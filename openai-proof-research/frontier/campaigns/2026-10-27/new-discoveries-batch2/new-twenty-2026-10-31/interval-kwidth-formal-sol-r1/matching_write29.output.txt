@@ -1,0 +1,57 @@
+  ext
+  rfl
+
+/-- On a finite type, equivalence between the self-embeddings and the bijections. -/
+@[simps] noncomputable def _root_.Equiv.embeddingEquivOfFinite (α : Type*) [Finite α] :
+    (α ↪ α) ≃ (α ≃ α) where
+  toFun e := e.equivOfFiniteSelfEmbedding
+  invFun e := e.toEmbedding
+
+/-- A constructive embedding of a fintype `α` in another fintype `β` when `card α ≤ card β`. -/
+def truncOfCardLE [Fintype α] [Fintype β] [DecidableEq α] [DecidableEq β]
+    (h : Fintype.card α ≤ Fintype.card β) : Trunc (α ↪ β) :=
+  (Fintype.truncEquivFin α).bind fun ea =>
+    (Fintype.truncEquivFin β).map fun eb =>
+      ea.toEmbedding.trans ((Fin.castLEEmb h).trans eb.symm.toEmbedding)
+
+theorem nonempty_of_card_le [Fintype α] [Fintype β] (h : Fintype.card α ≤ Fintype.card β) :
+    Nonempty (α ↪ β) := by classical exact (truncOfCardLE h).nonempty
+
+theorem nonempty_iff_card_le [Fintype α] [Fintype β] :
+    Nonempty (α ↪ β) ↔ Fintype.card α ≤ Fintype.card β :=
+  ⟨fun ⟨e⟩ => Fintype.card_le_of_embedding e, nonempty_of_card_le⟩
+
+theorem exists_of_card_le_finset [Fintype α] {s : Finset β} (h : Fintype.card α ≤ #s) :
+    ∃ f : α ↪ β, Set.range f ⊆ s := by
+  rw [← Fintype.card_coe] at h
+  rcases nonempty_of_card_le h with ⟨f⟩
+    Fintype.card { x // p x } ≤ Fintype.card α :=
+  Fintype.card_le_of_embedding (Function.Embedding.subtype _)
+
+lemma Fintype.card_subtype_lt [Fintype α] {p : α → Prop} [Fintype {a // p a}] {x : α} (hx : ¬p x) :
+    Fintype.card { x // p x } < Fintype.card α :=
+  Fintype.card_lt_of_injective_of_notMem (b := x) (↑) Subtype.coe_injective <| by
+    rwa [Subtype.range_coe_subtype]
+
+theorem Fintype.card_subtype [Fintype α] (p : α → Prop) [Fintype {a // p a}] [DecidablePred p] :
+    Fintype.card { x // p x } = #{x | p x} := by
+  refine Fintype.card_of_subtype _ ?_
+  simp
+
+@[simp]
+theorem Fintype.card_subtype_compl [Fintype α] (p : α → Prop) [Fintype { x // p x }]
+    [Fintype { x // ¬p x }] :
+    Fintype.card { x // ¬p x } = Fintype.card α - Fintype.card { x // p x } := by
+  classical
+    rw [Fintype.card_of_subtype (Set.toFinset { x | p x }ᶜ), Set.toFinset_compl,
+      Finset.card_compl, Fintype.card_of_subtype] <;>
+    · intro
+      simp only [Set.mem_toFinset, Set.mem_compl_iff, Set.mem_ofPred]
+
+theorem Fintype.card_subtype_mono (p q : α → Prop) (h : p ≤ q) [Fintype { x // p x }]
+    [Fintype { x // q x }] : Fintype.card { x // p x } ≤ Fintype.card { x // q x } :=
+  Fintype.card_le_of_embedding (Subtype.impEmbedding _ _ h)
+
+/-- If two subtypes of a fintype have equal cardinality, so do their complements. -/
+theorem Fintype.card_compl_eq_card_compl [Finite α] (p q : α → Prop) [Fintype { x // p x }]
+    [Fintype { x // ¬p x }] [Fintype { x // q x }] [Fintype { x // ¬q x }]

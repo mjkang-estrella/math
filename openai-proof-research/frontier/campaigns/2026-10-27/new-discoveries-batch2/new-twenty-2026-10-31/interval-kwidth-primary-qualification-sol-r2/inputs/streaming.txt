@@ -1,0 +1,883 @@
+Maximum Weight b-Matchings in Random-Order
+Streams
+Chien-Chung Huang !
+CNRS, DI ENS, École normale supérieure, Université PSL, Paris, France
+
+François Sellier !
+Université Paris Cité, CNRS, IRIF, F-75013, Paris, France
+MINES ParisTech, Université PSL, F-75006, Paris, France
+
+      Abstract
+We consider the maximum weight b-matching problem in the random-order semi-streaming model.
+                                                                               1
+Assuming all weights are small integers drawn from [1, W ], we present a 2 − 2W   + ε approximation
+algorithm, using a memory of O(max(|MG |, n) · poly(log(m), W, 1/ε)), where |MG | denotes the
+cardinality of the optimal matching. Our result generalizes that of Bernstein [3], which achieves
+a 3/2 + ε approximation for the maximum cardinality simple matching. When W is small, our
+result also improves upon that of Gamlath et al. [11], which obtains a 2 − δ approximation (for some
+small constant δ ∼ 10−17 ) for the maximum weight simple matching. In particular, for the weighted
+b-matching problem, ours is the first result beating the approximation ratio of 2. Our technique
+hinges on a generalized weighted version of edge-degree constrained subgraphs, originally developed
+by Bernstein and Stein [5]. Such a subgraph has bounded vertex degree (hence uses only a small
+                                                                                1
+number of edges), and can be easily computed. The fact that it contains a 2 − 2W  + ε approximation
+of the maximum weight matching is proved using the classical Kőnig-Egerváry’s duality theorem.
+
+2012 ACM Subject Classification Theory of computation → Streaming, sublinear and near linear
+time algorithms; Theory of computation → Approximation algorithms analysis
+
+Keywords and phrases Maximum weight matching, b-matching, streaming, random order
+
+Digital Object Identifier 10.4230/LIPIcs.ESA.2022.68
+
+Related Version Full Version: https://arxiv.org/abs/2207.03863
+
+Funding This work was funded by the grants ANR-19-CE48-0016 and ANR-18-CE40-0025-01 from
+the French National Research Agency (ANR).
+
+Acknowledgements The authors thank Claire Mathieu and the anonymous reviewers for their helpful
+comments.
+
+
+ 1      Introduction
+
+The maximum weight (b-)matching problem is a classical problem in combinatorial optimiza-
+tion. In this paper we will study a sparsifier for that problem and use it in order to design a
+streaming algorithm for randomly-ordered streams of edges.
+    Our main tool is a generalized weighted version of the edge-degree constrained subgraph
+(EDCS), a graph sparsifier originally designed for the maximum matching problem by
+Bernstein and Stein [5]. Let us first recall the definition an EDCS H of a graph G [5].
+
+▶ Definition 1 (from [5]). Let G = (V, E) be a graph, and H a subgraph of G. Given any
+integer parameters β ≥ 2 and β − ≤ β − 1, we say that H is a (β, β − )-EDCS of G if H
+satisfies the following properties:
+  (i) For any edge (u, v) ∈ H,      degH (u) + degH (v) ≤ β
+ (ii) For any edge (u, v) ∈ G\H, degH (u) + degH (v) ≥ β − .
+            © Chien-Chung Huang and François Sellier;
+            licensed under Creative Commons License CC-BY 4.0
+30th Annual European Symposium on Algorithms (ESA 2022).
+Editors: Shiri Chechik, Gonzalo Navarro, Eva Rotenberg, and Grzegorz Herman; Article No. 68; pp. 68:1–68:14
+                   Leibniz International Proceedings in Informatics
+                   Schloss Dagstuhl – Leibniz-Zentrum für Informatik, Dagstuhl Publishing, Germany
+68:2   Maximum Weight b-Matchings in Random-Order Streams
+
+
+           An EDCS has a size that can be easily controlled by the parameter β and it somehow
+       “balances” the vertex degrees in the graph. A very nice property of this sparsifier is that, for
+       well-chosen values of β and β − , it always contains a 3/2 + ε approximation of the maximum
+       cardinality matching [2, 6]:
+                                                                                                 ε
+       ▶ Theorem 2 (from the recent work of Assadi and Bernstein [2]). Let 0 < ε < 1/2. Set λ = 32 .
+                  −                                 −2                  −
+       Let β ≥ β + 1 be integers such that β ≥ 8λ log(1/λ) and β ≥ (1 − λ)          · β. Then  any
+       (β, β − )-EDCS H of a graph G contains a matching MH such that 23 + ε · |MH | ≥ |MG |
+                                                                                  
+
+       where MG denotes the maximum cardinality matching.
+
+             In our paper, we generalize the EDCS in two ways:
+             we handle (small) integer-weighted edges;
+             we handle the more general case of b-matchings.
+
+           To describe our generalization, first let us introduce some notation. A weighted multi-
+       graph G = (V, E) is defined by its set of vertices V and its multi-set of weighted edges E
+       drawn from V × V × {1, 2, . . . , W } (i.e., e = (u, v, k) represents an edge between u and v
+       of weight w(e) = k). We emphasize that E is a multi-set: not only can there be multiple
+       edges between two vertices, but also some of these edges can have the same weight. We
+       assume that the multi-graph does not contain any self-loop. For a given vertex v ∈ V and a
+       given subgraph H of G, δH (v) denotes the multi-set of incident edges to v in H, degH (v)
+                                                                                    P
+       the degree of v in the multi-graph H and wdegH (v) its weighted degree (u,v,w)∈δH (v) w in
+       H. Given a weighted multi-graph G = (V, E) and a set of capacities bv ∈ Z+ associated to
+       each vertex v ∈ V , a multi-set of weighted edges M is called a b-matching if for all v ∈ V
+       the number of edges incident to v in M is smaller than or equal to bv . For a given subgraph
+       H of G, we denote by MH an arbitrary maximum weight b-matching included in H. The
+       concept of b-matching encompasses that of matching and allows us to tackle a larger variety
+       of real situations where the vertices have different capacities, e.g. [20]. In this paper we will
+       assume that the number of edges between any two vertices u and v is at most min(bu , bv ).1
+
+       ▶ Definition 3. Let G = (V, E) be a weighted multi-graph, where E is a multiset of edges
+       drawn from V × V × {1, 2, . . . , W }, {bv }v∈V be a set of constraints, and H be a subgraph of G.
+       Given any integer parameters β ≥ 3 and β − ≤ β − 2, we say that H is a (β, β − )-w-b-EDCS
+       of G if H satisfies the following properties:
+         (i) For any edge (u, v, wuv ) ∈ H,        wdegH (u)
+                                                      bu     + wdegbvH (v) ≤ β · wuv
+           (ii) For any edge (u, v, wuv ) ∈ G\H, wdegbuH (u) + wdegbvH (v) ≥ β − · wuv .
+
+          An EDCS is a special case of a weighted b-EDCS when all the bv s and all the weights are
+       equal to 1. We can show that such w-b-EDCSes as described in Definition 3 always exist.
+       Moreover, we can also prove that it uses only a reasonable number of edges (up to 2β · |MG |)
+       and it contains a relatively large weighted b-matching:
+                                                                                           ε
+       ▶ Theorem 4. Let 0 < ε < 1/2 and let W be an integer parameter. Set λ = 100W           . Let
+            −                             β+6W          2 −2         −
+       β ≥ β + 2 be integers such that log(β+6W ) ≥ 2W λ and β − 6W ≥ (1 − λ) · (β + 6W ).
+       Then any (β, β − )-w-b-EDCS H of a weighted multi-graph G with integer edge weights bounded
+                                                        1
+       by W contains a b-matching MH such that 2 − 2W      + ε · w(MH ) ≥ w(MG ).
+
+
+       1
+           This is actually a reasonable assumption as the maximum number of edges that are relevant between
+           two given vertices u and v to construct a b-matching is at most min(bu , bv ). This assumption is more
+           debatable in the streaming setting, and this is why we explain how to handle this case in the full version
+           of this paper.
+C.-C. Huang and F. Sellier                                                                              68:3
+
+
+    In the full version of this paper, we give a whole class of tight examples reaching the
+bound of Theorem 4. Compared with the previous results of [2, 6] (Theorem 2) when W = 1,
+we can observe that the approximation ratio is the same, even though the constraints on β
+and β − are a bit stricter here. Nonetheless, we can deal with b-matchings as well, even when
+W > 1. As a side note, we note that to satisfy the conditions stated in Theorem 4, it suffices
+that β is of order poly(W, 1/ε) for some polynomial.
+    The semi-streaming model of computation [10] has been motivated by the recent rise of
+massive graphs, where we cannot afford to store the entire input in memory. Given that
+the graph is made of |V | = n vertices and |E| = m edges, in the semi-streaming model the
+graph is presented to the algorithm as a stream of edges e1 , . . . , em . The algorithm is allowed
+to make a single pass over that stream and can use a memory roughly proportional to the
+output size (up to a poly-logarithmic factor).
+    We note that in the most general model where an adversary decides the order of the
+elements, even for the maximum cardinality simple matching, it is still unclear whether it is
+possible to beat the approximation ratio of 2.
+    Our focus here is on the random-order streaming model, where the permutation of
+the edges in the stream is assumed to be chosen uniformly at random. This is a quite
+reasonable assumption as real-world data have little reason of being ordered in an adversarial
+way. In fact, as mentioned in [17], the random-order streaming model might better explain
+why certain algorithms perform better in practice than their theoretical bounds under an
+adversary model. It is noteworthy that under the random-order streaming model, there are
+already quite a few evidences to show that it is possible to beat the approximation factor of
+2 [1, 3, 11, 17], at least for the simple matching.
+    Using an adaptation of EDCS, Bernstein [3] obtained a 3/2 + ε approximation in the
+random-order semi-streaming framework (with probability 1 − 2n−3 and using O(n · log(n) ·
+poly(1/ε)) memory). Similarly, we can adapt our w-b-EDCSes to design a semi-streaming
+algorithm for randomly-ordered streams of weighted edges:
+▶ Theorem 5. Let 0 < ε < 12 and let W be an integer parameter. There exists an
+algorithm that can extract with high probability (at least 1 − 2m−3 ) from a randomly-ordered
+stream of weighted edges having integer weights in {1, . . . , W } a weighted b-matching with an
+                             1
+approximation ratio of 2 − 2W   + ε, using O(max(|MG |, n) · poly(log(m), W, 1/ε)) memory.
+    Theorem 5 is the first result for the maximum (integer-weighted) b-matching problem
+in the random-order semi-streaming framework. For the special case of simple matching,
+when W = 1, we essentially re-capture the result of Bernstein [3] (albeit using slightly
+more memory). When W > 1, we note that prior to our work, Gamlath et al. [11] have
+obtained an approximation ratio of 2 − δ for some small δ ∼ 10−17 . Our result gives a better
+approximation when W is reasonably small (but using a memory depending polynomially in
+W ) and we believe that our approach is significantly simpler.
+▶ Remark 6. Another generalization of EDCS has been developed by Bernstein et al. [4] to
+maintain a 3/2 + ε approximation of the optimal weighted matching in a dynamic graph.
+However it is still unknown if their construction can actually lead to an algorithm in the
+random-order one-pass semi-streaming model [4], or applied to b-matchings.
+
+Technical Overview
+To generalize the EDCS to the weighted case, a natural first idea is to build multiple EDCSes,
+one for each edge-weight from 1 to W , and then take their union. We show in the full version
+of this paper that such an idea does not lead to a subgraph containing a matching that is
+better than a 2 approximation.
+
+
+                                                                                                      ESA 2022
+68:4   Maximum Weight b-Matchings in Random-Order Streams
+
+
+           Our approach is a proper generalization of EDCS, as defined in Definition 3. In Theorem 4,
+       we show that such a w-b-EDCS contains a matching of good approximation ratio. The proof
+       of this theorem is technically the most innovative part of the present work. In order to
+       handle integer-weighted matchings (see Section 2) we make use of Kőnig-Egerváry’s duality
+       theorem [7] and a specially-constructed auxiliary graph. The fact that the weights of the
+       edges are integers is critical to get an approximation ratio better than 2 (especially for
+       Claim 13). Then, to handle b-matchings (see Section 3), we build a reduction to simple
+       matchings and show that by doing so we do not lose too much in the approximation ratio.
+           Regarding Theorem 5, when we design a semi-streaming algorithm to extract a b-matching
+       there is an additional challenge: we do not know in advance the actual size of MG , which
+       cannot be bounded by n (for instance |MG | could be of size n1.2 or even larger), but we still
+       want to use as little memory as possible, i.e., O(max(|MG |, n) · poly(log(m), W, 1/ε)). We
+       tackle this issue by using a guessing strategy in the early phase of the stream (see Section 4).
+
+       Related Work
+       In the adversarial semi-steaming setting, for the unweighted case, the simple greedy algorithm
+       building a maximal matching provides a 2 approximation, which is the best known approxim-
+       ation ratio. Knowing whether it is possible to achieve a better approximation ratio is a major
+       open question in the field of streaming algorithms. For weighted matchings an approximation
+       ratio of 2 + ε can be achieved [12, 18, 19]. For weighted b-matchings the approximation ratio
+       2 + ε can also be attained [14]. On the hardness side, we know that an approximation ratio
+       better than 1 + ln 2 ≈ 1.69 cannot be achieved [15].
+           In contrast, for the random-order stream, a first result was obtained by Konrad, Magniez,
+       and Mathieu [17] with an approximation ratio strictly below 2 for unweighted simple
+       matchings. The approximation ratio was then improved in a sequence of papers [11, 16, 9, 3].
+       Currently the best result is due to Assadi and Behnezhad [1], who obtained the ratio of
+       3/2 − δ for some small constant δ ∼ 10−14 . Regarding weighted simple matchings, Gamlath
+       et al. [11] obtained an approximation ratio of 2 − δ for some small constant δ ∼ 10−17 .
+       Regarding b-matchings, to our knowledge the only result is an approximation ratio of 2 − δ
+       in expectation for random-order online matroid intersection by Guruganesh and Singla [13]
+       (hence it applies for unweighted bipartite b-matchings).
+
+        2     EDCS for Weighted Matchings
+       In this section we consider the problem of finding a maximum weight matching in an
+       edge-weighted graph G = (V, E) where the edges have integer weights in [1, W ]. For ease
+       of presentation, we will use simplified notations for simple graphs in this section. Here
+       w(u, v) denotes edge weight between vertices u and v. For a subgraph H of G and a vertex
+       u ∈ V , we denote by NH (v) the set of vertices adjacent to v in H, by degH (v) the degree
+       of v in H, i.e., degH (v) = |NH (v)|, and by wdegH (v) the weighted degree of v in H, i.e.,
+                     P
+       wdegH (v) = u∈NH (v) w(u, v). For a subgraph H of G, we will denote by MH an arbitrary
+       maximum weight matching in H. Then we define the notion of edge-degree constrained
+       subgraphs for weighted graphs (w-EDCS), which in fact is just Definition 3 specialized to
+       the setting in this section.
+
+       ▶ Definition 7. Let G = (V, E) be a graph with weighted edges, and H be a subgraph of G.
+       Given any integer parameters β ≥ 3 and β − ≤ β − 2, we say that H is a (β, β − )-w-EDCS of
+       G if H satisfies the following properties:
+         (i) For any edge (u, v) ∈ H,     wdegH (u) + wdegH (v) ≤ β · w(u, v)
+        (ii) For any edge (u, v) ∈ G\H, wdegH (u) + wdegH (v) ≥ β − · w(u, v).
+C.-C. Huang and F. Sellier                                                                           68:5
+
+
+   Here is a first simple proposition on (β, β − )-w-EDCS (coming from Property (i)).
+
+▶ Proposition 8. Let H be a (β, β − )-w-EDCS of a given graph G. Then, for all v ∈ V , we
+have degH (v) ≤ β.
+
+Proof. Let v ∈ V . If NH (v) = ∅, the stated property is trivial. Otherwise, pick a vertex
+u such that w(u, v) = minu′ ∈NH (v) w(u′ , v). Then, by Property (i), β · w(u, v) ≥ wdegH (v).
+Therefore, degH (v) ≤ wdeg H (v)
+                       w(u,v) ≤ β, as any edge incident to v in H has a weight larger than
+or equal to w(u, v).                                                                       ◀
+
+    We show the existence of w-EDCSes by construction, using a local search algorithm. The
+following proof closely follows the argument of [2].
+
+▶ Proposition 9. Any graph G = (V, E) with weighted edges contains a (β, β − )-w-EDCS
+for any parameters β ≥ β − + 2. Such a (β, β − )-w-EDCS can be found in O(β 2 W 2 · n) local
+search steps.
+
+Proof. Start with an empty subgraph H. Then try the following local improvements of H,
+until it is no longer possible. If there is an edge in H violating Property (i) of Definition 7,
+then fix that edge by removing it from H. Otherwise, if there is an edge in G\H violating
+Property (ii), then fix that edge by inserting it in H.
+   Observe that we give the priority to the correction of violations of Property (i), so that at
+each step of the algorithm all the vertices have degrees bounded by β + 1 (as after inserting
+an edge, Proposition 8 may be violated). To prove that this algorithm terminates in finite
+time and to show the existence of a w-EDCS, we introduce a potential function:
+                        X                  X
+   Φ(H) = (2β − 2)            w(u, v)2 −      (wdegH (u))2 .
+                     (u,v)∈H            u∈V
+
+
+As the vertices have degrees bounded by β + 1 and the edges have weights bounded by W ,
+the value of that potential function is bounded by 2β 2 W 2 · n. Then we can show that after
+each local improvement step, the value of Φ(H) increases at least by 2 (see the full version
+of this paper for details). Therefore, the algorithm terminates in O(β 2 W 2 · n) steps.   ◀
+
+   We also introduce the notion of w-vertex-cover of the edge-weighted graph.
+
+▶ Definition 10. We say that the non-negative integer variables (αv )v∈V represent a w-
+vertex-cover of a subgraph H of G if for all (u, v) ∈ H, we have w(u, v) ≤ αu + αv . The sum
+P
+   v∈V αv is called the weight of the w-vertex-cover.
+
+  To use this data structure for the maximum weight problem, we will use the theorem of
+Kőnig-Egerváry [7], which is a classic duality theorem.
+
+▶ Theorem 11 (Kőnig-Egerváry). In any edge-weighted bipartite subgraph H of G, the
+maximum weight of a matching equals the smallest weight of a w-vertex-cover.
+
+   This theorem allows us to prove the following lemma, which is technically the most
+important part of the present work.
+
+▶ Lemma 12. Let 0 < ε < 1/2 and W be an integer parameter. For β ≥ β − + 2 integers
+such that ββ− ≤ 1 + 5W
+                     ε
+                        and β − ≥ 4W                         −
+                                   ε , we have that any (β, β )-w-EDCS H of a bipartite
+graph G (with integer edge weights bounded by W ) contains a matching MH such that
+      1
+ 2 − 2W  + ε · w(MH ) ≥ w(MG ).
+
+
+
+                                                                                                   ESA 2022
+68:6   Maximum Weight b-Matchings in Random-Order Streams
+
+
+       Proof. Using Kőnig-Egerváry’s theorem in the bipartite graph H, we know that there exist
+       integers (αv )v∈V such that:
+           P
+              v∈V αv = w(MH )
+           for all (u, v) ∈ H, w(u, v) ≤ αu + αv
+       Now consider the optimal matching MG in G. The first idea is to use the duality theorem to
+       relate w(MG ) to w(MH ), with a leftover term that will be analyzed in the second part of
+       the proof. We introduce the notion of good and bad edges:
+           the edges (u, v) ∈ MG such that β − · w(u, v) ≤ β · (αu + αv ), which are called good edges;
+           the set of good edges is denoted as Mgood ;
+           the edges (u, v) ∈ MG such that β − · w(u, v) > β · (αu + αv ), which are called bad edges;
+           the set of bad edges is denoted as Mbad .
+           A key observation is that the edges in MG ∩ H are necessarily good edges by the
+       definition of the w-vertex-cover (αv )v∈V and the fact that β − < β. Therefore, the bad
+       edges (u, v) are in G\H and as a consequence they satisfy Property (ii) of Definition 7, i.e.,
+       β − · w(u, v) ≤ wdegH (u) + wdegH (v).
+           Hence we can write the following:
+                             X                      X
+           β − · w(MG ) =           β − · w(u, v) +        β − · w(u, v)
+                             (u,v)∈Mgood                     (u,v)∈Mbad
+                     X                                X
+              ≤                 β · (αu + αv ) +                (wdegH (u) + wdegH (v))
+                  (u,v)∈Mgood                      (u,v)∈Mbad
+                    X                               X
+              =              β · (αu + αv ) +                (wdegH (u) + wdegH (v) − β · (αu + αv ))
+                  (u,v)∈MG                      (u,v)∈Mbad
+                                     X
+              ≤ β · w(MH ) +                   ((wdegH (u) − β · αu )+ + (wdegH (v) − β · αv )+ ),
+                                  (u,v)∈Mbad
+
+       where (x)+ denotes the non-negative part max(x, 0). In the last inequality we also used the
+                  P                    P
+       fact that (u,v)∈MG (αu + αv ) ≤ v∈V αv = w(MH ), as each vertex of V is counted at most
+       once in that sum. Now, denoting by Vbad the set of vertices which are the endpoints of a bad
+       edge and such that wdegH (u) − β · αu > 0, we get
+                                       X
+           β − · w(MG ) ≤ β · w(MH ) +     (wdegH (v) − β · αv ).                                (1)
+                                            v∈Vbad
+                                                            P
+            Naturally, we want to upper-bound the value of v∈Vbad (wdegH (v)−β ·αv ) and we will do
+       so via a specially-constructed graph. Before we describe this graph, we can first easily observe
+       that for any v ∈ Vbad , for any u ∈ NH (v), we have w(u, v) ≥ wdegβH (v) > αv (by Property (i)
+       of Definition 7 and the definition of Vbad ); moreover, as (αv )v∈V is a w-vertex-cover of H,
+       we obtain that αu > 0. These observations will be useful in the following.
+            The new graph is Hbad = (Vbad ∪ Ṽ , Ẽ). The vertices in Hbad are the vertices of Vbad
+       as well as copies of the vertices of V such that αv > 0, i.e., Ṽ = {ṽ : v ∈ V, αv > 0}. We
+       build the set of edges Ẽ as follows. For each v ∈ Vbad , for each u ∈ NH (v), we create in Ẽ
+       an edge (v, ũ) such that w(v, ũ) = w(v, u) − αv (note that if u is also in Vbad , then Ẽ will
+       also contain another edge (u, ṽ) such that w(u, ṽ) = w(u, v) − αu ). Note that w(v, ũ) ∈ Z>0 ,
+       since w(u, v) > αv as observed above. Therefore the graph Hbad still has non-negative
+       integer-valued edge weights. We next remove some edges from Ẽ: while there exists a
+       vertex v ∈ Vbad such that wdegHbad (v) > wdegH (v) − β · αv + W , we pick an arbitrary edge
+       (v, ũ) ∈ Ẽ incident to v and remove it from Hbad . This process guarantees the following
+       property:
+C.-C. Huang and F. Sellier                                                                              68:7
+
+
+
+
+   ∀v ∈ Vbad , wdegH (v) − β · αv ≤ wdegHbad (v) ≤ wdegH (v) − β · αv + W.                     (2)
+
+   This finishes the description of the graph Hbad . By (2), for any (v, ũ) ∈ Ẽ we have:
+
+   β · w(v, ũ) + W = β · (w(v, u) − αv ) + W ≥ wdegH (v) − β · αv + W + wdegH (u)
+                                                           ≥ wdegHbad (v) + wdegHbad (ũ).
+
+Summing this inequality over all the edges in Ẽ we obtain:
+                         X
+  β · w(Ẽ) + W · |Ẽ| ≥      (wdegHbad (v) + wdegHbad (ũ))
+                                  (v,ũ)∈Ẽ
+           X                                           X
+      =            degHbad (v) · wdegHbad (v) +                degHbad (ũ) · wdegHbad (ũ)
+          v∈Vbad                                       ũ∈Ṽ
+           X wdegH (v)                  X wdegH (ũ)
+      ≥           bad
+                       · wdegHbad (v) +        bad
+                                                     · wdegHbad (ũ)
+                 W                            αu
+          v∈Vbad                                          ũ∈Ṽ
+        X (wdegH (v))2 X (wdegH (ũ))2
+                bad            bad
+      =               +
+               W              αu
+          v∈Vbad                               ũ∈Ṽ
+                                      2     X 1  w(Ẽ) · αu 2
+           X       1         w(Ẽ)
+      ≥              ·                      +      · P
+                   W         |Vbad |            αu    ũ′ ∈Ṽ αu
+                                                                 ′
+          v∈Vbad                              ũ∈Ṽ
+                    2                   2
+           w(Ẽ)        w(Ẽ)
+      =               +P             .
+          W · |Vbad |   ũ′ ∈Ṽ αu
+                                   ′
+
+
+
+The second inequality comes from the fact that the degree of a vertex can be lower-bounded
+by the weighted degree of that vertex divided by the weight of the largest edge incident to it
+(for v ∈ Vbad this weight is W , and for ũ ∈ Ṽ it is αu , as w(v, ũ) = w(v, u) − αv ≤ αu for v
+adjacent to ũ in Hbad ). The third inequality comes from the minimization of the function
+                      P                          P
+over the constraints v∈Vbad wdegHbad (v) = ũ∈Ṽ wdegHbad (ũ) = w(Ẽ). Now observing
+that |Ẽ| ≤ w(Ẽ), we derive the following:
+
+                 w(Ẽ)        w(Ẽ)
+   β+W ≥                    +P          .                                                      (3)
+                W · |Vbad |    ũ∈Ṽ αu
+
+    The following claim will help us lower bound the average weighted degree of the vertices
+of Vbad in Hbad , namely, w(Ẽ)/|Vbad |. For this part it is crucial that the weights are integers.
+                                                                                               −
+                                                                                       β
+▷ Claim 13. For all (u, v) ∈ Mbad , (wdegH (u) − β · αu )+ + (wdegH (v) − β · αv )+ ≥ 1+ε/4
+
+Proof. We proceed by contradiction. Suppose that there exists (u, v) ∈ Mbad such that
+                                                     β−
+(wdegH (u) − β · αu )+ + (wdegH (v) − β · αv )+ < 1+ε/4    . Then, as β − · w(u, v) ≤ β · (αu +
+αv ) + (wdegH (u) − β · αu )+ + (wdegH (v) − β · αv )+ , it means that
+
+                                                                     β−
+   β · (αu + αv ) < β − · w(u, v) < β · (αu + αv ) +                       ,
+                                                                   1 + ε/4
+
+and therefore by dividing by β − we obtain
+     β                          β                   1
+       · (αu + αv ) < w(u, v) < − · (αu + αv ) +         .
+    β−                         β                 1 + ε/4
+
+
+
+                                                                                                      ESA 2022
+68:8   Maximum Weight b-Matchings in Random-Order Streams
+
+
+       As (αu + αv ) ∈ {0, 1, . . . , W } (recall that (u, v) is a bad edge) and because ββ− ≤ 1 + 5W
+                                                                                                    ε
+                                                                                                      <
+                ε
+       1 + 4W ·(1+ε/4) , there cannot be any integer in the open interval
+                                                         
+                 β               β                   1
+                   · (αu + αv ), − · (αu + αv ) +           ,
+                β−              β                 1 + ε/4
+
+       implying that w(u, v), which is an integer, cannot exist. The proof follows.                      ◁
+
+          Recall that u of (u, v) ∈ Mbad is part of Vbad only if wdegH (u) − β · αu > 0. Claim 13
+       then implies that given (u, v) ∈ Mbad , if both u and v are in Vbad , then wdegHbad (u) +
+                             −                                             −
+                       β                                                  β
+       wdegHbad (v) ≥ 1+ε/4 ; if only u is in Vbad , then wdegHbad (u) ≥ 1+ε/4 . We can thus infer that
+       w(Ẽ)         β−                                          β−        Pw(Ẽ) , and therefore
+       |Vbad | ≥ 2·(1+ε/4) and we can rewrite (3) as β + W ≥ 2W ·(1+ε/4) +       αu
+                                                                                ũ∈Ṽ
+
+
+                               β−
+                                           X
+             β+W −                          ·  αu ≥ w(Ẽ).                                           (4)
+                          2W · (1 + ε/4)
+                                             ũ∈Ṽ
+
+       We now can rebound the expression of (1) as follows:
+                                     X
+         β − · w(MG ) ≤ β · w(MH ) +      (wdegH (v) − β · αv )
+                                            v∈Vbad
+                                           X
+                        ≤ β · w(MH ) +            wdegHbad (v)                                  by (2)
+                                         v∈Vbad
+
+                        ≤ β · w(MH ) + w(Ẽ)
+                                             β−
+                                                                                 X
+                        ≤ 2β + W −                     · w(MH ).      by (4) and           αu ≤ w(MH )
+                                      2W · (1 + ε/4)
+                                                                                   ũ∈Ṽ
+
+       Re-arranging,
+                                   
+              β    W       1
+            2 −+ −−                   · w(MH ) ≥ w(MG ).
+             β     β 2W · (1 + ε/4)
+
+       As ββ− ≤ 1 + ε/4 and β − ≥ 4W
+                                   ε we obtain the desired result.                                       ◀
+
+            Then we can generalize this result to non-bipartite graphs.
+                                                                                    ε
+       ▶ Theorem 14. Let 0 < ε < 1/2 and W be an integer parameter. Set λ = 100W       . For
+               −                       β         2 −2       −
+       β ≥ β + 2 integers such that log(β) ≥ 2W λ and β ≥ (1 − λ) · β, we have that any
+       (β, β − )-w-EDCS H of a graph G (with  integer edge weights bounded by W ) contains a
+                                   1
+                                         
+       matching MH such that 2 − 2W   + ε · w(MH ) ≥ w(MG ).
+
+       Proof. The proof of this theorem relies on Lemma 12 and on the same construction as the
+       one in [2], using the probabilistic method and Lovasz Local Lemma [8]. We provide the
+       details of the proof in the full version of this paper.                              ◀
+
+        3        EDCS for Weighted b-Matchings
+       From now on we consider the problem of finding a maximum weight b-matching in an
+       edge-weighted multi-graph G = (V, E). Hence we will use the notations described in the
+       introduction. Here we recall the generalization of edge-degree constrained subgraphs (EDCS)
+       to an edge-weighted multi-graph G = (V, E) in the context of the b-matching problem.
+C.-C. Huang and F. Sellier                                                                              68:9
+
+
+▶ Definition 15. Let G = (V, E) be a weighted multi-graph, where E is a multiset of edges
+drawn from V × V × {1, 2, . . . , W }, {bv }v∈V be a set of constraints, and H be a subgraph of G.
+Given any integer parameters β ≥ 3 and β − ≤ β − 2, we say that H is a (β, β − )-w-b-EDCS
+of G if H satisfies the following properties:
+  (i) For any edge (u, v, wuv ) ∈ H,        wdegH (u)
+                                               bu     + wdegbvH (v) ≤ β · wuv
+ (ii) For any edge (u, v, wuv ) ∈ G\H, wdegbuH (u) + wdegbvH (v) ≥ β − · wuv .
+
+   As for a w-EDCS (Proposition 8), we can bound the degree of a vertex in a w-b-EDCS
+H (with almost the same proof as that of Proposition 8).
+
+▶ Proposition 16. Let H be a (β, β − )-w-b-EDCS of a given graph G. Then, for all v ∈ V ,
+we have degH (v) ≤ β · bv .
+
+▶ Proposition 17. Let H be a (β, β − )-w-b-EDCS of a given graph G. Then H contains at
+most 2β · |MG | edges.
+
+Proof. A vertex v ∈ V is called saturated by MG if |δG (v) ∩ MG | = bv . We denote by Vsat
+the set of vertices saturated by MG . As MG is a maximal matching in G, it means that for
+all (u, v, wuv ) ∈ G\MG , either u or v is in Vsat . We denote by Msat ⊆ MG the subset of
+edges in MG that are incident to a vertex of Vsat . By this definition, we get:
+                                                                     X
+    |H| = |H ∩ (MG \Msat )| + |H\(MG \Msat )| ≤ |MG | − |Msat | +         degH (v)
+                                                                            v∈Vsat
+                               X
+        ≤ |MG | − |Msat | +            β · bv ≤ |MG | − |Msat | + 2 · |Msat | · β ≤ 2β · |MG |,
+                              v∈Vsat
+                                             P
+as for all v ∈ V , degH (v) ≤ β · bv and       v∈Vsat bv ≤ 2 · |Msat |.                           ◀
+
+   We can also show that such w-b-EDCSes always exist.
+
+▶ Proposition 18. Any multi-graph G = (V, E), along with a set of constraints {bv }v∈V ,
+contains a (β, β − )-w-b-EDCS for any parameters β ≥ β − + 2. Such a (β, β − )-w-b-EDCS
+can also be found in O(β 2 W 2 · |MG |) local search steps.
+
+Proof. As in the proof of Proposition 9, we follow closely the argument of [2]. We use the
+same local-search algorithm as the one in Proposition 9, except that the properties violated
+are those of Definition 15. Here we also give the priority to the correction of violations of
+Property (i), so that the at each step of the algorithm all the vertices v ∈ V have degrees
+bounded by β · bv + 1. To prove that this algorithm terminates and show the existence of a
+w-b-EDCS, we introduce the following potential function:
+                          X                  X (wdeg (u))2
+                                      2             H
+   Φ(H) = (2β − 2)                   wuv −                 .
+                                                   bu
+                      (u,v,wuv )∈H           u∈V
+
+
+Observe that because of Proposition 17, the value of Φ(H) is bounded by 2βW 2 · 2β · |MG |.
+We can also show that after each local improvement, the value of Φ(H) increases by at
+least 3/2 (see full version for details). Hence the algorithm terminates in O(β 2 W 2 · |MG |)
+steps.                                                                                     ◀
+
+                                                                               1
+   The main interest of these w-b-EDCSes is that they contain an (almost) 2 − 2W approx-
+imation, as in the case of w-EDCSes in simple graphs (Theorem 14).
+
+
+
+                                                                                                      ESA 2022
+68:10   Maximum Weight b-Matchings in Random-Order Streams
+
+
+                                                                                            ε
+        ▶ Theorem 4. Let 0 < ε < 1/2 and let W be an integer parameter. Set λ = 100W           . Let
+             −                             β+6W          2 −2         −
+        β ≥ β + 2 be integers such that log(β+6W ) ≥ 2W λ and β − 6W ≥ (1 − λ) · (β + 6W ).
+        Then any (β, β − )-w-b-EDCS H of a weighted multi-graph G with integer edge weights bounded
+                                                         1
+        by W contains a b-matching MH such that 2 − 2W      + ε · w(MH ) ≥ w(MG ).
+
+        Proof. Consider a maximum weight b-matching MG . We will build from H and MG two
+        simple graphs G′ = (V ′ , E ′ ) and H ′ = (V ′ , EH  ′
+                                                               ). The set of vertices V ′ contains, for each
+        vertex v ∈ V , bv vertices v1 , . . . , vbv , so that V ′ contains v∈V bv vertices in total. To
+                                                                           P
+
+        construct E ′ , for each v ∈ V , we will distribute the edges of δ(v) ∩ (H ∪ MG ) among the bv
+        vertices v1 , . . . , vbv in such a way so that the following three properties hold:
+          (i) each vi has a most one edge of MG incident to it;
+         (ii) G′ is a simple graph;                               h                                i
+        (iii) each vi has a weighted degree in the interval       wdegH (v)
+                                                                     bv     − 2W, wdegbvH (v) + 3W    .
+        The existence of such a distribution is achieved by a greedy procedure (see the full version
+        of this paper for a proof of this fact). For Property (ii), it is crucial that the graph G has
+        at most min(bu , bv ) edges between any vertices u and v. This property is important in the
+        proof of Theorem 14 (where negative association is used). Then, for H ′ , we just consider
+        the restriction of G′ to the edges corresponding to H (ignoring those from MG \H in the
+        preceding construction).
+             Observe that MG corresponds a simple matching in G′ , and that any simple matching in
+        H ′ corresponds to a b-matching in H. Next we show that H ′ is a (β + 6W, β − − 6W )-EDCS
+        for simple graph G′ . Consider an edge (ui , vj ) ∈ H ′ . It corresponds to an edge (u, v, wuv ) of
+        H so wdegH ′ (ui ) + wdegH ′ (vj ) ≤ wdegbuH (u) + wdegbvH (v) + 6W ≤ (β + 6W ) · wuv , so Property
+        (i) of Definition 7 holds. Consider next an edge (ui , vj ) ∈ G′ \H ′ . It corresponds to an edge
+        (u, v, wuv ) of MG \H, so wdegH ′ (ui ) + wdegH ′ (vj ) ≥ wdegbuH (u) + degbHv (v) − 6W ≥ (β − − 6W ) ·
+        wuv (as there can be a difference of at most W between the weighted degree of u in G′ and in
+        H ′ ). Thus Property (ii) of Definition 7 holds as well. To conclude, H ′ is a (β + 6W, β − − 6W )-
+        w-EDCS of G′ , so by Theorem 14 we have that (2 − 2W         1
+                                                                        + ε) · w(MH ′ ) ≥ w(MG′ ) = w(MG ).
+                                                                 ′
+        As w(MH ) ≥ w(MH ′ ) (because any matching in H corresponds to a b-matching of the same
+        weight in H), completing the proof.                                                                 ◀
+
+         4     Application to b-Matchings in Random-Order Streams
+        In this section we consider the random-order semi-streaming model and we show how our
+                                                                      1
+        results in the preceding section can be adapted to get a 2 − 2W  + ε approximation.
+            As our algorithm builds on that of Bernstein [3] for the unweighted simple matching,
+        let us briefly summarize his approach. In the first phase of the streaming, he constructs a
+        subgraph that satisfies only a weaker definition of EDCS in Definition 1 (only Property (i)
+        holds). In the second phase of the streaming, he collects the “underfull” edges, which are
+        those edges that violate Property (ii). He shows that in the end, the union of the subgraph
+        built in the first phrase and the underfull edges collected in the second phase, with high
+        probability, contains a 3/2 + ε approximation and that the total memory used is in the
+        order of O(n · log n). As we will show below, this approach can be adapted to our context
+        of edge-weighted b-matching. Our main technical challenge lies in the fact that unlike the
+        simple matching, the size of MG can vary a lot. We need a “guessing” strategy to ensure
+        that the required memory is proportional to |MG |.
+
+        ▶ Definition 19. We say that a graph H has bounded weighted edge-degree β if for every
+        edge (u, v, wuv ) ∈ H, wdegbuH (u) + wdegbvH (v) ≤ β · wuv .
+C.-C. Huang and F. Sellier                                                                                           68:11
+
+
+▶ Definition 20. Let G be a edge-weighted multi-graph, and let H be a subgraph of G with
+bounded weighted edge-degree β. For any parameter β − , we say that an edge (u, v, wuv ) ∈ G\H
+is (H, β, β − )-underfull if wdegbuH (u) + wdegbvH (v) < β − · wuv .
+▶ Lemma 21. Let 0 < ε < 1/2 be any parameter and W be an integer parameter. Set
+                                                                         β+8W
+λ = 100W ε
+              . Suppose that β − and β ≥ β − + 2 are integers so that log(β+8W       2 −2
+                                                                               ) ≥ 2W λ    and
+  −
+β − 6W ≥ (1 − λ) · (β + 8W ). Given an edge-weighted multi-graph G with integer weights
+in 1, . . . , W , and a subgraph H with bounded weighted edge-degree β, if X contains all edges
+in G\H that are (H, β, β − )-underfull, then (2 − 2W  1
+                                                        + ε) · w(MH∪X ) ≥ w(MG ).
+Proof. First, observe that H ∪X is not necessarily a w-b-EDCS of G. Thereby we use another
+                                                                         H
+argument from [3]. Let MG be a maximum weight b-matching in G, let MG      = MG ∩ H and
+  G\H                         M          G\H
+MG     = MG ∩(G\H). Let X = X ∩MG . We can observe that w(MG ) = w(MH∪M G\H ).
+                                                                                                           G
+                                                                                            G\H
+Then we can show that H ∪ X M is a (β + 2W, β − )-w-b-EDCS of H ∪ MG           (see the full
+version of this paper). As a result,
+                                    Theorem4 can be applied in this case and  we get that
+      1
+             
+ 2 − 2W  + ε · w (MH∪X M ) ≥ w MH∪M G\H = w(MG ), thus concluding the proof.              ◀
+                                                      G
+
+
+▶ Remark 22. One can easily notice that there exist integers β and β − that are O(poly(W, 1/ε))
+satisfying the conditions of Lemma 21. From now on, we will use the parameters λ, β, and
+β − satisfying the conditions of Lemma 21 and they are of values O(poly(W, 1/ε)).
+
+      Algorithm 1 Main algorithm computing a weighted b-matching for a random-order stream.
+ 1: H ← ∅                         j                                k
+                                                ε·m
+ 2: ∀ 0 ≤ i ≤ log2 m, αi ←            log2 (m)·(2i+2 β 2 W 2 +1)
+ 3: for i = 0 . . . log2 m do
+ 4:       ProcessStopped ← False
+ 5:       for 2i+2 β 2 W 2 + 1 iterations do
+ 6:          FoundUnderfull ← False
+ 7:          for αi iterations do
+ 8:              let (u, v, wuv ) be the next edge in the stream
+ 9:              if wdegbuH (u) + wdegbvH (v) < β − · wuv then
+10:                   add edge (u, v, wuv ) to H
+11:                   FoundUnderfull ← True
+                                                                               ′               ′
+12:                   while there exists (u′ , v ′ , wu′ v′ ) ∈ H : wdegb H′ (u ) + wdegb H′ (v ) > β · wu′ v′ do
+                                                                         u               v
+13:                       remove (u′ , v ′ , wu′ v′ ) from H
+14:        if FoundUnderfull = False then
+15:            ProcessStopped ← True
+16:            break from the loop
+17:    if ProcessStopped = True then
+18:        break from the loop
+19: X ← ∅
+20: for each (u, v, wuv ) remaining edge in the stream do
+21:    if wdegbuH (u) + wdegbvH (v) < β − · wuv then
+22:        add edge (u, v, wuv ) to X
+23: return the maximum weight b-matching in H ∪ X
+
+
+    The algorithm, formally described in Algorithm 1, consists of two phases. The first phase,
+corresponding to Lines 3-18, constructs a subgraph H of bounded weighted edge-degree β
+using only a ε fraction of the stream E early . In the second phase, the algorithm collects the
+
+
+                                                                                                                    ESA 2022
+68:12   Maximum Weight b-Matchings in Random-Order Streams
+
+
+        underfull edges in the remaining part of the stream E late . As in [3] we use the idea that if no
+        underfull edge was found in an interval of size α (see Lines 6-13), with high probability the
+        number of underfull edges remaining in the stream is bounded by some value γ = 4 log(m) m      α.
+        The issue is therefore to choose the right size of interval α, because we do not know the order
+        of magnitude of |MG | in the b-matching problem: if we do as in [3] by choosing only one
+        fixed size of intervals α, then if α is too small, the value of γ will be too big compared to
+        |MG |, whereas if the value of α is too large we will not be able to terminate the first phase
+        of the algorithm within the early fraction of size εm. Therefore, the idea in the first phase of
+        the algorithm is to “guess” the value of log2 |MG | by trying successively larger and larger
+        values of i (see Line 3). In fact, by setting i0 = ⌈log2 |MG |⌉, we know that the number of
+        operations that can be performed on a w-b-EDCS is bounded by 2i0 +2 β 2 W 2 (see the proof
+        of Proposition 18). As a result we know that the first phase should always stop at a time
+        where i is smaller than or equal to i0 , and therefore at a time when αi ≥ αi0 . Then we can
+        prove that with high probability the number of remaining underfull edges in the stream is at
+        most γi = 4 log(m) αmi .
+            Algorithm 1 works when MG is neither too small nor too big. Here we will first argue
+        that the other border cases can be handled anyway. We first have this easy lemma (its proof
+        is very similar to that of Proposition 17, see the full version of this paper).
+        ▶ Lemma 23. We have the inequality |G| ≤ 2n · |MG |.
+           Then we use it to handle the case of small b-matchings.
+                                                           2
+        ▷ Claim 24. We can assume that w(MG ) ≥ 3W
+                                                 2ε2 log(m).
+                                         2                            2
+        Proof. In fact, if w(MG ) < 3W                          3W
+                                      2ε2 log(m), then |MG | < 2ε2 log(m) and by Lemma 23 the
+                                      2
+        graph has only m = O(n · 3W2ε2 · log(m)) edges, so the whole graph can be stored only using
+        O(n · poly(log(m), W, 1/ε)) memory, implying that we can compute an exact solution.      ◁
+
+        ▷ Claim 25. Assuming Claim 24, with probability at least 1 − m−3 the late part of the
+        steam E late contains at least a (1 − 2ε) fraction of the optimal b-matching.
+        Proof. Consider a maximum weight b-matching MG = {f1 , . . . , f|MG | }. We define the
+        random variables Xi = 1fi ∈E early · w(fi ). Hence we have E[ Xi ] = ε · w(MG ). Moreover,
+                                                                       P
+
+            random variables Xi are i
+        the h                        negativelyassociated, so we canuse Hoeffding’s   inequality to
+               P|MG |                                2·ε2 ·w(MG )2         2·ε2 ·w(MG )
+        get P    i=1  Xi ≥ 2ε · w(M G )  ≤  exp   −    |MG |·W 2   ≤ exp −      W2       ≤ m−3 , as we
+                                        2
+        now assume that w(MG ) ≥ 3W
+                                  2ε2 log(m) (see Claim 24).                                          ◁
+
+           Recall that we defined i0 = ⌈log2 |MG |⌉.
+        ▷ Claim 26. We can assume that log (m)·(2ε·m
+                                                 i0 +2 β 2 W 2 +1) ≥ 1.
+                                               2
+
+        Proof. If this is not the case, then we can just store all the edges of G as the number
+                                            i0 +2 2 2
+        of edges m is bounded by log2 (m)·(2 ε β W +1) = O(|MG | · poly(log(m), W, 1/ε)) (as β is
+        O(poly(W, 1/ε)), see Remark 22). As a result, if at some point of the first phase we have
+        not stopped and we have αi = 0, then we store all the remaining edges of E late and we will
+        be able to get a (1 − 2ε) approximation with high probability (because of Claim 25) using
+        O(|MG | · poly(log(m), W, 1/ε)) memory.                                                 ◁
+
+           Then we can move on to our main algorithm. The following lemma is very similar to the
+        one used in [3] (see the proof in the full version of this paper). It can then be combined with
+                                                             1
+        previous lemmas and claims to prove that a 2 − 2W       + ε approximation can be achieved with
+        high probability.
+C.-C. Huang and F. Sellier                                                                            68:13
+
+
+▶ Lemma 27. The first phase of Algorithm 1 uses O(β · |MG |) memory and constructs a
+subgraph H of G, satisfying the following properties:
+1. The first phase terminates within the first εm edges of the stream.
+2. When the first phase terminates after processing some edge, we have:
+   a. H has bounded weighted edge degree β, and contains at most O(β · |MG |) edges.
+   b. With probability at least 1 − m−3 , the total number of (H, β, β − )-underfull edges in the
+      remaining part of the stream is at most γ = O(|MG | · (log(m))2 · β 2 W 2 · 1/ε).
+▶ Theorem 28. Let ε > 0. Using Algorithm 1, with probability 1 − 2m−3 , one can extract
+from a randomly-ordered stream of edges a weighted b-matching with an approximation ratio
+        1
+of 2 − 2W + ε, using O(max(|MG |, n) · poly(log(m), W, 1/ε)) memory.
+Proof. Applying Lemma 21 to the graph H ∪ Glate we can get, choosing the right values β
+and β − (which are O(poly(W, 1/ε))), H ∪X contains a (1−2ε)−1 ·(2− 2W
+                                                                    1
+                                                                      +ε) approximation
+                                                          −3
+of the optimal b-matching (with probability at least 1 − m , see Claim 25), and with a
+memory consumption of O(|MG | · poly(log(m), W, 1/ε)) (with probability at least 1 − m−3 ,
+see Lemma 27), with probability at least 1 − 2m−3 (union bound). Hence the proof.      ◀
+
+      References
+ 1   Sepehr Assadi and Soheil Behnezhad. Beating two-thirds for random-order streaming matching.
+     In Nikhil Bansal, Emanuela Merelli, and James Worrell, editors, 48th International Colloquium
+     on Automata, Languages, and Programming, ICALP 2021, July 12-16, 2021, Glasgow, Scotland
+     (Virtual Conference), volume 198 of LIPIcs, pages 19:1–19:13. Schloss Dagstuhl – Leibniz-
+     Zentrum für Informatik, 2021. doi:10.4230/LIPIcs.ICALP.2021.19.
+ 2   Sepehr Assadi and Aaron Bernstein. Towards a unified theory of sparsification for matching
+     problems. In Jeremy T. Fineman and Michael Mitzenmacher, editors, 2nd Symposium on
+     Simplicity in Algorithms, SOSA 2019, January 8-9, 2019, San Diego, CA, USA, volume 69
+     of OASICS, pages 11:1–11:20. Schloss Dagstuhl – Leibniz-Zentrum für Informatik, 2019.
+     doi:10.4230/OASIcs.SOSA.2019.11.
+ 3   Aaron Bernstein. Improved Bounds for Matching in Random-Order Streams. In Artur
+     Czumaj, Anuj Dawar, and Emanuela Merelli, editors, 47th International Colloquium on
+     Automata, Languages, and Programming (ICALP 2020), volume 168 of Leibniz International
+     Proceedings in Informatics (LIPIcs), pages 12:1–12:13, Dagstuhl, Germany, 2020. Schloss
+     Dagstuhl–Leibniz-Zentrum für Informatik. doi:10.4230/LIPIcs.ICALP.2020.12.
+ 4   Aaron Bernstein, Aditi Dudeja, and Zachary Langley. A framework for dynamic matching
+     in weighted graphs. In Samir Khuller and Virginia Vassilevska Williams, editors, STOC ’21:
+     53rd Annual ACM SIGACT Symposium on Theory of Computing, Virtual Event, Italy, June
+     21-25, 2021, pages 668–681. ACM, 2021. doi:10.1145/3406325.3451113.
+ 5   Aaron Bernstein and Cliff Stein. Fully dynamic matching in bipartite graphs. In Magnús M.
+     Halldórsson, Kazuo Iwama, Naoki Kobayashi, and Bettina Speckmann, editors, Automata,
+     Languages, and Programming – 42nd International Colloquium, ICALP 2015, Kyoto, Japan,
+     July 6-10, 2015, Proceedings, Part I, volume 9134 of Lecture Notes in Computer Science, pages
+     167–179. Springer, 2015. doi:10.1007/978-3-662-47672-7_14.
+ 6   Aaron Bernstein and Cliff Stein. Faster fully dynamic matchings with small approximation
+     ratios. In Robert Krauthgamer, editor, Proceedings of the Twenty-Seventh Annual ACM-SIAM
+     Symposium on Discrete Algorithms, SODA 2016, Arlington, VA, USA, January 10-12, 2016,
+     pages 692–711. SIAM, 2016. doi:10.1137/1.9781611974331.ch50.
+ 7   Jeno Egerváry. Matrixok kombinatorius tulajdonságairól. Matematikai és Fizikai Lapok,
+     38(1931):16–28, 1931.
+ 8   Paul Erdős and László Lovász. Problems and results on 3-chromatic hypergraphs and some
+     related questions. In Colloquia Mathematica Societatis Janos Bolyai 10. Infinite and Finite
+     Sets, Keszthely (Hungary). Citeseer, 1973.
+
+
+
+
+                                                                                                     ESA 2022
+68:14   Maximum Weight b-Matchings in Random-Order Streams
+
+
+         9   Alireza Farhadi, Mohammad Taghi Hajiaghayi, Tung Mai, Anup Rao, and Ryan A. Rossi.
+             Approximate maximum matching in random streams. In Shuchi Chawla, editor, Proceedings
+             of the 2020 ACM-SIAM Symposium on Discrete Algorithms, SODA 2020, Salt Lake City, UT,
+             USA, January 5-8, 2020, pages 1773–1785. SIAM, 2020. doi:10.1137/1.9781611975994.108.
+        10   Joan Feigenbaum, Sampath Kannan, Andrew McGregor, Siddharth Suri, and Jian Zhang.
+             On graph problems in a semi-streaming model. Theoretical Computer Science, 348:207–216,
+             December 2005. doi:10.1016/j.tcs.2005.09.013.
+        11   Buddhima Gamlath, Sagar Kale, Slobodan Mitrovic, and Ola Svensson. Weighted matchings
+             via unweighted augmentations. In Proceedings of the 2019 ACM Symposium on Principles of
+             Distributed Computing, PODC ’19, pages 491–500, New York, NY, USA, 2019. Association for
+             Computing Machinery. doi:10.1145/3293611.3331603.
+        12   Mohsen Ghaffari and David Wajc. Simplified and Space-Optimal Semi-Streaming (2+ε)-
+             Approximate Matching. In Jeremy T. Fineman and Michael Mitzenmacher, editors, 2nd
+             Symposium on Simplicity in Algorithms (SOSA 2019), volume 69 of OpenAccess Series in
+             Informatics (OASIcs), pages 13:1–13:8, Dagstuhl, Germany, 2018. Schloss Dagstuhl–Leibniz-
+             Zentrum fuer Informatik. doi:10.4230/OASIcs.SOSA.2019.13.
+        13   Guru Prashanth Guruganesh and Sahil Singla. Online matroid intersection: Beating half for
+             random arrival. In Friedrich Eisenbrand and Jochen Könemann, editors, Integer Programming
+             and Combinatorial Optimization – 19th International Conference, IPCO 2017, Waterloo, ON,
+             Canada, June 26-28, 2017, Proceedings, volume 10328 of Lecture Notes in Computer Science,
+             pages 241–253. Springer, 2017. doi:10.1007/978-3-319-59250-3_20.
+        14   Chien-Chung Huang and François Sellier. Semi-streaming algorithms for submodular func-
+             tion maximization under b-matching constraint. In Approximation, Randomization, and
+             Combinatorial Optimization. Algorithms and Techniques (APPROX/RANDOM 2021), 2021.
+        15   Michael Kapralov. Space lower bounds for approximating maximum matching in the edge
+             arrival model. In Dániel Marx, editor, Proceedings of the 2021 ACM-SIAM Symposium on
+             Discrete Algorithms, SODA 2021, Virtual Conference, January 10–13, 2021, pages 1874–1893.
+             SIAM, 2021. doi:10.1137/1.9781611976465.112.
+        16   Christian Konrad. A simple augmentation method for matchings with applications to streaming
+             algorithms. In Igor Potapov, Paul G. Spirakis, and James Worrell, editors, 43rd International
+             Symposium on Mathematical Foundations of Computer Science, MFCS 2018, August 27-31,
+             2018, Liverpool, UK, volume 117 of LIPIcs, pages 74:1–74:16. Schloss Dagstuhl – Leibniz-
+             Zentrum für Informatik, 2018. doi:10.4230/LIPIcs.MFCS.2018.74.
+        17   Christian Konrad, Frédéric Magniez, and Claire Mathieu. Maximum matching in semi-
+             streaming with few passes. In Anupam Gupta, Klaus Jansen, José D. P. Rolim, and Rocco A.
+             Servedio, editors, Approximation, Randomization, and Combinatorial Optimization. Algorithms
+             and Techniques – 15th International Workshop, APPROX 2012, and 16th International
+             Workshop, RANDOM 2012, Cambridge, MA, USA, August 15-17, 2012. Proceedings, volume
+             7408 of Lecture Notes in Computer Science, pages 231–242. Springer, 2012. doi:10.1007/
+             978-3-642-32512-0_20.
+        18   Roie Levin and David Wajc. Streaming submodular matching meets the primal-dual method.
+             In SODA, pages 1914–1933, 2021.
+        19   Ami Paz and Gregory Schwartzman. A (2 + ε)-approximation for maximum weight matching
+             in the semi-streaming model. In Proceedings of the 2017 Annual ACM-SIAM Symposium on
+             Discrete Algorithms (SODA), pages 2153–2161, 2017. doi:10.1137/1.9781611974782.140.
+        20   Moshe Tennenholtz. Some tractable combinatorial auctions. In AAAI/IAAI, pages 98–103,
+             2000.
+

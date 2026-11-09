@@ -1,0 +1,23 @@
+      -- safety: `RealizationContext` is private
+      env := unsafe unsafeCast env
+    }) }
+
+def mainModule (env : Environment) : Name :=
+  env.header.mainModule
+
+def getModuleIdxFor? (env : Environment) (declName : Name) : Option ModuleIdx :=
+  -- async constants are always from the current module
+  env.base.get env |>.const2ModIdx[declName]?
+
+def isImportedConst (env : Environment) (declName : Name) : Bool :=
+  env.getModuleIdxFor? declName |>.isSome
+
+def isConstructor (env : Environment) (declName : Name) : Bool :=
+  env.findAsync? declName |>.any (·.kind == .ctor)
+
+def isSafeDefinition (env : Environment) (declName : Name) : Bool :=
+  match env.findAsync? declName with
+  | some { kind := .defn, constInfo, .. } => (constInfo.get matches .defnInfo { safety := .safe, .. })
+  | _ => false
+
+def getModuleIdx? (env : Environment) (moduleName : Name) : Option ModuleIdx :=

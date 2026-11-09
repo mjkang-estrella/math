@@ -1,0 +1,379 @@
+FILE /home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/src/lean/Lean/Checker.lean
+absent
+FILE /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib/Mathlib/Data/Fintype/Fin.lean
+/-
+Copyright (c) 2021 Anne Baanen. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Anne Baanen
+-/
+module
+
+public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Data.Vector.Basic
+
+/-!
+# The structure of `Fintype (Fin n)`
+
+This file contains some basic results about the `Fintype` instance for `Fin`,
+especially properties of `Finset.univ : Finset (Fin n)`.
+-/
+
+public section
+
+open List (Vector)
+
+open Finset
+
+namespace Fin
+
+variable {α β : Type*} {n : ℕ}
+
+@[simp] theorem map_valEmbedding_univ :
+    (Finset.univ : Finset (Fin n)).map Fin.valEmbedding = Iio n := by
+  ext
+  simp [orderIsoSubtype.symm.surjective.exists, OrderIso.symm]
+
+@[simp]
+theorem Ioi_zero_eq_map : Ioi (0 : Fin n.succ) = univ.map (Fin.succEmb _) :=
+  coe_injective <| by ext; simp [pos_iff_ne_zero]
+
+@[simp]
+theorem Iio_last_eq_map : Iio (Fin.last n) = Finset.univ.map Fin.castSuccEmb :=
+  coe_injective <| by ext; simp [lt_def]
+
+theorem Ioi_succ (i : Fin n) : Ioi i.succ = (Ioi i).map (Fin.succEmb _) := by simp
+
+theorem Iio_castSucc (i : Fin n) : Iio (castSucc i) = (Iio i).map Fin.castSuccEmb := by simp
+
+theorem card_filter_val_lt {m : ℕ} : #{i : Fin n | i < m} = min n m := by
+  simp [← card_map valEmbedding, ← filter_filter, exists_iff, map_filter']
+
+theorem card_filter_univ_succ (p : Fin (n + 1) → Prop) [DecidablePred p] :
+    #{x | p x} = if p 0 then #{x | p (.succ x)} + 1 else #{x | p (.succ x)} := by
+  rw [Fin.univ_succ, filter_cons, apply_ite Finset.card, card_cons, filter_map, card_map]; rfl
+
+theorem card_filter_univ_succ' (p : Fin (n + 1) → Prop) [DecidablePred p] :
+    #{x | p x} = ite (p 0) 1 0 + #{x | p (.succ x)} := by
+  rw [card_filter_univ_succ]; split_ifs <;> simp [add_comm]
+
+theorem card_filter_univ_eq_vector_get_eq_count [DecidableEq α] (a : α) (v : List.Vector α n) :
+    #{i | v.get i = a} = v.toList.count a := by
+  induction v with
+  | nil => simp
+  | @cons n x xs hxs =>
+    simp_rw [card_filter_univ_succ', Vector.get_cons_zero, Vector.toList_cons, Vector.get_cons_succ,
+      hxs, List.count_cons, add_comm (ite (x = a) 1 0), beq_iff_eq]
+
+/--
+Given a "downward-closed" predicate `p` on `Fin n` (which could be spelt `Antitone p`),
+then `p` holds for more than `j` elements iff it holds for `p` itself.
+-/
+theorem lt_card_filter_univ_iff_apply_of_imp {j : Fin n} (p : Fin n → Prop) [DecidablePred p]
+    (hp : ∀ i j, j ≤ i → p i → p j) :
+    j < #{i | p i} ↔ p j := by
+  have h1 (k : Fin n) (hk : ¬ p k) : #{i | p i} ≤ k := by
+    rw [← Fin.card_Iio]
+    exact card_le_card (by grind)
+  refine ⟨by grind, fun h ↦ ?_⟩
+  by_contra! hc
+  let q : Fin n → Prop := (· < #{i | p i})
+  have : univ.filter q = univ.filter p :=
+    eq_of_subset_of_card_le (by grind) (by rw [card_filter_val_lt]; grind)
+  have : j ∈ univ.filter p := by grind
+  grind
+
+lemma _root_.Finset.image_fin_univ {n : ℕ} :
+    (Finset.univ (α := Fin n)).image Fin.val = Finset.range n := by
+  ext
+  simp [Fin.exists_iff]
+
+@[simp]
+lemma _root_.Finset.sup_fin_univ [SemilatticeSup α] [OrderBot α] {n : ℕ} (f : ℕ → α) :
+    (Finset.univ (α := Fin n)).sup (fun n ↦ f n) = (Finset.range n).sup f := by
+  rw [← image_fin_univ, sup_image, Function.comp_def]
+
+end Fin
+
+FILE /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib/Mathlib/Data/Finset/Card.lean
+/-
+Copyright (c) 2015 Microsoft Corporation. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Leonardo de Moura, Jeremy Avigad
+-/
+module
+
+public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Finset.Image
+public import Mathlib.Data.Finset.Lattice.Lemmas
+
+/-!
+# Cardinality of a finite set
+
+This defines the cardinality of a `Finset` and provides induction principles for finsets.
+
+## Main declarations
+
+* `Finset.card`: `#s : ℕ` returns the cardinality of `s : Finset α`.
+
+### Induction principles
+
+* `Finset.strongInduction`: Strong induction
+* `Finset.strongInductionOn`
+* `Finset.strongDownwardInduction`
+* `Finset.strongDownwardInductionOn`
+* `Finset.case_strong_induction_on`
+* `Finset.Nonempty.strong_induction`
+* `Finset.eraseInduction`
+-/
+
+@[expose] public section
+
+assert_not_exists Monoid
+
+open Function Multiset Nat
+
+variable {α β : Type*}
+
+namespace Finset
+
+variable {s t : Finset α} {a b c : α}
+
+/-- `s.card` is the number of elements of `s`, aka its cardinality.
+
+The notation `#s` can be accessed in the `Finset` locale. -/
+def card (s : Finset α) : ℕ :=
+  Multiset.card s.1
+
+@[inherit_doc] scoped prefix:arg "#" => Finset.card
+
+theorem card_def (s : Finset α) : #s = Multiset.card s.1 :=
+  rfl
+
+@[simp] lemma card_val (s : Finset α) : Multiset.card s.1 = #s := rfl
+
+@[simp]
+theorem card_mk {m nodup} : #(⟨m, nodup⟩ : Finset α) = Multiset.card m :=
+  rfl
+
+@[simp, grind =]
+theorem card_empty : #(∅ : Finset α) = 0 :=
+  rfl
+
+@[gcongr]
+theorem card_le_card : s ⊆ t → #s ≤ #t :=
+  Multiset.card_le_card ∘ val_le_iff.mpr
+
+-- This pattern is unreasonable to use generally, but it's convenient in this file.
+-- (Note that we turn it on again later in this file.)
+local grind_pattern card_le_card => #s, #t
+
+@[mono]
+theorem card_mono : Monotone (@card α) := by apply card_le_card
+
+@[simp] lemma card_eq_zero : #s = 0 ↔ s = ∅ := Multiset.card_eq_zero.trans val_eq_zero
+lemma card_ne_zero : #s ≠ 0 ↔ s.Nonempty := card_eq_zero.ne.trans nonempty_iff_ne_empty.symm
+@[simp] lemma card_pos : 0 < #s ↔ s.Nonempty := Nat.pos_iff_ne_zero.trans card_ne_zero
+@[simp] lemma one_le_card : 1 ≤ #s ↔ s.Nonempty := card_pos
+
+alias ⟨_, Nonempty.card_pos⟩ := card_pos
+alias ⟨_, Nonempty.card_ne_zero⟩ := card_ne_zero
+
+theorem card_ne_zero_of_mem (h : a ∈ s) : #s ≠ 0 :=
+  (not_congr card_eq_zero).2 <| ne_empty_of_mem h
+
+grind_pattern card_ne_zero_of_mem => a ∈ s, #s
+
+@[simp, grind =]
+theorem card_singleton (a : α) : #{a} = 1 :=
+  Multiset.card_singleton _
+
+theorem card_singleton_inter [DecidableEq α] : #({a} ∩ s) ≤ 1 := by grind
+
+@[simp, grind =]
+theorem card_cons (h : a ∉ s) : #(s.cons a h) = #s + 1 :=
+  Multiset.card_cons _ _
+
+section InsertErase
+
+variable [DecidableEq α]
+
+@[simp, grind =]
+theorem card_insert_of_notMem (h : a ∉ s) : #(insert a s) = #s + 1 := by
+  grind [=_ cons_eq_insert]
+
+theorem card_insert_of_mem (h : a ∈ s) : #(insert a s) = #s := by rw [insert_eq_of_mem h]
+
+theorem card_insert_le (a : α) (s : Finset α) : #(insert a s) ≤ #s + 1 := by grind
+
+section
+
+variable {a b c d e f : α}
+
+theorem card_le_two : #{a, b} ≤ 2 := card_insert_le _ _
+
+theorem card_le_three : #{a, b, c} ≤ 3 :=
+  (card_insert_le _ _).trans (Nat.succ_le_succ card_le_two)
+
+theorem card_le_four : #{a, b, c, d} ≤ 4 :=
+  (card_insert_le _ _).trans (Nat.succ_le_succ card_le_three)
+
+theorem card_le_five : #{a, b, c, d, e} ≤ 5 :=
+  (card_insert_le _ _).trans (Nat.succ_le_succ card_le_four)
+
+theorem card_le_six : #{a, b, c, d, e, f} ≤ 6 :=
+  (card_insert_le _ _).trans (Nat.succ_le_succ card_le_five)
+
+end
+
+/-- If `a ∈ s` is known, see also `Finset.card_insert_of_mem` and `Finset.card_insert_of_notMem`.
+-/
+theorem card_insert_eq_ite : #(insert a s) = if a ∈ s then #s else #s + 1 := by grind
+
+@[simp]
+theorem card_pair_eq_one_or_two : #{a, b} = 1 ∨ #{a, b} = 2 := by grind
+
+/-- A two-element finset `{a, b}` has cardinality `2` iff `a ≠ b`. The reverse direction is
+`Finset.card_pair`. -/
+theorem card_pair_eq_two_iff : #{a, b} = 2 ↔ a ≠ b := by
+  aesop (add simp card_insert_eq_ite)
+
+alias ⟨_, card_pair⟩ := card_pair_eq_two_iff
+
+/-- A three-element finset `{a, b, c}` has cardinality `3` iff `a`, `b`, `c` are pairwise
+distinct. -/
+theorem card_triple_eq_three_iff : #{a, b, c} = 3 ↔ a ≠ b ∧ a ≠ c ∧ b ≠ c := by
+  aesop (add simp card_insert_eq_ite)
+
+/-- $\#(s \setminus \{a\}) = \#s - 1$ if $a \in s$. -/
+@[simp, grind =]
+theorem card_erase_of_mem : a ∈ s → #(s.erase a) = #s - 1 :=
+  Multiset.card_erase_of_mem
+
+-- @[simp] -- removed because LHS is not in simp normal form
+theorem card_erase_add_one : a ∈ s → #(s.erase a) + 1 = #s :=
+  Multiset.card_erase_add_one
+
+theorem card_erase_lt_of_mem : a ∈ s → #(s.erase a) < #s :=
+  Multiset.card_erase_lt_of_mem
+
+theorem card_erase_le : #(s.erase a) ≤ #s :=
+  Multiset.card_erase_le
+
+theorem pred_card_le_card_erase : #s - 1 ≤ #(s.erase a) := by grind
+
+/-- If `a ∈ s` is known, see also `Finset.card_erase_of_mem` and `Finset.erase_eq_of_notMem`. -/
+theorem card_erase_eq_ite : #(s.erase a) = if a ∈ s then #s - 1 else #s :=
+  Multiset.card_erase_eq_ite
+
+end InsertErase
+
+@[simp, grind =]
+theorem card_range (n : ℕ) : #(range n) = n :=
+  Multiset.card_range n
+
+@[simp, grind =]
+theorem card_attach : #s.attach = #s :=
+  Multiset.card_attach
+
+end Finset
+
+open scoped Finset
+
+section ToMultiset
+
+variable [DecidableEq α] (m : Multiset α) (l : List α)
+
+theorem Multiset.card_toFinset : #m.toFinset = Multiset.card m.dedup :=
+  rfl
+
+theorem Multiset.toFinset_card_le : #m.toFinset ≤ Multiset.card m :=
+  card_le_card <| dedup_le _
+
+theorem Multiset.toFinset_card_of_nodup {m : Multiset α} (h : m.Nodup) :
+    #m.toFinset = Multiset.card m :=
+  congr_arg card <| Multiset.dedup_eq_self.mpr h
+
+theorem Multiset.dedup_card_eq_card_iff_nodup {m : Multiset α} :
+    card m.dedup = card m ↔ m.Nodup :=
+  .trans ⟨fun h ↦ eq_of_le_of_card_le (dedup_le m) h.ge, congr_arg _⟩ dedup_eq_self
+
+theorem Multiset.toFinset_card_eq_card_iff_nodup {m : Multiset α} :
+    #m.toFinset = card m ↔ m.Nodup := dedup_card_eq_card_iff_nodup
+
+theorem nodup_iff_le_length_dedup : m.Nodup ↔ m.card ≤ m.dedup.card := by
+  rw [← dedup_card_eq_card_iff_nodup, card_le_card m.dedup_le |>.ge_iff_eq]
+
+theorem List.card_toFinset : #l.toFinset = l.dedup.length :=
+  rfl
+
+theorem List.toFinset_card_le : #l.toFinset ≤ l.length :=
+  Multiset.toFinset_card_le ⟦l⟧
+
+theorem List.toFinset_card_of_nodup {l : List α} (h : l.Nodup) : #l.toFinset = l.length :=
+  Multiset.toFinset_card_of_nodup h
+
+lemma List.Nodup.card_eq_countP {l : List α} {P : α → Prop} [DecidablePred P] (h : l.Nodup) :
+    (l.toFinset.filter P).card = countP P l := by
+  rw [l.countP_eq_length_filter, l.filter_toFinset P]
+  exact toFinset_card_of_nodup (h.filter P)
+
+end ToMultiset
+
+namespace Finset
+
+variable {s t u : Finset α} {f : α → β} {n : ℕ}
+
+@[simp, grind =]
+theorem length_toList (s : Finset α) : s.toList.length = #s := by
+  rw [toList, ← Multiset.coe_card, Multiset.coe_toList, card_def]
+
+theorem card_image_le [DecidableEq β] : #(s.image f) ≤ #s := by
+  simpa only [card_map] using! (s.1.map f).toFinset_card_le
+
+grind_pattern card_image_le => #(s.image f)
+grind_pattern card_image_le => s.image f, #s
+
+theorem card_image_of_injOn [DecidableEq β] (H : Set.InjOn f s) : #(s.image f) = #s := by
+  simp only [card, image_val_of_injOn H, card_map]
+
+theorem injOn_of_card_image_eq [DecidableEq β] (H : #(s.image f) = #s) : Set.InjOn f s := by
+  rw [card_def, card_def, image, toFinset] at H
+  dsimp only at H
+  have : (s.1.map f).dedup = s.1.map f := by
+    refine Multiset.eq_of_le_of_card_le (Multiset.dedup_le _) ?_
+    simp only [H, Multiset.card_map, le_rfl]
+  rw [Multiset.dedup_eq_self] at this
+  exact inj_on_of_nodup_map this
+
+theorem card_image_iff [DecidableEq β] : #(s.image f) = #s ↔ Set.InjOn f s :=
+  ⟨injOn_of_card_image_eq, card_image_of_injOn⟩
+
+grind_pattern card_image_iff => #(s.image f)
+grind_pattern card_image_iff => s.image f, #s
+
+theorem card_image_of_injective [DecidableEq β] (s : Finset α) (H : Injective f) :
+    #(s.image f) = #s :=
+  card_image_of_injOn fun _ _ _ _ h => H h
+
+theorem fiber_card_ne_zero_iff_mem_image (s : Finset α) (f : α → β) [DecidableEq β] (y : β) :
+    #(s.filter fun x ↦ f x = y) ≠ 0 ↔ y ∈ s.image f := by
+  rw [← Nat.pos_iff_ne_zero, card_pos, fiber_nonempty_iff_mem_image]
+
+lemma card_filter_le_iff (s : Finset α) (P : α → Prop) [DecidablePred P] (n : ℕ) :
+    #(s.filter P) ≤ n ↔ ∀ s' ⊆ s, n < #s' → ∃ a ∈ s', ¬ P a :=
+  (s.1.card_filter_le_iff P n).trans ⟨fun H s' hs' h ↦ H s'.1 (by simp_all) h,
+    fun H s' hs' h ↦ H ⟨s', nodup_of_le hs' s.2⟩ (fun _ hx ↦ Multiset.subset_of_le hs' hx) h⟩
+
+@[simp, grind =]
+theorem card_map (f : α ↪ β) : #(s.map f) = #s :=
+  Multiset.card_map _ _
+
+@[simp, grind =]
+theorem card_subtype (p : α → Prop) [DecidablePred p] (s : Finset α) :
+    #(s.subtype p) = #(s.filter p) := by simp [Finset.subtype]
+
+theorem card_filter_le (s : Finset α) (p : α → Prop) [DecidablePred p] :
+    #(s.filter p) ≤ #s :=
+  card_le_card <| filter_subset _ _
+
+grind_pattern card_filter_le => #(

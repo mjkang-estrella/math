@@ -1,0 +1,119 @@
+/-
+Copyright (c) 2021 Sébastien Gouëzel. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Johannes Hölzl, Yury Kudryashov, Sébastien Gouëzel
+-/
+module
+
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.Topology.Order.LeftRightLim
+
+/-!
+# Stieltjes measures on the real line
+
+Consider a function `f : ℝ → ℝ` which is monotone and right-continuous. Then one can define a
+corresponding measure, giving mass `f b - f a` to the interval `(a, b]`. We implement more
+generally this notion for `f : R → ℝ` where `R` is a conditionally complete dense linear order.
+
+## Main definitions
+
+* `StieltjesFunction R` is a structure containing a function from `R → ℝ`, together with the
+  assertions that it is monotone and right-continuous. To `f : StieltjesFunction R`, one associates
+  a Borel measure `f.measure`.
+* `f.measure_Ioc` asserts that `f.measure (Ioc a b) = ofReal (f b - f a)`
+* `f.measure_Ioo` asserts that `f.measure (Ioo a b) = ofReal (leftLim f b - f a)`.
+* `f.measure_Icc` and `f.measure_Ico` are analogous.
+* `Monotone.stieltjesFunction`: to a monotone function `f`, associate the Stieltjes function
+  equal to the right limit of `f`. This makes it possible to associate a Stieltjes measure to
+  any monotone function.
+
+## Implementation
+
+We define Stieltjes functions over any conditionally complete dense linear order, to be able
+to cover the cases of `ℝ≥0` and `[0, T]` in addition to the classical case of `ℝ`. This creates
+a few issues, mostly with the management of bottom and top elements. To handle these, we need
+two technical definitions:
+* `Iotop a b` is the interval `Ioo a b` if `b` is not top, and `Ioc a b` if `b` is top.
+* `botSet` is the empty set if there is no bot element, and `{x}` if `x` is bot.
+
+Note that the theory of Stieltjes measures is not completely satisfactory when there is a bot
+element `x`: any Stieltjes measure gives zero mass to `{x}` in this case, so the Dirac mass at `x`
+is not representable as a Stieltjes measure.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open Set Filter Function ENNReal NNReal MeasureTheory
+
+open scoped Topology
+
+open ENNReal (ofReal)
+
+section Prerequisites
+
+variable {R : Type*} [LinearOrder R]
+
+open scoped Classical in
+/-- `Iotop a b` is the interval `Ioo a b` if `b` is not top, and `Ioc a b` if `b` is top.
+This makes sure that any element which is not bot belo
+24:* `f.measure_Ioc` asserts that `f.measure (Ioc a b) = ofReal (f b - f a)`
+25:* `f.measure_Ioo` asserts that `f.measure (Ioo a b) = ofReal (leftLim f b - f a)`.
+163:protected def id : StieltjesFunction ℝ where
+528:theorem measure_Ioc (a b : R) : f.measure (Ioc a b) = ofReal (f b - f a) := by
+533:theorem measure_singleton (a : R) : f.measure {a} = ofReal (f a - leftLim f a) := by
+559:    · exact ⟨0, by simpa only [measure_Ioc] using ENNReal.ofReal_ne_top⟩
+562:    simp only [measure_Ioc]
+582:theorem measure_Ioo {a b : R} : f.measure (Ioo a b) = ofReal (leftLim f b - f a) := by
+589:    have := f.measure_Ioc a b
+590:    simp only [← Ioo_union_Icc_eq_Ioc hab le_rfl, measure_singleton,
+622:  exact tendsto_nhds_unique_of_forall (tendsto_measure_Ioc_atBot _ _)
+628:  rw [← Iic_sdiff_right, measure_sdiff _ (nullMeasurableSet_singleton x), measure_singleton,
+645:  rw [← Ici_sdiff_left, measure_sdiff _ (nullMeasurableSet_singleton x), measure_singleton,
+654:  exact (f.measure_Ioc x (max x N) ▸ ENNReal.coe_nnreal_eq r ▸ (ENNReal.ofReal_le_ofReal <|
+667:  exact (f.measure_Ioc (min x N) x ▸ ENNReal.coe_nnreal_eq r ▸ (ENNReal.ofReal_le_ofReal <|
+751:    have hf := measure_Ioc f x y
+752:    rw [hfg, measure_Ioc g x y, ENNReal.ofReal_eq_ofReal_iff, eq_comm, hy] at hf
+759:    have hf := measure_Ioc f y x
+760:    rw [hfg, measure_Ioc g y x, ENNReal.ofReal_eq_ofReal_iff, eq_comm, hy] at hf
+
+oming from the identity function. -/
+theorem volume_eq_stieltjes_id : (volume : Measure ℝ) = StieltjesFunction.id.measure := by
+  have : IsAddLeftInvariant StieltjesFunction.id.measure :=
+    ⟨fun a =>
+      Eq.symm <|
+        Real.measure_ext_Ioo_rat fun p q => by
+          simp only [Measure.map_apply (measurable_const_add a) measurableSet_Ioo,
+            sub_sub_sub_cancel_right, StieltjesFunction.measure_Ioo, StieltjesFunction.id_leftLim,
+            StieltjesFunction.id_apply, id, preimage_const_add_Ioo]⟩
+  have A : StieltjesFunction.id.measure (stdOrthonormalBasis ℝ ℝ).toBasis.parallelepiped = 1 := by
+    change StieltjesFunction.id.measure (parallelepiped (stdOrthonormalBasis ℝ ℝ)) = 1
+    rcases parallelepiped_orthonormalBasis_one_dim (stdOrthonormalBasis ℝ ℝ) with (H | H) <;>
+      simp only [H, StieltjesFunction.measure_Icc, StieltjesFunction.id_apply, id, tsub_zero,
+        StieltjesFunction.id_leftLim, sub_neg_eq_add, zero_add, ENNReal.ofReal_one]
+  conv_rhs =>
+    rw [addHaarMeasure_unique StieltjesFunction.id.measure
+        (stdOrthonormalBasis ℝ ℝ).toBasis.parallelepiped, A]
+  simp only [volume, Module.Basis.addHaar, one_smul]
+
+theorem volume_val (s) : volume s = StieltjesFunction.id.measure s := by
+  simp [volume_eq_stieltjes_id]
+
+@[simp]
+theorem volume_Ico {a b : ℝ} : volume (Ico a b) = ofReal (b - a) := by simp [volume_val]
+
+@[simp]
+theorem volume_real_Ico {a b : ℝ} : volume.real (Ico a b) = max (b - a) 0 := by
+  simp [measureReal_def, ENNReal.toReal_ofReal']
+
+theorem volume_real_Ico_of_le {a b : ℝ} (hab : a ≤ b) : volume.real (Ico a b) = b - a := by
+  simp [hab]
+
+@[simp]
+theorem volume_Icc {a b : ℝ} : volume (Icc a b) = ofReal (b - a) := by simp [volume_val]
+
+@[simp]
+theorem volume_real_Icc {a b : ℝ} : volume.real (Icc a b) = max (b - a) 0 := by
+  s

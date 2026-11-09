@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-08T20:59:23.652017+00:00",
+  "name": "counts_compile7",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/interval-kwidth-formal-sol-r2",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nfrom pathlib import Path\nimport subprocess,os,runpy\ns='''import IntervalBalanced\nimport IntervalEnvelope\nnamespace IntervalWidth\nopen Finset\n\ntheorem block_count_decomposition {\u03b9 : Type*} [DecidableEq \u03b9]\n    (s : Finset \u03b9) (block : \u03b9 \u2192 Nat) (m : Nat) (hb : \u2200 i \u2208 s, block i < m) :\n    s.card = \u2211 q \u2208 range m, (s.filter (fun i => block i = q)).card := by\n  exact Finset.card_eq_sum_card_fiberwise (fun i hi => Finset.mem_range.mpr (hb i hi))\n\nnoncomputable def balancedLabel (n m : Nat) (hm : 0 < m) (i : Fin n) : Nat :=\n  Classical.choose (balancedBlock_cover n m hm i.isLt)\n\ntheorem balancedLabel_mem (n m : Nat) (hm : 0 < m) (i : Fin n) :\n    balancedLabel n m hm i < m \u2227 i.val \u2208 balancedBlock n m (balancedLabel n m hm i) :=\n  Classical.choose_spec (balancedBlock_cover n m hm i.isLt)\n\ntheorem balancedLabel_chronological (n m : Nat) (hm : 0 < m) (i j : Fin n)\n    (h : balancedLabel n m hm i < balancedLabel n m hm j) : i < j := by\n  have hi := (Finset.mem_Ico.mp (balancedLabel_mem n m hm i).2).2\n  have hj := (Finset.mem_Ico.mp (balancedLabel_mem n m hm j).2).1\n  have hb : blockStart n m (balancedLabel n m hm i + 1) \u2264\n      blockStart n m (balancedLabel n m hm j) := blockStart_mono n m h\n  exact hi.trans_le (hb.trans hj)\n\nvariable {\u03b1 : Type*} [LinearOrder \u03b1] {n : Nat}\n/-- Counts in an arbitrary block at an arbitrary supplied threshold function. -/\nnoncomputable def blockLeftCount (I : Fin n \u2192 Interval \u03b1) (block : Fin n \u2192 Nat)\n    (h : Nat \u2192 \u03b1) (q : Nat) : Nat :=\n  (Finset.univ.filter (fun i => block i = q \u2227 (I i).left \u2264 h q)).card\nnoncomputable def blockRightCount (I : Fin n \u2192 Interval \u03b1) (block : Fin n \u2192 Nat)\n    (h : Nat \u2192 \u03b1) (q : Nat) : Nat :=\n  (Finset.univ.filter (fun i => block i = q \u2227 (I i).right \u2264 h (q+1))).card\n\ntheorem left_count_sum (z : \u03b1) (I : Fin n \u2192 Interval \u03b1) (S : Finset (Fin n))\n    (block : Fin n \u2192 Nat) (m : Nat) (hb : \u2200 i, block i < m) :\n    (leftEnvelope z I S block).card =\n      \u2211 q \u2208 range m, blockLeftCount I block (suffixHeight z I S block) q := by\n  classical\n  rw [block_count_decomposition (leftEnvelope z I S block) block m (fun i _ => hb i)]\n  apply sum_congr rfl\n  intro q _\n  congr 1\n  ext i\n  simp only [leftEnvelope, mem_filter, mem_univ, true_and, blockLeftCount]\n  constructor <;> rintro \u27e8h,h'\u27e9\n  \u00b7 exact \u27e8h', by simpa [h'] using h\u27e9\n  \u00b7 exact \u27e8by simpa [h] using h',h\u27e9\n\ntheorem right_count_sum (z : \u03b1) (I : Fin n \u2192 Interval \u03b1) (S : Finset (Fin n))\n    (block : Fin n \u2192 Nat) (m : Nat) (hb : \u2200 i, block i < m) :\n    (rightEnvelope z I S block).card =\n      \u2211 q \u2208 range m, blockRightCount I block (suffixHeight z I S block) q := by\n  classical\n  rw [block_count_decomposition (rightEnvelope z I S block) block m (fun i _ => hb i)]\n  apply sum_congr rfl\n  intro q _\n  congr 1\n  ext i\n  simp only [rightEnvelope, mem_filter, mem_univ, true_and, blockRightCount]\n  constructor <;> rintro \u27e8h,h'\u27e9\n  \u00b7 exact \u27e8h', by simpa [h'] using h\u27e9\n  \u00b7 exact \u27e8by simpa [h] using h',h\u27e9\n\n/-- All-cut bound (D), written additively over naturals to avoid truncated subtraction. -/\ntheorem all_cut_block_bound (k : Nat) (z : \u03b1) (I : Fin n \u2192 Interval \u03b1)\n    (block : Fin n \u2192 Nat) (m : Nat) (hb : \u2200 i, block i < m)\n    (chronological : \u2200 i j, block i < block j \u2192 i < j)\n    (positive : \u2200 i, z < (I i).right) (S : Finset (Fin n)) :\n    S.card + k * (\u2211 q \u2208 range m, blockRightCount I block (suffixHeight z I S block) q) \u2264\n    (\u2211 q \u2208 range m, blockLeftCount I block (suffixHeight z I S block) q) +\n      k * (neighbors I S).card := by\n  rw [\u2190 left_count_sum z I S block m hb, \u2190 right_count_sum z I S block m hb]\n  exact Nat.add_le_add (Finset.card_le_card (subset_leftEnvelope z I S block))\n    (Nat.mul_le_mul_left k (Finset.card_le_card\n      (rightEnvelope_subset_neighbors z I S block chronological positive)))\n\n#print axioms block_count_decomposition\n#print axioms balancedLabel\n#print axioms balancedLabel_mem\n#print axioms balancedLabel_chronological\n#print axioms blockLeftCount\n#print axioms blockRightCount\n#print axioms left_count_sum\n#print axioms right_count_sum\n#print axioms all_cut_block_bound\nend IntervalWidth\n'''\nsubprocess.run(['python3','-I','-B',str(Path.cwd()/'write_lane.py'),'src/IntervalBlockCounts.lean'],input=s,text=True,check=True,capture_output=True)\nos.environ.update(FORMAL_OPERATION='compile',FORMAL_MODULE='IntervalBlockCounts');runpy.run_path(str(Path.cwd()/'stack_driver.py'),run_name='__main__')\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 0.7810555699979886,
+  "sampled_group_rss_peak_bytes": 1752535040,
+  "samples": 9,
+  "exit": 1,
+  "killed": null,
+  "child_cpu_cumulative_s": 0.7774789999999999,
+  "stderr": ""
+}

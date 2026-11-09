@@ -1,0 +1,271 @@
+FILE /home/mj-kang/.codex/plugins/cache/openai-primary-runtime/pdf/26.1103.10131/skills/pdf/SKILL.md
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+FILE inputs/literal336276.json
+{
+  "mathdb_id": 336276,
+  "uuid": "50400b60-dcff-4c21-9b80-ca18a95cf289",
+  "canonical_url": "https://mathdb.com/p/336276/the-random-interval-sequence-k-width-scaling-conjecture",
+  "title": "The random-interval sequence k-width scaling conjecture",
+  "statement": "Let $k\\geq 2$, and let $R_n$ be a sequence of $n$ random intervals. Write $E[k\\operatorname{-wd}(R_n)]$ for the expected $k$-width of $R_n$. **Random-interval sequence scaling conjecture.** There exists a positive constant $c_k>0$ such that\n\n$$\n\\lim_{n\\rightarrow\\infty}\\frac{E[k\\operatorname{-wd}(R_n)]}{n}=c_k,\n$$\n\nand moreover\n\n$$\nc_k=\\frac{1}{k+1}.\n$$\n\nThe conjecture predicts linear scaling for the $k$-width of sequences of random intervals when $k\\geq 2$, contrasting with the known behavior for $k=1$. The constants are motivated by computational experiments, while the asserted limit and formula remain open.",
+  "statement_completeness": "full",
+  "post_type": "conjecture",
+  "status": "open",
+  "tags": [
+    "partial-orders",
+    "probabilistic-combinatorics",
+    "random-intervals"
+  ],
+  "importance": "corpus",
+  "source_name": "J\u00e1nos Balogh, Cosmin Bonchi\u015f, Diana Dini\u015f, Gabriel Istrate and Ioan Todinca, \u201cOn the heapability of finite partial orders\u201d, arXiv:1706.01230 (2020).",
+  "source_url": "https://arxiv.org/abs/1706.01230",
+  "first_stated_year": 2017,
+  "first_stated_year_source_url": "https://arxiv.org/abs/1706.01230",
+  "documented_by_year": null,
+  "documented_by_source_url": null,
+  "references": "Source: https://arxiv.org/abs/1706.01230\n\nStatus: no resolution is reported in the source (as of June 2017).",
+  "solutions": [],
+  "solution_count": 0,
+  "has_formal_statement": null,
+  "has_bounty": null,
+  "created_at": "2026-08-11T05:40:21.930012Z",
+  "edited_at": null,
+  "lastmod": "2026-09-12T11:18:05Z",
+  "in_sitemap": true,
+  "historical": false,
+  "retrieval_source": "probxiv_2026-09-29"
+}
+
+FILE inputs/review-r1-PROOF.md
+# Independent reconstruction before author read
+Fix integer k>=1. Let (U_i,V_i) be iid uniform pairs, L_i=min(U_i,V_i), R_i=max(U_i,V_i), in sampling order. Supply i has k distinct copies and demand j has one; join exactly when i<j and R_i<=L_j. A matching yields a chronological directed graph of indegree<=1 and outdegree<=k. Strict time makes it acyclic, hence components are rooted k-ary trees; conversely a tree partition matches each nonroot to a distinct copy of its parent. Thus width=n-maximum matching=max_S(|S|-k|N(S)|). Hall deficiency follows by adjoining d universal dummy supplies, where d=max_S deficiency: Hall gives a saturating matching, at most d of whose edges use dummies; reverse bound holds for every matching and S.
+For a fixed threshold x, take S={j:L_j<=x}. Every neighbor has R_i<=x (ties immaterial almost surely), so E width/n>=F_L(x)-k F_R(x)=2x-(k+1)x². Its maximum on [0,1] is 1/(k+1) at x=1/(k+1).
+For upper bound partition the first ma observations into m consecutive blocks of a=floor(n/m), discarding r<m terminal observations at cost at most r in the deficiency (or width). For arbitrary S let x_q be max L in S in block q, zero for empty block; b_q=max_{t>=q}x_t, and b_{m+1}=0. Every S member in block q has L<=b_q. Every parent in block q with R<b_{q+1} is a neighbor of a selected later demand attaining that suffix maximum. Parents in distinct blocks are distinct. Hence deficiency<=sum_q C^L_q(b_q)-k sum_q C^{R,<}_q(b_{q+1}). On the no-ties event empirical <= and < versions differ by at most one uniformly; alternatively include k m as a deterministic error. Write each count=aF+error, with block sup errors a e^L_q,a e^R_q. The deterministic part is
+ a sum_q [F_L(b_q)-k F_R(b_{q+1})]
+ =a sum_q [F_L(b_q)-k F_R(b_q)]+ka[F_R(b_1)-F_R(b_{m+1})]
+ <=ma/(k+1)+ka.
+The uniform empirical errors apply even though the b_q depend on S. Thus width<=ma/(k+1)+ka+a sum_q(e^L_q+k e^R_q)+km+r. For n<m use width<=n; it does not affect n->infinity at fixed m.
+For either marginal CDF F (Lipschitz constant 2), a grid of h subdivisions gives sup|F_a-F|<=2/h+max_grid|F_a-F|. By max squares <= sum squares, Cauchy-Schwarz and Bernoulli variance <=1/4, expected sup<=2/h+sqrt((h+1)/(4a)). No independence between L and R is required. First n->infinity with fixed m,h, then h->infinity, then m->infinity gives limsup<=1/(k+1). Lower bound gives the exact limit, for every fixed k>=1.
+All finite maxima, comparisons, selected subsets and widths are Borel functions of finitely many endpoints; bounded by n, they are integrable. Endpoint equalities and degenerate intervals are null; the explicit km term also controls empirical strictness. No algorithmic enumeration or formal execution used.
+MODEL DIAGNOSTIC: source p3 defines exactly ordered iid endpoint intervals, interval comparison R<=L, and p4 Definition3 applies k>=1. For sets, all intervals covering 1/2 form an antichain, expected size n/2. For sequences the same remains an antichain. Thus the source's printed sqrt(n) width assertion cannot hold for either statistic under these definitions. It is not evidence of a model mismatch if actual glyphs confirm these definitions. Indeed any pointwise monotonicity width_1>=width_2 already contradicts sqrt versus conjectured linear scaling. Visual confirmation pending. This proof supplies linear 1/2 at k=1, not a new separately creditable outcome.
+
+FILE write_lane.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE charge_search.py
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+

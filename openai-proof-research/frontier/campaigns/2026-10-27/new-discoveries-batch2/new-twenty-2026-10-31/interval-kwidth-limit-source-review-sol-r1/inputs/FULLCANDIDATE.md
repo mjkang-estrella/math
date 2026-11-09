@@ -1,0 +1,244 @@
+# Author ordinary proposals — no scientific acceptance or credit
+
+Two full ordinary arguments are proposed personally. Neither has independent review,
+formal execution, current-registry clearance, significance adjudication or acceptance.
+The full corpus literals and original bytes are in originals/. No source result is
+represented as our new theorem. All proof claims below are investigator-authored.
+
+## 341690: exact ferromagnetic WR phase counts
+
+Binding: Kissel–Külske–Rozikov, arXiv:1901.09258v1, 26 January 2019,
+Conjecture 1 following Theorem 6, pp13–14. Theorem 1, equations (4.1),
+(4.9), Proposition 2 and (4.24),(4.26),(4.27) were read in actual acquired
+body. The journal final DOI10.1088/1742-5468/ab081e delivered a Radware
+Captcha, NOT the article. No final equivalence is asserted; all new delivery
+of that entire work is closed. Previously acquired v1 and metadata retained.
+
+Claim: for every integer k>=4, lambda>0, and 0<=theta<1, put
+ theta_c=(k-1)/(k+1).
+If theta>=theta_c there is exactly one positive solution of (4.1).
+If theta<theta_c, put
+ lambda_c=((k+1)/k)^k / (k-1-(k+1)theta).
+There is exactly one positive solution for lambda<=lambda_c, and exactly
+three for lambda>lambda_c. Through the source boundary-law correspondence
+these are the TISGM counts. This proves precisely both clauses of Conjecture 1,
+and also the intervening critical/boundary cases; these are one proposal only.
+
+Proof. Write x=u^k,y=v^k, a=lambda^(1/k), all positive. Equation (4.9) is
+ u=a(1+u^k+theta v^k)/(1+u^k+v^k),
+ v=a(1+theta u^k+v^k)/(1+u^k+v^k).
+On the diagonal, (4.1) is equivalent to
+ lambda=x[(1+2x)/(1+(1+theta)x)]^k.
+The right side is continuous strictly increasing from zero to infinity:
+the bracket is positive nondecreasing (strictly increasing for theta<1),
+and multiplication by x gives strictness. Thus there is exactly one diagonal
+solution for every parameter pair. This also independently proves the needed
+content of source Proposition 2.
+
+Any off-diagonal solution is, after a unique swap, u>v. Set t=u/v>1,z=v^k.
+Dividing the two equations, without changing their positive denominators, gives
+ (t-1)=z D(t),
+ D(t)=t^k-t-theta(t^(k+1)-1).
+Therefore D>0, z=(t-1)/D, and substitution into the second equation gives
+ lambda=L(t):=(t-1)/D * [(t^(k+1)-1)/(t^k-1)]^k.                 (A)
+Conversely, any t>1 with D>0 and L(t)=lambda gives positive z,u,v,
+and satisfies the second equation and their ratio, hence both equations.
+All manipulations are reversible. Thus there are twice as many off-diagonal
+solutions as roots of L(t)=lambda on this domain.
+
+For global monotonicity put t=exp(2s), s>0. Direct cancellation of exponential
+factors in (A) yields
+ L(s)=sinh(s)/[sinh((k-1)s)-theta sinh((k+1)s)]
+                 *[sinh((k+1)s)/sinh(ks)]^k.                 (B)
+For fixed s>0 define f(b)=b coth(bs), b>0. Its derivative is positive:
+ f'(b)=[sinh(bs)cosh(bs)-bs]/sinh(bs)^2>0,
+because the numerator vanishes at zero and has derivative 2sinh(v)^2>0
+as a function of v=bs. Its second derivative is
+ f''(b)=2s csch(bs)^2 [bs coth(bs)-1]>0.
+Here v cosh(v)-sinh(v)>0 follows by differentiating to v sinh(v)>0.
+Thus f is strictly increasing and strictly convex.
+
+R(s)=sinh((k-1)s)/sinh((k+1)s) is strictly decreasing: its logarithmic
+derivative is f(k-1)-f(k+1)<0. Its limits are (k-1)/(k+1) at zero and
+zero at infinity. D>0 is equivalent to R(s)>theta. Accordingly the domain
+is empty if theta>=theta_c. For 0<theta<theta_c it is (0,s_theta), where
+R(s_theta)=theta, and for theta=0 it is all (0,infinity).
+
+First set theta=0 in (B). Its logarithmic derivative is
+ k[f(k+1)-f(k)]+f(1)-f(k-1).
+By convexity,
+ f(k-1)-f(1)=sum_{j=1}^{k-2}(f(j+1)-f(j))
+ <=(k-2)[f(k+1)-f(k)].
+The logarithmic derivative is therefore at least
+ 2[f(k+1)-f(k)]>0.
+For positive theta, L_theta(s)=L_0(s)/(1-theta/R(s)).
+The reciprocal factor is positive nondecreasing on the domain, because R
+strictly decreases. Hence L_theta remains strictly increasing. This is a
+global strict branch count, not merely a local instability criterion.
+
+Using sinh(bs)/sinh(cs)->b/c at zero, the lower endpoint limit of (B) is
+ ((k+1)/k)^k/[k-1-(k+1)theta]=lambda_c.
+For positive theta its upper endpoint limit is infinity because the
+positive denominator tends to zero with all other factors positive finite.
+For theta=0, the elementary exponential expression of sinh shows L_0(s)
+is asymptotic to exp(2s), so again the upper limit is infinity.
+Continuity and strict monotonicity now give no root for lambda<=lambda_c
+and exactly one root for lambda>lambda_c. Including the unique diagonal
+solution proves the claimed counts, including equality lambda=lambda_c.
+
+Source-measure bridge: Section2 defines compatible finite-volume measures,
+Theorem1 proves compatibility iff the boundary-law recursion, and Section4
+specializes constant positive normalized laws to (4.1). Distinct normalized
+laws give distinct Markov transition laws: the conditional transition row
+from spin zero has probabilities proportional to (x,1,y), so determines
+x and y by ratios. Positivity of the zero state permits this conditional
+identification. Each positive constant law gives a compatible family and
+its unique measure by the source extension construction; conversely each
+TISGM has that normalized law. For theta=0 the zero row is still positive
+and the hard-core compatibility corollary gives the same bridge. No claim
+about the number of all Gibbs measures, extremality, or non-splitting phases.
+
+Mechanisms sustained: (i) the source gamma-map contraction cannot pay the
+missing region; derivative at its fixed point alone only supplies existence,
+not an upper count; (ii) the source constrained Lagrange approach does not
+supply uniqueness of asymmetric solutions; (iii) the ratio parametrization
+above pays the whole admissible interval and global root count. It uses a
+new-to-this-writeup one-variable branch analysis, rather than substituting
+one scalar threshold estimate into the source contraction proof. Whether
+this is substantively new to literature or routine is NOT adjudicated here.
+Strong objection: the parameterization and convexity inequality may already
+occur in HC/SCWR or general boundary-law literature. Strong positive case:
+all k and the exact number of branches, including uniqueness in the gap,
+are deliberately left conjectural in the actual source. Need a complete
+applicable primary bridge before exclusion or novelty clearance.
+
+Prior limits: three bounded native searches across the packet, no matching
+all-k SCWR proof read. A search-described HC hinge/wand all-k exact-critical
+result is a specific unread comparison, especially for theta=0, not proof
+of subsumption of the positive-theta statement. The final journal work is
+closed and unread. Four public registry roots are inherited unavailable;
+not retried or reconstructed. No global novelty conclusion.
+
+## 336276: random-interval sequence k-width limit
+
+Binding: Balogh–Bonchis–Dinis–Istrate–Todinca, On the heapability of finite
+partial orders, acquired arXiv1706.01230 and DMTCS22(2020)1 paper17 publisher
+PDF. The actual publisher response (after one redirect) is byte-identical
+SHA256 ce8c99de537a59a6661db4d08c133d5b37699ce902f169403eb81ed23eb71507.
+Conjecture1 p21 is the exact reserved literal. Definitions1–5, Theorem1 and
+its matching/forest proof, sequence interpretation and Section8 were read.
+No computational experiment, simulation or source program was run.
+
+Claim: for every fixed integer k>=2, sample independent pairs (U_i,V_i)
+uniformly in (0,1)^2, and let L_i=min(U_i,V_i), R_i=max(U_i,V_i).
+For the sequence of intervals I_i=[L_i,R_i], let D_n be its minimum number
+of chronological k-ary heapable classes, exactly as in the source. Then
+ lim_{n->infinity} E[D_n]/n=1/(k+1).
+
+Step1, finite exact combinatorial identity. Make a bipartite graph with
+one demand vertex for each i and k supply copies of each j. A supply copy
+of j is adjacent to demand i iff j<i and R_j<=L_i. Matchings give forests:
+each matched i has its unique parent j, each j has at most k children,
+and strict time increase forbids cycles. Each component is a rooted tree
+and a valid heapable class. Conversely the edges of any partition into
+such rooted trees give a matching by distinct supply copies. Therefore
+D_n=n-maximumMatching. In particular, by the deficiency form of Hall,
+ D_n=max_{S subset [n]} (|S|-k|N(S)|),                       (C)
+where N uses the underlying supply labels, before cloning. To recall the
+finite deficiency proof: every matching leaves at least the displayed
+quantity unmatched. For a maximum matching, start alternating paths from
+all unmatched demands. There is no reachable unmatched supply (otherwise
+augment). The reachable demand set S has all its neighbor supply copies
+matched into S, and all matched members of S arise this way. Thus its
+deficiency is exactly the total number of unmatched demands, proving (C).
+This independently pays the finite bridge; the source theorem is consistent
+with it. Its claimed bijections need not literally be unique when supply
+copies are relabelled; only optimum cardinalities are used.
+
+Step2, lower bound. For any x in [0,1] take S={i:L_i<=x}.
+Every neighbor has R_j<=x. Thus (C) gives
+ D_n>=#{i:L_i<=x}-k#{j:R_j<=x}.
+The marginal CDFs are F_L(x)=2x-x^2 and F_R(x)=x^2. Hence
+ E[D_n]/n>=2x-(k+1)x^2.
+At x=1/(k+1) this gives c=1/(k+1), for every n>0.
+
+Step3, simultaneous upper bound for every Hall cut. Fix an integer m>=1,
+and for n>=m partition the arrival indices into m consecutive blocks B_q,
+each of size N_q in {a,a+1}, a=floor(n/m). Given ANY S, let h_q be the
+largest left endpoint of an element of S in blocks q,...,m, or zero if
+that set is empty. Set h_{m+1}=0. For i in S intersect B_q, L_i<=h_q.
+For j in B_q with R_j<=h_{q+1}, a selected interval in a strictly later
+block attains h_{q+1}, so j is a neighbor. If there is no such selected
+interval then h_{q+1}=0 and there is no such j, since all R_j>0.
+Therefore
+ |S|-k|N(S)| <= sum_q (#{i in B_q:L_i<=h_q}
+                            -k#{j in B_q:R_j<=h_{q+1}}).   (D)
+Let delta_q^L,delta_q^R be the sup errors of the two block empirical CDFs.
+The right side is at most
+ sum_q N_q[F_L(h_q)-kF_R(h_{q+1})]
+              +sum_q N_q(delta_q^L+k delta_q^R).
+Replace each N_q by a; the absolute error is at most (k+1)m.
+The remaining sum telescopes exactly:
+ sum_q [F_L(h_q)-kF_R(h_{q+1})]
+ =sum_q [F_L(h_q)-kF_R(h_q)] +k[F_R(h_1)-F_R(h_{m+1})]
+ <=m c+k,
+because 2x-(k+1)x^2<=c on [0,1], F_R(h_1)<=1 and F_R(0)=0.
+The bound is independent of S, so by (C)
+ D_n/n<=c+k/m+(k+1)m/n
+                 +(1/n)sum_q N_q(delta_q^L+k delta_q^R).   (E)
+This is the needed temporal-cut control. Endpoint-only/global-cut analysis
+alone would not pay (E); omitting the later-block buffer would falsely
+allow a parent to use a future supply. The buffer cost telescopes to k/m.
+
+Step4, expectation and limit, without an imported empirical-process theorem.
+For N iid observations with either marginal CDF F and an integer h>=1,
+monotonicity, a uniform mesh r/h and the Lipschitz bound |F(x)-F(y)|<=2|x-y|
+give
+ sup_x |F_N(x)-F(x)|<=max_{0<=r<=h}|F_N(r/h)-F(r/h)|+2/h.
+Each mesh empirical mean has variance at most 1/(4N), so Cauchy–Schwarz
+bounds its expected absolute deviation by 1/(2sqrt(N)). Bounding a finite
+maximum by the sum yields
+ E[sup|F_N-F|]<=(h+1)/(2sqrt(N))+2/h.
+Thus, taking expectation in (E),
+ c<=E[D_n]/n<=c+k/m+(k+1)m/n
+                  +(k+1)[(h+1)/(2sqrt(floor(n/m)))+2/h].  (F)
+For fixed m,h let n tend to infinity, then h to infinity, then m to
+infinity. This proves the asserted full expectation limit and c>0.
+Zero-probability endpoint coincidences do not affect expectations; one can
+also define all comparisons weakly as the source does. The proof is for
+each fixed k, with no unjustified uniform-in-k limit exchange. No coupling
+of samples for different n is required. The n=0 definition is irrelevant
+to the limit. All random quantities are measurable: finite graphs,
+matchings and maxima of finitely many endpoint inequality events suffice.
+
+Mechanisms sustained: threshold cuts give the exact proposed lower constant
+but cannot control arbitrary time-dependent Hall cuts; a hydrodynamic/slot
+balance argument requires an unproved stationary law; time blocking plus
+telescoping gives the uniform upper control (D)–(F), without mixing or an
+assumed continuum process. This is a full target argument, not just a
+helper, finite instance, or renamed source theorem.
+
+Significance/prior limits. The source has the matching representation but
+leaves the limit conjectural; the block envelope inequality is an additional
+argument. Strong contrary case: general random ordered b-matching or
+stochastic allocation literature may make this a routine LLN application;
+no such exact applicable primary proof was acquired. A search-described
+Language (and Series) of Hammersley-Type Processes companion repeats a
+related Conjecture20 but its actual body is UNREAD, so that is a specific
+source/prior HOLD, not a theorem-level nonmatch. The official author's page
+failed HTTP500 and is closed as a metadata artifact; this does not close
+every distinct companion paper. Final target PDF is authenticated, no
+claim all later corrections/citing work were covered. The source's k=1
+sqrt(n) assertion conflicts with its own marginal interval-order definition
+(the cited LIS statistic is different); no credit is requested for that
+correction and our proof uses only its unambiguous k>=2 target model.
+
+## Common scientific status
+
+These are FULL ORDINARY PROPOSALS ONLY, author-complete, not independently
+certified PASS. Zero qualified survivors. No proof registry root could be
+refreshed within inherited denials. No bounded no-hit is worldwide novelty.
+No all-96 family-scope comparison was independently performed here; exact
+assigned-ID/source history matching is recorded separately. No dispatch,
+Lean execution, acceptance, or credited count increment. Formal plans are
+in DORMANT-SOL-FORMAL-PLAN.md and explicitly retain every unpaid bridge.
