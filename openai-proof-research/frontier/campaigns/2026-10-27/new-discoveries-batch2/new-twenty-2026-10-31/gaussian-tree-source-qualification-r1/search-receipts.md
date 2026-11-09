@@ -1,0 +1,3 @@
+# Search routing record
+
+2026-11-05 UTC; functions web search used for Sullivant Gaussian/Gorenstein/conjecture, journal metadata, canonical-module criterion, cut/phylogenetic/Hibi/conformal comparisons and 2026 trek-posets lead. Full web search results remain in the tool transcript, not represented here as byte-hashed downloaded bodies. Exact acquired-body HTTP receipts are in fetch-receipts.jsonl. Search metadata alone was never treated as a verified proof. The guessed 2006.08386 item was wrong and is explicitly unused; corrected 2003.04751 obtained subsequently. No API-denial retry or browser used.

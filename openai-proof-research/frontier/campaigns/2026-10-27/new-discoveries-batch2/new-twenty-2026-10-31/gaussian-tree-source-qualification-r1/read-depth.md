@@ -1,0 +1,11 @@
+# Actual reading and limits
+
+Read TASK in full, all applicable AGENTS, current STATUS and scalar ledger fields, upstream pin/catalogue introduction, prior-campaign-context introduction, r270 parent integration, results[316253], ATTEMPTS §316253, SUMMARY/HISTORY/READING-LIMITS, registry screen and relevant inventory/version/receipt records. Large historical files were bounded/filter-read, not all historic proofs. Frozen inputs checked in entirety by hashes.
+
+Primary reading: Sullivant latest §2 through Proposition 2.5 (map, proof of model identification, toricity), §5 outward-tree convention through Theorem 5.1 and proof, Corollaries 5.2–5.3 and proofs, Conjecture 5.4, adjacent Corollary 5.5/proof. v1/v2 target and cone/normality sections compared via full section extraction diff. Latest arXiv and v2 identical payload. No visual figure review was needed for the local facet argument, which uses no printed graph witness. No claim that all figures or every page of the entire source were read.
+
+New proof bodies read are individually specified in source-comparison.md: companion §2 and §4, Barile–Bruns §5, Manon §6, Stefan §4 criterion, cut Theorem 4.1, phylogenetic §3–4 Gorenstein proofs, Hibi §2 definitions/criterion, 2026 colored-trek Proposition 6.1. Acquisition of complete PDFs does not equal full-body reading. In particular upstream proof dependencies in these secondary applications were not all reconstructed.
+
+Unfinished requested source coverage: typeset latest journal body denied (403); all citing articles, all historical-family records and all public formal registries/code not exhaustively cleared; no current-head SHA; original Hibi purity proof not independently reread. No claim of universal absence of a known resolution. This lane's exclusion is supported by its complete explicit routine bridge, and is not a novelty clearance inferred from missing sources.
+
+No Lean/mathlib build or declaration audit was performed. No solver, numerical enumeration, child, Pi run, browser, contacts, account mutation or publication. All HTTP jobs finite; denial respected. All writes confined to this lane, sources in other lanes read-only. New local source downloads/extractions are evidence files, not edits to any frozen author artifact.
