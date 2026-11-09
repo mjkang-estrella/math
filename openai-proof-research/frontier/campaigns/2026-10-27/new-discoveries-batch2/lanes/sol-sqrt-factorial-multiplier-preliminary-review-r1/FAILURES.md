@@ -1,0 +1,8 @@
+# Preserved failures and bounded gaps
+
+* New AMS canonical journal PDF request returned HTTP 403. Exact URL/time/error in retrieval/journal.receipt.json. Stopped; no alternate AMS path, proxy, browser, TLS change or retry. Crossref later supplied a shorter AMS path, deliberately NOT requested because it is the same denied body route.
+* First independent quadrature helper failed an assertion at a 1e-25 tolerance. Original code used -log(t*t+v*v) near u=1, causing catastrophic cancellation. Preserved original expression here: `u=t*t+v*v; sqrt(-log(u))`. Final helper uses `delta=(1-t*t)*cos(q)**2; -log1p(-delta)`. This is numerical stabilization, not a mathematical counterexample. Failed run exit1, groupRSS 66809856 bytes, wall0.320747s. Successful corrected run exit0, peak121659392 bytes, wall3.366115s. No caps raised.
+* Candidate PROOF.md falsely says arXiv v2 omits Theorem6 and leaves five numbered main theorems. Actual frozen v2 p6 retains Theorem6 restricted to s in N0, with proof p10. Must correct before reuse.
+* DOI landing HTTP200 is dynamic publisher HTML, NOT a scientific journal proof. Its unrelated current-issue JSON is not evidence about this article. No journal-body theorem conclusion drawn from it.
+* Crossref relation={} does not establish absence of an erratum. OpenAlex supplied publisher and arXiv only; it supplied no distinct author/institution full body. Journal final version and later correction chronology remain unresolved. No repeated historical inaccessible interval scans.
+* GitHub API/raw/codeload/diff/patch, ScienceDirect and Google challenge routes were not requested. No current complete public registry head/body audit; no absence/priority claim.
