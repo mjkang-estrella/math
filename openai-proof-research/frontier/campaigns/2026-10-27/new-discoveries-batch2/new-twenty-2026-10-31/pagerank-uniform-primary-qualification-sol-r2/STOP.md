@@ -1,0 +1,1 @@
+Mandatory STOP: automatic HTTPS-to-HTTP redirect rejected before HTTP dispatch; failure logger also failed. Preserve get_csaji.receipt.json and original guard ledger. No retries, ledger repair, alternate delivery, further research or dispatch. ALT2010 identified work unavailable ALL NEW deliveries. O1/O2 HOLD;0credit.
