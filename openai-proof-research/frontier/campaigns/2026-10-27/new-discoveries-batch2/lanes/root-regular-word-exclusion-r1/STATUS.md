@@ -1,0 +1,7 @@
+# Root exclusion — 2026-10-30
+
+Adopt EXCLUDE_PRIOR for the r249 enumeration candidate. The independent reviewer obtained and read the actual Kuba–Panholzer author preprint of the2012 article and the2019 primary re-derivation. Its report supplies exact transformations: reversal after value complement sends Av(123,121) to 123-avoiding r-Stirling permutations; Av(132,212) is directly the132-avoiding r-Stirling class. Theorem5's all-r bijection and Theorems8–9's formula/insertion proofs cover both classes, alln, with the empty boundary explicit. The proposed RouteA is the old generating tree under that transformation. This is exact prior subsumption, not exclusion based only on standard Lagrange machinery or oldr2 coefficients.
+
+Root read the frozen full review and evaluated its stated transformations; actual predecessor-body reading is attributed to the independent reviewer. The valid new presentation is retained uncounted. No Lean/manuscript investment; no need for further novelty hunting to undo a decisive prior proof. Counts9/39/next40 unchanged.
+
+Procedure deviation: the initial guarded root snapshot/read command misspelled PYTHONDONTWRITEBYTECODE as PYTHONDONTWRITECODE. The child Python had explicit -B and fixed guard caps were active; the required environment spelling was nevertheless not followed. This is preserved rather than claimed fully compliant. The subsequent integrity recheck uses the correct environment.
