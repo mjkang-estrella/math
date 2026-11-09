@@ -1,0 +1,25 @@
+## 322479: complete ordinary P4 obstruction, scientific PARK
+
+Primary 1111.0531v2 §1.2 (1.7), §5 (5.1), Conjecture 5.2 specifies a,b in (0,1), probabilities in [0,1], and a rooted tree with n_i children per vertex at level i. Set ell=4 and n1=n2=n3=1. There is one vertex at each level: the undirected path P4. No synchronization or limiting approximation is needed. At a=1/2,b=3/10 the exact map is
+F1=1-(1-x1/2)(1-3x2/10),
+F2=1-(1-x2/2)(1-3x1/10)(1-3x3/10),
+F3=1-(1-x3/2)(1-3x2/10)(1-3x4/10),
+F4=1-(1-x4/2)(1-3x3/10).
+All four coordinates lie in [0,1] for x in that cube. Zero is a fixed point.
+
+For 0<=u,v,w<=1, 1-(1-u)(1-v)=u+v-uv<=u+v. Applying this twice gives 1-(1-u)(1-v)(1-w)<=u+v+w. Consequently F(x)<=Bx coordinatewise, B=(1/2)I+(3/10)A(P4). Let w=(3,5,5,3). Direct ordinary rational arithmetic gives Bw=(3,49/10,49/10,3). If x=F(x) with x>=0, multiply the four inequalities by 3,5,5,3 and sum. Symmetry of B yields
+3x1+5x2+5x3+3x4 <= 3x1+(49/10)x2+(49/10)x3+3x4.
+Thus x2+x3<=0, hence x2=x3=0. The endpoint fixed equations become x1=x1/2 and x4=x4/2, so x1=x4=0. This excludes EVERY nontrivial cube fixed point, not just a symmetric one.
+
+Yet 3/10 > (1/2)/sqrt(3): both sides are positive and their squared comparison is 9/100>1/12, equivalent to 108>100. Thus the existential conclusion of the conjectured iff fails. Absence of any nonzero fixed point is stronger than failure of uniqueness and suffices to refute the full universal assertion.
+
+Second route: take a=1/2,b=1/4 on every path P_ell with ell>=6 (all branching numbers 1). Sum the inequalities F_i<=x_i/2+(x_{i-1}+x_{i+1})/4, using zero coordinates beyond endpoints. A fixed point would satisfy sum x_i <= sum x_i-(x1+xell)/4. Thus endpoints vanish; their exact equations force their neighbors to vanish, and induction forces all coordinates zero. The printed threshold is exceeded since sqrt(ell-1)>2. This is the SAME family, not extra credit. The P4 weighted proof avoids reliance on an all-ell induction in an eventual certificate.
+
+Third diagnostic route: the positive adjacency eigenvector of P4 is (1,phi,phi,1), phi=(1+sqrt5)/2, with eigenvalue phi. The linear majorant has largest eigenvalue 1/2+(3/10)phi<1 because phi<5/3, equivalent to sqrt5<7/3. Multiplying by this vector also excludes nonzero fixed points. This route confirms the missing spectral dependence; it is unnecessary for the rational certificate. No numerical approximations were used.
+
+Actual contrary primary: Takigawa–Miller 2212.05733v2, §4.1 Theorem4.1 II(a), prints the SAME existence assertion for its explicit k-coordinate map. Its displayed map specializes exactly to F above when all n_i=1. §4.2 Lemma4.2 (4.6) substitutes the last coordinate into the preceding equation, leaving both d_(k-1) and d_(k-2); it treats the resulting implicit equation as a one-variable composition. Implicit elimination requires a separate branch and derivative argument. Merely sharing the functional shape of the interior equations does not add their branching parameters under a square root. The P4 proof directly contradicts II(a) under this printed model; it is not an application of that asserted theorem. This is a source conflict, NOT an authenticated public resolution to be counted or silently accepted. The manuscript's total-node counting and common-level arguments also contain ambiguities; P4 has only one vertex per level and sidesteps those issues.
+
+Strongest significance case: this is a full parameter-admissible counterexample to an explicit original conjecture and a later claimed theorem, rather than a boundary correction or a small case of a known accepted family. Strongest contrary case: general spectral extinction is an old subject, explicitly cited by the original paper. A rigorous applicable general-network extinction theorem plus the P4 spectral calculation could make this a complete routine adaptation. That exclusion requires the actual theorem and model bridge; it is not established merely by shortness. The requested WDWF2003 primary PDF redirected to an author homepage. Entire identified work now unavailable across all alternate deliveries. No retry. Its actual general-network proof remains unread, so no complete authenticated routine-exclusion bridge is claimed. Takigawa2022 §4 is now read; do NOT retain an unread-body HOLD for it. Journal/final/corrections and strict glyph visual review are not cleared. No current registry refresh was attempted because those four artifacts are inherited unavailable. No worldwide novelty conclusion.
+
+Formal feasibility only: a future independently authorized review could express the four exact polynomial coordinates over R, prove the two/three-factor inequalities, take the weighted sum, and prove sqrt3 threshold by positivity and squaring. A literal theorem would negate the universal rooted-tree fixed-point iff, with an explicit equivalence from n_i=1 to P4. No finite search/native_decide is needed. No implementation or formal dispatch here. Scientific PARK, not a qualified FULLCANDIDATE.
+
