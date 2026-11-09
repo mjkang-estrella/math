@@ -1,0 +1,9 @@
+# Complete expression audit
+
+AuditR3 obtains every local declaration's `ci.type` and `ci.value? (allowOpaque := true)`. It records module, unsafe/partial flags and transitive axioms, rejecting any forbidden flag or axiom. Types and bodies are stored in a complete shared expression DAG, rather than repeatedly printing the same implicit-argument subtrees. The preceding flat pretty-printer exceeded the CPU cap; its failed log is retained.
+
+`TYPE_NODE n` and `BODY node n` identify root nodes. `BODY none` is the actual absence of a value for constructors, recursors and other declarations without bodies. Every `EXPR_NODE n` gives a complete Lean.Expr constructor and all its fields. Node IDs are zero-based and emitted in order; child nodes are emitted before their parents. Sharing uses Lean.ExprStructEq, not alpha equivalence. All nodes are present in the audit log. No type or proof body is elided.
+
+The node forms are `bvar index`, `fvar id`, `mvar id`, `sort level`, `const name levels`, `app function argument`, `lam name type body binderInfo`, `forallE name type body binderInfo`, `letE name type value body nonDependent`, `lit literal`, `mdata metadata body`, and `proj structureName index body`. Names, universe levels, binder information, literals, identifiers and metadata use their complete Lean Repr representation. Numeric type/body/child fields reference other expression nodes. Replacing references recursively reconstructs the full AST; keeping the references preserves its exact sharing. Metadata and binder names are retained.
+
+The encoder is an ordinary terminating safe definition in AuditR3, and is itself included in the local declaration audit. The full audit has no trusted Python computation. Python only checks inventory counts, contiguous node IDs, root references and receipt integrity. The inherited Audit and AuditR2 modules remain byte-identical.

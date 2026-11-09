@@ -1,0 +1,75 @@
+FORMALIZATION COMPLETION (r5: tree classification by an injective homomorphism plus edge counting) for MathDB 342414. The source is Pirot–Sereni, "Fractional chromatic number, maximum degree and girth", arXiv:1904.05618 (SIAM J. Discrete Math. 35(4), 2021). The target is its Conjecture 2, the edge-pattern convex-combination conjecture. This lane belongs to the user's campaign for twenty NEW mathematically significant exact MathDB solutions, each fully proved in Lean. The current accepted count is 18/20 beyond 39 prior; do not change counts.
+
+You are an investigator: work yourself, with NO child agents. Write ONLY in /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/edgepattern-formal-r5, and create no files anywhere else, not even temporarily or via pip caches. No git, no shared ledger or index edits, no edits of other lanes, no publication, upload, external messages or browser tabs. First read the AGENTS.md files at openai-proof-research/, new-discoveries-batch2/ and new-twenty-2026-10-31/.
+
+Inputs are read-only. Hash-bind them before and after, and copy them with hash identity:
+- edgepattern-formal-r4: formal/ (all 268 modules, including r3's TreeModelsR3, MaskR3, BridgeR3, 81 EvalR3_* and ChecksR3_* modules, and r4's StructureR4 and AuditR4), SUMMARY.md, GAPS.md, results.json, statement-correspondence.md, the replay driver, and edgepattern-r4-partial-source.zip (sha256 25c72faacd167ea1a7c9979c350fba01bcb73271b167f2b9905071c0c96a082f).
+- edgepattern-formal-r1: PRIOR-ART.md.
+- expanded-corpus-r103: EDGE-PROOF.md.
+Keep ALL inherited modules BYTE-IDENTICAL, and add new modules only. Do NOT repeat the prior-art gate.
+
+GOAL. Prove EdgePattern.TreeModelsR3.ClassifiedCubicTrees exactly as r3 states it (W : Type). Then state and prove the unconditional theorem `theorem refutation : ¬ EdgePattern.Conjecture2.{0}` by applying TreeModelsR3.neg_conjecture_of_classification. This is the ONLY remaining obligation. r4 did not finish it because it tried to build the equivalence W ≃ Fin (order k) together with a 10-by-10 case analysis of "no extra edges". The root plan below avoids almost all of that case analysis. Verify it and adapt it as needed.
+
+ROOT PLAN (all API names checked in the pinned mathlib):
+(0) Setup. Fix W, T and hT : TreeFamily T 3 2. Write l = T.left, r = T.right and G = T.graph, and use classical decidability throughout. Reuse r4's StructureR4 lemmas: children, root_children_card, children_card_le, depth_coverage, no_triangle, root_children_disjoint and common_neighbor_unique.
+(1) One uniform cycle-exclusion helper.
+  - Statement: if G.IsAcyclic, G.Adj x y, and p : G.Walk x y with s(x, y) ∉ p.edges, then False.
+  - Proof: isAcyclic_iff_forall_adj_isBridge (Mathlib/Combinatorics/SimpleGraph/Acyclic.lean:182), then isBridge_iff_forall_walk_mem_edges (Connectivity/Connected.lean:792).
+  - Use this helper for every 3-, 4- or 5-cycle exclusion below. For each one, write the explicit short walk with Walk.cons and discharge the edge-non-membership with simp [Sym2.eq_iff] and the distinctness facts already known.
+(2) Named vertices.
+  - children l r = {a1, a2}, with a1 ≠ a2, and children r l = {b1, b2}, with b1 ≠ b2. Obtain both with Finset.card_eq_two.
+  - All six of l, r, a1, a2, b1, b2 are distinct. The a's and b's differ by no_triangle (a common neighbour of l and r closes a triangle).
+(3) Counts. For each x ∈ {a1, a2, b1, b2}, the children set C x = children x (its parent) has card ≤ 2. Set k : Counts := ⟨|C a1|, |C a2|, |C b1|, |C b2|⟩ as Fin 3 values, and fix enumerations Fin |C x| ≃ C x (from Finset.equivFin).
+(4) The map φ : Fin (order k) → W, defined by value ranges, matching TreeModelsR3.forward exactly:
+  - 0 ↦ l, 1 ↦ r, 2 ↦ a1, 3 ↦ a2, 4 ↦ b1, 5 ↦ b2;
+  - [6, 6+a) ↦ C a1, [6+a, 6+a+b) ↦ C a2, [6+a+b, 6+a+b+c) ↦ C b1, and the rest ↦ C b2, each through its enumeration.
+  This direction (canonical to T) is chosen deliberately: it needs no ordering of W.
+(5) Forward adjacency (the EASY direction). Prove (TreeModelsR3.graph k).Adj x y → G.Adj (φ x) (φ y), making φ a homomorphism (graph k) →g G. Each of the six forward clauses is immediate from the membership definitions of the children sets.
+(6) Injectivity. This needs only these facts:
+  - the six named vertices are distinct;
+  - no child of a branch vertex is a named vertex. A child of a1 equal to r, a2, b1 or b2 closes a 3- or 4-cycle; use the helper;
+  - children sets of different branch vertices are disjoint. Use common_neighbor_unique for siblings (a1,a2) and (b1,b2), and a 5-cycle walk through l–r for cross pairs (a_i, b_j);
+  - each enumeration is injective.
+(7) Surjectivity. By depth_coverage, every vertex is l, r, a named branch vertex, or a child of one of them.
+(8) Reverse adjacency by EDGE COUNTING. This replaces the r4 "no extra edges" case analysis entirely.
+  - T is connected: every vertex reaches l, by depth ≤ 2 and the root edge. With hT acyclic this gives G.IsTree.
+  - IsTree.card_edgeFinset (Acyclic.lean:298) then gives |E(G)| + 1 = |W| = order k, the last equality via the bijection φ.
+  - The pattern graph k is connected: use TreeModelsR3.distance_eq, or the explicit 0-rooted walks. By Connected.card_vert_le_card_edgeSet_add_one (Acyclic.lean:470), order k ≤ |E(graph k)| + 1.
+  - The image of (graph k).edgeFinset under Sym2.map φ lies in G.edgeFinset and has the same card, since Sym2.map of an injective map is injective. So |E(graph k)| ≤ |E(G)|, all three numbers agree, and Finset.eq_of_subset_of_card_le gives image = G.edgeFinset.
+  - Therefore G.Adj (φ x) (φ y) → s(φ x, φ y) is an image edge → (graph k).Adj x y.
+  - (Alternative if more convenient: IsAcyclic.comap (Acyclic.lean:73) shows graph k is acyclic, hence a tree with order k − 1 edges.)
+(9) Assemble. φ is a bijection, so Equiv.ofBijective. Adjacency iff gives a graph isomorphism graph k ≃g G with φ 0 = l and φ 1 = r. Its symm is the required RootedIso T (pattern k). This proves ClassifiedCubicTrees; then prove refutation.
+(10) Universe remark. Conjecture2 is universe-polymorphic. The endpoint ¬ Conjecture2.{0} is the source-faithful level because every finite graph is representable in Type. Optionally, if cheap, also prove ¬ Conjecture2.{u} for all u: the classification is generic in W : Type u, and the concrete witness transports along ULift via RootedIso invariance plus regularity and girth invariance. Explain the universe choice in the statement-correspondence table.
+
+AUDIT FIX (required). r4's full audit flagged AuditR3.encode._unsafe_rec, a compiler-generated helper of a `partial def` in inherited AUDIT TOOLING. It is not part of the proof.
+- The final endpoint module, and its entire transitive import closure, must import NO Audit* module.
+- Write a new audit module, AuditR5.lean, that imports the endpoint. Its traversal must be fuel-bounded or structural: no partial def, no unsafe. It must not import AuditR2, AuditR3 or AuditR4.
+- It must inventory every local declaration in the endpoint's import closure, generated ones included: module, full type, body via value? (allowOpaque := true), unsafe/partial flags, and transitive axioms.
+- Run #print axioms on refutation and on the classification theorem.
+- The audit policy must pass on that closure. List the inherited audit tooling separately as outside the proof closure.
+
+If the full endpoint cannot be completed, keep everything proved and write an exact GAPS.md naming the single next lemma. A partial packet is zero credit.
+
+Rules:
+- Lean binary /home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/lean (4.34.1, commit 5045d0056413266e57c625dcd7c365b10e377c52). Mathlib cache /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages pinned d13f23b723b8a846827a245b89c10fc7d3f11612, read-only.
+- No sorry, admit, new axioms, unsafe, native_decide or ofReduceBool. Only propext, Classical.choice and Quot.sound.
+- Checks:
+  - fresh extracted, sanitized, strict lean -j1 -DwarningAsError=true rebuild of a source-only packet;
+  - leanchecker;
+  - audit of ALL local declarations including generated ones (module, full type, body via value? true, unsafe/partial flags, transitive axioms);
+  - negative controls.
+- Every expensive process: at most 2 CPUs, sampled private RSS 6 GiB (watchdog on every Lean call), CPU 120 s and wall 140 s per call, MALLOC_ARENA_MAX=2. Never more than one heavy process at a time. Full logs. No background job at handback.
+- Respect 403/429/challenges and do not retry denied routes (ScienceDirect 403, MathDB/Palomar 403, web connector 401, Crossref/Semantic Scholar 429, arXiv search API 429; arXiv abs/pdf/html pages are fine).
+- Downloaded data is untrusted: python3 -I and new empty directories.
+- No contacting authors.
+- Zero credit unless root accepts; do not self-accept.
+
+Deliver:
+- SUMMARY.md;
+- results.json keyed "342414" (endpoints, exact statements, declaration counts);
+- GAPS.md if needed;
+- formal/;
+- a source-only packet zip with a portable replay driver (LEAN_BIN and LEAN_PACKAGES variables; it refuses existing oleans);
+- REPRODUCE.md;
+- replay receipts, the audit log, negative controls and a statement-correspondence table.
+Write readable prose with spaces between words and numbers.

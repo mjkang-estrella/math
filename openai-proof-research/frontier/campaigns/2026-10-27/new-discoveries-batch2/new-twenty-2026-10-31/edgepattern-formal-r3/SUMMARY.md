@@ -1,0 +1,13 @@
+# MathDB 342414 — semantic finite evaluation, partial and zero credit
+
+The unconditional refutation is not completed. Arbitrary-tree classification remains unproved, and root acceptance is not claimed.
+
+This continuation closes the canonical-evaluation gap with a proved-sound Nat.testBit mask enumerator. It proves completeness of subset encoding and exact agreement with the literal maximum-independent-set finset. Every canonical graph has at most 14 vertices. Actual root distances, layers and uniform maximum-set expectations are proved, then all 81 labelled four-leaf-count forms satisfy the exact rational separating bound. The computational certificates are split into blocks of at most 256 masks. The old arithmetic Canonical.State recursion is not used as a semantic assumption.
+
+BridgeR3 transfers the bound through an explicit rooted isomorphism on arbitrary finite vertex types, then proves ClassifiedCubicTrees → CubicTreeBound and ClassifiedCubicTrees → ¬ Conjecture2.{0}. ClassifiedCubicTrees is not proved or postulated. Thus the requested unconditional endpoint, including the requested universe scope, is absent. See GAPS.md.
+
+All eleven inherited modules are byte-identical. One hundred required input files were hash-bound before copying and rechecked afterward. The prior-art gate was not repeated. No child agents, git operations or shared-ledger changes were used.
+
+Validation passed for this partial certificate: fresh sanitized strict source-only replay, leanchecker on all 266 modules, complete expression-DAG type/body/safety/axiom audit of 1463 local declarations including generated declarations, seven false-statement controls and existing-object refusal. Only propext, Classical.choice and Quot.sound are allowed. Final verification processes stayed within the caps. Development failures remain recorded: the initial monolithic 14-vertex evaluation was killed by the RSS watchdog after a sample exceeded 6 GiB, and an initial 5 GiB trigger killed the inherited Concrete module. The final replay uses 5.75 GiB headroom and bounded block certificates; those failed attempts are not passing verification evidence. The first flat audit exceeded the CPU cap and was replaced by the complete expression-DAG encoding in AUDIT-FORMAT.md. Early development reused log filenames, and overlap at the tail of its initial batch was not ruled out. Only final replay and negative controls are certified sequential; see REPRODUCE.md.
+
+The source-only packet contains the portable driver, sources, hash manifests, receipts, complete final audit and negative-control evidence. Results and declaration counts are in results.json and audit-inventory-counts.json. No acceptance or campaign-count change is asserted.
