@@ -1,0 +1,9 @@
+# Published source authenticated; renewal route needs independent review
+
+The new source review reports actual Springer VoR Conjecture2.4 and its2025 correction inspected. Target is DOI10.1007/s10959-025-01417-w, JTP38 article54,28May2025. It retains the literal old-complement fixed-r,s mean. The correction's introductory iid formula anomaly is explicitly recorded; do not infer full equation equivalence or treat that anomaly as the dependent target. Root read the bound comparison report, not the new PDFs independently.
+
+Retain the original independently reviewed spectral proof unchanged. The new renewal derivation is a proposed replacement, not yet independently reviewed. Its critical steps are: a uniform geometric return bound to empty distinguished intersection; cycle-entry expectation mu*Q; repeated entries after an exit cost O(1/n), giving h/mu=Q(1+O(1/n)); concentration of un-killed iid cycle counts; deterministic inclusions that avoid falsely conditioning independent marks on cycle lengths; stationary-start multiplicative squeeze and summed expectation tails.
+
+Root finds no immediate contradiction in these arguments. The uniform Chernoff scale delta=n^(-1/4), t~n^s log n makes exp(-c delta²t) negligible relative to polynomial pair tails, while delta log n tends to zero. Nevertheless all return-cycle, occupation and conditioning steps require independent review. No Lean readiness follows merely from removing contours.
+
+Commission a new independent review of the revised proof and full classical-adaptation boundary. Request a decisive substantive recommendation if a complete bridge can be exhibited, rather than another generic tools-based objection. Missing citer/registry/source-history gaps remain HOLD; no denied routes retried. No formalization/manuscript for this candidate yet. Counts9/39/next40 unchanged.
