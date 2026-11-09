@@ -1,0 +1,39 @@
+# Actual reading ledger, failures and limits
+
+Successful retrieval is not semantic reading. Original public prose is separated from retained source/primary bodies. No worldwide novelty clearance is claimed.
+
+## Context and history
+
+AGENTS.md and upstream.json were read fully. CONTENTS.md was parsed in full; its numbered headings were inspected across two displays, and the selected fourteen family descriptions and manuscript paths were inspected. Early combined whole-file outputs were truncated; not every abstract was semantically read. The complete preprints-tree.json was fully parsed/traversed, not visually printed line by line. It has13,223 entries and truncated=false, SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. An initial catalogue-navigation script also matched a generic preprints link and printed an excessive path inventory; no bulk download resulted. The corrected selected-path inventory was used for retrieval.
+
+NEW-TEN opening/current requirements and early operational history were read; a late65-line tail was displayed, partly truncated. The user assignment controls the later exclusions. Accepted findings R023--R040 were read at statement/contribution-description level, not as eighteen complete manuscripts or review chains. An initial combined read was truncated in the middle; R028--R035 were separately reread through their first1,700 characters. R023--R027 and R036--R040 statement/core portions were visible in the earlier display. No accepted finding was re-audited.
+
+r113 public research-report.md and regenerative-calculation.md were separately displayed fully. Its operation-comparison.md and reading-ledger.md were visible fully in the earlier combined output after the truncated catalogue portion. The r113 manifest/report hashes supplied in the assignment are exclusion anchors, not an adopted proof gate.
+
+Actual additional body reads: r28 affine-completeness-feasibility.md complete; r47 355-opening-interface.md complete; r27 screen-081.md complete; r30 checkpoint.md complete; r99 screen.md complete; r83 checkpoint.md complete; r89 comparison.md complete. I250 full statement and proof were read in the displayed body, including threshold-eigenvalue handling. I140 opening and relevant affine-balance paragraph were read; its entire37KB body was not. I135 relative circle-domain paragraph was read via the exact history match. I36's long report display was truncated and is not counted as a full proof read. I259/I264/I271, I217/I220, r12 and r17 were located, not fully reread.
+
+Content searches covered campaigns, iterations and experiments, using source aliases, construction strings and mechanism terms, not titles alone. No file-size ceiling was applied. Initial rg passes used normal ignore rules. Additional passes disabled ignore rules and followed symlink entries (the two explicitly checked iteration files were in fact regular files). Selected Markdown/TeX/text/JSON extensions and exclusions of copied inputs, private bodies, snapshots, payloads and work trees remain limitations. Broad expressions produced many unrelated hits; absence of a match is not contribution evidence. Commands and hit counts are in private/history-search.json; work/ retains the hit lists. Actual semantic reading is limited to the bodies named above.
+
+## Fresh pinned source reading
+
+All nine retained TeX files were fetched from immutable raw URLs and checked against Git blob entries selected from the complete tree. Receipts contain exact paths, raw URLs, Git blobs, SHA256 and sizes.
+
+353 smooth-example main.tex: read in full, including the reduction, origin integrals, autonomous change of variables, cooperative invariant-box proof and global continuation. Exact labels: thm:main, prop:reduction, eq:reduced, eq:radial, lem:local, eq:integral, lem:autonomous, eq:autonomous, lem:box, prop:global. Same-family September24 main.tex: theorem, history and strategy were read in the displayed portion; its TeX input commands do not mean the included bodies were read. The retained rigidity.tex was not freshly semantically read in this round. r28 already compares its completeness consequence; that account is not upgraded to a fresh full read.
+
+071 removable-boundary introduction.tex: complete. rigidity.tex: complete across the initial display and the separate lines70--190 read; exact labels eq:slice-estimate, eq:radius-summability, eq:limiting-flux, eq:source-area, eq:target-area, eq:nonnegative-rigidity. The retained Koebe introduction was not freshly read in full; the retained-test overlap was read through I135 and the rigidity introduction. Lower conductivity, Sobolev and masking proofs were not downloaded or read.
+
+262 equality introduction.tex and rigidity.tex: complete; thm:main, rig:fixed-right-spaces, rig:fixed-left-spaces, rig:active-identities, rig:tanh, rig:factorization and rig:partner. Matrix-inequality introduction.tex: complete, including its arbitrary-rank trace/field/connecting-path description. Its lower trace, action and compactness bodies were not freshly read, nor was the September23 scalar companion. The three family companions were mapped through the complete tree. No infinite-channel theorem is certified.
+
+## Primary versions actually read
+
+- Trudinger--Wang, The Bernstein problem for affine maximal hypersurfaces, Inventiones2000. Successful author-hosted published PDF1-Invent00.pdf, exact SHA256 in receipts. Section7 was read, including equations7.1--7.15, the affine coordinate change, double-root algebra and weak extension. Printed page420 (PDF page22) was rendered and inspected. Earlier interior-estimate sections were not freshly read in full.
+- Younsi, Removability, rigidity of circle domains and Koebe's conjecture, arXiv1511.07348v1: successful PDF. Section4 definitions and Proposition16 with proof, invariant extension, Proposition17 with proof, and the forward and reverse proof of Theorem5 in Section5 were read. Part of Lemma18's long tail estimate was displayed, not counted as a full proof read; Lemma19's statement/proof attribution was read. PDF page11 was rendered and inspected, including Proposition16 and the essential-supremum preservation sentence. David's original integrability proof and Sullivan's original group result were not read.
+- Rajala, Rigid circle domains with non-removable boundaries, arXiv2409.19103v1: successful PDF. Introduction and Theorems1.1--1.2, and Sections3.6--3.7 closing reflection/eccentric-distortion argument were read, including Proposition3.7 and Theorem3.8. PDF page2 was rendered and inspected. The intervening Cantor/disk-placement and neighborhood-distortion proofs were not fully read. Wu's and Ntalampekos's original input proofs were not read. This is a bounded theorem/operation comparison, not an independent proof audit of Rajala.
+
+Versioned HTML requests for2409.19103v2 and1511.07348v2 each returned404. The successful v1 PDFs were used; no claim that they are the latest version follows. Primary landing/search snippets were navigation only. The new public calculations do not rely on snippets.
+
+## Author diagnostics and failures
+
+An attempted SymPy calculation failed because sympy was unavailable. No package was installed. A standard-library Fraction implementation was written instead. Its initial degree-one-root assertion failed and corrected a hand-arithmetic error before sealing: sqrt(505), not23. The final polynomial identity and all listed root factorizations agree. The check is finite algebra, not a general proof or independent review. The complete asymptotic deduction is the prose argument in radial-calculation.md.
+
+No target freeze exists. The bounded derivation, incomplete angular construction and fourteen unequal screens must not be reported as a qualifying full theorem. Verification checks integrity only.
