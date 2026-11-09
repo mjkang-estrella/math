@@ -1,0 +1,7 @@
+# Conditional dormant next brief — 340110 only
+
+Not a dispatch or authorization for execution. Only GPT-6.1 Sol high/default personally under current routing; no children or fallback. Root must first adjudicate novelty/significance/family qualification and choose an authorized separate lane. This review does not accept or credit the result.
+
+Use the explicit C3×C2 witness and exact matching/multiplicity definitions in REVIEW.md. State the endpoint as failure of acyclic AND unit matching existence under all source hypotheses, not failure of weak acyclic matching existence. Prove unit equivalence to injectivity of sum map, cardinal exhaustion of H0 and full indicator equality. Construct the OUTPUT translate f+t as a subtype bijection using inverse translation; prove admissibility, g≠f via cancellation/nonemptiness, and m_g(x)=m_f(x−t)=m_f(x) for every x. Include id unit existence and constant-sum acyclic witnesses as fidelity checks. No permutation enumeration needed. Restrict optional generalization to abelian H; no extra credit.
+
+Before implementation fix pinned Lean/mathlib dependencies and an independently reviewed literal endpoint. A completed future certificate must include every bridge above, dependency/axiom audit with only propext, Classical.choice, Quot.sound, no sorry/admit/added axioms/unsafe/native_decide, and a fresh extracted strict replay. Nothing about installed libraries or build feasibility has been verified here. Revisit an actual applicable prior periodic-support theorem if root identifies one; do not infer novelty from this brief.
