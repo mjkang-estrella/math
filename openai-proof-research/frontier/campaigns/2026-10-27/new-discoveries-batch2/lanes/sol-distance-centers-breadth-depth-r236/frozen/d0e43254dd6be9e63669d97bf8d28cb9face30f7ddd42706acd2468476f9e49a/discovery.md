@@ -1,0 +1,25 @@
+# r115 discovery record
+
+Full ordinary counterexample candidate: Aivazidis–Loukaki–Müller published Problem 5.6, p.1281, DOI 10.1515/jgth-2024-0030. `PROOF.md` gives a disjoint nine-versus-seven product collision for f(t)=t!/t^t, with maximum integer 36. This resolves the full universal question negatively. No Lean or paper has been started; no shared counts changed.
+
+## Early screening of three exact source candidates
+
+1. Published Problem 5.2: for every finite G, H<=G and N normal in G, is P_G(H)<=P_G(HN)? Read source Proposition 3.2 and its counting proof, Proposition 3.14 and its induced-component proof, and Theorem 3.15 and its full transversal-lifting proof. This route is excluded as a routine direct source-formula argument. Set L=HN. Every H-double coset HgH maps into LgL, and its parameter t=[H:H intersect H^g] is at least T=[L:L intersect L^g]: because N lies in L intersect L^g and L=HN, T=[H:H intersect L^g]. Every L-double coset has at least one H-double coset above it. Since 0<f(t)<=1 and f decreases, multiplying within each coarse double coset gives product f(t)<=f(T). Multiply over the coarse double cosets. This supplies the asked inequality directly, but not a substantive campaign nomination. Equality characterization was not pursued.
+
+2. Published Problem 5.6: distinct-integer product injectivity. Read the actual full Theorem 4.6 proof before substantial computational investment, including its Bertrand-prime valuation argument and final majorization step. That theorem handles a distinct-prime side and does not cover the source's final general-integer question. Sustained this route. MILP with the largest entry constrained to 40,60,80 returned infeasibility diagnostics; these are neither exhaustive certificates nor universal proofs. The 100 case hit AS allocation failure. Switched to exact lattice basis reduction without raising caps. At n60 and n100 it found the same valid maximum36 witness. A separate dependency-free verifier proves exact equality. Only the first witness is nominated; all other lattice relations are one-family diagnostics with zero separate credit.
+
+3. Published Problem 5.8: existence, for every finite group G, of a minimizing cyclic p-subgroup H with [H:core_G(H)]<=p. Inspected source Proposition 4.1 and Lemma 4.2 alongside Proposition 3.2. The small-group formulas and subgroup/quotient monotonicity do not establish the universal minimizer restriction. No proof or counterexample was found; parked rather than elevating a special case. The trivial-group endpoint is not nominated.
+
+## Main objection and falsifiers
+
+Strongest substantive objection: the result is a small exact arithmetic collision found by standard lattice reduction. Its significance is the literal distinct-integer injectivity assertion, not a new general lattice method. A generic integer kernel does NOT prove this assertion false: arbitrary integer coefficients create repeated entries, which the source disallows. The exhibited coefficients are all 0,+1,-1 and the supports are disjoint. An actual public earlier collision, a classical theorem that directly ensures these distinct products collide, or an already credited family subsumer would exclude credit. None has been established by this bounded screen. Independent review is required.
+
+Mathematical falsifiers: any differing prime exponent, repeated/overlapping source entry, incorrect Gamma-to-factorial identification, or a published additional hypothesis excluding these lists. The retained published p.1281, all-prime table, and three exact arithmetic implementations address these locally. No mathematical gap remains in the finite refutation. Public-priority clearance remains a separate HOLD.
+
+## Prior-art limits
+
+Bounded public searches used source title/authors/ID, Problems5.2/5.6/5.8, factorial multiplicative independence, and the exact witness. They returned the source and neighboring common-transversal work rather than an established arithmetic resolution. Search indexing is not an absence proof. No worldwide novelty claim is made.
+
+Also retrieved the actual Aivazidis–Loukaki–Sambale *Common transversals and complements in abelian groups* author PDF. Read Theorems A/B, Lemma3.1 and the full TheoremA proof: primary decomposition, complements, induction on rank, and avoiding lines in an elementary abelian p-group. These address existence of common complements/transversals of specified subgroups, not injectivity of arbitrary factorial-ratio subset products. No theorem there was used to establish the collision. This neighboring-body comparison does not clear all later literature.
+
+The last supplied lawful registry state is Omega89cda9c274d1122b7676173296af3047c3b64cd1 at 2026-10-29T20:10:57Z; OpenAI7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a. Baseline18:13 inventories and bounded later chains are inherited evidence only. Earlier HEAD/tree403 and old300-file compare cap are not erased. No blocked API retry, alternate-endpoint bypass, inferred reset or live registry clearance was performed. Current freshness HOLD stays open.
