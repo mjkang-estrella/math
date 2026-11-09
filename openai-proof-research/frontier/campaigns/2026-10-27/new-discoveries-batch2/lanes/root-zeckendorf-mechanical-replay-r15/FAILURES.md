@@ -1,0 +1,1 @@
+Initial setup failed because manifest.json was assumed; it does not exist under that name. Four files had been copied but not read; setup was rerun with actual names. No scientific content was inspected before copying.

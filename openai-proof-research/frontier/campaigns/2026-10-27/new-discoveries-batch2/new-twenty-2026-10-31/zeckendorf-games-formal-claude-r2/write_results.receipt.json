@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-09T05:21:04.512953+00:00",
+  "name": "write_results",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/zeckendorf-games-formal-claude-r2",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nimport hashlib,json,subprocess,sys,os\ndef sha(p): return hashlib.sha256(open(p,'rb').read()).hexdigest()\nmods=[('ZeckMoves','moves04','mchk1','audit2a'),('ZeckWindow','win02','wchk1','audit2a'),('ZeckLow','low02','lchk1','audit2a'),\n('ZeckMacro','macro01','macchk1','audit2a'),('ZeckExit','exit01','exchk1','audit2a'),('ZeckLevel','level01','lvchk1','audit2a'),\n('ZeckConst','const02','cochk1','audit2a'),('ZeckChain','chain01','chchk1','audit2a'),('ZeckCS','cs02','cschk1','audit2a'),\n('ZeckSS','ss02','sschk1','audit2a'),('ZeckEndpoint','endp01','epchk1','audit2a'),('ZeckAudit2','audit2a','audit2chk','audit2a'),\n('ZeckRotation','rot02','rotchk1','audit3a'),('ZeckAudit3','audit3a','audit3chk','audit3a')]\ngreen=[]\nfor n,c,k,a in mods:\n    src='src/%s.lean'%n; ole='build/%s.olean'%n\n    for l in (c,k,a):\n        assert os.path.exists(l+'.receipt.json') and os.path.exists(l+'.output.txt'),l\n    rc=json.load(open(c+'.receipt.json')); rk=json.load(open(k+'.receipt.json'))\n    assert rc['exit']==0 and rk['exit']==0,(n,rc['exit'],rk['exit'])\n    # the compile output line records the source and olean hashes\n    last=[x for x in open(c+'.output.txt').read().split('\\n') if '\"stage\"' in x][-1]\n    j=json.loads(last); assert j['exit']==0 and j['source_sha256_after']==sha(src) and j['olean_sha256_after']==sha(ole),n\n    green.append({'name':n,'source_sha256':sha(src),'olean_sha256':sha(ole),'compile_label':c,'check_label':k,'audit_label':a,\n                  'compile_peak_group_rss_bytes':rc['sampled_group_rss_peak_bytes'],'compile_wall_s':round(rc['wall_s'],2)})\nfailed=['moves01','moves02','moves03','win01','low01','const01','cs01','ss01','rot01']\nfor f in failed:\n    rc=json.load(open(f+'.receipt.json'))\n    assert rc['exit']!=0,f\nstatements={\n'Zeck.split_smallest_asymptotic':\"\u2203 C : \u211d, \u2200 n : \u2115, 2 \u2264 n \u2192 |(SS n : \u211d) - phi ^ 2 * n| \u2264 C * (Real.log n) ^ 2\",\n'Zeck.combine_smallest_asymptotic':\"\u2203 C : \u211d, \u2200 n : \u2115, 2 \u2264 n \u2192 |(CS n : \u211d) - (5 / 2 - phi + \u2211' j : \u2115, 1 / (F (2 * (j + 2)) : \u211d)) * n| \u2264 C * Real.sqrt n * Real.log n\",\n'Zeck.combine_constant_bracket':\"(1.206 : \u211d) < 5 / 2 - phi + \u2211' j : \u2115, 1 / (F (2 * (j + 2)) : \u211d) \u2227 5 / 2 - phi + \u2211' j : \u2115, 1 / (F (2 * (j + 2)) : \u211d) < 1.207\",\n'Zeck.macro_rotation (route item 1, not used by the endpoint)':\"Zk z q (q even, q >= 2) \u2192 \u2203 z' k e m' h', Zk z' q \u2227 Tr (B z q (m+5) h) k e (B z' q m' h') \u2227 val z' = (val z + F q) % F (q+1)\",\n'Zeck.rotation_cycle (route item 2, not used by the endpoint)':\"Zk z q (q even, q >= 2), 5 * F (q+1) \u2264 m \u2192 \u2203 k e, Tr (B z q m h) k e (B z q (m - F (q+4)) (h + F (q+2))) \u2227 k + 1 = F (q+4) \u2227 splitCount (B z q m h) k + 1 = F (q+2)\",\n}\nres={'target':'MathDB 347063 Zeckendorf game move counts','lane':'zeckendorf-games-formal-claude-r2','credit':0,'campaign':'58 of 80 unchanged',\n'strict_green_modules':green,\n'failures_retained_with_true_exit':failed,\n'steps_completed':[\n '1. Combine Smallest core: READY state B z q m h, macro_step at every level p >= 4 (Case 1/2/3), macro_step0 at level 2, macro_rotation (L -> L + F_(p-2) mod F_(p-1))',\n '2. Chip balance: rotation_cycle: F_(p+2)-1 moves per cycle, exactly F_p - 1 splits',\n '3. Level assembly and endgame: exit_step, exit_step0 split by K = 0..4 and Cases 1/2/3 following the erratum, level_step, chain with accumulated error 16(j+1)',\n '4. Constant: combC, tsum, tail bound, combC_bracket 1.206 < c < 1.207',\n '5. Split Smallest lower half: SS_excess_le, SS_final_Phi_le, SS_estimate',\n '6. Endpoint theorems, no premise added'],\n'exact_theorem_statements':statements,\n'axioms_audit':'#print axioms on every main theorem (ZeckAudit2, ZeckAudit3): exactly [propext, Classical.choice, Quot.sound] for each',\n'proof_note':'The endpoint proof bypasses the cycle balance: the integer counter D with weights d_i = F_(i-2) - [i even] rises by 1 on every split and even combine and is unchanged by odd combines, so moves = counter + odd combines at every level. The rotation and cycle balance were still proved (ZeckRotation) but are not imported by ZeckEndpoint.',\n'unpaid':['Independent statement-fidelity review, paper, independent prior-art work and a fresh extracted replay are root-owned or later lanes; none done here.',\n 'The endpoint binds to the source game: n chips of value F 1 (Zeck.start). The MathDB record says the game starts from the Zeckendorf decomposition, which has no legal move; ZeckControls records that. Root must rule on this binding.',\n 'mathlib Nat.zeckendorf was not used: the low state is the invariant Zk with val and Zk.eq_of_val, so the index shift of the API is not engaged.'],\n'status':'Lean endpoint compiled and kernel-checked in this lane. No credit claimed; acceptance is root-only.'}\ntxt=json.dumps(res,indent=1,ensure_ascii=False)\nr=subprocess.run([sys.executable,'-I','-B','write_lane.py','results/347063.json'],input=txt,text=True,capture_output=True)\nprint(r.returncode,r.stderr)\nprint(len(green),'green modules')\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 0.052566407015547156,
+  "sampled_group_rss_peak_bytes": 15773696,
+  "samples": 1,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 0.04283,
+  "stderr": ""
+}

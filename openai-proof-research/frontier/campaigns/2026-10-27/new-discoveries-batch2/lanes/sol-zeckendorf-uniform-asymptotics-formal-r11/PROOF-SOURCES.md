@@ -1,0 +1,9 @@
+# Provenance and dependency scope
+
+Science inputs were frozen before inspection into flat frozen/r10-* and frozen/root-STATUS.md bindings, hashing original and copy before/after. This includes the r10 summary, fifteen mathematical modules, instrumentation, runner, certificates, pins and receipts. Ancestor/batch instructions and administrative snapshots are retained. No recursive historical evidence tree is included.
+
+Compiler: Lean4.34.1, SHA256 e8baaa71855a616dc351028f3ad2200051b0671f423a1696a100e809302d5550. Mathlib revision d13f23b723b8a846827a245b89c10fc7d3f11612; all nine pins checked directly from immutable local metadata without invoking git. pins.json contains exact paths/revisions.
+
+Actual finite mass interfaces come from inherited Assembly.actual_finite_interval_tail and SuffixUnion.suffixTailMass_bound. New analytic facts use pinned Analysis/Complex/Exponential (exp algebra/order and add_one_le_exp), Analysis/SpecificLimits/Normed (tendsto_pow_const_div_const_pow_of_one_lt), inverse/power limits and the inherited real square-root library. No external research/source/novelty claims are needed or made.
+
+StandaloneAudit enumerates declarations by module origin, including private/generated declarations; checks unsafe AND partial flags; traverses every transitive type and body dependency; rejects any axiom except propext, Classical.choice, Quot.sound. It computes exact axiom dependencies separately for every owned declaration. The auditor explicitly sets allowOpaque=true so theorem and opaque bodies are traversed. Instrumentation is safe standalone Lean IO code and is not a proof premise. Deterministic source-only archive excludes compiled objects and recursive frozen inputs. Replay is extracted fresh and serial; final verification is a separate guarded invocation.

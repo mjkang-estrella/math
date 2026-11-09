@@ -1,0 +1,10 @@
+# Root finite cell product disposition
+30 October2026. Counts9/39/next40 unchanged.
+
+Read frozen actual Product.lean endpoints and receipt. actual_cell_mass_product and actual_conditional_bernoulli use actual P_N, cellMass and proved subsetbijection; p_i=1/(1+b_i), b_i actual legal-type count after S2. Empty-slot/N0 cases explicit. Combined worker strictaudit now458decls1957transitive, zero partial/unsafe andStd3, includes correctedLiteral. Root has not independently replayed combinedpackage this turn; prior partialflagdisclosure remains preserved. Narrowproductgate closed as reported, no fullmixing.
+
+Next bounded component: early successful-block abundance under actual P_N, with a rigorous probability bound on cells with too few marks. Prove actual prefix probability/conditional branching from complete-word weights, tight legal-type bound <=2n when F_n<=N<F_(n+1), and F1 depletion <=2permove. First J=floorN/6 disjoint triples start with >=6 ones and force legal C1,C1,C2 with conditionalprobability >=(2n)^-3. Each success contributes distinct surviving marked C2 after globalcompression, including precedingS2 boundary. This crucial mapping is mandatory, not assumed.
+
+A rational finite-tail alternative to coupling: let Y countsuccesses, p=(2n)^-3. By conditionalprobability>=p, E[2^-Y] <=(1-p/2)^J inductively under actual law. Since markedSlots(compress word).card>=Y, for any natural t, P(markedcount<t) <=2^t(1-p/2)^J. This finite algebraic bound suffices for eventual abundance at t=(3/2)^n after later estimates and avoids Fourier or independent adaptive trials. A sharper proved binomial/Chebyshev bridge is equally acceptable; never assert trialindependence. State exactsource/Fibonacci/lengthhypotheses, integerfloors andzero conventions. No finalasymptotic/mixingclaim yet.
+
+Preserve all5inheritedproofmodules byte-identical; newpartialflags hardfail. No concentration/sigma/manuscript; broadscout runs independently. Sourceprior/noveltyHOLD persists. Rootbindings/manifestseparateverified, no shared/git/public edits.

@@ -1,0 +1,7 @@
+# Reproduction
+
+Run from this lane. Python/helper invocations must use the immutable helper_guard.py specified by the task, with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1. The fixed helper caps are AS/group RSS512MiB, CPU210s, wall230s. runner.py launches only serial Lean with j1, M2700, group RSS2800MiB, CPU210s, wall230s; warningAsError=true and autoImplicit=false. Compiler SHA and all nine package revisions are checked. No git command is used to inspect package refs.
+
+`sh run.sh` compiles the 23 mathematical modules in dependency order and runs StandaloneAudit. The audit inventories all module-origin declarations including private/generated declarations, rejects unsafe AND partial origins, and traverses all type/body dependencies with opaque bodies exposed. Only propext, Classical.choice and Quot.sound are allowed axioms. Instrumentation is outside mathematical origins.
+
+Guarded `python3 certify.py pack` creates the deterministic source-only ZIP. Guarded `python3 certify.py replay` extracts fresh sources, compiles serially, repeats the audit, compares declaration/axiom inventories and removes compiled objects. Guarded `python3 certify.py manifest` freezes output hashes excluding MANIFEST.json and verification-receipt.json. A separate guarded `python3 certify.py verify` checks every output, both sides of input bindings, pins, replay and absence of compiled objects; it writes only the final receipt.

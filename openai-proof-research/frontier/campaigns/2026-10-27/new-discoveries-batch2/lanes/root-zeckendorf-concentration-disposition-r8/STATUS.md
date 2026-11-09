@@ -1,0 +1,6 @@
+# Continue: assemble finite concentration
+Root froze and inspected r7 SUMMARY. Actual length/pushforward/mixture and parameter applicability are closed in the reported component, alongside the full-vector thinning identity and squared fair-binomial atom bound. Worker reports 613 declarations, 2416 transitive dependencies, strict extracted replay; this disposition is not an independent root compilation.
+Missing pieces are now finite subset probability algebra: cardinality moments and Chebyshev for the thinning variables, conditional fair-cardinality fibers, interval atom counting, then actual good/bad-cell summation.
+Authorize a focused successor to finish these pieces and the actual interval bound. Do not reprove the inherited atom estimate or reconstruct source semantics. Preserve twelve inherited modules byte-identically. No all-N asymptotics or suffix hazard in this next component.
+The intended finite endpoint remains mass of lengths in [a,a+h] <= badMarksMass N M + 4/L + 2*(h+2)/sqrt(L), with positive M and L=2*M/(2*n+1), n>=1,N<F(n+1). Replacing badMarksMass with the already proved finite tail is allowed. Zero-mark cells go into the bad part.
+No full mixing or novelty claim, no acceptance/count change: 9 additional /39 total /next40.

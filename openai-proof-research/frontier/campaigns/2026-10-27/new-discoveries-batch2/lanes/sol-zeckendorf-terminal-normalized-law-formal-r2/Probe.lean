@@ -1,0 +1,16 @@
+import Literal
+import Mathlib.Data.Multiset.Sort
+#check Multiset.sort
+#check Multiset.sort_sorted
+#check Multiset.coe_sort
+#check List.pairwise_iff_getElem
+#check List.pairwise_map
+#check List.pairwise_cons
+#check List.isChain_iff_pairwise
+#check Multiset.pair_le
+#check Multiset.cons_le
+#check Multiset.coe_le
+#check List.Pairwise.imp
+#check Multiset.sort_eq
+#check Multiset.coe_map
+#check Multiset.card_coe

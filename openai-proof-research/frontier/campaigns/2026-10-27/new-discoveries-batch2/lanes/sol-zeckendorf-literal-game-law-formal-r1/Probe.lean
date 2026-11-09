@@ -1,0 +1,16 @@
+import Literal
+#check Multiset.le_iff_exists_add
+#check Multiset.exists_add_of_le
+#check Multiset.le_add_left
+#check Multiset.le_add_right
+#check Multiset.le_iff_count
+#check Multiset.nodup_iff_count_le_one
+#check Multiset.sort
+#check Multiset.coe_sort
+#check Multiset.pairwise_sort
+#check Multiset.sort_sorted
+#check Multiset.exists_cons_of_mem
+#check Nat.strong_induction_on
+#check Lean.Environment.constants
+#check Lean.ConstantInfo.isUnsafe
+#check Lean.getEnv

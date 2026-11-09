@@ -1,0 +1,9 @@
+import Literal
+import Mathlib.Data.Multiset.Sort
+#check Multiset.cons_le_cons
+#check Multiset.singleton_le
+#check Multiset.map_coe
+#check Multiset.sum_coe
+#check Multiset.pair_comm
+#check Multiset.cons_swap
+#check Multiset.coe_cons

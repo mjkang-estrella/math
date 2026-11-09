@@ -1,0 +1,416 @@
+# MathDB 347063 — Lean formalization status (partial)
+
+Credit 0. Nothing here is claimed as a new result: part (a) is public (Cusenza et al.,
+as the reviewer states) and part (b) is not formalized at all.
+
+## Source check (required by TASK.txt step 1)
+
+I read `inputs/sources/` Definition 1.1 and section 1.2. The formal model in
+`src/ZeckBase.lean` matches the source exactly:
+
+* `F 1 = 1`, `F 2 = 2`, `F (i+1) = F i + F (i-1)` (`F i := Nat.fib (i+1)`);
+* the start is `n` copies of `F 1` — `start n = Finsupp.single 1 n`;
+* moves `A1: F1,F1 -> F2`; `Cons i (i>=2): F(i-1),F i -> F(i+1)`;
+  `Split 2: F2,F2 -> F1,F3`; `Split i (i>=3): F i,F i -> F(i-2),F(i+1)`;
+* Split Smallest priority: smallest legal split, else `A1`, else smallest legal combine;
+* Combine Smallest priority: `A1`, else smallest legal combine, else smallest legal split.
+
+**Difference found (corpus defect).** The MathDB record says the game "starts from the
+Zeckendorf decomposition of `n`". Under Definition 1.1 that position has *no legal move*:
+every count is at most 1 and no two consecutive indices are occupied, so there is no
+`A1`, no `Cons` and no `Split`. The game therefore has zero moves, not a linear number.
+The source itself starts at `n` copies of `F 1`. This is formalized, not merely asserted:
+`Zeck.zeckendorf_start_has_no_move`, `Zeck.SS_zeckendorf_zero`,
+`Zeck.CS_zeckendorf_zero`. It is a transcription error and earns nothing.
+
+## Green modules (compile exit 0, kernel check exit 0, axioms audited)
+
+| module | compile | check | olean sha256 |
+|---|---|---|---|
+| `ZeckBase` | `base05` | `basecheck05` | `c8126653…cc2196` |
+| `ZeckStrategy` | `strat11` | `stratcheck11` | `e043602f…f2f75b` |
+| `ZeckControls` | `ctrl06` | `ctrlcheck06` | `1e3dadc4…f8095f` |
+| `ZeckPotential` | `pot05` | `potcheck05` | `275678f2…b7e16c` |
+| `ZeckBound` | `bnd02` | `bndcheck02` | `ab145ab9…c986275` |
+| `ZeckAudit` | `audit01` | `auditcheck01` | `0014fb72…d00f4f` |
+
+`ZeckAudit` prints axioms for every main theorem; each depends on exactly
+`[propext, Classical.choice, Quot.sound]`. No `sorry`, `admit`, `axiom`, `unsafe` or
+`native_decide` occurs anywhere in `src/`.
+
+All builds ran through `check32.sh` / `checker32.sh` one at a time, with the lane's
+limits (CPU 115 s, 6 GiB, `-j1`, `-M3500`, `LEAN_NUM_THREADS=1`,
+`-DwarningAsError=true`). Peak sampled group RSS was below 2.3 GiB; nothing was killed.
+
+## What is proven
+
+**Step 1 — game model (`ZeckBase`).** Positions are finitely supported `ℕ → ℕ`.
+Value `val a = Σ a_i F_i` is invariant under every move. Chips decrease by 1 under
+`A1`/`Cons` and are preserved by splits. Termination is established with the integer
+potential `M a = Σ a_i Wt i` where `Wt 1 = 4`, `Wt 2 = 7`, `Wt i = i+5` (`i ≥ 3`):
+every legal move drops `M` by at least 1 (`M_doA1`, `M_doCons`, `M_doSplit2`,
+`M_doSplitG`, `M_doSplit`). Also `terminal_le_one` and the index bound `idx_bound`
+(`F i ≤ n` for any occupied index).
+
+**Step 2 — the two strategies (`ZeckStrategy`).** `smallestSplit` and `smallestCons`
+are `Nat.find` over the legal-move predicates, with the specification that they return
+the smallest legal index and are `none` exactly when no such move exists. `stepSS` and
+`stepCS` implement the source priorities literally, including the stuck case (`stepSS a = a`
+when no move is legal). `gameLen` is `Nat.find` over `exists_terminal` — the *actual*
+number of steps, not a fuel bound. `SS n` and `CS n` are `gameLen` from `start n`.
+
+**Step 3 — small exact controls (`ZeckControls`).**
+`SS 2 = 1`, `SS 3 = 2`, `SS 4 = 3`, `CS 2 = 1`, `CS 3 = 2`, `CS 4 = 3`, each by proof
+from explicit intermediate positions (`e1 n`, `e2 a b`, `e12 a b`, …). These agree with
+the reviewer's paper checks `n=2,3,4`.
+
+**Step 4 — the exact potential (`ZeckPotential`).** With
+`phi = (1+√5)/2`, `psi = phi - 1`, `s = 1 - phi = -psi`, and
+`w j = j + 2 + psi * s^j`:
+
+* `w 1 = phi^2`;
+* `w_drop_A1 : 2 w 1 - w 2 = 1`;
+* `w_drop_split2 : 2 w 2 - w 1 - w 3 = 1`;
+* `w_drop_splitG i : 2 w i - w (i-2) - w (i+1) = 1` for `i ≥ 3`;
+* `w_drop_cons i : w (i-1) + w i - w (i+1) = i` for `i ≥ 2`.
+
+These are polynomial identities in `phi`, `psi`, `s`, derived from `phi^2 = phi + 1`,
+`psi = phi - 1`, `s = 1 - phi`. Hence `Phi a = Σ a_j w j` satisfies, for every legal move,
+
+* `Phi_doA1 : Phi (doA1 a) = Phi a - 1`,
+* `Phi_doCons : Phi (doCons a i) = Phi a - i`,
+* `Phi_doSplit : Phi (doSplit a i) = Phi a - 1`.
+
+With `dropSS a` = 1 for a split or `A1`, `i` for `Cons i`, and 0 when stuck,
+`Phi_stepSS : Phi (stepSS a) = Phi a - dropSS a`, and by telescoping
+`Phi_run : Phi (run stepSS (start n) k) = Phi (start n) - Σ_{j<k} dropSS (run … j)`.
+
+**Step 4b — the bound (`ZeckBound`).** `w j > 0` for every `j` (since
+`|psi * s^j| ≤ psi < 1`), so `Phi ≥ 0`. Every legal move drops `Phi` by at least 1, so
+
+* `SS_eq : (SS n : ℝ) = phi^2 * n - Phi (final) - Σ_{j<SS n} (dropSS - 1)`;
+* `SS_deficit : phi^2 * n - (SS n : ℝ) = Phi (final) + Σ_{j<SS n} (dropSS - 1)`;
+* `SS_le_phi_sq : (SS n : ℝ) ≤ phi^2 * n`.
+
+So the *upper* half of part (a) is formalized, and in a stronger form than the
+reviewer's `SS n = phi^2 n + O(log^2 n)` needs.
+
+## What is unpaid
+
+**Part (a), lower half.** `SS n ≥ phi^2 n - O(log^2 n)` is not proved. It needs:
+
+1. the Phase 1 / Phase 2 split — Phase 1 runs while a split or `A1` exists and ends at a
+   position `b` with all `b_j ∈ {0,1}`; in Phase 1 `dropSS = 1` at every step, so the
+   exact Phase 1 count is `T(n) = phi^2 n - Phi(b)` (this is the reviewer's formula and
+   is *not* formalized — `SS_eq` above refers to the final position, not to `b`);
+2. `Phi(b) = Σ b_j w j = O(log^2 n)`, using `idx_bound` (all occupied indices are
+   `O(log n)`) and `w j ≤ j + 3`;
+3. the reviewer's Lemma T (from `c` chips at indices `≤ L`, every continuation has
+   `O(cL)` moves) to bound Phase 2. That needs the index-sum monotonicity
+   (`A1`: 0, `Cons i`: `2-i ≤ 0`, `Split 2`: 0, `Split i≥3`: `-1`) plus the
+   `Split 2` counting argument.
+
+The potential machinery for (1) is in place; the phase decomposition and Lemma T are not.
+
+**Part (b), entirely.** The `READY(p; N, Z, O)` summary with lower state `L ∈ [0, F(p-1))`,
+the rotation `L ↦ L + F(p-2) mod F(p-1)`, the chip balance `F_p - 1` splits per cycle,
+the level assembly with its error, the endgame by cases, and the constant
+`c = 5/2 - phi + Σ_{j≥2} 1/F_{2j} = 1.2064812…` with `1.206 < c < 1.207` are all
+unformalized. The reviewer's erratum (endgame Case 3 with `m = 3` exits via
+`B_{p+2}(r' + F_{p-1}, M+1, 0)` because `C_{p+1}` fires before `S_{p-2}`) was noted but
+there is no code for it yet.
+
+**Endpoint.** `Zeck.split_smallest_asymptotic` and `Zeck.combine_smallest_asymptotic`
+are not stated. No weakened placeholder, no `sorry`, and no added premise was used.
+
+## Notes for the next lane
+
+* `Nat.log2` lemma names differ from the ones I probed; `Mathlib.Analysis.SpecialFunctions.Log.Basic`
+  and `Mathlib.Data.Nat.Log` are both importable, `Real.log_le_log`, `Real.log_pow`,
+  `Real.log_pos` exist, but `Nat.pow_log2_le`, `Nat.log2_le_iff`, `Nat.lt_pow_iff_log2_lt`,
+  `Real.log_two_pos` do **not** exist in this toolchain. Check names before writing.
+* `Finsupp.update_apply` is stated as `(f.update a b) i = if i = a then b else f i`.
+  Field notation on the `Pos` synonym fails; use the function-argument form.
+* `if_neg` and `if_false` are deprecated here (`ite_eq_right`, `ite_false`); both are
+  errors under `-DwarningAsError=true`. For nested updates, `rw [Finsupp.update_apply]`
+  twice followed by `split_ifs` avoids the deprecation entirely.
+* `nlinarith` does not reduce `Nat.cast` numerals (`↑1`, `↑2`, `↑3`) or `s^1`; run
+  `norm_num` / `simp only [pow_one]` first, or state the auxiliary identity as a `calc`.
+* `Mathlib.Tactic.Omega`'s olean is absent, but core `omega` works.
+* `Finsupp.update` is noncomputable, so any definition built on it needs `noncomputable def`.
+
+=====A
+# PART A. MathDB 347063: exact constants for the Split Smallest and Combine Smallest Zeckendorf games
+
+Source: Li, Li, Miller, Mizgerd, Sun, Xia, Zhou, Deterministic Zeckendorf Games, arXiv 2006.16457v1
+(only version on the arXiv listing read here), Conjecture 1.4, text page 3 and Section 4.
+
+## A0. Literal binding, and a defect in the corpus literal
+
+Source game (Definition 1.1): indices F_1=1, F_2=2, F_{i+1}=F_i+F_{i-1}. Start at n copies of F_1. Moves:
+A1: F_1,F_1 -> F_2. Cons(i), i>=2: F_{i-1},F_i -> F_{i+1}. Split(2): F_2,F_2 -> F_1,F_3.
+Split(i), i>=3: F_i,F_i -> F_{i-2},F_{i+1}. Game ends at the Zeckendorf decomposition.
+Priorities (source section 1.2): Split Smallest = splits smallest first, then A1, then Cons smallest first.
+Combine Smallest = A1, then Cons smallest first, then splits smallest first.
+
+DEFECT: the corpus literal says the game "starts from the Zeckendorf decomposition of n". Read literally that
+game has zero moves and no growth. The source starts from n copies of 1. I bind to the source game and flag
+this for root; it is a corpus transcription error, not a mathematical claim of mine, and earns nothing.
+
+SCOPE WARNING: the bare words "grows linearly" in the Theta(n) sense are already source Theorem 1.2, which
+holds for every game (n-Z(n) <= moves <= 3n-3Z(n)-IZ(n)+1). If root reads the literal as Theta(n) only, this
+target is SOURCE-OWN PUBLIC, credit 0. The content below is the existence and exact value of the limit
+constants, which the source calls numerically apparent and does not prove.
+
+## A1. Theorem
+
+Let phi=(1+sqrt5)/2, psi=1/phi, and F_0:=1. Let SS(n) and CS(n) be the numbers of moves.
+
+(a) SS(n) = phi^2 n + O(log^2 n).
+(b) CS(n) = c n + O(sqrt(n) log n), where
+    c = 1 + sum_{j>=1} (F_{2j}-1)/(F_{2j} F_{2j+2}) = 5/2 - phi + sum_{j>=2} 1/F_{2j} = 1.20648... .
+Source Figure 2 plots against 1.20647n and Conjecture 1.4 says approximately 1.206. Source Figure 1 plots
+against phi^2 n.
+
+## A2. A general tail bound
+
+Lemma T. From any position with c chips, all at indices <= L, every continuation has O(cL) moves.
+Proof. A1 and Cons lower the chip count by 1 and splits keep it, so there are at most c combining moves. Let I
+be the sum of the indices of all chips. A1 changes I by 0, Cons(i) by 2-i <= 0, Split(2) by 0, Split(i) for
+i>=3 by -1. So the splits at indices >=3 number at most I <= cL. Each Split(2) uses two F_2, and F_2 chips
+come from the at most c initial ones, from at most c A1 moves, and from Split(4), so Split(2) count is at most
+(2c+cL)/2. Total O(cL). QED.
+
+Also every move preserves total value n, so no chip has index L with F_L>n; L=O(log n).
+
+## A3. Proof of (a)
+
+Under Split Smallest, while any split or A1 is available, only those moves occur. So the game has a Phase 1
+consisting of moves A1, Split(i) until a position with every a_i in {0,1}. Treat each as firing site i
+(site 1 firing is A1; it loses two chips and puts one on site 2). Define weights
+    w_j = j + 2 + psi (-psi)^j   (j>=1).
+Then, using psi^2=1-psi:  -2w_1+w_2 = -1, -2w_2+w_1+w_3 = -1, -2w_3+w_1+w_4 = -1, and for i>=4,
+-2w_i+w_{i-2}+w_{i+1} = -1. (Linear part j gives -1, constant part 2 gives 0, and the geometric part vanishes
+because (-psi)^{-2} - 2 + (-psi) = phi^2-2-psi = 0; the three boundary equations are equivalent to
+w(0)=w(1) and w(-1)=0 for the same formula with a=2, c=psi.)
+Hence Phi=sum_j a_j w_j drops by exactly 1 at every Phase 1 move. With w_1=3-psi^2=phi^2, the number of Phase 1
+moves is EXACTLY
+    T(n) = phi^2 n - sum_j b_j w_j,   b_j in {0,1} the stable position.
+(All w_j>0, so Phi>=0 and Phase 1 terminates, independently of the source's finiteness statement.)
+Since only indices j <= O(log n) occur, and 0 < w_j <= j+3, sum b_j w_j = O(log^2 n). Phase 2 starts with at
+most O(log n) chips at indices O(log n), so Lemma T gives O(log^2 n) moves. QED.
+(Paper checks of the exact formula: n=2 T=1, n=3 T=1, n=4 T=3.)
+
+## A4. Proof of (b): the exact state summary
+
+Combining moves number exactly n-Z(n) (each lowers the chip count by 1 and splits keep it; this is also source
+Lemma 3.3). So only splits S(n) need counting.
+
+Definition. For even p>=4, a position is READY(p; N,Z,O) if a_p=N, a_{p+2}=O, a_{p+1}=0, all other chips form a
+set Z of indices in [1,p-2] that has no repeats and no two consecutive indices, and there are no other chips.
+By uniqueness of Zeckendorf representation Z is determined by its value L=sum_{z in Z}F_z, and L < F_{p-1}.
+THE ENTIRE LOW STATE IS THE SINGLE INTEGER L.
+
+Lemma R (rotation). Let READY(p;N,Z,O) with N>=5. The next moves form one MACRO and end in READY(p;N',Z',O')
+with Z' the Zeckendorf set of L'= L+F_{p-2} if that is < F_{p-1}, else L+F_{p-2}-F_{p-1}. Non-wrap macros have
+N'=N-3, O'=O+1. Wrap macros have N'=N-5, O'=O+2.
+
+Proof. No A1 and no Cons is available and the smallest repeat is p (repeats in O are larger). So Split(p) fires,
+giving chips p-2 and p+1. A pair (p,p+1) is then available and has lower priority index than (p+1,p+2), so
+(p+1,p+2) never fires while a_p>=1. Now run the descent ADD(q), q even, starting at q=p-2, with the invariant
+q+1, q+2 not in the current set.
+ Case 1, q and q-1 not present: insert q. Stop.
+ Case 2, q-1 present (so q absent): Cons(q) fires, leaving a chip at q+1, whose neighbours q and q+2 are empty.
+   Stop.
+ Case 3, q present: a repeat at q. It is the smallest repeat, so Split(q) fires, giving q-2 (or, if q=2, the chip
+   1, which is absent because 2 was present) and a chip at q+1 whose neighbours q and q+2 are empty. Continue with
+   ADD(q-2). Its invariant holds: q-1 was absent because q was present (Zeckendorf), and q has just been emptied.
+   Later steps only add chips at smaller indices, so the chip at q+1 stays isolated. If q=2 stop.
+ At the top level q=p-2, a chip produced at p-1 pairs with the pool: Cons(p) gives p+1 and then (p,p+1) gives
+ p+2. Priorities are respected because in every position above exactly the listed move is the highest priority
+ available: repeats occur at one index at a time, and consecutive pairs are exactly those listed.
+ Case analysis at the top gives: no chip reaches p-1 iff p-2,p-3 are absent iff L<F_{p-3} iff L+F_{p-2}<F_{p-1}.
+ Pool and output counts follow by adding moves, and value conservation fixes the final L'. QED
+
+Lemma C (full cycle). Consecutive F_{p-2}, F_{p-1} are coprime, so L -> L+F_{p-2} mod F_{p-1} is a single cycle of
+length F_{p-1}. Over any F_{p-1} consecutive macros: pool drops by exactly F_{p+2}, output rises by exactly F_p,
+and the number of splits is exactly F_p-1.
+Proof. a=F_{p-1} macros and b=F_{p-2} wraps (a F_{p-2}=b F_{p-1}). Pool drop 3a+2b=F_{p+2}, output a+b=F_p.
+For splits: let d_q be the number of Split(q) and e_q the number of Cons(q) in the cascades, for even q <= p-2. Over
+a cycle Z returns, so chips balance. Even q: chips in = chips out gives d_{q+2} = 2 d_q + e_q (with d_p replaced by
+a). Odd q+1: e_{q+2} = e_q + d_q (with e_p replaced by b). Top: 2d_{p-2}+e_{p-2}=F_{p-1}, d_{p-2}+e_{p-2}=F_{p-2}, so
+d_{p-2}=F_{p-3}, e_{p-2}=F_{p-4}. By descent d_q=F_{q-1}, e_q=F_{q-2} (bottom F_0=1; the chip balance at index 1 is
+d_2=e_2 and holds). Total splits a + sum_{even q<=p-2} F_{q-1} = F_{p-1} + (F_1+F_3+...+F_{p-3}) = F_{p-1}+F_{p-2}-1 = F_p-1. QED
+
+Paper checks: p=4 gives 13 fours to 5 sixes with 4 splits; p=6 traced by hand gives 34 sixes to 13 eights with
+12 splits and 21 combines.
+
+Level 2. After A1 moves, a_1 in {0,1}, a_2=floor(n/2). If a_1=1, Cons(2) then Cons(3) leave a_1=0 at no split cost.
+From (0,K,0,N) with K>=5: Split(2), Cons(2), Cons(3), Cons(3) gives (0,K-5,0,N+2), one split, 5 twos to 2 fours,
+matching F_2-1=1 and F_4=5.
+
+Endgame lemma. From READY(p;K,Z,O) with K<=4 and O>=10, the game reaches READY(p+2;N',Z',O') with N' in [O-4,O+1],
+O'<=2, Z' Zeckendorf within [1,p], in O(p) moves. Cases by K and by the Case 1, 2, 3 trichotomy for the chip at p-2:
+K=0: Z unchanged. K=1: Z u {p}. K=2: Split(p); chip p+1 pairs (p+1,p+2) and then (p+2,p+3), so O drops by 2 and O'=1;
+any chip reaching p-1 stays there as a low chip since a_p=0. K=3: Case 1 and Case 3 fire (p,p+1) leaving O+1; Case 2
+gives (p-1,p) then two (p+1,p+2) and two (p+2,p+3), so N'=O-4, O'=2. K=4: Case 1 leaves Z u {p-2,p}, O+1; Cases 2 and
+3 end at N'=O-1, O'=1. Level 2 endgame K=0..4 is the same small list and yields READY(4). Each Z' is Zeckendorf since
+p-1 and p are never simultaneously present and p-2 absent when p-1 present.
+
+Assembly. Value conservation at READY(p): N F_p = n - L - O F_{p+2}, so N_p = n/F_p + O(1) uniformly, with no
+accumulation of errors. Number of full cycles at level p is N_p/F_{p+2}+O(1). So level p contributes
+S_p = n (F_p-1)/(F_p F_{p+2}) + O(F_p). Let p* be the largest even p with F_p <= sqrt n; for p<=p* outputs are
+>= sqrt(n)/O(1) >= 10 for large n so endgames apply. Sum over p<=p* gives c_S n + O(sqrt n), the tail of the infinite
+series being O(sqrt n). At level p*+2 there are O(sqrt n) chips and indices O(log n), so Lemma T finishes with
+O(sqrt n log n) moves. Finally sum_{j>=1} 1/(F_{2j}F_{2j+2}) telescopes to phi-3/2 by the Cassini identity, giving
+the closed form of c. QED
+
+## A5. Attempt to find a generic proof or a reduction, and what happened
+
+1. Linear functional for Combine Smallest: any weights neutral on all Cons and A1 satisfy w_{i+1}=w_i+w_{i-1},
+   so w is proportional to F_i and is also neutral on splits. So no potential counts splits in Combine Smallest.
+   Part (a)'s method cannot apply to (b). This is why the rotation is needed.
+2. Abelian sandpile: Part (a) is, in hindsight, a chip-firing odometer with an explicit potential. Generic chip-firing
+   gives uniqueness but not the constant; the explicit w_j is needed. Part (a) alone is short, and root may regard it
+   as a routine potential argument. I record that objection against (a).
+3. Reduction to a source theorem: source Theorem 1.2 and Lemma 3.3 yield only Theta(n) and the combine count.
+4. No general theorem known to me gives the constant in (b), which is transcendentally unusual (it contains the sum of
+   reciprocals of odd-indexed Fibonacci numbers).
+
+## A6. Limits on A
+Prior art: NOT CHECKED BY ANY SEARCH on this target. All 3 native searches were spent before this route emerged. The
+source is a Fibonacci Quarterly paper and there is follow-up Zeckendorf-game literature from the same group that I
+did not read; a later exact result is possible. Final journal text not read. HOLD. Recommend a focused qualification
+lane with fresh search budget before any further investment.
+
+---------------------------------------------------------------------------------------------------
+
+=====B
+{
+  "origin": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/zeckendorf-games-formal-deepseek-r1",
+  "root_verified_manifest_sha256": "c66f0a17d1f43cab5d4670b827d319ca26407d26c0387536088ea7cc53277ce3",
+  "immutable_green_modules": [
+    {
+      "name": "ZeckBase",
+      "source_sha256": "8853193adf7b7d35dec51ad257da69a0d4d8b1f0e8292337b12cd5b77c8f408d",
+      "olean_sha256": "c81266536157f32737ea25795e99ef1493a9293348e9a3f14821b54994cc2196",
+      "compile_label": "base05",
+      "check_label": "basecheck05",
+      "audit_label": "audit01",
+      "blobs": [
+        {
+          "path": "build/ZeckBase.olean",
+          "sha256": "c81266536157f32737ea25795e99ef1493a9293348e9a3f14821b54994cc2196"
+        }
+      ]
+    },
+    {
+      "name": "ZeckStrategy",
+      "source_sha256": "054883e37642a69d3cdd2ec4a95977240d13200421b2ae7a70ea30512f92c857",
+      "olean_sha256": "e043602f1252e0acfbfe66d193d66fcff28c727f863dcac320c8dae2afc2f75b",
+      "compile_label": "strat11",
+      "check_label": "stratcheck11",
+      "audit_label": "audit01",
+      "blobs": [
+        {
+          "path": "build/ZeckStrategy.olean",
+          "sha256": "e043602f1252e0acfbfe66d193d66fcff28c727f863dcac320c8dae2afc2f75b"
+        }
+      ]
+    },
+    {
+      "name": "ZeckControls",
+      "source_sha256": "def8fcffcaa10d69bfde8c2455b936c4d8a53a623992e0be498007984827c324",
+      "olean_sha256": "1e3dadc498386e73816dbc25c53342515fc9dff29ac1029acdf297de66f8095f",
+      "compile_label": "ctrl06",
+      "check_label": "ctrlcheck06",
+      "audit_label": "audit01",
+      "blobs": [
+        {
+          "path": "build/ZeckControls.olean",
+          "sha256": "1e3dadc498386e73816dbc25c53342515fc9dff29ac1029acdf297de66f8095f"
+        }
+      ]
+    },
+    {
+      "name": "ZeckPotential",
+      "source_sha256": "93fd25cd91d6912ea2d422999f3c0c769f4d3e7ac88551f38cf4fd85f5922191",
+      "olean_sha256": "275678f2e7fda2890d9a410342b2ee9f7332cae45c3f06e44a8c7aa290b7e16c",
+      "compile_label": "pot05",
+      "check_label": "potcheck05",
+      "audit_label": "audit01",
+      "blobs": [
+        {
+          "path": "build/ZeckPotential.olean",
+          "sha256": "275678f2e7fda2890d9a410342b2ee9f7332cae45c3f06e44a8c7aa290b7e16c"
+        }
+      ]
+    },
+    {
+      "name": "ZeckBound",
+      "source_sha256": "7df0e2a961251d401a9688913e4b77e3fd426ae06983cb7743377995faabfbac",
+      "olean_sha256": "ab145ab9e82c1fe2db8511ea06cc0f31477b346a967ef830b713eddcca986275",
+      "compile_label": "bnd02",
+      "check_label": "bndcheck02",
+      "audit_label": "audit01",
+      "blobs": [
+        {
+          "path": "build/ZeckBound.olean",
+          "sha256": "ab145ab9e82c1fe2db8511ea06cc0f31477b346a967ef830b713eddcca986275"
+        }
+      ]
+    },
+    {
+      "name": "ZeckAudit",
+      "source_sha256": "0cdc20f81f276254deded9eec980e52c25926d736814fea8a50230cee3d42469",
+      "olean_sha256": "0014fb72d1cbe10ac4b8538a5d14aead5c65284662d907146c70446a24d00f4f",
+      "compile_label": "audit01",
+      "check_label": "auditcheck01",
+      "audit_label": "audit01",
+      "blobs": [
+        {
+          "path": "build/ZeckAudit.olean",
+          "sha256": "0014fb72d1cbe10ac4b8538a5d14aead5c65284662d907146c70446a24d00f4f"
+        }
+      ]
+    }
+  ],
+  "rule": "These sources and compiler sidecars are immutable. Import the sealed oleans from build/. Never run check32.sh on these names. New modules must have new names."
+}
+
+#!/bin/bash
+set -eu
+export FORMAL_OPERATION=compile
+export FORMAL_MODULE="${1:?module name required}"
+export FORMAL_ROOT="$(cd "$(dirname "$0")" && pwd)"
+exec timeout 140 python3 -I -B "$FORMAL_ROOT/run_lean_32g.py" "${2:?unique receipt label required}" <<'PY'
+import os,runpy
+runpy.run_path(os.path.join(os.environ["FORMAL_ROOT"],"formal_command.py"),run_name="__main__")
+PY
+
+{
+  "lean_version": "4.34.1",
+  "mathlib_revision": "d13f23b723b8a846827a245b89c10fc7d3f11612",
+  "lean_bin": "/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/lean",
+  "lean_sha256": "e8baaa71855a616dc351028f3ad2200051b0671f423a1696a100e809302d5550",
+  "leanchecker_bin": "/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/leanchecker",
+  "leanchecker_sha256": "ccef1bfe9bfeecea65137d94a69033c1a89f360711f50fa3178e7ba3e696fcbe",
+  "packages_root": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages",
+  "upstream_lean_paths": [
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/batteries/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/aesop/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/Qq/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/proofwidgets/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/importGraph/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/LeanSearchClient/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/plausible/.lake/build/lib/lean"
+  ],
+  "mathlib_source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib",
+  "mathlib_metadata_sha256": {
+    "Mathlib.lean": "61d699d8ace6240934a751f1b1951339090d6e380b505041632227dd7eb73a29",
+    "lake-manifest.json": "8f67b2cf24143ac091cdb425e886c2164b2fc2d6fbccd6db9454b697f9541a67"
+  },
+  "pin_limits": "Root hashed binaries and available upstream source metadata, did NOT execute Lean/git or attest all upstream olean origins. Worker verifies runtime version/pin metadata before compilation; accepted pinned upstream oleans trusted. Never overwrite PINS.json; record discovered verification limits separately."
+}
+

@@ -1,0 +1,13 @@
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Nat.Log
+#check @Nat.pow_log2_le
+#check @Nat.log2_le_iff
+#check @Nat.lt_pow_iff_log2_lt
+#check @Real.log_le_log
+#check @Real.log_pow
+#check @Real.log_two_pos
+#check @Real.log_pos
+#check @Real.sq_sqrt
+#check @Real.sqrt_pos
+#check @pow_le_pow_left
+#check @Finsupp.sum_update_add

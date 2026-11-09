@@ -1,0 +1,11 @@
+# Retained limitations and failures
+
+- https://www2.math.ucla.edu/~tim/216b.1.12s/Bradley.pdf : network unreachable after bounded timeout. No retry. Separate primary arXiv copy obtained.
+- https://www.i-journals.org/ps/papers/volume2/4-Bradley.pdf : HTTP404; no loop or retry. Receipt retained.
+- Initial inspection helper decoded Miller's author publication list as UTF-8 and exited1: UnicodeDecodeError, byte0x96 at position117055. Source bytes and hash were preserved; explicit cp1252 decoding succeeded in a later guarded local read. PDF extractions earlier in that invocation succeeded. Original guard reported peak36585472 bytes, wall0.320672s, exit1. No resource increase.
+- Initial freeze copied more historical files than necessary. Before scientific reading, excess copies were removed and converted to immutable hash-bound references. Final lane contains only three assigned review-input copies; no historical evidence tree duplication remains. This procedural correction does not change scientific bytes.
+- Initial bounded terminal output for administrative data and source passages was truncated. Structured snapshot reads and targeted bounded passage reads followed. No full read of every proof in the later papers is claimed.
+- OpenAlex citation endpoint returned zero but an actual retrieved later body cites the source. Its title filter also omitted relevant plural-title works. Broad stopped-triangular-array search returned unrelated physics/lattice results. Search/index absence is not a prior-art clearance.
+- Ekström institutional MODS export supplies metadata/abstract only, no proof body; not certified as a subsumer or cleared non-subsumer. Distinct randomly stopped-process title hits were not followed to bodies within this bounded review.
+- All inherited GitHub API/raw/codeload/diff/patch, ScienceDirect, Google challenge denials remain parked; not retried. No fresh403/429 was received. The Springer cookie-related redirect delivered real full chapter HTML/PDF and was not bypassed.
+- No current global registry tree/history/import closure, exact public commit chronology, MathSciNet/zbMATH search, or exhaustive citing/stopped-array literature coverage. Current-prior HOLD persists.

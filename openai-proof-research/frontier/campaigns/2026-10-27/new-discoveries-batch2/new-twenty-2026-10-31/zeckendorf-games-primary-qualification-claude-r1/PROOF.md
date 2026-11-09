@@ -1,0 +1,149 @@
+# PROOF.md - independent reconstruction for MathDB 347063
+
+Written by the reviewer BEFORE opening inputs/author-candidate-347063.md or
+inputs/author-formal-plan-347063.md. The mechanism was disclosed in TASK ("exact
+potential"; "a pool sits at an even index, the lower state is one integer rotating
+modulo a Fibonacci number"); the argument below is the reviewer's own. No program,
+enumeration or numerical experiment was used (hand arithmetic only). Credit 0.
+
+## 0. Model (source Definition 1.1 and Section 1.2, read and viewed)
+
+F_1=1, F_2=2, F_{i+1}=F_i+F_{i-1}. A position is a finitely supported a=(a_i)_{i>=1}
+of nonnegative integers with sum a_i F_i = n. The start is a = n e_1 (source: "an
+unordered list of n 1's"). Moves:
+  C_1 : a_1>=2 : a_1 -= 2, a_2 += 1.
+  C_k (k>=2) : a_{k-1},a_k>=1 : both -= 1, a_{k+1} += 1.
+  S_2 : a_2>=2 : a_2 -= 2, a_1 += 1, a_3 += 1.
+  S_k (k>=3) : a_k>=2 : a_k -= 2, a_{k-2} += 1, a_{k+1} += 1.
+Split Smallest (SS): smallest split if any, else C_1 if legal, else smallest C_k (k>=2).
+Combine Smallest (CS): C_1 if legal, else smallest C_k (k>=2), else smallest split.
+imax = imax(n) = largest index with F_i <= n; every chip ever present has index <= imax.
+A position with no legal move has all a_i<=1 and no two adjacent indices, so it is the
+Zeckendorf vector Z(n). Z(n) denotes the index set too. Z(x) for x>=0 likewise.
+
+## 1. A universal exact identity
+
+phi=(1+sqrt5)/2, psi=-1/phi, w_i := i + 2 + (1/phi) psi^i (i>=1). Then i+1 < w_i < i+3,
+w_1 = 3 - 1/phi^2 = phi^2. Let Phi(a)=sum a_i w_i. Direct evaluation (uses psi^2=psi+1,
+psi^3=2psi+1, 1-psi=phi):
+  drop(C_1) = 1;  drop(S_k) = 1 for every k>=2;  drop(C_k) = k for k>=2.
+(C_k: integer part (k+1)+(k+2)-(k+3)=k, psi part psi^{k-1}(1+psi-psi^2)=0.
+ S_k, k>=3: integer part 1, psi part psi^{k-2}(2psi^2-1-psi^3)=0.
+ S_2: integer part 0, psi part (1/phi)(1-psi)=1.  C_1: integer part 2, psi part
+ (1/phi)(psi-1)=-1.)
+Since Phi>0 and every move drops Phi by >=1, every play terminates, in Z(n). Hence for
+EVERY complete play, with W(n)=sum_{i in Z(n)} w_i:
+  (I)  MC_1 + sum_{k>=2} k MC_k + MS = phi^2 n - W(n).
+With source Lemma 3.3 (MC = n - Z(n), term count) this gives
+  (II) length = MC + MS = phi^2 n - W(n) - sum_{k>=2} (k-1) MC_k <= phi^2 n - W(n).
+Also: from any position a, remaining moves <= Phi(a).
+
+Decomposition of w: i (source index-sum monovariant) + 2 (twice the source term count)
++ (1/phi) psi^i (Galois conjugate). The conjugate is the only new ingredient: it is
+preserved by every move except C_1 and S_2, and gives MC_1 - MS_2 = n/phi^2 + O(1).
+
+## 2. Theorem A: SS(n) = phi^2 n + O(log^2 n)
+
+In SS a move C_k with k>=2 is made only when no split and no C_1 is legal, so all
+a_i<=1 and the position has at most imax chips. The chip count never increases and each
+combine lowers it, so sum_{k>=2} MC_k <= imax, and each such k<=imax. So
+0 <= sum_{k>=2}(k-1) MC_k <= imax^2. Also 0 < W(n) <= sum_{i in Z(n)} (i+3) = O(log^2 n).
+By (II), |SS(n) - phi^2 n| = O(log^2 n).  QED
+
+Note: the three source relations (Lemma 3.2, Lemma 3.3, (3.14) corrected) leave
+SS = 3n - MS_3 + O(log^2 n) with MS_3 undetermined. The conjugate supplies MS_3 =
+n/phi^2 + O(log^2 n). So the source identities do not by themselves imply Theorem A.
+
+## 3. Theorem B: CS(n) = c n + O(sqrt(n) log n),
+##    c = 1/2 + sum_{p even >=2} (1/F_p - 1/(F_p F_{p+2})) = 5/2 - phi + sum_{j>=2} 1/F_{2j}
+
+### 3.1 Insertion lemma (recursion on even q)
+For even q>=2 and 0<=x<F_{q+1} (so Z(x) has max index <=q) define Insert(q,x), the
+relaxation of Z(x)+e_q using moves on indices <= q+1:
+ (i) a_q(x)=0, a_{q-1}(x)=0: no moves; Z(x)+e_q=Z(x+F_q).
+ (ii) a_q(x)=0, a_{q-1}(x)=1: the only adjacent pair is (q-1,q); C_q gives chip at q+1,
+      and Z(x)+e_q-e_{q-1}-e_q+e_{q+1}=Z(x+F_q).
+ (iii) a_q(x)=1 (so a_{q-1}(x)=0): now a_q=2. No combine; S_q gives chip at q+1 and
+      inserts a chip at q-2 (at index 1 if q=2), with x'=x-F_q<F_{q-1}. For q=2, x=2,
+      x'=0 and the result is {1,3}=Z(4). For q>=4 apply Insert(q-2,x') to get
+      Z(x'+F_{q-2}) with max index <=q-1; add chip q+1: this is Z(x+F_q) since
+      a_q=0 and q-1, q+1 are not adjacent, sum x-F_q+F_{q-2}+F_{q+1}=x+F_q.
+All splits are at even indices, a_1<=1 throughout (a_2=1 in Z(x) forces a_1=0), and in
+each position only one move on indices <=q+1 is legal, so priority is irrelevant inside
+this window. Split count I(q,x): 0 in (i),(ii); 1+I(q-2,x-F_q) in (iii), I(0,0)=0.
+A(q):=sum_{0<=x<F_{q+1}} I(q,x) satisfies A(q)=F_{q-1}+A(q-2), A(0)=0 (the x with
+a_q(x)=1 are x'+F_q, x' in [0,F_{q-1}) bijectively), so A(q)=F_{q-1}+F_{q-3}+...+F_1
+= F_q-1.
+
+### 3.2 Pool state and one step
+For even p>=2, B_p(r,m,h) := Z(r)+m e_p+h e_{p+2} with 0<=r<F_{p-1} (r=0 if p=2). Then
+a_{p-1}=a_{p+1}=0, nothing above p+2, no adjacent pair among the low chips or between
+them and p. If m>=2 the CS move is S_p.
+Case p>=4. After S_p: a_p=m-2, a_{p+1}=1, and chip inserted at p-2, i.e. Insert(p-2,r),
+r<F_{p-1}. Call the step ABS if r>=F_{p-3} (equivalently a_{p-2}(r)=1 or a_{p-3}(r)=1).
+Non-ABS: r<F_{p-3}, no low moves, result Z(r+F_{p-2}).
+ABS: the FIRST low move (S_{p-2} or C_{p-2}) creates one chip at p-1; the remaining low
+window (indices <=p-3) relaxes to Z(r') with r'=r+F_{p-2}-F_{p-1}=r-F_{p-3}<F_{p-2}.
+Low moves on indices <=p-2 and high moves C_p, C_{p+1}, ... on indices >=p-1 commute;
+priority only chooses the interleaving (a combine beats a split, a smaller combine beats
+a larger one, smaller splits beat S_p). While a_p>=1 the chip(s) at p+1 are taken by
+C_{p+1} before C_{p+2}; the p-1 chip is taken by C_p first.
+So for m>=5:
+  Non-ABS: B_p(r,m,M) -> B_p(r+F_{p-2}, m-3, M+1), moves S_p, C_{p+1}.
+  ABS: B_p(r,m,M) -> B_p(r-F_{p-3}, m-5, M+2), moves S_p, C_p, 2 C_{p+1} and l(r) low
+  moves (I(p-2,r) splits plus low combines).
+Case p=2. r=0. S_2 gives a_1=1,a_3=1; then C_2, C_3, C_3: B_2(0,m,M)->B_2(0,m-5,M+2),
+4 moves, 1 split (this is the ABS pattern with F_{p-1}=F_1=1).
+
+Rotation: r |-> R(r)=r+F_{p-2} mod F_{p-1}, because r-F_{p-3}=r+F_{p-2}-F_{p-1}, and the
+ABS condition is exactly wraparound. gcd(F_{p-2},F_{p-1})=1, so every r in [0,F_{p-1})
+is visited once per cycle of F_{p-1} steps.
+
+### 3.3 Cycle balance
+A cycle has F_{p-3} non-ABS and F_{p-2} ABS steps (ABS iff r in [F_{p-3},F_{p-1})), so:
+pool chips used 3F_{p-3}+5F_{p-2}=F_{p+2}; chips added to p+2: F_{p-3}+2F_{p-2}=F_p;
+S_p count F_{p-1}; low splits sum_r I(p-2,r)=A(p-2)=F_{p-2}-1; total splits F_p-1.
+Term count gives combines F_{p+2}-F_p=F_{p+1}. Moves per cycle F_{p+2}-1, i.e. exactly
+one move per pool chip except for one chip per cycle. For p=2: 5 chips, 4 moves, 1 split.
+
+### 3.4 Exits (0<=m<=4), assuming M>=4
+ m<=1: state is B_{p+2}(r+mF_p, M, 0) (a_{p-1}=0, r+mF_p<F_{p+1}).
+ Non-ABS m=2: a_p=0,a_{p+1}=1; C_{p+2},C_{p+3}: B_{p+2}(r+F_{p-2},M-2,1).
+ Non-ABS m=3: C_{p+1}: B_p(r+F_{p-2},0,M+1), then m<=1 rule.
+ Non-ABS m=4: C_{p+1}: B_p(r+F_{p-2},1,M+1), then m<=1 rule.
+ ABS m=2: a_p=0, chips at p-1 and p+1; C_{p+2},C_{p+3}: B_{p+2}(r'+F_{p-1},M-2,1).
+ ABS m=3: C_p; a_{p+1}=2; 2 C_{p+2}, 2 C_{p+3}: B_{p+2}(r',M-4,2).
+ ABS m=4: C_p, C_{p+1}; a_{p+1}=1, M+1; C_{p+2}, C_{p+3}: B_{p+2}(r',M-1,1).
+Each exit gives a B_{p+2} state with h<=2 (validity: r'<F_{p-2} so Z(r')+e_{p-1} is
+Zeckendorf; r'+F_{p-1}<F_{p+1}). For p=2 the ABS list applies with r'=0, r'+F_{p-1}=1.
+Start: n even: B_2(0,n/2,0) after n/2 C_1 moves; n odd (n>=5): after (n-1)/2 C_1, then
+C_2, C_3: B_2(0,(n-5)/2,1).
+
+### 3.5 Assembly
+Level p begins at B_p(r_0,m_0,h_0), h_0<=2. Mass: n=r_0+m_0 F_p+h_0 F_{p+2}, so
+m_0=n/F_p+O(1). Let N_p be moves from B_p to B_{p+2}. Each step has
+moves-chips = -1+l with l>=0; per cycle sum = -1; in a partial cycle the sum lies in
+[-F_{p-1},F_{p-1}]. With chips_run=m_0-O(1) and cycles=chips_run/F_{p+2}-theta,
+theta in [0,1):  N_p = m_0 (1-1/F_{p+2}) + O(F_p).
+Let P be the largest even number with F_{P+2}<=sqrt n (n large), so n/F_{p+2}>=sqrt n
+for p<=P and the hypothesis M>=4 holds at every exit up to level P. After level P the
+state B_{P+2}(r,m,h) has m=O(sqrt n), and Phi(state)=O(sqrt n log n) by weights i+3, so
+the remaining moves lie in [0,O(sqrt n log n)]. Therefore
+ CS(n) = n/2 + sum_{even p<=P} (n/F_p+O(1))(1-1/F_{p+2}) + O(F_P) + O(sqrt n log n)
+       = n [1/2 + sum_{even p>=2} (1/F_p - 1/(F_p F_{p+2}))] + O(sqrt n log n).
+Value of c: F_{p+1}F_p-F_{p-1}F_{p+2}=1 for even p (Cassini-type), hence
+1/(F_pF_{p+2}) = F_{p+1}/F_{p+2}-F_{p-1}/F_p, sum over even p>=2 telescopes to
+1/phi-1/2. With sum_{even p>=2}1/F_p = 1/2+sum_{j>=2}1/F_{2j}:
+  c = 1/2 + 1/2 + sum_{j>=2} 1/F_{2j} - 1/phi + 1/2 = 5/2 - phi + sum_{j>=2} 1/F_{2j}.
+Hand evaluation: sum_{j>=2}1/F_{2j} = 0.32451516 (F_4=5,13,34,89,233,...), so
+c = 1.2064812 to the displayed digits; this rounds to 1.206. QED
+
+## 4. Linear potential check
+Unit drop on all combines in use forces w_k = alpha F_k + 1 (from w_2=2w_1-1,
+w_{k+1}=w_k+w_{k-1}-1); such w gives split drop 0, not 1. So no linear functional drops
+by 1 on every combine and split used by CS. Hence CS cannot be a pure potential count.
+The level dynamics are needed. Same computation with combine drop 0: w proportional to F.
+
+## 5. Limits of this document
+Only the mathematics above. Source-to-record, prior art, significance, family and formal
+gates are in REVIEW.md. The chain above has not been checked by machine.

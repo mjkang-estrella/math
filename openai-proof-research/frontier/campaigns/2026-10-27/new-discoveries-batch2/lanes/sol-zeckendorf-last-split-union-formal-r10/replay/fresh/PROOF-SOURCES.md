@@ -1,0 +1,5 @@
+All scientific campaign inputs were copied and hashed before reading; bindings.json gives flat original/copy/SHA256 bindings for r9 modules, harness, receipts and root r10 disposition. Inherited modules are byte-identical. Administrative snapshots are historical context, not live scientific inputs. Scientific originals and copies are checked before and after verification.
+
+The local game semantics are inherited LiteralGame: C1 and Ck are combines, S2 and Sk are splits, IsSplit means combine=0. The actual law is the inherited finite normalized P over completeDomain. The new endpoint depends on r9 actual_fixed_deterministic_blocks and long_combine_suffix_high and inherited complete-word execution and length theorems. Original r284 need not be reopened for these inherited semantics. Upstream literature attribution remains the frozen r9 PROOF-SOURCES.md; no fresh source or novelty clearance is asserted. Full-source/novelty HOLD.
+
+Compiler SHA and all nine package pins are verified using filesystem reads, without git operations. No HTTP or browser requests were made; prohibited/denied routes were not attempted.

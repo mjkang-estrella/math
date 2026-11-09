@@ -1,0 +1,10 @@
+# Progress and reproducibility
+
+1. Read ancestor/batch instructions; snapshot administrative inputs. Counts confirmed9/39/next40. Freeze17 specified scientific/report inputs before scientific reads, pre/post hash comparison. Later freeze10 named cached registry proof modules before their body reads; no recursive history trees.
+2. Read primary definitions/law, Section4 partition/abundance proof bodies, Section5 conditional Gaussian proof scope and Section6.5 exact target. Read the frozen root route and r279 reports. Registry semantic modules were read before the sustained final proof construction; an earlier mechanistic sketch had already been considered, so this was not a fully pre-idea prior-art screen.
+3. Recheck strict root identity including T=m and C_1 convention. Derive anti-concentration plus high-token suffix hazard. Replace reliance on source full partition with a direct single-type cube proof; thereby avoid the source after/before index ambiguity and unnecessary independence claim for raw success triples.
+4. Capped exact mechanism diagnostics and rational-law partition checks PASS. Initial checker namespace failure preserved, corrected under unchanged limits. All checks run solo through mandated guard; no cap raises.
+5. Live primary arXiv history and current public registry ordinary HTML read with hashes. Current exact problem body read at observed immutable head; no exact new proof resolution in that body. No forbidden route, challenge bypass, git or browser.
+6. Write full ordinary proof and handback. Run final verification separately after all writes. Acceptance, Lean, manuscript, full novelty clearance and counting are outside this lane.
+
+Reproduce with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python ../sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python diagnostics.py (from this lane), likewise diamond_check.py, single_type_check.py and verify.py. Fixed AS/groupRSS512MiB CPU210 wall230; helper samples group RSS, not every transient. See diagnostics.json, diamond-check.json and single-type-diamond-check.json. No histogram expansion was used.

@@ -1,0 +1,9 @@
+import Observables
+import Mathlib.MeasureTheory.MeasurableSpace.Basic
+#check Finset.sum_attach
+#check MeasurableSpace.measurableSet_empty
+#check MeasurableSpace.measurableSet_iUnion
+#check MeasurableSet.mono
+#check MeasurableSpace.le_iSup
+#check MeasurableSpace.measurableSet_comap
+#check MeasurableSpace.comap_le_iff_le_map

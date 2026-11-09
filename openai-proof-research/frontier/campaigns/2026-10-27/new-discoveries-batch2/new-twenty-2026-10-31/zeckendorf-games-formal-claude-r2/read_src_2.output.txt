@@ -1,0 +1,1063 @@
+/-
+  The two deterministic strategies of Section 1.2 of
+  Li--Li--Miller--Mizgerd--Sun--Xia--Zhou, "Deterministic Zeckendorf Games".
+
+  Split Smallest: splits from smallest to largest, then adding 1's, then
+  combining consecutive indices from smallest to largest.
+  Combine Smallest: adding 1's, then combining consecutive indices from smallest
+  to largest, then splitting from smallest to largest.
+-/
+import ZeckBase
+
+open Classical
+
+namespace Zeck
+
+/-- The smallest split index `i ≥ 2` with `a i ≥ 2`, if one exists. -/
+noncomputable def smallestSplit (a : Pos) : Option ℕ :=
+  if h : ∃ i, legalSplit a i then some (Nat.find h) else none
+
+/-- The smallest combine index `i ≥ 2` with `a (i-1) ≥ 1` and `a i ≥ 1`. -/
+noncomputable def smallestCons (a : Pos) : Option ℕ :=
+  if h : ∃ i, legalCons a i then some (Nat.find h) else none
+
+lemma smallestSplit_none_iff (a : Pos) :
+    smallestSplit a = none ↔ ¬ ∃ i, legalSplit a i := by
+  unfold smallestSplit
+  by_cases h : ∃ i, legalSplit a i
+  · simp [h]
+  · simp [h]
+
+lemma smallestCons_none_iff (a : Pos) :
+    smallestCons a = none ↔ ¬ ∃ i, legalCons a i := by
+  unfold smallestCons
+  by_cases h : ∃ i, legalCons a i
+  · simp [h]
+  · simp [h]
+
+lemma smallestSplit_exists (a : Pos) {i : ℕ} (h : smallestSplit a = some i) :
+    ∃ j, legalSplit a j := by
+  by_contra hc
+  unfold smallestSplit at h
+  simp [hc] at h
+
+lemma smallestCons_exists (a : Pos) {i : ℕ} (h : smallestCons a = some i) :
+    ∃ j, legalCons a j := by
+  by_contra hc
+  unfold smallestCons at h
+  simp [hc] at h
+
+lemma smallestSplit_some_spec (a : Pos) {i : ℕ} (h : smallestSplit a = some i) :
+    legalSplit a i ∧ ∀ j < i, ¬ legalSplit a j := by
+  have hex := smallestSplit_exists a h
+  have hfi : Nat.find hex = i := by
+    unfold smallestSplit at h
+    simp only [hex] at h
+    simpa using h
+  subst hfi
+  exact ⟨Nat.find_spec hex, fun j hj => Nat.find_min hex hj⟩
+
+lemma smallestCons_some_spec (a : Pos) {i : ℕ} (h : smallestCons a = some i) :
+    legalCons a i ∧ ∀ j < i, ¬ legalCons a j := by
+  have hex := smallestCons_exists a h
+  have hfi : Nat.find hex = i := by
+    unfold smallestCons at h
+    simp only [hex] at h
+    simpa using h
+  subst hfi
+  exact ⟨Nat.find_spec hex, fun j hj => Nat.find_min hex hj⟩
+
+lemma smallestSplit_eq_some_of (a : Pos) (i : ℕ) (h : legalSplit a i)
+    (hmin : ∀ j < i, ¬ legalSplit a j) : smallestSplit a = some i := by
+  have hex : ∃ j, legalSplit a j := ⟨i, h⟩
+  have hle : Nat.find hex ≤ i := Nat.find_min' hex h
+  have hge : ¬ Nat.find hex < i := by
+    intro hlt
+    exact hmin (Nat.find hex) hlt (Nat.find_spec hex)
+  have hfi : Nat.find hex = i := by omega
+  rw [← hfi]
+  unfold smallestSplit
+  simp only [hex]
+  simp
+
+lemma smallestCons_eq_some_of (a : Pos) (i : ℕ) (h : legalCons a i)
+    (hmin : ∀ j < i, ¬ legalCons a j) : smallestCons a = some i := by
+  have hex : ∃ j, legalCons a j := ⟨i, h⟩
+  have hle : Nat.find hex ≤ i := Nat.find_min' hex h
+  have hge : ¬ Nat.find hex < i := by
+    intro hlt
+    exact hmin (Nat.find hex) hlt (Nat.find_spec hex)
+  have hfi : Nat.find hex = i := by omega
+  rw [← hfi]
+  unfold smallestCons
+  simp only [hex]
+  simp
+
+/-- Split Smallest: smallest split, then `A1`, then smallest combine. -/
+noncomputable def stepSS (a : Pos) : Pos :=
+  match smallestSplit a with
+  | some i => doSplit a i
+  | none =>
+    if legalA1 a then doA1 a
+    else match smallestCons a with
+         | some i => doCons a i
+         | none => a
+
+/-- Combine Smallest: `A1`, then smallest combine, then smallest split. -/
+noncomputable def stepCS (a : Pos) : Pos :=
+  if legalA1 a then doA1 a
+  else match smallestCons a with
+       | some i => doCons a i
+       | none => match smallestSplit a with
+                 | some i => doSplit a i
+                 | none => a
+
+lemma stepSS_stuck (a : Pos) (h : ¬ hasMove a) : stepSS a = a := by
+  have h1 : smallestSplit a = none :=
+    (smallestSplit_none_iff a).2 (fun ⟨i, hi⟩ => h (Or.inr (Or.inr ⟨i, hi⟩)))
+  have h2 : ¬ legalA1 a := fun ha => h (Or.inl ha)
+  have h3 : smallestCons a = none :=
+    (smallestCons_none_iff a).2 (fun ⟨i, hi⟩ => h (Or.inr (Or.inl ⟨i, hi⟩)))
+  simp [stepSS, h1, h2, h3]
+
+lemma stepCS_stuck (a : Pos) (h : ¬ hasMove a) : stepCS a = a := by
+  have h1 : smallestSplit a = none :=
+    (smallestSplit_none_iff a).2 (fun ⟨i, hi⟩ => h (Or.inr (Or.inr ⟨i, hi⟩)))
+  have h2 : ¬ legalA1 a := fun ha => h (Or.inl ha)
+  have h3 : smallestCons a = none :=
+    (smallestCons_none_iff a).2 (fun ⟨i, hi⟩ => h (Or.inr (Or.inl ⟨i, hi⟩)))
+  simp [stepCS, h1, h2, h3]
+
+lemma stepSS_drop (a : Pos) (h : hasMove a) : M (stepSS a) + 1 ≤ M a := by
+  unfold stepSS
+  cases hsp : smallestSplit a with
+  | some i =>
+    dsimp only
+    exact M_doSplit a i (smallestSplit_some_spec a hsp).1
+  | none =>
+    dsimp only
+    split_ifs with ha1
+    · exact M_doA1 a ha1
+    · cases hco : smallestCons a with
+      | some i =>
+        dsimp only
+        exact M_doCons a i (smallestCons_some_spec a hco).1
+      | none =>
+        dsimp only
+        exfalso
+        rcases h with ha | hc | hs
+        · exact ha1 ha
+        · exact (smallestCons_none_iff a).1 hco hc
+        · exact (smallestSplit_none_iff a).1 hsp hs
+
+lemma stepCS_drop (a : Pos) (h : hasMove a) : M (stepCS a) + 1 ≤ M a := by
+  unfold stepCS
+  split_ifs with ha1
+  · exact M_doA1 a ha1
+  · cases hco : smallestCons a with
+    | some i =>
+      dsimp only
+      exact M_doCons a i (smallestCons_some_spec a hco).1
+    | none =>
+      dsimp only
+      cases hsp : smallestSplit a with
+      | some i =>
+        dsimp only
+        exact M_doSplit a i (smallestSplit_some_spec a hsp).1
+      | none =>
+        dsimp only
+        exfalso
+        rcases h with ha | hc | hs
+        · exact ha1 ha
+        · exact (smallestCons_none_iff a).1 hco hc
+        · exact (smallestSplit_none_iff a).1 hsp hs
+
+lemma stepSS_val (a : Pos) : val (stepSS a) = val a := by
+  unfold stepSS
+  cases hsp : smallestSplit a with
+  | some i =>
+    dsimp only
+    exact val_doSplit a i (smallestSplit_some_spec a hsp).1
+  | none =>
+    dsimp only
+    split_ifs with ha1
+    · exact val_doA1 a ha1
+    · cases hco : smallestCons a with
+      | some i =>
+        dsimp only
+        exact val_doCons a i (smallestCons_some_spec a hco).1
+      | none => dsimp only
+
+lemma stepCS_val (a : Pos) : val (stepCS a) = val a := by
+  unfold stepCS
+  split_ifs with ha1
+  · exact val_doA1 a ha1
+  · cases hco : smallestCons a with
+    | some i =>
+      dsimp only
+      exact val_doCons a i (smallestCons_some_spec a hco).1
+    | none =>
+      dsimp only
+      cases hsp : smallestSplit a with
+      | some i =>
+        dsimp only
+        exact val_doSplit a i (smallestSplit_some_spec a hsp).1
+      | none => dsimp only
+
+lemma stepSS_chips_le (a : Pos) : chips (stepSS a) ≤ chips a := by
+  unfold stepSS
+  cases hsp : smallestSplit a with
+  | some i =>
+    dsimp only
+    exact le_of_eq (chips_doSplit a i (smallestSplit_some_spec a hsp).1)
+  | none =>
+    dsimp only
+    split_ifs with ha1
+    · have := chips_doA1 a ha1; omega
+    · cases hco : smallestCons a with
+      | some i =>
+        dsimp only
+        have := chips_doCons a i (smallestCons_some_spec a hco).1; omega
+      | none => dsimp only; exact le_rfl
+
+lemma stepCS_chips_le (a : Pos) : chips (stepCS a) ≤ chips a := by
+  unfold stepCS
+  split_ifs with ha1
+  · have := chips_doA1 a ha1; omega
+  · cases hco : smallestCons a with
+    | some i =>
+      dsimp only
+      have := chips_doCons a i (smallestCons_some_spec a hco).1; omega
+    | none =>
+      dsimp only
+      cases hsp : smallestSplit a with
+      | some i =>
+        dsimp only
+        exact le_of_eq (chips_doSplit a i (smallestSplit_some_spec a hsp).1)
+      | none => dsimp only; exact le_rfl
+
+/-! ### Runs and the exact number of moves -/
+
+noncomputable def run (step : Pos → Pos) (a : Pos) : ℕ → Pos
+  | 0 => a
+  | k + 1 => step (run step a k)
+
+lemma run_succ (step : Pos → Pos) (a : Pos) (k : ℕ) :
+    run step a (k + 1) = step (run step a k) := rfl
+
+lemma M_run_add (step : Pos → Pos) (hstep : ∀ a, hasMove a → M (step a) + 1 ≤ M a)
+    (a : Pos) : ∀ k, (∀ j < k, hasMove (run step a j)) → M (run step a k) + k ≤ M a := by
+  intro k
+  induction k with
+  | zero => intro _; simp [run]
+  | succ k ih =>
+    intro h
+    have hk : ∀ j < k, hasMove (run step a j) := fun j hj => h j (by omega)
+    have ih' := ih hk
+    have hm : hasMove (run step a k) := h k (by omega)
+    have hd := hstep (run step a k) hm
+    rw [run_succ]
+    omega
+
+lemma exists_terminal (step : Pos → Pos) (hstep : ∀ a, hasMove a → M (step a) + 1 ≤ M a)
+    (a : Pos) : ∃ k, ¬ hasMove (run step a k) := by
+  by_contra hcon
+  have hall : ∀ k, hasMove (run step a k) := by
+    intro k
+    by_contra hk
+    exact hcon ⟨k, hk⟩
+  have h := M_run_add step hstep a (M a + 1) (fun j _ => hall j)
+  omega
+
+/-- The exact number of moves of a deterministic play. -/
+noncomputable def gameLen (step : Pos → Pos)
+    (hstep : ∀ a, hasMove a → M (step a) + 1 ≤ M a) (a : Pos) : ℕ :=
+  Nat.find (exists_terminal step hstep a)
+
+lemma gameLen_spec (step : Pos → Pos) (hstep : ∀ a, hasMove a → M (step a) + 1 ≤ M a) (a : Pos) :
+    ¬ hasMove (run step a (gameLen step hstep a)) :=
+  Nat.find_spec (exists_terminal step hstep a)
+
+lemma gameLen_min (step : Pos → Pos) (hstep : ∀ a, hasMove a → M (step a) + 1 ≤ M a) (a : Pos) :
+    ∀ j < gameLen step hstep a, hasMove (run step a j) := by
+  intro j hj
+  by_contra hc
+  exact Nat.find_min (exists_terminal step hstep a) hj hc
+
+lemma gameLen_eq_of (step : Pos → Pos) (hstep : ∀ a, hasMove a → M (step a) + 1 ≤ M a)
+    (a : Pos) (k : ℕ) (hterm : ¬ hasMove (run step a k))
+    (hmoves : ∀ j < k, hasMove (run step a j)) : gameLen step hstep a = k := by
+  have hspec := gameLen_spec step hstep a
+  have hmin := gameLen_min step hstep a
+  have hle : gameLen step hstep a ≤ k := by
+    by_contra hc
+    exact hterm (hmin k (by omega))
+  have hge : k ≤ gameLen step hstep a := by
+    by_contra hc
+    exact hspec (hmoves _ (by omega))
+  omega
+
+lemma gameLen_le_M (step : Pos → Pos) (hstep : ∀ a, hasMove a → M (step a) + 1 ≤ M a)
+    (a : Pos) : gameLen step hstep a ≤ M a := by
+  have h := M_run_add step hstep a (gameLen step hstep a) (gameLen_min step hstep a)
+  omega
+
+/-- The start: `n` copies of `F 1`. -/
+noncomputable def start (n : ℕ) : Pos := Finsupp.single 1 n
+
+lemma val_start (n : ℕ) : val (start n) = n := by
+  simp [start, val]
+
+lemma chips_start (n : ℕ) : chips (start n) = n := by
+  simp [start, chips]
+
+lemma start_zero (n : ℕ) : (start n) 0 = 0 := by
+  simp [start]
+
+/-- The actual number of moves of the Split Smallest game from `n` ones. -/
+noncomputable def SS (n : ℕ) : ℕ := gameLen stepSS stepSS_drop (start n)
+
+/-- The actual number of moves of the Combine Smallest game from `n` ones. -/
+noncomputable def CS (n : ℕ) : ℕ := gameLen stepCS stepCS_drop (start n)
+
+lemma runSS_val (n : ℕ) (k : ℕ) : val (run stepSS (start n) k) = n := by
+  induction k with
+  | zero => simpa [run] using val_start n
+  | succ k ih => rw [run_succ, stepSS_val]; exact ih
+
+lemma runCS_val (n : ℕ) (k : ℕ) : val (run stepCS (start n) k) = n := by
+  induction k with
+  | zero => simpa [run] using val_start n
+  | succ k ih => rw [run_succ, stepCS_val]; exact ih
+
+lemma runSS_chips_le (n : ℕ) (k : ℕ) : chips (run stepSS (start n) k) ≤ n := by
+  induction k with
+  | zero => simpa [run] using le_of_eq (chips_start n)
+  | succ k ih => rw [run_succ]; exact le_trans (stepSS_chips_le _) ih
+
+lemma runCS_chips_le (n : ℕ) (k : ℕ) : chips (run stepCS (start n) k) ≤ n := by
+  induction k with
+  | zero => simpa [run] using le_of_eq (chips_start n)
+  | succ k ih => rw [run_succ]; exact le_trans (stepCS_chips_le _) ih
+
+lemma runSS_idx (n : ℕ) (k : ℕ) (i : ℕ) (hi : 1 ≤ (run stepSS (start n) k) i) :
+    i ≤ 2 * Nat.log2 n + 1 :=
+  idx_bound _ n (runSS_val n k) i hi
+
+lemma runCS_idx (n : ℕ) (k : ℕ) (i : ℕ) (hi : 1 ≤ (run stepCS (start n) k) i) :
+    i ≤ 2 * Nat.log2 n + 1 :=
+  idx_bound _ n (runCS_val n k) i hi
+
+/-- When Split Smallest combines, every chip count is at most one. -/
+lemma stepSS_cons_le_one (a : Pos) (hsp : smallestSplit a = none) (ha1 : ¬ legalA1 a) :
+    ∀ j, 1 ≤ j → a j ≤ 1 := by
+  intro j hj
+  rcases eq_or_lt_of_le hj with h1 | h2
+  · have hj1 : j = 1 := by omega
+    subst hj1
+    have h : ¬ (2 ≤ a 1) := ha1
+    omega
+  · by_contra hc
+    have hge : 2 ≤ a j := by omega
+    exact (smallestSplit_none_iff a).1 hsp ⟨j, by omega, hge⟩
+
+lemma doA1_zero (a : Pos) : doA1 a 0 = a 0 := by
+  have h1 : 0 ≠ 1 := by omega
+  have h2 : 0 ≠ 2 := by omega
+  simp [doA1, Finsupp.update_apply, h1, h2]
+
+lemma doCons_zero (a : Pos) (i : ℕ) (hi : 2 ≤ i) : doCons a i 0 = a 0 := by
+  have h1 : 0 ≠ i - 1 := by omega
+  have h2 : 0 ≠ i := by omega
+  simp [doCons, Finsupp.update_apply, h1, h2]
+
+lemma doSplit2_zero (a : Pos) : doSplit2 a 0 = a 0 := by
+  have h1 : 0 ≠ 2 := by omega
+  have h2 : 0 ≠ 1 := by omega
+  have h3 : 0 ≠ 3 := by omega
+  simp [doSplit2, Finsupp.update_apply, h1, h2, h3]
+
+lemma doSplitG_zero (a : Pos) (i : ℕ) (hi : 3 ≤ i) : doSplitG a i 0 = a 0 := by
+  have h1 : 0 ≠ i := by omega
+  have h2 : 0 ≠ i - 2 := by omega
+  simp [doSplitG, Finsupp.update_apply, h1, h2]
+
+lemma doSplit_zero (a : Pos) (i : ℕ) (hi : 2 ≤ i) : doSplit a i 0 = a 0 := by
+  unfold doSplit
+  split_ifs
+  · exact doA1_zero a
+  · exact doSplit2_zero a
+  · exact doSplitG_zero a i (by omega)
+
+lemma stepSS_zero (a : Pos) (h0 : a 0 = 0) : stepSS a 0 = 0 := by
+  unfold stepSS
+  cases hsp : smallestSplit a with
+  | some i =>
+    dsimp only
+    rw [doSplit_zero a i (smallestSplit_some_spec a hsp).1.1]
+    exact h0
+  | none =>
+    dsimp only
+    split_ifs with ha1
+    · rw [doA1_zero]; exact h0
+    · cases hco : smallestCons a with
+      | some i =>
+        dsimp only
+        rw [doCons_zero a i (smallestCons_some_spec a hco).1.1]
+        exact h0
+      | none => dsimp only; exact h0
+
+lemma stepCS_zero (a : Pos) (h0 : a 0 = 0) : stepCS a 0 = 0 := by
+  unfold stepCS
+  split_ifs with ha1
+  · rw [doA1_zero]; exact h0
+  · cases hco : smallestCons a with
+    | some i =>
+      dsimp only
+      rw [doCons_zero a i (smallestCons_some_spec a hco).1.1]
+      exact h0
+    | none =>
+      dsimp only
+      cases hsp : smallestSplit a with
+      | some i =>
+        dsimp only
+        rw [doSplit_zero a i (smallestSplit_some_spec a hsp).1.1]
+        exact h0
+      | none => dsimp only; exact h0
+
+lemma runSS_zero (n : ℕ) (k : ℕ) : (run stepSS (start n) k) 0 = 0 := by
+  induction k with
+  | zero => simpa [run] using start_zero n
+  | succ k ih => rw [run_succ]; exact stepSS_zero _ ih
+
+lemma runCS_zero (n : ℕ) (k : ℕ) : (run stepCS (start n) k) 0 = 0 := by
+  induction k with
+  | zero => simpa [run] using start_zero n
+  | succ k ih => rw [run_succ]; exact stepCS_zero _ ih
+
+/-- A position all of whose positive-index counts are at most one has at most
+`2 log₂ n + 2` chips when its value is `n` and no chip sits at index `0`. -/
+lemma chips_le_of_all_one (a : Pos) (n : ℕ) (hv : val a = n) (h0 : a 0 = 0)
+    (h : ∀ j, 1 ≤ j → a j ≤ 1) : chips a ≤ 2 * Nat.log2 n + 2 := by
+  have hsub : a.support ⊆ Finset.range (2 * Nat.log2 n + 2) := by
+    intro j hj
+    rw [Finsupp.mem_support_iff] at hj
+    rw [Finset.mem_range]
+    rcases Nat.eq_zero_or_pos j with rfl | hpos
+    · simp [h0] at hj
+    · have := idx_bound a n hv j (by omega)
+      omega
+  have hterm : ∀ j ∈ a.support, a j ≤ 1 := by
+    intro j hj
+    rw [Finsupp.mem_support_iff] at hj
+    rcases Nat.eq_zero_or_pos j with rfl | hpos
+    · simp [h0] at hj
+    · exact h j hpos
+  have hsum : chips a = Finset.sum a.support (fun j => a j) := by
+    simp [chips, Finsupp.sum]
+  have h1 : Finset.sum a.support (fun j => a j) ≤ Finset.sum a.support (fun _ => 1) :=
+    Finset.sum_le_sum hterm
+  have h2 : Finset.sum a.support (fun _ => (1 : ℕ)) = a.support.card := by simp
+  have h3 : a.support.card ≤ (Finset.range (2 * Nat.log2 n + 2)).card :=
+    Finset.card_le_card hsub
+  have h4 : (Finset.range (2 * Nat.log2 n + 2)).card = 2 * Nat.log2 n + 2 :=
+    Finset.card_range _
+  omega
+
+end Zeck
+
+=====POT
+/-
+  Part (a) of MathDB 347063: the exact potential.
+
+  With phi = (1 + sqrt 5)/2 and psi = 1/phi = phi - 1, the reviewer's weight is
+  w i = i + 2 + psi * (-psi)^i, and -psi = 1 - phi.  Every A1 and every split
+  lowers Phi = sum a_i w_i by exactly 1, every Cons i lowers it by exactly i.
+-/
+import ZeckControls
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+
+open Classical
+
+namespace Zeck
+
+noncomputable def phi : ℝ := (1 + Real.sqrt 5) / 2
+
+noncomputable def psi : ℝ := phi - 1
+
+noncomputable def s : ℝ := 1 - phi
+
+noncomputable def w (i : ℕ) : ℝ := (i : ℝ) + 2 + psi * s ^ i
+
+lemma phi_sq : phi ^ 2 = phi + 1 := by
+  unfold phi
+  have h5 : Real.sqrt 5 ^ 2 = 5 := Real.sq_sqrt (by norm_num)
+  have h0 : 0 ≤ Real.sqrt 5 := Real.sqrt_nonneg 5
+  nlinarith
+
+lemma phi_pos : 0 < phi := by
+  unfold phi
+  have h0 : 0 ≤ Real.sqrt 5 := Real.sqrt_nonneg 5
+  nlinarith
+
+lemma psi_def : psi = phi - 1 := rfl
+
+lemma s_def : s = 1 - phi := rfl
+
+lemma s_sq : s ^ 2 = s + 1 := by
+  unfold s
+  have := phi_sq
+  nlinarith
+
+lemma s_cb : s ^ 3 = 2 * s + 1 := by
+  have h := s_sq
+  nlinarith
+
+lemma psi_phi : psi * phi = 1 := by
+  unfold psi
+  have := phi_sq
+  nlinarith
+
+lemma psi_one_sub_s : psi * (1 - s) = 1 := by
+  unfold psi s
+  have := phi_sq
+  nlinarith
+
+lemma psi_s_eq : psi * s = psi - 1 := by
+  have h := psi_one_sub_s
+  nlinarith
+
+lemma psi_s2_eq : psi * s ^ 2 = 2 * psi - 1 := by
+  have h := psi_s_eq
+  have h2 := s_sq
+  calc psi * s ^ 2 = psi * (s + 1) := by rw [h2]
+    _ = psi * s + psi := by ring
+    _ = (psi - 1) + psi := by rw [h]
+    _ = 2 * psi - 1 := by ring
+
+lemma psi_s3_eq : psi * s ^ 3 = 3 * psi - 2 := by
+  have h := psi_s_eq
+  have h2 := s_cb
+  calc psi * s ^ 3 = psi * (2 * s + 1) := by rw [h2]
+    _ = 2 * (psi * s) + psi := by ring
+    _ = 2 * (psi - 1) + psi := by rw [h]
+    _ = 3 * psi - 2 := by ring
+
+lemma w_one : w 1 = phi ^ 2 := by
+  unfold w
+  simp only [pow_one]
+  rw [psi_s_eq]
+  norm_num
+  nlinarith [psi_def, phi_sq]
+
+lemma w_two : w 2 = phi ^ 2 + phi := by
+  unfold w
+  rw [psi_s2_eq]
+  norm_num
+  nlinarith [psi_def, phi_sq]
+
+/-- `A1` lowers the potential by exactly one. -/
+lemma w_drop_A1 : 2 * w 1 - w 2 = 1 := by
+  unfold w
+  simp only [pow_one]
+  rw [psi_s_eq, psi_s2_eq]
+  norm_num
+  nlinarith [psi_def, phi_sq]
+
+/-- `Cons i` lowers the potential by exactly `i`. -/
+lemma w_drop_cons (i : ℕ) (hi : 2 ≤ i) : w (i - 1) + w i - w (i + 1) = (i : ℝ) := by
+  have h1 : ((i - 1 : ℕ) : ℝ) = (i : ℝ) - 1 := by
+    rw [Nat.cast_sub (show (1 : ℕ) ≤ i by omega)]
+    norm_num
+  have h2 : ((i + 1 : ℕ) : ℝ) = (i : ℝ) + 1 := by push_cast; ring
+  have hp1 : s ^ (i - 1) * s = s ^ i := by
+    rw [← pow_succ]
+    congr 1
+    omega
+  have hp2 : s ^ (i - 1) * s ^ 2 = s ^ (i + 1) := by
+    rw [← pow_add]
+    congr 1
+    omega
+  have hz : 1 + s - s ^ 2 = 0 := by
+    have := s_sq
+    nlinarith
+  have hpsi : psi * s ^ (i - 1) + psi * s ^ i - psi * s ^ (i + 1) = 0 := by
+    have e : psi * s ^ (i - 1) + psi * s ^ i - psi * s ^ (i + 1)
+        = psi * (s ^ (i - 1) * (1 + s - s ^ 2)) := by
+      rw [mul_sub, mul_add, mul_one, ← hp1, ← hp2]
+      ring
+    rw [e, hz]
+    simp
+  unfold w
+  rw [h1, h2]
+  linarith [hpsi]
+
+/-- `Split 2` lowers the potential by exactly one. -/
+lemma w_drop_split2 : 2 * w 2 - w 1 - w 3 = 1 := by
+  unfold w
+  simp only [pow_one]
+  rw [psi_s_eq, psi_s2_eq, psi_s3_eq]
+  norm_num
+  nlinarith [psi_def, phi_sq]
+
+/-- `Split i` for `i ≥ 3` lowers the potential by exactly one. -/
+lemma w_drop_splitG (i : ℕ) (hi : 3 ≤ i) : 2 * w i - w (i - 2) - w (i + 1) = 1 := by
+  have h1 : ((i - 2 : ℕ) : ℝ) = (i : ℝ) - 2 := by
+    rw [Nat.cast_sub (by omega)]
+    norm_num
+  have h2 : ((i + 1 : ℕ) : ℝ) = (i : ℝ) + 1 := by push_cast; ring
+  have hp1 : s ^ (i - 2) * s ^ 2 = s ^ i := by
+    rw [← pow_add]
+    congr 1
+    omega
+  have hp2 : s ^ (i - 2) * s ^ 3 = s ^ (i + 1) := by
+    rw [← pow_add]
+    congr 1
+    omega
+  have hz : 2 * s ^ 2 - 1 - s ^ 3 = 0 := by
+    have h1 := s_sq
+    have h2 := s_cb
+    nlinarith
+  have hpsi : 2 * (psi * s ^ i) - psi * s ^ (i - 2) - psi * s ^ (i + 1) = 0 := by
+    have e1 : psi * s ^ i = psi * s ^ (i - 2) * s ^ 2 := by
+      rw [← hp1]; ring
+    have e2 : psi * s ^ (i + 1) = psi * s ^ (i - 2) * s ^ 3 := by
+      rw [← hp2]; ring
+    rw [e1, e2]
+    have e3 : 2 * (psi * s ^ (i - 2) * s ^ 2) - psi * s ^ (i - 2) - psi * s ^ (i - 2) * s ^ 3
+        = psi * s ^ (i - 2) * (2 * s ^ 2 - 1 - s ^ 3) := by ring
+    rw [e3, hz]
+    ring
+  unfold w
+  rw [h1, h2]
+  linarith [hpsi]
+
+/-! ### The potential -/
+
+/-- The exact potential `Phi a = sum_i a_i * w i`. -/
+noncomputable def Phi (a : Pos) : ℝ := a.sum (fun i c => (c : ℝ) * w i)
+
+lemma sum_update_Phi (a : Pos) (i v : ℕ) :
+    Phi (a.update i v) + (a i : ℝ) * w i = Phi a + (v : ℝ) * w i := by
+  unfold Phi
+  exact Finsupp.sum_update_add a i v (fun j c => (c : ℝ) * w j) (by intro j; simp)
+    (by intro j x y; push_cast; ring)
+
+lemma Phi_start (n : ℕ) : Phi (start n) = (n : ℝ) * phi ^ 2 := by
+  have h : Phi (start n) = (n : ℝ) * w 1 := by simp [Phi, start]
+  rw [h, w_one]
+
+lemma Phi_doA1 (a : Pos) (h : legalA1 a) : Phi (doA1 a) = Phi a - 1 := by
+  have ha : 2 ≤ a 1 := h
+  have e1 := sum_update_Phi a 1 (a 1 - 2)
+  have e2 := sum_update_Phi (a.update 1 (a 1 - 2)) 2 (a 2 + 1)
+  have h1 : (a.update 1 (a 1 - 2)) 2 = a 2 := by
+    have hne : (2 : ℕ) ≠ 1 := by norm_num
+    simp [Finsupp.update_apply, hne]
+  rw [h1] at e2
+  have hc : ((a 1 - 2 : ℕ) : ℝ) = (a 1 : ℝ) - 2 := by
+    rw [Nat.cast_sub ha]; norm_num
+  have hc2 : ((a 2 + 1 : ℕ) : ℝ) = (a 2 : ℝ) + 1 := by push_cast; ring
+  rw [hc] at e1
+  rw [hc2] at e2
+  unfold doA1
+  linarith [e1, e2, w_drop_A1]
+
+lemma Phi_doCons (a : Pos) (i : ℕ) (h : legalCons a i) : Phi (doCons a i) = Phi a - (i : ℝ) := by
+  obtain ⟨hi2, hi1, hi0⟩ := h
+  have e1 := sum_update_Phi a (i - 1) (a (i - 1) - 1)
+  have e2 := sum_update_Phi (a.update (i - 1) (a (i - 1) - 1)) i (a i - 1)
+  have e3 := sum_update_Phi ((a.update (i - 1) (a (i - 1) - 1)).update i (a i - 1))
+    (i + 1) (a (i + 1) + 1)
+  have h1 : (a.update (i - 1) (a (i - 1) - 1)) i = a i := by
+    have hne : i ≠ i - 1 := by omega
+    simp [Finsupp.update_apply, hne]
+  have h2 : ((a.update (i - 1) (a (i - 1) - 1)).update i (a i - 1)) (i + 1) = a (i + 1) := by
+    rw [Finsupp.update_apply, Finsupp.update_apply]
+    split_ifs with h1 h2
+    · omega
+    · omega
+    · rfl
+  rw [h1] at e2
+  rw [h2] at e3
+  have hc1 : ((a (i - 1) - 1 : ℕ) : ℝ) = (a (i - 1) : ℝ) - 1 := by
+    rw [Nat.cast_sub hi1]; norm_num
+  have hc2 : ((a i - 1 : ℕ) : ℝ) = (a i : ℝ) - 1 := by
+    rw [Nat.cast_sub hi0]; norm_num
+  have hc3 : ((a (i + 1) + 1 : ℕ) : ℝ) = (a (i + 1) : ℝ) + 1 := by push_cast; ring
+  rw [hc1] at e1
+  rw [hc2] at e2
+  rw [hc3] at e3
+  unfold doCons
+  linarith [e1, e2, e3, w_drop_cons i hi2]
+
+lemma Phi_doSplit2 (a : Pos) (h : 2 ≤ a 2) : Phi (doSplit2 a) = Phi a - 1 := by
+  have e1 := sum_update_Phi a 2 (a 2 - 2)
+  have e2 := sum_update_Phi (a.update 2 (a 2 - 2)) 1 (a 1 + 1)
+  have e3 := sum_update_Phi ((a.update 2 (a 2 - 2)).update 1 (a 1 + 1)) 3 (a 3 + 1)
+  have h1 : (a.update 2 (a 2 - 2)) 1 = a 1 := by
+    have hne : (1 : ℕ) ≠ 2 := by norm_num
+    simp [Finsupp.update_apply, hne]
+  have h2 : ((a.update 2 (a 2 - 2)).update 1 (a 1 + 1)) 3 = a 3 := by
+    rw [Finsupp.update_apply, Finsupp.update_apply]
+    split_ifs with h1 h2
+    · omega
+    · omega
+    · rfl
+  rw [h1] at e2
+  rw [h2] at e3
+  have hc : ((a 2 - 2 : ℕ) : ℝ) = (a 2 : ℝ) - 2 := by
+    rw [Nat.cast_sub h]; norm_num
+  have hc2 : ((a 1 + 1 : ℕ) : ℝ) = (a 1 : ℝ) + 1 := by push_cast; ring
+  have hc3 : ((a 3 + 1 : ℕ) : ℝ) = (a 3 : ℝ) + 1 := by push_cast; ring
+  rw [hc] at e1
+  rw [hc2] at e2
+  rw [hc3] at e3
+  unfold doSplit2
+  linarith [e1, e2, e3, w_drop_split2]
+
+lemma Phi_doSplitG (a : Pos) (i : ℕ) (hi : 3 ≤ i) (hge : 2 ≤ a i) :
+    Phi (doSplitG a i) = Phi a - 1 := by
+  have e1 := sum_update_Phi a i (a i - 2)
+  have e2 := sum_update_Phi (a.update i (a i - 2)) (i - 2) (a (i - 2) + 1)
+  have e3 := sum_update_Phi ((a.update i (a i - 2)).update (i - 2) (a (i - 2) + 1))
+    (i + 1) (a (i + 1) + 1)
+  have h1 : (a.update i (a i - 2)) (i - 2) = a (i - 2) := by
+    have hne : i - 2 ≠ i := by omega
+    simp [Finsupp.update_apply, hne]
+  have h2 : ((a.update i (a i - 2)).update (i - 2) (a (i - 2) + 1)) (i + 1) = a (i + 1) := by
+    rw [Finsupp.update_apply, Finsupp.update_apply]
+    split_ifs with h1 h2
+    · omega
+    · omega
+    · rfl
+  rw [h1] at e2
+  rw [h2] at e3
+  have hc : ((a i - 2 : ℕ) : ℝ) = (a i : ℝ) - 2 := by
+    rw [Nat.cast_sub hge]; norm_num
+  have hc2 : ((a (i - 2) + 1 : ℕ) : ℝ) = (a (i - 2) : ℝ) + 1 := by push_cast; ring
+  have hc3 : ((a (i + 1) + 1 : ℕ) : ℝ) = (a (i + 1) : ℝ) + 1 := by push_cast; ring
+  rw [hc] at e1
+  rw [hc2] at e2
+  rw [hc3] at e3
+  unfold doSplitG
+  linarith [e1, e2, e3, w_drop_splitG i hi]
+
+lemma Phi_doSplit (a : Pos) (i : ℕ) (h : legalSplit a i) : Phi (doSplit a i) = Phi a - 1 := by
+  obtain ⟨hi, h2⟩ := h
+  rcases eq_or_lt_of_le hi with h' | h'
+  · have hi2 : i = 2 := by omega
+    subst hi2
+    have e : doSplit a 2 = doSplit2 a := by simp [doSplit]
+    rw [e]
+    exact Phi_doSplit2 a h2
+  · have h1 : i ≠ 1 := by omega
+    have h3 : i ≠ 2 := by omega
+    have e : doSplit a i = doSplitG a i := by simp [doSplit, h1, h3]
+    rw [e]
+    exact Phi_doSplitG a i (by omega) h2
+
+/-! ### The drop of a Split Smallest step -/
+
+noncomputable def dropSS (a : Pos) : ℕ :=
+  match smallestSplit a with
+  | some _ => 1
+  | none =>
+    if legalA1 a then 1
+    else match smallestCons a with
+         | some i => i
+         | none => 0
+
+lemma Phi_stepSS (a : Pos) : Phi (stepSS a) = Phi a - (dropSS a : ℝ) := by
+  unfold stepSS dropSS
+  cases hsp : smallestSplit a with
+  | some i =>
+    dsimp only
+    rw [Phi_doSplit a i (smallestSplit_some_spec a hsp).1]
+    norm_num
+  | none =>
+    dsimp only
+    split_ifs with ha1
+    · rw [Phi_doA1 a ha1]
+      norm_num
+    · cases hco : smallestCons a with
+      | some i =>
+        dsimp only
+        rw [Phi_doCons a i (smallestCons_some_spec a hco).1]
+      | none =>
+        dsimp only
+        ring
+
+lemma Phi_run (n : ℕ) (k : ℕ) :
+    Phi (run stepSS (start n) k) =
+      Phi (start n) - Finset.sum (Finset.range k) (fun j => (dropSS (run stepSS (start n) j) : ℝ)) := by
+  induction k with
+  | zero => simp [run]
+  | succ k ih =>
+    rw [run_succ, Phi_stepSS, ih, Finset.sum_range_succ]
+    ring
+
+end Zeck
+
+=====BOUND
+/-
+  Part (a) of MathDB 347063, the exact Split Smallest count.
+
+  Every Phase-1 move (A1 or split) lowers Phi by exactly 1; every Cons i lowers it
+  by exactly i >= 2.  Hence the number of moves is at most phi^2 * n, with the gap
+  Phi(final) + (extra drops of combining moves).
+-/
+import ZeckPotential
+
+open Classical
+
+namespace Zeck
+
+lemma phi_gt_one : 1 < phi := by
+  unfold phi
+  have h0 : 0 ≤ Real.sqrt 5 := Real.sqrt_nonneg 5
+  have h5 : Real.sqrt 5 ^ 2 = 5 := Real.sq_sqrt (by norm_num)
+  nlinarith
+
+lemma phi_lt_two : phi < 2 := by
+  unfold phi
+  have h0 : 0 ≤ Real.sqrt 5 := Real.sqrt_nonneg 5
+  have h5 : Real.sqrt 5 ^ 2 = 5 := Real.sq_sqrt (by norm_num)
+  nlinarith
+
+lemma psi_pos : 0 < psi := by
+  unfold psi
+  linarith [phi_gt_one]
+
+lemma psi_lt_one : psi < 1 := by
+  unfold psi
+  linarith [phi_lt_two]
+
+lemma abs_s_lt_one : |s| < 1 := by
+  unfold s
+  rw [abs_lt]
+  constructor <;> linarith [phi_gt_one, phi_lt_two]
+
+lemma abs_s_pow_le_one (i : ℕ) : |s ^ i| ≤ 1 := by
+  rw [abs_pow]
+  induction i with
+  | zero => simp
+  | succ k ih =>
+    rw [pow_succ]
+    have h0 : 0 ≤ |s| := abs_nonneg s
+    nlinarith [abs_s_lt_one, ih, h0]
+
+lemma w_pos (i : ℕ) : 0 < w i := by
+  have hle : |psi * s ^ i| ≤ psi := by
+    rw [abs_mul, abs_of_pos psi_pos]
+    nlinarith [abs_s_pow_le_one i, psi_pos]
+  have h2 : -psi ≤ psi * s ^ i := by
+    linarith [neg_abs_le (psi * s ^ i), hle]
+  unfold w
+  have hi : (0 : ℝ) ≤ (i : ℝ) := Nat.cast_nonneg i
+  linarith [psi_lt_one, h2, hi]
+
+lemma Phi_nonneg (a : Pos) : 0 ≤ Phi a := by
+  unfold Phi
+  exact Finset.sum_nonneg (fun i _ => mul_nonneg (Nat.cast_nonneg _) (le_of_lt (w_pos i)))
+
+/-- A move always drops the potential by at least one. -/
+lemma dropSS_ge_one (a : Pos) (h : hasMove a) : 1 ≤ dropSS a := by
+  unfold dropSS
+  cases hsp : smallestSplit a with
+  | some _ => simp
+  | none =>
+    dsimp only
+    split_ifs with ha1
+    · simp
+    · cases hco : smallestCons a with
+      | some i =>
+        dsimp only
+        have h2 : 2 ≤ i := (smallestCons_some_spec a hco).1.1
+        omega
+      | none =>
+        dsimp only
+        exfalso
+        have hs : ¬ ∃ i, legalSplit a i := (smallestSplit_none_iff a).1 hsp
+        have hc : ¬ ∃ i, legalCons a i := (smallestCons_none_iff a).1 hco
+        rcases h with hA | hC | hS
+        · exact ha1 hA
+        · obtain ⟨i, hi⟩ := hC
+          exact hc ⟨i, hi⟩
+        · obtain ⟨i, hi⟩ := hS
+          exact hs ⟨i, hi⟩
+
+lemma SS_move_ge_one (n : ℕ) (j : ℕ) (hj : j < SS n) :
+    (1 : ℝ) ≤ (dropSS (run stepSS (start n) j) : ℝ) := by
+  have hmove : hasMove (run stepSS (start n) j) := gameLen_min stepSS stepSS_drop (start n) j hj
+  exact_mod_cast dropSS_ge_one _ hmove
+
+lemma sum_one_range (k : ℕ) : Finset.sum (Finset.range k) (fun _ => (1 : ℝ)) = (k : ℝ) := by
+  rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
+
+/-- The exact Split Smallest identity. -/
+lemma SS_eq (n : ℕ) :
+    (SS n : ℝ) = phi ^ 2 * n - Phi (run stepSS (start n) (SS n))
+      - Finset.sum (Finset.range (SS n))
+          (fun j => (dropSS (run stepSS (start n) j) : ℝ) - 1) := by
+  have h := Phi_run n (SS n)
+  have hstart := Phi_start n
+  have h1 := sum_one_range (SS n)
+  have hsplit : Finset.sum (Finset.range (SS n))
+        (fun j => (dropSS (run stepSS (start n) j) : ℝ) - 1)
+      = Finset.sum (Finset.range (SS n)) (fun j => (dropSS (run stepSS (start n) j) : ℝ)) - (SS n : ℝ) := by
+    rw [Finset.sum_sub_distrib, h1]
+  linarith [h, hstart, hsplit]
+
+/-- Every drop is at least one, so the gap is nonnegative. -/
+lemma SS_excess_nonneg (n : ℕ) :
+    0 ≤ Finset.sum (Finset.range (SS n))
+      (fun j => (dropSS (run stepSS (start n) j) : ℝ) - 1) := by
+  apply Finset.sum_nonneg
+  intro j hj
+  have hj' : j < SS n := Finset.mem_range.1 hj
+  linarith [SS_move_ge_one n j hj']
+
+/-- Part (a), upper half: `SS n ≤ phi^2 n`. -/
+theorem SS_le_phi_sq (n : ℕ) : (SS n : ℝ) ≤ phi ^ 2 * n := by
+  have hid := SS_eq n
+  have hex := SS_excess_nonneg n
+  have hpos := Phi_nonneg (run stepSS (start n) (SS n))
+  linarith
+
+/-- The same bound, in the shape used by the reviewer: the deficit from `phi^2 n`
+is exactly the final potential plus the extra drops. -/
+lemma SS_deficit (n : ℕ) :
+    phi ^ 2 * n - (SS n : ℝ) = Phi (run stepSS (start n) (SS n))
+      + Finset.sum (Finset.range (SS n))
+          (fun j => (dropSS (run stepSS (start n) j) : ℝ) - 1) := by
+  have hid := SS_eq n
+  linarith
+
+end Zeck
+
+=====AUDIT
+/-
+  Axiom audit for the main theorems of MathDB 347063.
+  Only propext, Classical.choice and Quot.sound are permitted.
+-/
+import ZeckBound
+
+#print axioms Zeck.exists_terminal
+#print axioms Zeck.gameLen_spec
+#print axioms Zeck.gameLen_min
+#print axioms Zeck.Phi_stepSS
+#print axioms Zeck.Phi_doCons
+#print axioms Zeck.Phi_doSplit
+#print axioms Zeck.SS_eq
+#print axioms Zeck.SS_le_phi_sq
+#print axioms Zeck.SS_deficit
+#print axioms Zeck.SS_two
+#print axioms Zeck.SS_three
+#print axioms Zeck.SS_four
+#print axioms Zeck.CS_two
+#print axioms Zeck.CS_three
+#print axioms Zeck.CS_four
+#print axioms Zeck.zeckendorf_start_has_no_move
+#print axioms Zeck.SS_zeckendorf_zero
+#print axioms Zeck.CS_zeckendorf_zero
+
+=====FC
+import os,re,json,hashlib,subprocess,sys,shutil
+from pathlib import Path
+p=Path(__file__).resolve().parent
+pins=json.loads((p/'PINS.json').read_text())
+mode=os.environ['FORMAL_OPERATION'];module=os.environ['FORMAL_MODULE']
+assert mode in ['compile','check'] and re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*',module)
+def sha(q):return hashlib.sha256(q.read_bytes()).hexdigest()
+assert sha(Path(pins['lean_bin']))==pins['lean_sha256'] and sha(Path(pins['leanchecker_bin']))==pins['leanchecker_sha256']
+source=p/'src'/(module+'.lean');olean=p/'build'/(module+'.olean')
+assert source.is_file();before=sha(source)
+env=dict(os.environ);env['PATH']=str(Path(pins['lean_bin']).parent)+os.pathsep+env.get('PATH','');env['LEAN_PATH']=os.pathsep.join([str(p/'build')]+pins['upstream_lean_paths']);env['LEAN_NUM_THREADS']='1'
+prior=sha(olean) if olean.exists() else None
+if mode=='compile':
+ if olean.exists():
+  archive=p/'cache'/(module+'.'+prior+'.olean')
+  if not archive.exists():shutil.copyfile(olean,archive)
+  olean.unlink()
+ args=[pins['lean_bin'],'-j1','-M3500','-DwarningAsError=true','-o',str(olean),str(source)]
+else:
+ assert olean.is_file(),'Kernel checker requires actual production olean'
+ args=[pins['leanchecker_bin'],module]
+r=subprocess.run(args,cwd=p,env=env,text=True,capture_output=True)
+sys.stdout.write(r.stdout);sys.stderr.write(r.stderr)
+after=sha(source);out=sha(olean) if olean.exists() else None
+print(json.dumps(dict(stage=mode,module=module,argv=args,exit=r.returncode,source_sha256_before=before,source_sha256_after=after,olean_sha256_before=prior,olean_sha256_after=out,LEAN_PATH=env['LEAN_PATH'],LEAN_NUM_THREADS=1)))
+assert before==after,'Source changed during compile/check'
+if r.returncode==0:
+ assert out is not None,'No fresh olean produced'
+ if mode=='check':assert prior==out,'Checker changed olean'
+raise SystemExit(r.returncode)
+
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(32*1024**3,32*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+assert os.environ.get('FORMAL_OPERATION') in ('compile','check') and os.environ.get('FORMAL_MODULE'),'This runner is only for Lean compile and kernel-check runs'
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(32*1024**3,32*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None; vm=0
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+    vm=max(vm,max([int(l.split()[1])*1024 for l in (ent/'status').read_text().splitlines() if l.startswith('VmPeak:')] or [0]))
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':32*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'sampled_max_process_vmpeak_bytes':vm,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+{
+  "mathdb_id": 347063,
+  "uuid": "956fdac4-819d-46c6-b848-75fe1453cb87",
+  "canonical_url": "https://mathdb.com/p/347063/linear-growth-conjecture-for-split-smallest-and-combine-smal",
+  "title": "Linear-growth conjecture for Split Smallest and Combine Smallest games",
+  "statement": "A Zeckendorf game starts from the Zeckendorf decomposition of $n$ and proceeds by legal combining and splitting moves; the **Split Smallest** and **Combine Smallest** games are deterministic strategies, and the number of moves is measured as the total number of moves in the resulting game.\n\n**Linear-growth conjecture.** For Split Smallest, the number of moves grows linearly with $n$, with the asymptotic constant appearing numerically to be the square of the golden mean. For Combine Smallest games, the number of moves grows linearly with $n$, with the constant appearing numerically to be approximately $1.206$.\n\nThe paper presents these claims as data-supported conjectures for the two deterministic games whose behavior was not rigorously determined there.",
+  "statement_completeness": "full",
+  "post_type": "conjecture",
+  "status": "open",
+  "tags": [
+    "combinatorial-games",
+    "number-theory",
+    "zeckendorf-games"
+  ],
+  "importance": "corpus",
+  "source_name": "Ruoci Li, Xiaonan Li, Steven J. Miller, Clayton Mizgerd, Chenyang Sun, Dong Xia and Zhyi Zhou, \u201cDeterministic Zeckendorf Games\u201d, arXiv:2006.16457 (2020).",
+  "source_url": "https://arxiv.org/abs/2006.16457",
+  "first_stated_year": 2020,
+  "first_stated_year_source_url": "https://arxiv.org/abs/2006.16457",
+  "documented_by_year": null,
+  "documented_by_source_url": null,
+  "references": "Source: https://arxiv.org/abs/2006.16457\n\nStatus: no resolution is reported in the source (as of June 2020).",
+  "solutions": [],
+  "solution_count": 0,
+  "has_formal_statement": null,
+  "has_bounty": null,
+  "created_at": "2026-08-11T05:40:41.044167Z",
+  "edited_at": null,
+  "lastmod": "2026-10-05T02:56:35Z",
+  "in_sitemap": true,
+  "historical": false,
+  "retrieval_source": "probxiv_2026-09-29"
+}
+
