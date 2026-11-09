@@ -1,0 +1,921 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+                                            Numerical Integration over the Unit Sphere by
+                                                       using spherical t-design∗
+
+
+
+
+arXiv:1611.02785v1 [math.NA] 9 Nov 2016
+                                                                     Congpei An1 , Siyong Chen1
+
+                                                           1
+                                                               Department of Mathematics, Jinan Universtiy,
+                                                                       Guangzhou 510632, China
+
+                                                           E-mail: tancpei@jnu.edu.cn, chensiy98@126.com
+
+
+
+                                                                                 Abstract
+                                                    This paper studies numerical integration over the unit sphere S2 ⊂ R3
+                                                by using spherical t-design, which is an equal positive weights quadra-
+                                                ture rule with polynomial precision t. We investigate two kinds of spher-
+                                                ical t-designs with t up to 160. One is well conditioned spherical t-
+                                                designs(WSTD), which was proposed by [1] with N = (t+1)2 . The other is
+                                                efficient spherical t-design(ESTD), given by Womersley [2], which is made
+                                                of roughly of half cardinality of WSTD. Consequently, a series of persua-
+                                                sive numerical evidences indicates that WSTD is better than ESTD in the
+                                                sense of worst-case error in Sobolev space Hs (S2 ). Furthermore, WSTD is
+                                                employed to approximate integrals of various of functions, especially in-
+                                                cluding integrand has a point singularity over the unit sphere and a given
+                                                ellipsoid. In particular, to deal with singularity of integrand, Atkinson’s
+                                                transformation [3] and Sidi’s transformation [4] are implemented with the
+                                                choices of ‘grading parameters’ to obtain new integrand which is much
+                                                smoother. Finally, the paper presents numerical results on uniform errors
+                                                for approximating representive integrals over sphere with three quadrature
+                                                rules: Bivariate trapezoidal rule, Equal area points and WSTD.
+                                                Keywords: Numerical integration, Spherical t-designs, Singular integral
+
+
+                                                1     Introduction
+                                                We consider numerical integration over the unit sphere
+                                                              n                                        o
+                                                         S2 := x = [x, y, z]T ∈ R3 | x2 + y 2 + z 2 = 1 ⊂ R3 .
+
+                                                The exact integral of an integrable function f defined on S2 is
+                                                                                  Z
+                                                                         I(f ) :=    f (x) dω(x),                       (1.1)
+                                                                                    S2
+                                             ∗ This work was supported by National Natural Science Foundation of China [grant number
+
+                                          11301222].
+
+
+                                                                                      1
+where dω(x) denotes the surface measure on S2 . The aim of this paper is
+approximate I(f ) by positive weight quadrature rules of the form
+                                            N
+                                            X
+                           QN (f ) :=             ωj f (xj ),               (1.2)
+                                            j=1
+
+
+where xj ∈ S2 , 0 < ωj ∈ R, j = 1, . . . , N .
+    As shown in literature [1, 5, 6, 7, 8] on numerical integration over
+sphere, there are many point sets can be used as quadrature rules. It is
+merit to consider Quasi Monte Carlo(QMC) rules, or equal weight numer-
+ical integration, for functions in a Sobolev space Hs (S2 ), with smoothness
+parameter s > 1. In particular, [5] provides an emulation of spherical
+t-designs, named sequence of QMC designs.
+    As is known, for numerical integration, sequences of spherical t-design
+enjoy the property that it convergent very fast in Sobolev spaces [9]. In
+this paper we focus our interest on approximating integrals with the aid
+of spherical t-designs. The concept of spherical t-design was introduced
+by Delsarte, Goethals and Seidel in 1977 [10], as following:
+Definition 1.1. A point set XN = {x1 , . . . , xN } ⊂ S2 is called a spherical
+t-design if an equal weight quadrature rule with node set XN is exact for
+all polynomials p with degree no more than t, i.e.
+                   N               Z
+               1 X             1
+                     p(xj ) =               p(x) dω(x)          ∀p ∈ Pt ,   (1.3)
+               N j=1          4π       S2
+
+
+where Pt is the linear space of restrictions of polynomials of degree at most
+t in 3 variables to S2 .
+In past decades, spherical t-design has been studied extensively [1, 11, 12,
+13, 14, 15]. The existence of spherical t-design for all t only for sufficiently
+large N was shown in [16]. However, when t is given, the smallest number
+of N to construct a spherical t-design is still to be fixed. Bondarenko,
+Radchenko and Viazovska [12] claimed that there always exist a spherical
+t-design for N ≥ ct2 , but c is an unknown constant. In practice, one might
+have to construct spherical t-designs by assist of numerical computation,
+when t is large. To the best of our knowledge, there are many numerical
+methods for constructing spherical t-designs. For detail, we refer [2, 8, 13,
+17]. However, it is not easy to overcome rounding errors in computation.
+Therefore, reliable numerical spherical t-design is cherished in numerical
+construction.
+    [13] and [14] verified spherical t-design exist in a small neighbourhood
+of extremal system on S2 . It is worth noting that well conditioned spherical
+t-designs(WSTD) are not only have good geometry but also good for
+numerical integration with N = (t + 1)2 , that is the dimension of the
+linear space Pt . In [1], WSTD are constructed just up to 60. In present
+paper we can use WSTD for t up to 160 with N = (t + 1)2 , from a very
+recently work [17]. Moreover, Womersley introduced efficient spherical t-
+design(ESTD), which are consist of N ≈ 12 t2 points [2]. Both WSTD and
+ESTD are applied to approximate the integral of a well known smooth
+function – Franke function. High attenuation to absolute error [1, 2, 5],
+
+
+                                            2
+excellent performance enhance the attractiveness of spherical t-designs.
+Inspired by [5, 9], it is natural to compare the worst-case error for these
+two spherical t-designs for t up to 160. Consequently, we will employ
+the lower worst-case error spherical t-design (actually it is WSTD) to
+approximate the integral of various of functions: smooth function, C 0
+function, near-singular function, singular function over S2 and ellipsoid.
+    In sequel, we provide necessary background and terminology for spher-
+ical polynomial, spherical t-design. Section 3 introduces the concept of
+worst-case errors of positive weight quadratures rules on S2 . Immedi-
+ately, a series of numerical experiments indicates that WSTD has lower
+worst-case error than ESTD. Consequently, we use WSTD to evaluate
+the numerical integration of several kinds of test functions in below. Sec-
+tion 4 focus on how to deal with point singularity of integrands, we
+apply the variable transformations raised by Atkinson [3] and Sidi [4] to
+obtain new smoother integrands, respectively. In Section 5 , we investi-
+gate three quadrature nodes: Bivariate trapezoidal rule, Equal area points
+and WSTD. The geometry of these quadrature nodes is compared. We
+also demonstrate numerical results on uniform errors for approximating
+integrals of a set of test functions, by using these three quadrature nodes.
+
+
+2     Background
+Let L2 := L2 (S2 ) be the space of square-integrable measurable functions
+over S2 . The Hilbert space L2 is endow with the inner product
+                           Z
+               hf, giL2 :=    f (x) g(x) dω(x), f, g ∈ L2 .
+                               S2
+
+And the induced norm is
+                        Z                            1
+                                                       2
+              kf kL2 :=              |f (x)|2 dω(x)        ,   f ∈ L2 .
+                                S2
+
+    It is natural to choose real spherical harmonics [18]
+                     {Y`,k : 1 ≤ k ≤ 2` + 1, 0 ≤ ` ≤ t} ,
+as an orthonormal
+         √        basic for Pt . Noting that the normalisation is such that
+Y0,1 = 1/ 4π. Then
+             Pt = span{Y`,k : ` = 0, . . . , t, k = 1, . . . , 2` + 1},
+and then the dimension of Pt is dt := dim(Pt ) = t`=0 (2` + 1) = (t + 1)2 .
+                                                       P
+For t ≥ 1, let the spherical harmonic matrix Yt be denoted by
+Yt (XN ) := [Y`,k (xj )],   k = 0, . . . , 2` + 1, ` = 1, . . . , t;      j = 1, . . . , N.
+It is very important to note the addition theorem of spherical harmonics
+[19]
+            2`+1
+             X                      2` + 1
+                 Y`,k (x)Y`,k (y) =        P` (x · y) ∀ x, y ∈ S2 , (2.4)
+                                      4π
+            k=1
+
+where x·y denotes the usual Euclidean inner product of x and y in R3 , and
+P` is the normalized Legendre polynomial of degree `. For applications of
+the addition theorem (2.4) , we refer to [19].
+
+
+                                           3
+2.1     Spherical t-designs
+In [10], lower bounds of even and odd t, for the number of nodes N to
+consist a spherical t-design are established as following:
+                             ( (t+1)(t+3)
+                                          , t is odd,
+                      N (t) ≥ (t+2)42                            (2.5)
+                                  4
+                                      ,      t is even.
+
+Spherical t-designs achieved this bound (2.5) are called tight. However,
+Bannai and Damerell [20, 21] proved tight spherical t-design only exists
+for t = 1, 2, 3, 5 on S2 . For practical computation, we have to construct
+spherical t-design with large t. There is a survey paper on spherical t-
+designs given by Bannai and Bannai [11]. Interval methods are applied
+to construct reliable computational spherical t-designs with rigorous proof
+[1, 13, 14]. In this paper, we are considering two kinds of spherical t-design
+as follows:
+
+2.1.1    Well condition spherical t-designs
+[1] extends the work of [8] for the case N = (t + 1)2 by including a
+constraint that the set of points XN is a spherical t-design, as suggested
+in [14], to extremal spherical t-design which is a spherical t-design for
+which the determinant of a Gram matrix, or equivalently the product of
+the singular values of a basis matrix, is maximized. This can be written
+as the following optimization problem:
+
+                     max     log det(Gt (XN ))
+                    XN ⊂S2
+                                                                        (2.6)
+                        s.t. Ct (XN ) = EGt (XN )e = 0,
+
+where
+                  e := [1, . . . , 1]T ∈ RN ,
+                  E := [e, −IN −1 ] ∈ R(N −1)×N ,
+                  Gt (XN ) := Yt (XN )T Yt (XN ) ∈ RN ×N .
+After solving (2.6) by nonlinear optimization methods, the interval anal-
+ysis provides a series of narrow intervals, which contain computational
+spherical t-design and a true spherical t-design. Consequently, the mid
+point of these intervals are determinated as well conditioned spherical
+t-design, for detail, see [1].
+    Following the methods in [1], we use extremal systems [8] which max-
+imize the determinant without any additional constraints as the starting
+points to solve this problems (2.6) . We also use interval methods, which
+memory usage is optimized, to prove that close to the computed extremal
+spherical t-design there are exact spherical t-design. Finally, we obtain
+well conditioned spherical t-design with degree up to 160. For detail, we
+refer to another paper on construct well conditioned spherical t-design for
+t up to 160, see [17].
+
+
+
+
+                                       4
+2.1.2    Efficient spherical t-designs
+In [22], Womersley introduced efficient spherical t-designs with roughly
+1 2
+2
+  t points. The point number is close to the number in a conjecture by
+Hardin and Sloane that N = 12 t2 + o(t2 ) [23]. The author used Levenberg-
+Marquardt method to solve the following problem
+                                     t 2`+1      N
+                                                              !2
+                               4π X X X
+            min AN,t (XN ) = 2                      Y`,k (xj ) .     (2.7)
+           XN ⊂S2              N                j=1
+                                    `=1 k=1
+
+This point sets can be download at http://web.maths.unsw.edu.au/
+~rsw/Sphere/EffSphDes/index.html.
+
+
+3       Worst-case error of spherical t-designs
+This section considers the worst-case error for numerical integration over
+S2 [5] [9]. In this section we follow notations and definitions from [5]. The
+Sobolev space, denoted by Hs := Hs (S2 ), can be defined for s ≥ 0 as the
+set of all functions f ∈ L2 with Laplace-Fourier coefficients
+                                         Z
+                 fˆ`,k := hf, Y`,k iL2 =   f (x)Y`,k (x) dω(x),
+                                       S2
+
+satisfying
+                       ∞ 2`+1
+                       X X                   2
+                             (1 + λ` )s fˆ`,k < ∞,
+                       `=0 k=1
+
+where λ` := `(` + 1). Obviously, by letting s = 0, then H0 = L2 . The
+norm of Hs can be defined as
+                              " ∞ 2`+1          #1
+                               XX 1 2 2
+                     kf kHs =              fˆ      ,
+                                        (s) `,k
+                               `=0 k=1 a`
+
+                                              (s)                (s)
+where the sequence of positive parameters α` satisfies a` ∼ (1+λ` )−s ∼
+(` + 1)−2s .
+    The worst-case error of the spherical t-design XN on Hs can be defined
+as
+
+    wce(Q[XN ]) := sup |Q[XN ](f ) − I(f )| f ∈ Hs , kf kHs ≤ 1 ,
+                       
+                                                                      (3.8)
+                          N
+where Q[XN ](f ) := 4π
+                       P
+                     N    j=1 f (xj ).
+    Before introducing the formula of worst-case error, we show the signed
+power of the distance, with sign (−1)L+1 with L := L(s) := bs − 1c, that
+has the following Laplace-Fourier expansion [19]: for x, y ∈ S2 ,
+                                                    ∞
+                                                    X      (s)
+    (−1)L+1 |x − y|2s−2 = (−1)L+1 V2−2s (S2 ) +           α` Z(2, `)P` (x · y),
+                                                    `=1
+
+where P` is the normalized Legendre polynomial,
+                                                                  22s−2
+              Z Z
+                                                    Γ(3/2)Γ(s)
+V2−2s (S2 ) =        |x − y|2s−2 dω(x)dω(y) = 22s−1 √           =       ,
+               S2 S2                                  πΓ(1 + s)     s
+
+
+                                     5
+    (s)             (−1)L+1 (1 − s)`                (−1)L+1 Γ(1 − s + `)Γ(1 + s)
+  α`      := V2−2s (S2 )              = V2−2s (S2 )                              ,
+                         (1 + s)`                      Γ(1 + s + `)Γ(1 − s)
+                         Γ(` + 2 − 1)
+  Z(2, `) = (2` + 2 − 1)              = 2` + 1.
+                         Γ(2)Γ(` + 1)
+
+  From [5], we know that worst-case error is divided into two cases:
+ Case I For 1 < s < 2 and L = 0, the worst-case error is given by
+
+                                                  N   N
+                                                                            ! 12
+                                           2    1 XX
+              wce(Q[XN ]) =        V2−2s (S ) − 2        |xj − xi |2s−2            . (3.9)
+                                               N j=1 i=1
+
+Case II For s > 2 and L satify L := L(s) = bs − 1c, the worst-case error is
+        given by
+                                   N  N
+                                1 XXh                                           i
+             wce(Q[XN ]) =       2
+                                         QL (xj · xi ) + (−1)L+1 |xj − xi |2s−2
+                               N j=1 i=1
+                                                                                        !1
+                                                                                         2
+                                                                    L+1             2
+                                                            −(−1)         V2−2s (S )         ,
+
+                                                                                    (3.10)
+            where
+                                   L 
+                                   X                  
+                                                        (s)
+                 QL (xj · xi ) =         (−1)L+1−` − 1 α` Z(2, `)P` (xj · xi ).
+                                   `=1
+
+
+  3.1        Numerical experiments on worst-case error
+  By using the definition of worst-case error, we calculate and compare
+  worst-case error of two spherical t-designs: well condition spherical t-
+  design[1] and efficient spherical t-design[22].  Figure 1 gives, when
+  s = 1.5, 2.5, 3.5 and 4.5, worst-case error for WSTD and ESTD [22].
+  Worst-case error for WSTD is smaller which means that it has a better
+  performance in numerical integration when the precision t of two point
+  sets are the same.
+
+  3.2 Conjecture on worst-case error of spherical
+  t-design
+  From the above interesting numerical experiments, we propose a reason-
+  able conjecture as following:
+  Conjecture 1. Let wce(Q[XN ]) be worst-case error of the spherical t-
+  design(see (3.8) ). Then when N increases, wce(Q[XN ]) decreases. That
+  is to say:
+
+                 wce(Q[XN 0 ]) ≤ wce(Q[XN ]),       N 0 > N for fixed t.
+
+
+
+
+                                               6
+                   10 1
+
+
+
+
+                   10 0
+
+
+
+
+Worst-case error
+                   10 -1
+
+
+
+
+                   10 -2
+
+
+
+
+                                   WSTD
+                   10 -3
+                                   0.62 t-1.42
+                                   ESTD
+                                            -1.49
+                                   0.32 t
+                   10 -4
+                             0         20           40   60       80   100   120   140   160
+                                                                  t
+                                                         (a) s = 1.5
+
+                   10 1
+
+
+
+                   10 0
+
+
+
+                   10 -1
+
+
+
+
+Worst-case error
+                   10 -2
+
+
+
+                   10 -3
+
+
+
+                   10 -4
+                                   WSTD
+
+                   10   -5         0.62 t-2.36
+                                   ESTD
+                                   0.81 t-2.46
+                   10 -6
+                             0         20           40   60       80   100   120   140   160
+                                                                  t
+                                                         (b) s = 2.5
+
+
+                                 Figure 1: Worst-case error of two point sets
+
+
+
+
+                                                              7
+                        10 2
+
+
+
+
+                        10 0
+
+
+
+
+    Worst-case error
+                       10 -2
+
+
+
+
+                       10 -4
+
+
+
+
+                                      WSTD
+                       10 -6
+                                      1.55 t-3.34
+                                      ESTD
+                                               -3.45
+                                      2.06 t
+                       10 -8
+                               0          20           40   60       80   100   120   140   160
+                                                                     t
+                                                            (c) s = 3.5
+
+                        10 2
+
+
+
+
+                        10 0
+
+
+
+
+                        10 -2
+
+
+
+
+Worst-case error
+                        10 -4
+
+
+
+
+                        10 -6
+
+
+                                      WSTD
+                        10 -8         3.29 t-4.10
+                                      ESTD
+                                      3.69 t-4.44
+                       10 -10
+                                0         20           40   60       80   100   120   140   160
+                                                                     t
+                                                            (d) s = 4.5
+
+
+                                    Figure 1: Worst-case error of two point sets
+
+
+
+
+                                                                 8
+4 Transformations for singular functions
+on S2
+In this section, we consider two variable transformations for the approxi-
+mation of spherical integral I(f ) in which f (x) is singular at a point x0 .
+Examples are the single layer integral
+                            Z
+                                   g(x)
+                                           dω(x)
+                              S2 |x − x0 |
+
+and the double layer integral
+                     Z
+                          g(x) |(x − x0 ) · nx |
+                                                 dω(x),
+                       S2      |x − x0 |3
+
+where g(x) is smooth function, nx is the outward normal to S2 at x, and
+(x − x0 ) · nx is the dot product of two vectors (x − x0 ) and nx . From
+[4], we know the double-layer integral is simply 1/2 times the single-layer
+integral over S2 . So it is enough to treat the single-layer case. In this
+case of that integrand is a singular function, we use a variable transfor-
+mation, such as Atkinson’s transformation [3] and Sidi’s transformation
+[4], rather than approximating this integral directly. In the following, we
+introduce two variable transformations : Atkinson’s transformation and
+Sidi’s transformation.
+
+4.1     Atkinson’s transformation T1
+                                              1−1
+We consider the transformation T1 : S2 −−−→ S2 introduced by Atkinson
+                                              onto
+[3]. We show x̃ ∈ S2 by standard spherical coordinates with θ (polar angle,
+0 ≤ θ < π) and φ (azimuth angle, 0 ≤ θ < 2π). Define the transformation:
+
+                                                        (cos φ sinq θ, sin φ sinq θ, cos θ)T
+T1 : x = (cos φ sin θ, sin φ sin θ, cos θ)T 7→ x̃ =             p                            .
+                                                                   cos2 θ + sin2q θ
+In this transformation, q ≥ 1 is a ‘grading parameter’. Then north and
+south poles of S2 remain fixed, while the region around them is distorted
+by the mapping. Then the integral I(f ) becomes
+                            Z
+                    I(f ) =    f (T1 (x))JT1 (x) dω(x),
+                                S2
+
+with JT1 (x) the Jacobian of the mapping T1 ,
+
+                           sin2q−1 θ(q cos2 θ + sin2 θ)
+               JT1 (x) =                            3       ,   q ≥ 1.
+                               (sin2q θ + cos2 θ) 2
+
+As shown in [3, 24, 25], for smooth integrand, when 2q is an odd integer,
+trapezoidal rule enjoys a fast convergence. Consequently, in the following
+numerical experiments, we set grading parameter q such that 2q is an odd
+integer.
+
+
+
+                                        9
+4.2     Sidi’s transformation T2
+Sidi [4] introduced another variable transformation T2 with the aid of
+spherical coordinate as following:
+                                                 T
+                  T2 : x = (θ, φ)T 7→ x̃ = Ψ 2π
+                                              θ
+                                                 ,φ ,
+where Ψ(t) is derived from a standard variable transformation ψ(t) in the
+extended class T2 of Sidi [26], and Ψ(t) = πψ(t), which is the first way to
+do variable transformation in [4]. The standard variable transformation
+ψ(t), just as the original sinm – transformation, is defined via
+                                            Z t
+                         Θm (t)
+               ψm (t) =         ; Θm (t) =      (sin πu)m du.         (4.11)
+                         Θm (1)              0
+
+Here m ≥ 1 act as the ‘grading parameter’ in T1 . From Θm (t)’s deriva-
+tive Θ0m (t) = (sin πt)m , we have ψm
+                                    0
+                                      (t) = (sin πt)m /Θm (1). Obviously,
+  0
+Θm (t) is symmetric with respect to t = 1/2. So Θm (t) satisfies equation
+Θm (t) = Θm (1) − Θm (1 − t) for t ∈ [1/2, 1]. Thus, Θm (1) = 2 Θm (1/2).
+Consequently,
+            Θm (t)
+ψm (t) =             for t ∈ [0, 1/2] ;           ψm (t) = 1−ψm (1−t) for t ∈ [1/2, 1] .
+           2Θm (1/2)
+                                                                              (4.12)
+From equality
+                     m−1                1
+             Θm (t) =       Θm−2 (t) −    (sin πt)m−1 cos πt,
+                       m               πm
+we have the recursion relation
+                            Γ(m/2)
+      ψm (t) = ψm−2 (t) − √              (sin πt)m−1 cos πt.                  (4.13)
+                         2 πΓ((m + 1)/2)
+When m is a positive integer, ψm (t) can be expressed in terms of elemen-
+tary functions. In this case, ψm (t) can be computed via the recursion
+relation (4.13), with the initial conditions
+                                                     1
+                 ψm (t) = t    and      ψm (t) =       (1 − cos πt) .         (4.14)
+                                                     2
+When m is not an integer, ψm (t) cannot be expressed in terms of ele-
+mentary functions. However, it can be expressed conveniently in terms of
+hypergeometric functions. Because of symmetry and (4.12) , it is enough
+to consider the computation of Θm (t) only for t ∈ [0, 1/2]. One of the
+representations in terms of hypergeometric functions now reads
+          (2K)m+1
+                                                        
+                         1    1    1    1     1     3               πt
+Θm (t) =            F      − m, + m; m + ; K 2 ; K = sin .
+          π(m + 1)       2    2    2    2     2     2                2
+                                                                  (4.15)
+Then the expression of ψm (t) in (4.11) follows from (4.15) .
+   Now the integral I(f ) becomes
+                             Z
+                     I(f ) =    f (T2 (x))JT2 (x) dω(x),
+                                S2
+
+with Jacobian
+                        JT2 (x) = Ψ0m     θ             0
+                                                  = 21 ψm    θ
+                                                                
+                                         2π                 2π
+                                                                     .
+
+
+                                         10
+4.3 Numerical integration method with orthogo-
+nal transformation
+Since the above variable transformations are based on that the singular
+point is at the north pole of S2 , we need to move the north pole to the
+singular point. The original coordinate system of R3 needs to be rotated
+to have the north pole of S2 in the rotated system be the location of the
+singularity in integrand. Atkinson [3] used an orthogonal Householder
+transformation. Here we introduce the rotation transformation R in R3 ,
+
+                           x̂ = Rx,             x̂, x ∈ S2 .                      (4.16)
+
+In fact, R can be expressed as follows:
+                                                                                  
+                         cos φ − sin φ              0      cos θ           0   sin θ
+  R = Rz (φ)Ry (θ) =  sin φ      cos φ             0 ·    0             1     0 ,
+                           0        0               1     − sin θ          0   cos θ
+
+such that                              
+                                      0
+                                  R  0  = x0 .
+                                      1
+Here, x0 ∈ S2 is the singular point. Obviously, when the singular point is
+just at the north pole, the rotation matrix R is the identity matrix I.
+    By using (1.2) , the singular integral can by approximated by the
+following form with these positive weight quadrature rules:
+                         N
+                         X
+               I(f ) ≈         ωj f (RTi (xj ))JTi (xj ),      i = 1, 2.
+                         j=1
+
+Here, T1 , T2 correspond to Atkinson’s transformation and Sidi’s transfor-
+mation, respectively.
+
+
+5     Numerical Results
+5.1     Quadrature nodes over S2
+In this section we investigate three quadrature rules to approximate the
+integration of serval test functions:
+    • Bivariate trapezoidal rule This quadrature rule is consist of
+      Longitude-Latitude points which divide the longitude and latitude
+      equally. By using the spherical coordinate (θ, φ), for n ≥ 1, let
+      h = π/n, and θj = φj = jh. Bivariate trapezoidal can be written in
+      the following formula
+                                             2n       n
+                                         π 2 X 00 X 00
+                         QN (f ) :=                    f (θi , φj ).
+                                         n2 j=0 i=0
+
+      Here the superscript notation 00 means to multiply the first and last
+      terms by 1/2 before summing. Atkinson [3] and Sidi [4] added a
+
+
+                                           11
+(a) Bi. trapezoidal rule, N = (b) Equal area points, N = (c) spherical t-design, N =
+231                           225                        225
+
+                          Figure 2: Point sets on sphere
+
+
+           transformation to led rapid convergence or reduce the effect of any
+           singularities in f at the poles. In the following numerical experiment,
+           for continuous function, we use Atkinson’s transformation with q =
+           2.5, which shows faster convergence than 2 and 3, and for singularity
+           we use another q.
+        • Equal Partition Area points on sphere This integration rule
+          based on partitioning the sphere into a set of N open domains Tj ⊂
+                                                                    N
+                                                                    [
+          S2 , j = 1, . . . , N , that is Tj Tk = ∅ for j 6= k, and   Tj = S2
+                                            T
+                                                                     j=1
+           where Tj represent the closure of T . So the quadrature weight is the
+           surface area of T . In [27], Leopardi developed an algorithm to divide
+           the sphere into N equal area partition efficiently. The center of each
+           partition is chosen as the quadrature node. So the corresponding
+           quadrature rule is of equal positive weight:
+                                                   N
+                                               4π X
+                                  QN (f ) :=         f (xi ).
+                                               N i=1
+
+        • Well conditional spherical t-design ( t up to 160 ).
+     The direct observation of these three point sets can be found in Figure 2
+     .
+
+     5.2     Geometric properties
+     In this section we concentrate on the geometric properties of point sets
+     over sphere. Naturally, the distance between any two points x and y on
+     S2 is measured by the geodesic distance:
+
+                       dist(x, y) = cos−1 (x · y),     x, y ∈ S2 ,
+
+     which is the natural metric on S2 . The quality of the geometric distribu-
+     tion of point set XN is often characterized by the following two quantities
+
+
+
+                                          12
+and their ration. The mesh norm
+
+                         hXN := max min dist(y, xi )                              (5.17)
+                                  y∈S2 xi ∈XN
+
+and the minimal angle
+
+                        δXN =        min           dist(xi , xj ).
+                                xi ,xj ∈XN ,i6=j
+
+
+The mesh norm is the covering radius for covering the sphere with spheri-
+cal caps of the smallest possible equal radius centered at the points in XN ,
+while the minimal angle δXN is twice the packing radius, so hXN ≥ δXN /2.
+The mesh ratio ρXN
+                                      2hXN
+                             ρXN :=          ≥1
+                                       δXN
+is a good measure for the quality of the geometric distribution of XN :
+the smaller ρXN is; the more uniformly are the points distributed on S2
+[28].
+    The geometric properties of above three point sets are shown in Fig-
+ure 3 . Comparing the mesh norm, minimal angle and mesh ratio of three
+point sets in three subfigures, it can be seen that the mesh norm of WSTD
+is between the Bivariate trapezoidal
+inputs/accepted55-routing.json TYPE dict KEYS ['utc', 'kind', 'accepted_count', 'prior39_not_audited_here', 'root_role', 'limitation', 'records']
+{'utc': '2026-11-08T01:54:38.255492+00:00', 'kind': 'accepted55immutablecorpusstatementsforroutingonly', 'accepted_count': 55, 'prior39_not_audited_here': True, 'root_role': 'metadataextraction,notmathematicalduplicateclearance', 'limitation': 'CurrentimmutableMathDBstatementmetadataisnotacceptancecertificateaudit; exactsourceURLortitlematch/nonmatchdoesnotsettlefamilyoverlap. Protectedformalbodiesnotread.', 'records': [{'mathdb_id': 324342, 'title': 'Conference-matrix MDS code conjecture', 'statement': 'Let $p$ be a prime, and let ${\\mathbb C}$ be a code of length $p+1$ constructed from a generator matrix that is a conference matrix. **Conference-matrix MDS conjecture.** The code ${\\mathbb C}$ is an MDS code of dimension $\\frac{p+1}{2}$ and minimum Hamming distance $\\frac{p+3}{2}$. This would give an MDS code with parameters determined by the rank of a conference matrix over ${\\mathbb Z}_p$; the source provides no resolution of the claim.', 'source_url': 'https://arxiv.org/abs/1210.5725', 'tags': ['coding-theory', 'conference-matrices', 'mds-codes'], 'canonical_url': 'https://mathdb.com/p/324342/conference-matrix-mds-code-conjecture'}, {'mathdb_id': 330264, 'title': 'The spectral characterization of geodesic growth for right-angled Coxeter groups on trees', 'statement': "Let $T$ and $T'$ be trees. Assume that they are simultaneously co-spectral, their complements are co-spectral, and their line graphs are co-spectral. **Geodesic-growth conjecture.** Then $T$ and $T'$ have the same geodesic growth, meaning that the associated right-angled Coxeter groups $G(T)$ and $G(T')$ have the same geodesic growth series. The conjecture asks whether these three spectral data determine geodesic growth for right-angled Coxeter groups based on trees; the paper establishes examples supporting the question but does not resolve the general implication.", 'source_url': 'https://arxiv.org/abs/1504.02774', 'tags': ['geodesic-growth', 'right-angled-coxeter-groups', 'spectral-graph-theory'], 'canonical_url': 'https://mathdb.com/p/330264/the-spectral-characterization-of-geodesic-growth-for-right-a'}, {'mathdb_id': 331705, 'title': 'Starlikeness conjecture for Cassinian balls in starlike domains', 'statement': 'Let $G\\subset\\mathbb{R}^n$ be a domain that is starlike with respect to $x\\in G$, and let $B_{c_G}(x,r)$ denote the Cassinian ball of radius $r$. **Starlikeness conjecture.** For every $r>0$, the ball $B_{c_G}(x,r)$ is starlike with respect to $x$. This is a proposed
+inputs/prior39-routing.json TYPE dict KEYS ['kind', 'prior30', 'next9', 'count', 'limitation']
+{'kind': 'Trustedacceptedscopemetadataonly,nocertificateaudit', 'prior30': [{'number': 1, 'mathdb_id': 352508, 'path': 'candidates/fractional-binomial', 'title': 'Sharp converse fractional-binomial inequality', 'status': 'ACCEPT: full proof, source fidelity, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 67, 'discovery_count_credit': 1, 'scope': 'One combined resolution of Gerhold–Simon Conjecture 3.2; includes biased bound and optimality, no separate counts.', 'novelty_limit': 'No prior full sharp finite-sum resolution located. Alzer full article inaccessible; exact classical summand theorem and corollary types checked in two accessible primary successors. Absolute worldwide priority not certified.', 'packet': 'candidate-packets/352508-fractional-binomial-proof.zip', 'packet_sha256': 'baf26ba9f238e40f6fa3efa5a990b3c2b1a5a02dbdefa62cefd7a223ee9ebd15'}, {'number': 2, 'related_mathdb_id': 363319, 'mathdb_record_itself_resolved': False, 'source_target': 'Capitelli–Somma arXiv2405.19593v1 Section3 general all-odd nonconvergence assertion', 'path': 'candidates/odd-subtraction', 'title': 'Nonconvergence for every finite all-odd randomized subtraction set', 'status': 'ACCEPT: complete proof, source fidelity, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 37, 'discovery_count_credit': 1, 'scope': 'One source-question resolution, bypassing the separate root-simplicity conjecture. No separate counts for invariant, zigzag or known small-cardinality cases.', 'novelty_limit': 'No earlier full resolution or directly subsuming theorem found in inspected primary literature; finite searches do not certify absolute priority.', 'packet': 'candidate-packets/2405-19593-odd-subtraction-proof.zip', 'packet_sha256': '85194069ee35ae8d3a2b92f6d97ec42b9b009af933639075df50e71c9d2f4d96'}, {'number': 3, 'mathdb_id': 369172, 'path': 'candidates/trig-counterexample', 'title': 'Exact counterexample to square-root trigonometric positivity', 'status': 'ACCEPT: full source proof, published-source comparison, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 55, 'discovery_count_credit': 1, 'witness': {'d': 49, 'n': 949, 't': 'arccos(523/527)'}, 'scope': 'One counterexample to Kovalev Conjecture1.3, no zero-free Conjecture1.2 or minimality claim.', 'novelty_limit': 'Actual 2026 published b
+inputs/registry-inventory.json TYPE dict KEYS ['registry-deepmind.html', 'registry-leanpool.html', 'registry-openai.html', 'registry-tauceti.html']
+{'registry-deepmind.html': {'sha256': '05347cbd1427a9769386d6b517fd080e89ad47e5c2b9517a99f82b398b8aa382', 'currentOid': ['2055e5adadae0b2e392365938faa82ef6f1464f0'], 'visible_paths': ['.devcontainer', '.gitattributes', '.github', '.gitignore', '.gitpod.yml', '.mailmap', '.vscode', '/', 'AGENTS.md', 'AUTHORS', 'CONTRIBUTING.md', 'FormalConjectures', 'FormalConjecturesForMathlib', 'FormalConjecturesForMathlib.lean', 'FormalConjecturesTest', 'FormalConjecturesUtil', 'FormalConjecturesUtil.lean', 'LICENSE', 'PROOFS.md', 'README.md', 'STATEMENTS.md', 'docbuild', 'lake-manifest.json', 'lakefile.toml', 'lean-toolchain', 'scripts', 'site'], 'scope': 'Fresh root HTML / visible routing inventory only; not recursive file or proof-body review. No worldwide novelty clearance or theorem chronology inferred from no root matches.'}, 'registry-leanpool.html': {'sha256': 'f23c0528b8e10f70a5ddf516700f4f772dbd376bc9408650d05477ae759e7c39', 'currentOid': ['45b5a1be4b778aa0d78b82671a7b67e649cd05f5'], 'visible_paths': ['.claude/skills', '.github', '.gitignore', '.greptile', '.zenodo.json', '/', 'AGENTS.md', 'CITATION.cff', 'CLAUDE.md', 'CONTRIBUTING.md', 'LICENSE', 'LeanPool', 'LeanPool.lean', 'MOTIVATION.md', 'Makefile', 'NOTICE', 'NOTICE.extra.yml', 'README.md', 'candidates', 'docbuild', 'lake-manifest.json', 'lakefile.toml', 'lean-toolchain', 'logo.png', 'python', 'scripts'], 'scope': 'Fresh root HTML / visible routing inventory only; not recursive file or proof-body review. No worldwide novelty clearance or theorem chronology inferred from no root matches.'}, 'registry-openai.html': {'sha256': '47759975ab60139804f4ce33c984b174c7365f458a13bed5d3780145fca7e72e', 'currentOid': ['4eaee87548250b2682affda7d05d947c05554bae'], 'visible_paths': ['.github/workflows', '/', 'CONTENTS.md', 'LICENSE', 'README.md', 'history.md', 'lean', 'overview.pdf', 'overview.tex', 'preprints', 'reasoning_traces'], 'scope': 'Fresh root HTML / visible routing inventory only; not recursive file or proof-body review. No worldwide novelty clearance or theorem chronology inferred from no root matches.'}, 'registry-tauceti.html': {'sha256': '3e743f405b1aec802029c2efe3461ab2397419f410d638196a4f7348ab031ece', 'currentOid': ['e583e15d3be177d86491854d1db508f6edfe5ee7'], 'visible_paths': ['.claude', '.github', '.gitignore', '/', 'AGENTS.md', 'COORDINATION.md', 'LICENSE', 'README.md', 'TauCeti', 'TauCeti.lean', 'assets', 'bors.toml', 'docbuild', 'docs', 'formalization.yaml', 'lake-manifest.json', 'lakefile.toml', '
+search-budget.json TYPE dict KEYS ['calls_used', 'queries_used', 'maximum_calls', 'maximum_queries', 'charged_before_call']
+{'calls_used': 0, 'queries_used': 0, 'maximum_calls': 2, 'maximum_queries': 6, 'charged_before_call': True}
