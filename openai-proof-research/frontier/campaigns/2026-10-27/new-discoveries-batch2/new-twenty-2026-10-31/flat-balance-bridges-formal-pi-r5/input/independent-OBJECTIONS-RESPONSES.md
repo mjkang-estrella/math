@@ -1,0 +1,14 @@
+# Strongest objections and responses
+
+1. Could Flat mean planar or no isolated edges? No. Actual Definition 2.2 says <=2 triangles per edge. Definition 2.3 and subsequent restricted theorems distinguish zero-triangle edges. K3,3 is permitted. Source's erroneous planarity inference is not a definition.
+2. Could clique counting be directed pairs or an encoded answer? No. The finset-of-finsets definition uses real k-element subsets and pairwise adjacency; pair image and injectivity prove nine unordered cross pairs.
+3. Could subtraction truncate 6-10 to zero? No. Both inputs cast to Z before subtraction; natAbs(-4)=4. Generic source cast bridge is nevertheless absent as a certificate theorem (R1).
+4. Could the endpoint be vacuous, have extra hypotheses or assume its conclusion? No visible such parameter/instance. It quantifies all Type/Fintype/graphs and has only Flat -> Balanced. Explicit six-vertex graph and edges defeat empty-domain concerns.
+5. Does the allowed axiom trio prove every safety/origin property? No. Selected transitive axiom closures do not enumerate all new/generated/private declarations or certify import origin. R2 requires independent deep Pi work.
+6. Do ten controls fully cover definition sensitivity? No. They are positive proofs, mostly consequences of witness equalities. They show edges and different discrepancies, but no nonflat graph sensitivity, generic source translations or complete body audit. The contrapositive control does not use its flat argument.
+7. Does recorded extracted success establish an independent clean replay? No. Logs support strict extracted compilation/checking with upstream-only imports; the empty-build setup evidence and distinct independent replay remain open (R3).
+8. Is the result excluded because K3,3 is easy? No. Root has prospectively qualified this exact refutation. Research impact may be modest; only a concrete applicable prior result/bridge or a reasoned substantive adjudication can exclude it, not smallness alone.
+9. Does the Conjecture-1 public counterpart resolve this endpoint? No. Different conjecture and balanced polynomial; preserve the bounded historical account without conflation.
+10. Has novelty been cleared globally or a final journal version checked? No. Bounded prior evidence only, metadata v1 only, no new search; absence of an identified applicable prior objection is not exhaustive clearance.
+11. Does the old procedural release erase the failed frozen-budget check? No. Root acknowledges contradictory configuration and releases narrow evidence; historical FAIL stays. This review reports its own receipts and final frozen check separately.
+12. Can acceptance proceed now? No. R1 generic bridges, R2 independent deep audit, R3 separate clean replay, a manuscript and root acceptance are unpaid. No fatal counterexample to the actual mathematical refutation was found. Recommendation REVISE then advance, never self-credit.

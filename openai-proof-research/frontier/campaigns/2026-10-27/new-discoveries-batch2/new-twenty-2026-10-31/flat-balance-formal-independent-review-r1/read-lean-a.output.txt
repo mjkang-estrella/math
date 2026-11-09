@@ -1,0 +1,260 @@
+1: /-
+2: MathDB 352972: balanced-graph conjecture for flat graphs -- literal refutation.
+3: 
+4: Source: Hossein Teimoori Faal, "On Clique Roots of Flat Graphs", arXiv:2112.09721v1.
+5: Definition 2.2 (p4): flat = every edge lies in at most two triangles (3-cliques).
+6: Conjecture 2 (p6): every flat graph is balanced, i.e. the absolute difference
+7: between the odd-clique count sum and the even-clique count sum is at most 1
+8: (c_0 = 1 is counted among the even cliques).
+9: 
+10: Endpoint: refutation of the universal statement over ALL finite simple graphs,
+11: by the finite simple graph K_{3,3}: flat, yet discrepancy 4 > 1 with c_0
+12: (and 3 > 1 under the positive-index convention).
+13: 
+14: Pins: Lean v4.34.1 (5045d0056413266e57c625dcd7c365b10e377c52),
+15: mathlib d13f23b723b8a846827a245b89c10fc7d3f11612.
+16: -/
+17: 
+18: import Mathlib.Data.Fintype.Basic
+19: import Mathlib.Data.Fintype.Card
+20: import Mathlib.Data.Fintype.Sum
+21: import Mathlib.Data.Fintype.Prod
+22: import Mathlib.Data.Finset.Card
+23: import Mathlib.Data.Finset.Filter
+24: import Mathlib.Data.Finset.Powerset
+25: import Mathlib.Data.Finset.Range
+26: import Mathlib.Data.Int.NatAbs
+27: import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+28: 
+29: /-!
+30: # MathDB 352972: balanced-graph conjecture for flat graphs, literal refutation
+31: 
+32: Universal endpoint: `NOT (for all finite simple graphs G, flat G -> balanced G)`,
+33: witnessed by `K_{3,3}` with clique-count discrepancy 4 > 1 (c_0 = 1 convention)
+34: and 3 > 1 (positive-index convention).
+35: -/
+36: 
+37: open BigOperators
+38: 
+39: namespace FlatBalance
+40: 
+41: /-! ## Simple graphs -/
+42: 
+43: /-- A simple undirected graph: irreflexive symmetric adjacency (no loops,
+44: undirected).  Finiteness is carried by a `Fintype` instance on the vertex
+45: type, never by the structure itself. -/
+46: structure SimpleGraph (V : Type) where
+47:   /-- The adjacency relation. -/
+48:   Adj : V → V → Prop
+49:   /-- Adjacency is symmetric. -/
+50:   adj_symm : ∀ a b, Adj a b → Adj b a
+51:   /-- Adjacency is irreflexive. -/
+52:   adj_irrefl : ∀ a, ¬ Adj a a
+53: 
+54: /-! ## Cliques, triangles, counts, flatness, balance
+55: 
+56: The data-level definitions below use classical decidability for the
+57: clique/triangle predicates; this contributes at most the axiom
+58: `Classical.choice`, which is on the allowed list. -/
+59: 
+60: open Classical
+61: 
+62: /-- `s` is a clique of `G`: all its vertices are pairwise adjacent. -/
+63: def IsClique {V : Type} (G : SimpleGraph V) (s : Finset V) : Prop :=
+64:   ∀ a ∈ s, ∀ b ∈ s, a ≠ b → G.Adj a b
+65: 
+66: /-- The set of `k`-cliques: `k`-element vertex subsets which are cliques.
+67: This is `c_k(G)` as a Finset; every subset of the vertex type is eligible
+68: since it is automatically a subset of `univ`. -/
+69: noncomputable def cliqueFinset {V : Type} [Fintype V] (G : SimpleGraph V) (k : ℕ) :
+70:     Finset (Finset V) :=
+71:   ((Finset.univ : Finset V).powerset).filter fun s => s.card = k ∧ IsClique G s
+72: 
+73: /-- The number `c_k(G)` of `k`-cliques of `G`. -/
+74: noncomputable def cliqueCount {V : Type} [Fintype V] (G : SimpleGraph V) (k : ℕ) : ℕ :=
+75:   (cliqueFinset G k).card
+76: 
+77: /-- Membership characterization of the `k`-clique set. -/
+78: theorem mem_cliqueFinset {V : Type} [Fintype V] {G : SimpleGraph V} {s : Finset V} {k : ℕ} :
+79:     s ∈ cliqueFinset G k ↔ s.card = k ∧ IsClique G s := by
+80:   simp only [cliqueFinset, Finset.mem_filter, Finset.mem_powerset, Finset.subset_univ,
+81:     true_and]
+82: 
+83: /-- A triangle of `G`: a three-element clique, exactly the source's notion of
+84: a triangle (3-clique) on which edge-incidence is counted. -/
+85: def IsTriangle {V : Type} (G : SimpleGraph V) (s : Finset V) : Prop :=
+86:   s.card = 3 ∧ IsClique G s
+87: 
+88: /-- The Finset of triangles of `G` containing both `a` and `b`:
+89: the edge-in-triangle incidence set of source Definition 2.2. -/
+90: noncomputable def triangleSet {V : Type} [Fintype V] (G : SimpleGraph V) (a b : V) :
+91:     Finset (Finset V) :=
+92:   ((Finset.univ : Finset V).powerset).filter fun s => IsTriangle G s ∧ a ∈ s ∧ b ∈ s
+93: 
+94: /-- The common neighbours of `a` and `b`. -/
+95: noncomputable def commonNbrFinset {V : Type} [Fintype V] (G : SimpleGraph V) (a b : V) :
+96:     Finset V :=
+97:   Finset.univ.filter fun c => G.Adj a c ∧ G.Adj b c
+98: 
+99: /-- Flatness, source Definition 2.2: every edge lies in at most two triangles.
+100: No planarity, connectedness or no-isolated-edge condition is imposed. -/
+101: noncomputable def Flat {V : Type} [Fintype V] (G : SimpleGraph V) : Prop :=
+102:   ∀ a b, G.Adj a b → (triangleSet G a b).card ≤ 2
+103: 
+104: /-- The sum of the `c_k(G)` over odd `k`, up to the vertex count. -/
+105: noncomputable def oddCliqueSum {V : Type} [Fintype V] (G : SimpleGraph V) : ℕ :=
+106:   ∑ d ∈ Finset.range (Fintype.card V + 1), if d % 2 = 1 then cliqueCount G d else 0
+107: 
+108: /-- The sum of the `c_k(G)` over even `k` *including* `k = 0` (source
+109: convention `c_0 = 1`), up to the vertex count. -/
+110: noncomputable def evenCliqueSum {V : Type} [Fintype V] (G : SimpleGraph V) : ℕ :=
+111:   ∑ d ∈ Finset.range (Fintype.card V + 1), if d % 2 = 0 then cliqueCount G d else 0
+112: 
+113: /-- The sum over even `k ≥ 1` only (positive-index convention, no `c_0`). -/
+114: noncomputable def evenCliqueSumPos {V : Type} [Fintype V] (G : SimpleGraph V) : ℕ :=
+115:   ∑ d ∈ Finset.range (Fintype.card V + 1),
+116:     if d % 2 = 0 ∧ 0 < d then cliqueCount G d else 0
+117: 
+118: /-- The clique-count discrepancy `D_clique(G)` of the source, equation (14):
+119: the absolute value of the difference of the odd and even sums, as a
+120: natural number via `Int.natAbs` (the exact absolute value on Z). -/
+121: noncomputable def discrepancyNat {V : Type} [Fintype V] (G : SimpleGraph V) : ℕ :=
+122:   Int.natAbs ((oddCliqueSum G : ℤ) - (evenCliqueSum G : ℤ))
+123: 
+124: /-- The discrepancy under the positive-index convention (no `c_0`). -/
+125: noncomputable def discrepancyNatPos {V : Type} [Fintype V] (G : SimpleGraph V) : ℕ :=
+126:   Int.natAbs ((oddCliqueSum G : ℤ) - (evenCliqueSumPos G : ℤ))
+127: 
+128: /-- Balanced: `D_clique(G) ≤ 1`. -/
+129: noncomputable def Balanced {V : Type} [Fintype V] (G : SimpleGraph V) : Prop :=
+130:   discrepancyNat G ≤ 1
+131: 
+132: /-! ## The witness K_{3,3} -/
+133: 
+134: /-- Adjacency of the witness: vertices are adjacent iff they lie in different
+135: summands of `Fin 3 ⊕ Fin 3`. -/
+136: def K33Adj : Fin 3 ⊕ Fin 3 → Fin 3 ⊕ Fin 3 → Prop
+137:   | Sum.inl _, Sum.inr _ => True
+138:   | Sum.inr _, Sum.inl _ => True
+139:   | _, _ => False
+140: 
+141: /-- The witness graph `K_{3,3}`: two disjoint three-element sides, all and
+142: only cross edges.  A genuine finite simple graph: irreflexive and symmetric. -/
+143: def K33 : SimpleGraph (Fin 3 ⊕ Fin 3) where
+144:   Adj := K33Adj
+145:   adj_symm := by
+146:     intro a b h
+147:     cases a <;> cases b
+148:     · exact h
+149:     · exact trivial
+150:     · exact trivial
+151:     · exact h
+152:   adj_irrefl := by
+153:     intro a
+154:     cases a <;> simp [K33Adj]
+155: 
+156: /-- Unfolding lemma for the witness adjacency, left-to-right. -/
+157: theorem K33_adj_il_ir (i j : Fin 3) : K33.Adj (Sum.inl i) (Sum.inr j) := trivial
+158: 
+159: /-- Unfolding lemma for the witness adjacency, right-to-left. -/
+160: theorem K33_adj_ir_il (i j : Fin 3) : K33.Adj (Sum.inr i) (Sum.inl j) := trivial
+161: 
+162: /-- No adjacency within the left side. -/
+163: theorem K33_not_adj_ll (i j : Fin 3) : ¬ K33.Adj (Sum.inl i) (Sum.inl j) := id
+164: 
+165: /-- No adjacency within the right side. -/
+166: theorem K33_not_adj_rr (i j : Fin 3) : ¬ K33.Adj (Sum.inr i) (Sum.inr j) := id
+167: 
+168: /-- An edge of the witness has its endpoints on opposite sides. -/
+169: theorem K33_adj_opposite {a b : Fin 3 ⊕ Fin 3} (h : K33.Adj a b) :
+170:     (∃ i j, a = Sum.inl i ∧ b = Sum.inr j) ∨ (∃ i j, a = Sum.inr i ∧ b = Sum.inl j) := by
+171:   cases a <;> cases b
+172:   case inl.inl => exact absurd h (K33_not_adj_ll _ _)
+173:   case inl.inr => exact Or.inl ⟨_, _, rfl, rfl⟩
+174:   case inr.inl => exact Or.inr ⟨_, _, rfl, rfl⟩
+175:   case inr.inr => exact absurd h (K33_not_adj_rr _ _)
+176: 
+177: /-- Adjacent vertices of the witness are distinct (faithfulness of the
+178: simple-graph structure: no edge is a loop). -/
+179: theorem K33_adj_ne {a b : Fin 3 ⊕ Fin 3} (h : K33.Adj a b) : a ≠ b := by
+180:   intro e
+181:   subst e
+182:   exact K33.adj_irrefl _ h
+183: 
+184: /-- Symmetry of the witness adjacency, as a usable lemma. -/
+185: theorem K33_symm {a b : Fin 3 ⊕ Fin 3} (h : K33.Adj a b) : K33.Adj b a :=
+186:   K33.adj_symm a b h
+187: 
+188: 
+189: 
+190: /-! ## Witness cardinality and clique counting -/
+191: 
+192: /-- The witness vertex type has exactly six elements. -/
+193: theorem card_V6 : Fintype.card (Fin 3 ⊕ Fin 3) = 6 := by
+194:   rw [Fintype.card_sum, Fintype.card_fin]
+195: 
+196: /-- Left-side and right-side vertices are distinct. -/
+197: theorem inl_ne_inr (i j : Fin 3) : (Sum.inl i : Fin 3 ⊕ Fin 3) ≠ Sum.inr j := by
+198:   intro e
+199:   cases e
+200: 
+201: /-- Two-element sets commute. -/
+202: theorem insert_pair_comm (x y : Fin 3 ⊕ Fin 3) :
+203:     insert x ({y} : Finset (Fin 3 ⊕ Fin 3)) = insert y ({x} : Finset (Fin 3 ⊕ Fin 3)) := by
+204:   ext z
+205:   simp only [Finset.mem_insert, Finset.mem_singleton]
+206:   constructor
+207:   · intro hz
+208:     rcases hz with rfl | rfl
+209:     · exact Or.inr rfl
+210:     · exact Or.inl rfl
+211:   · intro hz
+212:     rcases hz with rfl | rfl
+213:     · exact Or.inr rfl
+214:     · exact Or.inl rfl
+215: 
+216: /-- The cross pair `{left i, right j}` as a set. -/
+217: def pairFinset (p : Fin 3 × Fin 3) : Finset (Fin 3 ⊕ Fin 3) :=
+218:   insert (Sum.inl p.1) ({Sum.inr p.2} : Finset (Fin 3 ⊕ Fin 3))
+219: 
+220: /-- Any clique of the witness has at most two vertices: among any three
+221: vertices, two lie on the same side and are then nonadjacent. -/
+222: theorem K33_clique_card_le (s : Finset (Fin 3 ⊕ Fin 3)) (h : IsClique K33 s) :
+223:     s.card ≤ 2 := by
+224:   by_contra hc
+225:   have h3 : 3 ≤ s.card := by omega
+226:   have hne : s.Nonempty := Finset.card_pos.mp (by omega)
+227:   obtain ⟨a, ha⟩ := hne
+228:   have h1 : (s.erase a).card = s.card - 1 := Finset.card_erase_of_mem ha
+229:   have hne2 : (s.erase a).Nonempty := Finset.card_pos.mp (by omega)
+230:   obtain ⟨b, hb⟩ := hne2
+231:   have hab : b ≠ a ∧ b ∈ s := Finset.mem_erase.mp hb
+232:   have hb' : b ∈ s := hab.2
+233:   have hba : b ≠ a := hab.1
+234:   have hbE : b ∈ s.erase a := Finset.mem_erase.mpr ⟨hba, hb'⟩
+235:   have h2 : ((s.erase a).erase b).card = (s.erase a).card - 1 :=
+236:     Finset.card_erase_of_mem hbE
+237:   have hne3 : ((s.erase a).erase b).Nonempty := Finset.card_pos.mp (by omega)
+238:   obtain ⟨c, hc⟩ := hne3
+239:   have hcb : c ≠ b ∧ c ∈ s.erase a := Finset.mem_erase.mp hc
+240:   have hca : c ≠ a ∧ c ∈ s := Finset.mem_erase.mp hcb.2
+241:   have hcc : c ∈ s := hca.2
+242:   have hne_ab : a ≠ b := Ne.symm hba
+243:   have hne_ac : a ≠ c := Ne.symm hca.1
+244:   have hne_bc : b ≠ c := Ne.symm hcb.1
+245:   rcases a with a | a <;> rcases b with b | b <;> rcases c with c | c
+246:   · exact absurd (h (Sum.inl a) ha (Sum.inl b) hb' hne_ab) (K33_not_adj_ll _ _)
+247:   · exact absurd (h (Sum.inl a) ha (Sum.inl b) hb' hne_ab) (K33_not_adj_ll _ _)
+248:   · exact absurd (h (Sum.inl a) ha (Sum.inl c) hcc hne_ac) (K33_not_adj_ll _ _)
+249:   · exact absurd (h (Sum.inr b) hb' (Sum.inr c) hcc hne_bc) (K33_not_adj_rr _ _)
+250:   · exact absurd (h (Sum.inl b) hb' (Sum.inl c) hcc hne_bc) (K33_not_adj_ll _ _)
+251:   · exact absurd (h (Sum.inr a) ha (Sum.inr c) hcc hne_ac) (K33_not_adj_rr _ _)
+252:   · exact absurd (h (Sum.inr a) ha (Sum.inr b) hb' hne_ab) (K33_not_adj_rr _ _)
+253:   · exact absurd (h (Sum.inr a) ha (Sum.inr b) hb' hne_ab) (K33_not_adj_rr _ _)
+254: 
+255: /-- Membership in the triangle-incidence set. -/
+256: theorem mem_triangleSet {V : Type} [Fintype V] {G : SimpleGraph V} {a b : V}
+257:     {s : Finset V} :
+258:     s ∈ triangleSet G a b ↔ (s.card = 3 ∧ IsClique G s) ∧ a ∈ s ∧ b ∈ s := by
+259:   unfold triangleSet
+260:   constructor
