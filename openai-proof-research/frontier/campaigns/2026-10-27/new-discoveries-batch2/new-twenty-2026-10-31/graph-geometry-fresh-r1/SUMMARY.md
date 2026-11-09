@@ -1,0 +1,24 @@
+# Research handoff: 319783 and 320847
+
+**Zero new solutions; zero discovery credit.** Both exact universal endpoints remain unresolved in this lane. No Lean formalization or clean Lean replay was attempted because no full mathematical candidate closed. Independent review remains separate and was not performed here.
+
+The strongest pursued route was an exact nonedge certificate for the TBR/BME conjecture. The primary source restores unrooted binary labeled trees, weights 2^(1−path-edge-count), and the convex hull of all tree vectors. The program searched 180 TBR pairs against full tree pools at 7–9 leaves and another 24 pairs against bounded local pools at 12 and 16 leaves. No feasible witness was found. Two sixteen-leaf LPs returned solver errors; all other outcomes were numerical infeasibility reports, not exact edge certificates. The nine-leaf run completed in 169 seconds, with about 1.084 GB observed RSS; no larger full enumeration was attempted. All processes finished.
+
+A useful surviving calculation is the four-reconnection identity: cross-coordinate alternating sums factor as (p_0−p_1)⊗(q_0−q_1), where p_i,q_j are root-distance profiles of the components. Thus the tempting four-tree parallelogram fails whenever both profile differences are nonzero. MATHEMATICS.md supplies the derivation, a rigorous sufficient full-polytope nonedge certificate criterion that assumes no extremality, and the unresolved step needed for an edge-exposing construction. No claim of mathematical novelty is made for these helpers.
+
+For UBBs, the published primary paper explicitly conjectures cardinality **at most |E|**, whereas the cached MathDB/older author formulation says exact cardinality. Definition 2 quantifies over every failure set of size λ−1. No wording correction is offered as a solution. A bounded exact integer experiment constructed and reverified suitable families for 45 sampled simple graphs on 6–8 vertices with λ≥3 and at most 18 edges. These positive instances are not resolutions. MATHEMATICS.md gives the exact set-cover formulation and sufficient rational-dual obstruction; no such obstruction was found or certified.
+
+Live prior-art checks used OpenAI/math head 4eaee87548250b2682affda7d05d947c05554bae (2026-10-30), and successful Palomar revision-651 queries at release ff01fa2bd3240170cedf26fba4b146111e3b132a8c11fe533e5cea0a9fe75287. BME/uncovering queries were empty. The broader spanning-trees query returned five unrelated or classical entries, including Nash-Williams–Tutte and flow theorems; these do not themselves assert the UBB endpoint. Actual successor bodies inspected include Catanzaro–Pesenti–Wolsey (2020) Proposition 6/Corollary 1 and facet statements, Forcey–Keefe–Sands (arXiv v5, 2021) Theorem 4.3 and split-face discussion, Bailey–Newman–Stevens Theorems 1, 13, 21, and the live pinned strong thin-tree Theorems 1.1 and 2.3. None of these inspected statements resolves the assigned conjectures. This is bounded review, not worldwide novelty clearance; see results.json.
+
+Access gaps: both live MathDB records returned 403 once and were not retried. Two guessed legacy registry domains failed DNS and were not retried. The old BME author PDF URL redirects to his homepage; the actual current author-linked PDF was then retrieved through its pinned GitHub URL. A direct packing-paper author host timed out; the arXiv version succeeded. No access control was bypassed. Initial source receipts use the local date 2026-10-31; later UTC receipts are 2026-11-01, still October 31 in Los Angeles.
+
+Artifacts:
+
+- `results.json`: per-target scope, review depth, status, surviving step, and zero credit.
+- `MATHEMATICS.md`: definitions, proof of helper criteria, exact experiment scopes, known failure modes.
+- `sources/`: primary/successor bodies, extracted text, live registry responses and SHA-256/URL/date receipts; `source-manifest.json` indexes them.
+- `bme_search.py`, `bme_local_search.py`, `bme-run-*.json`, `bme-local-run-*.json`: discovery programs and run evidence. The retained interrupt note contains an explicit correction: the run had already completed before an attempted stop. It is not an interrupted experiment.
+- `ubb_search.py`, `ubb-runs.json`: 45 exact finite-instance covering certificates.
+- `verify_experiments.py`, `experiment-validation.json`: fresh Python structural/covering validation; not a Lean replay.
+
+Recommended handoff: park both as hard targets absent a new mechanism. For BME, the concrete next calculation is an objective that controls every attachment position on the shared-split face, followed by full-polytope extension. For UBB, search for a rational dual with value >|E| on a graph outside the source's constructed classes and verify its constraints over every spanning tree. Neither next step currently has a closed candidate. Do not spend Lean effort on the helpers or count these finite instances.
