@@ -1,0 +1,1815 @@
+                                               Learning-Augmented Metric Distortion via (p, q)-Veto Core
+
+                                                       Ben Bergera , Michal Feldman∗b , Vasilis Gkatzelis†c , and Xizhi Tan†c
+                                                                  a
+                                                                   Offchain Labs, inc.; bberger@offchainlabs.com
+                                                      b
+                                                          Tel-Aviv University and Microsoft ILDC; mfeldman@cs.tau.ac.il
+                                                                   c
+                                                                     Drexel University; {gkatz,xizhi}@drexel.edu
+
+
+
+
+arXiv:2307.07495v3 [cs.GT] 11 Jul 2024
+                                                                                           Abstract
+                                                   In the metric distortion problem there is a set of candidates C and voters V within the
+                                               same metric space. The goal is to select a candidate minimizing the social cost, defined as the
+                                               sum of distances of the selected candidate from all the voters, and the challenge arises from the
+                                               algorithm receiving only ordinal input — each voter’s list of candidates ranked by distance —
+                                               while the objective function is cardinal, determined by the underlying metric. The distortion of
+                                               an algorithm is its worst-case approximation factor with respect to the optimal social cost.
+                                                   A key concept here is the (p, q)-veto core, with p ∈ ∆(V ) and q ∈ ∆(C) being normalized
+                                               weight vectors representing voters’ veto power and candidates’ support, respectively. The (p, q)-
+                                               veto core corresponds to a set of winners from a specific class of deterministic algorithms.
+                                               Notably, the optimal distortion of 3 is obtained from this class, by selecting veto core candidates
+                                               using uniform p and q proportional to candidates’ plurality scores. Bounding the distortion of
+                                               other algorithms from this class is an open problem.
+                                                   Our contribution is twofold. First, we establish upper bounds on the distortion of candidates
+                                               from the (p, q)-veto core for arbitrary weight vectors p and q. Second, we revisit the metric dis-
+                                               tortion problem through the learning-augmented framework, which equips the algorithm with a
+                                               (machine-learned) prediction regarding the optimal candidate. The quality of this prediction is
+                                               unknown, and the goal is to optimize the algorithm’s performance under accurate predictions
+                                               (known as consistency), while simultaneously providing worst-case guarantees under arbitrarily
+                                               inaccurate predictions (known as robustness). We propose an algorithm that chooses candi-
+                                               dates from the (p, q)-veto core, using a prediction-guided q vector and, leveraging our distortion
+                                               bounds, we prove that this algorithm achieves the optimal robustness-consistency trade-off.
+
+
+
+
+                                           ∗
+                                              Partially supported by the European Research Council (ERC) under the European Union’s Horizon 2020 research
+                                         and innovation program (grant agreement No. 866132), by an Amazon Research Award, and by the NSF-BSF (grant
+                                         number 2020788).
+                                            †
+                                              Partially supported by NSF CAREER award CCF-2047907 and NSF grant CCF-2210502.
+1    Introduction
+In the metric distortion problem there is a set of candidates C and a set of voters V, all residing
+in the same metric space. This metric defines a distance d(v, c) between each voter v ∈ V and
+candidate c ∈ C, and the objective is to choose a candidate c with minimum  P        social cost, defined
+as the total distance of the chosen candidate from all voters, i.e.,          v∈V d(v, c). This captures
+spatial models of voting from the political science literature, such as the Downsian proximity
+model [26], as well as the classic    problem of facility location [21, 37, 24]. Computing the optimal
+             ∗
+                              P
+candidate, c = arg minc∈C v∈V d(v, c), given the pairwise distances, d(v, c), is a computationally
+easy problem, but the challenge in the metric distortion problem is that the algorithm has access
+only to ordinal information regarding the preferences of each voter, i.e., a ranked list of candidates
+in non-decreasing order of their distance from the voter. This information limitation restricts the
+designer’s ability to optimize the social cost and the performance of an algorithm is evaluated based
+on its distortion, i.e., its worst-case approximation factor with respect to the optimal social cost.
+    The metric distortion problem has been the focus of a series of papers [6, 47, 30, 40, 41, 39, 48]
+which evaluated the distortion of known algorithms and designed new ones, aiming to achieve better
+distortion bounds. Anshelevich et al. [6] established that no deterministic algorithm can achieve a
+distortion better than 3, and Gkatzelis et al. [30] eventually provided a deterministic algorithm that
+matches this bound (see Section 1.2 for details). Even after achieving this tight bound, subsequent
+work by Kizilkaya and Kempe [40, 41] and Peters [48] has deepened our understanding of the metric
+distortion problem, leading to the formulation of simpler algorithms that achieve the same bound.
+    A key concept resulting from this line of work is the (p, q)-veto core, where p ∈ ∆(V ) and q ∈
+∆(C) are normalized weight vectors representing the voters’ veto power and candidates’ support,
+respectively. Kizilkaya and Kempe [41] showed that the (p, q)-veto core corresponds to a set of
+candidates that arise as winners under a natural class of algorithms. Notably, all known algorithms
+that achieve the optimal distortion of 3 always select (p, q)-veto core candidates, where p is uniform
+over all voters and each q(c) is proportional to the plurality score of candidate c, i.e., proportional to
+the number of voters that rank c first. However, our understanding of distortion in the veto core is
+restricted to this specific pair of weight vectors and an important open problem arises, as highlighted
+by Kizilkaya and Kempe [41]: “The study of the generalized veto core and its connection to metric
+distortion is very intriguing. In particular, for which initial candidate weights q do candidates in the
+core guarantee constant (or otherwise small) distortion?” Our first result makes significant progress
+toward resolving this open problem by establishing upper bounds on the distortion of candidates
+in the (p, q)-veto core for arbitrary choices of both p and q. We then exhibit the power of these
+bounds by revisiting the metric distortion problem through the learning-augmented framework and
+leveraging our bounds to design optimal learning-augmented algorithms.
+
+Learning-augmented framework. Aiming to overcome the limitations of worst-case analysis,
+a surge of recent work has focused on a new analysis framework for achieving refined bounds
+using the guidance of (machine-learned) predictions. In this framework, often termed algorithms
+with predictions or learning-augmented algorithms, the algorithm is enhanced with a prediction
+that it can use as a guide toward improved performance. This prediction can take different forms
+(depending on the information that the designer may benefit from in the setting at hand) and can
+be generated using historical data or other relevant information available to the designer. However,
+the quality of this prediction is unknown and cannot be trusted. This framework goes beyond worst-
+case analysis through bicriteria optimization: the algorithm is simultaneously evaluated based on its
+performance when the prediction is accurate (known as its consistency) as well as its performance
+when the prediction can be arbitrarily inaccurate (known as its robustness).
+
+                                                    1
+    One extreme choice is to follow the prediction blindly, which is rewarding when it is accurate
+(leading to good consistency), but can yield very bad outcomes when it is inaccurate (leading to
+poor robustness). The other extreme is to disregard the prediction, which provides weak consistency
+guarantees. In general, each learning-augmented algorithm provides a trade-off between robustness
+and consistency, and the goal is to identify the Pareto frontier between these two measures.
+    The learning-augmented framework has been applied quite broadly, e.g., to analyze the com-
+petitive ratio of online algorithms, the running time of algorithms and data structures, or the
+performance of mechanisms in multiagent systems (see [42] for a frequently updated list of papers
+in this rapidly growing literature). In all of these applications, this framework has been used to
+mitigate information limitations that pose obstacles for the designer.
+    Since the main challenge in metric distortion is the information gap that the designer faces, this
+makes it a prime application domain for this framework. Specifically, apart from the rankings of the
+voters, it is reasonable to assume that the designer may also have access to historical observations
+regarding the voters’ choices in other matters that may correlate with their preferences in the
+matter at hand, thus providing hints regarding their preferred outcome in the metric space.
+
+1.1    Our Results
+Our first main result provides an upper bound for the distortion of any algorithm choosing candi-
+dates from the (p, q)-veto core, for arbitrary weight vectors p ∈ ∆(V) and q ∈ ∆(C).
+Theorem: Any algorithm choosing a candidate c from the (p, q)-veto core has distortion at most
+
+                                                 2 maxv p(v)
+                                            1+         q(c)
+                                                               ,
+                                                 minc plu(c)
+
+where plu(c) is the plurality score of c (the number of voters that rank c at the top of their list).
+    Note that all the deterministic algorithms known to achieve the optimal distortion of 3 choose
+candidates from the (puni , q plu )-veto core, where puni (v) = n1 for all v and q plu (c) = plu(c)
+                                                                                               n    for all
+c. For these vectors, our bound recovers the optimal distortion of 3. In general, our upper bound
+makes significant progress towards answering the question posed by Kizilkaya and Kempe [41] by
+providing a sufficient condition for achieving constant distortion, i.e., that the ratio of maxv p(v)
+            q(c)
+over minc plu(c)  is constant. Another implication of our upper bound is that if we let both p and
+q be uniform, in which case the (p, q)-veto core reduces to the proportional veto core introduced
+by Moulin [46], the resulting distortion is at most 1 + 2 m    n maxc∈C plu(c). Intuitively, maxv p(v)
+                                                                                        q(c)
+captures the “distance” of p from p    uni (for which maxv p (v) = n1 ) and minc plu(c)
+                                                              uni                            captures the
+                         plu                    plu               1
+“distance” of q from q       (for which minc q (c)/plu(c) = n ). If we use λ = n · maxv p(v) and
+µ = n · minc q(c)/plu(c) as two parameters that quantify these “distances,” our upper bound
+becomes 1 + 2λ µ , and we complement it by showing that it is tight with respect to µ and λ.
+    Our second main result, leverages our distortion upper bounds for the (p, q)-veto core, to provide
+the first analysis of algorithms for the metric distortion problem using the learning-augmented
+framework. We first consider learning-augmented algorithms that are enhanced with the strongest
+possible type of prediction, i.e., a prediction regarding the exact cardinal distances between each
+voter-candidate pair, and we exhibit an inevitable trade-off between the optimal robustness and
+consistency pairs that any such algorithm can achieve (see Theorem 4.1). We then propose a family
+of algorithms augmented only with a prediction ĉ ∈ C regarding who the optimal candidate is, and
+we prove that despite the weaker prediction that they are provided with, these algorithms are able
+to match the optimal robustness-consistency trade-off that even the stronger class of algorithms
+
+
+                                                    2
+can achieve (see Theorem 4.3). These algorithms, termed LAδ , are parameterized by δ ∈ [0, 1) and
+they always return a candidate from the (p, q)-veto core, where p is uniform and q is guided by the
+prediction, assigning a higher amount of weight to ĉ; the exact amount also depends on the value
+of δ chosen by the designer.
+                                               3−δ                  3+δ
+Theorem: For any δ ∈ [0, 1), LAδ achieves 1+δ      -consistency and 1−δ -robustness. Moreover, this
+is the optimal trade-off. Namely, no deterministic algorithm that is 3−δ
+                                                                      1+δ -consistent can be strictly
+            3+δ
+better than 1−δ -robust, even for the line metric and just two candidates.
+   Figure 1 exhibits this optimal trade-off for values of δ ∈ [0, 1). Specifically, if the designer is
+confident regarding the quality of the prediction and willing to relax the robustness guarantee to
+β > 3, then choosing the corresponding value of δ yields a consistency guarantee of (β + 3)/(β − 1).
+For example, the designer can achieve a consistency of 2 with a guaranteed robustness of 5.
+
+
+
+
+Figure 1: On the left, a plot showing the consistency and robustness bounds achieved by LAδ as
+a function of the confidence parameter δ. On the right, a plot of the Pareto-frontier capturing the
+best possible trade-off between robustness and consistency, all of which can be achieved by LAδ
+for the appropriate choice of δ.
+
+
+A more refined analysis. Consistency and robustness capture two extremes regarding the
+quality of the prediction, namely, full accuracy and complete arbitrariness, respectively. A more
+refined analysis provides bounds on the distortion parameterized by the quality of the prediction.
+In Section 4.3, we provide such refined worst-case bounds         on the distortion of LAδ algorithms.
+                                                     n·d(ĉ,c∗ )
+Specifically, we define the prediction error as η :=  SC(c∗ ) , i.e., the distance between the predicted
+and the optimal candidates, normalized by the optimal average distance, SC(c∗ )/n. We then prove
+                                         1
+
+that the distortion of LAδ with any given δ is at most the bound shown below, which recovers the
+consistency guarantee of (3 − δ)/(1 + δ) for η = 0, then increases linearly in η up until it reaches
+the robustness bound of (3 + δ)/(1 − δ).
+                                                                 
+                                           3 − δ + 2δη 3 + δ
+                                     min                ,            .
+                                               1+δ          1−δ
+
+Metric spaces with decisive voters. We then refine the distortion bounds further, using the
+α-decisiveness framework of Anshelevich and Postl [5]. For α ∈ [0, 1], a voter is α-decisive if her
+  1
+    As we discuss in Section 4.3, normalizing the error using the average distance from the optimal candidate is
+necessary to accurately quantify the quality of the prediction.
+
+
+                                                       3
+distance from her favorite candidate is at most α times her distance from any other candidate. An
+instance is α-decisive if every voter is α-decisive. We obtain a distortion upper bound of
+                                                                       
+                              2 + α − αδ            2δη        8δ
+                                          + min         ,
+                                 1+δ               1 + δ (1 + δ)(1 − δ)
+
+for α-decisive instances, which recovers our previous bounds when α = 1. For α = 0, the distance
+from each voter to her favorite candidate is 0, capturing the well-studied peer selection problem,
+where the set of voters and the set of candidates coincide and each voter ranks herself first.
+
+1.2   Related Work
+Deterministic metric distortion. Anshelevich et al. [6] initiated the study of the metric dis-
+tortion problem and showed that well-known algorithms such as “plurality”, “Borda count”, “k-
+approval”, and “veto” admit a distortion that increases linearly with the number of voters or
+candidates. They also showed that the distortion of the transferable vote algorithm grows logarith-
+mically in the number of candidates, while Copeland’s rule achieves a distortion of 5. They also
+proved a lower bound of 3 for any deterministic algorithm and conjectured that this bound is tight.
+    The first deterministic algorithm to guarantee a distortion √ better than 5 was proposed by
+Munagala and Wang [47], who achieved a distortion of 2 + 5 ≈ 4.236 using a novel algorithm.
+They also provided a sufficient condition
+                                  √        for achieving a distortion of 3. Independently, Kempe [39]
+derived the same bound of 2 + 5 using a linear programming duality framework, and provided
+several alternative formulations of the sufficient condition outlined in [47]. Gkatzelis et al. [30] then
+introduced the Plurality Matching rule that achieves the optimal distortion of 3.
+    Even after the tight distortion bound of 3 was achieved, subsequent work provided a better
+understanding of the problem. Kizilkaya and Kempe [40] achieved the optimal distortion with the
+Plurality Veto algorithm which is much simpler relative to Plurality Matching, and very recently
+Kizilkaya and Kempe [41] proposed a refinement of Plurality Veto called Simultaneous Veto that
+resolves the arbitrary tie-breaking issues in [30] and [40] while maintaining optimal distortion.
+    Gkatzelis et al. [32] studied the extent to which metric distortion bounds can be combined
+with distortion bounds for the utilitarian setting — where the voters’ preferences are arbitrary
+normalized valuations. Abramowitz et al. [1] studied a variant where more information besides the
+usual preference rankings is available, and Kempe [38] studied the trade-offs between the achievable
+distortion and the communication complexity of deterministic social choice algorithms.
+
+Metric distortion with randomized algorithms. The tight bound of 3 does not hold when
+algorithms are allowed to be randomized. Anshelevich and Postl [5] proved that the Random
+Dictatorship algorithm achieves distortion better than 3, but that tends to 3 as the number of
+voters grows. Subsequent work by Fain et al. [27] and Kempe [38] identify other algorithms that
+achieve distortion bounds that tend to 3 (but this time as the number of candidates grows). A lower
+bound of 2 was also established by [5], which was improved to 2.1126 and 2.06316, independently
+by Charikar and Ramakrishnan [22], and Pulyassary and Swamy [51] respectively. Charikar et al.
+[23] also achieved an upper-bound of 2.753, thereby providing the first randomized algorithm with
+distortion bounded away from 3.
+    Unlike the deterministic metric distortion problem, the randomized variant remains unresolved
+even from the traditional worst-case approach. Closing the remaining gap is a major open question
+in this field and as more advances are achieved in this direction, this provides additional motivation
+for a refined analysis of that variant through the learning-augmented framework as well.
+
+
+                                                   4
+Learning-augmented framework. The learning-augmented framework has been widely ac-
+cepted in recent years as a valuable paradigm for the design and analysis of algorithms, aiming to
+circumvent overly-pessimistic worst-case bounds. In the last five years alone, more than 150 papers
+have revisited classic algorithmic problems using this framework, with principal examples being
+online paging [44], scheduling [52], secretary problems [25, 8], optimization problems with covering
+[12] and knapsack constraints [34], as well as graph problems [9]. We refer the reader to [45] for a
+survey of some early work and [42] for a more up-to-date list of papers in this area. More closely
+related to this paper, some recent work has used this framework on social choice problems, where
+the predictions are regarding a group of agents and their preferences, and the goal is to optimize
+some social cost or social welfare function. This includes the study of resource allocation problems
+where agents’ preferences are revealed in an online fashion [13, 14] and settings where the agents
+are strategic and their preferences may be private [2, 53, 31, 10, 36, 49, 43, 11, 15]. Our work adds
+to this literature by focusing on settings where access to the agents’ preferences is limited to ordinal
+information.
+
+Metric spaces with α-decisive voters. The α-decisiveness framework was introduced by An-
+shelevich and Postl [5] to provide a more refined analysis of distortion bounds, as a function of
+how strong the agents’ preference is for their top choice, and it has been used in several distortion
+problems [4, 33, 29]. The special case of α = 0 corresponds to the peer selection setting, where
+the set of voters and candidates coincide. This setting has received attention in settings beyond
+distortion as well [3, 35, 18, 19, 20].
+
+
+2    Model and Preliminaries
+Let (X , d) be a metric space where d : X × X → R≥0 is the distance function that satisfies the
+following conditions: 1) positive definiteness: ∀a, b ∈ X , d(a, b) ≥ 0 and d(a, b) = 0 if and only
+if a = b; 2) symmetry: ∀a, b ∈ X , d(a, b) = d(b, a); and 3) triangle inequality: ∀a, b, c ∈ X ,
+d(a, b) + d(b, c) ≥ d(a, c). Let V, C be finite sets of voters and candidates, respectively, that are
+located in the metric space. We denote by n the number of voters (n = |V|) and by m the number
+of candidates (m = |C|). For simplicity of notation, we extend d to also operate on the voters
+and the candidates. That is, we use d(a, b), for a, b ∈ V ∪ C, to denote the distance between the
+points in XPwhere a and b are located. Given a metric d, the social cost of a candidate c ∈ C is
+SC(c, d) = v∈V d(v, c); we write SC(c) when the metric distance d is clear from the context.
+
+Preference profile. We refer to triplets (V, C, d) as instances and the distance between a voter
+and a candidate quantifies how much the voter prefers that candidate — the closer the better. We
+say that a voter v ∈ V prefers c ∈ C over c′ ∈ C, and we write c ≽v c′ if and only if d(v, c) ≤ d(v, c′ ).
+Note that this is a weak preference relation. A given instance (V, C, d) induces preference rankings
+over candidates for each voter. That is, for each v ∈ V we have a preference ranking (bijection)
+σv : C → {1, . . . , |C|} such that σv (c1 ) < σv (c2 ) implies c1 ≽v c2 , and we write in this case that d is
+aligned with σv , denoted d ▷ σv . Note that these rankings are not determined uniquely when there
+are at least two candidates whose distance from v is the same.
+    A preference profile σ := (σv )v∈V is a tuple of preference rankings for each voter and we say
+that d is aligned with the preference profile σ, denoted as d ▷ σ, if d ▷ σv for each v ∈ V. Given σ,
+we define top(v) to be the candidate ranked highest by v, and we define plu(c) to be the number
+of voters that rank c highest.
+
+
+
+                                                      5
+Metric distortion. In the metric distortion problem, an algorithm ALG receives as input a
+preference profile σ which is induced by some (V, C, d). Importantly, ALG does not have access to
+the underlying distance function. The goal is to output a candidate that minimizes the social cost.
+We denote by c∗ (d) = arg minc∈C SC(c, d) the candidate that minimizes the social cost, i.e., the
+optimal candidate, breaking ties arbitrarily. The distortion of ALG is the worst-case multiplicative
+approximation it achieves to the optimum, i.e.,
+                                                          SC(ALG(σ), d)
+                           distortion(ALG) = sup        sup              .
+                                                σ   d:d▷σ  SC(c∗ (d), d)
+In addition to using c∗ to represent the optimal candidate, we often use a to represent a special
+candidate with some properties and c to refer to any general candidate.
+
+Generalized veto core Given a preference profile σ, a (p, q)-domination graph for some candi-
+date a is a vertex-weighted bipartite graph with voters on one side and candidates on the other
+side. It captures how the candidate is evaluated compared with the other candidates. More specif-
+ically, an edge (v, c) between some voter v and candidate c exists if voter v prefers candidate a over
+candidate c. The more edges in the (p, q)-domination graph of some candidate, the more “popular”
+she is among the voters. We use ∆(V) and ∆(C) to denote the probability distribution over V and
+C, respectively.
+Definition 2.1 ((p, q)-Domination Graph [30]). Given a preference profile σ and (normalized)
+weight vectors p ∈ ∆(V) and q ∈ ∆(C), the (p, q)-domination graph of candidate a is the vertex-
+weighted bipartite graph Gσp,q (a) = (V, C, Ea , p, q), where (v, c) ∈ Ea if and only if a ≽v c. Vertex
+v ∈ V has weight p(v) and vertex c ∈ C has weight q(c).
+Definition 2.2 (Fractional perfect Matching). We say that the (p, q)-domination graph of can-
+didate a, i.e., Gσp,q (a), admits a fractional perfect matching if there exists a weight function
+w : Ea → R≥0 such that the total weight   P of edges incident on each vertex equals the weight of
+the
+P   vertex,  i.e., for each v ∈ V we have  c∈C:(v,c)∈Ea w((v, c)) = p(v), and for each c ∈ C we have
+  v∈V :(v,c)∈Ea w((v, c)) = q(c).
+
+    Kizilkaya and Kempe [41] generalized the notion of proportional Veto Core introduced by Moulin
+[46] by defining the (p, q)-veto core and they showed that it is equivalent to the set of candidates
+whose (p, q)-domination graph admits a fractional perfect matching.
+Definition 2.3 ((p, q)-Veto Core [41]). Given a preference profile σ and weight vectors p ∈ ∆(V)
+and q ∈ ∆(C), the (p, q)-Veto Core is the set of candidates a such that Gσp,q (a) admits a fractional
+perfect matching.
+
+
+3    Distortion bounds for (p, q)-Algorithms
+In this section, we prove distortion bounds for algorithms that take as input a preference profile σ
+and return candidates from the (p, q)-veto core of σ. Specifically, in Section 3.1 we establish bounds
+for arbitrary q ∈ ∆(C) paired with a uniform p vector. We then extend this bound in Section 3.2
+to arbitrary p ∈ ∆(V).
+    We henceforth refer to the class of algorithms that we will be analyzing as (p, q)-algorithms.
+Definition 3.1 ((p, q)-algorithms). Given arbitrary weight vectors p ∈ ∆(V) and q ∈ ∆(C), a
+(p, q)-algorithm is one that, given a preference profile σ as input, returns a non-empty subset of
+candidates from the (p, q)-veto core of σ.
+
+                                                    6
+     The initial motivation to study such algorithms is due to the work of Munagala and Wang [47],
+who focused on the special case of weight vectors (puni , q plu ), where puni (v) = 1/n for all v ∈ V and
+q plu (c) = plu(c)/n for all c ∈ C, and showed that if the (puni , q plu )-veto core is non-empty, then
+any (puni , q plu )-algorithm achieves an optimal distortion of 3.
+
+Lemma 3.2 ([47, 30]). If the (puni , q plu )-veto core is non-empty, then the distortion of any (puni , q plu )-
+algorithm is at most 3.
+
+   Building upon this lemma, Gkatzelis et al. [30] achieved the optimal distortion bound by proving
+that the (p, q)-veto core of any preference profile is non-empty for any choice of p and q.
+
+Lemma 3.3 (Ranking-Matching Lemma [30]). For any preference profile σ and weight vectors
+p ∈ ∆(V) and q ∈ ∆(C), there exists a candidate a whose (p, q)-domination graph Gσp,q (a) admits a
+fractional perfect matching. Namely, the (p, q)-veto core is non-empty.
+
+    The (p, q)-algorithm proposed by Gkatzelis et al. [30] (PluralityMatching) identifies an
+arbitrary candidate in the (p, q)-veto core by just iterating over all candidates and checking whether
+their (p, q)-domination graph has a fractional perfect matching. Subsequent work by Kizilkaya and
+Kempe [40, 41] proposed more elegant (p, q)-algorithms that return some subset of candidates in
+the (p, q)-veto core (e.g., SerialVeto and SimultaneousVeto). However, our understanding
+of the performance of these algorithms with respect to distortion remains limited to the special
+case of the (puni , q plu ) weight vectors. Our first result makes significant progress on this matter by
+establishing a distortion upper bound for (p, q)-algorithms with arbitrary (p, q) weights.
+
+3.1    Distortion Bounds for puni and General q
+In this section, we provide distortion bounds for (puni , q)-algorithms with arbitrary q. Given any
+preference profile σ (inducing plu(c) for each candidate c ∈ C) and any weight vector q ∈ ∆(C),
+our analysis utilizes the following parameter:
+
+                                                         q(c) · n
+                                          µ(σ, q) = min           .                                       (1)
+                                                     c∈C plu(c)
+
+We simply write µ when σ and q are clear from the context, and we observe (by an averaging argu-
+ment) that µ ≤ 1. We note that any candidate with plu(c) = 0 can be treated as if q(c)/plu(c) = 1
+when computing this parameter value.
+
+Theorem 3.4. Given any q ∈ ∆(C), the distortion of any (puni , q)-algorithm is at most 1 + µ2 .
+
+    At a high level, for a given preference profile σ, µ quantifies the distance between the given
+vector q and the vector q plu induced by the instance. More formally, µ represents the fraction of
+the weight in q that aligns with the plurality score. If this part of weight were the only component
+present then the distortion for any candidate within the corresponding veto core would be at
+most 3. Consequently, we decouple the weight into two components and analyze them separately.
+For the “well-behaved” µ portion of the weight, we utilize the analysis established in prior work.
+Addressing the “ill-behaved” weight, which comprises the remaining 1 − µ fraction, necessitates
+a deeper understanding of the (p, q)-domination graph and the implication of fractional perfect
+matching on the quality of the corresponding candidates.
+    To prove Theorem 3.4, i.e., the upper bound on SC(a, d)/SC(c∗ , d) for any agent a ∈ (puni , q)-
+Veto Core in any metric d, the key technical contribution of this section is establishing an upper
+bound on the distance between the optimal candidate, c∗ , and the corresponding candidate, a, as
+
+                                                      7
+                                                                                             b   p′ (b) = 1
+                                                                                                          2
+
+
+                                                                          p(1) = 1
+                                                                                 3   1      1    p′ (1) = 1
+                                                                                                          6
+
+                                   p(1) = 1
+                                          3    1
+         σ1 : a ≻ b                                         a q(a) = 23   p(2) = 1
+                                                                                 3   2
+         σ2 : b ≻ a                p(2) = 1                                                 2    p′ (2) = 1
+                                          3    2                                                          6
+                                                                          p(3) = 1   3
+         σ3 : b ≻ a                                         b q(b) = 13          3
+
+                                   p(3) = 1                                                 3    p′ (3) = 1
+                                          3    3                                                          6
+
+
+
+   (a) Preference Profile σ                   (b) Gσpuni ,q (a)                 (c) VDG(a), µ = 0.5
+
+Figure 2: An example of a domination graph and a VDG graph for an instance with preference
+                                                                                q(b)·3
+profile σ. The red edges represent a matching. The value of µ(q, σ) is plu(b)          = 21 . In the graph
+Gσpuni ,q (a), the weight of each edge in the matching is 1/3. In VDG(a), w′ ((2, 1)) = w′ ((3, 1)) = 1/12,
+w′ ((1, 2)) = w′ ((1, 3)) = 1/6, and w′ ((3, b)) = w′ ((2, b)) = 1/4. The dotted edges in VDG(a)
+represent the “ill-behaved” portion of the weight.
+
+
+a function of the optimal social cost (see Lemma 3.10). To prove this upper bound, we extend the
+domination graph of a, Gσpuni ,q (a), to a Voter Domination Graph (VDG graph, see below) for a that
+captures the conflicts among voter preferences. Leveraging the structure of this graph, we derive a
+lower bound on the distance between pairs of voters from the optimal candidate, c∗ , as stated in
+Lemma 3.9.
+    To this end, we first define the Voter Domination Graph (VDG) of some candidate a.
+
+Definition 3.5. Let σ be a preference profile, a ∈ C be a candidate, and p ∈ ∆(V), q ∈ ∆(C) be
+weight vectors such that Gσp,q (a) admits a fractional perfect matching. We define the weight vector
+p′ ∈ ∆(V ∪ {b}), where p′ (v) = nµ and p′ (b) = 1 − µ, and the voter’s domination graph (VDG) of
+a as a bipartite graph VDGσp,p′ (a) = (V, V ∪ {b}, Ea′ ), where (v, v ′ ) ∈ Ea′ if and only if a ≽v top(v ′ ),
+and (v, b) ∈ Ea′ if (v, c) ∈ Ea and q(c) > µ plu(c)
+                                               n . We simply write VDG(a) when the parameters are
+clear from the context.
+
+    We note that Definition 3.5 closely resembles Definition 5 from [30]. The key difference lies in the
+requirement for the graph described in Definition 5 to be integral, with integrality being essential
+for the analysis to go through. In contrast, our graph may be fractional. In addition, we introduce
+an extra voter b on the RHS to capture the “ill-behaved” weights which does not exist in [30]’s
+setting. See Figure 2 for an illustration of VDG. We first observe that for any candidate a whose
+domination graph Gσp,q (a) admits a fractional perfect matching, VDG(a) also admits a fractional
+perfect matching.
+
+Lemma 3.6. Consider any candidate a such that Gσpuni ,q (a) admits a fractional perfect matching for
+some arbitrary q, then VDG(a) also admits a fractional perfect P    matching, i.e., there exists a weight
+function w : Ea → R≥0 such that for each voter v ∈ V we have v′ ∈V∪{b}:(v,v′ )∈Ea′ w′ ((v, v ′ )) = p(v)
+          ′     ′
+
+and for each v ′ ∈ V ∪ {b} we have v∈V:(v,v′ )∈Ea′ w′ ((v, v ′ )) = p′ (v ′ ).
+                                  P
+
+Proof. We prove the statement by constructing w′ : Ea′ → R≥0 from w.
+                                              µ
+                          w′ ((v, v ′ )) =             · w((v, top(v ′ )))                                    (2)
+                                         q(top(v ′ ))n
+                                                                       
+                                            X               µ · plu(c)
+                           w′ ((v, b)) =               1−                  · w((v, c))                        (3)
+                                                              q(c)n
+                                             c∈C:(v,c)∈Ea
+
+
+                                                             8
+First consider any voter v on the LHS, we have:
+                                                     
+       X                         X
+              w′ ((v, v ′ )) =         w′ ((v, v ′ )) + w′ ((v, b))
+    v ′ :(v,v ′ )∈Ea′            v ′ ∈V:(v,v ′ )∈Ea′
+                                                                          
+                                    X               X
+                            =                                 w′ ((v, v ′ )) + w′ ((v, b))
+                                 c:(v,c)∈Ea v ′ :top(v ′ )=c
+                                   X     µ · plu(c)                   X           µ · plu(c)
+                                                                                              
+                            =                       · w((v, c)) +             1−                · w((v, c))
+                                           q(c)n                                     q(c)n
+                              c:(v,c)∈Ea                          c:(v,c)∈Ea
+                                  X           µ · plu(c) µ · plu(c)
+                                                                         
+                            =             1−              +                · w((v, c))
+                                                 q(c)n          q(c)n
+                              c:(v,c)∈Ea
+                                  X
+                            =            w((v, c)) = p(v)                                       (by Def. 2.2)
+                               c:(v,c)∈Ea
+
+Now consider any voter v ′ on the RHS, and let c = top(v ′ ). We have:
+                              X                              X         µ
+                                         w′ ((v, v ′ )) =                  w((v, c))
+                                                                     q(c)n
+                          v:(v,v ′ )∈Ea′                  v:(v,c)∈Ea
+                                                             µ       X
+                                                        =                  w((v, c))
+                                                          q(c)n
+                                                                       v:(v,c)∈Ea
+                                                                 µ
+                                                             =       · q(c)                        (by Def. 2.2)
+                                                               q(c)n
+                                                               µ
+                                                             =    = p′ (v ′ )
+                                                               n
+Finally, we consider the added voter b on the RHS. We have:
+                                                          X                       
+                    X
+                              ′
+                                             X                          µ · plu(c)
+                             w ((v, b)) =                         1−                 · w((v, c))
+                                                                          q(c)n
+                 v:(v,b)∈Ea′              v:(v,b)∈Ea′ c:(v,c)∈Ea
+                                          X X                   µ · plu(c)
+                                                                             
+                                        =                    1−                · w((v, c))
+                                                                   q(c)n
+                                          c∈C v:(v,c)∈Ea
+                                          X           µ · plu(c)
+                                                                  
+                                        =        1−                  · q(c)                        (by Def. 2.2)
+                                                          q(c)n
+                                              c∈C
+                                                       X plu(c)
+                                          =1−µ                         = 1 − µ = q ′ (b)
+                                                                 n
+                                                       c∈C
+
+  The Corollary below follows from Lemma 3.6.
+                                       ′      ′
+               P
+Corollary 3.7.   (v,v ′ )∈Ea′ :v ′ ∈V w ((v, v )) = µ.
+
+     We first observe the following relations between voters v, v ′ and candidate a, for every pairs of
+v, v ′ with (v, v ′ ) ∈ Ea′ .
+Observation 3.8. Consider any candidate a such that Gσp,q (a) admits a fractional perfect matching
+for puni and some arbitrary q. If (v, v ′ ) ∈ Ea′ in the VDG of candidate a, VDG(a), then for any d ▷ σ,
+
+                                          d(v, a) ≤ d(v, c∗ ) + 2d(v ′ , c∗ ).
+
+                                                                9
+Proof. Consider any v, v ′ ∈ V such that (v, v ′ ) ∈ Ea′ , let c = top(v ′ ). We have
+
+                        d(v, a) ≤ d(v, c∗ ) + d(c∗ , a)                                                    (triangle ineq.)
+                                              ∗         ∗
+                                   ≤ d(v, c ) + d(c , c)                                                     (by Def. 2.1)
+                                              ∗         ∗   ′         ′
+                                   ≤ d(v, c ) + d(c , v ) + d(v , a)                                       (triangle ineq.)
+                                              ∗         ′   ∗         ′    ∗
+                                   ≤ d(v, c ) + d(v , c ) + d(v , c )                                (since c = top(v ′ ))
+                                   ≤ d(v, c∗ ) + 2d(v ′ , c∗ ).
+
+    We now make the crucial observation that if candidate a is in the (p, q)-veto core, then for
+every edge (v, v ′ ) ∈ Ea′ (i.e., for every edge that does not involve b in the VDG of candidate a), we
+can derive a lower bound on the combined contribution of voters v and v ′ to the social cost of the
+optimal candidate, c∗ . Intuitively, if v prefers a over the candidate closest to v ′ (this is the meaning
+of the assumption that (v, v ′ ) ∈ Ea′ ), then v must be far enough from that candidate and hence
+from v ′ as well. In turn, if one of v or v ′ is close to c∗ , then the other voter must be far enough
+from c∗ .
+
+Lemma 3.9. Consider any candidate a such that Gσp,q (a) admits a fractional perfect matching for
+puni and some arbitrary q. If (v, v ′ ) ∈ Ea′ in the VDG of candidate a, VDG(a), then for any d ▷ σ,
+
+                                                                          d(c∗ , a)
+                                             d(v, c∗ ) + d(v ′ , c∗ ) ≥             .
+                                                                             2
+Proof. Consider any v, by the triangle inequality we have
+
+                       d(c∗ , a) ≤ d(a, v) + d(v, c∗ ) ⇒ d(a, v) ≥ d(c∗ , a) − d(v, c∗ ).                              (4)
+
+Consider any v ′ ∈ V such that (v, v ′ ) ∈ Ea′ , let c = top(v ′ ). We have
+
+              d(c∗ , c) ≥ d(c, v) − d(v, c∗ ) ≥ d(a, v) − d(v, c∗ ) ≥ d(c∗ , a) − 2d(v, c∗ ),                          (5)
+
+where the first inequality holds by the triangle inequality, the second holds since d(c, v) ≥ d(a, v)
+by Definition 3.5, and the last inequality is using (4). Now consider voter v ′ , we have
+
+          d(c∗ , v ′ ) + d(v ′ , c) ≥ d(c∗ , c)                                  (by triangle inequality)     ⇒
+                           ∗   ′         ∗                                                     ′       ∗
+                     2d(c , v ) ≥ d(c , c)                                     (since c = top(v ) ≽v′ c )     ⇒
+                           ∗   ′         ∗                  ∗
+                     2d(c , v ) ≥ d(c , a) − 2d(v, c )                            (using Inequality (5))      ⇒
+                                     d(c∗ , a)
+          d(c∗ , v) + d(c∗ , v ′ ) ≥           .
+                                        2
+    We now show the key lemma that connects the social cost of the optimal candidate c∗ with the
+distance between the candidate a who admits a fractional perfect matching and c∗ .
+
+Lemma 3.10. Consider any candidate a in the (puni , q)-veto core of σ for some arbitrary q. Then,
+for any metric d ▷ σ,
+                                                       d(c∗ , a)
+                                                   
+                                 ∗           µ
+                             SC(c , d) ≥          n              .
+                                           1+µ            2
+Proof. Consider the optimal social cost
+              X
+ SC(c∗ , d) =   d(c∗ , v)
+              v∈V
+
+
+                                                                10
+                 X      1
+             =                   · (p(v) + p′ (v)) · d(c∗ , v)
+                   p(v) + p′ (v)
+               v∈V
+                 n X
+             =           (p(v) + p′ (v)) · d(c∗ , v)
+               1+µ
+                         v∈V
+                                                                                                 !
+                n             X
+                                                 ∗
+                                                             X
+                                                                      ′     ′         ∗      ′
+             =                      p(v) · d(c , v) +                p (v ) · d(c , v )
+               1+µ
+                              v∈V                           v ′ ∈V
+                                                                                                                               
+                  n          X         X                                            XX
+             =                                  w((v, v ′ )) · d(c∗ , v) +                           w((v, v ′ )) · d(c∗ , v ′ ) (by Lem. 3.6)
+                 1+µ
+                              v∈V v ′ ∈V∪{b}                                         v ′ ∈V v∈V
+                                                                                                                           !
+                n             XX                                                XX
+             ≥                             w((v, v ′ )) · d(c∗ , v) +                        w((v, v ′ )) · d(c∗ , v ′ )             (removing b)
+               1+µ
+                              v∈V v ′ ∈V                                        v ′ ∈V v∈V
+                n             X
+             ≥                          w′ ((v, v ′ )) · (d(c∗ , v) + d(c∗ , v ′ ))                                    (rearranging the sum)
+               1+µ
+                         (v,v ′ )∈Ea′
+                  n           X                            d(c∗ , a)
+             ≥                          w′ ((v, v ′ )) ·                                                                            (by Lem. 3.9)
+                 1+µ                                          2
+                         (v,v ′ )∈Ea′
+                 n        d(c∗ , a)
+             ≥       ·µ·                                                                                                        (by Corollary 3.7)
+               1+µ           2
+                          d(c∗ , a)
+                       
+                   µ
+             =        n             .
+                 1+µ         2
+
+   We are now ready to prove Theorem 3.4.
+
+Proof of Theorem 3.4. Consider any candidate a in the (puni , q)-veto core of σ for puni and some
+q, i.e., a is any candidate that could be returned by a (puni , q)-algorithm. We show that for any
+metric d ▷ σ,                                       
+                                                   2
+                                   SC(a, d) ≤ 1 +      · SC(c∗ , d),
+                                                   µ
+                 q(c)·n
+where µ = minc∈C plu(c) . The social cost of this candidate a can be upper bounded as follows:
+
+             X
+SC(a, d) =         d(v, a)
+             v∈V
+             X
+        =          n · p(v) · d(v, a)                                                                                          (since p is uniform)
+             v∈V
+                                                                     !
+                 X      X
+                                    ′       ′         ′
+        =n                       w ((v, v )) + w ((v, b))                 · d(v, a)
+                 v∈V    v ′ ∈V
+                 XX                                             X
+        =n                    w′ ((v, v ′ )) · d(v, a) + n                w′ ((v, b)) · d(v, a)
+                 v∈V v ′ ∈V                                     v∈V
+                 XX                                                                          X
+        =n                    w′ ((v, v ′ )) · (d(v, c∗ ) + 2d(v ′ , c∗ )) + n                       w′ ((v, b)) · d(v, a)           (by Obs. 3.8)
+                 v∈V v ′ ∈V                                                                  v∈V
+                 XX                                                                       X
+        ≤n                    w′ ((v, v ′ )) · (d(v, c∗ ) + 2d(v ′ , c∗ )) +                     w′ ((v, b)) · (d(v, c∗ ) + d(c∗ , a))
+                 v∈V v ′ ∈V                                                               v∈V
+
+
+
+
+                                                                           11
+              X        X                                           XX                                                 X
+         =n                      w′ ((v, v ′ )) · d(v, c∗ ) + n                  w′ ((v, v ′ )) · 2d(v ′ , c∗ ) + n         w′ ((v, b)) · d(c∗ , a)
+              v∈V v ′ ∈V∪{b}                                       v ′ ∈V v∈V                                         v∈V
+             X                                 X
+                                    ∗                     ′   ′          ′   ∗                       ∗
+         =         np(v) · d(v, c ) + n                 np (v ) · 2d(v .c ) + n(1 − µ) · d(c , a).                          (by Lem. 3.6)
+             v∈V                               v ′ ∈V
+             X                   X
+         =         d(v, c∗ ) +            2µ · d(v ′ , o) + n(1 − µ) · d(c∗ , a)                                             (by Def. 3.5)
+             v∈V                 v ′ ∈V
+                                          1+µ
+         = (1 + 2µ)SC(c∗ , d) + n(1 − µ)2     SC(c∗ , d)
+                                           µ
+                  
+                 2
+         = 1+        · SC(c∗ , d).
+                 µ
+
+3.2   Distortion Bounds for (p, q)-algorithms with General p and q
+We now extend the distortion upper bound we obtained in the previous section for puni to prove
+a distortion upper bound for general p (and q). Specifically, we reduce any instance with some
+arbitrary p and q to an instance with puni and a new q ′ such that the (puni , q ′ )-veto core is a
+superset of the original (p, q)-veto core. To do so, we show that if — for some candidate a and
+arbitrary p, q — Gσp,q (a) admits a fractional perfect matching, then the new q ′ that we construct
+has a fractional perfect matching in the domination graph Gσpuni ,q′ (a), and we carefully bound the
+change in µ in the transition from q to q ′ .
+    The high level idea is to add weights on both sides so as to “re-balance” the given p vector, and
+re-normalize the weight. We introduce a new parameter λ to capture the amount of extra weight
+that (relatively) needs to be added to re-balance p. All the proofs missing from this section can be
+found in Appendix A.
+Lemma 3.11. Consider any candidate a in the (p, q)-veto core of σ for for some arbitrary p ∈ ∆(V)
+and q ∈ ∆(C), then there exists some q ′ ∈ ∆(C) such that Gσpuni ,q′ (a) also admits a fractional perfect
+matching. In addition, if we let λ = n maxv p(v), we have
+                                             µ(σ, q)
+                                                     .    µ(σ, q ′ ) ≥
+                                               λ
+   Combining Theorem 3.4 and Lemma 3.11 the corollary below follows.
+Corollary 3.12. Given a preference profile σ and any p ∈ ∆(V) and q ∈ ∆(C), the distortion of
+any (p, q)-algorithm is at most
+                                           2 maxv p(v)
+                                      1+          q(c)
+                                            minc plu(c)
+
+3.3   Distortion Lower Bounds
+We now show that our upper bound is tight with respect to parameters µ and λ, i.e., for any given
+µ ∈ (0, 1] and λ ∈ [1, n] there exists a metric d and vectors p ∈ ∆(V) and q ∈ ∆(C) that yield the
+given µ and λ, such that some candidate a in the (p, q)-veto core with distortion at least 1 + 2λ
+                                                                                               µ .
+Theorem 3.13. Given any µ ∈ (0, 1] and λ ∈ [1, n], there exists a preference profile σ and weight
+                                     q(c)·n
+vectors q ∈ ∆(C) with µ = minc∈C plu(c)     and p ∈ ∆(V) with λ = n maxv p(v), such that for any
+ϵ > 0 there is a metric d ▷ σ and a candidate a in the (p, q)-veto core of σ with
+                                                       
+                                                  2λ
+                                 SC(a, d) ≥ 1 +      − ϵ SC(c∗ , d).
+                                                  µ
+
+                                                                   12
+4     Optimal Distortion with Predictions
+We now provide our second main result, which is a tight analysis of the metric distortion prob-
+lem through the learning-augmented framework. Specifically, we provide an optimal learning-
+augmented algorithm for metric distortion and we achieve this by leveraging the results of the
+previous section. While this demonstrates the applicability of our first main result, we believe that
+our results within the learning-augmented framework hold significant independent interest beyond
+being merely an application of our first result.
+    In the learning-augmented framework, the regular input that the algorithm receives is aug-
+mented with a prediction p̂ that may provide the algorithm with some guidance regarding how to
+approach this instance. For example, in the metric distortion problem, p̂ could be a prediction
+regarding the metric d, i.e., all the pairwise distances between agents and voters. Crucially, this
+prediction can be arbitrarily inaccurate, and the goal is to design algorithms guided by this pre-
+diction that guarantee better distortion whenever it happens to be accurate (consistency), while
+maintaining some worst-case distortion guarantee even if the prediction is (arbitrarily) inaccurate
+(robustness). These algorithms receive as input both a preference profile σ and prediction p̂, and
+we use d ▷ (σ, p̂) to denote the restriction to metrics d for which the prediction p̂ is accurate.
+    Formally, the consistency of ALG is the distortion it guarantees when p̂ is accurate, i.e.,
+                                                                 SC(ALG(σ, p̂), d)
+                        consistency(ALG) = sup         sup                         .
+                                              σ   d : d ▷ (σ,p̂)   SC(c∗ (d), d)
+
+The robustness of ALG is the distortion it guarantees irrespective of the prediction accuracy, i.e.,
+                                                              SC(ALG(σ, p̂), d)
+                          robustness(ALG) = sup     sup                         .
+                                              σ, p̂ d : d ▷ σ   SC(c∗ (d), d)
+
+    In Section 4.1, we consider algorithms augmented with the strongest type of prediction, i.e.,
+a prediction p̂ regarding all the pairwise distance among voters and candidates, and we prove an
+impossibility result regarding the robustness and consistency guarantees that any such algorithm
+can achieve. Then, in Section 4.2, we consider algorithms augmented with a much weaker prediction:
+a prediction regarding who the optimal candidate is. We propose a family of (p, q)-algorithms that
+use the prediction to determine the q vector, and prove that the robustness-consistency trade-off
+these algorithms achieve exactly matches the impossibility result shown in Section 4.1. Therefore,
+despite the fact that they are provided with a weaker type of prediction, these algorithms achieve
+the optimal distortion and consistency that algorithms with the strongest prediction could achieve.
+Finally, we provide a more refined analysis on the distortion as a function of the prediction accuracy
+(Section 4.3), and as a function of the voters’ decisiveness (Section 4.4).
+
+4.1   Impossibility Result for Algorithms with Full-Metric Predictions
+We now show that even if an algorithm is augmented with the strongest type of prediction (a
+                                                                                   3−δ
+prediction regarding all the pairwise distances), it cannot simultaneously achieve 1+δ -consistency
+                 3+δ
+and better than 1−δ robustness for any δ ∈ [0, 1).
+
+Theorem 4.1. For any δ ∈ [0, 1), let ALG be a deterministic algorithm augmented with a prediction
+regarding the whole metric that is 3−δ                                3+δ
+                                   1+δ -consistent. Then, for any β < 1−δ , ALG is not β-robust.
+
+Proof. Let r(n, ϵ) := (3 + δ − n4 − 2ϵ)/(1 − δ + n4 ), where δ and β are as in the theorem statement.
+Note that for every n, ϵ > 0 we have r(n, ϵ) < 3+δ1−δ . Since this is function is continuous in both n
+
+
+                                                  13
+                                                                                          3+δ
+and ϵ, and limn→∞,ϵ→0+ r(n, ϵ) = 3+δ 1−δ , then there exist n, ϵ for which β < r(n, ϵ) < 1−δ . Fix any
+n, ϵ that satisfy this, and also satisfy 1/n − ϵ > 0 (since 1/n > 0, we can always choose a small
+enough value for ϵ that satisfies both inequalities).
+    Consider the instance I1 = (V, C, d) consisting of two candidates a, b whose distance from one
+another is 2 − ϵ. The voters are located in the metric space such that ⌈ 1−δ
+                                                                           2 n + 1⌉ of them are placed
+on b, and the rest (of which there are ⌊ 1+δ 2 n − 1⌋  are placed  almost at the halfway point with a
+slight inclination towards a, such that their distance from b is 1 and their distance from a is 1 − ϵ.
+
+
+
+
+   Note that b is the optimal candidate, and a achieves distortion equal to:
+                  SC(a, d)   ⌊ 1+δ                  1−δ
+                                2 n − 1⌋(1 − ϵ) + ⌈ 2 n + 1⌉(2 − ϵ)
+                           =
+                  SC(b, d)               ⌊ 1+δ
+                                            2 n − 1⌋ · 1
+                                1+δ
+                              ⌊ 2 n − 1⌋ + ⌈ 1−δ                   1−δ
+                                                        
+                                               2 n + 1⌉ (1 − ϵ) + ⌈ 2 n + 1⌉ · 1
+                           =
+                                                 ⌊ 1+δ
+                                                    2 n − 1⌋
+                                                                               1−δ
+                               n(1 − ϵ) + ⌈ 1−δ
+                                                                                            
+                                             2 n + 1⌉ · 1         n(1 − ϵ) +    2 n+1
+                           =                                 ≥
+                                      ⌊ 1+δ
+                                         2 n − 1⌋
+                                                                          1+δ
+                                                                           2 n
+                               (3 − δ) n2 + 1 − ϵn   3 − δ + n2 − 2ϵ   3−δ
+                           =                 n     =                 >
+                                   (1 + δ) 2              1+δ          1+δ
+    Therefore, if ALG is provided as input the preference profile σ induced by (V, C, d) and the
+prediction provided to the mechanism is accurate (i.e., it accurately predicts (V, C, d)), then to
+                          3−δ
+achieve a consistency of 1+δ  , ALG must output b.
+    Now, consider the instance I2 = (V, C, d′ ), with the same sets of voters and candidates, but the
+⌈ 1−δ
+   2 n + 1⌉ voters previously located on b are now located almost at the halfway point between a
+and b with a slight inclination towards b such that their distance from b is 1 − ϵ and their distance
+from a is 1. The rest of the voters (of which there are ⌊ 1+δ2 n − 1⌋) are located on a. Note that
+
+
+
+
+instance I2 induces the same preference profile σ as I1 . Thus, if the real instance is I2 but ALG
+received the, now inaccurate, prediction (V, C, d), along with σ, it would still choose b. Therefore,
+ALG is not β-robust, since here a is the optimal candidate, and the output b achieves distortion
+equal to:
+                SC(b, d)  ⌈ 1−δ n + 1⌉(1 − ϵ) + ⌊ 1+δ
+                                                   2 n − 1⌋(2 − ϵ)
+                         = 2             1−δ
+                SC(a, d)               ⌈ 2 n + 1⌉ · 1
+                                                                               1+δ
+                              n(1 − ϵ) + ⌊ 1+δ
+                                                                                        
+                                            2 n − 1⌋ · 1         n(1 − ϵ) +     2 n−2
+                          =                                 ≥
+                                     ⌈ 1−δ
+                                        2 n + 1⌉
+                                                                       1−δ
+                                                                        2 n+2
+                              (3 + δ) n2 − 2 − ϵn        3 + δ − n4 − 2ϵ
+                          =                         =                    = r(n, ϵ) > β.
+                                  1−δ
+                                   2 n+2
+                                                           1 − δ + n4
+
+                                                    14
+4.2   (p, q)-Algorithms with Prediction Regarding the Optimal Candidate
+We now present a family of learning-augmented algorithms, termed LAδ , which is parameterized
+by δ ∈ [0, 1). Instead of a prediction regarding the whole metric, these algorithms are provided
+only with a prediction regarding who the optimal candidate is, i.e., some p̂ ∈ C. Note that this is a
+strictly weaker prediction: given an accurate prediction regarding the whole metric, one can readily
+infer a prediction regarding who the optimal candidate would be. More importantly, note that the
+algorithm needs to satisfy the consistency guarantee only on instances where d ▷ (σ, p̂). Therefore,
+if the prediction is regarding the whole metric, then the consistency guarantee binds only if the
+actual metric, d, is exactly the predicted metric. On the other hand, if the prediction is regarding
+the optimal candidate, there is an infinite number of different metrics d such that c∗ (d) = p̂, and
+the algorithm needs to achieve the consistency guarantee for all of them. Nevertheless, despite the
+weaker prediction that they are provided with, we prove that our algorithms achieve the optimal
+robustness-consistency trade-off that even algorithms with full-metric predictions can achieve.
+
+Definition 4.2 (LAδ ). Given a δ ∈ (0, 1], a predicted optimal candidate ĉ ∈ C, and a preference
+                                                                                                       2δn
+                                                                                              plu(ĉ)+ 1−δ
+profile σ, the class of LAδ algorithms contains any (puni , q̂)-algorithm with q̂(ĉ) = 1−δ
+                                                                                        1+δ         n        as
+                                                      plu(c)
+the weight of the predicted candidate and q̂(c) = 1−δ
+                                                  1+δ n      the weight of any other candidate c.
+
+   We refer to δ as the confidence parameter that the designer can choose, depending on how much
+she trusts the prediction (or, depending on the robustness-consistency trade-off that she prefers).
+The next theorem shows that for each δ, any LAδ algorithm achieves a different Pareto optimal
+trade-off between robustness and consistency, matching the impossibility result of Theorem 4.1.
+                                              3−δ
+Theorem 4.3. For any δ ∈ [0, 1), LAδ achieves 1+δ -consistency and 3+δ
+                                                                   1−δ -robustness.
+
+Proof. We first show that LAδ has a distortion at most 3+δ    1−δ directly from the distortion bound we
+obtain from Section 3.1. In other words, any candidate that admits a fractional perfect matching
+with (puni , q̂) has distortion 3+δ                                                                3+δ
+                                1−δ . This implies that the robustness of LAδ algorithm is at most 1−δ .
+First note that given some δ instance σ, and q̂ defined by Definition 4.2, we have:
+                                                           1−δ plu(c)
+                                               q̂(c) · n       · n ·n   1−δ
+                               µ(σ, q̂) = min            = 1+δ        =     .
+                                           c∈C plu(c)          plu(c)   1+δ
+
+From Theorem 3.4, the distortion of candidate a is at most 1 + µ2 by letting µ = 1−δ
+                                                                                 1+δ , we get that
+                    uni
+the distortion of (p , q̂)-algorithm is at most
+
+                                               2     2(1 + δ)   3+δ
+                                         1+      =1+          =     .
+                                               µ      1−δ       1−δ
+   We now turn to the consistency of LAδ , i.e., the case ĉ = c∗ . Assume a is some candidate
+chosen by a LAδ algorithm. The social cost of candidate a is:
+              X
+   SC(a, d) =   d(v, a)
+                v∈V
+                X
+            =         n · puni (v) · d(v, a)                                           (by Def. of puni )
+                v∈V
+                 X         X
+            =n                    w((v, c)) · d(v, a)                                         (by Def. 2.2)
+                 v∈V c:(v,c)∈Ea
+
+
+
+                                                        15
+                 X      X
+            ≤n                    w((v, c)) · d(v, c)                                        (by Def. 2.1)
+                 v∈V c:(v,c)∈Ea
+                 X      X
+            ≤n                    w((v, c)) · (d(v, c∗ ) + d(c∗ , c))                 (triangle inequality)
+                 v∈V c:(v,c)∈Ea
+                               X        X
+            ≤ SC(c∗ , d) + n                          w((v, c)) · d(c∗ , c)
+                               v∈V c:(v,c)∈Ea
+                               X             X
+                    ∗
+            = SC(c , d) + n                              w((v, c)) · d(c∗ , c)
+                               c∈C v∈V:(v,c)∈Ea
+                               X
+            = SC(c∗ , d) + n         q̂(c) · d(c∗ , c)                                       (by Def. 2.2)
+                               c∈C
+                                                                                       
+                                                                        2δn
+                               1 − δ   X plu(c)               plu(ĉ) + 1−δ
+            = SC(c∗ , d) + n ·                 · d(c∗ , c) +               · d(c∗ , ĉ)    (by Def. 4.2)
+                               1+δ         n                        n
+                                              c̸=ĉ
+                             1−δ X
+            = SC(c∗ , d) +          plu(c) · d(c∗ , c)                                       (since ĉ = c∗ )
+                             1+δ  ∗   c̸=c
+                             1−δ X              X
+            = SC(c∗ , d) +                                 d(c∗ , c)
+                             1+δ
+                                      c∈C v:top(v)=c
+                             1−δ X              X
+            ≤ SC(c∗ , d) +                                (d(c, v) + d(c∗ , v))       (triangle inequality)
+                             1+δ
+                                      c∈C v:top(v)=c
+                             1−δ X              X
+            ≤ SC(c∗ , d) +                                 2d(c∗ , v)             (since c = top(v) ≽v c∗ )
+                             1+δ c
+                                             v:top(v)=c
+                             2(1 − δ)              3−δ
+            ≤ SC(c∗ , d) +            SC(c∗ , d) ≤     SC(c∗ , d).
+                              1+δ                  1+δ
+
+4.3   Distortion Bounds Parameterized by Prediction Quality
+Consistency and robustness bounds focus on two extreme cases: the case where the prediction is
+perfect (consistency) and the case where it can be arbitrarily bad (robustness). To develop a more
+refined understanding of the distortion that our family of LAδ algorithms achieves as a function of
+the prediction quality, we now seek to prove bounds parameterized by the error of the prediction.
+    We first define a natural measure of error, which is proportional to the distance between the
+prediction, ĉ, and the optimal candidate, c∗ , i.e., d(ĉ, c∗ ). Note that using this distance alone as
+a measure of error would not accurately capture the quality of the prediction, since this does not
+measure how significant this distance is relative to the average cost that each voter would suffer in
+the optimal solution. For example, if d(ĉ, c∗ ) = 100, and the average distance in the optimal solution
+is 10000, then the prediction was quite accurate, whereas the prediction would be inaccurate if we
+scaled the same instance down so that the average distance is 1. Therefore, to accurately capture
+the relative quality of the prediction we quantify the error η of the prediction by normalizing its
+distance from c∗ by the average optimal distance, SC(c∗ )/n, i.e.,
+                                                                nd(ĉ, c∗ )
+                                                         η :=
+                                                                 SC(c∗ )
+   Our main result in this section shows that for each choice of δ ∈ [0, 1), our LAδ algorithm
+guarantees distortion at most 3−δ+2δη
+                                1+δ   when the error of the prediction is η. This bound is equal
+
+                                                                16
+to our consistency bound when the prediction is correct, i.e., η = 0, and then grows linearly as a
+function of η, with a slope that is increasing in δ. This makes sense, as it captures the intuition
+that trusting the prediction more (i.e., higher values of δ) translates into a worse dependence on
+the error. Note, however, that the distortion never exceeds our robustness bound, so it gracefully
+transitions from the consistency bound to the robustness bound as a function of the error. Figure 3
+demonstrates this bound for different values of δ. For example, as long as η ≤ 2, the distortion is
+at most 3, for any value of δ.. We defer the proof of the following Proposition to Appendix B due
+to space limitation.
+
+
+
+
+Figure 3: A plot of the distortion upper bound guaranteed by LAδ as a function of the prediction
+error η for different values of δ ∈ [0, 1).
+
+
+Proposition 4.4. For any δ ∈ [0, 1), the distortion achieved by LAδ on instances where the
+prediction ĉ has error η = nd(ĉ, c∗ )/SC(c∗ ) is at most
+                                                              
+                                             3 − δ + 2δη 3 + δ
+                                       min               ,       .
+                                                 1+δ       1−δ
+
+4.4   Bounds for Metric Spaces with Decisive Voters
+We now refine the achieved distortion bounds even further, using the α-decisiveness framework of
+[5]. For α ∈ [0, 1], A voter v is α-decisive if d(v, top(v)) ≤ α · d(v, c), for all c ̸= top(v). In other
+words, the distance of voter v from her favorite candidate is at most α times her distance from
+any other candidate. We say an instance (V, C, d) is α-decisive if every voter is α-decisive. Note
+that when α = 0, the distance between every voter and her favorite candidate is 0. This captures
+the peer selection setting, in which the set of voters is the set of candidates, and each voter ranks
+herself first. Therefore, the positive results presented in the section for α = 0 apply to this setting
+as well. Since the proofs of the decisiveness results are very similar to some of our earlier proofs,
+we defer them to Appendix C and directly provide the most general bound that is parameterized
+both by the decisiveness parameter α, and the error parameter η.
+
+Proposition 4.5. For any δ ∈ [0, 1) and α ∈ [0, 1], the distortion achieved by LAδ on α-decisive
+instances where the prediction ĉ has error η = nd(ĉ, c∗ )/SC(c∗ ) is at most
+                                                                         
+                            2 + α − αδ            2δη          8δ
+                                        + min          ,                    .
+                               1+δ               1 + δ (1 + δ)(1 − δ)
+
+
+                                                   17
+Figure 4: The analogue of Figure 1 for 0-decisive instances (peer selection setting). On the left, a
+plot showing the consistency and robustness bounds achieved by LAδ as a function of the confidence
+parameter δ. On the right, a plot capturing the consistency-robustness pairs that can be achieved
+by LAδ for any chosen δ ∈ [0, 1).
+
+
+    If we focus our attention on the interesting case where α = 0, i.e., the peer selection case, then
+this implies the following bound.
+
+Corollary 4.6. For any δ ∈ [0, 1) and α = 0, the distortion achieved by LAδ on α-decisive
+instances where the prediction ĉ has error η = nd(ĉ, c∗ )/SC(c∗ ) is at most
+                                                                      
+                                 2             2δη           8δ
+                                     + min         ,                     .
+                              1+δ             1 + δ (1 + δ)(1 − δ)
+
+    In the metric distortion problem with 0-decisive voters (the peer selection setting), the best
+known achievable distortion is 2. Our algorithm recovers this guarantee for δ = 0. For δ > 0, our
+algorithm achieves a consistency strictly better than 2, at the cost of higher robustness — Figure 4
+illustrates the achieved consistency-robustness pairs obtained by varying δ. Note that as long as
+the value of η is at most 1, our algorithm ensures that the achieved distortion remains at most 2.
+
+
+5    Conclusion and Future Work
+Our contribution in this work is twofold: i) we establish an new distortion upper bound for candi-
+dates om the (p, q)-veto core for general p and q and ii) we initiate the study of distortion problems
+through the learning-augmented framework, leading to an optimal learning-augmented algorithm
+guided by a prediction for the optimal candidate.
+    An interesting avenue for future research involves a deeper exploration of the implications of our
+distortion bounds for the (p, q)-veto core. A particularly intriguing problem within this direction is
+identifying other well-motivated alternatives for the q vector. For example, Kizilkaya and Kempe
+[41] propose using k-plurality scores of candidates (the number of times they appear among the top
+k choices of a voter) to generate a q, which interpolates between q plu (for k = 1) and uniform q (for
+k = m). Another interesting direction is to examine the potential for alternative parameterizations
+of the distortion bounds. Identifying even more refined upper bounds as a function of p, q and plu,
+or as a function of other parameters.
+    Our results also pave the way for revisiting many other interesting problems within the distortion
+literature using the learning-augmented framework (see [7] for a recent survey on the distortion
+
+
+                                                 18
+literature). Examples include the multi-winner variant of the metric distortion problem [17], the
+distortion of one-sided matching [28], as well as the utilitarian distortion setting with a single winner
+[50] or multiple winners [16]. Another natural direction is to apply this framework to randomized
+metric distortion, especially given the recent randomized algorithm achieving distortion better than
+3 [23]. Can this be extended toward more general improvements on the robustness-consistency
+Pareto frontier achievable via randomization?
+
+
+Acknowledgement
+We would like to thank the anonymous reviewers for their detailed feedback and comments that
+helped significantly improve the exposition of this paper.
+
+
+References
+ [1] Ben Abramowitz, Elliot Anshelevich, and Wennan Zhu. Awareness of voter passion greatly
+     improves the distortion of metric social choice. In Proceedings of the The 15th Conference on
+     Web and Internet Economics (WINE), pages 3–16, 2019.
+ [2] Priyank Agrawal, Eric Balkanski, Vasilis Gkatzelis, Tingting Ou, and Xizhi Tan. Learning-
+     augmented mechanism design: Leveraging predictions for facility location. In Proceedings of
+     the 23rd ACM Conference on Economics and Computation, pages 497–528, 2022.
+ [3] Noga Alon, Felix Fischer, Ariel Procaccia, and Moshe Tennenholtz. Sum of us: Strategyproof
+     selection from the selectors. In Proceedings of the 13th Conference on Theoretical Aspects of
+     Rationality and Knowledge, pages 101–110, 2011.
+ [4] Ioannis Anagnostides, Dimitris Fotakis, and Panagiotis Patsilinakos. Metric-distortion bounds
+     under limited information. Journal of Artificial Intelligence Research, 74:1449–1483, 2022.
+ [5] Elliot Anshelevich and John Postl. Randomized social choice functions under metric prefer-
+     ences. Journal of Artificial Intelligence Research, 58:797–827, 2017.
+ [6] Elliot Anshelevich, Onkar Bhardwaj, Edith Elkind, John Postl, and Piotr Skowron. Approxi-
+     mating optimal social choice under metric preferences. Artificial Intelligence, 264:27–51, 2018.
+     ISSN 0004-3702.
+ [7] Elliot Anshelevich, Aris Filos-Ratsikas, Nisarg Shah, and Alexandros A. Voudouris. Distortion
+     in social choice problems: The first 15 years and beyond. In 30th, pages 4294–4301, 2021.
+     Survey Track.
+ [8] Antonios Antoniadis, Themis Gouleakis, Pieter Kleer, and Pavel Kolev. Secretary and online
+     matching problems with machine learned advice. Advances in Neural Information Processing
+     Systems, 33:7933–7944, 2020.
+ [9] Yossi Azar, Debmalya Panigrahi, and Noam Touitou. Online graph algorithms with predic-
+     tions. Proceedings of the Thirty-Third Annual ACM-SIAM Symposium on Discrete Algorithms,
+     2022.
+[10] Eric Balkanski, Vasilis Gkatzelis, and Xizhi Tan. Strategyproof scheduling with predictions. In
+     14th Innovations in Theoretical Computer Science Conference (ITCS 2023). Schloss Dagstuhl-
+     Leibniz-Zentrum für Informatik, 2023.
+
+                                                   19
+[11] Eric Balkanski, Vasilis Gkatzelis, Xizhi Tan, and Cherlin Zhu. Online mechanism design with
+     predictions. In Proceedings of the 25th ACM Conference on Economics and Computation (to
+     appear), 2024.
+[12] Etienne Bamas, Andreas Maggiori, and Ola Svensson. The primal-dual method for learning
+     augmented algorithms. Advances in Neural Information Processing Systems, 33:20083–20094,
+     2020.
+[13] Siddhartha Banerjee, Vasilis Gkatzelis, Artur Gorokh, and Billy Jin. Online nash social welfare
+     maximization with predictions. In Proceedings of the 2022 ACM-SIAM Symposium on Discrete
+     Algorithms, SODA 2022. SIAM, 2022.
+[14] Siddhartha Banerjee, Vasilis Gkatzelis, Safwan Hossain, Billy Jin, Evi Micha, and Nisarg Shah.
+     Proportionally fair online allocation of public goods with predictions. In Proceedings of the
+     Thirty-Second International Joint Conference on Artificial Intelligence, IJCAI, pages 20–28,
+     2023.
+[15] Ioannis Caragiannis and Georgios Kalantzis. Randomized learning-augmented auctions with
+     revenue guarantees. CoRR, abs/2401.13384, 2024.
+[16] Ioannis Caragiannis, Swaprava Nath, Ariel D. Procaccia, and Nisarg Shah. Subset selection
+     via implicit utilitarian voting. Journal of Artificial Intelligence Research, 58:123–152, 2017.
+[17] Ioannis Caragiannis, Nisarg Shah, and Alexandros A. Voudouris. The metric distortion of
+     multiwinner voting. Artif. Intell., 313:103802, 2022.
+[18] Ching-Lueh Chang. Some results on approximate 1-median selection in metric spaces. Theo-
+     retical Computer Science, 426:1–12, 2012.
+[19] Ching-Lueh Chang. A lower bound for metric 1-median selection. Journal of Computer and
+     System Sciences, 84:44–51, 2017.
+[20] Ching-Lueh Chang. Metric 1-median selection: Query complexity vs. approximation ratio.
+     ACM Transactions on Computation Theory (TOCT), 9(4):1–23, 2017.
+[21] Moses Charikar and Sudipto Guha. Improved combinatorial algorithms for the facility location
+     and k-median problems. In 40th Annual Symposium on Foundations of Computer Science (Cat.
+     No. 99CB37039), pages 378–388. IEEE, 1999.
+[22] Moses Charikar and Prasanna Ramakrishnan. Metric distortion bounds for randomized social
+     choice. In Proceedings of the 2022 Annual ACM-SIAM Symposium on Discrete Algorithms
+     (SODA), pages 2986–3004. SIAM, 2022.
+[23] Moses Charikar, Kangning Wang, Prasanna Ramakrishnan, and Hongxun Wu. Breaking the
+     metric voting distortion barrier. In David P. Woodruff, editor, Proceedings of the 2024 ACM-
+     SIAM Symposium on Discrete Algorithms, SODA, pages 1621–1640. SIAM, 2024.
+[24] Vincent Cohen-Addad, Michal Pilipczuk, and Marcin Pilipczuk. A polynomial-time approxi-
+     mation scheme for facility location on planar graphs. In 2019 IEEE 60th Annual Symposium
+     on Foundations of Computer Science (FOCS), pages 560–581. IEEE, 2019.
+[25] Paul Dütting, Silvio Lattanzi, Renato Paes Leme, and Sergei Vassilvitskii. Secretaries with
+     advice. In Proceedings of the 22nd ACM Conference on Economics and Computation, pages
+     409–429, 2021.
+
+                                                20
+[26] James M Enelow and Melvin J Hinich. The spatial theory of voting. Cambridge Books, 1984.
+
+[27] Brandon Fain, Ashish Goel, Kamesh Munagala, and Nina Prabhu. Random dictators with a
+     random referee: Constant sample complexity mechanisms for social choice. In Proceedings of
+     the 33rd AAAI Conference on Artificial Intelligence (AAAI), pages 1893–1900, 2019.
+
+[28] Aris Filos-Ratsikas and Peter Bro Miltersen. Truthful approximations to range voting. In
+     Web and Internet Economics: 10th International Conference, WINE 2014, Beijing, China,
+     December 14-17, 2014. Proceedings 10, pages 175–188. Springer, 2014.
+
+[29] Dimitris Fotakis and Laurent Gourvès. On the distortion of single winner elections with aligned
+     candidates. Auton. Agents Multi Agent Syst., 36(2):37, 2022.
+
+[30] Vasilis Gkatzelis, Daniel Halpern, and Nisarg Shah. Resolving the optimal metric distor-
+     tion conjecture. In 2020 IEEE 61st Annual Symposium on Foundations of Computer Science
+     (FOCS), pages 1427–1438. IEEE, 2020.
+
+[31] Vasilis Gkatzelis, Kostas Kollias, Alkmini Sgouritsa, and Xizhi Tan. Improved price of anarchy
+     via predictions. In Proceedings of the 23rd ACM Conference on Economics and Computation,
+     pages 529–557, 2022.
+
+[32] Vasilis Gkatzelis, Mohamad Latifian, and Nisarg Shah. Best of both distortion worlds. In The
+     24th ACM Conference on Economics and Computation, 2023.
+
+[33] Stephen Gross, Elliot Anshelevich, and Lirong Xia. Vote until two of you agree: Mechanisms
+     with small distortion and sample complexity. In Proceedings of the 31st AAAI Conference on
+     Artificial Intelligence (AAAI), pages 544–550, 2017.
+
+[34] Sungjin Im, Ravi Kumar, Mahshid Montazer Qaem, and Manish Purohit. Online knapsack
+     with frequency predictions. Advances in Neural Information Processing Systems, 34, 2021.
+
+[35] Piotr Indyk. Sublinear time algorithms for metric space problems. In Proceedings of the
+     thirty-first annual ACM symposium on Theory of computing, pages 428–434, 1999.
+
+[36] Gabriel Istrate and Cosmin Bonchis. Mechanism design with predictions for obnoxious facility
+     location. CoRR, abs/2212.09521, 2022.
+
+[37] K. Jain, M. Mahdian, E. Markakis, A. Saberi, and V. V. Vazirani. Greedy facility location
+     algorithms analyzed using dual fitting with factor-revealing LP. Journal of the ACM, 50(6):
+     795–824, 2003.
+
+[38] David Kempe. Communication, distortion, and randomness in metric voting. In Proceedings
+     of the 34th AAAI Conference on Artificial Intelligence (AAAI), pages 2087–2094, 2020.
+
+[39] David Kempe. An analysis framework for metric voting based on LP duality. In Proceedings
+     of the 34th AAAI Conference on Artificial Intelligence (AAAI), pages 2079–2086, 2020.
+
+[40] Fatih Erdem Kizilkaya and David Kempe. Plurality veto: A simple voting rule achieving
+     optimal metric distortion. In Proceedings of the Thirty-First International Joint Conference
+     on Artificial Intelligence, IJCAI 2022, Vienna, Austria, 23-29 July 2022, pages 349–355, 2022.
+
+
+
+
+                                                 21
+[41] Fatih Erdem Kizilkaya and David Kempe. Generalized veto core and a practical voting rule
+     with optimal metric distortion. In Kevin Leyton-Brown, Jason D. Hartline, and Larry Samuel-
+     son, editors, Proceedings of the 24th ACM Conference on Economics and Computation, EC,
+     pages 913–936, 2023.
+[42] Alexander Lindermayr and Nicole Megow.                           Alps.          URL      https://
+     algorithms-with-predictions.github.io/.
+[43] Pinyan Lu, Zongqi Wan, and Jialin Zhang. Competitive auctions with imperfect predictions.
+     In Proceedings of 25th ACM Conference on Economics and Computation (to appear), 2024.
+[44] Thodoris Lykouris and Sergei Vassilvtiskii. Competitive caching with machine learned advice.
+     In International Conference on Machine Learning, pages 3296–3305. PMLR, 2018.
+[45] Michael Mitzenmacher and Sergei Vassilvitskii. Algorithms with Predictions, page 646–662.
+     Cambridge University Press, 2021.
+[46] Hervé Moulin. The proportional veto principle. The Review of Economic Studies, 48(3):
+     407–416, 1981. ISSN 00346527, 1467937X. URL http://www.jstor.org/stable/2297154.
+[47] Kamesh Munagala and Kangning Wang. Improved metric distortion for deterministic social
+     choice rules. In Proceedings of the 2019 ACM Conference on Economics and Computation
+     (EC), pages 245–262, 2019.
+[48] Jannik Peters. A note on rules achieving optimal metric distortion. arXiv:2305.08667, 2023.
+[49] Siddharth Prasad, Maria-Florina Balcan, and Tuomas Sandholm. Bicriteria multidimensional
+     mechanism design with side information. In Alice Oh, Tristan Naumann, Amir Globerson, Kate
+     Saenko, Moritz Hardt, and Sergey Levine, editors, Advances in Neural Information Processing
+     Systems 36: Annual Conference on Neural Information Processing Systems 2023, NeurIPS
+     2023, New Orleans, LA, USA, December 10 - 16, 2023, 2023.
+[50] Ariel D. Procaccia and Jeffrey S. Rosenschein. The distortion of cardinal preferences in voting.
+     In International Workshop on Cooperative Information Agents (CIA), pages 317–331, 2006.
+[51] Haripriya Pulyassary and Chaitanya Swamy. On the randomized metric distortion conjecture.
+     CoRR, abs/2111.08698, 2021. URL https://arxiv.org/abs/2111.08698.
+[52] Manish Purohit, Zoya Svitkina, and Ravi Kumar. Improving online algorithms via ml predic-
+     tions. In Advances in Neural Information Processing Systems, pages 9661–9670, 2018.
+[53] Chenyang Xu and Pinyan Lu. Mechanism design with predictions. In Luc De Raedt, editor,
+     Proceedings of the Thirty-First International Joint Conference on Artificial Intelligence, IJCAI
+     2022, Vienna, Austria, 23-29 July 2022, pages 571–577. ijcai.org, 2022. doi: 10.24963/ijcai.
+     2022/81. URL https://doi.org/10.24963/ijcai.2022/81.
+
+
+A     Missing Proofs from Section 3.2
+Lemma 3.11. Consider any candidate a in the (p, q)-veto core of σ for for some arbitrary p ∈ ∆(V)
+and q ∈ ∆(C), then there exists some q ′ ∈ ∆(C) such that Gσpuni ,q′ (a) also admits a fractional perfect
+matching. In addition, if we let λ = n maxv p(v), we have
+                                                         µ(σ, q)
+                                          µ(σ, q ′ ) ≥           .
+                                                           λ
+
+                                                   22
+Proof. We let pm = maxv p(v), and for each voter v we define λv = pm − p(v). We note that
+0 ≤ λv ≤ 1. We construct the following q ′ vector as a function of the initial p, q as follows: for any
+candidate c ∈ C, we define:
+                                                                     
+                                     1            X w((v, c)) · λv
+                            q ′ (c) = · q(c) +                       .
+                                     λ                       p(v)
+                                                      v:(v,c)∈Ea
+
+We first show that q ′ ∈ ∆(C). To this end, consider:
+                                                                       
+                X             1  X               X       w((v, c)) · λv 
+                      q(c′ ) = ·    q(c) +
+                  c
+                              λ c                            p(v)
+                                              v:(v,c)∈Ea
+                                                                         
+                              1   X         X        X     w((v, c)) · λv 
+                             =     q(c) +
+                              λ   c           c v:(v,c)∈Ea
+                                                                p(v)
+                                                                    
+                              1      X X w((v, c)) · λv
+                             = · 1+                                                   (since q ∈ ∆(c))
+                              λ         c v:(v,c)∈Ea
+                                                          p(v)
+                                                                   
+                              1      X X w((v, c)) · λv
+                             = · 1+                                 
+                              λ         v c:(v,c)∈Ea
+                                                          p(v)
+                                             !
+                              1       X
+                             = · 1+       λv                                             (by Def. 2.2)
+                              λ        v
+                                    1
+                                =     · (λ) = 1                                          (by Def. of λ)
+                                    λ
+   We now show that Gσpuni ,q′ (a) admits a fractional perfect matching. Consider the following
+weight function w′ : for any (v, c) ∈ Ea , we let:
+                                                       
+                                  ′          1      λv
+                               w ((v, c)) = · 1 +         · w((v, c)).
+                                             λ     p(v)
+
+First, consider any candidate c:
+                                                               
+                 X
+                            ′          1          X         λv
+                           w ((v, c)) = ·              1+          · w((v, c))
+                                       λ                   p(v)
+              v:(v,c)∈Ea                   v:(v,c)∈Ea
+                                        1     X                    w((v, c)) · λv
+                                                                                   
+                                       = ·             w((v, c)) +
+                                        λ                                p(v)
+                                           v:(v,c)∈Ea
+                                                                             
+                                        1              X w((v, c)) · λv
+                                       = · q(c) +                                       (by Def. 2.2)
+                                        λ                           p(v)
+                                                      v:(v,c)∈Ea
+                                          ′
+                                       = q (c)
+
+
+
+
+                                                       23
+Now, consider any voter v:
+                                                           X
+                    X                     1            λv
+                              w′ ((v, c)) =  · 1+            ·     w((v, c))
+                                          λ           p(v)
+                 c:(v,c)∈Ea                                    c∈C
+                                                          
+                                          1            λv
+                                        = · 1+               · p(v)
+                                          λ           p(v)
+                                          p(v) + λv
+                                        =
+                                                 λ
+                                                   pm
+                                        =P                                     (by Def. of λ and p ∈ ∆(V))
+                                              v (p(v) + λv )
+                                            pm          1
+                                        =           =      = puni (v).
+                                          n · pm        n
+   Finally, we consider the change in µ value from q to q ′ . First, since λv ≥ 0, we have
+                                                                  
+                                1            X w((v, c)) · λv
+                       q ′ (c) = · q(c) +                          ≥ q(c) .
+                                λ                       p(v)               λ
+                                                   v:(v,c)∈Ea
+
+Therefore, for any candidate c, we have:
+                                              q ′ (c) · n  1 q(c) · n
+                                                          ≥ ·         .
+                                               plu(c)      λ plu(c)
+
+Since the pointwise change of any candidate c is bounded by λ1 , we therefore have
+
+                                           q ′ (c) · n       1 q(c) · n   µ(σ, q)
+                        µ(σ, q ′ ) = min               ≥ min ·          =         .
+                                       c∈C plu(c)        c∈C λ plu(c)       λ
+Theorem 3.13. Given any µ ∈ (0, 1] and λ ∈ [1, n], there exists a preference profile σ and weight
+                                     q(c)·n
+vectors q ∈ ∆(C) with µ = minc∈C plu(c)     and p ∈ ∆(V) with λ = n maxv p(v), such that for any
+ϵ > 0 there is a metric d ▷ σ and a candidate a in the (p, q)-veto core of σ with
+                                                       
+                                                  2λ
+                                 SC(a, d) ≥ 1 +      − ϵ SC(c∗ , d).
+                                                  µ
+
+Proof. Consider the following instance (V,C,d) consisting of two candidates a, b below. We first note
+
+
+
+
+                                 λ                  µ                                      µλ
+that in this instance, plu(a) = µ+λ n and plu(b) = µ+λ n. Now consider q such that q(a) = µ+λ
+                                                      q(c)n    q(a)n
+and q(b) = µ+λ−µλ
+                µ+λ , it is easy to verify that minc plu(c) = plu(a) = µ. We now partition the voters
+into V1 and V2 , where V1 is the set of voters co-located with candidate a and V2 is the set of voters
+co-located in the midpoint. For any v ∈ V1 , we set p(v) = n1 − (λ−1)µ                         ′
+                                                                      λn , and for any voter v ∈ V2 ,
+we set p(v ′ ) = n1 + λ−1                            1     λ−1
+                       n . Note that maxv (p(v)) = n + n and n · maxv (p(v)) = 1 + λ − 1 = λ.
+
+
+
+
+                                                         24
+                                       λ
+               v ∈ V1 : a ≻ b |V1 | = µ+λ                                    1 −
+                                                                      p(v) = n
+                                                                                   (λ−1)µ
+                                                                                            V1   a q(a) = µ+λ
+                                                                                                           µλ
+                                                                                     λn
+                                       µ
+               v ∈ V2 : b ≻ a |V2 | = µ+λ
+                                                                               1 + λ−1
+                                                                        p(v) = n    n       V2   b q(b) = µ+λ−µλ
+                                                                                                            µ+λ
+
+
+                   (a) Preference Profile σ                                (b) Domination Graph Gσp,q (b)
+
+Figure 5: the preference profile and the domination graph induced from the instance and the choice
+of p, q.
+
+
+ We now argue that candidate b, given the p, q vector defined above has a fractional perfect
+matching. Consider the graph Gσp,q (b), note that, for voters v ∈ V1 they the have only have edges
+to b, whereas the voters in V2 has edges to both candidate a, b. Consider a simple weight function
+w where w((v, b)) = p(v) = n1 − (λ−1)µ
+                                    λn   and w((v, a)) = 0 for all v ∈ V1 and w((v ′ , a)) = n1 + λ−1
+                                                                                                   n
+                           ′
+and w((v, b)) = 0 for all v ∈ V2 . We first note that for each voter v, w((v, a)) + w((v, b)) = p(v).
+Now consider the candidates, we have:
+                                                             
+     X                   1 (λ − 1)µ                  1 (λ − 1)µ       λ        µ + λ − µλ
+           w((v, b)) =      −            · |V1 | =     −           ·      n=                = q(b).
+                         n      λn                   n     λn        µ+λ          µ+λ
+  v:(v,b)∈Eb
+                                                                            
+               X                        1 λ−1                        1 λ−1               µ      µλ
+                      w((v, a)) =         +          · |V2 | =         +            ·       n=     = q(a).
+                                        n   n                        n   n              µ+λ    µ+λ
+        v:(v,a)∈Eb
+
+We therefore conclude that Gσp,q (b) admits a fractional perfect matching. We now compute the
+distortion of candidate b. To this end, we first compute the optimal social cost of the instance, note
+that the optimal candidate in this case is candidate a, we have:
+                                               µ        1        µ
+                                 SC(a, d) =       n·1+     n·0=     n.
+                                              µ+λ      1+µ      µ+λ
+The cost of candidate b is:
+                                              µ                   λ
+                                    SC(b, d) =    n · (1 − ϵ) +     n · (2 − ϵ)
+                                            µ+λ                 µ+λ
+                                                                   
+                                µ + 2λ                 2λ ϵ(µ + λ)
+                              =        n − ϵn = 1 +       −           SC(a, d)
+                                µ+λ                    µ        µ
+
+    the distortion converges to 1 + 2λ
+                                    µ as ϵ converges to 0.
+
+
+B     Missing Proofs from Section 4.3
+Proposition 4.4. For any δ ∈ [0, 1), the distortion achieved by LAδ on instances where the
+prediction ĉ has error η = nd(ĉ, c∗ )/SC(c∗ ) is at most
+                                                              
+                                             3 − δ + 2δη 3 + δ
+                                       min               ,       .
+                                                 1+δ       1−δ
+Proof. For any δ ∈ [0, 1), assume that a is the candidate output by a given execution of LAδ , when
+provided with a prediction ĉ with error η = nd(ĉ, c∗ )/SC(c∗ , d). Theorem 4.3 already shows that
+the worst-case distortion of LAδ is at most 3+δ
+                                              1−δ for any δ, so we just need to prove that it is also
+        3−δ+2δη
+at most 1+δ .
+
+                                                           25
+   The social cost of a can be upper bounded as follows:
+             X
+  SC(a, d) =    d(v, a)
+              v∈V
+              X
+          =         n · puni (v) · d(v, a)                                                                       (by Def. of puni )
+              v∈V
+               X         X
+          =n                    w((v, c)) · d(v, a)                                                                 (by Def. 2.2)
+               v∈V c:(v,c)∈Ea
+               X         X
+          ≤n                    w((v, c)) · d(v, c)                                                                 (by Def. 2.1)
+               v∈V c:(v,c)∈Ea
+               X         X
+          ≤n                    w((v, c)) · (d(v, c∗ ) + d(c∗ , c))                                      (triangle inequality)
+               v∈V c:(v,c)∈Ea
+                               X        X
+          ≤ SC(c∗ , d) + n                           w((v, c)) · d(c∗ , c)
+                               v∈V c:(v,c)∈Ea
+                               X          X
+          = SC(c∗ , d) + n                              w((v, c)) · d(c∗ , c)
+                               c∈C v∈V:(v,c)∈Ea
+                               X
+          = SC(c∗ , d) + n           q̂(c) · d(c∗ , c)                                                              (by Def. 2.2)
+                               c∈C
+                                                                                                     
+                                                                                      2δn
+                                 1−δ        X plu(c)                       plu(ĉ) + 1−δ
+          = SC(c∗ , d) + n ·                                  · d(c∗ , c) +               · d(c∗ , ĉ)             (by Def. 4.2)
+                                 1+δ                     n                        n
+                                             c̸=ĉ
+                             2δη              1−δ X
+          = SC(c∗ , d) +         SC(c∗ , d) +        plu(c) · d(c∗ , c) (by d(c∗ , ĉ) = η · SC(c∗ , d)/n)
+                             1+δ              1+δ  ∗           c̸=c
+            1 + δ + 2δη              1−δ X                       X
+          =             SC(c∗ , d) +                                      d(c∗ , c)
+               1+δ                   1+δ
+                                                         c∈C v:top(v)=c
+              1 + δ + 2δη              1−δ X                     X
+          ≤               SC(c∗ , d) +                                    (d(c, v) + d(c∗ , v))          (triangle inequality)
+                 1+δ                   1+δ
+                                                         c∈C v:top(v)=c
+              1 + δ + 2δη              1−δ X                     X
+          ≤               SC(c∗ , d) +                                    2d(c∗ , v)                 (since c = top(v) ≽v c∗ )
+                 1+δ                   1+δ c
+                                                             v:top(v)=c
+                                                                                              
+            1 + δ + 2δη              2(1 − δ)                                    3 − δ + 2δη
+          ≤             SC(c∗ , d) +          SC(c∗ , d) ≤                                         SC(c∗ , d).
+               1+δ                    1+δ                                           1+δ
+
+C     Missing Proofs from Section 4.4
+C.1    Consistency Bound for α-Decisive Instances
+Proposition C.1. For any δ ∈ [0, 1) and α ∈ [0, 1], assume that a is the candidate output by a
+given execution of LAδ on an α-decisive instance when provided with the correct prediction ĉ = c∗ .
+Then we have
+                                           2 + α − αδ
+                               SC(a, d) ≤             · SC(c∗ , d).
+                                              1+δ
+
+
+
+
+                                                                26
+Proof. The social cost of the returned candidate a can be upper bounded as follows:
+             X
+  SC(a, d) =     d(v, a)
+               v∈V
+               X
+           =         n · puni (v) · d(v, a)                                                               (by Def. of puni )
+               v∈V
+                X         X
+           =n                    w((v, c)) · d(v, a)                                                             (by Def. 2.2)
+                v∈V c:(v,c)∈Ea
+                X         X
+           ≤n                    w((v, c)) · d(v, c)                                                             (by Def. 2.1)
+                v∈V c:(v,c)∈Ea
+                X         X
+           ≤n                    w((v, c)) · (d(v, c∗ ) + d(c∗ , c))                                  (triangle inequality)
+                v∈V c:(v,c)∈Ea
+                                X        X
+           ≤ SC(c∗ , d) + n                              w((v, c)) · d(c∗ , c)
+                                v∈V c:(v,c)∈Ea
+                                X            X
+                      ∗
+           = SC(c , d) + n                                  w((v, c)) · d(c∗ , c)
+                                c∈C v∈V:(v,c)∈Ea
+                                X
+                      ∗
+           = SC(c , d) + n            q̂(c) · d(c∗ , c)                                                          (by Def. 2.2)
+                                c∈C
+                                                                                                         
+                                                                                          2δn
+                                  1−δ           X plu(c)                       plu(ĉ) + 1−δ
+           = SC(c∗ , d) + n ·                                     · d(c∗ , c) +               · d(c∗ , ĉ)     (by Def. 4.2)
+                                  1+δ                        n                        n
+                                                 c̸=ĉ
+                              1−δ X
+           = SC(c∗ , d) +            plu(c) · d(c∗ , c)                                                         (since ĉ = c∗ )
+                              1+δ  ∗  c̸=c
+                              1−δ X               X
+           = SC(c∗ , d) +                                     d(c∗ , c)
+                              1+δ
+                                      c∈C v:top(v)=c
+                              1−δ X               X
+           ≤ SC(c∗ , d) +                                    (d(c, v) + d(c∗ , v))                    (triangle inequality)
+                              1+δ
+                                      c∈C v:top(v)=c
+                          1−δ X                   X
+           ≤ SC(c∗ , d) +                                    (αd(c∗ , v) + d(c∗ , v))                         (α-decisiveness)
+                          1+δ
+                                      c∈C v:top(v)=c
+                          1−δ X                   X
+           ≤ SC(c∗ , d) +                                    (1 + α)d(c∗ , v)
+                          1+δ c
+                                             v:top(v)=c
+                              (1 + α)(1 − δ)              2 + α − αδ
+           ≤ SC(c∗ , d) +                    SC(c∗ , d) ≤            SC(c∗ , d).
+                                  1+δ                        1+δ
+
+C.2    Robustness Bound for α-Decisive Instances
+Proposition C.2. For any δ ∈ [0, 1) and α ∈ [0, 1], assume that ĉ is the candidate output by a
+given execution of LAδ on an α-decisive instance, i.e., the algorithm returns the prediction. Then
+we have                                                        
+                                   2 + α − αδ          8δ
+                     SC(ĉ, d) ≤              +                   · SC(c∗ , d).
+                                      1+δ       (1 + δ)(1 − δ)
+Proof. We first note that by Definition 3.1, any candidates output by LAδ is a member of (p, q)-
+veto core for the corresponding p, q.The social cost of the returned candidate a can then be upper
+
+                                                                   27
+bounded as follows given a α-decisiveness instance. Note that the proof is very similar with the
+proof of Theorem 3.4.
+             X
+  SC(a, d) =    d(v, a)
+              v∈V
+              X
+          =         n · p(v) · d(v, a)                                                    (since p is uniform)
+              v∈V
+                X         X
+          =n                         w((v, c)) · d(v, a)                                         (by Def. 2.2)
+                v∈V c∈C:(v,c)∈Ea
+                                                          
+                X         X µ · plu(c)           µ · plu(c)
+          =n                           + 1−                    · w((v, c)) · d(v, a)
+                              q(c)n                q(c)n
+             c∈C v:(v,c)∈Ea
+             X µ · plu(c) X                                  X        µ · plu(c)
+                                                                                             X
+          =n                         w((v, c)) · d(v, a) + n      1−                                    w((v, c)) · d(v, a)
+                    q(c)n                                                 q(c)n
+                c∈C                v:(v,c)∈Ea                                c∈C           v:(v,c)∈Ea
+                X µ · plu(c)           X
+          ≤n                          w((v, c)) · d(v, c)                                          (by a ≽v c)
+                  q(c)n
+                c∈C        v:(v,c)∈Ea
+                 X                  X
+                        µ · plu(c)
+              +n   1−                            w((v, c)) · d(v, a)
+                          q(c)n
+                    c∈C                         v:(v,c)∈Ea
+                X µ · plu(c)           X
+          ≤n                           w((v, c)) · (d(v, c∗ ) + d(c∗ , c))
+                   q(c)n
+             c∈C            v:(v,c)∈Ea
+               X                     X
+                         µ · plu(c)
+           +n       1−                            w((v, c)) · (d(v, c∗ ) + d(c∗ , a))    (triangle inequality)
+                           q(c)n
+               c∈C                     v:(v,c)∈Ea
+             X  µ · plu(c)           µ · plu(c)
+                                                   X
+          =n                   +1−                             w((v, c)) · d(v, c∗ )
+                     q(c)n              q(c)n
+                c∈C                                             v:(v,c)∈Ea
+                    X µ · plu(c)         X
+              +n                                   w((v, c)) · d(c∗ , c)
+                           q(c)n
+                    c∈C               v:(v,c)∈Ea
+              X     µ · plu(c)
+                                 X
+           +n     1−                          w((v, c)) · d(c∗ , a)
+                       q(c)n
+              c∈C                  v:(v,c)∈Ea
+             X X
+          =n          w((v, c)) · d(v, c∗ )
+                v∈V v:(v,c)∈Ea
+                    X µ · plu(c)         X
+              +n                                   w((v, c)) · d(c∗ , c)                (rearranging the sum)
+                           q(c)n
+                    c∈C               v:(v,c)∈Ea
+                 X   µ · plu(c)
+                                                   X
+              +n   1−                                        w((v, c)) · d(c∗ , a)
+                        q(c)n
+                    c∈C                         v:(v,c)∈Ea
+                               X µ · plu(c)           X
+          = SC(c∗ , d) + n                                      w((v, c)) · d(c∗ , c)            (by Def. 2.2)
+                             q(c)n
+                       c∈C                         v:(v,c)∈Ea
+                                 
+                 X     µ · plu(c)                   X
+              +n    1−                                       w((v, c)) · d(c∗ , a)
+                         q(c)n
+                    c∈C                         v:(v,c)∈Ea
+
+
+
+
+                                                              28
+                                X µ · plu(c)
+          = SC(c∗ , d) + n                  · q(c) · d(c∗ , c)
+                                  q(c)n
+                           c∈C
+               X                      
+                           µ · plu(c)
+            +n         1−                q(c) · d(c∗ , a)                                      (by Def. 2.2)
+                             q(c)n
+               c∈C
+                           X X µ
+          = SC(c∗ , d) + n                    · d(c∗ , c) + n(1 − µ) · d(c∗ , a)
+                                           n
+                           c∈C v:top(v)=c
+                           X X
+          = SC(c∗ , d) + µ                (d(c∗ , v) + d(v, c)) + n(1 − µ) · d(c∗ , a) (triangle inequality)
+                                c∈C v:top(v)=c
+                                X      X
+          ≤ SC(c∗ , d) + µ                       (1 + α)d(c∗ , v) + n(1 − µ)d(c∗ , a)       (α-decisiveness)
+                                 c v:top(v)=c
+
+                                                              2SC(c∗ , d)(1 + µ)
+          ≤ SC(c∗ , d) + (1 + α)µ · SC(c∗ , d) + n(1 − µ) ·                                (by Lemma 3.10)
+                                                                      µn
+                                                
+                               2(1 − µ)(1 + µ)
+          ≤ 1 + (1 + α)µ +                         SC(c∗ , d)
+                                       µ
+                                            
+              2 + α − αδ            8δ
+          =                +                    · SC(c∗ , d).                               (since µ = 1−δ
+                                                                                                       1+δ )
+                 1+δ         (1 + δ)(1 − δ)
+
+This concludes the proof.
+
+C.3    Bounds Parameterized by Prediction Quality for α-Decisive Instances
+Proposition C.3. For any δ ∈ [0, 1) and α ∈ [0, 1], the distortion achieved by LAδ on α-decisive
+instances where the prediction ĉ has error η = nd(ĉ, c∗ )/SC(c∗ , d) is at most
+                                                                         
+                            2 + α − αδ            2δη          8δ
+                                        + min          ,                     .
+                               1+δ               1 + δ (1 + δ)(1 − δ)
+
+Proof. For any δ ∈ [0, 1), assume that a is the candidate output by a given execution of LAδ on an α-
+decisive instance when provided with a prediction ĉ with error η = nd(ĉ,  ∗        ∗
+                                                                        c )/SC(c , d). Proposition
+                                                                                             
+                                                                                       8δ
+C.2 already show that the worst-case distortion of LAδ is at most 2+α−αδ  1−δ   +  (1+δ)(1−δ) for any
+δ, so we just need to prove that it is also at most 2+α−αδ+2δη
+                                                       1+δ     . Note that if ĉ = c∗ then η = 0 and
+the claim follows from Proposition C.1. We thus assume for the rest of the proof that ĉ ̸= c∗ .
+    The social cost of a can be upper bounded as follows:
+              X
+   SC(a, d) =    d(v, a)
+               v∈V
+               X
+           =         n · puni (v) · d(v, a)                                                (by Def. of puni )
+               v∈V
+                X         X
+           =n                    w((v, c)) · d(v, a)                                           (by Def. 2.2)
+                v∈V c:(v,c)∈Ea
+                X         X
+           ≤n                    w((v, c)) · d(v, c)                                           (by Def. 2.1)
+                v∈V c:(v,c)∈Ea
+                X         X
+           ≤n                    w((v, c)) · (d(v, c∗ ) + d(c∗ , c))                    (triangle inequality)
+                v∈V c:(v,c)∈Ea
+
+
+
+
+                                                           29
+                   X        X
+≤ SC(c∗ , d) + n                         w((v, c)) · d(c∗ , c)
+                   v∈V c:(v,c)∈Ea
+                   X          X
+        ∗
+= SC(c , d) + n                             w((v, c)) · d(c∗ , c)
+                   c∈C v∈V:(v,c)∈Ea
+                   X
+        ∗
+= SC(c , d) + n          q̂(c) · d(c∗ , c)                                                                 (by Def. 2.2)
+                   c∈C
+                                                                                               
+                                                                              2δn
+                     1−δ        X plu(c)                           plu(ĉ) + 1−δ
+= SC(c∗ , d) + n ·                                  · d(c∗ , c) +                     · d(c∗ , ĉ)        (by Def. 4.2)
+                     1+δ                     n                              n
+                                 c̸=ĉ
+                 2δη              1−δ X
+= SC(c∗ , d) +       SC(c∗ , d) +        plu(c) · d(c∗ , c) (by d(c∗ , ĉ) = η · SC(c∗ , d)/n)
+                 1+δ              1+δ  ∗             c̸=c
+    1 + δ + 2δη                   1−δ X               X
+=               SC(c∗ , d) +                                    d(c∗ , c)
+       1+δ                   1+δ
+                                             c∈C v:top(v)=c
+    1 + δ + 2δη                   1−δ X               X
+≤               SC(c∗ , d) +                                    (d(c, v) + d(c∗ , v))         (triangle inequality)
+       1+δ                   1+δ
+                                             c∈C v:top(v)=c
+    1 + δ + 2δη                   1−δ X               X
+≤               SC(c∗ , d) +                                    (αd(c∗ , v) + d(c∗ , v))              (α-decisiveness)
+       1+δ                   1+δ
+                                             c∈C v:top(v)=c
+    1 + δ + 2δη                   1−δ X               X
+≤               SC(c∗ , d) +                                    (1 + α)d(c∗ , v)         (since c = top(v) ≽v c∗ )
+       1+δ                   1+δ                 c v:top(v)=c
+                                                                                                     
+  1 + δ + 2δη              (1 + α)(1 − δ)                                       2 + α − αδ + 2δη
+≤             SC(c∗ , d) +                SC(c∗ , d) ≤                                                    SC(c∗ , d).
+     1+δ                       1+δ                                                    1+δ
+
+
+
+
+                                                     30
+

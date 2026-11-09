@@ -1,0 +1,1257 @@
+                                        Generalized Veto Core and a Practical Voting Rule with
+                                        Optimal Metric Distortion
+                                        FATIH ERDEM KIZILKAYA and DAVID KEMPE, University of Southern California, USA
+
+
+
+
+arXiv:2305.19632v2 [cs.GT] 4 Feb 2025
+                                        We revisit the recent breakthrough result of Gkatzelis et al. on (single-winner) metric voting, which showed
+                                        that the optimal distortion of 3 can be achieved by a mechanism called PluralityMatching. The rule picks
+                                        an arbitrary candidate for whom a certain candidate-specific bipartite graph contains a perfect matching.
+                                        Subsequently, a much simpler rule called PluralityVeto was shown to achieve distortion 3 as well; this rule
+                                        only constructs such a matching implicitly, but it, too, makes some arbitrary decisions affecting the outcome.
+                                        Our point of departure is the question whether there is an intuitive interpretation of this matching, with
+                                        the goal of identifying the underlying source of arbitrariness in these rules. We first observe directly from
+                                        Hall’s condition that a matching for candidate 𝑐 certifies that there is no coalition of voters that can jointly
+                                        counterbalance the number of first-place votes 𝑐 received, along with the first-place votes of all candidates
+                                        ranked lower than 𝑐 by any voter in this coalition. This condition closely mirrors the classical definition of
+                                        the (proportional) veto core in social choice theory, except that coalitions can veto a candidate 𝑐 whenever
+                                        their size exceeds the plurality score of 𝑐, rather than the average number of voters per candidate. Based on
+                                        this connection, we define a general notion of the veto core with arbitrary weights for voters and candidates
+                                        which respectively represent the veto power and the public support they have.
+                                           This connection opens up a number of immediate consequences. Previous methods for electing a candidate
+                                        from the veto core can be interpreted simply as matching algorithms. Different election methods realize
+                                        different matchings, in turn witnessing different sets of candidates as winners. Viewed through this lens, we
+                                        first resolve nontrivial tie breaking issues contributing to the inherent arbitrariness of the above rules. Our
+                                        approach to ties reveals a novel characterization of the (general) veto core, showing it to be identical to the
+                                        set of candidates who can emerge as winners under a natural class of matching algorithms reminiscent of
+                                        SerialDictatorship. Then, we extend this class of voting rules into continuous time, and obtain a highly
+                                        practical voting rule with optimal distortion 3, which is also intuitive and easy to explain: Each candidate starts
+                                        off with public support equal to his plurality score. From time 0 to 1, every voter continuously brings down, at
+                                        rate 1, the support of her bottom choice among not-yet-eliminated candidates. A candidate is eliminated if he
+                                        is opposed by a voter after his support reaches 0. On top of being anonymous and neutral, the absence of
+                                        arbitrary non-deterministic choices in this rule allows for the study of other axiomatic properties that are
+                                        desirable in practice. We show that the canonical voting rule we propose for electing from the (plurality) veto
+                                        core also satisfies resolvability, monotonicity, majority, majority loser, mutual majority and reversal symmetry,
+                                        in addition to still guaranteeing metric distortion 3.
+                                        CCS Concepts: • Applied computing → Economics; Voting / election technologies.
+                                        Additional Key Words and Phrases: Computational Social Choice, Voting Theory, Metric Distortion
+
+                                        1   INTRODUCTION
+                                        Voting is a fundamental process by which a group of agents with different preferences can decide on
+                                        one alternative; applications range widely, from groups of friends choosing a restaurant or meeting
+                                        time, to departments and other bodies deciding on a course of action or budget, to towns, states or
+                                        countries electing politicians. When each voter can support or oppose only one candidate, the most
+                                        informative votes are those for their top or bottom choices. As a result, Plurality and Veto —
+                                        respectively, picking the candidate with the largest and smallest number of such votes — are the
+                                        most natural voting rules for single-vote elections. Better results can be obtained when the voters’
+                                        full rankings are taken into account, and indeed, a large body of theoretical and practical work has
+                                        focused on ranked-choice voting rules, which have these complete rankings available. Of course,
+
+                                        Authors’ address: Fatih Erdem Kizilkaya, fatih.erdem.kizilkaya@gmail.com; David Kempe, david.m.kempe@gmail.com,
+                                        University of Southern California, USA.
+2                                                                                 Fatih Erdem Kizilkaya and David Kempe
+
+
+there are many natural ways to aggregate this information into the choice of a winner. The choice
+of voting rule, ultimately, depends on the specific context and goals of the election. When picking
+a restaurant or meeting time within a group of friends, the preferences of minorities, such as those
+with dietary restrictions or limited availability, may be more important; thus, using Veto might be
+a better idea than Plurality. Conversely, for high-stakes settings, such as presidential elections,
+picking a winner opposed by a majority could lead to conflicts; thus, the benefits of Plurality
+may outweigh those of Veto.
+   In light of the plethora of available (ranked-choice) voting rules, it becomes important to evaluate
+and compare the pros and cons of different rules for different settings. One approach to do so,
+dating back to at least the 18th century [de Borda 1784; de Condorcet 1785], is via axioms which
+the rule may or may not satisfy; see Brandt et al. [2016] for a detailed overview. Among those, two
+absolutely essential axioms are Anonymity and Neutrality which, respectively, require that all
+voters and candidates be treated the same a priori. As shown by Moulin [1983] (though similar
+ideas are present in earlier work, e.g., Smith [1973]), no voting rule can be both anonymous and
+neutral without having tied outcomes. In order to deal with the presence of ties necessitated by
+Anonymity and Neutrality, another essential axiom is Resolvability [Tideman 1987] which
+requires that ties can always be broken in favor of any winning candidate 𝑤 by adding a single
+voter who ranks 𝑤 at the top.
+   An alternative approach to defining desirable axiomatic properties, proposed much more recently,
+and to date primarily pursued by the computer science community, is to interpret voting as
+an implicit optimization problem of finding a “best” candidate. Here, a natural modeling assumption
+is that the voters and candidates are jointly embedded in an abstract metric space [Anshelevich
+2016; Anshelevich et al. 2018, 2015, 2021a,b], and the distance between a voter and a candidate
+captures how much the voter dislikes the candidate, or how much their opinions/positions on key
+issues differ. This generalizes the notion of single-peaked preferences [Black 1948; Downs 1957;
+Moulin 1980b], which in its original definition only considered the line instead of a general metric
+space. A natural definition of a “best” candidate is then one who minimizes the total distance to all
+voters, and a good voting rule should approximately minimize this total distance with its choices
+of candidates. However, there is a key obstacle: the voting rule does not have access to the actual
+distances1 . Instead, the rankings provide ordinal information about the distances, in that each voter
+ranks candidates from closest to furthest.2 This lack of information about the cardinal distances can
+of course result in suboptimal choices for any rule, and the worst-case multiplicative gap between
+the sum of distances from the chosen candidate to all voters, vs. the optimum one chosen with
+knowledge of the metric space, has been termed distortion of the voting rule. (See Section 2.1 for
+the formal definition.)
+   Anshelevich et al. [2015] established a lower bound of 3 on the distortion of any deterministic
+voting rule. After a sequence of improvements and partial progress [Kempe 2020a; Munagala and
+Wang 2019], this lower bound was matched by the voting rule PluralityMatching in a recent
+breakthrough result [Gkatzelis et al. 2020] which showed that the voting rule has distortion 3.
+PluralityMatching is a complex rule not likely to be understood by anyone without mathematical
+background. This shortcoming was remedied in Kizilkaya and Kempe [2022], where it was shown
+that a very simple rule called PluralityVeto enjoys the same optimal distortion 3 guarantee as
+PluralityMatching. PluralityVeto works as follows. Each of the 𝑚 candidates starts with a score
+
+     1 Indeed, it would be very unlikely that voters could even articulate the nature of the “opinion space,” let alone
+
+estimate/communicate precise distances in it.
+     2 It has been observed repeatedly that humans are much better at comparing options than articulating the desirability of
+
+an option in isolation.
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                                          3
+
+
+equal to his3 number of first-place votes. Then, each of the 𝑛 voters is processed in an arbitrary
+order. When it is the turn of a voter, she considers all candidates who currently have positive scores,
+and subtracts 1 from the candidate she likes least among them. Note that candidates start with
+a total score of 𝑛, and because each voter subtracts 1, all candidates finish with a score of 0. The last
+candidate whose score reaches 0 is chosen as the winner.
+   The simplicity of PluralityVeto, along with its natural intuition of counterbalancing top votes
+against bottom votes, suggests that it might be suitable for implementation in practice. However,
+PluralityVeto suffers from a fatal flaw which precludes its acceptance in practice: it violates
+the Anonymity axiom. This can be seen most immediately in the following basic example.
+Example 1. There are two candidates {𝑎, 𝑏} and two voters {1, 2} with preferences 𝑎 ≻1 𝑏 and
+𝑏 ≻2 𝑎. If voter 1 vetos first, 𝑎 wins — otherwise, 𝑏 wins. Stated differently: if the veto order is (1, 2),
+then switching the voters’ preferences changes the outcome, violating Anonymity.4
+   Naturally, this example poses a problem for every deterministic voting rule. The election from
+Example 1 should clearly be declared a tie, and resolved separately by some tie breaker, such as
+a coin flip. The following question then becomes central: if a mechanism akin to PluralityVeto is
+to return a tied subset of candidates, all of whom would guarantee metric distortion5 3, how, and
+on what grounds, should such a subset be chosen?
+   To begin answering this question, and develop practical mechanisms of (metric) distortion 3,
+we begin by revisiting the PluralityMatching mechanism of Gkatzelis et al. [2020]. Plurality-
+Matching is based on the notion of domination graphs: the domination graph 𝐺𝑐 for candidate
+𝑐 is a bipartite graph between voters and voters in which an edge from 𝑣 to 𝑣 ′ exists if and only
+if 𝑣 weakly prefers 𝑐 over the top choice of 𝑣 ′ . (See Section 2.2 for the formal definition.) It had
+been shown by Munagala and Wang [2019] and Kempe [2020a] that any candidate 𝑐 for whom 𝐺𝑐
+contains a perfect matching has distortion 3; the breakthrough of Gkatzelis et al. [2020] was to show
+(non-constructively) that such a candidate 𝑐 always exists. Their voting rule PluralityMatching
+finds such a candidate by brute force. This description is non-deterministic about which candidate(s)
+will be returned in case there are multiple such 𝑐. Picking a candidate deterministically would
+violate the Neutrality axiom. On the other hand, the following example shows that returning all
+such candidates violates Resolvability.
+Example 2. There are three candidates {𝑎, 𝑏, 𝑐}, and two voters {1, 2} with rankings 𝑎 ≻1 𝑏 ≻1 𝑐
+and 𝑐 ≻2 𝑏 ≻2 𝑎. All candidates have the perfect matching {(1, 2), (2, 1)} in their domination
+graph, and thus would be winners under PluralityMatching returning all candidates with perfect
+matchings. Even if a voter is added who ranks 𝑏 at the top (and without loss of generality 𝑎 second),
+both 𝐺𝑏 and 𝐺𝑎 contain perfect matchings, so the election cannot be resolved in favor of 𝑏.
+   The execution of PluralityVeto can be viewed as not just determining a winning candidate 𝑐,
+but constructing a perfect matching in 𝐺𝑐 along the way — thus, explicitly witnessing distortion 3.
+Our endeavor to improve on PluralityVeto, and understand PluralityMatching more deeply,
+begins with an examination of the role of these matchings. Besides witnessing distortion 3, is there
+any constructive interpretation that one could explain to a voter not trained in graph theory, but
+interested in acquiring intuition for the voting rule? The following observation follows directly
+    3 For consistency, we will always refer to voters with female and candidates with male pronouns.
+     4 The Anonymity property could be restored by choosing a ranking-dependent veto order, e.g., having voters veto in
+
+lexicographic order of their ballots. However, such a solution would come at the cost of violating the equally important
+Neutrality axiom.
+     5 Akin to the distortion of a mechanism, the distortion of a candidate is the ratio between his sum of distances to all
+
+voters, and the sum of distances of an optimal candidate.
+4                                                                   Fatih Erdem Kizilkaya and David Kempe
+
+
+from Hall’s Condition: The graph 𝐺𝑐 contains a perfect matching if and only if there is no subset
+𝑆 of voters whose size is larger than the total number of first-place votes of not only 𝑐, but also
+all candidates whom at least one member of 𝑆 ranks lower than 𝑐. In other words, no coalition of
+voters has enough combined veto power to counterbalance the first-place votes of 𝑐 and candidates
+ranked lower by the coalition.
+   This condition is highly reminiscent of the classic definition of the veto core [Moulin 1981a];
+the latter simply has uniform scores of 𝑛/𝑚 for candidates which need to be counterbalanced,
+as opposed to the numbers of first-place votes. (See Section 3.1 for the formal definition.) Thus,
+we define a generalized notion of the veto core, in which voters and candidates can have arbitrary
+weights, so long as the sums of the weights are the same. It then follows immediately from Hall’s
+condition that the veto core consists of the candidates 𝑐 for whom a natural weighted generalization
+of the bipartite graph 𝐺𝑐 (defined now between voters and candidates) has a (fractional) perfect
+matching (see Section 3.2).
+   Past algorithms for electing a candidate from the veto core [Moulin 1982] can then simply be
+understood as constructing a witnessing (perfect) matching for some candidate (though various
+subtle tie-breaking choices in earlier definitions introduce some strange artifacts). The witnessing
+matchings possess rich structure, and focusing on them turns out to be very fruitful in many
+respects. First, notice that the same perfect matching M may exist in the domination graphs 𝐺𝑐 of
+several distinct candidates 𝑐; let 𝑊 (M) be the set of such candidates. By focusing on the construction
+of the witnessing matching M as the primary task of an algorithm, 𝑊 (M) emerges as a natural set
+of tied winners to return. Interestingly, 𝑊 (M) is convex in all possible embedding spaces for all M,
+providing a desirable “consistency” condition for the returned set of tied winners (see Section 4.1).
+   Both past work on the veto core and (the analysis of) PluralityVeto can be viewed as a greedy
+construction of witnessing matchings. We show that these algorithms are special cases of a general
+class of natural algorithms which greedily construct a witnessing matching for arbitrary weighted
+veto cores. The fact that PluralityVeto only selects a single winner is an artifact of an overly strict
+elimination rule. By making some important modifications — specifically, eliminating a candidate
+not when his score reaches 0 but only if he is subsequently opposed by some voter — we obtain
+the desirable property that whenever a witnessing matching is produced, the entire set 𝑊 (M)
+is returned as tied winners (see Section 4.2). This also resolves another undesirable property of
+PluralityVeto: that a candidate 𝑐 who is ranked second by every voter could never win, even
+when 𝐺𝑐 contains a perfect matching. In addition, we show that for arbitrary weights on candidates
+and voters, the corresponding veto core exactly equals the set of candidates who can be returned as
+winners by the modified algorithm; the proof of this result utilizes an argument highly reminiscent
+of the TopTradingCycles algorithm (see Section 4.3).
+
+
+Our Main Contribution. Returning to our original goal, we present an anonymous, neutral and
+resolvable voting rule that achieves optimal metric distortion by implicitly constructing a witnessing
+matching M and returning 𝑊 (M). Here, we adapt an algorithm of Ianovski and Kondratev [2021]
+for the veto core, which can be construed as vetoing candidates continuously over time. As in
+PluralityVeto, each candidate starts with a score equal to his number of first-place votes; however,
+our voting rule starts off with the set of all candidates as eligible winners (even those with score 0).
+Then, all voters are processed simultaneously in continuous time from time 0 to 1. Every voter,
+starting from her bottom choice, instantly eliminates those with score 0 and moves on to her next
+bottom choice. When she arrives at a candidate with positive score, she decrements his score
+continuously at rate 1. The set of winners consists of all candidates who are not eliminated until
+time 1 (see Section 5.1).
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                      5
+
+
+   In addition to guaranteeing optimal distortion (for all tied winners), and satisfying the essential
+axioms of Anonymity, Neutrality and Resolvability, our practical rule satisfies many other basic
+axioms: Monotonicity, Majority, Majority Loser, Mutual Majority, and Reversal Symmetry
+(see Section 5.2 for definitions), and it is also easy to explain, even without reference to distortion.
+Thus, we believe that the rule is indeed practical.
+   Our work unites not only two bodies of work on voting but also two differentiating factors in
+voting settings: the protection of the majority versus minorities. The motivation for the notion of
+veto core is the protection of minorities (and it is optimal in that sense under some formalizations
+of this principle [Kondratev and Nesterov 2020]), whereas optimizing metric distortion clearly aims
+for the protection of the majority, by (approximately) minimizing the (utilitarian) social cost. Thus,
+the generalized veto core gives rise to a spectrum of voting rules via initial weights interpolating
+between the plurality scores and uniform weights, and consequently, between the protection of
+majority and minorities. For further discussion and other possible future directions, see Section 6.
+
+Related Work. Selection methods in which parties alternately cross off alternatives in each round
+are common in practice and have been a subject of research in various settings, such as arbitration
+schemes [Anbarci 2006; Barberà and Coelho 2022; Bloom and Cavanagh 1986] and negotiation
+schemes [Anbarci 1993; Barberà and Coelho 2017; Erlich et al. 2018]. In the context of voting,
+a sequential veto-based mechanism was perhaps first studied formally by Mueller [1978], but only
+for alternatives consisting of one proposal from each voter, in addition to the status quo. In the
+analysis of Mueller [1978], voters take turns in an arbitrary order and strike off the alternative they
+like the least. Exactly one outcome is selected by this rule, and clearly no voter will see their worst
+outcome elected. However, this rule requires the number of alternatives to be one greater than the
+number of voters. Much of the follow-up work has focused on strategic behavior by voters under
+this type of rule. For example,Moulin [1980a, 1981b]; Peleg [1978] show that variants of iterated
+elimination rules can elect the same winner under strategic behavior as with truthful behavior, for
+various equilibrium notions.
+   Moulin [1981a] extended the concept of voting by veto from individuals to coalitions to study
+the core of the resulting cooperative game, and thus, the proportional veto core was introduced.
+Subsequently, Moulin [1982] proposed a rule electing from the proportional veto core, and studied
+the strategic behavior by voters under this rule. Recently, Ianovski and Kondratev [2021] (see also
+the expanded version Ianovski and Kondratev [2023]) showed how to compute the proportional
+veto core in polynomial time and introduced an anonymous and neutral rule electing from the
+proportional veto core. To some degree, the veto core is also related to the notion of proportional
+fairness, which measures whether the influence of cohesive groups of agents on the voting outcome
+is proportional to the group size [Ebadian et al. 2022].
+   The utilitarian analysis of voting rules through the lens of approximation algorithms was first
+suggested by Boutilier et al. [2015]; Caragiannis and Procaccia [2011]; Procaccia [2010]; Procaccia
+and Rosenschein [2006]. Anshelevich et al. [2015]; Boutilier and Rosenschein [2016] were the first
+to clearly articulate the tension between the objective of maximizing utility (or minimizing cost)
+and the available information, which is only ordinal; they also termed the resulting gap distortion. In
+the earlier work, the focus was on (positive) utilities, and no additional assumptions (such as metric
+costs) were placed on the utilities [Boutilier et al. 2015; Caragiannis and Procaccia 2011; Procaccia
+2010; Procaccia and Rosenschein 2006]. Without any structures on the costs, the lowest possible
+distortion is 𝑂 (𝑚 2 ) [Caragiannis et al. 2017]. Connections between both types of distortion analysis
+have also been made: Very recently, Gkatzelis et al. [2023] showed that a variant of PluralityVeto
+achieves the asymptotically optimal distortion of Θ(1) and Θ(𝑚 2 ), respectively, under the metric
+and utilitarian notions of distortion.
+6                                                                      Fatih Erdem Kizilkaya and David Kempe
+
+
+   There has been extensive work on giving lower and upper bounds on the metric distortion of
+specific rules in the social choice literature [Anshelevich et al. 2018, 2015; Goel et al. 2017; Kempe
+2020a; Munagala and Wang 2019; Skowron and Elkind 2017]. The notion of metric distortion has also
+been studied for settings other then single-winner elections, such as committee election [Caragiannis
+et al. 2022], facility location [Anshelevich and Zhu 2021], distrubuted voting [Anshelevich et al.
+2022; Voudouris 2023] and distributed facility location [Filos-Ratsikas et al. 2023; Filos-Ratsikas
+and Voudouris 2021]. We refer the reader to the surveys of Anshelevich et al. [2021a,b] for further
+discussion of related work on metric distortion.
+   In this work, we focus exclusively on deterministic voting rules. The distortion — both utilitarian
+and metric — of randomzied voting rules has also been studied extensively. Anshelevich and Postl
+[2016] showed that Random Dictatorship — the rule electing the top choice of a uniformly
+random voter — achieves expected distortion 3 − 𝑛2 . This bound is strictly better than the lower
+bound of 3 for deterministic rules. The bound was improved slightly by Kempe [2020b] to 3 − 𝑚2 , by
+mixing between Random Dictatorship and another simple rule. In the setting of our Example 1,
+it is easy to show that no randomized rule can achieve expected distortion less than 2. Perhaps
+somewhat surprisingly, this lower bound was improved to 2.1126 by Charikar and Ramakrishnan
+[2022]. The gap between the upper and lower bounds constitutes one of the most intriguing open
+questions about the distortion of voting rules. While there is no concrete direction, it is conceivable
+that an in-depth study of the generalized veto core may lead to useful insights towards closing or
+reducing the gap.
+
+2   PRELIMINARIES
+Throughout, vectors and matrices are denoted by bold lowercase and uppercase letters, respectively.
+We denote         th                     x by 𝑥 (𝑖), and we extend this notation to sets via addition, i.e.,
+         Í the 𝑖 element of a vector
+𝑥 (𝑇 ) = 𝑖 ∈𝑇 𝑥 (𝑖). We denote the 𝑖 th row vector of a matrix M by M(𝑖) and we denote the element
+in the 𝑖 th row and 𝑗 th column by 𝑀 (𝑖, 𝑗). Given a set 𝑆, let Δ(𝑆) denote the probability simplex
+over 𝑆, i.e., the set of non-negative weight vectors over 𝑆 that add up to 1. Given a weight vector
+x defined over a set 𝑆, we use [x ≠ 0] to denote the elements of 𝑆 with non-zero weights, i.e.,
+[x ≠ 0] = {𝑖 ∈ 𝑆 | 𝑥 (𝑖) ≠ 0}. Given integers 𝑖 and 𝑗, we use [𝑖, 𝑗] to denote the set of integers
+between 𝑖 and 𝑗 (inclusively).
+
+   Let 𝑉 be the set of 𝑛 voters, and let 𝐶 be the set of 𝑚 candidates. For each voter 𝑣, let ≻𝑣 be
+                                                                 #—
+a ranking (i.e., total order) over 𝐶. The vector of all rankings ≻ = (≻𝑣 )𝑣 ∈𝑉 is referred to as a ranked-
+                                 #—
+choice profile, and E = (𝑉 , 𝐶, ≻) is referred to as an election. A voting rule 𝑓 is an algorithm that
+returns a candidate (or non-empty set of candidates) 𝑓 (E) ∈ 𝐶 (or 𝑓 (E) ⊆ 𝐶) given an election E.
+The latter case — a voting rule returning a set of candidates — will be important in this paper
+because we explicitly consider voting rules returning multiple tied winners.
+   We say that voter 𝑣 ranks candidate 𝑎 higher than candidate 𝑏 if 𝑎 ≻𝑣 𝑏. If 𝑎 = 𝑏 or 𝑎 ≻𝑣 𝑏,
+we write 𝑎 ≽𝑣 𝑏 and say that 𝑣 ranks 𝑎 weakly higher than 𝑏. We also extend this notation to
+coalitions, i.e., non-empty subsets of voters. We write 𝑎 ≻𝑇 𝑏 to denote that every voter in coalition
+𝑇 ranks candidate 𝑎 higher than candidate 𝑏. Extending this notation further, we also write 𝐴 ≻𝑇 𝑏
+to denote that 𝑎 ≻𝑇 𝑏 for all 𝑎 ∈ 𝐴.
+   We refer to the candidate ranked highest by voter 𝑣 as the top choice of 𝑣, denoted by top(𝑣).
+The number of voters who have candidate 𝑐 as their top choice is referred to as the plurality score
+of 𝑐, denoted by plu(𝑐). The candidate ranked lowest by voter 𝑣 is referred to as the bottom choice
+of 𝑣, denoted by bot(𝑐). The number of voters who have candidate 𝑐 as their bottom choice is
+referred to as the veto score of 𝑐, denoted by veto(𝑐). We also use top𝐴 (𝑣) and bot𝐴 (𝑣), respectively,
+to denote the top and bottom choices of voter 𝑣 among the subset 𝐴 of candidates.
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                                                     7
+
+
+2.1    Metric Distortion
+A metric over a set 𝑆 is a function 𝑑 : 𝑆 × 𝑆 → R ≥0 which satisfies the following conditions for all
+𝑎, 𝑏, 𝑐 ∈ 𝑆: (1) Positive Definiteness: 𝑑 (𝑎, 𝑏) = 0 if and only6 if 𝑎 = 𝑏; (2) Symmetry: 𝑑 (𝑎, 𝑏) = 𝑑 (𝑏, 𝑎);
+(3) Triangle inequality: 𝑑 (𝑎, 𝑏) + 𝑑 (𝑏, 𝑐) ≥ 𝑑 (𝑎, 𝑐).
+                                   #—
+    Given an election E = (𝑉 , 𝐶, ≻), we say that a metric 𝑑 over7 𝑉 ∪𝐶 is consistent with the ranking
+≻𝑣 of voter 𝑣 if 𝑑 (𝑣, 𝑎) ≤ 𝑑 (𝑣, 𝑏) for all 𝑎, 𝑏 ∈ 𝐶 such that 𝑎 ≻𝑣 𝑏. We say that 𝑑 is consistent with
+                             #—                                                                        #—
+a ranked-choice profile ≻ if it is consistent with the ranking ≻𝑣 for all 𝑣 ∈ 𝑉 . We use D ( ≻) to
+                                                     #—
+denote the domain of metrics consistent with ≻.
+    The (utilitarian) social cost of a candidate 𝑐 under a metric 𝑑 is defined as the total distance of
+voters to 𝑐, i.e., cost(𝑐, 𝑑) = 𝑣 ∈𝑉 𝑑 (𝑣, 𝑐). A candidate 𝑐𝑑∗ is optimal with respect to the metric 𝑑 if
+                                Í
+𝑐𝑑∗ ∈ argmin𝑐 ∈𝐶 cost(𝑐, 𝑑).
+    The distortion of a candidate 𝑐 in an election E, denoted by dist E (𝑐), is the largest possible ratio
+                                                                                                          #—
+between the cost of 𝑐 and that of an optimal candidate 𝑐𝑑∗ with respect to a metric 𝑑 ∈ D ( ≻).
+That is,
+                                                             cost(𝑐, 𝑑)
+                                      dist E (𝑐) = sup                    .
+                                                         #— cost(𝑐 ∗ , 𝑑)
+                                                   𝑑∈D( ≻ )        𝑑
+   The distortion of a voting rule 𝑓 , denoted by dist(𝑓 ), is the worst-case distortion of any winner
+of 𝑓 among all elections. That is,
+                                              dist(𝑓 ) = max max dist E (𝑐).
+                                                              E   𝑐∈𝑓 (E)
+
+2.2    Domination Graphs
+Domination graphs offer a sufficient condition for a candidate to have distortion at most 3, which
+is known to be the lowest possible distortion that a voting rule can have [Anshelevich et al. 2015].
+                                                                                         #—
+Definition 1 (Domination Graphs [Gkatzelis et al. 2020]). Given an election E = (𝑉 , 𝐶, ≻), the dom-
+ination graph of candidate 𝑎 is the bipartite graph 𝐺𝑎 = (𝑉 , 𝐶, 𝐸𝑎 ) with the neighborhood function
+N𝑎 (𝑣) = {𝑐 ∈ 𝐶 | 𝑎 ≽𝑣 𝑐}, i.e., (𝑣, 𝑐) ∈ 𝐸𝑎 if and only if 𝑣 weakly prefers 𝑎 over 𝑐.
+   Given vectors p ∈ Δ(𝑉 ) and q ∈ Δ(𝐶), we refer to a matrix M ∈ Δ(𝑉 × 𝐶) as a (p, q)-matching
+          Í                                        Í
+if 𝑝 (𝑣) = 𝑐 ∈𝐶 𝑀 (𝑣, 𝑐) for all 𝑣 ∈ 𝑉 and 𝑞(𝑐) = 𝑣 ∈𝑉 𝑀 (𝑣, 𝑐) for all 𝑐 ∈ 𝐶. We say that candidate 𝑎
+admits the (p, q)-matching M if and only if (𝑣, 𝑐) ∈ 𝐸𝑎 whenever 𝑀 (𝑣, 𝑐) ≠ 0; this is equivalent to
+requiring that (𝑣, top [M(𝑣)≠0] (𝑣)) ∈ 𝐸𝑎 for all 𝑣 ∈ 𝑉 . We say that candidate 𝑎 is (p, q)-dominant if
+there exists a (p, q)-matching that 𝑎 admits. For any p ∈ Δ(𝑉 ) and q ∈ Δ(𝐶), there always exists
+a (p, q)-dominant candidate, which was first shown non-constructively by Gkatzelis et al. [2020]
+and then constructively by Kizilkaya and Kempe [2022].
+
+  As shown by Gkatzelis et al. [2020], Hall’s condition easily generalizes to (p, q)-matchings.
+          Ð condition, we extend the neighborhood function to coalitions 𝑇 ⊆ 𝑉 , by defining that
+To state the
+N𝑎 (𝑇 ) = 𝑣 ∈𝑇 N𝑎 (𝑣) = {𝑐 ∈ 𝐶 | there exists a 𝑣 ∈ 𝑇 such that 𝑎 ≽𝑣 𝑐}.
+Lemma 1 ([Gkatzelis et al. 2020], Lemma 1). For any weight vectors p ∈ Δ(𝑉 ) and q ∈ Δ(𝐶),
+candidate 𝑎 is (p, q)-dominant if and only if 𝑝 (𝑇 ) ≤ 𝑞(N𝑎 (𝑇 )) for all 𝑇 ⊆ 𝑉 .
+
+
+      6 Our proofs do not require the “only if” condition, so technically, all our results hold for pseudo-metrics, not just
+
+metrics.
+      7We only care about the distances between voters and candidates, so 𝑑 can be defined as a function 𝑑 : 𝑉 × 𝐶 → R
+                                                                                                                                    ≥0
+instead of on 𝑉 ∪ 𝐶. The triangle inequality can then be written as 0 ≤ 𝑑 (𝑣, 𝑐 ) ≤ 𝑑 (𝑣, 𝑐 ′ ) + 𝑑 (𝑣 ′ , 𝑐 ′ ) + 𝑑 (𝑣 ′ , 𝑐 ) for all
+𝑣, 𝑣 ′ ∈ 𝑉 and for all 𝑐, 𝑐 ′ ∈ 𝐶.
+8                                                                      Fatih Erdem Kizilkaya and David Kempe
+
+
+   Let 𝑝 uni (𝑣) = 1/𝑛, for all 𝑣 ∈ 𝑉 , be the uniform weight vector. Let 𝑞 plu (𝑐) = plu(𝑐)/𝑚, for all
+𝑐 ∈ 𝐶, be the normalized plurality scores. We refer to (puni, qplu )-dominant candidates as plurality
+dominant candidates. The following proposition by Gkatzelis et al. [2020] (independently shown by
+Kempe [2020a]; Munagala and Wang [2019]) captures the main way in which domination graphs
+are used in the metric distortion framework.
+Lemma 2 ([Gkatzelis et al. 2020], Theorem 1). In every election, the distortion of every plurality
+dominant candidate is at most 3.
+
+3     THE VETO CORE AND ITS EQUIVALENCE TO DOMINANT CANDIDATES
+In this section, we review the classical notion of proportional veto core due to Moulin [1981a], then
+introduce a generalization called the (p, q)-veto core and show that it is equivalent to the set of
+(p, q)-dominant candidates.
+
+3.1    The Proportional Veto Core and its Generalization
+                                                                                                        #—
+The proportional veto principle requires that, for a winning candidate 𝑎 of an election E = (𝑉 , 𝐶, ≻),
+the following must hold: if 𝑇 ⊆ 𝑉 is a coalition of voters comprising an 𝛼 fraction of voters (i.e.,
+|𝑇 |/𝑛 = 𝛼), then the union of candidates ranked weakly lower than 𝑎 by voters in 𝑇 should comprise
+at least an 𝛼 fraction of candidates (i.e., |N𝑎 (𝑇 )|/𝑚 ≥ 𝛼). Intuitively, this provides protection against
+overly bad candidates, for every possible groups of voters, proportional to their size. Moulin [1981a]
+defined the proportional veto core as the set of candidates not blocked in this way:
+                                                                                                #—
+Definition 2 (Proportional Veto Core [Moulin 1981a]). Given an election E = (𝑉 , 𝐶, ≻), we say
+that the coalition 𝑇 blocks the candidate 𝑐 if there exists a subset of candidates 𝐵 with 𝐵 ≻𝑇 𝑐 and
+                                         &          '
+                                               |𝑇 |
+                                           𝑚·         − 1 ≥ 𝑚 − |𝐵|.
+                                                𝑛
+
+The set of all candidates that are not blocked is called the proportional veto core.
+  Moulin [1981a] shows that, for every election, the proportional veto core is non-empty and
+                                                                 𝑛
+does not contain any candidate who is ranked lowest by more than 𝑚  voters.
+   We now generalize the definition to arbitrary weights for voters and candidates.
+                                                                      #—
+Definition 3 ((p, q)-Veto Core). Given an election E = (𝑉 , 𝐶, ≻) along with weights vectors
+p ∈ Δ(𝑉 ) and q ∈ Δ(𝐶), we say that coalition 𝑇 (p, q)-blocks candidate 𝑐 if there exists a subset of
+candidates 𝐵 with 𝐵 ≻𝑇 𝑐 and 𝑝 (𝑇 ) > 1 − 𝑞(𝐵). We refer to 𝐵 as a witness that 𝑇 blocks 𝑐. The set
+of all candidates that are not (p, q)-blocked is called the (p, q)-veto core.
+   We first show that the (p, q)-veto core indeed generalizes the proportional veto core.
+                                                   #—
+Proposition 1. For every election E = (𝑉 , 𝐶, ≻), the (puni, quni )-veto core equals the proportional
+veto core (where 𝑝 (𝑣) = 1/𝑛 for all 𝑣 ∈ 𝑉 and 𝑞 uni (𝑐) = 1/𝑚 for all 𝑐 ∈ 𝐶).
+                   uni
+
+                                 
+   Proof. First, observe that 𝑥𝑦 − 1 ≥ 𝑧 if and only if 𝑥𝑦 > 𝑧 for all natural numbers 𝑥, 𝑦, 𝑧 ∈ N.
+Candidate 𝑐 is is blocked (in the traditional
+                                          l sense) m if and only if there exists a coalition 𝑇 and a subset
+                                              |𝑇 |
+of candidates 𝐵 such that 𝐵 ≻𝑇 𝑐 and 𝑚 · 𝑛 − 1 ≥ 𝑚 − |𝐵|. Because all quantities are integers,
+this holds if and only if 𝑚 · |𝑇𝑛 | > 𝑚 − |𝐵|, which in turn holds if and only if 𝑐 is (puni, quni )-blocked
+by 𝑇 with witness 𝐵.                                                                                       □
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                       9
+
+
+3.2    Relation to Dominant Candidates
+We now show that the (p, q)-veto core equals the set of (p, q)-dominant candidates.
+                                               #—
+Theorem 1. For every election E = (𝑉 , 𝐶, ≻) and for any weight vectors p ∈ Δ(𝑉 ) and q ∈ Δ(𝐶),
+the (p, q)-veto core equals the set of (p, q)-dominant candidates.
+                                          #—
+   Proof. For any election E = (𝑉 , 𝐶, ≻) and any weight vectors p ∈ Δ(𝑉 ) and q ∈ Δ(𝐶), we show
+that candidate 𝑎 is not (p, q)-dominant if and only if 𝑎 is not in the (p, q)-veto core of E.
+   First, assume that 𝑎 is not (p, q)-dominant. Then, by Hall’s condition (Lemma 1), there exists
+a coalition 𝑇 of voters such that 𝑝 (𝑇 ) > 𝑞(N𝑎 (𝑇 )) = 1 − 𝑞(𝐶 \ N𝑎 (𝑇 )). Since 𝐶 \ N𝑎 (𝑇 ) = {𝑐 ∈ 𝐶 |
+𝑐 ≻𝑇 𝑎} by definition, 𝐶 \ N𝑎 (𝑇 ) ≻𝑇 𝑎. Hence, coalition 𝑇 (p, q)-blocks 𝑎 with witness 𝐶 \ N𝑎 (𝑇 ).
+Thus, we have shown that 𝑎 is not in the (p, q)-veto core.
+   For the converse direction, assume that candidate 𝑎 is not in the (p, q)-veto core, i.e., there
+exists a coalition 𝑇 that (p, q)-blocks 𝑎. Let 𝐵 be a witness for 𝑇 (p, q)-blocking 𝑎, i.e., 𝐵 ≻𝑇 𝑎
+and 𝑝 (𝑇 ) > 1 − 𝑞(𝐵). Because 𝐵 ⊆ {𝑐 ∈ 𝐶 | 𝑐 ≻𝑇 𝑎} = 𝐶 \ N𝑎 (𝑇 ), we can bound its weight by
+𝑞(𝐵) ≤ 𝑞(𝐶 \ N𝑎 (𝑇 )). This implies that Hall’s condition (Lemma 1) is violated for the coalition 𝑇
+as follows: 𝑝 (𝑇 ) > 1 − 𝑞(𝐵) ≥ 1 − 𝑞((𝐶 \ N𝑎 (𝑇 ))) = 𝑞(N𝑎 (𝑇 )). Thus, we have shown that 𝑎 is not
+(p, q)-dominant.                                                                                      □
+
+Corollary 1. A candidate 𝑐 is in the (p, q)-veto core if and only if 𝑐 admits a (p, q)-matching.
+
+4     A CLASS OF VOTING RULES WITH TIES CHARACTERIZING THE VETO CORE
+In this section, we show that the (p, q)-veto core is exactly characterized by the set of candidates
+who can be elected by a natural iterative elimination process generalizing PluralityVeto. Defining
+this generalized algorithm correctly requires us to remedy flaws in PluralityVeto related to tie
+breaking. These flaws are most clearly observed in two examples: (1) In Example 1, only a single
+winner — depending on the veto order — is chosen, even though the election should clearly be
+declared a tie. (2) In Example 2, PluralityVeto never elects candidate 𝑏 since plu(𝑏) = 0, even
+though 𝑏 is a winner of PluralityMatching (i.e., a plurality dominant candidate); thus, candidates
+are not treated equally under the sufficient condition of achieving distortion 3 (given in Lemma 2).
+We propose a generalized version of PluralityVeto with a less aggressive elimination criterion,
+which will remedy all of these flaws simultaneously.
+   Before doing so, we approach the issue of tied winners from a different angle. Corollary 1 indicates
+that membership of a candidate 𝑎 in the (p, q)-veto core can be certified by a (p, q)-matching M
+that 𝑎 admits. If we view M as a “justification” for electing 𝑎, then this justification equally suggests
+electing any other candidate 𝑐 admitting M. This view motivates the following definition.
+Definition 4 (Ties). Given a (p, q)-matching M, the set 𝑊 (M) = {𝑐 ∈ 𝐶 | 𝑐 admits M} is called
+the set of winners tied at M.
+
+4.1    Ties are Convex
+The combinatorial definition of ties based on matchings turns out to imply a natural geometric
+condition on the candidates’ embedding. We show that for every embedding of the candidates
+(consistent with the given rankings) into a metric space allowing the definition of convexity, 𝑊 (M)
+is convex for all (p, q)-matchings M. This is desirable for the goal of electing a central candidate:
+if we think of the metric space as capturing political positions, then convexity says that if more
+extreme candidates in all directions can be elected, a candidate who is moderate in the sense of
+interpolating their positions should also be elected. Convexity in all metric spaces consistent with
+the given rankings is implied by the following property:
+10                                                                                  Fatih Erdem Kizilkaya and David Kempe
+
+
+
+
+Fig. 1. A consistent embedding of the election in Example 3 into a 2-dimensional ℓ1 -normed space such that
+the plurality veto core is non-convex.
+
+                                                                          #—
+Definition 5 (Prefix-Intersection). Given an election E = (𝑉 , 𝐶, ≻), a subset of candidates 𝐴 is
+prefix-intersecting if there exist indices 𝑘 𝑣 ∈ [0, 𝑚] for all voters 𝑣 such that 𝐴 is the intersection of
+the sets of top 𝑘 𝑣 candidates for each voter 𝑣 ∈ 𝑉 .
+   We first show that prefix-intersecting sets of candidates are convex for any metric embedding
+consistent with the given rankings.
+                                                #—
+Proposition 2. Given an election E = (𝑉 , 𝐶, ≻), if 𝐴 is a prefix-intersecting set of candidates, then
+                                        #—
+for every metric space consistent with ≻ for which convexity is defined, 𝐴 is convex, in the sense that
+the interior of the convex hull of 𝐴 contains no point from 𝐶 \ 𝐴.
+   Proof. For each voter 𝑣, the set of the top 𝑘 𝑣 candidates forms a ball in any metric space — except
+that some of the candidates on the boundary of the ball may be included while others are excluded
+(due to indifferences in the distance-based ranking which are resolved arbitrarily in the reported
+rankings). The interior of each ball is a convex set, and thus, so is the intersection of the interiors
+of the balls.                                                                                        □
+     We now show that the set of winners tied at any (p, q)-matching is prefix-intersecting.
+Proposition 3. For every (p, q)-matching M, the set 𝑊 (M) of winners tied at M is prefix-intersecting.
+   Proof. By definition (see Section 2.2 for this characterization), the set of winners tied at M
+is 𝑊 (M) = {𝑐 ∈ 𝐶 | 𝑐 ≽𝑣 top [M(𝑣)≠0] (𝑣) for all 𝑣 ∈ 𝑉 }. For every voter 𝑣, note that the set
+𝑇𝑣 = {𝑐 ∈ 𝐶 | 𝑐 ≽ top [M(𝑣)≠0] (𝑣)} is the set of top 𝑘 𝑣 choices for some 𝑘 𝑣 ∈ [1, 𝑚]. Therefore,
+         Ñ
+𝑊 (M) = 𝑣 ∈𝑉 𝑇𝑣 is prefix-intersecting by definition.                                            □
+   Kizilkaya and Kempe [2022] conjectured that the (p, q)-veto core is convex in all metric spaces
+consistent with the rankings, i.e., not only 𝑊 (M) but also the union of all the 𝑊 (M).8 We resolve
+this conjecture negatively in Example 3.
+Example 3. There are three voters 𝑉 = {1, 2, 3} and six candidates 𝐶 = {𝑎 1, 𝑎 2, 𝑎 3, 𝑏 1, 𝑏 2, 𝑏 3 }.
+The rankings are as follows:
+     • 𝑎 1 ≻1 𝑏 1 ≻1 𝑎 2 ≻1 𝑏 2 ≻1 𝑏 3 ≻1 𝑎 3
+     • 𝑎 2 ≻2 𝑏 3 ≻2 𝑎 1 ≻2 𝑏 2 ≻2 𝑏 1 ≻2 𝑎 3
+     • 𝑎 3 ≻3 𝑏 2 ≻3 𝑏 1 ≻3 𝑏 3 ≻3 𝑎 1 ≻3 𝑎 2
+     8 The conjecture was originally phrased only for the special case of the Peer Selection setting, in which the set of voters
+
+is the same as the set of candidates (due to the aforementioned tie breaking issues with PluralityVeto that will be resolved
+in Sections 4.2 and 4.3).
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                                            11
+
+
+Observe that 𝑏 1 and 𝑏 3 respectively admit the plurality matchings {(1, 𝑎 2 ), (2, 𝑎 3 ), (3, 𝑎 1 )} and
+{(1, 𝑎 3 ), (2, 𝑎 1 ), (3, 𝑎 2 )}, while 𝑏 2 does not admit any plurality matching, as voters 1 and 2 can be
+only matched to 𝑎 3 but plu(𝑎 3 ) = 1. Thus, 𝑏 1 and 𝑏 3 are in the plurality veto core while 𝑏 2 is not.
+In Fig. 1, we illustrate a 2-dimensional ℓ1 -normed space consistent with these rankings where 𝑏 2 is
+a convex combination of 𝑏 1 and 𝑏 3 , specifically 𝑏 2 = 𝑏 1 +𝑏    3
+                                                                 2 . This example disproves the conjecture
+that the plurality veto core is always convex.          9
+
+
+4.2     SerialVeto
+We now present an adaptation of PluralityVeto (for the general case with arbitrary weights) with
+more careful elimination. We present this class of rules only for integral weight vectors (instead of
+weights normalized to 1); when p, q are rational, they can of course be made integral by multiplying
+all weights. For irrational weights, the rules can be adapted, albeit at an increase in notational
+complexity. The corresponding results are also subsumed by our continuous-time approach in
+Section 5.1. Given a set 𝑆 and a positive integer 𝑁 , let Δ𝑁 (𝑆) denote the domain of integral weight
+vectors over 𝑆 that add up 𝑁 .
+                                                            #—
+Definition 6 (Veto Order). Given an election E = (𝑉 , 𝐶, ≻) along with a weight vector p ∈ Δ𝑁 (𝑉 ),
+a veto order under p is a repeated sequence of voters (𝑣 1, . . . , 𝑣 𝑁 ) in which each voter 𝑣 ∈ 𝑉 occurs
+exactly 𝑝 (𝑣) times.
+   SerialVeto with veto order (𝑣 1, . . . , 𝑣 𝑁 ), given in Algorithm 1, starts off with the set of all
+candidates as eligible winners. Then, the rule processes voters in the order (𝑣 1, . . . , 𝑣 𝑁 ). In each
+iteration, the voter being processed starts from her bottom choice among not-yet-eliminated
+candidates and eliminates those whose weight is already 0. When she arrives at a candidate 𝑐 with
+positive weight, she decrements his weight by 1, but does not eliminate 𝑐, even if his weight is now 0.
+The set of winners consists of all candidates that are not eliminated until the end.
+Theorem 2. SerialVeto (Algorithm 1) returns a non-empty subset of candidates 𝑊 consisting of
+the winners tied at a (p, q)-matching.
+   Proof. The proof is similar to that of Theorem 1 and Theorem 2 in Kizilkaya and Kempe [2022].
+We first show that Algorithm 1 returns a non-empty subset of candidates. The weights of candidates
+initially add up to 𝑁 . In each of the 𝑁 iterations of the for loop (lines 3–6), a positive weight is
+decremented by 1. Hence, there is a candidate 𝑤 whose weight reaches 0 only at the end of the 𝑁 th
+iteration. Since a candidate can be removed from 𝑊 only after his weight reaches 0, 𝑤 ∈ 𝑊 when
+the algorithm terminates. Thus, Algorithm 1 returns a non-empty subset of candidates.
+   Next, we show that 𝑊 is the set of winners tied at some (p, q)-matching when the algorithm
+terminates. Let 𝑐𝑖 denote the candidate whose weight is decremented in the 𝑖 th iteration of the for
+loop (lines 3–6). Let M ∈ Δ𝑁 (𝑉 × 𝐶) be defined by 𝑀 (𝑣, 𝑐) = |{𝑖 ∈ [1, 𝑁 ] | 𝑣 = 𝑣𝑖 and 𝑐 = 𝑐𝑖 }| for
+all 𝑣 ∈ 𝑉 and 𝑐 ∈ 𝐶. Note that M is a (p, q)-matching since each voter 𝑣 occurs 𝑝 (𝑣) times in the
+veto order and the weight of each candidate 𝑐 (initialized with 𝑞(𝑐)) reaches 0 at the end. We will
+show that Algorithm 1 returns the winners tied at M.
+   For all 𝑖 ∈ [1, 𝑁 ], let 𝐶𝑖 denote the candidates that voter 𝑣𝑖 ranks weakly higher than 𝑐𝑖 , i.e.,
+𝐶𝑖 = {𝑐 ∈ 𝐶 | 𝑐 ≽𝑣𝑖 𝑐𝑖 }. All candidates are initially in 𝑊 , and for all 𝑖 ∈ [1, 𝑁 ], in the 𝑖 th iteration of
+the for loop (lines 3–6), candidates that 𝑣𝑖 ranks lower than 𝑐𝑖 (i.e., candidates that are not in 𝐶𝑖 )
+                                                                                          Ñ𝑁
+are removed by the while loop (lines 4–5). By induction on the iterations, 𝑊 = 𝑖=1              𝐶𝑖 at the end.
+By definition, the set of winners tied at M is 𝑊 (M) = {𝑐 ∈ 𝐶 | 𝑐 ≽𝑣 top [M(𝑣)≠0] (𝑣) for all 𝑣 ∈ 𝑉 } =
+                                        Ñ𝑁
+{𝑐 ∈ 𝐶 | 𝑐 ≽𝑣𝑖 𝑐𝑖 for all 𝑖 ∈ [1, 𝑁 ]} = 𝑖=1 𝐶𝑖 , which completes the proof.                                 □
+      9While Example 3 disproves the conjecture in general, it remains open for the special case of the peer selection setting.
+12                                                                               Fatih Erdem Kizilkaya and David Kempe
+
+
+Algorithm 1 SerialVeto
+                                             #—
+        Input: An election E = (𝑉 , 𝐶, ≻),
+               an integral weight vector q ∈ Δ𝑁 (𝐶),
+               a veto order (𝑣 1, . . . , 𝑣 𝑁 ) under p ∈ Δ𝑁 (𝑉 ).
+
+      Output: A non-empty subset of candidates 𝑊 in the (p, q)-veto core of E
+              who are the winners tied at a (p, q)-matching M, i.e., 𝑊 = 𝑊 (M).
+
+ 1: initialize 𝑊 = 𝐶
+ 2: initialize weight(𝑐) = 𝑞(𝑐) for all 𝑐 ∈ 𝐶
+
+ 3: for 𝑖 = 1, . . . , 𝑁 do
+ 4:     while weight(bot𝑊 (𝑣𝑖 )) = 0 do
+ 5:           remove bot𝑊 (𝑣𝑖 ) from 𝑊
+ 6:        decrement weight(bot𝑊 (𝑣𝑖 )) by 1
+ 7: return 𝑊
+
+
+   For unit weights over voters and plurality scores over candidates, notice that a veto order
+corresponds to an ordering of voters and SerialVeto (Algorithm 1) returns a set of winners
+containing the winner of PluralityVeto for the same ordering. Naturally, in this special case,
+every possible winner is guaranteed to have distortion 3 by Lemma 2.
+   Unlike PluralityVeto, the voting rule proposed by Moulin [1981a] for electing a candidate
+from the veto core does not insist on picking a single winner. However, while it does allow for
+ties, it frequently fails to include multiple candidates who should be “obviously” tied; in particular,
+it does not always return candidates tied at a common matching. Indeed, the ties allowed by
+Moulin’s rule appear to be less by design10 than an artifact of the combination of two choices:
+(1) eliminating a candidate when his score reaches 0, and (2) insisting that the winner not be
+eliminated at all (rather than only at the end). We believe that the combination of these two choices
+is the primary reason why Definition 2 is a bit more convoluted than Definition 3, and it also
+introduces various number-theoretic arguments into the analysis of the rule.
+
+4.3     Characterization of the Veto Core via SerialVeto
+Theorem 2 guarantees that for every veto order (𝑣 1, . . . , 𝑣 𝑁 ), the outcome of running SerialVeto for
+this veto order results in a set of winners tied at some (p, q)-matching. Here, we show the converse:
+for every (p, q)-matching M, there exists a veto order under which the set of winners is 𝑊 ⊇ 𝑊 (M)
+In particular, this implies that the (p, q)-veto core is exactly characterized by the set of possible
+winners under SerialVeto with suitably chosen veto orders.
+   The main technical tool in our proof is the concept of a bottom trading cycle, similar to the notion
+of top trading cycles widely used in fair allocation tasks.
+                                                                                  #—
+Definition 7 (Bottom Trading Cycles). Given an election E = (𝑉 , 𝐶, ≻) along with weight vectors
+p ∈ Δ𝑁 (𝑉 ) and q ∈ Δ𝑁 (𝐶), a bottom trading cycle of a (p, q)-matching M ∈ Δ𝑁 (𝑉 × 𝐶) is
+an alternating sequence of voters and candidates 𝜙 = (𝑣 1, 𝑐 1, . . . , 𝑣𝑘 , 𝑐𝑘 ) such that
+     • 𝑀 (𝑣𝑖 , 𝑐𝑖 ) > 0 for all 𝑖 ∈ [1, 𝑘],
+     • bot [q≠0] (𝑣𝑖 ) = 𝑐𝑖+1 for all 𝑖 ∈ [1, 𝑘 − 1], and bot [q≠0] (𝑣𝑘 ) = 𝑐 1 .
+
+     10 For example, the rule cannot return tied candidates when 𝑛 and 𝑚 are relatively prime.
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                                      13
+
+
+
+
+Fig. 2. A bottom trading cycle 𝜙 = (𝑣 1, 𝑐 1, . . . , 𝑣 4, 𝑐 4 ) of a (p, q)-matching M is illustrated above. Notice that
+M ◦𝜙 is the same matching as M except that the weight on each bold edge is decremented by 1 and the weight
+on each dotted edge is incremented by 1.
+
+
+  We use M b = M ◦ 𝜙 to denote the outcome of swapping along 𝜙, defined as the same (integral)
+(p, q)-matching as M except
+      • 𝑀
+        b (𝑣𝑖 , 𝑐𝑖 ) = 𝑀 (𝑣𝑖 , 𝑐𝑖 ) − 1 for all 𝑖 ∈ [1, 𝑘],
+      • 𝑀
+        b (𝑣𝑖 , 𝑐𝑖+1 ) = 𝑀 (𝑣𝑖 , 𝑐𝑖+1 ) + 1 for all 𝑖 ∈ [1, 𝑘 − 1], and 𝑀
+                                                                        b (𝑣𝑘 , 𝑐 1 ) = 𝑀 (𝑣𝑘 , 𝑐 1 ) + 1.
+
+   First, we show that if M is a matching in which no voter has positive edge weight to her bottom
+choice, then M must contain a bottom trading cycle.
+                                          #—
+Lemma 3. Given an election E = (𝑉 , 𝐶, ≻) along with weight vectors p ∈ Δ𝑁 (𝑉 ) and q ∈ Δ𝑁 (𝐶),
+if M ∈ Δ𝑁 (𝑉 × 𝐶) is a (p, q)-matching with 𝑀 (𝑣, bot [q≠0] (𝑣)) = 0 for all 𝑣 ∈ 𝑉 , then M contains
+a bottom trading cycle.
+  Proof. Suppose that 𝑀 (𝑣, bot [q≠0] (𝑣)) = 0 for all 𝑣 ∈ 𝑉 . If 𝑁 = 1 then the lemma holds vacuously.
+Hence, assume that 𝑁 > 1. Then, there exist a voter 𝑣 1 and a candidate 𝑐 1 such that 𝑀 (𝑣 1, 𝑐 1 ) ≠ 0.
+For 𝑖 = 1, 2, . . ., let 𝑐𝑖+1 = bot [q≠0] (𝑣𝑖 ) and let 𝑣𝑖+1 be an arbitrary voter such that 𝑀 (𝑣𝑖+1, 𝑐𝑖+1 ) ≠ 0.
+Note that there always exists such a voter 𝑣𝑖+1 because 𝑀 (𝑣𝑖 , 𝑐𝑖+1 ) = 0 and 𝑞(𝑐𝑖+1 ) > 0 by definition.
+Since there are only 𝑚 candidates, after at most 𝑚 + 1 steps, a candidate must repeat; let 𝑗 ≠ 𝑘
+be indices such that 𝑐 𝑗 = 𝑐𝑘 . Then, (𝑣 𝑗 , 𝑐 𝑗 , 𝑣 𝑗+1, 𝑐 𝑗+1, . . . , 𝑣𝑘 −1, 𝑐𝑘 −1 ) is a bottom trading cycle of M,
+which completes the proof.                                                                                           □
+
+   Next, we show that if a candidate admits a matching, and one swaps along a bottom trading
+cycle, the candidate admits the new matching as well.
+                                         #—
+Lemma 4. Given an election E = (𝑉 , 𝐶, ≻) along with weight vectors p ∈ Δ𝑁 (𝑉 ) and q ∈ Δ𝑁 (𝐶),
+suppose that M ∈ Δ𝑁 (𝑉 × 𝐶) is a (p, q)-matching with bottom trading cycle 𝜙 = (𝑣 1, 𝑐 1, . . . , 𝑣𝑘 , 𝑐𝑘 ).
+                                            b = M ◦ 𝜙.
+If candidate 𝑎 admits M, then 𝑎 also admits M
+   Proof. For all 𝑖 ∈ [1, 𝑘], we show that (𝑣𝑖 , bot [q≠0] (𝑣𝑖 )) ∈ 𝐸𝑎 , which suffices to prove that
+candidate 𝑎 admits M          b is the same (p, q)-matching as M except that voter 𝑣𝑖 reassigns a unit
+                      b since M
+of her weight from candidate 𝑐𝑖 to bot [q≠0] (𝑣𝑖 ).
+   Let 𝑖 ∈ [1, 𝑘]. Since candidate 𝑎 admits M and 𝑀 (𝑣𝑖 , 𝑐𝑖 ) ≠ 0, we have (𝑣𝑖 , 𝑐𝑖 ) ∈ 𝐸𝑎 , i.e., 𝑎 ≽𝑣𝑖 𝑐𝑖 .
+Note that 𝑞(𝑐𝑖 ) ≠ 0 since 𝑀 (𝑣𝑖 , 𝑐𝑖 ) ≠ 0. Then, 𝑐𝑖 ≽𝑣𝑖 bot [q≠0] (𝑣𝑖 ) by definition. Combining the two,
+we get that 𝑎 ≽𝑣𝑖 bot [q≠0] (𝑣𝑖 ). Thus, (𝑣𝑖 , bot [q≠0] (𝑣𝑖 )) ∈ 𝐸𝑎 . This completes the proof.          □
+14                                                                        Fatih Erdem Kizilkaya and David Kempe
+
+                            #—
+Theorem 3. Let E = (𝑉 , 𝐶, ≻) be an election with weight vectors p ∈ Δ𝑁 (𝑉 ) and q ∈ Δ𝑁 (𝐶), and
+let M ∈ Δ𝑁 (𝑉 ×𝐶) be an (integral) (p, q)-matching. There exists a veto order 𝜎 = (𝑣 1, . . . , 𝑣 𝑁 ) under p
+for which SerialVeto (Algorithm 1) returns a subset of candidates 𝑊 with 𝑊 ⊇ 𝑊 (M).
+   Proof. The proof is by induction on 𝑁 . As the base case, consider the case where 𝑁 = 0. Because
+no iterations are run, all candidates will be winners, establishing the claim. Now consider an
+                        #—
+election E = (𝑉 , 𝐶, ≻) with p ∈ Δ𝑁 (𝑉 ) and q ∈ Δ𝑁 (𝐶) such that 𝑁 ≥ 1. Let M be an integral
+(p, q)-matching, i.e., M ∈ Δ𝑁 (𝑉 × 𝐶).
+   If 𝑀 (𝑣, bot [q≠0] (𝑣)) = 0 for all voters 𝑣, then Lemma 3 implies the existence of a bottom trading
+cycle 𝜙 of M. Let M  b = M ◦ 𝜙. By Lemma 4, we have 𝑊 ( b      M) ⊇ 𝑊 (M). We will construct a veto order
+𝜎 such that 𝑊 ⊇ 𝑊 ( b    M) ⊇ 𝑊 (M), which will imply the claim. Notice that by definition of bottom
+trading cycles and M,  b for all voters 𝑣 along 𝜙, we have 𝑀     b (𝑣, bot [q≠0] (𝑣)) > 0. In particular, we can
+update M with b   M, and ensure the existence of a voter 𝑣 1 for whom 𝑀 (𝑣 1, bot [q≠0] (𝑣 1 )) > 0.
+   We now define 𝑣 1 to be the starting voter of the sequence 𝜎, and let 𝑐 1 = bot [q≠0] (𝑣 1 ). Define
+the following modified weights p ∈ Δ𝑁 −1 (𝑉 ) and q ∈ Δ𝑁 −1 (𝐶). Let 𝑝 (𝑣 1 ) = 𝑝 (𝑣 1 ) − 1 and
+𝑝 (𝑣) = 𝑝 (𝑣) for all 𝑣 ∈ 𝑉 \ {𝑣 1 }, and similarly 𝑞(𝑐 1 ) = 𝑞(𝑐 1 ) − 1 and 𝑞(𝑐) = 𝑞(𝑐) for all 𝑐 ∈ 𝐶 \ {𝑐 1 }.
+Define the modified matching M ∈ Δ𝑁 −1 (𝑉 × 𝐶) by 𝑀 (𝑣 1, 𝑐 1 ) = 𝑀 (𝑣 1, 𝑐 1 ) − 1 and 𝑀 (𝑣, 𝑐) = 𝑀 (𝑣, 𝑐)
+for all (𝑣, 𝑐) ∈ (𝑉 × 𝐶) \ {(𝑣 1, 𝑐 1 )}. Notice that M is a (p, q)-matching. By induction hypothesis,
+there exists a veto order 𝜎 = (𝑣 1, . . . , 𝑣 𝑁 −1 ) under p for which Algorithm 1 returns a subset of
+candidates 𝑊 ⊇ 𝑊 (M). Define 𝜎 = (𝑣 1, 𝑣 1, 𝑣 2, . . . , 𝑣 𝑁 −1 ), which is a veto order under p.
+   Given the input E, q and 𝜎, Algorithm 1 first decrements the weight of 𝑐 1 by 1. Then, the algorithm
+runs exactly the same way as if it were given the input E, q and 𝜎, and thus, it returns 𝑊 .                   □
+     As an immediate corollary, we obtain the following:
+Corollary 2. Every candidate in the (p, q)-veto core can win under SerialVeto with some veto order.
+  Proof. Whenever 𝐺𝑎 has an integral (p, q)-matching, the claim follows directly from Theorem 3.
+But it is impossible that 𝐺𝑎 contains only fractional (p, q)-matchings, because all entries of p and q
+are integral, so the existence of an integral matching follows from the integrality part of the
+Max-Flow Min-Cut Theorem.                                                                           □
+
+5     A PRACTICAL VOTING RULE ELECTING FROM THE VETO CORE
+In this section, we present a continuous-time extension of SerialVeto called SimultaneousVeto
+which does not require the specification of a veto order; as a result, the rule does not prioritize any
+voter over another. Our rule can also be considered as a generalization (beyond the proportional
+veto core) of the VetoByConsumption algorithm (Definition 12) of Ianovski and Kondratev [2021].
+We will discuss this connection in more detail below. We show that this voting rule still picks
+a set of winners tied at a (p, q)-matching; thus, it constitutes a canonical rule for electing from
+the (p, q)-veto core. Most importantly, we show that SimultaneousVeto with uniform weights
+over voters and plurality scores over candidates satisfies many axioms desirable in practice.
+
+5.1     SimultaneousVeto
+SimultaneousVeto, given in Algorithm 2, starts off with the set of all candidates as eligible
+winners, just like SerialVeto (Algorithm 1). However, instead of a particular veto order, all voters
+are processed simultaneously in continuous time. From time 0 to 1, every voter 𝑣, starting from her
+bottom choice, instantly eliminates those with weight 0 and moves on to her next bottom choice.
+When she arrives at a candidate with positive weight, she decrements his weight continuously at
+rate 𝑝 (𝑣). The set of winners consists of all candidates who are not eliminated until time 1.
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                15
+
+
+   In Algorithm 2, along with the above continuous-time description, SimultaneousVeto is also
+given using discrete events corresponding to the time steps at which a candidate is eliminated;
+this shows that SimultaneousVeto can be implemented efficiently in a standard computational
+                 −1
+model. Here, bot𝑊   (𝑐) denotes the set of voters whose bottom choice among the subset 𝑊 of
+candidates is candidate 𝑐.
+Algorithm 2 SimultaneousVeto
+                                     #—
+      Input: An election E = (𝑉 , 𝐶, ≻),
+             weight vectors p ∈ Δ(𝑉 ) and q ∈ Δ(𝐶).
+
+      Output: A non-empty subset of candidates 𝑊 in the (p, q)-veto core of E
+              who are the winners tied at a (p, q)-matching M, i.e., 𝑊 = 𝑊 (M).
+
+      Initialization: 𝑊 = 𝐶,
+                      weight(𝑐) = 𝑞(𝑐) for all 𝑐 ∈ 𝐶.
+
+      Continuous-Time Description:
+ 1: from time = 0 to 1 do
+ 2:    for all 𝑣 ∈ 𝑉 in parallel do
+ 3:        while weight(bot𝑊 (𝑣)) = 0 do
+ 4:            remove bot𝑊 (𝑣) from 𝑊
+ 5:        decrement weight(bot𝑊 (𝑣)) at rate 𝑝 (𝑣)
+ 6: return 𝑊
+
+
+      Implementation via Discrete Events:
+ 1: time = 0
+ 2: while time < 1 do
+ 3:    for all 𝑐 ∈ 𝐶 \ [weight ≠ 0] do
+                 −1
+ 4:        if bot𝑊  (𝑐) ≠ ∅ then
+ 5:               remove 𝑐 from 𝑊
+                         weight(𝑐 )
+ 6:      𝛿 = min𝑐 ∈𝑊 𝑝 (bot−1 (𝑐 ) )
+                             𝑊
+
+ 7:      for all 𝑐 ∈ 𝑊 do
+                                              −1
+ 8:          decrement weight(𝑐) by 𝛿 · 𝑝 (bot𝑊  (𝑐))
+ 9:      increment time by 𝛿
+10: return 𝑊
+
+
+Theorem 4. SimultaneousVeto (Algorithm 2) returns a non-empty subset of candidates 𝑊 consisting
+of the winners tied at a (p, q)-matching.
+   Proof. For proving the theorem, we will be using the continuous-time description of Algorithm 2.
+The proof proceeds along the same lines as that of Theorem 2. We first show that Algorithm 2
+returns a non-empty subset of candidates. The weights of candidates initially add up to 1, and
+each voter 𝑣 ∈ 𝑉 decrements the weights at rate 𝑝 (𝑣) from time 0 to 1. Since 𝑝 (𝑉 ) = 1, there is
+a candidate 𝑤 whose weight reaches 0 only at time 1. Since a candidate can be removed from 𝑊
+only after his weight reaches 0, 𝑤 ∈ 𝑊 when the algorithm terminates. Thus, Algorithm 2 returns
+a non-empty subset of candidates.
+16                                                                                Fatih Erdem Kizilkaya and David Kempe
+
+
+    Next, we show that 𝑊 consists of the winners tied at some (p, q)-matching when the algorithm
+terminates. Let 𝑐 𝑣 (𝑡) denote the candidate whose weight is decremented by voter 𝑣 at time 𝑡.
+Let I𝑣,𝑐 (𝑡) be an indicator function which takes the value 1 if 𝑐 = 𝑐 𝑣 (𝑡) and 0 otherwise. Let
+                                                    ∫1
+M ∈ Δ𝑁 (𝑉 × 𝐶) be defined by 𝑀 (𝑣, 𝑐) = 0 I𝑣,𝑐 (𝑡) · 𝑝 (𝑣) d𝑡 for all 𝑣 ∈ 𝑉 and 𝑐 ∈ 𝐶, i.e., the
+total amount by which 𝑣 decreases the weight of 𝑐 over the entire algorithm. Note that M is a
+(p, q)-matching since each voter 𝑣 decrements the weight of 𝑐 𝑣 (𝑡) at rate 𝑝 (𝑣) from time 𝑡 = 0 to 1,
+and the weight of each candidate 𝑐 (initialized with 𝑞(𝑐)) must have reached 0 by the end. We will
+show that Algorithm 2 returns the winners tied at M.
+   We use 𝐶 𝑣 (𝑡) = {𝑐 ∈ 𝐶 | 𝑐 ≽𝑣 𝑐 𝑣 (𝑡)} to denote the set of candidates that voter 𝑣 ranks weakly
+higher than 𝑐 𝑣 (𝑡). Note that 𝐶 𝑣 (𝑡) ⊆ 𝐶 𝑣 (𝑡 ′ ) for all 𝑡 > 𝑡 ′ , because the set of remaining candidates
+shrinks over time, and 𝑣 always decrements the weight of her lowest-ranked remaining candidate. All
+candidates are initially in 𝑊 and, for all voters 𝑣 ∈ 𝑉 , candidates 𝑐 ∈ 𝑊 that 𝑣 ranks lower than 𝑐 𝑣 (𝑡)
+(i.e., candidates not in 𝐶 𝑣 (𝑡)) are removed at time 𝑡 by the while loop (lines 3 – 4). Note that such
+candidates 𝑐 must have weight 0 at time 𝑡; otherwise, by definition, 𝑣 would decrease the score of such
+a candidate instead at time 𝑡. By induction on time11 ,𝑊 = 𝑡1=0 𝑣 ∈𝑉 𝐶 𝑣 (𝑡) = 𝑣 ∈𝑉 𝐶 𝑣 (1) at the end.
+                                                                    Ñ Ñ                  Ñ
+By definition, the set of winners tied at M is 𝑊 (M) = {𝑐 ∈ 𝐶 | 𝑐 ≽𝑣 top [M(𝑣)≠0] (𝑣) for all 𝑣 ∈ 𝑉 } =
+                                        Ñ
+{𝑐 ∈ 𝐶 | 𝑐 ≽𝑣 𝑐 𝑣 (1) for all 𝑣 ∈ 𝑉 } = 𝑣 ∈𝑉 𝐶 𝑣 (1) which completes the proof.                            □
+   As mentioned above, SimultaneousVeto is a generalization of the VetoByConsumption rule
+of Ianovski and Kondratev [2021] picking a candidate from the proportional veto core. Therefore,
+their rule also satisfies our definition of ties, and consequently, the convexity property given in
+Section 4.1. However, the generalization to arbitrary weights, while preserving the convexity
+property, is not trivial because if the weight of a candidate 𝑐 is 0 and no voter ranks 𝑐 at the bottom,
+then the naive generalization is not well-defined, as it involves dividing 0 by 0. Another way to
+deal with this issue would be to ignore candidates with weight 0 as in PluralityVeto; however,
+doing so may lead to violating convexity of the set of returned winners.
+   We also remark that SimultaneousVeto can be easily generalized further. The rates at which
+a voter decrements the weight of her bottom choice need not stay constant over time. Instead,
+a voting rule can prescribe rates 𝑟 𝑣 (𝑡) ≥ 0 for all voters 𝑣 and times 𝑡 ∈ [0, 1], so long as these rates
+       ∫1
+satisfy 0 𝑟 𝑣 (𝑡)d𝑡 = 𝑝 (𝑣). The proof of Theorem 4 then carries through verbatim. This general rule
+then also subsumes the discrete rule SerialVeto, by having voter 𝑣𝑖 decrement at rate 𝑁 during
+the interval [(𝑖 − 1)/𝑁 , 𝑖/𝑁 ), while all other voters have rate 0 during that interval.
+
+5.2     Axiomatic Properties of SimultaneousPluralityVeto
+We refer to the instantiation of SimultaneousVeto (Algorithm 2) with uniform weights over
+voters and plurality scores over candidates as SimultaneousPluralityVeto. For ease of notation,
+in the analysis in this section, we treat SimultaneousVeto as using unnormalized weights, i.e.,
+the initial scores are 𝑞(𝑐) = plu(𝑐), and each voter reduces scores at a rate of 1. Of course, scaling
+all 𝑝 (𝑣) and 𝑞(𝑐) by 1/𝑛 translates the arguments to an implementation with normalized scores and
+rates. Our main result here is that in addition to guaranteeing metric distortion 3 (due to Lemma 2),
+SimultaneousPluralityVeto satisfies a number of desirable axioms:
+       • Anonymity and Neutrality, respectively, require the voting rule to not discriminate a
+         priori between voters and candidates. In other words, the outcome should depend only on
+         the rankings, not the identities of voters or candidates.
+
+
+     11 Induction can be formally performed by considering only the time steps when a candidate is removed from 𝑊 , i.e., by
+
+considering the discrete set of values that are assigned to the variable time in the implementation via discrete events.
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                                         17
+
+
+      • Resolvability requires that for any set of tied winners 𝑊 , adding a new voter 𝑣 whose top
+        choice is some candidate 𝑤 ∈ 𝑊 makes 𝑤 the unique winner.
+      • Monotonicity requires that when a voter moves a winning candidate 𝑤 higher up in her
+        ranking, then 𝑤 still wins.
+      • Mutual Majority requires that if a strict majority of voters rank all candidates in 𝑆 ahead
+        of all other candidates, then the winner(s) must be from 𝑆. Majority requires this only for
+        singleton sets. Majority Loser requires this only for sets whose complement is a singleton.
+      • Reversal Symmetry requires that if a candidate 𝑤 is the unique winner, and the ranking
+        of each voter is reversed, then 𝑤 must not be a winner any longer.
+Theorem 5. SimultaneousPluralityVeto returns a non-empty set 𝑊 of tied winners all of whom
+have distortion at most 3, and for every metric space consistent with the rankings for which convexity is
+defined, 𝑊 is convex12 . Furthermore, the voting rule satisfies Anonymity, Neutrality, Resolvability,
+Monotonicity, Majority, Majority Loser, Mutual Majority, and Reversal Symmetry.
+
+5.3   Axioms Violated by SimultaneousPluralityVeto
+Before giving the proof of Theorem 5, we discuss some other important axioms that are violated by
+SimultaneousPluralityVeto.
+   Candidate 𝑎 is a Condorcet winner if for every other candidate 𝑏, there are at least 𝑛/2 voters who
+rank 𝑎 higher than 𝑏. A Condorcet winner does not always exist. A voting rule satisfies Condorcet
+Consistency if it picks a Condorcet winner whenever one exists. Gkatzelis et al. [2020] showed that
+a Condorcet winner is not always a plurality dominant candidate; thus, neither PluralityMatching
+nor PluralityVeto nor SimultaneousPluralityVeto is Condorcet consistent. On the other
+hand, Anshelevich et al. [2015] showed that the distortion of any Condorcet winner is at most 3; as
+a result, all of the above voting rules can be made Condorcet consistent by forcing them to pick
+a Condorcet winner when one exists, without hurting the distortion.
+                                                                                                         #—
+   A voting rule 𝑓 satisfies Electoral Consistency [Young 1975] if, when the election E = (𝑉 , 𝐶, ≻)
+                                                  #—                   #—
+is partitioned into two elections E1 = (𝑉1, 𝐶, ≻) and E2 = (𝑉2, 𝐶, ≻) with disjoint voters such that
+𝑓 (E1 ) ∩ 𝑓 (E2 ) ≠ ∅, the set of winners of the whole election is 𝑓 (E) = 𝑓 (E1 ) ∩ 𝑓 (E2 ). The following
+example shows that 𝑓 = SimultaneousPluralityVeto violates Electoral Consistency.
+Example 4. There are five candidates 𝐶 = {𝑎, 𝑏, 𝑐, 𝑑, 𝑒}, and five voters partitioned as 𝑉1 = {1, 2, 3}
+and 𝑉2 = {4, 5}. The rankings are as follows:
+      • 𝑎 ≻1 𝑐 ≻1 𝑑 ≻1 𝑏 ≻1 𝑒                                        • 𝑐 ≻4 𝑎 ≻4 𝑏 ≻4 𝑑 ≻4 𝑒
+      • 𝑏 ≻2 𝑐 ≻2 𝑎 ≻2 𝑑 ≻2 𝑒                                        • 𝑒 ≻5 𝑑 ≻5 𝑏 ≻5 𝑎 ≻5 𝑐
+      • 𝑑 ≻3 𝑐 ≻3 𝑏 ≻3 𝑎 ≻3 𝑒
+𝑓 (E) ≠ 𝑓 (E1 ) ∩ 𝑓 (E2 ) because 𝑓 (E) = {𝑎, 𝑏, 𝑐}, 𝑓 (E1 ) = {𝑎, 𝑏, 𝑐, 𝑑 } and 𝑓 (E2 ) = {𝑎, 𝑏, 𝑐, 𝑑, 𝑒}.
+   Perhaps most concerning is that SimultaneousPluralityVeto violates the Pareto Property,
+which requires that a Pareto dominated candidate 𝑎 (i.e., a candidate whom every voter ranks below
+some candidate 𝑏) can never be chosen as a winner. The Pareto property is violated in an input
+with 𝑚 candidates and two voters with respective rankings 𝑐 1 ≻ 𝑐 2 ≻ 𝑐 3 ≻ · · · ≻ 𝑐𝑚−1 ≻ 𝑐𝑚
+and 𝑐𝑚 ≻ 𝑐 2 ≻ 𝑐 3 ≻ · · · ≻ 𝑐𝑚−1 ≻ 𝑐 1 . In this input, all candidates are tied at the unique matching,
+and hence are returned as winners by SimultaneousPluralityVeto, even though 𝑐 3, . . . , 𝑐𝑚−1
+are Pareto dominated by 𝑐 2 . Fortunately, in a sense, this type of preferences is the only setting
+in which a Pareto dominated candidate can win: a Pareto dominated candidate 𝑎 can only win if
+the candidate 𝑏 dominating him (and hence 𝑎 himself) has plurality score 0. To see this, notice first
+   12 In the sense that the interior of the convex hull of 𝑊 contains no candidates other than those in 𝑊 (see Section 4.1).
+18                                                                  Fatih Erdem Kizilkaya and David Kempe
+
+
+that the score of 𝑏 cannot be decreased until 𝑎 has been eliminated. Because the score of 𝑏 must
+reach 0 by time 1, 𝑏’s score must be decremented before time 1, so 𝑎 would be eliminated before
+time 1, and could not win.
+   To restore the Pareto Property, one could of course post-process the set of winners 𝑊 and
+eliminate any Pareto dominated candidates. This will leave a non-empty set of winners, because
+with any Pareto dominated candidate 𝑎, any candidate 𝑏 dominating 𝑎 will always be a winner.
+Unfortunately, it would come at the expense of violating convexity and the principle that candidates
+with the same witnessing matching should all be returned by the voting rule.
+   An alternative approach — which would resolve the specific example we gave above — is to have
+candidates start not with their plurality scores, but with a score that also accounts for intermediate
+positions, e.g., scores that decrease exponentially with the rank of a candidate, or even Borda count
+scores. However, for such scores, the analogue of Lemma 2 is not known to hold, and probably does
+not hold verbatim. Thus, this approach will necessitate a more refined analysis of the distortion
+of SimultaneousVeto (or, equivalently, candidates in the (p, q)-veto core) under more general
+candidate weights q. We discuss this direction more in Section 6.
+
+5.4   Proof of Theorem 5
+The fact that all of the winning candidates have distortion at most 3 holds by Lemma 2, because
+the winners are all in the plurality veto core. The fact that the set of winning candidates is convex,
+for every metric space consistent with the rankings for which convexity is defined, follows from
+Proposition 2 because SimultaneousVeto returns the winners tied at a (p, q)-matching M by
+Theorem 4 and 𝑊 (M) is prefix-intersecting by Proposition 3.
+  SimultaneousPluralityVeto is completely symmetric with respect to members of both groups,
+and thus, Anonymity and Neutrality follow directly from the definition. We prove the remaining
+properties as separate lemmas.
+Lemma 5. SimultaneousPluralityVeto satisfies Majority, Majority Loser & Mutual Majority.
+   Proof. We prove that SimultaneousPluralityVeto satisfies the Mutual Majority property.
+Then, Majority and Majority Loser are special cases. Suppose that a strict majority 𝑉 ′ ⊆ 𝑉 of
+voters rank all candidates in 𝑆 ahead of all other candidates. Then, the initial total weight of 𝑆 is
+strictly greater than that of 𝑆. Until all candidates from 𝑆 are eliminated, each voter in 𝑉 ′ will veto
+a candidate in 𝑆, so the total weight on 𝑆 is decreased at a strictly higher rate than the total weight
+on 𝑆. As a result, the total weight of 𝑆 must reach 0 strictly before the total weight of 𝑆 reaches 0.
+In particular, no candidate from 𝑆 can be a winner.                                                    □
+
+Lemma 6. SimultaneousPluralityVeto satisfies Reversal Symmetry.
+   Proof. We first prove that if 𝑤 is the unique winner, then plu(𝑤) > veto(𝑤). We prove the
+contrapositive, so we assume that veto(𝑤) ≥ plu(𝑣). The voters ranking 𝑤 last, i.e., bot−1 (𝑤), will
+oppose 𝑤 until 𝑤 is eliminated. Since 𝑤 wins, this happens only at time 1, so none of the voters
+in bot−1 (𝑤) will ever decrement the weight of another candidate. Thus, the total weight of all
+candidates except 𝑤 is decremented at rate at most 𝑛 − veto(𝑤) ≤ 𝑛 − plu(𝑤). Since the total weight
+of all candidates other than 𝑤 is initially 𝑛 − plu(𝑤), it cannot reach 0 until time 1. Therefore, at
+least one candidate other than 𝑤 is a winner as well. So we have proved that plu(𝑤) > veto(𝑤).
+   In the election with reversed rankings, plu(𝑤) < veto(𝑤) instead. Then, 𝑤 is not a plurality-
+dominant candidate due to Lemma 6 in Gkatzelis et al. [2020]; this can also be directly observed
+by mildly adapting the argument we just gave in the case plu(𝑤) ≤ veto(𝑤). Thus, 𝑤 cannot be a
+winner in the election with reversed rankings.                                                     □
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                          19
+
+
+  The proofs of Monotonicity and Resolvability are more involved. They involve comparing
+the winner(s) under the original rankings with those under suitably modified rankings. To facilitate
+the analysis, we introduce the following notation; the notation with a prime refers to the execution
+with modified rankings.
+     • 𝜏 (𝑐) and 𝜏 ′ (𝑐) denote the time when candidate 𝑐 is eliminated. When 𝑐 is not eliminated
+       until time 1 (i.e., a winner), we write 𝜏 (𝑐) = 1.
+     • For any time 𝑡 ∈ [0, 1], let 𝑊 (𝑡) = {𝑐 | 𝜏 (𝑐) ≥ 𝑡 } and 𝑊 ′ (𝑡) = {𝑐 | 𝜏 ′ (𝑐) ≥ 𝑡 } denote the sets
+       of candidates who are not eliminated before time 𝑡. Thus, 𝑊 = 𝑊 (1) and 𝑊 ′ = 𝑊 ′ (1) are
+       the winning candidates.
+     • Similarly, let 𝑊+ (𝑡) = {𝑐 | 𝜏 (𝑐) > 𝑡 } and 𝑊+′ (𝑡) = {𝑐 | 𝜏 ′ (𝑐) > 𝑡 } be the sets of candidates
+       eliminated strictly after time 𝑡, i.e., the set of non-eliminated candidates at time 𝑡 after
+       the while loop (lines 3–4) in the continuous-time description has been executed.
+     • weight(𝑐, 𝑡) and weight′ (𝑐, 𝑡) denote the weight of candidate 𝑐 at time 𝑡.
+                             −1              ′            −1
+     • We write 𝐵(𝑐, 𝑡) = bot𝑊 (𝑡 ) (𝑐) and 𝐵 (𝑐, 𝑡) = bot𝑊 ′ (𝑡 ) (𝑐) for the sets of voters opposing
+       candidate 𝑐 among candidates not eliminated before time 𝑡, i.e., the sets of voters whose
+       bottom choice among candidates not eliminated before time 𝑡 is 𝑐.
+                                           −1                        −1
+     • Similarly, we write 𝐵 + (𝑐, 𝑡) = bot𝑊+ (𝑡 )
+                                                   (𝑐) and 𝐵 +′ = bot𝑊 ′     (𝑐) for the sets of voters
+                                                                      + (𝑡 )
+       opposing candidate 𝑐 among candidates eliminated strictly after time 𝑡.
+Lemma 7. SimultaneousPluralityVeto satisfies Monotonicity.
+   Let 𝑤 ∈ 𝑊 be a winner ranked higher by a voter in the modified election. We begin with the
+following simple proposition, which will be used repeatedly:
+Proposition 4. If 𝑊 (𝑡) ⊇ 𝑊 ′ (𝑡), then 𝐵(𝑐, 𝑡) ⊆ 𝐵 ′ (𝑐, 𝑡) for any candidate 𝑐 ∈ 𝑊 ′ (𝑡) \ {𝑤 }.
+  Proof. Consider a voter 𝑣 ∈ 𝐵(𝑐, 𝑡). By definition, 𝑣 ranks 𝑐 below all candidates 𝑐 ′ ∈ 𝑊 (𝑡)
+under the original election. Because 𝑐 ≠ 𝑤, and candidates other than 𝑤 can only be ranked lower
+or in the same place in the modified election, 𝑣 also ranks 𝑐 below all candidates 𝑐 ′ ∈ 𝑊 (𝑡) in
+the modified election. And because 𝑊 ′ (𝑡) ⊆ 𝑊 (𝑡), 𝑣 ranks 𝑐 below all candidates 𝑐 ′ ∈ 𝑊 ′ (𝑡) in
+the modified election, meaning that 𝑣 ∈ 𝐵 ′ (𝑐, 𝑡).                                               □
+   We are now ready to prove Lemma 7.
+Proof of Lemma 7. Let 𝑡 1 < 𝑡 2 < · · · < 𝑡𝑘 = 1 be the times at which one or more candidate
+is eliminated under the modified election, i.e., {𝑡 1, . . . , 𝑡𝑘 } = {𝜏 ′ (𝑐) | 𝑐 ∈ 𝐶}. For notational
+convenience, we write 𝑡 0 = 0.
+   We will prove the following by induction on 𝑖 = 0, . . . , 𝑘:
+      • For all 𝑐 ∈ 𝑊 ′ (𝑡𝑖 ) \ {𝑤 }, the weight at time 𝑡𝑖 is weakly lower in the modified election, i.e.,
+        weight′ (𝑐, 𝑡𝑖 ) ≤ weight(𝑐, 𝑡𝑖 ).
+     • 𝑊 (𝑡𝑖 ) ⊇ 𝑊 ′ (𝑡𝑖 ), i.e., candidates can only be eliminated earlier in the modified instance.
+   For 𝑖 = 0, the first part holds because any candidate 𝑐 ≠ 𝑤 can only have moved down or stayed
+in the same place in each ranking, so the initial weights are weakly lower. The second part of
+the hypothesis holds because 𝑊 ′ (0) = 𝑊 (0) = 𝐶.
+   For the induction step from 𝑖 to 𝑖 + 1, consider time 𝑡𝑖 for 𝑖 < 𝑘. First, consider the while loop
+(lines 3–4) in the continuous-time description. By induction over its iterations, in each iteration,
+we maintain that the set of uneliminated candidates in the original election is a superset of the
+uneliminated candidates in the modified election. This holds initially by the outer induction
+20                                                                                  Fatih Erdem Kizilkaya and David Kempe
+
+
+hypothesis. Whenever it holds, Proposition 4 implies that 𝐵(𝑐, 𝑡𝑖 ) ⊆ 𝐵 ′ (𝑐, 𝑡𝑖 ) for all 𝑐 ≠ 𝑤. In
+particular, if 𝑐 gets eliminated at time 𝑡𝑖 in the original election, then 𝐵(𝑐, 𝑡𝑖 ) ≠ ∅ and weight(𝑐, 𝑡𝑖 ) = 0.
+Thus, 𝐵 ′ (𝑐, 𝑡𝑖 ) ≠ ∅, and the while loop also eliminates 𝑐 at time 𝑡𝑖 in the modified election, because
+weight′ (𝑐, 𝑡𝑖 ) ≤ weight(𝑐, 𝑡𝑖 ) = 0 and 𝑐 is opposed by a non-empty set of voters. Thus, we showed
+that 𝑊+ (𝑡𝑖 ) ⊇ 𝑊+′ (𝑡𝑖 ).
+   Next, observe that because the sum of all weights at time 𝑡𝑖 is exactly 𝑛(1−𝑡𝑖 ) in both elections, and
+every candidate 𝑐 ≠ 𝑤 has weight′ (𝑐, 𝑡𝑖 ) ≤ weight(𝑐, 𝑡𝑖 ), we have weight′ (𝑤, 𝑡𝑖 ) ≥ weight(𝑤, 𝑡𝑖 ).
+   Applying Proposition 4 after the while loop terminates, we obtain that 𝐵 +′ (𝑐, 𝑡𝑖 ) ⊇ 𝐵 + (𝑐, 𝑡𝑖 )
+                                                                                                     Ð
+for all candidates 𝑐 ≠ 𝑤. Since each voter opposes exactly one candidate, 𝑐 ∈𝑊+ (𝑡𝑖 ) 𝐵 + (𝑐, 𝑡𝑖 ) =
+𝑉 = 𝑐 ∈𝑊+′ (𝑡𝑖 ) 𝐵 +′ (𝑐, 𝑡𝑖 ). Hence, the facts that 𝐵 +′ (𝑐, 𝑡𝑖 ) ⊇ 𝐵 + (𝑐, 𝑡𝑖 ) for all 𝑐 ∈ 𝑊+′ (𝑡𝑖 ) \ {𝑤 } and
+       Ð
+𝑊+′ (𝑡𝑖 ) ⊆ 𝑊+ (𝑡𝑖 ) imply that 𝐵 +′ (𝑤, 𝑡𝑖 ) ⊆ 𝐵 + (𝑤, 𝑡𝑖 ). Combining this fact with the bounds on weights,
+                        weight(𝑐,𝑡 )              weight′ (𝑐,𝑡 )
+and defining 𝛿𝑐 = |𝐵+ (𝑐,𝑡𝑖 ) 𝑖| and 𝛿𝑐′ = |𝐵 ′ (𝑐,𝑡𝑖 ) |𝑖 (with the definition that 0/0 := ∞), we observe
+                                                     +
+that 𝛿 𝑤′ ≥ 𝛿 and 𝛿 ′ ≤ 𝛿 for all 𝑐 ≠ 𝑤.
+               𝑤         𝑐     𝑐
+   Since the weight of each uneliminated candidate 𝑐 at time 𝑡𝑖 is decreased at rate |𝐵 +′ (𝑐, 𝑡𝑖 )| under
+                                                                                                                  weight′ (𝑐,𝑡 )
+the modified election, the next elimination will happen at time 𝑡𝑖+1 = 𝑡𝑖 + min𝑐 ∈𝑊+′ (𝑡𝑖 ) |𝐵 ′ (𝑐,𝑡𝑖 ) |𝑖 .
+                                                                                                                     +
+If 𝑤 minimizes this expression, then we obtain that 𝑡𝑖+1 = 𝑡𝑖 + 𝛿 𝑤                     ′ ≥ 𝑡 +𝛿
+                                                                                                 𝑖    𝑤 ≥ 𝜏 (𝑤) = 1, and
+thus, 𝑤 is a winner. Otherwise, for all candidates 𝑐 ∈ 𝑊+ (𝑡𝑖+1 ) \ {𝑤 }, we have weight(𝑐, 𝑡𝑖+1 ) =
+weight(𝑐, 𝑡𝑖 ) − (𝑡𝑖+1 − 𝑡𝑖 ) · |𝐵 + (𝑐, 𝑡𝑖 )| ≥ weight′ (𝑐, 𝑡𝑖 ) − (𝑡𝑖+1 − 𝑡𝑖 ) · |𝐵 +′ (𝑐, 𝑡𝑖 )| = weight′ (𝑐, 𝑡𝑖+1 ). Thus,
+we showed that the first part of the hypothesis (inequality on weights) holds at time 𝑡𝑖+1 .
+   A further consequence of this inequality on weights is that, in the time interval (𝑡𝑖 , 𝑡𝑖+1 ), no
+candidate from𝑊+′ (𝑡𝑖 ) can be eliminated in the original election, i.e.,𝑊+′ (𝑡𝑖 ) ⊆ 𝑊 (𝑡𝑖+1 ). Furthermore,
+𝑊 ′ (𝑡𝑖+1 ) = 𝑊+′ (𝑡𝑖 ) by definition of 𝑡𝑖+1 . Therefore, 𝑊 ′ (𝑡𝑖+1 ) = 𝑊+′ (𝑡𝑖 ) ⊆ 𝑊 (𝑡𝑖+1 ), which completes
+the proof for the second part of the hypothesis. Thus, we have shown that 𝑤 ∈ 𝑊 ′ .                                            □
+Lemma 8. SimultaneousPluralityVeto satisfies Resolvability.
+   The proof of resolvability is similar to the proof of monotonicity. Again, let 𝑤 ∈ 𝑊 be a winner
+in the original election. Recall that in the modified election, all voters in the original election keep
+their original rankings, and there is an additional voter 𝑣ˆ who ranks 𝑤 at the top; the rest of her
+ranking is arbitrary. The following proposition is similar to Proposition 4, and captures a stronger
+inference that can be drawn here.
+Proposition 5. If 𝑊 (𝑡) ⊇ 𝑊 ′ (𝑡), then 𝐵(𝑐, 𝑡) ⊆ 𝐵 ′ (𝑐, 𝑡) for any candidate 𝑐 ∈ 𝑊 ′ (𝑡) \ {𝑤 }, and
+unless 𝑊 ′ (𝑡) = {𝑤 }, there exists a candidate 𝑐 ∈ 𝑊 ′ (𝑡) \ {𝑤 } for whom the set inclusion is strict, i.e.,
+𝐵(𝑐, 𝑡) ⊊ 𝐵 ′ (𝑐, 𝑡).
+    Proof. Fix any candidate 𝑐 ∈ 𝑊 ′ (𝑡) \ {𝑤 }, and consider a voter 𝑣 ∈ 𝐵(𝑐, 𝑡). By definition,
+𝑣 ranks 𝑐 below all candidates 𝑐 ′ ∈ 𝑊 (𝑡) ⊇ 𝑊 ′ (𝑡). Therefore, 𝑣 ranks 𝑐 below all candidates
+𝑐 ′ ∈ 𝑊 ′ (𝑡), implying that 𝐵(𝑐, 𝑡) ⊆ 𝐵 ′ (𝑐, 𝑡). To prove strictness for at least one candidate, assume
+that 𝑊 ′ (𝑡) ≠ {𝑤 }. Then, 𝑣ˆ ranks some candidate 𝑐 ∈ 𝑊 ′ (𝑡) \ {𝑤 } lowest among 𝑊 ′ (𝑡), and thus,
+𝑣ˆ ∈ 𝐵 ′ (𝑐, 𝑡) \ 𝐵(𝑐, 𝑡) for that candidate 𝑐.                                                         □
+Proof of Lemma 8. As in the proof of Lemma 7, let 𝑡 1 < 𝑡 2 < · · · < 𝑡𝑘 = 1 be the times at which
+one or more candidate is eliminated under the modified election, i.e., {𝑡 1, . . . , 𝑡𝑘 } = {𝜏 ′ (𝑐) | 𝑐 ∈ 𝐶}.
+For notational convenience, we write 𝑡 0 = 0.
+  We first prove the exact same facts about the process by induction on 𝑖 = 0, . . . , 𝑘, namely:
+     • For all 𝑐 ∈ 𝑊 ′ (𝑡𝑖 ) \ {𝑤 }, the weight at time 𝑡𝑖 is weakly lower in the modified election, i.e.,
+       weight′ (𝑐, 𝑡𝑖 ) ≤ weight(𝑐, 𝑡𝑖 ).
+      • 𝑊 (𝑡𝑖 ) ⊇ 𝑊 ′ (𝑡𝑖 ), i.e., candidates can only be eliminated earlier in the modified instance.
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                                   21
+
+
+    For 𝑖 = 0, the first part of the hypothesis holds because only 𝑤 has gained one additional point
+initially from ˆ𝑣, while every other candidate’s score is the same as before. The second part holds
+simply because 𝑊 ′ (0) = 𝑊 (0) = 𝐶.
+    For the induction step from 𝑖 to 𝑖 + 1, consider time 𝑡𝑖 for 𝑖 < 𝑘. First, an identical proof to that
+of Lemma 7 proves that 𝑊+ (𝑡𝑖 ) ⊇ 𝑊+′ (𝑡𝑖 ), substituting Proposition 5 for Proposition 4 in the inner
+inductive step.
+    In the original election, the sum of all weights at time 𝑡𝑖 is 𝑛 · (1 − 𝑡𝑖 ), while in the modified
+election, it is (𝑛 + 1) · (1 − 𝑡𝑖 ). Because every candidate 𝑐 ≠ 𝑤 has weight′ (𝑐, 𝑡𝑖 ) ≤ weight(𝑐, 𝑡𝑖 ),
+we obtain that weight′ (𝑤, 𝑡𝑖 ) ≥ 1 + weight(𝑤, 𝑡𝑖 ).
+    We now distinguish two cases. First, if 𝑊+′ (𝑡𝑖 ) = {𝑤 }, then 𝑤 is the only remaining candidate
+at time 𝑡𝑖 , and the time is 𝑡𝑖 < 1 since 𝑖 < 𝑘. Thus, 𝑤 is the unique winner, completing the proof
+of Resolvability. Otherwise, we apply Proposition 5, and obtain that 𝐵 +′ (𝑐, 𝑡𝑖 ) ⊇ 𝐵 + (𝑐, 𝑡𝑖 ) for all
+candidates 𝑐 ∈ 𝑊+′ (𝑡𝑖 ) \ {𝑤 }, and the inclusion           is strict for at least one
+                                                                                     Ð such candidate. Because
+each voter opposes exactly one candidate, 𝑐 ∈𝑊+ (𝑡𝑖 ) 𝐵 + (𝑐, 𝑡𝑖 ) = 𝑉 and 𝑐 ∈𝑊+′ (𝑡𝑖 ) 𝐵 +′ (𝑐, 𝑡𝑖 ) = 𝑉 ∪ {𝑣ˆ }.
+                                                     Ð
+Now, the facts that 𝐵 +′ (𝑐, 𝑡𝑖 ) ⊇ 𝐵 + (𝑐, 𝑡𝑖 ) for all 𝑐 ∈ 𝑊+′ (𝑡𝑖 ) \ {𝑤 } and 𝑊+′ (𝑡𝑖 ) ⊆ 𝑊+ (𝑡𝑖 ), along with the
+fact that the inclusion is strict for at least one candidate, imply that |𝐵 +′ (𝑤, 𝑡𝑖 )| ≤ |𝐵 + (𝑤, 𝑡𝑖 )|. Again,
+we define 𝛿𝑐 and 𝛿𝑐′ as the distance in time by when 𝑐 would be eliminated at the current opposition
+rates. The previous inequalities then imply that 𝛿𝑐′ ≤ 𝛿𝑐 for all 𝑐 ∈ 𝑊+′ (𝑡𝑖 ) \ {𝑤 }, and 𝛿 𝑤            ′ ≥𝛿 .
+                                                                                                                𝑤
+    The rest of the inductive proof is now exactly the same as for Lemma 7, proving that under the
+modified election, the set of eliminated candidates remains a supserset at all times, and the weights
+remain weakly lower at all times.
+    Finally, consider time 𝑡𝑘 −1 (i.e., the last step at which a candidate was eliminated). Assume for
+contradiction that after the while loop, in the modified election, at least one candidate other than
+𝑤 was uneliminated, i.e., 𝑊+′ (𝑡𝑘 −1 ) ≠ {𝑤 }. Consider the candidate 𝑐 with 𝐵 +′ (𝑐, 𝑡𝑘 −1 ) ⊋ 𝐵 + (𝑐, 𝑡𝑘 −1 )
+who is guaranteed to exist by the strict inclusion part of Proposition 5. This candidate then has
+𝛿𝑐′ < 𝛿𝑐 . Because no candidate survived until after time 1, we have that 𝛿𝑐 ≤ 1 − 𝑡𝑘 −1 , and thus,
+𝛿𝑐′ < 1 − 𝑡𝑘 −1 . This means that 𝑐 must be eliminated strictly between times 𝑡𝑘 −1 and 1 = 𝑡𝑘 under
+the modified election. But by definition of the 𝑡𝑖 , no eliminations occur between 𝑡𝑘 −1 and 𝑡𝑘 , giving
+a contradiction. Therefore, 𝑊+′ (𝑡𝑘 −1 ) = {𝑤 }, and 𝑤 is the unique winner under the modified election.
+                                                                                                                     □
+
+6   CONCLUSION AND FUTURE DIRECTIONS
+We introduced a generalization of the veto core, and showed that it is precisely characterized by the
+winners under a natural class of sequential veto-based voting rules in which the given weights for
+candidates are counterbalanced by the given weights for voters. Applying this insight continuously
+to the veto core for initial candidate weights equal to plurality scores yields a very natural and
+simple voting rule with metric distortion 3 which remedies the key flaws of the recently proposed
+PluralityVeto, by being anonymous, neutral, and resolvable. In addition, this new rule satisfies
+many important social choice axioms; combined with its simplicity, this makes it well suited for
+practical adoption.
+   Our work raises a wealth of interesting questions for future work. The study of the generalized
+veto core and its connection to metric distortion is very intriguing. In particular, for which initial
+candidate weights q do candidates in the core guarantee constant (or otherwise small) distortion?
+This question is particularly important in the context of eliminating Pareto dominated candidates,
+which ideally should come without sacrificing optimal distortion or the characterization of winners
+in terms of matchings. Which other interesting guarantees are obtained by electing candidates
+from a weighted core?
+22                                                                   Fatih Erdem Kizilkaya and David Kempe
+
+
+   An interesting and natural choice of initial weights for candidates are the 𝑘-approval scores:
+the number of voters who rank a given candidate in their top 𝑘 choices. Notice that, as 𝑘 ranges
+between 1 and 𝑚, these initial weights interpolate between the plurality veto core and the propor-
+tional veto core. Thus, they give rise to a spectrum of voting rules achieving different tradeoffs
+between the protection of minorities and the majority. For a quantification of majority and minority
+principles, see Kondratev and Nesterov [2020].
+   The characterization in terms of veto orders also raises interesting questions. The simultaneous
+version of the rule was motivated largely by ensuring anonymity, a very desirable fairness criterion
+for an election. The focus on fairness raises an interesting question about veto orders: what would
+the voters prefer to be the veto order? It is not difficult to show that a voter 𝑣 is always weakly better
+off (in the sense of preferring the outcome) by moving her vote to the very end of the sequence.
+However, we currently do not know whether a stronger version holds: do voters always weakly
+prefer moving their veto later in the sequence? While we have not identified counter-examples to
+this stronger conjecture, we suspect that counter-examples might exist. However, if the conjecture
+were true, it would provide additional principled justification for the simultaneous veto process.
+   We verified that SimultaneousPluralityVeto satisfies several desirable axioms for voting
+rules, but fails to satisfy certain others: the Pareto property, Condorcet consistency, and consistency.
+Over the years, researchers have identified dozens of desirable axioms for voting rules, and a
+more complete exploration may be of interest as well — indeed, Ianovski and Kondratev [2023]
+very recently posted an updated version of their [2021] paper which undertakes such an analysis
+for the proportional veto core. For axioms which SimultaneousPluralityVeto fails to satisfy,
+it would be interesting to see whether modifications to the voting rule can satisfy these axioms,
+while retaining the distortion-3 guarantee or sacrificing only a small loss in the distortion guarantee.
+Perhaps even more fundamentally, it would be interesting to investigate which combinations of
+axioms are fundamentally incompatible with low metric distortion.
+   SimultaneousPluralityVeto has the desirable property of Resolvability, meaning that a tie
+can always be resolved in favor of any winning candidate 𝑤 by adding a single voter ranking 𝑤 at
+the top. In a sense, this implies that ties should be “rare”. The desideratum of rare ties motivates
+the axiom of Asymptotic Resolvability [Schulze 2011], requiring that the proportion of profiles
+resulting in a tie approach zero as the number of voters increases. It would be of interest to
+understand whether SimultaneousPluralityVeto is asymptotically resolvable, and perhaps even
+to quantify the probability of ties under a suitable probabilistic model of voter preferences.
+   Ianovski and Kondratev [2021] showed that the expected size of the proportional veto core is
+𝑚/2 as 𝑛 → ∞ under the “Impartial Culture” (uniformly random preferences) assumption. It would
+be interesting to study the expected size of the plurality veto core because it gives a lower bound
+on the expected number of candidates with distortion at most 3 due to Lemma 2. It could be also of
+interest to study the expected size of the (p, q)-veto core in general.
+
+
+
+ACKNOWLEDGMENTS
+We would like to thank Jannik Peters for pointing us to the work of Ianovski and Kondratev
+[2021], and sharing the observation that there is a connection between the proportional veto core
+and PluralityVeto. Peters [2023] contains a writeup of this observation, along with additional
+connections of PluralityVeto to other notions in social choice theory. We would also like to
+thank anonymous reviewers for very detailed and helpful feedback, and Shaddin Dughmi for useful
+conversations.
+Generalized Veto Core and a Practical Voting Rule with Optimal Metric Distortion                                                23
+
+
+REFERENCES
+Nejat Anbarci. 1993. Noncooperative Foundations of the Area Monotonic Solution. The Quarterly Journal of Economics 108,
+    1 (1993), 245–258. https://doi.org/10.2307/2118502
+Nejat Anbarci. 2006. Finite Alternating-Move Arbitration Schemes and the Equal Area Solution. Theory and Decision 61, 1
+    (Aug. 2006), 21–50. https://doi.org/10.1007/s11238-005-4748-9
+Elliot Anshelevich. 2016. Ordinal Approximation in Matching and Social Choice. ACM SIGecom Exchanges 15, 1 (July 2016),
+    60–64.
+Elliot Anshelevich, Onkar Bhardwaj, Edith Elkind, John Postl, and Piotr Skowron. 2018. Approximating optimal social
+    choice under metric preferences. Artificial Intelligence 264 (2018), 27–51.
+Elliot Anshelevich, Onkar Bhardwaj, and John Postl. 2015. Approximating Optimal Social Choice under Metric Preferences.
+    In Proc. 29th AAAI Conf. on Artificial Intelligence. 777–783.
+Elliot Anshelevich, Aris Filos-Ratsikas, Nisarg Shah, and Alexandros A. Voudouris. 2021a. Distortion in social choice
+    problems: an annotated reading list. SIGecom Exchanges 19, 1 (2021), 12–14.
+Elliot Anshelevich, Aris Filos-Ratsikas, Nisarg Shah, and Alexandros A. Voudouris. 2021b. Distortion in Social Choice
+    Problems: The First 15 Years and Beyond. In Proc. 30th Intl. Joint Conf. on Artificial Intelligence. 4294–4301.
+Elliot Anshelevich, Aris Filos-Ratsikas, and Alexandros A. Voudouris. 2022. The Distortion of Distributed Metric Social
+    Choice. Artificial intelligence 308 (2022), 103713.
+Elliot Anshelevich and John Postl. 2016. Randomized Social Choice Functions Under Metric Preferences. In Proc. 25th Intl.
+    Joint Conf. on Artificial Intelligence. 46–59.
+Elliot Anshelevich and Wennan Zhu. 2021. Ordinal Approximation for Social Choice, Matching, and Facility Location
+    Problems given Candidate Positions. ACM Transactions on Economics and Computation (TEAC) 9, 2 (2021), 1–24.
+Salvador Barberà and Danilo Coelho. 2017. Balancing the Power to Appoint Officers. Games and Economic Behavior 101, C
+    (2017), 189–203.
+Salvador Barberà and Danilo Coelho. 2022. Compromising on Compromise Rules. The RAND Journal of Economics 53, 1
+    (2022), 95–112. https://doi.org/10.1111/1756-2171.12401
+Duncan Black. 1948. On the Rationale of Group Decision Making. J. Political Economy 56 (1948), 23–34.
+David Bloom and Christopher L. Cavanagh. 1986. An Analysis of the Selection of Arbitrators. American Economic Review
+    76, 3 (1986), 408–22.
+Craig Boutilier, Ioannis Caragiannis, Simi Haber, Tyler Lu, Ariel D. Procaccia, and Or Sheffet. 2015. Optimal social choice
+    functions: A utilitarian view. Artificial Intelligence 227 (2015), 190–213.
+Craig Boutilier and Jeffrey S. Rosenschein. 2016. Incomplete information and communication in voting. In Handbook of
+    Computational Social Choice, Felix Brandt, Vincent Conitzer, Ulle Endriss, Jérôme Lang, and Ariel D. Procaccia (Eds.).
+    Cambridge University Press, Chapter 10, 223–257.
+Felix Brandt, Vincent Conitzer, Ulle Endriss, Jérôme Lang, and Ariel D. Procaccia (Eds.). 2016. Handbook of Computational
+    Social Choice. Cambridge University Press.
+Ioannis Caragiannis, Swaprava Nath, Ariel D. Procaccia, and Nisarg Shah. 2017. Subset Selection Via Implicit Utilitarian
+    Voting. Journal of Artificial Intelligence Research 58 (Jan. 2017), 123–152. https://doi.org/10.1613/jair.5282
+Ioannis Caragiannis and Ariel D. Procaccia. 2011. Voting almost maximizes social welfare despite limited communication.
+    Artificial Intelligence 175, 9 (2011), 1655–1671.
+Ioannis Caragiannis, Nisarg Shah, and Alexandros A. Voudouris. 2022. The Metric Distortion of Multiwinner Voting.
+    Artificial Intelligence 313 (2022), 103802.
+Moses Charikar and Prasanna Ramakrishnan. 2022. Metric Distortion Bounds for Randomized Social Choice. In Proc. 33rd
+    ACM-SIAM Symp. on Discrete Algorithms. 2986–3004.
+Jean-Charles de Borda. 1784. Mémoire sur les élections au Scrutin. Histoire de l’Académie Royale des Sciences, Paris (1784),
+    657–665.
+M. J. A. Nicolas de Condorcet. 1785. Essai sur l’application de l’analyse à la probabilité des décisions rendues à la pluralité des
+    voix. Imprimerie Royale, Paris.
+Anthony Downs. 1957. An economic theory of political action in a democracy. The Journal of Political Economy 65, 2 (1957),
+    135–150.
+Soroush Ebadian, Anson Kahng, Dominik Peters, and Nisarg Shah. 2022. Optimized Distortion and Proportional Fairness in
+    Voting. In Proceedings of the 23rd ACM Conference on Economics and Computation (EC ’22). Association for Computing
+    Machinery, New York, NY, USA, 563–600. https://doi.org/10.1145/3490486.3538339
+Sefi Erlich, Noam Hazon, and Sarit Kraus. 2018. Negotiation Strategies for Agents with Ordinal Preferences. In Proc. 27th
+    Intl. Joint Conf. on Artificial Intelligence. 210–218.
+Aris Filos-Ratsikas, Panagiotis Kanellopoulos, Alexandros A. Voudouris, and Rongsen Zhang. 2023. Settling the Distortion
+    of Distributed Facility Location. (2023). https://doi.org/10.48550/ARXIV.2301.01604 arXiv 2301.01604.
+24                                                                               Fatih Erdem Kizilkaya and David Kempe
+
+
+Aris Filos-Ratsikas and Alexandros A. Voudouris. 2021. Approximate Mechanism Design for Distributed Facility Location.
+   In Algorithmic Game Theory (Lecture Notes in Computer Science), Ioannis Caragiannis and Kristoffer Arnsfelt Hansen
+   (Eds.). Springer International Publishing, Cham, 49–63. https://doi.org/10.1007/978-3-030-85947-3_4
+Vasilis Gkatzelis, Daniel Halpern, and Nisarg Shah. 2020. Resolving the Optimal Metric Distortion Conjecture. In Proc. 61st
+   IEEE Symp. on Foundations of Computer Science. 1427–1438.
+Vasilis Gkatzelis, Mohamad Latifian, and Nisarg Shah. 2023. Best of Both Distortion Worlds. In Proc. 24th ACM Conf. on
+   Economics and Computation.
+Ashish Goel, Anilesh Kollagunta Krishnaswamy, and Kamesh Munagala. 2017. Metric Distortion of Social Choice Rules:
+   Lower Bounds and Fairness Properties. In Proc. 18th ACM Conf. on Economics and Computation. 287–304.
+Egor Ianovski and Aleksei Y. Kondratev. 2021. Computing the Proportional Veto Core. Proceedings of the AAAI Conference
+   on Artificial Intelligence 35, 6 (May 2021), 5489–5496. https://doi.org/10.1609/aaai.v35i6.16691
+Egor Ianovski and Aleksei Y. Kondratev. 2023. Computing the Proportional Veto Core. https://doi.org/10.48550/arXiv.2003.
+   09153 arXiv:2003.09153 [cs]
+David Kempe. 2020a. An Analysis Framework for Metric Voting based on LP Duality. In Proc. 34th AAAI Conf. on Artificial
+   Intelligence. 2079–2086.
+David Kempe. 2020b. Communication, Distortion, and Randomness in Metric Voting. In Proc. 34th AAAI Conf. on Artificial
+   Intelligence. 2087–2094.
+Fatih Erdem Kizilkaya and David Kempe. 2022. PluralityVeto: A Simple Voting Rule with Optimal Metric Distortion. In
+   Proc. 31st Intl. Joint Conf. on Artificial Intelligence. 349–355.
+Aleksei Y. Kondratev and Alexander S. Nesterov. 2020. Measuring Majority Power and Veto Power of Voting Rules. Public
+   Choice 183, 1 (April 2020), 187–210. https://doi.org/10.1007/s11127-019-00697-1
+Hervé Moulin. 1980a. Implementing Efficient, Anonymous and Neutral Social Choice Functions. Journal of Mathematical
+   Economics 7, 3 (1980), 249–269.
+Hervé Moulin. 1980b. On Strategy-Proofness and Single Peakedness. Public Choice 35 (1980), 437–455.
+Hervé Moulin. 1981a. The Proportional Veto Principle. The Review of Economic Studies 48, 3 (July 1981), 407–416. https:
+   //doi.org/10.2307/2297154
+Hervé Moulin. 1981b. Prudence versus Sophistication in Voting Strategy. Journal of Economic Theory 24, 3 (1981), 398–412.
+Hervé Moulin. 1982. Voting with Proportional Veto Power. Econometrica 50, 1 (1982), 145–162. https://doi.org/10.2307/
+   1912535
+Hervé Moulin. 1983. The Strategy of Social Choice. Vol. 18. North-Holland, Amsterdam, The Netherlands.
+Dennis C. Mueller. 1978. Voting by Veto. Journal of Public Economics 10, 1 (Aug. 1978), 57–75. https://doi.org/10.1016/0047-
+   2727(78)90005-1
+Kamesh Munagala and Kangning Wang. 2019. Improved Metric Distortion for Deterministic Social Choice Rules. In Proc.
+   20th ACM Conf. on Economics and Computation. 245–262.
+Bezalel Peleg. 1978. Consistent Voting Systems. Econometrica 46, 1 (1978), 153–161. https://doi.org/10.2307/1913652
+Jannik Peters. 2023. A Note on Rules Achieving Optimal Metric Distortion. https://doi.org/10.48550/arXiv.2305.08667
+   arXiv:2305.08667 [cs]
+Ariel D. Procaccia. 2010. Can approximation circumvent Gibbard-Satterthwaite?. In Proc. 24th AAAI Conf. on Artificial
+   Intelligence. 836–841.
+Ariel D. Procaccia and Jeffrey S. Rosenschein. 2006. The distortion of cardinal preferences in voting. In Proc. 10th Intl.
+   Workshop on Cooperative Inform. Agents X. 317–331.
+Markus Schulze. 2011. A New Monotonic, Clone-Independent, Reversal Symmetric, and Condorcet-Consistent Single-Winner
+   Election Method. Social Choice and Welfare 36, 2 (2011), 267–303.
+Piotr Skowron and Edith Elkind. 2017. Social Choice under Metric Preferences: Scoring Rules and STV. In Proceedings of the
+   Thirty-First AAAI Conference on Artificial Intelligence (AAAI’17). AAAI Press, San Francisco, California, USA, 706–712.
+John H. Smith. 1973. Aggregation of Preferences with Variable Electorate. Econometrica 41, 6 (1973), 1027–1041.
+T. N. Tideman. 1987. Independence of Clones as a Criterion for Voting Rules. Social Choice and Welfare 4, 3 (Sept. 1987),
+   185–206. https://doi.org/10.1007/BF00433944
+Alexandros A. Voudouris. 2023. Tight Distortion Bounds for Distributed Single-Winner Metric Voting on a Line. (2023).
+   https://doi.org/10.48550/ARXIV.2301.01742 arXiv 2301.01742.
+H. Peyton Young. 1975. Social Choice Scoring Functions. SIAM J. Appl. Math. 28, 4 (June 1975), 824–838. https://doi.org/10.
+   1137/0128067
+
