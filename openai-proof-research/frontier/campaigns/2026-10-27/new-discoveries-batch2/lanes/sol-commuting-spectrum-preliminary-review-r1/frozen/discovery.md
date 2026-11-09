@@ -1,0 +1,9 @@
+# Outcome and adaptation objection
+
+The full source statement, all quantifiers, both successful constructions and complete proof are in PROOF.md. The source asks equality of probability VALUE SETS. It does not ask to put an associative ring on the original group law, preserve its powers, identify its center elementwise, or obtain an antisymmetric multiplication. Imposing any of those extra conditions would obscure the triangular construction.
+
+The economical construction uses A=G/Z(G), B=Z(G) and an ordered cyclic decomposition of A. Its multiplication is the upper triangular part of the commutator bimap. That product is not b itself: its skew part is b. This precisely removes the even-order obstruction. Probability counts depend only on the zero set of b and equal-size coset fibers. The free-cover route removes the decomposition theorem entirely, using finitely many redundant generators of exponent |A| and uniform fibers. It answers the full even-order question, not a chosen instance. The two routes share a polarization idea and are explicitly not claimed as unrelated methods or separate outcomes.
+
+The adaptation objection is serious: passing from alternating forms to upper triangular bilinear forms is standard algebra. The source's alternating-product construction already supplies every other ingredient. Although no inspected body states the even-order endpoint, the missing step might be considered routine and/or already appear in classical distributive-algebra/isoclinism literature. Therefore a source-question resolution alone is insufficient for this campaign's substantive discovery gate. HOLD pending independent adjudication; zero credit requested.
+
+No extra credit for same-size realization, free-cover presentation, half-bracket failure, nilpotency, examples, or reverse inclusion. No conclusion about arbitrary higher-class finite nilpotent groups or ring annihilating spectra is needed or claimed.
