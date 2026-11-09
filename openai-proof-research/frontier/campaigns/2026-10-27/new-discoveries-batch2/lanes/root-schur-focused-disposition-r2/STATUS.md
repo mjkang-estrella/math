@@ -1,0 +1,4 @@
+# Root Schur focused disposition
+No full resolution. Retain the reported all-n attainment proof as uncredited verification of a source construction; it supplies only an upper bound on the minimum. The stretched exceptional n11 family is excluded by an exact all-parameter count. Strict interval traps rule out monotone interval compression even with neutral moves. The missing global cross-interval inequality remains equivalent to the desired lower bound and is not a proof.
+
+Park further repetition of these mechanisms and finite sweeps. Move focused effort to a distinct shortlist lead; broad scouting continues. Root read these reports but did not independently audit every helper identity or source comparison. No PROOF.md, Lean, manuscript or credit accepted. Counts9 additional /39 total /next40 unchanged.
