@@ -1,0 +1,4 @@
+extern int printf(const char*,...);extern void *calloc(unsigned long,unsigned long);extern int atoi(const char*);extern void *fopen(const char*,const char*);extern unsigned long fwrite(const void*,unsigned long,unsigned long,void*);extern int fclose(void*);
+int main(int argc,char**argv){int N=atoi(argv[1]);unsigned char *e=calloc(N+1,1),*o=calloc(N+1,1),*a=calloc(N+1,1),*b=calloc(N+1,1);e[0]=a[0]=1;
+for(int k=1;k<=N;k++){if(k%3)for(int n=k;n<=N;n++){e[n]^=o[n-k];o[n]^=e[n-k];}for(int n=0;n<=N;n++)b[n]=a[n]^(n>=k?a[n-k]:0)^(n>=2*k?b[n-2*k]^a[n-2*k]:0);unsigned char*t=a;a=b;b=t;}
+void*f=fopen(argv[2],"wb");fwrite(e,1,N+1,f);fwrite(o,1,N+1,f);fclose(f);int odd=0,total=0;for(int n=7;n<=N;n+=8){odd+=a[n];total++;}printf("odd multiplicity progression 8m+7 to %d: %d/%d odd\n",N,odd,total);return 0;}

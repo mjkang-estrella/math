@@ -1,0 +1,13 @@
+The namespace below is Circulant350979; module names are Circulant, Bridge and Endpoint. The four supplied modules, including Audit, are byte-identical to expanded-corpus-r108. AuditFull is a new full declaration audit adapted from the independent review. The correspondence is as follows.
+
+Mathlib's circulantGraph J is fromRel of the difference relation. It symmetrizes that relation and removes loops; arbitrary asymmetric J and J containing zero introduce no extra graphs. Bridge.represent therefore covers every circulant at order 15. Fin 15 and ZMod 15 use the compatible finite residue representation in this development.
+
+Mathlib defines the natural diameter of a disconnected graph as 0. The hypothesis diam = 2 excludes this case: radius_of_diam first proves the extended diameter is finite, then bounds distances. Thus neither disconnected graphs nor a diameter convention creates a spurious refutation. The source quantifier uses natural orders; under n >= 11 this agrees with integer orders.
+
+The dossier pins Lean 4.34.1, commit 5045d0056413266e57c625dcd7c365b10e377c52, and mathlib d13f23b723b8a846827a245b89c10fc7d3f11612. The replay driver accepts LEAN_BIN and LEAN_PACKAGES, rejects existing local oleans, verifies source hashes, and builds sequentially with -j1 and warningAsError. It then runs leanchecker with exactly one module per process. Each child has at most two CPUs, a 120-second CPU limit, a 140-second wall watchdog and a sampled aggregate RSS limit of 6 GiB; MALLOC_ARENA_MAX is 2.
+
+AuditFull enumerates all 52 declarations originating in the three proof modules, including generated declarations, and prints their full types, bodies using value? (allowOpaque := true), safety flags and transitive axioms. It rejects local axioms, missing ordinary bodies, unsafe or partial declarations, and any axiom beyond propext, Classical.choice and Quot.sound. Two deliberately false Lean claims must be rejected: substituting mask 40 for 41, and denying triple-path coverage at the positive order-16 control.
+
+Trust limits. Decidable finite reduction is kernel-checked; no native_decide, ofReduceBool, sorry, admit or added axiom is used. The Lean implementation, allowed logical axioms, operating system, binary and cached upstream mathlib oleans remain trusted. Mathlib is pinned but not rebuilt. Leanchecker rechecks exported environments using the same kernel implementation; it is not a second foundational implementation. RSS sampling does not certify every transient peak. The exact residual mp-number and coverage through 40 are supplementary ordinary/executable results, not additional theorems claimed by the source_refutation endpoint.
+
+See page 4 of paper/circulant-draft.pdf for the declaration table.
