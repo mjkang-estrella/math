@@ -1,0 +1,11 @@
+Shoe discrepancy — MathDB324571 — source-only certificate
+
+This archive contains the exact 28 independently checked production/control/print-audit source modules, plus separate audit tools/evidence. One result only: under independent equal-law strict alternating shoe draws, the source-defined discrepancy has uniform bound255/256<1 for all countable laws. Finite zero-extension, PMF normalization and arbitrary-fallback a.s. transport are included; no optimal constant is claimed.
+
+PINS.json specifies Lean4.34.1, mathlib d13f23b723b8a846827a245b89c10fc7d3f11612 and executable hashes. Upstream libraries are trusted read-only. The supplied env.sh uses this workspace's pinned installation; for another host change the package/bin locations in a NEW environment file, retaining exact versions. No upstream installation, git or network is needed on the original task host.
+
+For a fresh rebuild, unpack in a NEW directory, create empty build/logs/receipt/tmp/cache directories, source env.sh, and run bash check.sh MODULE then bash checker.sh MODULE sequentially for every entry of PRODUCTION-ORDER.json. Use module names, not olean paths, with the pinned bin on PATH. The runner chdirs to its own directory and preserves actual exits/logs/receipts under the documented caps. Do not import original author or legacy oleans. Audit/control source tools are separate from the endpoint; their exact checked commands and exported type/body DAG/origin/closure evidence are recorded in the independent-review references.
+
+The independent reviewer already performed both a cold28module strict/checker build and a separate empty-build source-only28module strict/checker replay. No olean is shipped here. SOURCE-HASHES.json binds every shipped production source. Only propext, Classical.choice and Quot.sound are transitive axioms. Full audit JSON is included; human-readable source/proof review is FINAL-REVIEW.md.
+
+Access and process limitations are retained in the root acceptance record. The unread Galbraith-Holmes2012 expected-collision-time source is not claimed cleared; no specific applicable marked-color theorem was identified. No worldwide priority, full upstream rebuild, independent Lean implementation, continuous cgroup bound or optimal-constant claim.
