@@ -1,0 +1,4 @@
+import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
+#check @SimpleGraph.ConnectedComponent
+#check @MvPolynomial.weightedHomogeneousComponent

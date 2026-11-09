@@ -1,0 +1,1 @@
+New copy only: r6 runner own CPU140 changed120 and own AS12GiB added before reads; check.sh outer170 changed140. Old evidence immutable; copied runner unexecuted in this lane. Real130s development group guard retained; sample RSS/leaderwait limitations retained. Validate routine commands before claiming caps or build success.

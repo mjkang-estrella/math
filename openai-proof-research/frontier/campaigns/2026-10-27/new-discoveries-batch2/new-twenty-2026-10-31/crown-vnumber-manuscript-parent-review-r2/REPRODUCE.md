@@ -1,0 +1,10 @@
+# Revised ordinary-proof crown manuscript
+
+DRAFT, MathDB369163; full Lean endpoint PENDING; credit0, campaign52/60.
+All reviewer findings F01-F09 are addressed in CORRECTIONS.json. The main theorem and supplied ordinary proof remain intact. All10 final pages were rendered at120dpi and visually inspected. The independent mathematical reviewer gave qualified ordinary-paper PASS, no fatal finding/main-proof gap; root applied the prescribed minor corrections rather than commissioning another recheck. Formalization, strict replay and acceptance remain separate.
+
+To rebuild from this directory with existing ReportLab4.4.9 runtime, run:
+    timeout 60 python3 -I -B -c "import os,resource,subprocess; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(50,50)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3)); subprocess.run([os.path.expanduser('~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12'),'manuscript/generate_paper.py'],check=True,timeout=40)"
+No network/install is needed. Existing LiberationSerif and Symbola system font paths are registered by the generator. Parent generation/rendering used actual affinity/CPU/AS limits and subprocess wall timeouts, not a cgroup or full every-process RSS certification. The original author and prior parent copies remain unchanged. apply_review.py reconstructs the specified edits from the prior parent source and is retained for audit, but is not needed to rebuild this final generator.
+
+The source ZIP contains the final generator, correction map, independent review/audit, QA and reproduction files, original129 frozen source hashes/verification script, coverage map and per-file hash manifest. It contains no Lean proof and no full publisher article bodies. All earlier155 frozen review inputs were reverified after these edits in a separate lane. The inherited23-obligation section map is supplemented by the independent22-obligation audit; neither is a Lean certificate.

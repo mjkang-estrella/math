@@ -1,0 +1,49 @@
+import os,resource,signal,json,hashlib,datetime,re,difflib
+from pathlib import Path
+from html.parser import HTMLParser
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]);resource.setrlimit(resource.RLIMIT_CPU,(120,120));resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));signal.alarm(140)
+p=Path(__file__).resolve().parent;b=p.parent;a=b/'crown-vnumber-source-ideation-r1';r=b/'expanded-corpus-r292';root=Path('/home/mj-kang/Documents/Dev/math/openai-proof-research');utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+def sha(d):return hashlib.sha256(d).hexdigest()
+def write(n,o):(p/n).write_text(json.dumps(o,indent=2)+'\n')
+def freeze(f,out):
+ j=json.loads(f.read_text());rows=[dict(path=k,expected=v,actual=sha(Path(k).read_bytes())) for k,v in j.items()];write(out,dict(utc=utc,count=len(rows),ok=all(x['expected']==x['actual'] for x in rows),files=rows));return all(x['expected']==x['actual'] for x in rows)
+class Parser(HTMLParser):
+ def __init__(self):super().__init__();self.t=[];self.skip=0
+ def handle_starttag(self,t,a):
+  if t in ['style','script']:self.skip+=1
+ def handle_endtag(self,t):
+  if t in ['style','script']:self.skip-=1
+ def handle_data(self,d):
+  if not self.skip:self.t.append(d)
+def text(path):
+ h=Parser();h.feed(path.read_text());return ' '.join(' '.join(h.t).split())
+s1=text(p/'http/v1.html');s2=text(p/'http/v2.html');versions={}
+for label,start,end in [('section3','3. Krull dimension','4. Projective dimension'),('section5.1','5. v-number','5.2. v-numbers')]:
+ q=[]
+ for s in [s1,s2]:
+  i=s.find(start);j=s.find(end,i);assert i>=0 and j>i;q.append(s[i:j])
+ versions[label]=dict(v1_chars=len(q[0]),v2_chars=len(q[1]),v1_sha256=sha(q[0].encode()),v2_sha256=sha(q[1].encode()),equal=q[0]==q[1])
+ (p/(label+'-diff.txt')).write_text('\n'.join(difflib.unified_diff(q[0].split('. '),q[1].split('. '))))
+versions.update(current_crown='v2; independent live abs unchanged',liwski_older='v1 listed 2 July 2025; current HTML internal 24 August 2026; unresolved',liwski_newer='v1 13 October, v2 16 October 2026; independently fetched and inspected v2',journal_bodies='unread HOLD',denied_routes='no retry of reu-assets 404, no subscription PDF request/bypass')
+write('source-version-review.json',versions)
+raw=(r/'raw/369163.jsonl').read_bytes();j=json.loads((r/'literal-provenance.json').read_text())['369163'];chunk=Path(j['chunk_path']);chunkdata=chunk.read_bytes();line=chunkdata.splitlines()[j['line_1based']-1];rec=json.loads(line);rawrec=json.loads(raw)
+write('literal-check.json',dict(raw_sha256=sha(raw),expected_raw_sha256=j['raw_sha256'],raw_match=sha(raw)==j['raw_sha256'],chunk_sha256=sha(chunkdata),expected_chunk_sha256=j['chunk_sha256'],chunk_match=sha(chunkdata)==j['chunk_sha256'],record_equal=rec==rawrec,statement_sha256=sha(rawrec['statement'].encode()),expected_statement_sha256=j['statement_utf8_sha256']))
+heads={k:re.search(r'"currentOid":"([a-f0-9]+)"',(p/'http'/f'{k}.html').read_text()).group(1) for k in ['openai','pool','omega']}
+pattern=re.compile(r'369163|2507\.03889|crown graph|binomial edge|vasconcelos|local v-number',re.I)
+screens=[]
+for path in [r/'http/openai-CONTENTS-current.md',r/'http/pool-projects-current.yml',a/'http/omega-readme.md',root/'sources/CONTENTS.md']:
+ s=path.read_text();screens.append(dict(path=str(path),sha256=sha(path.read_bytes()),depth='bounded case-insensitive routing screen only',hits=[l[:1500] for l in s.splitlines() if pattern.search(l)]))
+write('registry-review.json',dict(utc=utc,heads=heads,previous_author_heads=json.loads((a/'registry-review.json').read_text())['heads'],screens=screens,chronology='r292: OpenAI and Pool unchanged; Omega f6227ace45a0ac2ea7ec151cfdea85b9f104334a to 81c61ee7bd24606a14a1e078becd924ecaf81082; README unchanged; no complete commit history read',readscope='repository pages for heads plus pinned/cached routing indexes; no matched theorem body, no full tree/import audit, no novelty clearance'))
+inventory=[]
+def inv(path,depth):
+ path=Path(path);d=path.read_bytes();inventory.append(dict(path=str(path.resolve()),bytes=len(d),sha256=sha(d),depth=depth))
+for path,depth in [(p/'TASK.txt','FULL'),(p/'frozen-inputs.json','all 42 bindings hashed before/after'),(a/'frozen-inputs.json','all 153 bindings hashed before/after'),(a/'ORDINARY-PROOF.md','FULL independent semantic audit'),(a/'REVIEW.md','FULL independent semantic audit'),(a/'results.json','FULL keyed 369163'),(a/'source-read-inventory.json','inventory routing; initial aggregate tool output truncated, not full source read'),(a/'version-section-comparison.json','FULL'),(a/'http-receipts.jsonl','FULL access/URL/status review'),(a/'registry-review.json','FULL'),(b/'crown-vnumber-parent-integration-r1.json','FULL'),(r/'raw/369163.jsonl','FULL literal record'),(r/'literal-provenance.json','keyed369163 only'),(r/'results.json','keyed369163 only'),(r/'http-receipts.jsonl','source/registry/access relevant lines'),(r/'history-focused.txt','historical routing excerpt, other IDs not investigated'),(r/'history-reconciled-excerpts.txt','crown/source-family matches and context; not full text'),(b/'ledger.json','scalar counters, candidate key and exclusion/source-family projections; not all proof packets'),(b/'STATUS.md','leading count and acceptance summaries'),(root/'sources/upstream.json','FULL immutable source pin'),(root/'sources/CONTENTS.md','bounded terminology screen, no full semantic read'),(r/'http/369163.html.txt','definitions; complete section3 classification and section5.1 through mixed proof'),(r/'http/crown-v1.html.txt','independent byte equality to newly fetched v1; section comparisons processed'),(a/'http/nmsu.txt','section5.1 mixed proof/conjecture/bounds and witness context; not full paper'),(a/'http/journal.html.txt','subscription access and publication metadata only; body unread'),(a/'http/cuts.html.txt','Definitions2.3, field, Theorems3.3/3.5 proofs, Corollary4.14 and Theorem4.15 proofs; no full Proposition4.13 dependency audit'),(a/'http/domination.html.txt','Theorem3.2 statement and proof route; Lemma3.5 proof; Proposition3.6 inspected partially; original external edge-colon proof unread'),(a/'http/liwski.html.txt','section3 bound definitions and proof; H applicability, not entire v1'),(p/'http/latest-v2.html.txt','section3 definitions and full Lemma3.8/Theorem3.6 proof, H and Theorem4.2 hypotheses; remaining sections bounded crown/formula routing'),(p/'http/herzog.txt','Theorem2.1 proof, Cor2.2, Theorem3.2, Prop3.8/Cor3.9 relevant proofs; not full paper')]:inv(path,depth)
+for path in [root/'AGENTS.md',b.parent/'AGENTS.md',b/'AGENTS.md',Path('/home/mj-kang/.codex/plugins/cache/openai-primary-runtime/pdf/26.1103.10131/skills/pdf/SKILL.md')]:inv(path,'FULL applicable instruction')
+for path in (p/'http').iterdir():
+ if path.is_file():inv(path,'HTTP body saved/hashed; semantic read only as separately specified; repository pages head extraction; abstracts version history')
+write('read-inventory.json',inventory)
+ok42=freeze(p/'frozen-inputs.json','frozen-after.json');ok153=freeze(a/'frozen-inputs.json','upstream-frozen-after.json')
+write('review.json',{'369163':dict(utc=utc,endpoint='Every field K, n>=4, every actual crown cut-point prime; actual polynomial binomial edge ideal and exact colon; total-degree minimum4',gates=dict(literal_fidelity='PASS',source_fidelity_for_ordinary_dependencies='PASS',independent_ordinary_mathematics='PASS with M indexed i<j',source_versions_journals='HOLD',prior_subsumption='HOLD',novelty='HOLD',significance='HOLD; no complete routine-exclusion bridge and no demonstrated novelty',Lean='NOT RUN',replay='NOT RUN'),objections=[dict(key='M_DUPLICATION',severity='presentation; resolved by root normalization',resolution='M_ij=M_ji; index unordered pairs'),dict(key='LATEST_LIWSKI_VERSION',severity='source report omission',resolution='independent v2 review preserves lower3 upper4 gap'),dict(key='JOURNAL_BODY',severity='qualification HOLD',residual='crown and earlier Liwski versions of record/corrections unread'),dict(key='LIWSKI_CHRONOLOGY',severity='qualification HOLD',residual='v1 July2025 versus internal August2026; exact theorem chronology unverified')],subsumption=dict(Q_R_M_over_C='Theorem4.15 constrained domination 3+1 and2+2',full_side='not a two-component cut; newer v^-_X=3; H fails',all_characteristics='direct ordinary proof valid; full prior theorem extension not established',routine_exclusion='not established; needs complete all-prime/all-field bridge'),Pi_recommendation='NO execution; no dormant full handoff until all qualification gates pass',accepted_credit=0,campaign_count='52/60 unchanged',frozen_author_count=42,frozen_author_before=json.loads((p/'frozen-before.json').read_text())['ok'],frozen_author_after=ok42,upstream_count=153,upstream_after=ok153,report='REVIEW.md',read_inventory='read-inventory.json',next_gate='Lawful public full journal/correction comparison and older Liwski chronology; retain HOLD if unavailable; no bypass',forbidden_execution=False)})
+write('jobs.jsonl',dict(processing='all capped processing synchronous and reaped',caps=dict(CPU_seconds=120,wall_seconds=140,AS_bytes=6*1024**3,affinity_cpus=2),source_extraction='joined pdftotext timeout30; inherited caps',bootstrap_deviations=['initial navigation/instruction reads/baseline lacked full explicit envelope; completed synchronously','one immediately failed inline read from shell quoting NameError, then corrected; no output mutation'],managed_search='local caps unavailable',running_local_jobs=0))
+manifest={str(x.relative_to(p)):sha(x.read_bytes()) for x in p.rglob('*') if x.is_file() and x.name!='artifact-hashes.json'};write('artifact-hashes.json',manifest)
+print(json.dumps(dict(frozen42=ok42,frozen153=ok153,versions=versions,literal=json.loads((p/'literal-check.json').read_text()),artifacts=len(manifest)),indent=2))
