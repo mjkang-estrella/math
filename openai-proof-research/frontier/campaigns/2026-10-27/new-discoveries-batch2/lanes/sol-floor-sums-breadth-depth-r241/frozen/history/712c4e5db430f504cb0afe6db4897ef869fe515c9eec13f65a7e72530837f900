@@ -1,0 +1,7 @@
+# Candidate status: ordinary proof, priority hold
+
+The exact universal multiplier endpoint is proved in PROOF.md via the kernel h(t)=-K'(t). The central identity is h(e^-a)=integral_0^1 sqrt(2au/(exp(2au)-1))/sqrt(u(1-u)) du. This proves strict increase of h from0 to pi. A Fourier partial-fraction argument then excludes every nonreal zero; genus-zero factorization proves LP+. No residual mathematical bridge is intentionally left in that ordinary proof, but it is not independently reviewed.
+
+The strongest adaptation objection is that the entire mechanism after the kernel identity is classical Pólya theory: this may be deemed a short classical corollary rather than creditable new discovery. The strongest prior objection is more concrete: an exact public assertion existed in Baricz–Singh v1, although its proof has a branch defect and latest v2 deletes it. Neither the existence of that defective historical claim nor its removal alone resolves priority. Root must read the final journal body and commission adversarial review. No acceptance recommendation is made at this stage.
+
+The broader scouting result is honest: eight additional source families screened; no third genuinely surviving fresh candidate located. The new persistence question is fully scoped in SCOUTING.md and remains unsolved here. No partial finite check, kernel helper, historical proof correction or CZDS speculation receives separate credit.

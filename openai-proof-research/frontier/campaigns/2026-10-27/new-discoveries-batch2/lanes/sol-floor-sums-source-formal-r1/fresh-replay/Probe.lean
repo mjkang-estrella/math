@@ -1,0 +1,14 @@
+import Reduction
+#check Finset.sum_equiv
+#check Finset.sum_map
+#check Finset.powerset_map
+#check Finset.card_map
+#check Equiv.Perm
+#check Finset.univ_map_equiv_toEmbedding
+#check Finset.map_univ
+#check Finset.sum_bij
+#check Finset.map_map
+#check Equiv.finsetCongr
+#check Finset.sum_mul
+#check Finset.sum_range_id
+#check Equiv.Perm.sum_comp

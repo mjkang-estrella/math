@@ -1,0 +1,8 @@
+# Root final-packet replay PASS; acceptance HOLD
+Root fresh extracted replay of the worker final ZIP exited zero: 437 mathematical modules and 22 audit partitions, 459 serial Lean invocations. Both full_audit.py and the separately authored root log audit pass: 35,654 safe nonpartial declarations across 436 origins, only propext/Classical.choice/Quot.sound, unconditional literal endpoint.
+
+Root rechecked every original packet payload, bound originals/copies, toolchain and nine package pins. Both original ZIP and tar rebuild byte-identically. Read actual source text's general domain, Section4 separately posed all-m n=4 lower bound and distinction from later Conjecture17; checked the literal sum, threshold reduction, sorting, source/clip bridge and unconditional endpoint. Actual-body novelty claims outside this reading remain attributed to inherited reviews.
+
+Corrected paper-reviewed.md includes the full-period boundary and records completed root replay. reviewed-packet/source-packet.zip contains that revised paper, root receipts and original documentation provenance. All 460 Lean sources are byte-identical to the fresh root replay. The revised packet was rebuilt twice and checked member-for-member; no redundant mathematical recompilation is claimed. Root-owned compiled objects were removed after audits; logs and receipts retained.
+
+PDF NOTAUTHORED / QA_NOTPERFORMED: the current PDF skill requires the creation marker to run successfully exactly once, and preserved worker attempts failed under fixed caps. No marker bypass or cap increase occurred. Prior/substantive adjudication, final packet review and acceptance remain pending. Counts unchanged: 9 additional /39 total /next40. No shared ledger/git edits.

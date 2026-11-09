@@ -1,0 +1,3053 @@
+import Dag168
+set_option autoImplicit false
+set_option warningAsError true
+set_option maxRecDepth 20000
+set_option maxHeartbeats 1500000
+namespace Assembly
+noncomputable section
+open Classical
+theorem n17321 (_v : Vars) (_q : Query _v) (h70 : (e70 _v)) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h2740 : (e2740 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3169 : (e3169 _v)) (h3267 : (e3267 _v)) (h3585 : (e3585 _v)) (h3937 : (e3937 _v)) (h3976 : (e3976 _v)) (h4096 : (e4096 _v)) (h4139 : (e4139 _v)) (h4156 : (e4156 _v)) (h4199 : (e4199 _v)) (h4260 : (e4260 _v)) (h4285 : (e4285 _v)) (h4301 : (e4301 _v)) (h4369 : (e4369 _v)) (h4608 : (e4608 _v)) (h4648 : (e4648 _v)) (h4675 : (e4675 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h6423 : (e6423 _v)) (h8038 : (e8038 _v)) : (e7489 _v) := by
+  have p14855 := n14855 _v _q 
+  have p17319 := n17319 _v _q h70 h91 h191 h225 h442 h488 h2740 h3069 h3105 h3152 h3169 h3267 h3585 h3937 h3976 h4096 h4139 h4156 h4199 h4260 h4285 h4301 h4369 h4608 h4648 h4675 h4787 h4813 h4838 h4872 h4903 h6423 h8038
+  have p17320 := n17320 _v _q h2740 h6423
+  simp only [e2787, e4417, e4418, e4419, e4420, e6772, e7921, e7927, e7930] at *
+  tauto
+theorem n17323 (_v : Vars) (_q : Query _v)  : (e17322 _v) := by
+  by_contra hc
+  change ¬ ((e196 _v) ∨ (e1995 _v) ∨ (¬ (e4608 _v)) ∨ (¬ (e3855 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4398 _v)) ∨ (e2634 _v)) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3855 : (e3855 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5195 : (e5195 _v) := by
+    change (¬ (e196 _v))
+    tauto
+  have h6423 : (e6423 _v) := by
+    change (¬ (e1995 _v))
+    tauto
+  have h6700 : (e6700 _v) := by
+    change (¬ (e2634 _v))
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have p17205 := n17205 _v _q h70 h91 h225 h442 h488 h3069 h3105 h3152 h3169 h3855 h3937 h3946 h3976 h4059 h4096 h4156 h4199 h4260 h4369 h4398 h4491 h4608 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h5195 h6423 h6700 h7493 h7749 h8045
+  exact p17205
+theorem n17325 (_v : Vars) (_q : Query _v)  : (e17324 _v) := by
+  by_contra hc
+  change ¬ ((e2740 _v) ∨ (e2793 _v) ∨ (e2475 _v) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4787 _v))) at hc
+  have h91 : (e91 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h6746 : (e6746 _v) := by
+    change (¬ (e2740 _v))
+    tauto
+  have h6784 : (e6784 _v) := by
+    change (¬ (e2793 _v))
+    tauto
+  have h8038 : (e8038 _v) := by
+    change (¬ (e2475 _v))
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17215 := n17215 _v _q h91 h225 h488 h3069 h3105 h3152 h3937 h4096 h4369 h4434 h4608 h4787 h4813 h4838 h4872 h4899 h6746 h6784 h8038 h8398
+  exact p17215
+theorem n17327 (_v : Vars) (_q : Query _v)  : (e17326 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e3173 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4419 _v)) ∨ (e2475 _v) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e3971 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e3585 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3971 : (e3971 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h8038 : (e8038 _v) := by
+    change (¬ (e2475 _v))
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17216 := n17216 _v _q h70 h91 h191 h225 h442 h488 h3069 h3105 h3152 h3173 h3267 h3585 h3937 h3971 h4096 h4128 h4139 h4156 h4199 h4260 h4285 h4301 h4369 h4419 h4434 h4477 h4567 h4608 h4648 h4675 h4787 h4813 h4838 h4872 h4899 h8038 h8398
+  exact p17216
+theorem n17328 (_v : Vars) (_q : Query _v) (h91 : (e91 _v)) (h225 : (e225 _v)) (h488 : (e488 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3937 : (e3937 _v)) (h3971 : (e3971 _v)) (h4096 : (e4096 _v)) (h4369 : (e4369 _v)) (h4434 : (e4434 _v)) (h4608 : (e4608 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4872 : (e4872 _v)) (h4899 : (e4899 _v)) (h6423 : (e6423 _v)) (h6784 : (e6784 _v)) (h8038 : (e8038 _v)) (h8398 : (e8398 _v)) : (e7610 _v) := by
+  have p11418 := n11418 _v _q 
+  have p17217 := n17217 _v _q h91 h225 h488 h3069 h3105 h3152 h3937 h3971 h4096 h4369 h4434 h4608 h4787 h4813 h4838 h4872 h4899 h6423 h6784 h8038 h8398
+  simp only [e7606, e7607, e7608, e7609, e7610, e7611] at *
+  tauto
+theorem n17330 (_v : Vars) (_q : Query _v)  : (e17329 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e2536 _v)) ∨ (¬ (e3152 _v)) ∨ (e13 _v) ∨ (¬ (e4096 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2536 : (e2536 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h5093 : (e5093 _v) := by
+    change (¬ (e13 _v))
+    tauto
+  have p17224 := n17224 _v _q h70 h91 h191 h225 h442 h488 h2536 h3069 h3105 h3152 h3169 h3937 h3946 h3976 h4059 h4096 h4139 h4156 h4199 h4260 h4285 h4301 h4369 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4747 h4787 h4813 h4838 h4872 h5093
+  exact p17224
+theorem n17332 (_v : Vars) (_q : Query _v)  : (e17331 _v) := by
+  by_contra hc
+  change ¬ ((e13 _v) ∨ (¬ (e2303 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e2475 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e3855 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e7688 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e8335 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2303 : (e2303 _v) := by
+    tauto
+  have h2475 : (e2475 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3855 : (e3855 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h5093 : (e5093 _v) := by
+    change (¬ (e13 _v))
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7688 : (e7688 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h8335 : (e8335 _v) := by
+    tauto
+  have p17226 := n17226 _v _q h70 h91 h191 h225 h442 h488 h2303 h2475 h3069 h3105 h3152 h3169 h3267 h3585 h3855 h3937 h3946 h3976 h4059 h4096 h4128 h4156 h4199 h4260 h4301 h4369 h4398 h4419 h4434 h4477 h4491 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4899 h5093 h5100 h7493 h7688 h7749 h8335
+  exact p17226
+theorem n17334 (_v : Vars) (_q : Query _v)  : (e17333 _v) := by
+  by_contra hc
+  change ¬ ((e2482 _v) ∨ (¬ (e3851 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e8335 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3851 : (e3851 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h6636 : (e6636 _v) := by
+    change (¬ (e2482 _v))
+    tauto
+  have h8335 : (e8335 _v) := by
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17227 := n17227 _v _q h30 h70 h91 h191 h225 h442 h488 h3069 h3105 h3152 h3169 h3267 h3585 h3851 h3937 h3946 h3976 h4026 h4059 h4096 h4128 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4899 h6636 h8335 h8398
+  exact p17227
+theorem n17336 (_v : Vars) (_q : Query _v)  : (e17335 _v) := by
+  by_contra hc
+  change ¬ ((e2482 _v) ∨ (¬ (e2371 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e4720 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e3851 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4855 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e30 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2371 : (e2371 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3851 : (e3851 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4720 : (e4720 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4855 : (e4855 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h6636 : (e6636 _v) := by
+    change (¬ (e2482 _v))
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17228 := n17228 _v _q h30 h70 h91 h191 h225 h442 h488 h2371 h3069 h3105 h3152 h3169 h3267 h3585 h3851 h3937 h3946 h3976 h4026 h4059 h4096 h4128 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4720 h4747 h4787 h4813 h4838 h4855 h4872 h4899 h6636 h8398
+  exact p17228
+theorem n17338 (_v : Vars) (_q : Query _v)  : (e17337 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e3566 _v)) ∨ (¬ (e2482 _v)) ∨ (¬ (e2310 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e2371 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e3855 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (e2634 _v)) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2310 : (e2310 _v) := by
+    tauto
+  have h2371 : (e2371 _v) := by
+    tauto
+  have h2482 : (e2482 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3566 : (e3566 _v) := by
+    tauto
+  have h3855 : (e3855 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h6700 : (e6700 _v) := by
+    change (¬ (e2634 _v))
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17229 := n17229 _v _q h30 h70 h91 h191 h225 h442 h488 h2310 h2371 h2482 h3069 h3105 h3152 h3169 h3566 h3855 h3937 h3946 h3976 h4026 h4059 h4096 h4128 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4398 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4899 h6700 h8398
+  exact p17229
+theorem n17340 (_v : Vars) (_q : Query _v)  : (e17339 _v) := by
+  by_contra hc
+  change ¬ ((e2536 _v) ∨ (e2371 _v) ∨ (¬ (e4369 _v)) ∨ (¬ (e7606 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e3855 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e8335 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e2482 _v)) ∨ (¬ (e2310 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2310 : (e2310 _v) := by
+    tauto
+  have h2482 : (e2482 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3855 : (e3855 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h6579 : (e6579 _v) := by
+    change (¬ (e2371 _v))
+    tauto
+  have h6656 : (e6656 _v) := by
+    change (¬ (e2536 _v))
+    tauto
+  have h7606 : (e7606 _v) := by
+    tauto
+  have h8335 : (e8335 _v) := by
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17231 := n17231 _v _q h30 h70 h91 h191 h225 h442 h488 h2310 h2482 h3069 h3105 h3152 h3169 h3585 h3855 h3937 h3946 h3976 h4026 h4059 h4096 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4398 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4899 h6579 h6656 h7606 h8335 h8398
+  exact p17231
+theorem n17342 (_v : Vars) (_q : Query _v)  : (e17341 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e2799 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3855 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4855 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2799 : (e2799 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3855 : (e3855 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4855 : (e4855 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have p17232 := n17232 _v _q h30 h70 h91 h191 h225 h442 h488 h2799 h3069 h3105 h3152 h3169 h3267 h3585 h3855 h3937 h3946 h3976 h4059 h4096 h4128 h4139 h4156 h4199 h4260 h4285 h4301 h4369 h4398 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4855 h4872 h4899
+  exact p17232
+theorem n17344 (_v : Vars) (_q : Query _v)  : (e17343 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e5018 _v)) ∨ (¬ (e2634 _v)) ∨ (¬ (e2371 _v)) ∨ (¬ (e2482 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e3566 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e3855 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e3271 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2371 : (e2371 _v) := by
+    tauto
+  have h2482 : (e2482 _v) := by
+    tauto
+  have h2634 : (e2634 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3271 : (e3271 _v) := by
+    tauto
+  have h3566 : (e3566 _v) := by
+    tauto
+  have h3855 : (e3855 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h5018 : (e5018 _v) := by
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17233 := n17233 _v _q h30 h70 h91 h191 h225 h442 h488 h2371 h2482 h2634 h3069 h3105 h3152 h3271 h3566 h3855 h3937 h3946 h3976 h4026 h4059 h4096 h4128 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4398 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4899 h5018 h8398
+  exact p17233
+theorem n17346 (_v : Vars) (_q : Query _v)  : (e17345 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e3849 _v)) ∨ (¬ (e2799 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4720 _v)) ∨ (¬ (e4394 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2799 : (e2799 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3849 : (e3849 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4394 : (e4394 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4720 : (e4720 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have p17234 := n17234 _v _q h30 h70 h91 h191 h225 h442 h488 h2799 h3069 h3105 h3152 h3169 h3267 h3585 h3849 h3937 h3946 h3976 h4026 h4059 h4096 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4394 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4720 h4747 h4787 h4813 h4838 h4872 h4899
+  exact p17234
+theorem n17348 (_v : Vars) (_q : Query _v)  : (e17347 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e2740 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3851 _v)) ∨ (e2254 _v) ∨ (e2371 _v) ∨ (¬ (e4096 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e8398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e8335 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e3152 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2740 : (e2740 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3851 : (e3851 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h6531 : (e6531 _v) := by
+    change (¬ (e2254 _v))
+    tauto
+  have h6579 : (e6579 _v) := by
+    change (¬ (e2371 _v))
+    tauto
+  have h8335 : (e8335 _v) := by
+    tauto
+  have h8398 : (e8398 _v) := by
+    tauto
+  have p17235 := n17235 _v _q h30 h70 h91 h191 h225 h442 h488 h2740 h3069 h3105 h3152 h3169 h3267 h3585 h3851 h3937 h3946 h3976 h4026 h4059 h4096 h4128 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4747 h4787 h4813 h4838 h4872 h4899 h6531 h6579 h8335 h8398
+  exact p17235
+theorem n17350 (_v : Vars) (_q : Query _v)  : (e17349 _v) := by
+  by_contra hc
+  change ¬ ((e2482 _v) ∨ (¬ (e2799 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e3855 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e2310 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2310 : (e2310 _v) := by
+    tauto
+  have h2799 : (e2799 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3855 : (e3855 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h6636 : (e6636 _v) := by
+    change (¬ (e2482 _v))
+    tauto
+  have p17236 := n17236 _v _q h30 h70 h91 h191 h225 h442 h488 h2310 h2799 h3069 h3105 h3152 h3169 h3585 h3855 h3937 h3946 h3976 h4026 h4059 h4096 h4139 h4156 h4199 h4220 h4260 h4285 h4301 h4369 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4899 h6636
+  exact p17236
+theorem n17352 (_v : Vars) (_q : Query _v)  : (e17351 _v) := by
+  by_contra hc
+  change ¬ ((e2303 _v) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e2482 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e3566 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e3271 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4546 _v)) ∨ (e2634 _v) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4096 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2482 : (e2482 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3271 : (e3271 _v) := by
+    tauto
+  have h3566 : (e3566 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h6700 : (e6700 _v) := by
+    change (¬ (e2634 _v))
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7807 : (e7807 _v) := by
+    change (¬ (e2303 _v))
+    tauto
+  have p17237 := n17237 _v _q h70 h91 h191 h225 h442 h488 h2482 h3069 h3105 h3152 h3169 h3271 h3566 h3937 h3946 h3976 h4059 h4096 h4139 h4156 h4199 h4260 h4301 h4369 h4419 h4434 h4477 h4491 h4546 h4562 h4608 h4648 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h6700 h7493 h7749 h7807
+  exact p17237
+theorem n17354 (_v : Vars) (_q : Query _v)  : (e17353 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e2132 _v)) ∨ (¬ (e2303 _v)) ∨ (¬ (e2475 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e2364 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4747 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2132 : (e2132 _v) := by
+    tauto
+  have h2303 : (e2303 _v) := by
+    tauto
+  have h2364 : (e2364 _v) := by
+    tauto
+  have h2475 : (e2475 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have p17239 := n17239 _v _q h70 h91 h191 h225 h442 h488 h2132 h2303 h2364 h2475 h3069 h3105 h3152 h3937 h3946 h4059 h4096 h4139 h4156 h4199 h4260 h4301 h4369 h4419 h4434 h4477 h4491 h4562 h4608 h4675 h4747 h4787 h4813 h4838 h4872
+  exact p17239
+theorem n17356 (_v : Vars) (_q : Query _v)  : (e17355 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e7935 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e3173 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4838 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have p17240 := n17240 _v _q h70 h91 h191 h225 h442 h488 h3069 h3105 h3152 h3173 h3937 h3946 h3976 h4059 h4096 h4139 h4156 h4199 h4260 h4301 h4369 h4398 h4434 h4477 h4491 h4546 h4562 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h7493 h7749 h7814 h7935
+  exact p17240
+theorem n17358 (_v : Vars) (_q : Query _v)  : (e17357 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e4139 _v)) ∨ (e1995 _v) ∨ (¬ (e7814 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e7935 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3173 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h6423 : (e6423 _v) := by
+    change (¬ (e1995 _v))
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17241 := n17241 _v _q h70 h91 h191 h225 h442 h488 h3069 h3105 h3152 h3173 h3937 h3946 h3976 h4059 h4096 h4139 h4156 h4199 h4260 h4306 h4369 h4398 h4434 h4491 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h6423 h7493 h7749 h7814 h7935 h8045 h8317
+  exact p17241
+theorem n17360 (_v : Vars) (_q : Query _v)  : (e17359 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e4567 _v)) ∨ (¬ (e2634 _v)) ∨ (¬ (e7935 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e7645 _v)) ∨ (¬ (e3069 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2634 : (e2634 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7645 : (e7645 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17242 := n17242 _v _q h70 h91 h225 h442 h488 h2634 h3069 h3105 h3152 h3937 h3946 h3976 h4059 h4096 h4156 h4199 h4260 h4306 h4369 h4398 h4434 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h5208 h7493 h7645 h7749 h7814 h7935 h8045 h8317
+  exact p17242
+theorem n17362 (_v : Vars) (_q : Query _v)  : (e17361 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e2303 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e7935 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3173 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2303 : (e2303 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have p17243 := n17243 _v _q h70 h91 h191 h225 h442 h488 h2303 h3069 h3105 h3152 h3173 h3937 h3946 h3976 h4059 h4096 h4156 h4199 h4260 h4306 h4369 h4398 h4434 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h7493 h7749 h7935 h8045
+  exact p17243
+theorem n17364 (_v : Vars) (_q : Query _v)  : (e17363 _v) := by
+  by_contra hc
+  change ¬ ((e2358 _v) ∨ (¬ (e3105 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e3173 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e7935 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4838 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h6571 : (e6571 _v) := by
+    change (¬ (e2358 _v))
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have p17244 := n17244 _v _q h70 h91 h191 h225 h442 h488 h3069 h3105 h3152 h3173 h3937 h3946 h3976 h4059 h4096 h4156 h4199 h4260 h4301 h4369 h4398 h4434 h4477 h4491 h4546 h4562 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h6571 h7493 h7749 h7814 h7935
+  exact p17244
+theorem n17366 (_v : Vars) (_q : Query _v)  : (e17365 _v) := by
+  by_contra hc
+  change ¬ ((e436 _v) ∨ (¬ (e7814 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e5145 _v)) ∨ (¬ (e51 _v)) ∨ (¬ (e5237 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e7645 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e4724 _v)) ∨ (e1995 _v) ∨ (¬ (e3069 _v)) ∨ (¬ (e4264 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4101 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e7714 _v))) at hc
+  have h51 : (e51 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4101 : (e4101 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4264 : (e4264 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5145 : (e5145 _v) := by
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h5237 : (e5237 _v) := by
+    tauto
+  have h5362 : (e5362 _v) := by
+    change (¬ (e436 _v))
+    tauto
+  have h6423 : (e6423 _v) := by
+    change (¬ (e1995 _v))
+    tauto
+  have h7645 : (e7645 _v) := by
+    tauto
+  have h7714 : (e7714 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17248 := n17248 _v _q h51 h488 h3069 h3105 h3152 h3937 h3946 h3976 h4059 h4101 h4156 h4264 h4306 h4369 h4398 h4434 h4491 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h5145 h5208 h5237 h5362 h6423 h7645 h7714 h7749 h7814 h8045 h8317
+  exact p17248
+theorem n17368 (_v : Vars) (_q : Query _v)  : (e17367 _v) := by
+  by_contra hc
+  change ¬ ((e436 _v) ∨ (e2125 _v) ∨ (¬ (e5100 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3173 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e5145 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e7645 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e1995 _v))) at hc
+  have h488 : (e488 _v) := by
+    tauto
+  have h1995 : (e1995 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5145 : (e5145 _v) := by
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h5362 : (e5362 _v) := by
+    change (¬ (e436 _v))
+    tauto
+  have h6480 : (e6480 _v) := by
+    change (¬ (e2125 _v))
+    tauto
+  have h7645 : (e7645 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17254 := n17254 _v _q h488 h1995 h3069 h3105 h3152 h3173 h3937 h3946 h3976 h4059 h4156 h4306 h4369 h4398 h4434 h4491 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h5145 h5208 h5362 h6480 h7645 h7749 h7814 h8045 h8317
+  exact p17254
+theorem n17370 (_v : Vars) (_q : Query _v)  : (e17369 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e4838 _v)) ∨ (e2358 _v) ∨ (¬ (e4096 _v)) ∨ (¬ (e51 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4724 _v))) at hc
+  have h51 : (e51 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h6571 : (e6571 _v) := by
+    change (¬ (e2358 _v))
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have p17257 := n17257 _v _q h51 h91 h225 h442 h488 h3069 h3105 h3152 h3937 h3946 h3976 h4059 h4096 h4156 h4199 h4260 h4306 h4369 h4398 h4434 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h5208 h6571 h7749 h7814 h8045
+  exact p17257
+theorem n17372 (_v : Vars) (_q : Query _v)  : (e17371 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e4838 _v)) ∨ (¬ (e196 _v)) ∨ (¬ (e4101 _v)) ∨ (¬ (e51 _v)) ∨ (e2475 _v) ∨ (¬ (e3069 _v)) ∨ (¬ (e7935 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4724 _v))) at hc
+  have h51 : (e51 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h196 : (e196 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4101 : (e4101 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have h8038 : (e8038 _v) := by
+    change (¬ (e2475 _v))
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have p17258 := n17258 _v _q h51 h91 h196 h225 h442 h488 h3069 h3105 h3152 h3937 h3946 h3976 h4059 h4101 h4156 h4199 h4260 h4306 h4369 h4398 h4434 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h5208 h7749 h7814 h7935 h8038 h8045
+  exact p17258
+theorem n17374 (_v : Vars) (_q : Query _v)  : (e17373 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e4264 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e2634 _v)) ∨ (e2061 _v) ∨ (e196 _v) ∨ (¬ (e91 _v)) ∨ (¬ (e7493 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e3069 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2634 : (e2634 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4264 : (e4264 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5195 : (e5195 _v) := by
+    change (¬ (e196 _v))
+    tauto
+  have h6454 : (e6454 _v) := by
+    change (¬ (e2061 _v))
+    tauto
+  have h7493 : (e7493 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17259 := n17259 _v _q h70 h91 h225 h442 h488 h2634 h3069 h3105 h3152 h3937 h3946 h3976 h4059 h4096 h4156 h4199 h4264 h4306 h4369 h4398 h4434 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h5195 h6454 h7493 h7749 h8045 h8317
+  exact p17259
+theorem n17376 (_v : Vars) (_q : Query _v)  : (e17375 _v) := by
+  by_contra hc
+  change ¬ ((e1995 _v) ∨ (¬ (e4813 _v)) ∨ (e2358 _v) ∨ (¬ (e442 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e2781 _v))) at hc
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2781 : (e2781 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h6423 : (e6423 _v) := by
+    change (¬ (e1995 _v))
+    tauto
+  have h6571 : (e6571 _v) := by
+    change (¬ (e2358 _v))
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17274 := n17274 _v _q h442 h488 h2781 h3069 h3105 h3152 h3937 h3946 h4156 h4306 h4369 h4398 h4434 h4608 h4675 h4747 h4787 h4813 h4872 h5208 h6423 h6571 h8045 h8317
+  exact p17274
+theorem n17378 (_v : Vars) (_q : Query _v)  : (e17377 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e7714 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e3173 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e4264 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e4101 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e51 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e5145 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e7645 _v))) at hc
+  have h51 : (e51 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4101 : (e4101 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4264 : (e4264 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5145 : (e5145 _v) := by
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h7645 : (e7645 _v) := by
+    tauto
+  have h7714 : (e7714 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17275 := n17275 _v _q h51 h225 h442 h488 h3069 h3105 h3152 h3173 h3937 h3946 h3976 h4059 h4101 h4156 h4264 h4306 h4369 h4398 h4434 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h5145 h5208 h7645 h7714 h7749 h7814 h8045 h8317
+  exact p17275
+theorem n17380 (_v : Vars) (_q : Query _v)  : (e17379 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e4096 _v)) ∨ (¬ (e7749 _v)) ∨ (e2781 _v) ∨ (¬ (e4608 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e5208 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4439 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e7935 _v)) ∨ (e196 _v) ∨ (¬ (e48 _v))) at hc
+  have h48 : (e48 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4439 : (e4439 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h5195 : (e5195 _v) := by
+    change (¬ (e196 _v))
+    tauto
+  have h5208 : (e5208 _v) := by
+    tauto
+  have h6776 : (e6776 _v) := by
+    change (¬ (e2781 _v))
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have p17277 := n17277 _v _q h48 h91 h225 h442 h488 h3069 h3105 h3152 h3937 h3946 h3976 h4059 h4096 h4156 h4199 h4306 h4369 h4398 h4439 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h5195 h5208 h6776 h7749 h7814 h7935 h8045
+  exact p17277
+theorem n17381 (_v : Vars) (_q : Query _v) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h2358 : (e2358 _v)) (h2529 : (e2529 _v)) (h2781 : (e2781 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3158 : (e3158 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3976 : (e3976 _v)) (h4156 : (e4156 _v)) (h4199 : (e4199 _v)) (h4306 : (e4306 _v)) (h4369 : (e4369 _v)) (h4439 : (e4439 _v)) (h4459 : (e4459 _v)) (h4567 : (e4567 _v)) (h4653 : (e4653 _v)) (h4747 : (e4747 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h7807 : (e7807 _v)) (h8038 : (e8038 _v)) (h8045 : (e8045 _v)) : (e4685 _v) := by
+  have p14989 := n14989 _v _q 
+  have p17280 := n17280 _v _q h91 h191 h225 h442 h488 h2358 h2529 h2781 h3069 h3105 h3152 h3158 h3937 h3946 h3976 h4156 h4199 h4306 h4369 h4439 h4459 h4567 h4653 h4747 h4787 h4813 h4838 h4872 h4903 h7807 h8038 h8045
+  simp only [e4678, e4679, e4683, e4684, e4685, e4967] at *
+  tauto
+theorem n17383 (_v : Vars) (_q : Query _v)  : (e17382 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e2303 _v)) ∨ (¬ (e196 _v)) ∨ (¬ (e3937 _v)) ∨ (e2475 _v) ∨ (¬ (e91 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e7749 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e2781 _v))) at hc
+  have h91 : (e91 _v) := by
+    tauto
+  have h196 : (e196 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2303 : (e2303 _v) := by
+    tauto
+  have h2781 : (e2781 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h7749 : (e7749 _v) := by
+    tauto
+  have h8038 : (e8038 _v) := by
+    change (¬ (e2475 _v))
+    tauto
+  have p17282 := n17282 _v _q h91 h196 h225 h442 h488 h2303 h2781 h3069 h3105 h3152 h3937 h3946 h3976 h4156 h4199 h4369 h4747 h4813 h4872 h4903 h7749 h8038
+  exact p17282
+theorem n17385 (_v : Vars) (_q : Query _v)  : (e17384 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e7645 _v)) ∨ (¬ (e8317 _v)) ∨ (¬ (e196 _v)) ∨ (¬ (e4491 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4903 _v)) ∨ (e2475 _v) ∨ (¬ (e4459 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e5100 _v)) ∨ (¬ (e7814 _v)) ∨ (¬ (e4398 _v)) ∨ (¬ (e8045 _v)) ∨ (¬ (e3158 _v)) ∨ (¬ (e4059 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4747 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e51 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4724 _v)) ∨ (¬ (e4439 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4264 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4101 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4813 _v))) at hc
+  have h51 : (e51 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h196 : (e196 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3158 : (e3158 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4059 : (e4059 _v) := by
+    tauto
+  have h4101 : (e4101 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4264 : (e4264 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4398 : (e4398 _v) := by
+    tauto
+  have h4439 : (e4439 _v) := by
+    tauto
+  have h4459 : (e4459 _v) := by
+    tauto
+  have h4491 : (e4491 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4724 : (e4724 _v) := by
+    tauto
+  have h4747 : (e4747 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h5100 : (e5100 _v) := by
+    tauto
+  have h7645 : (e7645 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h8038 : (e8038 _v) := by
+    change (¬ (e2475 _v))
+    tauto
+  have h8045 : (e8045 _v) := by
+    tauto
+  have h8317 : (e8317 _v) := by
+    tauto
+  have p17283 := n17283 _v _q h51 h91 h196 h225 h442 h488 h3069 h3105 h3152 h3158 h3937 h3946 h3976 h4059 h4101 h4156 h4199 h4264 h4306 h4369 h4398 h4439 h4459 h4491 h4567 h4653 h4675 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h7645 h7814 h8038 h8045 h8317
+  exact p17283
+theorem n17387 (_v : Vars) (_q : Query _v)  : (e17386 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e7814 _v)) ∨ (e2475 _v) ∨ (¬ (e4260 _v)) ∨ (¬ (e7606 _v)) ∨ (¬ (e7935 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3566 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4653 _v)) ∨ (¬ (e4567 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4306 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e3173 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e4439 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e3271 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4903 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e3976 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e2358 _v))) at hc
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h2358 : (e2358 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3173 : (e3173 _v) := by
+    tauto
+  have h3271 : (e3271 _v) := by
+    tauto
+  have h3566 : (e3566 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3976 : (e3976 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4306 : (e4306 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4439 : (e4439 _v) := by
+    tauto
+  have h4567 : (e4567 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4653 : (e4653 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4903 : (e4903 _v) := by
+    tauto
+  have h7606 : (e7606 _v) := by
+    tauto
+  have h7814 : (e7814 _v) := by
+    tauto
+  have h7935 : (e7935 _v) := by
+    tauto
+  have h8038 : (e8038 _v) := by
+    change (¬ (e2475 _v))
+    tauto
+  have p17289 := n17289 _v _q h70 h91 h191 h225 h442 h488 h2358 h3069 h3105 h3152 h3173 h3271 h3566 h3937 h3976 h4096 h4156 h4199 h4260 h4306 h4369 h4439 h4567 h4608 h4653 h4675 h4787 h4813 h4838 h4872 h4903 h7606 h7814 h7935 h8038
+  exact p17289
+theorem n17388 (_v : Vars) (_q : Query _v) (h51 : (e51 _v)) (h467 : (e467 _v)) (h2402 : (e2402 _v)) (h3051 : (e3051 _v)) (h3109 : (e3109 _v)) (h3133 : (e3133 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4101 : (e4101 _v)) (h4161 : (e4161 _v)) (h4264 : (e4264 _v)) (h4306 : (e4306 _v)) (h4373 : (e4373 _v)) (h4398 : (e4398 _v)) (h4439 : (e4439 _v)) (h4459 : (e4459 _v)) (h4491 : (e4491 _v)) (h4567 : (e4567 _v)) (h4653 : (e4653 _v)) (h4679 : (e4679 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4791 : (e4791 _v)) (h4817 : (e4817 _v)) (h4877 : (e4877 _v)) (h4903 : (e4903 _v)) : (e3159 _v) := by
+  have p17291 := n17291 _v _q 
+  have p14799 := n14799 _v _q h2402
+  have p17294 := n17294 _v _q 
+  have p17143 := n17143 _v _q h4567
+  have p17060 := n17060 _v _q h4653
+  have p17061 := n17061 _v _q h4747
+  have p17075 := n17075 _v _q h4439
+  have p17065 := n17065 _v _q h4101
+  have p17059 := n17059 _v _q h4791
+  have p17062 := n17062 _v _q h3133
+  have p17076 := n17076 _v _q h3976
+  have p17051 := n17051 _v _q h4459
+  have p17081 := n17081 _v _q h4161
+  have p17084 := n17084 _v _q h467
+  have p17085 := n17085 _v _q h4373
+  have p17088 := n17088 _v _q h4817
+  have p17094 := n17094 _v _q h4724
+  have p16729 := n16729 _v _q h51
+  have p17118 := n17118 _v _q h4264
+  have p17125 := n17125 _v _q h3051
+  have p17128 := n17128 _v _q h4491
+  have p17129 := n17129 _v _q h4903
+  have p17134 := n17134 _v _q h4398
+  have p17137 := n17137 _v _q h4059
+  have p17138 := n17138 _v _q h4306
+  have p17139 := n17139 _v _q h4877
+  have p17142 := n17142 _v _q h3109
+  have p17070 := n17070 _v _q h4679
+  simp only [e51, e57, e467, e468, e3051, e3052, e3109, e3114, e3133, e3138, e3158, e3159, e3919, e3920, e3946, e3947, e3976, e3981, e4059, e4064, e4101, e4106, e4161, e4166, e4264, e4269, e4306, e4311, e4373, e4378, e4398, e4403, e4439, e4444, e4459, e4464, e4491, e4496, e4567, e4572, e4653, e4658, e4679, e4684, e4724, e4729, e4747, e4752, e4791, e4796, e4817, e4822, e4877, e4882, e4903, e4908, e17290] at *
+  tauto
+theorem n17389 (_v : Vars) (_q : Query _v) (h51 : (e51 _v)) (h467 : (e467 _v)) (h2402 : (e2402 _v)) (h3051 : (e3051 _v)) (h3109 : (e3109 _v)) (h3133 : (e3133 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4101 : (e4101 _v)) (h4161 : (e4161 _v)) (h4264 : (e4264 _v)) (h4306 : (e4306 _v)) (h4373 : (e4373 _v)) (h4398 : (e4398 _v)) (h4439 : (e4439 _v)) (h4459 : (e4459 _v)) (h4491 : (e4491 _v)) (h4567 : (e4567 _v)) (h4653 : (e4653 _v)) (h4679 : (e4679 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4791 : (e4791 _v)) (h4817 : (e4817 _v)) (h4877 : (e4877 _v)) (h4903 : (e4903 _v)) : (e7489 _v) := by
+  have p15126 := n15126 _v _q 
+  have p17388 := n17388 _v _q h51 h467 h2402 h3051 h3109 h3133 h3976 h4059 h4101 h4161 h4264 h4306 h4373 h4398 h4439 h4459 h4491 h4567 h4653 h4679 h4724 h4747 h4791 h4817 h4877 h4903
+  have p15795 := n15795 _v _q h2402
+  simp only [e3158, e3159, e3160, e3161, e3162, e3163, e4616] at *
+  tauto
+theorem n17390 (_v : Vars) (_q : Query _v) (h30 : (e30 _v)) (h70 : (e70 _v)) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3169 : (e3169 _v)) (h3267 : (e3267 _v)) (h3585 : (e3585 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3971 : (e3971 _v)) (h4026 : (e4026 _v)) (h4054 : (e4054 _v)) (h4096 : (e4096 _v)) (h4128 : (e4128 _v)) (h4139 : (e4139 _v)) (h4156 : (e4156 _v)) (h4181 : (e4181 _v)) (h4199 : (e4199 _v)) (h4220 : (e4220 _v)) (h4260 : (e4260 _v)) (h4285 : (e4285 _v)) (h4301 : (e4301 _v)) (h4369 : (e4369 _v)) (h4394 : (e4394 _v)) (h4419 : (e4419 _v)) (h4434 : (e4434 _v)) (h4477 : (e4477 _v)) (h4486 : (e4486 _v)) (h4546 : (e4546 _v)) (h4562 : (e4562 _v)) (h4608 : (e4608 _v)) (h4648 : (e4648 _v)) (h4675 : (e4675 _v)) (h4742 : (e4742 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4855 : (e4855 _v)) (h4872 : (e4872 _v)) (h4899 : (e4899 _v)) (h4924 : (e4924 _v)) (h6486 : (e6486 _v)) : (e4721 _v) := by
+  have p17296 := n17296 _v _q 
+  have p15052 := n15052 _v _q h6486
+  have p4969 := n4969 _v _q h3267
+  have p4970 := n4970 _v _q h3585
+  have p4971 := n4971 _v _q h4419
+  have p4972 := n4972 _v _q h4899
+  have p4973 := n4973 _v _q h4562
+  have p4974 := n4974 _v _q h4128
+  have p4975 := n4975 _v _q h4026
+  have p4976 := n4976 _v _q h4546
+  have p4977 := n4977 _v _q h4285
+  have p4978 := n4978 _v _q h4477
+  have p4979 := n4979 _v _q h4139
+  have p4980 := n4980 _v _q h4301
+  have p4981 := n4981 _v _q h4260
+  have p4982 := n4982 _v _q h4394
+  have p4983 := n4983 _v _q h4813
+  have p4984 := n4984 _v _q h4872
+  have p4985 := n4985 _v _q h4156
+  have p4986 := n4986 _v _q h3105
+  have p4987 := n4987 _v _q h4434
+  have p4988 := n4988 _v _q h488
+  have p4989 := n4989 _v _q h4838
+  have p253 := n253 _v _q h191
+  have p4990 := n4990 _v _q h4648
+  have p4991 := n4991 _v _q h4608
+  have p4992 := n4992 _v _q h442
+  have p4993 := n4993 _v _q h4742
+  have p4994 := n4994 _v _q h3069
+  have p4995 := n4995 _v _q h4369
+  have p4996 := n4996 _v _q h3937
+  have p4997 := n4997 _v _q h4855
+  have p4998 := n4998 _v _q h3152
+  have p4999 := n4999 _v _q h91
+  have p5000 := n5000 _v _q h30
+  have p5001 := n5001 _v _q h4096
+  have p5002 := n5002 _v _q h3971
+  have p17056 := n17056 _v _q h3946
+  have p5003 := n5003 _v _q h4199
+  have p5004 := n5004 _v _q h4220
+  have p5005 := n5005 _v _q h3169
+  have p5006 := n5006 _v _q h4675
+  have p5007 := n5007 _v _q h225
+  have p5008 := n5008 _v _q h4787
+  have p5009 := n5009 _v _q h4181
+  have p5010 := n5010 _v _q h70
+  have p5011 := n5011 _v _q h4486
+  have p5012 := n5012 _v _q h4054
+  have p4968 := n4968 _v _q h4924
+  simp only [e30, e35, e70, e75, e91, e95, e191, e192, e225, e230, e442, e443, e488, e493, e3069, e3074, e3105, e3106, e3152, e3156, e3169, e3170, e3267, e3268, e3585, e3589, e3851, e3852, e3937, e3942, e3946, e3947, e3971, e3972, e4026, e4031, e4054, e4055, e4096, e4097, e4128, e4133, e4139, e4140, e4156, e4157, e4181, e4182, e4199, e4200, e4220, e4221, e4260, e4261, e4285, e4286, e4301, e4302, e4369, e4370, e4394, e4395, e4419, e4420, e4434, e4435, e4477, e4481, e4486, e4487, e4546, e4547, e4562, e4563, e4608, e4609, e4648, e4649, e4675, e4676, e4720, e4721, e4742, e4743, e4787, e4788, e4813, e4814, e4838, e4839, e4855, e4856, e4872, e4873, e4899, e4900, e4924, e4925, e17295] at *
+  tauto
+theorem n17391 (_v : Vars) (_q : Query _v) (h30 : (e30 _v)) (h70 : (e70 _v)) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3169 : (e3169 _v)) (h3267 : (e3267 _v)) (h3585 : (e3585 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3971 : (e3971 _v)) (h4026 : (e4026 _v)) (h4054 : (e4054 _v)) (h4096 : (e4096 _v)) (h4128 : (e4128 _v)) (h4139 : (e4139 _v)) (h4156 : (e4156 _v)) (h4181 : (e4181 _v)) (h4199 : (e4199 _v)) (h4220 : (e4220 _v)) (h4260 : (e4260 _v)) (h4285 : (e4285 _v)) (h4301 : (e4301 _v)) (h4369 : (e4369 _v)) (h4394 : (e4394 _v)) (h4419 : (e4419 _v)) (h4434 : (e4434 _v)) (h4477 : (e4477 _v)) (h4486 : (e4486 _v)) (h4546 : (e4546 _v)) (h4562 : (e4562 _v)) (h4608 : (e4608 _v)) (h4648 : (e4648 _v)) (h4675 : (e4675 _v)) (h4742 : (e4742 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4855 : (e4855 _v)) (h4872 : (e4872 _v)) (h4899 : (e4899 _v)) (h4924 : (e4924 _v)) (h6486 : (e6486 _v)) : (e8206 _v) := by
+  have p15030 := n15030 _v _q 
+  have p17390 := n17390 _v _q h30 h70 h91 h191 h225 h442 h488 h3069 h3105 h3152 h3169 h3267 h3585 h3937 h3946 h3971 h4026 h4054 h4096 h4128 h4139 h4156 h4181 h4199 h4220 h4260 h4285 h4301 h4369 h4394 h4419 h4434 h4477 h4486 h4546 h4562 h4608 h4648 h4675 h4742 h4787 h4813 h4838 h4855 h4872 h4899 h4924 h6486
+  simp only [e4718, e4719, e4720, e4721, e8206, e8207] at *
+  tauto
+theorem n17392 (_v : Vars) (_q : Query _v) (h70 : (e70 _v)) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h2536 : (e2536 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3169 : (e3169 _v)) (h3271 : (e3271 _v)) (h3855 : (e3855 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4096 : (e4096 _v)) (h4139 : (e4139 _v)) (h4156 : (e4156 _v)) (h4199 : (e4199 _v)) (h4260 : (e4260 _v)) (h4285 : (e4285 _v)) (h4301 : (e4301 _v)) (h4369 : (e4369 _v)) (h4398 : (e4398 _v)) (h4491 : (e4491 _v)) (h4572 : (e4572 _v)) (h4608 : (e4608 _v)) (h4675 : (e4675 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h5100 : (e5100 _v)) (h7493 : (e7493 _v)) (h7606 : (e7606 _v)) (h7688 : (e7688 _v)) (h7749 : (e7749 _v)) (h7935 : (e7935 _v)) (h8045 : (e8045 _v)) (h8335 : (e8335 _v)) : (e4649 _v) := by
+  have p17298 := n17298 _v _q 
+  have p4977 := n4977 _v _q h4285
+  have p16343 := n16343 _v _q h2536
+  have p17161 := n17161 _v _q h7688
+  have p15181 := n15181 _v _q h4572
+  have p17162 := n17162 _v _q h8335
+  have p4989 := n4989 _v _q h4838
+  have p4980 := n4980 _v _q h4301
+  have p17163 := n17163 _v _q h7935
+  have p17134 := n17134 _v _q h4398
+  have p253 := n253 _v _q h191
+  have p4979 := n4979 _v _q h4139
+  have p17164 := n17164 _v _q h7606
+  have p4991 := n4991 _v _q h4608
+  have p16344 := n16344 _v _q h4572
+  have p16250 := n16250 _v _q h3855
+  have p4985 := n4985 _v _q h4156
+  have p4995 := n4995 _v _q h4369
+  have p4996 := n4996 _v _q h3937
+  have p16269 := n16269 _v _q h7749
+  have p4998 := n4998 _v _q h3152
+  have p16346 := n16346 _v _q h4572
+  have p17137 := n17137 _v _q h4059
+  have p4999 := n4999 _v _q h91
+  have p17155 := n17155 _v _q h7493
+  have p5001 := n5001 _v _q h4096
+  have p17128 := n17128 _v _q h4491
+  have p17056 := n17056 _v _q h3946
+  have p17165 := n17165 _v _q h3271
+  have p5003 := n5003 _v _q h4199
+  have p17159 := n17159 _v _q h5100
+  have p17129 := n17129 _v _q h4903
+  have p5006 := n5006 _v _q h4675
+  have p17076 := n17076 _v _q h3976
+  have p5007 := n5007 _v _q h225
+  have p5008 := n5008 _v _q h4787
+  have p5005 := n5005 _v _q h3169
+  have p5010 := n5010 _v _q h70
+  have p4981 := n4981 _v _q h4260
+  have p17157 := n17157 _v _q h8045
+  have p17061 := n17061 _v _q h4747
+  have p4988 := n4988 _v _q h488
+  have p4986 := n4986 _v _q h3105
+  have p4983 := n4983 _v _q h4813
+  have p17094 := n17094 _v _q h4724
+  have p4994 := n4994 _v _q h3069
+  have p4992 := n4992 _v _q h442
+  have p4984 := n4984 _v _q h4872
+  simp only [e70, e75, e91, e95, e191, e192, e225, e230, e442, e443, e488, e493, e3069, e3074, e3105, e3106, e3152, e3156, e3169, e3170, e3271, e3276, e3585, e3589, e3855, e3860, e3937, e3942, e3946, e3947, e3976, e3981, e4059, e4064, e4096, e4097, e4139, e4140, e4156, e4157, e4199, e4200, e4260, e4261, e4285, e4286, e4301, e4302, e4369, e4370, e4398, e4403, e4434, e4435, e4477, e4481, e4491, e4496, e4562, e4563, e4608, e4609, e4648, e4649, e4675, e4676, e4724, e4729, e4747, e4752, e4787, e4788, e4813, e4814, e4838, e4839, e4872, e4873, e4903, e4908, e5100, e5103, e7493, e7494, e7606, e7607, e7688, e7698, e7749, e7752, e7935, e7943, e8045, e8048, e8335, e8345, e17297] at *
+  tauto
+theorem n17393 (_v : Vars) (_q : Query _v) (h70 : (e70 _v)) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h2536 : (e2536 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3169 : (e3169 _v)) (h3271 : (e3271 _v)) (h3855 : (e3855 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4096 : (e4096 _v)) (h4139 : (e4139 _v)) (h4156 : (e4156 _v)) (h4199 : (e4199 _v)) (h4260 : (e4260 _v)) (h4285 : (e4285 _v)) (h4301 : (e4301 _v)) (h4369 : (e4369 _v)) (h4398 : (e4398 _v)) (h4491 : (e4491 _v)) (h4572 : (e4572 _v)) (h4608 : (e4608 _v)) (h4675 : (e4675 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h5100 : (e5100 _v)) (h7493 : (e7493 _v)) (h7606 : (e7606 _v)) (h7688 : (e7688 _v)) (h7749 : (e7749 _v)) (h7935 : (e7935 _v)) (h8045 : (e8045 _v)) (h8335 : (e8335 _v)) : (e8149 _v) := by
+  have p15027 := n15027 _v _q 
+  have p17392 := n17392 _v _q h70 h91 h191 h225 h442 h488 h2536 h3069 h3105 h3152 h3169 h3271 h3855 h3937 h3946 h3976 h4059 h4096 h4139 h4156 h4199 h4260 h4285 h4301 h4369 h4398 h4491 h4572 h4608 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h7493 h7606 h7688 h7749 h7935 h8045 h8335
+  simp only [e4648, e4649, e4650, e4651, e8149, e8150] at *
+  tauto
+theorem n17394 (_v : Vars) (_q : Query _v) (h70 : (e70 _v)) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h2061 : (e2061 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3169 : (e3169 _v)) (h3271 : (e3271 _v)) (h3566 : (e3566 _v)) (h3855 : (e3855 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4096 : (e4096 _v)) (h4139 : (e4139 _v)) (h4156 : (e4156 _v)) (h4199 : (e4199 _v)) (h4260 : (e4260 _v)) (h4306 : (e4306 _v)) (h4369 : (e4369 _v)) (h4398 : (e4398 _v)) (h4459 : (e4459 _v)) (h4491 : (e4491 _v)) (h4567 : (e4567 _v)) (h4608 : (e4608 _v)) (h4653 : (e4653 _v)) (h4675 : (e4675 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h5100 : (e5100 _v)) (h6700 : (e6700 _v)) (h7493 : (e7493 _v)) (h7606 : (e7606 _v)) (h7935 : (e7935 _v)) (h8045 : (e8045 _v)) : (e7817 _v) := by
+  have p17302 := n17302 _v _q 
+  have p17163 := n17163 _v _q h7935
+  have p4989 := n4989 _v _q h4838
+  have p4979 := n4979 _v _q h4139
+  have p17051 := n17051 _v _q h4459
+  have p253 := n253 _v _q h191
+  have p17155 := n17155 _v _q h7493
+  have p5001 := n5001 _v _q h4096
+  have p15217 := n15217 _v _q h2061
+  have p17056 := n17056 _v _q h3946
+  have p17165 := n17165 _v _q h3271
+  have p5003 := n5003 _v _q h4199
+  have p17159 := n17159 _v _q h5100
+  have p17129 := n17129 _v _q h4903
+  have p5006 := n5006 _v _q h4675
+  have p17076 := n17076 _v _q h3976
+  have p5007 := n5007 _v _q h225
+  have p5008 := n5008 _v _q h4787
+  have p5005 := n5005 _v _q h3169
+  have p17143 := n17143 _v _q h4567
+  have p5010 := n5010 _v _q h70
+  have p4981 := n4981 _v _q h4260
+  have p17138 := n17138 _v _q h4306
+  have p17157 := n17157 _v _q h8045
+  have p17061 := n17061 _v _q h4747
+  have p4988 := n4988 _v _q h488
+  have p4986 := n4986 _v _q h3105
+  have p4983 := n4983 _v _q h4813
+  have p17094 := n17094 _v _q h4724
+  have p4994 := n4994 _v _q h3069
+  have p4992 := n4992 _v _q h442
+  have p4984 := n4984 _v _q h4872
+  have p4985 := n4985 _v _q h4156
+  have p17134 := n17134 _v _q h4398
+  have p4991 := n4991 _v _q h4608
+  have p16250 := n16250 _v _q h3855
+  have p17060 := n17060 _v _q h4653
+  have p17164 := n17164 _v _q h7606
+  have p17156 := n17156 _v _q h3566
+  have p4998 := n4998 _v _q h3152
+  have p4995 := n4995 _v _q h4369
+  have p17128 := n17128 _v _q h4491
+  have p4996 := n4996 _v _q h3937
+  have p17137 := n17137 _v _q h4059
+  have p4999 := n4999 _v _q h91
+  have p11027 := n11027 _v _q h6700
+  simp only [e70, e75, e91, e95, e191, e192, e225, e230, e442, e443, e488, e493, e2634, e3069, e3074, e3105, e3106, e3152, e3156, e3169, e3170, e3271, e3276, e3566, e3571, e3855, e3860, e3937, e3942, e3946, e3947, e3976, e3981, e4059, e4064, e4096, e4097, e4139, e4140, e4156, e4157, e4199, e4200, e4260, e4261, e4306, e4311, e4369, e4370, e4398, e4403, e4439, e4444, e4459, e4464, e4491, e4496, e4567, e4572, e4608, e4609, e4653, e4658, e4675, e4676, e4724, e4729, e4747, e4752, e4787, e4788, e4813, e4814, e4838, e4839, e4872, e4873, e4903, e4908, e5100, e5103, e6700, e7493, e7494, e7606, e7607, e7814, e7817, e7935, e7943, e8045, e8048, e17301] at *
+  tauto
+theorem n17395 (_v : Vars) (_q : Query _v) (h70 : (e70 _v)) (h91 : (e91 _v)) (h191 : (e191 _v)) (h225 : (e225 _v)) (h442 : (e442 _v)) (h488 : (e488 _v)) (h2061 : (e2061 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3169 : (e3169 _v)) (h3271 : (e3271 _v)) (h3566 : (e3566 _v)) (h3855 : (e3855 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4096 : (e4096 _v)) (h4139 : (e4139 _v)) (h4156 : (e4156 _v)) (h4199 : (e4199 _v)) (h4260 : (e4260 _v)) (h4306 : (e4306 _v)) (h4369 : (e4369 _v)) (h4398 : (e4398 _v)) (h4459 : (e4459 _v)) (h4491 : (e4491 _v)) (h4567 : (e4567 _v)) (h4608 : (e4608 _v)) (h4653 : (e4653 _v)) (h4675 : (e4675 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4838 : (e4838 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h5100 : (e5100 _v)) (h6700 : (e6700 _v)) (h7493 : (e7493 _v)) (h7606 : (e7606 _v)) (h7935 : (e7935 _v)) (h8045 : (e8045 _v)) : (e7818 _v) := by
+  have p15221 := n15221 _v _q 
+  have p17394 := n17394 _v _q h70 h91 h191 h225 h442 h488 h2061 h3069 h3105 h3152 h3169 h3271 h3566 h3855 h3937 h3946 h3976 h4059 h4096 h4139 h4156 h4199 h4260 h4306 h4369 h4398 h4459 h4491 h4567 h4608 h4653 h4675 h4724 h4747 h4787 h4813 h4838 h4872 h4903 h5100 h6700 h7493 h7606 h7935 h8045
+  simp only [e7812, e7814, e7816, e7817, e7818, e8456] at *
+  tauto
+theorem n17396 (_v : Vars) (_q : Query _v) (h225 : (e225 _v)) (h488 : (e488 _v)) (h2125 : (e2125 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3271 : (e3271 _v)) (h3566 : (e3566 _v)) (h3855 : (e3855 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4096 : (e4096 _v)) (h4156 : (e4156 _v)) (h4260 : (e4260 _v)) (h4369 : (e4369 _v)) (h4398 : (e4398 _v)) (h4439 : (e4439 _v)) (h4491 : (e4491 _v)) (h4567 : (e4567 _v)) (h4653 : (e4653 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h5100 : (e5100 _v)) (h6571 : (e6571 _v)) (h6700 : (e6700 _v)) (h7493 : (e7493 _v)) (h7606 : (e7606 _v)) (h7814 : (e7814 _v)) (h7935 : (e7935 _v)) (h8045 : (e8045 _v)) (h8310 : (e8310 _v)) : (e5218 _v) := by
+  have p17304 := n17304 _v _q 
+  have p17163 := n17163 _v _q h7935
+  have p17155 := n17155 _v _q h7493
+  have p17076 := n17076 _v _q h3976
+  have p5001 := n5001 _v _q h4096
+  have p15243 := n15243 _v _q h2125
+  have p17075 := n17075 _v _q h4439
+  have p17056 := n17056 _v _q h3946
+  have p17165 := n17165 _v _q h3271
+  have p17159 := n17159 _v _q h5100
+  have p17129 := n17129 _v _q h4903
+  have p16352 := n16352 _v _q h6700
+  have p5007 := n5007 _v _q h225
+  have p5008 := n5008 _v _q h4787
+  have p15234 := n15234 _v _q h6700
+  have p17143 := n17143 _v _q h4567
+  have p16353 := n16353 _v _q h6700
+  have p4981 := n4981 _v _q h4260
+  have p16803 := n16803 _v _q h6700
+  have p17157 := n17157 _v _q h8045
+  have p17061 := n17061 _v _q h4747
+  have p4988 := n4988 _v _q h488
+  have p4986 := n4986 _v _q h3105
+  have p4983 := n4983 _v _q h4813
+  have p17094 := n17094 _v _q h4724
+  have p4994 := n4994 _v _q h3069
+  have p16804 := n16804 _v _q h6700
+  have p4984 := n4984 _v _q h4872
+  have p4985 := n4985 _v _q h4156
+  have p17134 := n17134 _v _q h4398
+  have p16358 := n16358 _v _q h6700
+  have p16250 := n16250 _v _q h3855
+  have p15246 := n15246 _v _q h2125
+  have p17060 := n17060 _v _q h4653
+  have p17164 := n17164 _v _q h7606
+  have p17156 := n17156 _v _q h3566
+  have p4998 := n4998 _v _q h3152
+  have p4995 := n4995 _v _q h4369
+  have p17128 := n17128 _v _q h4491
+  have p4996 := n4996 _v _q h3937
+  have p15248 := n15248 _v _q h8310
+  have p17172 := n17172 _v _q h7814
+  have p17137 := n17137 _v _q h4059
+  have p16805 := n16805 _v _q h6700
+  have p15251 := n15251 _v _q h6571
+  simp only [e70, e75, e91, e95, e225, e230, e442, e443, e488, e493, e3069, e3074, e3105, e3106, e3152, e3156, e3169, e3170, e3271, e3276, e3566, e3571, e3855, e3860, e3937, e3942, e3946, e3947, e3976, e3981, e4059, e4064, e4096, e4097, e4156, e4157, e4199, e4200, e4260, e4261, e4306, e4311, e4369, e4370, e4398, e4403, e4439, e4444, e4459, e4464, e4491, e4496, e4567, e4572, e4608, e4609, e4653, e4658, e4675, e4676, e4724, e4729, e4747, e4752, e4787, e4788, e4813, e4814, e4872, e4873, e4903, e4908, e5100, e5103, e5208, e5218, e7493, e7494, e7606, e7607, e7645, e7655, e7814, e7817, e7935, e7943, e8045, e8048, e8317, e8320, e17303] at *
+  tauto
+theorem n17397 (_v : Vars) (_q : Query _v) (h225 : (e225 _v)) (h488 : (e488 _v)) (h2125 : (e2125 _v)) (h3069 : (e3069 _v)) (h3105 : (e3105 _v)) (h3152 : (e3152 _v)) (h3271 : (e3271 _v)) (h3566 : (e3566 _v)) (h3855 : (e3855 _v)) (h3937 : (e3937 _v)) (h3946 : (e3946 _v)) (h3976 : (e3976 _v)) (h4059 : (e4059 _v)) (h4096 : (e4096 _v)) (h4156 : (e4156 _v)) (h4260 : (e4260 _v)) (h4369 : (e4369 _v)) (h4398 : (e4398 _v)) (h4439 : (e4439 _v)) (h4491 : (e4491 _v)) (h4567 : (e4567 _v)) (h4653 : (e4653 _v)) (h4724 : (e4724 _v)) (h4747 : (e4747 _v)) (h4787 : (e4787 _v)) (h4813 : (e4813 _v)) (h4872 : (e4872 _v)) (h4903 : (e4903 _v)) (h5100 : (e5100 _v)) (h6571 : (e6571 _v)) (h6700 : (e6700 _v)) (h7493 : (e7493 _v)) (h7606 : (e7606 _v)) (h7814 : (e7814 _v)) (h7935 : (e7935 _v)) (h8045 : (e8045 _v)) (h8310 : (e8310 _v)) : (e5220 _v) := by
+  have p8685 := n8685 _v _q 
+  have p17396 := n17396 _v _q h225 h488 h2125 h3069 h3105 h3152 h3271 h3566 h3855 h3937 h3946 h3976 h4059 h4096 h4156 h4260 h4369 h4398 h4439 h4491 h4567 h4653 h4724 h4747 h4787 h4813 h4872 h4903 h5100 h6571 h6700 h7493 h7606 h7814 h7935 h8045 h8310
+  simp only [e5208, e5211, e5218, e5219, e5220, e5258] at *
+  tauto
+end
+end Assembly

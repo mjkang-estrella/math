@@ -1,0 +1,11 @@
+# r67 — full polynomial source conjecture unresolved; credit0
+
+Selected Heim–Neuhauser, published RamanujanJ70(2026)58 Conjecture1: actual sigma2-defined P_n, BOTH every n>=1,x>5 and every n>=6,x>=1, Delta_n=P_n^(n+1)-P_{n+1}^n>0. Latestv1 and published bodies read; published source already corrected its x5 endpoint. Sun binomial-polynomial lead excluded for previous/public q-log-convexity overlap; arithmetic congruences deferred.
+
+Closest actual published HNT2023 Bessenrodt–Ono/Turan bodies, Ono2022 scalar proof and actual immutable Omega partition-derivative dossier/Lean certificate read early. None supplies a demonstrated complete all-real-x bridge. Public x1 proof gets no credit. Registry freshnessHOLD persists: inheritedAPI403 respected without retry/bypass/reset clearance;15:49-observed6c27b0a… is not currentHEAD, r57D5 is Blueprint markdown.
+
+Sustained routes: exact logarithmic derivative numerator; shifted coefficient convolution; Abel suffix cone; antisymmetric bivariate kernel. All100 checked derivative rows satisfy shifted/suffix nonnegativity, but no all-n cone theorem. Actual-source D12(1/10)<0 blocks all-positive-x extension; generic positive-g example has W2(1)=-121/6; negative minor terms block termwise kernel proof. These are route obstructions, not source refutations.
+
+`bash run.sh`:100 derivative rows,12 finite high-degree Delta certificates,17 independent Euler-product coefficient rows,1000 scalar comparisons/970 exact source inequalities,19 independent shifts,300 Abel identity evaluations,80 kernel identities and300 below-threshold probes. Overlap acknowledged; finite checks are not universal proof. Reused unchanged AS/groupRSS512MiB CPU210/wall230,40ms sampling,BLAS1 guards; no failures/cap increases. Profile extraction warnings documented.
+
+Precise gap: uniform all-n>=6 suffix domination or another proof of D_n>=0 / H_n>0 for every x>=1. No full ordinary theorem, PROOF.md, new Lean, nomination or acceptance. Strongest objection/falsifiers in discovery.md; URLsUTCversionsSHA/accesslimits in provenance.json. Solo/lane-only; no children/git/shared edits/browser/contact/post/upload/accounts. Counts unchanged7additional/37total,rootacceptanceonly.

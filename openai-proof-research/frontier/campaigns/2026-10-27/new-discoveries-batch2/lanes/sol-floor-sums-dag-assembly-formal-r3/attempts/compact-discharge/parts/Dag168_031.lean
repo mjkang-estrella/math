@@ -1,0 +1,114 @@
+import parts.Dag168_030
+import generated.th_lemma_16
+set_option autoImplicit false
+set_option warningAsError true
+set_option maxRecDepth 20000
+set_option maxHeartbeats 1500000
+namespace Assembly
+noncomputable section
+open Classical
+theorem n17296 (_v : Vars) (_q : Query _v)  : (e17295 _v) := by
+  by_contra hc
+  change ¬ ((¬ (e4720 _v)) ∨ (¬ (e4924 _v)) ∨ (¬ (e3267 _v)) ∨ (¬ (e3585 _v)) ∨ (¬ (e4419 _v)) ∨ (¬ (e4899 _v)) ∨ (¬ (e4562 _v)) ∨ (¬ (e4128 _v)) ∨ (¬ (e4026 _v)) ∨ (¬ (e4546 _v)) ∨ (¬ (e4285 _v)) ∨ (¬ (e4477 _v)) ∨ (¬ (e4139 _v)) ∨ (¬ (e4301 _v)) ∨ (¬ (e4260 _v)) ∨ (¬ (e4394 _v)) ∨ (¬ (e4813 _v)) ∨ (¬ (e4872 _v)) ∨ (¬ (e4156 _v)) ∨ (¬ (e3105 _v)) ∨ (¬ (e4434 _v)) ∨ (¬ (e488 _v)) ∨ (¬ (e4838 _v)) ∨ (¬ (e191 _v)) ∨ (¬ (e4648 _v)) ∨ (¬ (e4608 _v)) ∨ (¬ (e442 _v)) ∨ (¬ (e4742 _v)) ∨ (¬ (e3069 _v)) ∨ (¬ (e4369 _v)) ∨ (¬ (e3937 _v)) ∨ (¬ (e4855 _v)) ∨ (¬ (e3152 _v)) ∨ (¬ (e91 _v)) ∨ (¬ (e30 _v)) ∨ (¬ (e4096 _v)) ∨ (¬ (e3971 _v)) ∨ (¬ (e3946 _v)) ∨ (¬ (e4199 _v)) ∨ (¬ (e4220 _v)) ∨ (¬ (e3169 _v)) ∨ (¬ (e4675 _v)) ∨ (¬ (e225 _v)) ∨ (¬ (e4787 _v)) ∨ (¬ (e4181 _v)) ∨ (¬ (e70 _v)) ∨ (¬ (e4486 _v)) ∨ (¬ (e4054 _v)) ∨ (¬ (e3851 _v))) at hc
+  have h30 : (e30 _v) := by
+    tauto
+  have h70 : (e70 _v) := by
+    tauto
+  have h91 : (e91 _v) := by
+    tauto
+  have h191 : (e191 _v) := by
+    tauto
+  have h225 : (e225 _v) := by
+    tauto
+  have h442 : (e442 _v) := by
+    tauto
+  have h488 : (e488 _v) := by
+    tauto
+  have h3069 : (e3069 _v) := by
+    tauto
+  have h3105 : (e3105 _v) := by
+    tauto
+  have h3152 : (e3152 _v) := by
+    tauto
+  have h3169 : (e3169 _v) := by
+    tauto
+  have h3267 : (e3267 _v) := by
+    tauto
+  have h3585 : (e3585 _v) := by
+    tauto
+  have h3851 : (e3851 _v) := by
+    tauto
+  have h3937 : (e3937 _v) := by
+    tauto
+  have h3946 : (e3946 _v) := by
+    tauto
+  have h3971 : (e3971 _v) := by
+    tauto
+  have h4026 : (e4026 _v) := by
+    tauto
+  have h4054 : (e4054 _v) := by
+    tauto
+  have h4096 : (e4096 _v) := by
+    tauto
+  have h4128 : (e4128 _v) := by
+    tauto
+  have h4139 : (e4139 _v) := by
+    tauto
+  have h4156 : (e4156 _v) := by
+    tauto
+  have h4181 : (e4181 _v) := by
+    tauto
+  have h4199 : (e4199 _v) := by
+    tauto
+  have h4220 : (e4220 _v) := by
+    tauto
+  have h4260 : (e4260 _v) := by
+    tauto
+  have h4285 : (e4285 _v) := by
+    tauto
+  have h4301 : (e4301 _v) := by
+    tauto
+  have h4369 : (e4369 _v) := by
+    tauto
+  have h4394 : (e4394 _v) := by
+    tauto
+  have h4419 : (e4419 _v) := by
+    tauto
+  have h4434 : (e4434 _v) := by
+    tauto
+  have h4477 : (e4477 _v) := by
+    tauto
+  have h4486 : (e4486 _v) := by
+    tauto
+  have h4546 : (e4546 _v) := by
+    tauto
+  have h4562 : (e4562 _v) := by
+    tauto
+  have h4608 : (e4608 _v) := by
+    tauto
+  have h4648 : (e4648 _v) := by
+    tauto
+  have h4675 : (e4675 _v) := by
+    tauto
+  have h4720 : (e4720 _v) := by
+    tauto
+  have h4742 : (e4742 _v) := by
+    tauto
+  have h4787 : (e4787 _v) := by
+    tauto
+  have h4813 : (e4813 _v) := by
+    tauto
+  have h4838 : (e4838 _v) := by
+    tauto
+  have h4855 : (e4855 _v) := by
+    tauto
+  have h4872 : (e4872 _v) := by
+    tauto
+  have h4899 : (e4899 _v) := by
+    tauto
+  have h4924 : (e4924 _v) := by
+    tauto
+  have p17153 := n17153 _v _q h30 h70 h91 h191 h225 h442 h488 h3069 h3105 h3152 h3169 h3267 h3585 h3851 h3937 h3946 h3971 h4026 h4054 h4096 h4128 h4139 h4156 h4181 h4199 h4220 h4260 h4285 h4301 h4369 h4394 h4419 h4434 h4477 h4486 h4546 h4562 h4608 h4648 h4675 h4720 h4742 h4787 h4813 h4838 h4855 h4872 h4899 h4924
+  exact p17153
+end
+end Assembly
