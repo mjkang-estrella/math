@@ -1,0 +1,16 @@
+import PackedBits
+#check Nat.or_lt_two_pow
+#check Nat.testBit_two_pow
+#check Nat.testBit_two_pow_of_ne
+#check Nat.eq_of_testBit_eq
+#check Nat.lt_two_pow_iff
+#check Nat.testBit_lt_two_pow
+#check Nat.testBit_or
+#check Nat.testBit_xor
+#check Nat.testBit_and
+#check Nat.testBit_eq_false_of_lt
+#check Nat.testBit_add_two_pow
+#check Nat.testBit_lt
+#check Nat.land_le_left
+#check Nat.and_le_left
+#check Nat.xor_le

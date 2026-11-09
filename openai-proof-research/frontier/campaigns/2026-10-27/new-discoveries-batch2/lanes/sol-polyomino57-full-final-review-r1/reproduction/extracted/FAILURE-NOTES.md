@@ -1,0 +1,19 @@
+# Local failures and qualifications
+
+No mathematical source edit. Input archive hashes and all2023 mathematical/audit sources verified. Formal worker and root notes are preserved in inherited/FAILURE-NOTES.md and inherited/ADOPTION.json.
+
+1. Initial exploration tried a nonexistent fresh_replay.py path; actual runner was fresh_replay.sh. A combined read also tried absent formal/FiniteAudit.lean, while actual consumed observer is FinalAudit.lean. Read-only failures, no outside writes.
+2. First replay in replay/ failed its version probe with exit250: Lean inherited the512MiB Python hard address-space limit. The corrected driver caps its own helper work with a512MiB soft limit and restores unrestricted virtual address space only at the Lean launcher boundary. The child uses CPU210/wall230, group RSS2800MiB sampled.045s and-j1. Failed extraction/version log retained outside final packet, hash recorded by local-failures.json.
+3. PDF marker Node failed to reserve its segmented table under512MiB AS (exit133). A second invocation succeeded with explicit CPU210/wall230 and sampled512MiB process-group RSS; peak observed47,534,080bytes. This runtime reservation failure is not a proof failure.
+4. System Python lacked ReportLab. uv was absent (exit127). Created a venv strictly in this lane and installed ReportLab5.1.0, Pillow13.0.0, pypdf6.21.4 and fonttools4.68.0. This is artifact tooling, not a Lean dependency.
+5. Initial manuscript rendering exposed heading-paragraph parsing and an unrecognized figure token. LiberationSans alone lacked six mathematical glyphs. Revised the parser and embedded NotoSansMath fallback. Revised all seven pages rendered and visually read. These were layout failures; no formula or formal source was altered.
+
+All Python authoring/packaging helpers were explicitly address-space/CPU capped; bounded build scripts install wall alarms. Shell-invoked rendering/install helpers additionally used timeout230. The Node marker exception uses bounded RSS rather than AS, described above. Ordinary read-only shell inspection is not represented as heavy computation. Sampled RSS is not a continuous maximum. Package installs used default service, no external posting, account operation or browser.
+
+## Write-scope deviation
+
+Installing PDF tooling into this lane's venv inadvertently used pip's default HTTP cache under /home/mj-kang/.cache/pip. A read-only metadata check found27 recent cache files after13:50UTC, with installation-associated timestamps around14:00:30UTC. These are incidental package-manager cache writes outside the assigned lane, and prevent an unqualified assertion that every filesystem write stayed in the lane. No project source, ledger, count, other lane or git state was deliberately edited outside the assigned lane. No outside-cache cleanup was performed. Subsequent reproduction commands use --no-cache-dir.
+
+The automated final font-coverage assertion additionally rejected the superscript-minus glyph even after adding NotoSansMath. Replacing g superscript-minus-one by the equivalent ASCII notation g^(-1) resolved that presentation issue; the changed page and then all seven final pages were visually read again. The failed assertion was a QA failure, not a mathematical failure.
+
+The first offline ZIP reproduction check falsely rejected FinalAudit's literal diagnostic string "axiom=" as if it were a mathematical axiom declaration. The frozen observer was not changed. The verifier now applies the mathematical-source token check to the2022 mathematical modules; FinalAudit remains byte-hash checked and its actual5924-record audit output is exhaustively checked. Initial archive SHA256 e5d8af49fb78e165a382591f2fe821775fd7ea202ea1cb29227d58937ae633fb is retained as failed-initial-packet.zip outside the delivered packet, with its failed extraction in reproduction-final/. No Lean replay or mathematical check failed.

@@ -1,0 +1,244 @@
+import Mathlib.Data.Finset.Card
+import Mathlib.Logic.Relation
+import Lean.Elab.Tactic.Omega
+set_option autoImplicit false
+namespace GraphPotential
+variable {V I : Type*} [DecidableEq V] [DecidableEq I]
+
+-- Every edge in a connecting path has both endpoints in the finite set.
+def Connected (E : V → V → Prop) (T : Finset V) : Prop :=
+  T.Nonempty ∧ ∀ x ∈ T, ∀ y ∈ T,
+    Relation.ReflTransGen (fun a b => a ∈ T ∧ b ∈ T ∧ E a b) x y
+
+-- A rooted tree expressed by edge extension and unions sharing only the root.
+inductive Rooted (E : V → V → Prop) : Finset V → V → Prop
+  | single (z : V) : Rooted E {z} z
+  | edge {T : Finset V} {w z : V} : Rooted E T w → z ∉ T → E z w →
+      Rooted E (insert z T) z
+  | merge {S T : Finset V} {z : V} : Rooted E S z → Rooted E T z →
+      (∀ x ∈ S, x ∈ T → x = z) → Rooted E (S ∪ T) z
+
+theorem Rooted.mem {E : V → V → Prop} {T : Finset V} {z : V}
+    (h : Rooted E T z) : z ∈ T := by
+  induction h with
+  | single => simp
+  | edge => simp
+  | merge _ _ _ ih _ => exact Finset.mem_union_left _ ih
+
+-- Grafting a new leaf preserves every previously chosen root.
+theorem Rooted.graft {E : V → V → Prop}
+    {T : Finset V} {z : V} (h : Rooted E T z) {a b : V}
+    (ha : a ∈ T) (hb : b ∉ T) (hab : E a b) : Rooted E (insert b T) z := by
+  induction h with
+  | single z =>
+    have haz : a = z := by simpa using ha
+    subst a
+    have hne : z ≠ b := by simpa [eq_comm] using hb
+    simpa [Finset.pair_comm] using
+      (Rooted.edge (Rooted.single b) (by simpa using hne) hab)
+  | @edge T w z ht hz hzw ih =>
+    by_cases haz : a = z
+    · subst a
+      have hleaf : Rooted E {z,b} z :=
+        Rooted.edge (Rooted.single b) (by simpa using (show z ≠ b from by
+          intro he; apply hb; simp [← he])) hab
+      have hm := Rooted.merge (Rooted.edge ht hz hzw) hleaf (by
+        intro x hx hy
+        simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+        rcases hy with h | h
+        · exact h
+        · subst x; exact False.elim (hb hx))
+      convert hm using 1; ext x; simp; tauto
+    · have haT : a ∈ T := (Finset.mem_insert.mp ha).resolve_left haz
+      have hbT : b ∉ T := fun h => hb (Finset.mem_insert_of_mem h)
+      have hzb : z ≠ b := by intro he; apply hb; simp [← he]
+      have hr := Rooted.edge (ih haT hbT) (by simp [hz, hzb]) hzw
+      simpa [Finset.insert_comm] using hr
+  | @merge S T z hS hT hi ihS ihT =>
+    have hbS : b ∉ S := fun h => hb (Finset.mem_union_left _ h)
+    have hbT : b ∉ T := fun h => hb (Finset.mem_union_right _ h)
+    rcases Finset.mem_union.mp ha with haS | haT
+    · have hr := Rooted.merge (ihS haS hbS) hT (by
+        intro x hx hy
+        rcases Finset.mem_insert.mp hx with he | hx
+        · subst x; exact False.elim (hbT hy)
+        · exact hi x hx hy)
+      simpa [Finset.insert_union] using hr
+    · have hr := Rooted.merge hS (ihT haT hbT) (by
+        intro x hx hy
+        rcases Finset.mem_insert.mp hy with he | hy
+        · subst x; exact False.elim (hbS hx)
+        · exact hi x hx hy)
+      simpa [Finset.union_insert] using hr
+
+theorem boundary {E : V → V → Prop} {P Q : Finset V}
+    (hP : Connected E P) (hne : Q.Nonempty) (hsub : Q ⊆ P) (hlt : Q ≠ P) :
+    ∃ a ∈ Q, ∃ b ∈ P, b ∉ Q ∧ E a b := by
+  obtain ⟨a,ha⟩ := hne
+  have hex : ∃ b ∈ P, b ∉ Q := by
+    by_contra! h
+    exact hlt (Finset.Subset.antisymm hsub h)
+  obtain ⟨b,hb,hbQ⟩ := hex
+  have cross : ∀ {x : V},
+      Relation.ReflTransGen (fun u v => u ∈ P ∧ v ∈ P ∧ E u v) a x →
+      x ∈ Q ∨ ∃ u ∈ Q, ∃ v ∈ P, v ∉ Q ∧ E u v := by
+    intro x hx
+    induction hx with
+    | refl => exact Or.inl ha
+    | @tail x y _ hxy ih =>
+      rcases ih with hxQ | hdone
+      · by_cases hyQ : y ∈ Q
+        · exact Or.inl hyQ
+        · exact Or.inr ⟨x,hxQ,y,hxy.2.1,hyQ,hxy.2.2⟩
+      · exact Or.inr hdone
+  exact (cross (hP.2 a (hsub ha) b hb)).resolve_left hbQ
+
+-- Completeness is proved from literal connectedness, without a tree premise.
+theorem rooted_complete {E : V → V → Prop}
+    {P : Finset V} (hP : Connected E P) {z : V} (hz : z ∈ P) : Rooted E P z := by
+  have extend : ∀ k : ℕ, ∀ Q : Finset V, Q ⊆ P → z ∈ Q →
+      Rooted E Q z → P.card - Q.card = k → Rooted E P z := by
+    intro k
+    induction k with
+    | zero =>
+      intro Q hsub _ hg hk
+      have heq : Q = P := Finset.eq_of_subset_of_card_le hsub (by omega)
+      simpa [heq] using hg
+    | succ k ih =>
+      intro Q hsub hzQ hg hk
+      have hneP : Q ≠ P := by intro h; subst Q; simp at hk
+      obtain ⟨a,ha,b,hb,hbQ,hab⟩ := boundary hP ⟨z,hzQ⟩ hsub hneP
+      apply ih (insert b Q) (Finset.insert_subset hb hsub) (Finset.mem_insert_of_mem hzQ)
+        (hg.graft ha hbQ hab)
+      rw [Finset.card_insert_of_notMem hbQ]
+      have hle := Finset.card_le_card hsub
+      omega
+  exact extend _ {z} (Finset.singleton_subset_iff.mpr hz) (by simp) (Rooted.single z) rfl
+
+
+-- All hypotheses are restricted to the finite domain D and masks inside M.
+structure Certificate (E : V → V → Prop) (D : Finset V) (M : Finset I)
+    (H : I → V → Prop) (L : Finset I → V → ℕ) : Prop where
+  base : ∀ A, A ⊆ M → A.Nonempty → ∀ z ∈ D,
+    (∀ i ∈ A, H i z) → L A z ≤ 1
+  edge : ∀ A, A ⊆ M → A.Nonempty → ∀ z ∈ D, ∀ w ∈ D,
+    E z w → L A z ≤ L A w + 1
+  merge : ∀ A B, A ⊆ M → B ⊆ M → A.Nonempty → B.Nonempty →
+    Disjoint A B → ∀ z ∈ D, L (A ∪ B) z + 1 ≤ L A z + L B z
+
+def Hits (H : I → V → Prop) (A : Finset I) (T : Finset V) : Prop :=
+  ∀ i ∈ A, ∃ v ∈ T, H i v
+
+-- Partition by existence of a witness on one side. Memberships may overlap.
+theorem split_hits {H : I → V → Prop} {A : Finset I} {S T : Finset V}
+    (h : Hits H A (S ∪ T)) :
+    ∃ B C : Finset I, B ∪ C = A ∧ Disjoint B C ∧ B ⊆ A ∧ C ⊆ A ∧
+      Hits H B S ∧ Hits H C T := by
+  classical
+  let B := A.filter (fun i => ∃ v ∈ S, H i v)
+  refine ⟨B, A \ B, Finset.union_sdiff_of_subset (Finset.filter_subset _ _),
+    (by exact Finset.disjoint_left.mpr (fun _ hb hc => (Finset.mem_sdiff.mp hc).2 hb)), Finset.filter_subset _ _, Finset.sdiff_subset, ?_, ?_⟩
+  · intro i hi
+    exact (Finset.mem_filter.mp hi).2
+  · intro i hi
+    obtain ⟨v,hv,hiv⟩ := h i (Finset.mem_sdiff.mp hi).1
+    rcases Finset.mem_union.mp hv with hvS | hvT
+    · exact False.elim ((Finset.mem_sdiff.mp hi).2 (Finset.mem_filter.mpr
+        ⟨(Finset.mem_sdiff.mp hi).1, v,hvS,hiv⟩))
+    · exact ⟨v,hvT,hiv⟩
+
+theorem rooted_bound {E : V → V → Prop} {D : Finset V} {M : Finset I}
+    {H : I → V → Prop} {L : Finset I → V → ℕ}
+    (c : Certificate E D M H L) {T : Finset V} {z : V} (ht : Rooted E T z) :
+    T ⊆ D → ∀ A, A ⊆ M → A.Nonempty → Hits H A T → L A z ≤ T.card := by
+  classical
+  induction ht with
+  | single z =>
+    intro hsub A hAM hA hh
+    have hb := c.base A hAM hA z (hsub (by simp)) (by
+      intro i hi
+      obtain ⟨v,hv,hiv⟩ := hh i hi
+      simpa only [Finset.mem_singleton.mp hv] using hiv)
+    simpa using hb
+  | @edge T w z ht hz hzw ih =>
+    intro hsub A hAM hA hh
+    have hTd : T ⊆ D := fun _ hv => hsub (Finset.mem_insert_of_mem hv)
+    have hzd : z ∈ D := hsub (Finset.mem_insert_self _ _)
+    have hwd : w ∈ D := hTd ht.mem
+    have hhit : Hits H A ({z} ∪ T) := by simpa using hh
+    obtain ⟨B,C,heq,hdis,hBA,hCA,hB,hC⟩ := split_hits hhit
+    have hBM := Finset.Subset.trans hBA hAM
+    have hCM := Finset.Subset.trans hCA hAM
+    have hbase : B.Nonempty → L B z ≤ 1 := by
+      intro hne
+      apply c.base B hBM hne z hzd
+      intro i hi
+      obtain ⟨v,hv,hiv⟩ := hB i hi
+      simpa only [Finset.mem_singleton.mp hv] using hiv
+    by_cases hCn : C.Nonempty
+    · have hc := ih hTd C hCM hCn hC
+      have he := c.edge C hCM hCn z hzd w hwd hzw
+      by_cases hBn : B.Nonempty
+      · have hm := c.merge B C hBM hCM hBn hCn hdis z hzd
+        have hb := hbase hBn
+        rw [heq] at hm
+        rw [Finset.card_insert_of_notMem hz]
+        omega
+      · have hBe : B = ∅ := Finset.not_nonempty_iff_eq_empty.mp hBn
+        have hAC : A = C := by simpa [hBe] using heq.symm
+        rw [hAC, Finset.card_insert_of_notMem hz]
+        omega
+    · have hCe : C = ∅ := Finset.not_nonempty_iff_eq_empty.mp hCn
+      have hAB : A = B := by simpa [hCe] using heq.symm
+      have hb := hbase (hAB ▸ hA)
+      rw [hAB, Finset.card_insert_of_notMem hz]
+      omega
+  | @merge S T z hS hT hi ihS ihT =>
+    intro hsub A hAM hA hh
+    have hSd : S ⊆ D := fun _ hv => hsub (Finset.mem_union_left _ hv)
+    have hTd : T ⊆ D := fun _ hv => hsub (Finset.mem_union_right _ hv)
+    obtain ⟨B,C,heq,hdis,hBA,hCA,hB,hC⟩ := split_hits hh
+    have hBM := Finset.Subset.trans hBA hAM
+    have hCM := Finset.Subset.trans hCA hAM
+    have hcard : (S ∪ T).card + 1 = S.card + T.card := by
+      have hinter : S ∩ T = {z} := by
+        ext x
+        simp only [Finset.mem_inter, Finset.mem_singleton]
+        exact ⟨fun h => hi x h.1 h.2, fun h => h ▸ ⟨hS.mem,hT.mem⟩⟩
+      have hc := Finset.card_union_add_card_inter S T
+      simpa [hinter] using hc
+    by_cases hBn : B.Nonempty
+    · have hb := ihS hSd B hBM hBn hB
+      by_cases hCn : C.Nonempty
+      · have hc := ihT hTd C hCM hCn hC
+        have hm := c.merge B C hBM hCM hBn hCn hdis z (hSd hS.mem)
+        rw [heq] at hm
+        omega
+      · have hCe : C = ∅ := Finset.not_nonempty_iff_eq_empty.mp hCn
+        have hAB : A = B := by simpa [hCe] using heq.symm
+        rw [hAB]
+        exact hb.trans (Finset.card_le_card Finset.subset_union_left)
+    · have hBe : B = ∅ := Finset.not_nonempty_iff_eq_empty.mp hBn
+      have hAC : A = C := by simpa [hBe] using heq.symm
+      rw [hAC]
+      exact (ihT hTd C hCM (hAC ▸ hA) hC).trans
+        (Finset.card_le_card Finset.subset_union_right)
+
+/-- Unconditional soundness: the caller supplies only finite connectedness and hits. -/
+theorem soundness {E : V → V → Prop}
+    {D T : Finset V} {M : Finset I} {H : I → V → Prop}
+    {L : Finset I → V → ℕ} (c : Certificate E D M H L)
+    (hT : Connected E T) (hTD : T ⊆ D) {z : V} (hz : z ∈ T)
+    (hM : M.Nonempty) (hh : Hits H M T) : L M z ≤ T.card :=
+  rooted_bound c (rooted_complete hT hz) hTD M (Finset.Subset.refl _) hM hh
+
+theorem excludes_small {E : V → V → Prop}
+    {D T : Finset V} {M : Finset I} {H : I → V → Prop}
+    {L : Finset I → V → ℕ} (c : Certificate E D M H L)
+    (hM : M.Nonempty) (hl : ∀ z ∈ D, 12 ≤ L M z)
+    (hT : Connected E T) (hTD : T ⊆ D) (hh : Hits H M T) : ¬ T.card ≤ 11 := by
+  obtain ⟨z,hz⟩ := hT.1
+  have hu := soundness c hT hTD hz hM hh
+  have hlo := hl z (hTD hz)
+  omega
+end GraphPotential
