@@ -1,0 +1,10 @@
+# Preserved failures and bounds
+
+- Initial /list/math.CO/2002 request returned a historical listing (year2002), not the intended February2020 slice. Retained and not used as mathematical evidence. /list/math.NT/2102 and /list/math.RA/2202 returned404; retained in retrieval.jsonl. Corrected to API date queries.
+- Two API date ranges incorrectly ended in February29 for2021/2022 and returned500. Corrected once to valid February28 dates. These were input corrections, not retries of403/429/challenges. No denied route was retried.
+- First trace_test.py import failed because lane inspect.py shadowed stdlib inspect, causing ImportError: cannot import name getmro. Renamed under guard to inspect_bodies.py; exact subsequent checks pass. No numerical or scientific result was produced by the failed run.
+- SymPy factor_list produced the modular-integer-ordering deprecation warning. Results were independently checked by ordinary integer tuple arithmetic; no tolerance or numerical minimum is involved.
+- Some initial combined tool outputs were truncated. Bounded targeted reads were subsequently used for the relevant source statements and proof bodies. No claim of entire historical-report or entire 719-manuscript reading.
+- No current complete GitHub registry head, original Evans–Wallach2019 body, exhaustive specialist citation audit, or MathSciNet/zbMATH access. API/raw/codeload/diff/patch, ScienceDirect and Google challenge routes were inherited denied and stayed parked. OpenAlex zero indexed citations is not a proof of absence.
+- No proof of the Toeplitz kernel restriction's nondegeneracy, Roman minimum-support repair, or pressing-order exchange. Those failures remain gaps, not inferred universal results.
+- All Python/helpers/retrieval/hash/edit operations were launched through the assigned fixed helper_guard with OPENBLAS_NUM_THREADS=1,OMP_NUM_THREADS=1,PYTHONDONTWRITEBYTECODE=1. Native bounded reads and apply_patch were used as authorized. Fixed AS/groupRSS512MiB,CPU210s,wall230s; no raises. Each launch's guard record is in tool history; scientific check summaries are in checks.json and independent-checks.json.
