@@ -1,0 +1,9 @@
+# Preserved failures and limits
+
+1. Intake/AGENTS concatenations produced truncated terminal output; no claim that every truncated historical payload was read. Applicable ancestor and campaign AGENTS were read; binding verification used complete bytes.
+2. Before the corpus freeze, a native `head -c 2000` schema inspection displayed record1 and the start of record2 from original chunk0001. This violated the requested before-content ordering for those unrelated records. Neither was assigned here or in the active fifty. No credit/coverage is claimed for either. The fifty assigned records were first selected/displayed only after all twenty chunks and input freeze passed. Originals were never changed.
+3. The first EMS `rg` link pattern returned exit1 because it found no literal href matching the pattern. A bounded URL extraction from the retained200 HTML found the public PDF links; this was not a denied-route retry.
+4. fetch3 encoded query separators as%26, so its two search200 responses did not represent the intended searches. Both malformed requests/bodies/metadata remain. fetch4 uses correctly separated query parameters. No negative scientific inference from malformed results.
+5. No HTTP403/429 or challenges were returned in this lane; no blocked route was retried. The inherited MathDB429 hold remained untouched (zero MathDB requests).
+6. No low-cost full-scope route survived source qualification. No numerical/determinant/graph sweeps, Lean, manuscript, independent acceptance review, complete dependency audit, or current proof-registry clearance was performed. No code/CPU/memory cap was raised and no helper resource failure occurred.
+7. Cycle-embedding375643 was stopped at source qualification to avoid investment in the prohibited circulant-adjacent direction. The fetched long source was not read in full. No earlier C_n(1,5) certificate was investigated or resumed.

@@ -1,0 +1,13 @@
+import Mathlib.Data.Finset.Max
+import Mathlib.Tactic
+#check Finset.exists_min_image
+#check Finset.min'_mem
+#check Finset.min'_le
+#check Finset.le_min'
+#check Finset.card_le_card
+#check Finset.card_image_iff
+#check Finset.exists_min_image
+#check Function.Injective.ne
+#check Finset.mem_image
+#check Finset.univ_nonempty
+#check Finset.min'_mem

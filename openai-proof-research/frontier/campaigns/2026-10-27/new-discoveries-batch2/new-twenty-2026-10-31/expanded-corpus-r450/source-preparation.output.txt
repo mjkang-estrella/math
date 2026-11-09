@@ -1,0 +1,173 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+DENIAL KEYS ['arxiv.org/pdf/1803.03947', 'bims.iranjournals.ir/article_1148.html', 'cmup.pt/cmup/apdias/2006_14269.pdf', 'directory.nau.edu/person/jmn3', 'doi.org/10.1002/jgt.22812', 'doi.org/10.1007/s10107980012a', 'doi.org/10.1016/j.disc.2013.07.025', 'doi.org/10.1016/j.disc.2015.06.002', 'doi.org/10.1016/j.ffa.2019.01.003', 'doi.org/10.1016/j.jctb.2020.08.003', 'doi.org/10.1112/S0025579315000157', 'doi.org/10.1142/S021819671850008X', 'doi.org/10.1142/S0218216522500110', 'doi.org/10.1142/S0219498823502390', 'doi.org/10.1184/R1/12026448.V1', 'doi.org/10.1216/rmj.2025.55.997', 'dspace.mit.edu/bitstreams/2aa44fa8-de7c-436f-b7dc-9885a7d090e0/download', 'emis.dsd.sztaki.hu/journals/EJC/Surveys/ds6.pdf', 'eprint.iacr.org/2021/583.pdf', 'eprint.iacr.org/2021/896.pdf', 'epubs.siam.org/doi/pdf/10.1137/18M1186769', 'escholarship.org/content/qt5h16p4t1/qt5h16p4t1.pdf', 'github.com/LeanPool/lean-pool', 'github.com/TauCetiProject/TauCeti', 'github.com/google-deepmind/formal-conjectures', 'github.com/openai/math', 'hexagonmath.org/2610.00329v1', 'irep.ntu.ac.uk/id/eprint/53057/1/2378021_Smith.pdf', 'kilthub.cmu.edu/articles/Exploiting_Structure_In_Data_Sampling_and_Signal_Processing_on_Graphs/12026448/1', 'kopi.sztaki.hu/journals/EJC/Surveys/ds6.pdf', 'link.springer.com/article/10.1007/s00224-017-9825-2', 'link.springer.com/content/pdf/10.1007/s11083-012-9253-5.pdf', 'linkinghub.elsevier.com/retrieve/pii/S0012365X13003361', 'linkinghub.elsevier.com/retrieve/pii/S0095895620300782', 'linkinghub.elsevier.com/retrieve/pii/S1071579719300036', 'mathdb.com/p/324571/equal-distribution-pair-discrepancy-bound', 'mathdb.com/p/327053/the-first-two-layers-conjecture-for-spherical-designs-of-euc', 'mathdb.com/p/332073/optimality-conjecture-for-the-local-set-based-piecewise-cons', 'mathdb.com/p/350044/lower-bound-conjecture-for-spanning-trees-containing-a-fores', 'mathweb.ucsd.edu/~sspiro/Research/Problems2Solve.pdf', 'mediatum.ub.tum.de/doc/1210538/1210538.pdf', 'ntu-repository.worktribe.com', 'onlinelibrary.wiley.com/doi/10.1002/jgt.22812', 'onlinelibrary.wiley.com/doi/abs/10.1112/S0025579315000157', 'onlinelibrary.wiley.com/doi/pdf/10.1002/jcd.21739', 'onlinelibrary.wiley.com/doi/pdf/10.1002/jgt.22029', 'onlinelibrary.wiley.com/doi/pdf/10.1002/jgt.22401', 'paperzz.com/doc/8919938/balanced-equitable-mixed-doubles-round-robin', 'people.math.harvard.edu/~knill/graphgeometry/papers/reidemeister.pdf', 'perso.univ-rennes1.fr/michel.coste/polyens/SAG.pdf', 'projecteuclid.org/journals/rocky-mountain-journal-of-mathematics/volume-55/issue-4/NEURAL-CODES-AND-NEURAL-RING-ENDOMORPHISMS/10.1216/rmj.2025.55.997.full', 'repository.tudelft.nl/file/File_07951d55-4804-4c69-a83f-4560e70209fb', 'research-portal.uu.nl/files/146783022/1_s2.0_S0012365X22000358_main.pdf', 'ricerca.sns.it/bitstream/11384/128462/1/soposc_rev.pdf', 'ricerca.sns.it/rm-password-login', 'scispace.com/pdf/the-sierpinski-product-of-graphs-1r0hy4x9.pdf', 'teses.usp.br/teses/disponiveis/45/45131/tde-10072011-093023', 'tsapps.nist.gov/publication/get_pdf.cfm', 'www.aimsciences.org/data/article/export-pdf', 'www.dlib.si/details/URN:NBN:SI:DOC-05TQJS6H', 'www.dlib.si/stream/URN:NBN:SI:DOC-05TQJS6H/0b433388-ece2-4e0e-b676-beb051f82b80/PDF', 'www.ecs.umass.edu/mduarte/Publications.html', 'www.ecs.umass.edu/mduarte/publications.html', 'www.math.auckland.ac.nz/~sgal018/birthday.pdf', 'www.math.vanderbilt.edu/saffeb/texts/240.pdf', 'www.mscand.dk/article/download/18001/15760/41028', 'www.sciencedirect.com/science/article/abs/pii/S0024379523003014', 'www.sciencedirect.com/science/article/am/pii/S0097316519301177', 'www.sciencedirect.com/science/article/pii/0012365X94903883', 'www.sciencedirect.com/science/article/pii/S0022314X14001012', 'www.sciencedirect.com/science/article/pii/S0024379519302022', 'www.sciencedirect.com/science/article/pii/S0166218X17302202/pdfft', 'www.sciencedirect.com/science/article/pii/S0166218X26001903', 'www.tandfonline.com/doi/pdf/10.1080/00927872.2024.2347582', 'www.worldscientific.com/doi/10.1142/S0219498823502390']
+DENIAL ARTIFACTS ['0012365x94903883', '10.1002/jcd.21739', '10.1002/jgt.22029', '10.1002/jgt.22401', '10.1002/jgt.22812', '10.1007/s00224-017-9825-2', '10.1007/s10107980012a', '10.1007/s10444-015-9440-1', '10.1007/s11083-012-9253-5', '10.1016/0012-365x(94)90388-3', '10.1016/j.dam.2017.04.030', '10.1016/j.dam.2026.03.043', '10.1016/j.disc.2013.07.025', '10.1016/j.disc.2015.06.002', '10.1016/j.ffa.2019.01.003', '10.1016/j.jctb.2020.08.003', '10.1016/j.jnt.2014.02.015', '10.1016/j.laa.2019.04.038', '10.1080/00927872.2024.2347582', '10.1112/s0025579315000157', '10.1137/18m1186769', '10.1137/20m1348248', '10.1142/s021819671850008x', '10.1142/s0218216522500110', '10.1142/s0219498823502390', '10.1184/r1/12026448', '10.1184/r1/12026448.v1', '10.1216/rmj.2025.55.997', '10.26493/1855-3974.2199.97e', '1302.3212', '1307.8396', '1401.2891', '1701.06404', '1706.03298', '1708.06955', '1803.03947', '1805.04144', '1811.08322', '1812.08065', '1904.04180', '2002.04198', '2003.14335', '2006.06551', '2006.14269', '2103.05294', '2109.09249', '2378021_smith.pdf', '2610.00329', '2aa44fa8-de7c-436f-b7dc-9885a7d090e0', 'Marco Duarte current publication-page artifact', 'Ye1999 Approximating quadratic programming with bound and quadratic constraints, Mathematical Programming84(2)219-226, DOI10.1007/s10107980012a', 'a strengthening of erdos-gallai theorem and proof of woodall conjecture', 'berman-smith2013 balanced equitable mixed doubles round-robin tournaments', 'bims.iranjournals.ir/article_1148.html', 'chapoton mathematica scandinavica115(2014)20-61 final flows-on-rooted-trees work', 'current mathdb324571 record delivery containing challenge-platform script', 'distinguishing number and distinguishing index of natural and fractional powers of graphs final bims 43 7 2017', 'ds6.pdf', 'exploiting structure in data: sampling and signal processing on graphs', 'finding cactus roots in polynomial time', 'galbraith-holmes2012 a non-uniform birthday problem with applications to discrete logarithms', 'gallian dynamic survey of graph labeling', 'hitting times cover cost and the wiener index of a tree identified2017 final', 'ilinca-kahn order30(2013)427-435 identified final maximal-independent-set paper', 'on distance preserving and sequentially distance preserving graphs', 'on structural decompositions of finite frames final2016', 'p-partition generating function equivalence of naturally labeled posets, pii s0097316519301177', 'problems2solve.pdf', 'qmc designs: optimal order quasi monte carlo integration schemes on the sphere', 's0012365x13003361', 's0012365x22000358', 's0024379519302022', 's0095895620300782', 's0097316519301177', 's0166218x17302202', 's0166218x26001903', 's1071579719300036', 'soposc_rev.pdf']
+OWN FILES ['reservation.json', 'reservation.sha256', 'bootstrap.py', 'run.py', 'write_lane.py', 'verify_frozen.py', 'registry-roots.json', 'source_get_guard.py', 'model-policy-sol-only.json', 'charge_search.py', 'inherited-denials.json', 'historical-results-allowlist.json', 'search-budget.json', 'TASK.txt', 'frozen-inputs.json', 'ROOT-PREP.json', 'bootstrap-receipt.json', 'frozen-before.json', 'inspect-contract.receipt.json', 'inspect-contract.output.txt', 'contract-targeted.receipt.json', 'contract-targeted.output.txt', 'originals.json', 'literal20.receipt.json', 'literal20.output.txt', 'history-reconciliation.json', 'history-and-provenance.receipt.json', 'history-and-provenance.output.txt']

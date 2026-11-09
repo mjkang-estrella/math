@@ -1,0 +1,550 @@
+FILE write_lane.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE charge_search.py
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+FILE reservation.json
+{
+  "utc": "2026-11-09T00:10:13.241221+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    341397,
+    327334,
+    373954,
+    373956,
+    373958,
+    374392,
+    374536,
+    375405,
+    375425,
+    368091,
+    368400,
+    369471,
+    361481,
+    361563,
+    363172,
+    363555,
+    363818,
+    364364,
+    370165,
+    359050
+  ],
+  "rows": [
+    {
+      "mathdb_id": 341397,
+      "canonical_url": "https://mathdb.com/p/341397/conjecture-on-the-ninth-primary-pseudoperfect-number",
+      "title": "Conjecture on the ninth primary pseudoperfect number",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 34,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "arithmetic-progressions",
+        "number-theory",
+        "primary-pseudoperfect-numbers"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1812.06566",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 327334,
+      "canonical_url": "https://mathdb.com/p/327334/poisson-distribution-conjecture-for-six-packs-of-consecutive",
+      "title": "Poisson distribution conjecture for six-packs of consecutive pth powers",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 34,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "finite-fields",
+        "number-theory",
+        "probabilistic-number-theory"
+      ],
+      "first_stated_year": 2014,
+      "source_url": "https://arxiv.org/abs/1402.5148",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 373954,
+      "canonical_url": "https://mathdb.com/p/373954/projective-involution-symmetry-conjecture-for-sections",
+      "title": "Projective involution symmetry conjecture for sections",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "convex-geometry",
+        "projective-geometry",
+        "symmetry"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2603.29130",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 373956,
+      "canonical_url": "https://mathdb.com/p/373956/collinear-supporting-cone-flatness-characterization-of-ellip",
+      "title": "Collinear supporting-cone flatness characterization of ellipsoids",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "convex-geometry",
+        "ellipsoids",
+        "supporting-cones"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2603.29130",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 373958,
+      "canonical_url": "https://mathdb.com/p/373958/two-body-flat-shadow-characterization-of-concentric-homothet",
+      "title": "Two-body flat-shadow characterization of concentric homothetic ellipsoids",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "convex-geometry",
+        "ellipsoids",
+        "shadow-boundaries"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2603.29130",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 374392,
+      "canonical_url": "https://mathdb.com/p/374392/cusick-wills-lonely-runner-conjecture",
+      "title": "Cusick\u2013Wills Lonely Runner Conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "diophantine-approximation",
+        "lonely-runner-conjecture"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2604.23906",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 374536,
+      "canonical_url": "https://mathdb.com/p/374536/zaremba-s-conjecture-on-bounded-partial-quotients",
+      "title": "Zaremba's conjecture on bounded partial quotients",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "continued-fractions",
+        "diophantine-approximation",
+        "number-theory"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2605.02518",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 375405,
+      "canonical_url": "https://mathdb.com/p/375405/sun-s-conjecture-on-the-constants-s-1-n-and-s-2-n",
+      "title": "Sun's conjecture on the constants $s_1(n)$ and $s_2(n)$",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "congruences",
+        "zero-sum-theory"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2606.18234",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 375425,
+      "canonical_url": "https://mathdb.com/p/375425/the-weak-atiyah-conjecture-over-a-subfield-of-the-complex-nu",
+      "title": "The Weak Atiyah Conjecture over a subfield of the complex numbers",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "atiyah-conjecture",
+        "group-theory",
+        "l2-invariants"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2606.19606",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 368091,
+      "canonical_url": "https://mathdb.com/p/368091/the-skolem-conjecture-for-simple-rational-linear-recurrence",
+      "title": "The Skolem conjecture for simple rational linear recurrence binary sequences",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "linear-recurrences",
+        "number-theory"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2504.14413",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 368400,
+      "canonical_url": "https://mathdb.com/p/368400/the-star-surface-support-cone-characterization-of-ellipsoids",
+      "title": "The star-surface support-cone characterization of ellipsoids",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "convex-geometry",
+        "ellipsoids",
+        "support-cones"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2505.08169",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 369471,
+      "canonical_url": "https://mathdb.com/p/369471/prime-smoothness-and-prescribed-odd-prime-valuations",
+      "title": "Prime smoothness and prescribed odd-prime valuations",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "number-theory",
+        "prime-numbers",
+        "smooth-numbers"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2507.18499",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 361481,
+      "canonical_url": "https://mathdb.com/p/361481/the-discrete-shephard-conjecture-for-volume-polynomials-of-t",
+      "title": "The discrete Shephard conjecture for volume polynomials of two lattice polytopes",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "convex-geometry",
+        "lattice-polytopes",
+        "volume-polynomials"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2401.06111",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 361563,
+      "canonical_url": "https://mathdb.com/p/361563/the-isotropic-constant-conjecture",
+      "title": "The isotropic constant conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "convex-geometry",
+        "isotropic-constants",
+        "slicing-problem"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2401.10992",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 363172,
+      "canonical_url": "https://mathdb.com/p/363172/optimal-size-conjecture-for-realizing-symmetric-groups-by-si",
+      "title": "Optimal-size conjecture for realizing symmetric groups by singular ASMs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "alternating-sign-matrices",
+        "finite-groups",
+        "symmetric-groups"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2405.13611",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 363555,
+      "canonical_url": "https://mathdb.com/p/363555/non-ellipses-have-caustics-with-more-than-four-cusps",
+      "title": "Non-ellipses have caustics with more than four cusps",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "billiards",
+        "caustics",
+        "convex-geometry"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2406.11074",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 363818,
+      "canonical_url": "https://mathdb.com/p/363818/the-base-p-digit-sum-conjecture-for-planar-monomial-exponent",
+      "title": "The base-$p$ digit-sum conjecture for planar monomial exponents",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "finite-fields",
+        "number-theory",
+        "planar-functions"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2407.04570",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 364364,
+      "canonical_url": "https://mathdb.com/p/364364/zakharevich-s-perfectness-conjecture-for-scissors-automorphi",
+      "title": "Zakharevich's perfectness conjecture for scissors automorphism groups",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "algebraic-k-theory",
+        "group-theory",
+        "scissors-congruence"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2408.08081",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 370165,
+      "canonical_url": "https://mathdb.com/p/370165/the-shifted-lonely-runner-conjecture",
+      "title": "The shifted Lonely Runner Conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "diophantine-approximation",
+        "lonely-runner-conjecture"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2509.04281",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 359050,
+      "canonical_url": "https://mathdb.com/p/359050/existence-conjecture-for-smooth-higher-degree-plane-filling",
+      "title": "Existence conjecture for smooth higher-degree plane-filling curves",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "finite-fields",
+        "plane-curves",
+        "smoothness"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2307.03072",
+      "finite_cue_count": 2
+    }
+  ],
+  "input_hashes": {
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/coverage-delta.json": "014e0d4835ddb95509b956de619aa969568b4e2c8a95dea06518648aa26b2644",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/routing-queue.jsonl": "b0a830b96c47b2b64c46686c318ad16d21a1985d18224fc246b88583e8201a95",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/tags/screening-tags.jsonl": "cfee4e3848c396dc462eff7aa883009c995243d77120d369fa4118f4e96dd45e"
+  },
+  "excluded_ids_count": 20990,
+  "eligible_metadata_rows_after_filters": 63857,
+  "finite_discrete_pool": 151,
+  "selection": "reserve8 (reserve7 with classic colouring names also penalised; reserve6 with flagship-name conjectures ranked last; finite, kernel-checkable discrete conjectures): same eligibility and exclusions as earlier expanded-corpus reservations; first_stated_year >= 1900, solution_count 0, discrete keyword in MathDB tags or title; asymptotic/probabilistic/analytic language softly ranked later rather than excluded; ranked by finite-instance cue count, absence of hard_structural, few-parameter cue, review score, newer year, then ID.",
+  "limitation": "Unassigned in checked indexes, not globally unreviewed or novelty-cleared; no corpus-wide technical review claimed.",
+  "output_requirement": "Exactly20 ID-keyed dispositions with exact literal provenance, historical checks and actual source/proof review depth; sustain strongest exact mechanisms and finish full Lean endpoint if justified.",
+  "root_routing_note": "Metadata only, scientific clearance absent. Active formal peer directories filtered BEFORE reservation stat/open; target IDs/sourceURLs excluded using retained root metadata, no active-child file access."
+}
+

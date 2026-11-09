@@ -1,0 +1,45 @@
+# r220 working derivations — PREFREEZE
+
+Provenance: Codex / GPT-6 Astra / xhigh / default service tier, as authorized. Source344 and all operative proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb are stipulated true. No mathematical grades or counts are assigned.
+
+All ten canonical included sections and both operative figure sources have been read in full before extended deductions. The exact include order is 00 through 09. The pinned Lean navigation endpoint returned HTTP404.
+
+The geometry is closed connected smooth Riemannian, positive dimension; inj is global infimum. All cut times equal D only at exact equality. Intermediate types are normalized to D=pi/2,T=pi with m,k>0. The chart uses L_t={Jacobi fields vanishing at t}, velocity G_t(J,J)=|J'(t)|², and a fixed graph A(t). The actual model matrix is diag(-2cot(2t) I_k,-cot(t) I_m).
+
+The analytic paid construction is A' positivity, regular H block, positive velocity Schur complement S, endpoint Schur Q, exact Q(u,u+D)=0, separate endpoint derivative square completions, determinant-root concavity, scalar logarithmic cancellation, four folded weights with equal symmetric row and column sums, and the nonnegative r-1-log r remainder. The global integral is 2TV(V-V0). The exact quaternionic upper construction pays the incidence normal bundle, rank-complement Pontryagin calculation, signature coefficient, contact normalization, integral Gysin lattice, actual first negative bundle and primitive attachment, half-integral lift, complete intersection and its normalized determinant. These cannot be counted again downstream.
+
+Prefreeze directions to compare concretely: (i) quantitative density and chart recovery from the strict gap, with geometric applicability checked separately; (ii) global inj/diam near equality in an explicitly precompact class, with the classical compactness composition executed as the baseline. Neither is frozen or offered as a nominee.
+
+## Feasibility calculations before freezing
+
+The scalar defect alone bounds integral (sqrt(f)-sqrt(w))² by Delta and gives integral |f-w| <= sqrt(Delta(4W+2Delta)), where W=integral w over the square. This comes from Phi(r)>= (sqrt(r)-1)² and Cauchy--Schwarz. It says nothing by itself about curvature, a diffeomorphism, or a near-Blaschke manifold.
+
+The stronger integrated route keeps every discarded matrix remainder. For an interval I, let h=det(H')^(1/m), M_H=H'/h and D_H=log det(integral_I H')-m log integral_I h. For a folded interval use s_i=det(S_i)^(1/k), M_i=S_i/s_i and D_i analogously. Each D is logdet of a weighted mean of determinant-one matrices, and is nonnegative. The Hessian of -logdet yields a uniform quadratic variance bound when the matrix eigenvalues are bounded. Kazdan's logarithmic interval Jensen gap similarly bounds the variance of log(h/h0) and log(s_i/s0).
+
+For all four endpoint orders, retain E_ij=log det Q_ij - (log det integral S_i + log det integral S_j)/2 >=0. Summing the exact decompositions with the source's four weights retains D_H, both D_i, both scalar profiles and all E_ij with nonnegative coefficients. Thus there is no cancellation of the sought matrix errors against the scalar errors.
+
+There is a particularly useful exact identity on a single half-period. Set B_C=C'(H')^(-1), bar B_C=(integral C')(integral H')^(-1). Direct expansion gives
+
+Q(x,y)-integral_x^y S = integral_x^y (B_C-bar B_C) H' (B_C-bar B_C)^T.
+
+This measures the coupling block and avoids trying to control a moving endpoint square by a fixed endpoint average. It is a classical Schur covariance identity, not a claimed new matrix inequality.
+
+For rho small choose x in [rho/4,rho/2] and y in [b-rho/2,b-rho/4]. Every interval contains [rho,b-rho]. On the full period w(y-x)>=c rho^(m+k), and on the half period W_D(y-x)>=c rho^k. The reference probability density is bounded below by c rho on the enclosed interval. Hence the integrated scalar and matrix variances cost rho^(d+4) in the H block and rho^(k+4) in either S block. The same-half coupling covariance costs rho^(k+3), using Q<=C/rho and H'>=cI.
+
+Uniform smooth pole remainders make the normalized H and S velocities I+O(t²) at the exterior poles, and B_C=O(t²) there. Calibrating the unknown constant on an interval of length rho costs rho^(-1/2). Taking rho=Delta^(1/(d+9)) makes the resulting normalized L² errors O(rho²) simultaneously in all blocks. This is an actual rate, with constants depending on the specified a priori bounds, in a matrix-chart problem.
+
+The middle residue B is not assumed to be I. Its expansion and the normalized S estimate on [D-2rho,D-rho] give |B-I|<=C rho^(3/2). Let eta=rho^(3/4). Matching each branch to the same finite part R_D(D) costs |B-I|/eta+eta+rho² eta^(-3/2), which is O(rho^(3/4)). Thus two independent branch constants can be replaced by one common shear. Interpolation on fixed interior intervals gives C^j control from a C^q a priori bound, with exponent (3/(4(d+9)))(1-j/q).
+
+These are feasibility calculations, not an earlier freeze. The actual full scope is frozen only in STATEMENT.md below. The endpoint matching, weighted covariance accounting and constants still require the durable proof at that frozen scope.
+
+Nonvacuity: psi(t)=t+epsilon sin³(4t), |epsilon| small, obeys psi(t+D)=psi(t)+D, psi'(0)=psi'(D)=psi'(T)=1. Substituting psi into the two model cotangents gives admissible nonconstant positive charts with the exact cut-pair pattern. These are not asserted to be Jacobi charts of a globally Blaschke Riemannian metric. Hence the abstract domain is larger than the Riemannian equality case already classified by Source344.
+
+## Geometric near-equality baseline (not the frozen result)
+
+On a fixed closed smooth manifold, if smooth metrics converge in C² to a positive smooth metric, the global injectivity radius converges. For the lower limit, fix r<inj(g). The exponential map with basepoint included is nonsingular and injective on each closed radius-r fiber, uniformly over the compact set of basepoints and tangent vectors. C² metric convergence gives C¹ convergence of these exponential maps; local inverse estimates on this compact set and the separation of pairs outside a neighborhood of the diagonal exclude both singularity and collisions for the approximating metrics. For the upper limit, choose a g-geodesic segment of length less than inj(g)+epsilon that is already strictly nonminimizing (continue a cut segment by a small positive amount). Its length-minus-distance gap is positive. The approximating unit initial velocities and geodesics converge, and uniform metric convergence gives uniform distance convergence, so the strict gap persists. Thus inj(g_j)<=inj(g)+epsilon eventually. This argument uses smooth positive limits and strong convergence, not a weak-limit assertion about inj.
+
+If a class of diameter-one smooth metrics is sequentially precompact modulo diffeomorphisms in C-infinity with positive smooth limits, then Source344 and this continuity give a non-effective modulus of distance to the finite diameter-one CROSS model list in every fixed C^j quotient norm. Otherwise a sequence with inj tending to one and distance bounded below has, after choosing gauges, a smooth limit with inj=diam=1; a single source-supplied isometry of that limit to its model makes those same pulled-back metrics converge to the model, a contradiction. This explicitly uses the gauges and fixed diameter. Singular/collapsed limits are excluded by the compactness hypothesis, not classified by Source344. A concrete finite union of compact subsets of positive C-infinity metrics has this property without importing a bounded-geometry compactness theorem. Finite derivative bounds alone do not guarantee a smooth limit to which the stipulated smooth theorem applies. This construction proves no rate and is not nominated.
+
+Near equality inj/diam>=1-epsilon only puts all unit directional cut times in [inj,diam]. It does not assert phi_T=Id, fixed conjugate multiplicity, a great-sphere cut fibration, a smooth geodesic quotient, or Q(u,u+D)=0. The frozen theorem assumes the exact pattern; no implication from a small inj/diam defect to its hypotheses is claimed. The available exact source/classical composition and this compactness baseline are fully acknowledged.
+
+For the injectivity-radius lower-limit argument, choose r<r'<inj(g). Uniform metric convergence puts the varying g_j-radius-r tangent balls inside the fixed g-radius-r' compact tangent disk bundle. Uniform C¹ convergence of the vertical exponential maps excludes singular derivatives there. If collisions persisted, subsequences of their basepoints and initial vectors would converge to a collision for g; injectivity makes the limiting vectors coincide, and a uniform local inverse neighborhood excludes the remaining nearby collisions. For the upper limit it suffices to choose one directional cut time less than inj(g)+epsilon/2, not to assume the infimum is attained. Continue it to a strictly nonminimizing segment of length less than inj(g)+epsilon. This completes the stated continuity argument with the needed domain margin.

@@ -1,0 +1,28 @@
+# r81 incomplete research checkpoint
+
+No new qualifying result and no Lean endpoint. Campaign count remains **12/20 beyond 39 prior**. Nothing is accepted by this lane.
+
+The assignment is **not completed**. In particular, this pass does not meet the requested several-hour sustained investigation, the per-finite-object exhaustive-search requirement, or full primary-definition and later-literature review for all 40 IDs. `results.json` contains exactly 40 ID-keyed, depth-qualified dispositions. Pending work is explicitly identified rather than presented as exclusions or novelty clearances. No full formal proof packet was created; strict Lean rebuild, leanchecker, and declaration audits consequently were not run.
+
+All 40 literal statements have byte-preserved JSONL lines, including newline, in `raw/`. `extracted.json` binds them to original chunk path, one-based line, chunk SHA256, raw-line SHA256, and statement UTF8 SHA256. `history-matches.txt` preserves the bounded prior-campaign ID/title search. Assignment metadata and hash-substring hits are not treated as prior mathematical investigations. No global nonreview claim is made.
+
+The source archive has dated HTTP receipts with actual downloaded-byte hashes. HTML 404 for the Laver paper was followed by an ordinary successful PDF request; the guessed Seshadri main.tex path returned 404, followed by the catalogue-listed introduction.tex path. No denied 403/429 routes were retried. No browser tabs, publishing, uploads, external messages, child agents, git commands, or shared-file edits were used.
+
+The live `/commits/HEAD` checks found OpenAI/math unchanged at `4eaee87548250b2682affda7d05d947c05554bae` and Omega changed to `40e572189e8b2852a6e9241e149bb27dab559dde`. The Omega recursive root response was truncated and is **not** used as a complete screen. Complete nontruncated D5 (13,351 paths) and Problems (1,637 paths) scopes were fetched separately. Their exact-ID path screens found no reserved ID. This does not clear semantic matches, deleted proofs, or all registry proof bodies. The pinned OpenAI Seshadri theorem was actually read and matches 315939.
+
+Notable existing resolutions or resolution leads include 341063 (older refutation reported in source), 345836 (2008 refutation), 351805 (source/journal full length classification), 367516 (later stronger full-scope proof, key proof bodies read), 369029 (later lattice theorem statement read), 370077 and 370078 (explicitly resolved in raw/source records), 382229 (Alon author notes credit Taskinov1982), 315878 (direct-summand theorem bridge), 315939 (exact pinned registry theorem), 315992 (later full-scope Brouwer proof statement), and 373645 (current source proves the frequency law). Review depth differs; see each entry. Do not infer that all cited original proof bodies were read.
+
+`ROUTES.md` records the three sustained mathematical routes: the T-matrix weighted inertia problem, Baxter moment/log-convexity problem, and partition quadratic-form obstruction. None has a completed ordinary proof, novelty clearance, or formal endpoint.
+
+Exact capped diagnostic coverage:
+
+- Every nonempty graph-atlas graph through order 7, 1,252 graphs in total. Applicable subsets: 851 K4-free graphs for sparse halves; 1,015 planar graphs for 3-path covers; 995 connected graphs of order at least 2 for distance gaps; 605 nonbipartite graphs meeting Brandt's edge condition; 3 connected bridgeless cubic graphs for six-matchings coverage; 4 regular degree-4 graphs for cubic-subgraph existence. No new counterexample. Energy has three numerical counterexamples to its already-known-false conjecture.
+- T-matrix: all 59,038 vectors in {0,1,2}^10 with total at least 2, plus 40 seeded constrained optimizations; spectral computations are floating-point diagnostics.
+- Baxter: first 200 exact terms through 12 iterations, and first 60 terms through 22 iterations with GMP, every valid window; no negative value. An independently checked shifted Hankel determinant is negative, blocking the straightforward Stieltjes-moment proof route.
+- Partition form: all odd primes up to 2,000, 45 Q-primes, all possible nonnegative coordinates for the obstruction; no solution. Direct b21 parities through index 20,000 agree for p=29,59,79,103.
+- All permutations through length 8 for square-freeness; all insertions for every square-free input. Independently all permutations through length 8 for three-stack sorting. These finite counts do not settle asymptotic or arbitrarily-long existence assertions.
+- PGL_2(q) at q=3,5: exact clique searches give intersection density 1. Cyclic Cayley graphs: all inverse-closed connection sets without identity for orders 3 through 12, exact Hamilton subset DP; no counterexample. These subfamilies are already classical/source-tested.
+
+Search coverage is incomplete for other finite-object assignments, including final matrices, bipartite polynomials, bar visibility, drawings, weak trees, Ruzsa numbers, graph cohomology, and the incompletely recovered avoidance class. `outputs/search-coverage.json` records these absences explicitly. No tiny sweep is claimed to clear an entire conjecture.
+
+Reproduction uses scripts under `scripts/`, Python standard library plus networkx, numpy, scipy and gmpy2 from the lane's `.venv`. Run expensive scripts via `scripts/limited.py NAME COMMAND...`; receipts and full stdout/stderr are in `logs/`. The guard sets two-CPU affinity, CPU120s/wall140s, monitors process RSS against 6GiB, and sets AS12GiB. It is sampled process RSS, not an aggregate cgroup/transient-peak guarantee. No expensive child processes are spawned by the search scripts. No background jobs remain at handback.

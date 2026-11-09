@@ -1,0 +1,5 @@
+# 362719: routine parity resolution, excluded from discovery credit
+
+For each of the eight maps in Table I of arXiv:2404.07670 there is a constant c∈{0,1} such that wt(phi_i(a))≡a+c (mod 2) for every quaternary letter a. The eight constants in order are 0,1,1,0,0,1,1,0 (see early.json). Hence for a length-n word x, wt(phi_i(x))≡sum_j x_j+n c (mod 2). Sharing the quaternary VT residue b modulo 4 forces equal image-weight parity. If two equal-length binary words share a one-deletion subsequence, their weights differ by at most one: each original is the common subsequence with one bit inserted. An even integer of absolute value at most one is zero. Their weights are equal.
+
+This proves the full printed weight claim for all eight maps, all n and both residues, and actually uses no VT ascent residue a. The paper's own Table I and Definition 2 contain all substantive ingredients; the one-deletion weight fact is elementary. This is a generic Gray-map parity invariant, not a qualifying mathematical discovery. No Lean helper or count is proposed.

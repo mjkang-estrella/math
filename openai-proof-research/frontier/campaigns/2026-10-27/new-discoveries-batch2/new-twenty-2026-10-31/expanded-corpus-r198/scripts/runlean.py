@@ -1,0 +1,2 @@
+import pathlib,os,subprocess,sys
+D=pathlib.Path(__file__).resolve().parents[1];root=pathlib.Path('/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages');paths=[p/'.lake/build/lib/lean' for p in root.iterdir() if (p/'.lake/build/lib/lean').exists()];env={**os.environ,'LEAN_PATH':':'.join(map(str,[D/'lean']+paths))};sys.exit(subprocess.call(['/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/lean','-M3500','-j2','-DwarningAsError=true']+sys.argv[1:],env=env,cwd=D/'lean'))

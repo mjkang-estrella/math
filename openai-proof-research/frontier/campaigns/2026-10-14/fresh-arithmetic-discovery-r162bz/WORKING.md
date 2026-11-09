@@ -1,0 +1,3 @@
+R162BZ — PREFREEZE/no nominee. No theorem or diagnostic was selected or frozen. Authorized Codex / GPT-6 Astra / high / serviceTier default. Source159 stipulated true at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb. All writes confined to this root. No optional original-history traversal or nested agents. Parent alone adopts gates/counts.
+
+Complete source and linked companion reading precedes the retained derivation. The private notebook gives the paid quantitative same-majorant comparison, cap-free diagonal removal, and precise limits of attempted stronger transfer. No general impossibility or priority claim. Read FINAL.md and private/READING-LIMITS.md for disposition and extents.

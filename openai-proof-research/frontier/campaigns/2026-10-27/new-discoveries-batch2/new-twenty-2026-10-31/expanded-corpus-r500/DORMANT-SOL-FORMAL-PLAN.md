@@ -1,0 +1,1 @@
+No qualified full candidate; no formal dispatch or execution authorized in this lane. Missing full-scope ordinary endpoints, independent review and source/prior/significance gates are listed separately for every ID in results.json. This file is a dormant no-dispatch handoff, not a proposed accepted theorem or helper-credit request.

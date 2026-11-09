@@ -1,0 +1,7 @@
+# Root r729 reconciliation
+
+Reconciled Sol r726: fifty disjoint literal record reviews, no replacements, zero proposals or credit. Cumulative 9,133 literal record reviews. Reported classifications: 10 complete, 22 definition-dependent, 13 scope-ambiguous, 5 incomplete. Preserve restoration flags. Worker baseline-relative totals are superseded by root reconciliation including r724; literal review coverage is not full-statement or whole-body coverage.
+
+Four selected primary passages in three sources were reported. 319142 is refuted by the source's Masuda L=2 example. 319456 is proved by source Theorem 7 on intended n>=3; finite Walsh checks do not add discovery credit. For 319179, +1 is the unobstructed Pfaffian sign in the source definition; the -1 example does not refute that claim. 319178 still needs symmetry-preserving approximation. No hypothesis merits investment from this handback. Whole-body, successor, full-dependency and registry gates remain HOLD. Recovered oversized displays and omitted-context limits remain disclosed. Root checks integrity, corpus identity and reservations only; no mathematical replay.
+
+Counts 9 additional / 39 total / next 40 unchanged. Sol r728 continues; fresh Sol r730 receives queue-r730.json and reserved-ids-r730.json. Claude r628 remains rate-limit held with its exact reservation. Three disjoint reserved sets; no focused hypothesis or pending user input. Routing 10,000 metadata rows remains byte-identical and uncredited. All previous adjudications, access stops and privacy constraints persist.

@@ -1,0 +1,21 @@
+# Public bridges and scope corrections
+
+All entries earn zero. No exclusion below is based just on ease or size.
+
+359021: use the own-source Lemma 15 family. In its row/hub construction, label row vertices p(i,j), 1<=i,j<=N, join consecutive j in each row, and join hub h(j) to all p(i,j). No two distinct vertices have two common neighbors: two hubs have none; two row vertices in different rows share at most their same-position hub; same-row vertices can share only their intervening row vertex at distance two; a hub and row vertex can share at most the neighboring position matching that hub. Thus there is no K2,2. Contracting each row gives K_N,N, of treewidth N, so minor monotonicity gives the lower bound. For the source's twin-width upper bound, merge two row copies position by position, then repeat with each remaining row. Complete bag-to-hub adjacency remains black, and red inconsistencies are confined to the current row path and the sweep boundary, where at most three red neighbors meet. Finish by merging pendant hubs into the final row and contracting that red path (width at most two). This is the source's explicit contraction proof, not a new construction. Choosing the class for all N makes treewidth unbounded with one fixed forbidden biclique t=2 and twin-width at most three. Published ISAAC version acquired; its full proof was not independently audited page by page. The actual arXiv Lemma 15 proof was read. Figure caption was read as text; graphical image itself was not rendered.
+
+364915: source's weakly even theorem applies to every connected graph not regular bipartite, with the finite multigraph/no-loops convention. A regular nonbipartite connected graph satisfies that premise. Every leaf has maximum ambient degree because all ambient degrees agree. Thus the restriction to maximum-degree leaves is exactly the restriction to all leaves, proving the assigned even-tree assertion. The source construction is public; only this full reduction and source statement were checked, not a fresh proof of the source construction.
+
+361887: Keusch's no-K2-component hypothesis is equivalent to no isolated edge. The conclusion assigns one of 1,2,3 to each edge and gives the identical adjacent-vertex inequality. Isolated vertices cause no requirements. This is a direct identical-statement match, not a new corollary.
+
+362380: for any sufficiently large s in source Theorem 1.3, choose t=2s. This is an allowed pair under 3<=s<=t-2. Source Conjecture 1.2(ii) is exactly the prescribed partition, and Theorem 1.3 says that partition conjecture fails in this range. This refutes the universal endpoint publicly. The density optimization proof was not reconstructed here.
+
+359623: the own-source Theorem 2 says sufficiently large m; it does not prove the all-m record despite the record's explanatory sentence. A finite initial gap is still a mathematical gap, and no threshold or bounded search was executed. Literal nesting of disjoint subgraphs is not the source's meaning of copies embedding into successive shapes.
+
+364298: the literal universal 2-factor predicate on K2 is vacuous, so k=1 yields an endpoint correction. This supplies no significant new result. The source restricts attention to the nontrivial factor setting; degree three classification remains a separate unclosed problem. No duplicate credit for exploiting omitted hypotheses.
+
+358390: the Catlin sentence in the corpus references refutes Hajos, requiring internally vertex-disjoint subdivision paths. It does not refute Churchley's edge-disjoint odd paths. The own source's Theorem 3 proves odd immersions for the line-graph family of those examples. A statement correction here earns no result.
+
+366258: the Horton sentence concerns another conjecture, not the treewidth/connectivity endpoint. The source's k-tree argument is fully expanded in ORDINARY-ROUTES.md; it is already public. A bad coloring after completion disproves a shortcut, not the exact partition claim.
+
+364636: see the full square null-vector proof and integer determinant coefficients in ORDINARY-ROUTES.md. This closes the intended nontrivial identity in every dimension; no zero-coefficient loophole or mere algebraic-degree bound is used to claim a result.

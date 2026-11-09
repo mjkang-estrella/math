@@ -1,0 +1,1 @@
+Initial schema inspection assumed child bindings.json was a list and exited KeyError 0. Corrected to its flat_refs member after reading the frozen verifier; no coverage was written by the failed inspection.

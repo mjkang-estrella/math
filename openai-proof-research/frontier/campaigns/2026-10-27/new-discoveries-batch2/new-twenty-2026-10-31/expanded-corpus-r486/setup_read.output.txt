@@ -1,0 +1,883 @@
+FILE run.py 
+ import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+FILE write_lane.py 
+ import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE reservation.json 
+ {
+  "utc": "2026-11-08T14:06:59.037615+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    379965,
+    379987,
+    379994,
+    380003,
+    380116,
+    380120,
+    382572,
+    336611,
+    355158,
+    357168,
+    376825,
+    378986,
+    379035,
+    379053,
+    379055,
+    379199,
+    379317,
+    379340,
+    379373,
+    379375
+  ],
+  "rows": [
+    {
+      "mathdb_id": 379965,
+      "canonical_url": "https://mathdb.com/p/379965/strong-dantzig-conjecture-for-fundamental-deformations",
+      "title": "Strong Dantzig conjecture for fundamental deformations",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "polyhedral-combinatorics"
+      ],
+      "first_stated_year": 2006,
+      "source_url": "https://arxiv.org/abs/math/0608388",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379987,
+      "canonical_url": "https://mathdb.com/p/379987/the-totally-geodesic-image-conjecture-for-simplicial-embeddi",
+      "title": "The totally geodesic image conjecture for simplicial embeddings of pants graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "geometric-group-theory",
+        "pants-graphs",
+        "totally-geodesic-subgraphs"
+      ],
+      "first_stated_year": 2006,
+      "source_url": "https://arxiv.org/abs/math/0608752",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379994,
+      "canonical_url": "https://mathdb.com/p/379994/the-conjecture-on-symmetric-six-tuples-solving-problem-1",
+      "title": "The conjecture on symmetric six-tuples solving Problem 1",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorial-geometry",
+        "equivariant-obstruction-theory"
+      ],
+      "first_stated_year": 2006,
+      "source_url": "https://arxiv.org/abs/math/0609053",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 380003,
+      "canonical_url": "https://mathdb.com/p/380003/rational-generating-function-conjecture-for-the-class-of-per",
+      "title": "Rational generating function conjecture for the class of permutations corresponding to pin words",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "generating-functions",
+        "permutation-patterns"
+      ],
+      "first_stated_year": 2006,
+      "source_url": "https://arxiv.org/abs/math/0609211",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 380116,
+      "canonical_url": "https://mathdb.com/p/380116/positivity-conjecture-for-normalized-characters-in-twisted-b",
+      "title": "Positivity conjecture for normalized characters in twisted Boolean cumulants",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "character-theory",
+        "combinatorics",
+        "symmetric-groups"
+      ],
+      "first_stated_year": 2006,
+      "source_url": "https://arxiv.org/abs/math/0610540",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 380120,
+      "canonical_url": "https://mathdb.com/p/380120/simplicial-affine-oriented-matroid-bounded-complex-conjectur",
+      "title": "Simplicial affine oriented matroid bounded-complex conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "bounded-complexes",
+        "combinatorial-topology",
+        "oriented-matroids"
+      ],
+      "first_stated_year": 2006,
+      "source_url": "https://arxiv.org/abs/math/0610575",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 382572,
+      "canonical_url": "https://mathdb.com/p/382572/orthogonality-conjecture-for-the-four-split-decompositions",
+      "title": "Orthogonality conjecture for the four split decompositions",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "association-schemes",
+        "distance-regular-graphs",
+        "linear-algebra"
+      ],
+      "first_stated_year": 2006,
+      "source_url": "https://arxiv.org/abs/math/0608694",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 336611,
+      "canonical_url": "https://mathdb.com/p/336611/the-perfect-skolem-set-conjecture",
+      "title": "The perfect Skolem set conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "skolem-sequences"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/1707.03928",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 355158,
+      "canonical_url": "https://mathdb.com/p/355158/product-formula-for-successive-vertex-orderings-of-the-line",
+      "title": "Product formula for successive vertex orderings of the line graph of a bipartite 3-uniform hypergraph",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-enumeration",
+        "hypergraphs",
+        "product-formulas"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/2206.13592",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 357168,
+      "canonical_url": "https://mathdb.com/p/357168/the-kauffman-harary-conjecture-for-prime-determinant-alterna",
+      "title": "The Kauffman\u2013Harary conjecture for prime-determinant alternating knot diagrams",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "alternating-links",
+        "fox-colorings",
+        "knot-theory"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/2301.02645",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 376825,
+      "canonical_url": "https://mathdb.com/p/376825/global-maximality-of-the-circular-leaky-loop",
+      "title": "Global maximality of the circular leaky loop",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "isoperimetric-inequalities",
+        "leaky-quantum-graphs",
+        "spectral-geometry"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math-ph/0501066",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 378986,
+      "canonical_url": "https://mathdb.com/p/378986/analyticity-of-the-giant-component-fraction-away-from-the-cr",
+      "title": "Analyticity of the giant-component fraction away from the critical point",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "phase-transitions",
+        "random-graphs"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0504589",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379035,
+      "canonical_url": "https://mathdb.com/p/379035/the-homotopy-test-graph-conjecture-for-connected-bipartite-g",
+      "title": "The homotopy-test-graph conjecture for connected bipartite graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-coloring",
+        "hom-complexes"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0505563",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379053,
+      "canonical_url": "https://mathdb.com/p/379053/the-perfect-extremal-skolem-set-conjecture",
+      "title": "The perfect extremal Skolem set conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "skolem-sequences"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0506155",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379055,
+      "canonical_url": "https://mathdb.com/p/379055/the-distinct-displacement-pattern-conjecture-for-permutation",
+      "title": "The distinct displacement-pattern conjecture for permutations",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "permutations",
+        "skolem-sequences"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0506155",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379199,
+      "canonical_url": "https://mathdb.com/p/379199/the-spectrum-polygon-conjecture-for-standardized-laplacian-m",
+      "title": "The spectrum-polygon conjecture for standardized Laplacian matrices",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "laplacian-matrices",
+        "spectral-graph-theory"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0508176",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379317,
+      "canonical_url": "https://mathdb.com/p/379317/proper-subset-conjecture-for-classical-spatial-graphs-in-vir",
+      "title": "Proper-subset conjecture for classical spatial graphs in virtual spatial graph theory",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "spatial-graphs",
+        "virtual-knot-theory"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0510158",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379340,
+      "canonical_url": "https://mathdb.com/p/379340/ore-s-connected-graph-product-conjecture-for-edge-invariants",
+      "title": "Ore's connected-graph product conjecture for edge invariants",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-combinatorics",
+        "graph-theory"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0510387",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379373,
+      "canonical_url": "https://mathdb.com/p/379373/neil-white-s-symmetric-exchange-conjecture-for-matroid-toric",
+      "title": "Neil White's symmetric-exchange conjecture for matroid toric ideals",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorial-algebra",
+        "matroid-theory",
+        "toric-ideals"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0511223",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 379375,
+      "canonical_url": "https://mathdb.com/p/379375/the-matroid-toric-ideal-quadratic-grobner-basis-conjecture",
+      "title": "The matroid toric-ideal quadratic Gr\u00f6bner-basis conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "groebner-bases",
+        "matroid-theory",
+        "toric-ideals"
+      ],
+      "first_stated_year": 2005,
+      "source_url": "https://arxiv.org/abs/math/0511223",
+      "finite_cue_count": 0
+    }
+  ],
+  "input_hashes": {
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/coverage-delta.json": "014e0d4835ddb95509b956de619aa969568b4e2c8a95dea06518648aa26b2644",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/routing-queue.jsonl": "b0a830b96c47b2b64c46686c318ad16d21a1985d18224fc246b88583e8201a95",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/tags/screening-tags.jsonl": "cfee4e3848c396dc462eff7aa883009c995243d77120d369fa4118f4e96dd45e"
+  },
+  "excluded_ids_count": 20110,
+  "eligible_metadata_rows_after_filters": 64737,
+  "finite_discrete_pool": 259,
+  "selection": "reserve8 (reserve7 with classic colouring names also penalised; reserve6 with flagship-name conjectures ranked last; finite, kernel-checkable discrete conjectures): same eligibility and exclusions as earlier expanded-corpus reservations; first_stated_year >= 2000, solution_count 0, discrete keyword in MathDB tags or title; statements/titles with asymptotic, probabilistic or analytic cues excluded; ranked by finite-instance cue count, absence of hard_structural, few-parameter cue, review score, newer year, then ID.",
+  "limitation": "Unassigned in checked indexes, not globally unreviewed or novelty-cleared; no corpus-wide technical review claimed.",
+  "output_requirement": "Exactly20 ID-keyed dispositions with exact literal provenance, historical checks and actual source/proof review depth; sustain strongest exact mechanisms and finish full Lean endpoint if justified.",
+  "root_routing_note": "Metadata only, scientific clearance absent. Active formal peer directories filtered BEFORE reservation stat/open; target IDs/sourceURLs excluded using retained root metadata, no active-child file access."
+}
+
+FILE historical-results-allowlist.json 
+ {
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/adverse-manuscript-r1/results.json": "8057644cb91a953dc772c8e88c899a150055d4669be5ede607c4b4f2661e14f1",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-parent-integration-r1.json": "0158fb07c599c2e0c6ee298f632ba25b98c96758aaebdd0695ab2683d4338548",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-review-r1/review.json": "54c90910a3664cf389cc5540347e30f8f0b027a3beaf91453d37fc9dcce27807",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/asep-manuscript-r1/results.json": "1888fbc3dd4b3ff27cc244344ab80364659e69e120a21a8315630aa8b3d6cfa0",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bicores-armstrong-source-parent-integration-r1.json": "19f8aab7593ddcfbf243a446917a3bf88f17718cde2627b22901f6955fa653dc",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bicores-armstrong-source-review-r1/review.json": "13e7ac7921c7318837abd78e38d2737ef88012686bf33ea7cabb4c5d79698a26",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bidding-number-independent-qualification-r2/review.json": "eed05a0b71903aed69813c9e3921a28090d22d998e428edab62b152e52eb2a78",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bidding-number-primary-comparison-r3/review.json": "b0b5bb8868f6672f38fcba5531c214f1d5c54b3fc34adc33bc68ac2acfb1416c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/cassinian-manuscript-r1/results.json": "a009e0432928c25dc1adb85d1aa5b1599bee20143089dfa2083809fee5adaf2f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/central-zonotopal-source-review-r1/review.json": "fccba6dac4d9d8e3b59cfd5c817644e97dc1a19f37924b345878abdb99b4cf31",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/circulant-manuscript-r1/results.json": "6bd44212b267fe6e7fb961675aaf3e0cde512e0b70116219d1ef0178602cdfa3",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/clique-flat-chordal-source-parent-integration-r1.json": "e2073a8fc4d990d1a9443fb4aafd7ceb94ac3a0cd759defe54337a4d8268bf54",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/clutter-characterization-r1/results.json": "3eea27dd81d713ecdc4d0b166f84349d9bf501242788a1ba7b3ccdfddee22819",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/collapsing-manuscript-r1/results.json": "aab14ccb358abe3dd98061b1d9542354def969d8eca767c8ae61bef29f2b64e5",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/common-basis-final-replay-pi-r1/results.json": "bff71cc17824e553cb558c4889a6d2930aa0f3dce6227dd2f872147d98054b76",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/common-basis-manuscript-pi-r2/results.json": "6ce80209ec457f52e69603a292b07b57109c68fdb305795b6e26158fa0784b05",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/conference-mds-resume-r4/results.json": "771b25586f34947d5aab4f266119b485d750e9822dae81c7146579270cd05f01",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/contact-manuscript-r1/results.json": "d24665736c4317b2a7eda01dd8755ed4623469ce031cd3b3fccee0e2548dd195",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coupon-variance-source-ideation-r1/results.json": "1a151c94942765170b4fc3acf0c34e1516243b523b250ee298b02d6e1a46782d",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coxeter-manuscript-r1/results.json": "d489d18247bda28d232a12c45dc9f9357bea25b9081bd60fdd1b51a88254ced4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coxeter-normal-form-r3/results.json": "2cfdaaedbd116bc578060b3ebe69ee44e02f2785cc6ad6e043371ab46339f1cb",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coxeter-spectral-r2/results.json": "fc08bf2dd51bfd189f3d098391a2e2a50f2b5047999de7ff6e2aa1a186f9ef67",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/cyclic-exchange-source-qualification-r1/365645review.json": "b67036d465d95fdcd406c3aa653b80a4057f1ecb47439203f9d2413012de826e",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/derived-matroid-genericity-source-ideation-r1/keyed355016results.json": "a0d8094228b878369b3d67c9238b9665935d2c5c94668defa8d25fe1856e314f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/digits-manuscript-r1/results.json": "4f582cf3840b22b09989365b693ec241bae305c10fdfdc40c22420920cbf4af6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/discrete-fresh-r1/results.json": "f43ce73302ede96e8ee1de5950cdaa14f6aea77f3f9cbcad5ee558ec563b257c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/double-interval-piercing-source-review-r1/review.json": "8e81fbd1940ead8d712431c56b2f0536b203e01b0158ddebf126b21ec1a223fa",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/edgepattern-manuscript-r1/results.json": "62b6cb71298d33b32c12410f3b575a717e6047d6919ae7a8e4345a33035ef6e0",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r100/results.json": "06a0eff56fd4314483d8ecac2898dc86616a283968ddba12143df4b1848b4ada",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r101/results.json": "9290c40a695ff3a90117be565b0f674491838c732b9642cba613f4fdc760da0f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r102/results.json": "dd20c6e021563602274538ab4dd57edc1697c86e4c963738ed7e2ec85e3b68d8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r103/results.json": "6356edb2f11fd00c8f7ee79db131b99a5398848f60b5b53b3bad47a2164b15c6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r104/results.json": "17924a0d6299ed84a5cf774b64958850bdbd0371a003b08a72e7149833cdfa55",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r105/results.json": "2c785f76777e2defdd7f67d7ad8ee6da0ba9e13688bc67d333c3136e9b3760fa",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r106/results.json": "852ca713316d52f717fa11305b5d604c397f9273ba7bdcacb8be77bc32b4f1e8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r107/results.json": "9b530f999c05af9ed7b84a841e2070a813af2821148d4a937b72d5d50ff96d6b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r108/results.json": "63223ac3a188add255b232184053b950f8b7de82c56c89ff1670099074a04c70",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r109/results.json": "39080745091c72d9701db1f3323f23ee8a6c9f25726476e2567ebded6d605a23",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r110/results.json": "e4e34c456a8cc823306af44a0c34e714fa2817355229f0df4583a9ecb8adcd63",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r111/results.json": "f0c6427a5da06081d505aa1f3236e4b0331fe1f78b2f62cba2de5449ba1cb55b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r112/results.json": "f66c1f265e7b705cfaff2c37952daf2a1a92c8014aa39af0a1197a3388b8e6f4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r113/results.json": "d225b859dd059d4561fc2ffb7d83375ef1f2aebd9475aad526995a7e4171bf7c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r114/results.json": "e10de90cc11f95e60a5fa630f80fb248ae1319f6f841a6845a89a76e5eaaba54",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r115/results.json": "bcf6ff25106b65566694ac2ce4446868643178a13b0fcb4a5d45c130cfc40109",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r116/results.json": "83589d25423c22cd6374d66460489c70cfa9b8d9bef1d26a2183adb62a11d1dc",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r117/results.json": "ce01bff4ef2bd70214da0bbba0add55ab1530988b2a80e82fa45ef2f07f7c2fc",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r118/results.json": "ce5af2e1146de91c3896894b81eed29a5b1f5f0b33d2cc01adbc820af05645c9",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r252/results.json": "b52ceaeecb02bce5a53331deb0ba0fdf3b32827251cfb558ad66f09e29d93124",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r253/results.json": "b83eba63ef0bc1dfaa4b9ee7cdaa3334c3f1e88b5756b7e07661c1f6352071ca",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r254/results.json": "5c561b841b325f8070e6f66031980765b6011d90c3a612052d72e4672b7b65f2",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r255/results.json": "66cd0afb79f1fce358ccdf3e808fdd43e4425f043a406e7fb35004941b06f11f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r256/results.json": "fc798d98f6b8ce095d8f5fe562d2d88ab7d9c0ac5e12b4da6d39dfc89eefecb5",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r257/results.json": "4615b3eb0a48c15a5edd829c6bb2e1b0fe2d1b828f6b10ced1a9680486445695",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r258/results.json": "9084de9b3fb10f51135d52883b7419ce6346f925d0b5eb3677a8f867f23aa637",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r259/results.json": "90e21e4e82037d6b7b57ddc7d8d63e3ccb11df050ab4cd7f081182368f89ffe2",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r260/results.json": "f9ef1974510e65c2162fccf442e29dacd4c810fa34c44dfa59f25f064aeebd6f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r261/results.json": "ef79d48f1d7374745f3374fdafda6ea1211fef297f383988b4a1eee664a4fb0b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r262/results.json": "f78eaddab38a4f123317356b84f92e4e6e53adf405c3cf69f78de12efda3fdcd",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r263/results.json": "fea0e23f5c245e8d4ef2bed3102615b4fd6fbd013c71a3ed0421e6eb77e487b8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r264/results.json": "00c6976430c2bce995da1b8b00f6e361a77613851a88d63f34a5ba594d768ed4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r265/results.json": "a47d9ee44f56eacb9c4a9be40f99e284bfaeb684eac2a2f48eb58da97dbbe468",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r266/results.json": "fe38a80f4c56d99d98d46f84369dba18b81e4b0e4400ced7253da643cbae80e1",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r267/results.json": "58ed20a1b32acac6411a2facbbe0af0a595f71140c8f4b221e2bf75e3c4d2c05",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r268/results.json": "64aca07e2868b6ec8976dcc604728dbf08fcbcde343953df36b5e0c7ecef96e9",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r269/results.json": "112a6d3f1df67c5fcd0be030ca726e5b9e30ba708e4a792693bcdefeacbf0685",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r270/results.json": "8a520c17fb0df724231ad96317ec07efa3158651fe81f0c62917544c5b341b27",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r271/results.json": "eee91f6630a89720fb40d33c68dc19524ed086e54bdaddfbea4143654ea8fd46",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r272/results.json": "c3b65253108d423a8f5b27c800d17bef3b819f0c853394ec76a65045ba7ef78a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r273/results.json": "25d7847646ba758dfb4cbc3969a69e036ee2cfb490d0cb82a89bc00c10f8735d",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r274/results.json": "58bdcd43aa39dabe794c3bffc2729376fac812f1dbc605d6396d9dafbbb5e90b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r275/results.json": "42132ec1cc8d502a0e2efe9e9621ac8cd3f251a3192a48b6e312359dfb7e0e07",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r276/results.json": "2332b907946a994e77b610d271e1f1bb1f5caa2b4fb484a92649feb7a3a67725",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r277/results.json": "a5aa5a81df0baf649602132320ea48d9171cdb6cfab59729206f0305b1eafc98",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r278/results.json": "e868ed1399401d0cf8af70401a5ca38f40f758906b9479bb97f33ffe3fc2a256",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r279/results.json": "3d0c92492cecc7a0880bf637f2973e689838acc49d5a2f5bee02a09f97f37d6c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r280/results.json": "79d587c16cad91349eb572364339640ff0e19189ba11c5a0d785f64373f819a6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r281/results.json": "dbc3a249e73956c0c6f5c4552d4d20bb96341b32b86d8e14fe250c218bb9f824",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r282/results.json": "c82726947876d34d94e178b8f42cc56ad406cdb68e5c43d32bc1f0d08cc4a13c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r283/results.json": "a51f76715a92638f567ff9ab5c52b7fef5c1f2530df8cc6c5df61260d6c1abc4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r284/results.json": "1a259b3f42d44ccdb2e3bb3ce19e8f4b32541a344f4fc664ca04a31d2ad23e28",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r285/results.json": "9877fb6f748478ba5318c23b8e24df7a1ce01a8e52bb7bd31820e47e91941cd4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r286/results.json": "28a5d4e11fab4e4733d48767d3f73f29c0eed076b0036a92bd5d6823a56ba46e",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r287/results.json": "81fbc1fcec0026be90ee4c73128bfdbffa000aadb36807b1ffa4c6ebda3b96db",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r288/results.json": "dee03e046871db9358c09327afad507e756b2d28ec69b7d472ff9a54d11301bd",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r289/results.json": "0e8ddf5afc4ab2317f357c0849a40fbacac840872df742c261eb27cff40c15cf",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r290/results.json": "f148987560435b8af7a69f2a2c8e0c0553d0cbdeabf3632c1543ec6f97baf33a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r291/results.json": "333d4ae7d45dc10b406513a2febd4ab7ace17ba03b4aeed73efa34c5e90b66fd",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r292/results.json": "24731a376c176439006b56827eefaa6aae87f802af5e6760af2e7908182d595c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r293/results.json": "60c26b78df7696943de2ce8ec27a2bf2caa1cae5b5aa9e4e67d4c15032bb9c5a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r294/results.json": "c2e44c96871d38baadb4e3d0319817c01b3e7bd37fe635501a908185b1a8928b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r295/results.json": "51516cc4ae8ca5be096cc968a3541dc569e66b06f1625bc9a1e9f74403a1762a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r296/results.json": "5376689a01ba26e4d51f2740d73910f1c9a20009bc32c4755e21da037323b1f8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r297/results.json": "69bd970b41ac409a3dbcf87443918836f781d697c70acd24974201c2597ca887",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r298/results.json": "e9d6277cd4af511cb3f8ead22d3cd92448b3fb9b85bcb09e211b1bf4ea64d925",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r299/results.json": "4d3b5f66febe9ad4559ae71b7aa395673d00e27486ec3d131d95f1a8262912aa",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r300/results.json": "281673e26988b96bc8432fcfaf1b2f9c93d2ff8efae0c9127422095fd0967a40",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r301/results.json": "a47ce7773ea45be40b86985af486e878036ef5f23687e092930b884c3f411ad6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r302/results.json": "faa29992aa1592dacb47e2aa5203e290197682bdb07bc1b4cbd63125471cbf08",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r303/results.json": "2e6ae793982716ba503d2d5812d9d9fbb36345d4b24ed542c8f77b8a076c61ff",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r304/results.json": "935457b9d1a3bf4fbbe696ac741fa5ed0666491b59aa2f09f225dab36e3f2f37",
+  "/home/mj-kang/Docu
+FILE source_get_guard.py 
+ """One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+FILE charge_search.py 
+ """Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+TASK MIDDLE
+ fix is honest, do not repair its history.
+
+Resources fixed:affinity<=2,childCPU115/supervisor120,AS6GiB,sampledgroupRSS6GiB,deadline130/outer140,arena2. True exits/output/resource receipts, synchronous reaping; no background work. Standalone verifierCPU120 is explicit exception, do not nest underchild115. Sampling misses transients,native tool telemetry and separate writer peaks unavailable; no universal cgroup/processcompliance claim. ALLwrites OWNlane ONLY,no/tmp/parent/shared/author/dependencies/git/install/publish/children. Frozen helpers/reservation/sidecar/denials/policy/history/TASK immutable; own outputs/budget/ledger mutable.
+
+Deliver actual ACTUALBRIEF.md or SUMMARY, EXACT20 ID-keyed separate literal/source/ordinary/prior/novelty/significance/formal/independent/acceptance gates; sustained derivations, failed mechanisms and exact unpaid lemmas; original provenance, literal/source/read/figure/HTTP/access/search/resource inventories. Actual SHA256 manifest includes EVERY completed receiptJSON, helpers, plans, denied outcomes, hashchain, frozen-after and all handoff files, with explicit precisely named terminal noncircular self-exclusions. Run standalone frozen-after at end, no subsequent frozen writes. Preserve failures/reap all jobs, no acceptance or credit. No acknowledgment-only or future-tense source-acquisition-as-proof handback. Zero qualified survivors is honest.
+
+
+LATEST ROOT ROUTING authoritative, supersedes historical handbacks: 57/60 beyond39 prior,96total. ONLYGPT-6.1Solhigh/default ALLagents,nochildren/fallback. Root orchestrates/documentary metadata only. ACTIVE/PLANNED cyclic-unit-fixed-sums-source-review-sol-r1, expanded-corpus-r485 entirely protected evenmetadata/reservation/stat/read/hash/glob/list/poll.
+
+Accepted#56shoe324571fullcountable-lawuniformsup<=255/256<1 and#57CMDRR326555universalnonexistence fullyindependentlyreviewed/rootacceptedwithboundedprioraccess/historicalprocessqualifications;stale55/60zero-creditauthorhandbacks historical. Nohelper/finite-countable/constant/row-columnvariants recounted.
+Completed338620independentreview ordinaryPASS only explicitunrestrictedtwo-parameter whp reading n->infinity,k(n)=n-1,absolute c;notfixedk/growingcorank/balancedrank. Actualfulloriginal1803.02523v2 standingk<=n/no printedbalancedbound,extrazerosallowed,maximalminors only,butwhp/uniformitynotformallydefined. ActualGreaves-Syatriadi1808.06306v2/IEEE2019counterclaimConj1.5not1.9 completeboundednonmatch. SCIENTIFICPARK finalSIAM10.1137/20M1323345/source1803.02523HTTP403 ALLnewalternatebodydeliveryunavailable,onlyexplicitcopiedpredenialv2notfinalequivalence;informalasymptotics/significance/rankregime/currentregistryunqualified. Properrectangularfamily notk=nidentityendpoint;standardtools/shortness alone notroutineexclusion, no complete applicablepriorbridge authenticated. No newretrieval/formallane/credit.
+Completed351988independentordinaryPASS source-definedn>=2/explicitabsorbing-singletonconvention,actual2014extremalityprimary boundednonmatch/57+39familyboundednonoverlap. SCIENTIFICPARK finalDAM3892026DOI10.1016/j.dam.2026.03.043/source2109.09249 andapplicableSidorenko199410.1016/0012-365X(94)90388-3 denied403 ALLnewdeliveryblocked,noretrieval/formal/credit. Hammingfinal10.1007/s40863-022-00339-3/source1907.09644automaticcookieguardreject ALLnewdeliveryblocked;no manualretry/bypassestablished. Neighborhood354612final10.1002/jgt.23014/source2205.06464denied403 ALLnewdeliveryblocked,propercoloroctahedron correction0;distinctBickle353974original2203.10239/2023finalpublicrefutation0. LiNingJCTB2021redirect-only/CMUthesis202/allolddenialsbinding.
+Four exactpublicregistryROOTmetadataartifacts504unavailable:NOroot/README/tree/API/branch/versionalternate refresh/retry/reconstruction;notblanketban everydistinctproofpublication/repo,cannotindirectlyrestoredeniedmetadata. Cacheddatedheads navigationonly,nocurrentproof/chronology/noveltyclearance/worldwideabsence. IndependentlyidentifiedconcretematchingcounterclaimneedsactualbodyorpreciseHOLD. SpecificapplicableunreadbodyHOLD/genericworldwideunknownnotautomaticveto.
+Recentcompletedall0:r450340211actualsourceownstrongerDiracT4.4;337615specificKardosNarboni2019proofbodyHOLD;340492listarborability/333550two-rowbuttons/339730339731labelinggaps.336282Johnson-Steinerconverse isDISTINCT notbuttons,rootdraftmisattributioncorrectedbeforedispatchandoriginalgatesunchanged. r451350677/350678/350679actualZhu2611.01172 fixesparametersnotjointarbitraryminors/Hankel,350679(c)public;347351higher-exterioruniformrank/isotropymergegap,330954actualrecoloring-localizationdefinitioncorrection0. r452323005reversalformula/343308nullity-degree-domaincorrections0,331056concreteKeuschproofbodyunread;authorautomaticredirectFAIL/networkSTOPretained. r449352639/344760/376136actualpublic/sourceown0,338284singlevertexfactorboundary0/nontrivialproductgap,346690ONEcoloringALLs,k fixedhgap. Rootintakesdocumentary/provenance/routingonlynotmathproofvalidation.
+BOOKKEEPING: IMMUTABLEcharge_search.py,THIRTEENfrozenbindings. BeforeEACHnativeSEARCH persist plan top-levelqueriesEXACTstrings; invokeABSOLUTEhelperownplanpathUNDERrun.py. AuthenticateLIVEoldcounter+chargeledger BEFOREmutation,neverdirectbudget/chargeledgerediting. AfterchargeexactnativecallONCE,FULLactualresponseIMMEDIATELYsavedbeforeotherwork. Wholelane3calls9queries,failedattemptsstaycharged,norefund/reset/backfill. GETsolefixedguard. BEFOREsignificantinvestment exactIDkeys/scalarIDsANDexactsourceURLstructuralhistorymatches/readactualrelevantdispositions,noneighbortransfer;sourceown/strongertheoremproofs beforeclaimnew. Standalonefirsttwocommandsno dot/prosepunctuation;inertownverifierargumenttrue0/all13checkedundercapsrecordedinvocationdeviationnotautomaticexternalpolicybreach/abandonment. Genuineprotected/frozen/access/cap/network/budgetviolationsretainSTOP/disclosure. Allr39576acquisitionspermanentquarantine;latestuserONLYGPT-6.1Solhigh/default ALLagents,nochildren/fallback.
+
+LATEST: Active328748independent perfectmatchingliteral/source-range/specificpublicsmall-nconstruction/significance review ONLY,noformal. Author107>105central-switch n54,t50family self-check;actualsourceafterConj1.3discusseslargen andMeagherprimaryslidesreportpublicsmall-n phenomenonwithoutproof. Paystrict-vsweakintersectionandrangebeforeclaimnew;no inferredrangecorrectionorpriorbridgewithoutactualsource. Newreviewtarget1409.2057 notdenied;no duplicateinvestment/parameter/helpercredit. Recentr453338330sourceownrationalB=A/mrefutation and350142sourceownKempe/randompairrefutationpublic0;350349orbit3/4convergence gap/public>=5,348329rankedLatin deletion-vsL1removalgap,345905specificallalphabetweakshuffleprimaryproofHOLD. Latevisibledenial-overlaprecoveryafterretrieval retainedqualification;fullcapped-childoutputhadbeenread/saved,nouniversalretroactivePASS,noinheriteddeniedartifactrequested. r454342490balanced-subsequenceallwordinjectivity and329404exactcliquefactorgaps;340276sourceowncounterexample/335343strongerpublicrestricted-sumtheorem0,329896sourcecapacity-vsmultichoosabilitydefinitioncorrection0.15GETsuccess/acrosstwocompletedlanes,nonewdenial;2search6queries and3search9querieslivecontinuityauthenticated. Allrootintakesdocumentaryonly,notindependentmathvalidation.
+
+LATESTr455all0:336597ordinary all-parameterinverse-kernel algebraicproof author-only,selfchecknotindependentreview. SpecificallyidentifiedearlierexactByrne-Fulcher Invariants of Tutte partitions and a q-analogue,JCTB172May2025,DOI10.1016/j.jctb.2024.12.002/PIIS0095895624000996 actualpublisherbody403: ENTIREpriorworkALLnewalternatehost/query/version/arxiv/author/DOI/API/cache/mirror/bodydeliveriesUNAVAILABLE. No authenticatedprior-exclusionfromsnippets/no noveltyclearance. ParkatSPECIFICpriorbodyHOLD,nofreshretrieval/formallane. Different2017originalBollen-Crapo-Jurrius1707.03459 notthatdeniedwork,but target336597/1707.03459excludedfromnewinvestment.339903balancedshapeFK/330224sourcetrimmedB-lattice/350593publicloopless-colooplessmatroidrefutationzero.355749posetfiberinjection/quantitativecoupling and347515allcubicmatchingordersgap;14originalbodiesunread.8GETattempts7success1HTTP403,noalternate delivery;2search6querieslivecontinuityverified. Rootmetadata/ordinaryproposalnotnewscientificacceptance.
+
+LATESTmatching328748reviewCOMPLETED/PARK,notactive. Independentordinary107>105strict>50 PASS/fullv1printedunqualifiedscopeandstrictglyphVISUALLYpaid;originalsubsequentlarge-ncontext separate. Meagherslidespublicsmall-nclaim lacksconstruction/strictthreshold/cardinalitybridge:weak51largerthan15notnecessarilylargerthan105. Exact2017LindzeyEJC65pp130-142DOI10.1016/j.ejc.2017.05.005/PIIS019566981730063X/original1409.2057returned2668byteRedirectingHTMLonly: ENTIREsameworkALLnewalternatehost/query/version/arxiv/author/cache/mirror/API/DOI/body/metadataDELIVERIESUNAVAILABLE. Guardtransport200historyunchanged,manualclassificationseparate. Explicitcopiedv1onlynotfinalequivalence. Distinct1811.06160unread/notautomaticallydenied,butcannotindirectlyrestore2017work. Scientificrange/known-small-nadaptation/finalHOLD,nofreshretrieval/formallane/credit. No intendedlarge-nbreakthrough,unsupportedroutineexclusion orworldwidenoveltyclaim. Onefamilyonly,n54/alln/threshold/helper/formalizationnotrecounted.
+
+LATEST completed r456 and r457: neither has a qualified full-scope survivor. r456: 367030 lacks the modulo-four pairing of cycle-reversal orbits, despite actual final-source conjecture context; 369042 lacks arbitrary even-order redundant-generating-set classification; 371370 literal weak class refutation violates the source induced-subgraph definition and earns zero. r457: 364237 ordinary graph-metric classification has a COMPLETE source-Menger-to-target bridge, zero routine adaptation. Gaussian 358003 primitive-rank/unimodality proof, triangle-free POSH 357571 ordering lift, and refined greedy Tamari 357920 general-m residue-preserving recursion remain unpaid. Actual 2026 Biane-Fang paper covers m=1 only; total
+OWN FILES ['reservation.json', 'reservation.sha256', 'bootstrap.py', 'run.py', 'write_lane.py', 'verify_frozen.py', 'registry-roots.json', 'source_get_guard.py', 'model-policy-sol-only.json', 'charge_search.py', 'inherited-denials.json', 'historical-results-allowlist.json', 'search-budget.json', 'TASK.txt', 'frozen-inputs.json', 'ROOT-PREP.json', 'bootstrap-receipt.json', 'frozen-before.json']

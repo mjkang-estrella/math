@@ -1,0 +1,15 @@
+# r720 breadth handback
+
+Exactly 50 assigned literal records screened; no replacements. Baseline remains 8,883 reported literal reviews; this lane supplies 50 additional disjoint literal reviews for root reconciliation, not an edited shared total. Routing 10,000 rows is metadata only. No credit or manuscript changes; counts 9 additional / 39 total / next 40 unchanged.
+
+Classification: {'incomplete': 10, 'definition-dependent': 16, 'scope-ambiguous': 9, 'complete': 15}. Each disposition retains the exact UTF-8 statement, quantifiers, chunk/line and canonical record hash. Complete means self-contained enough for literal technical screening, not mathematical truth or novelty clearance.
+
+Zero hypothesis briefs. Record 379396 is publicly proved: Guo–Jouhet–Zeng arXiv:math/0511635v4 Conjecture 5.1 is exactly Cao–Pan arXiv:0903.3767v1 Conjecture 1.2 equations (1.7)–(1.8), proved in Section 3 by cyclotomic factors and specialization q=1. Selected full relevant proof passage read; cited q-divisibility dependencies and journal body not audited. Initial v1 source did not contain this later conjecture; v4 binding resolves the version mismatch.
+
+378414: actual flag-orbit and normalized intersection definitions plus Conjecture4.5 read. Counting periods alone misses the intersection-vector clauses; no full-scope route established. Deza–Pankov successor selected theorem/proof starts concern thin simplicial complexes and do not by method similarity establish product-polytopal subsumption. 380408: primary Conjecture1 matches; Sivaraman2012 Chapter5 reports computation through n<=12, not an all-n construction. No further investment or formalization justified.
+
+All 20 original corpus chunks and eight inventory frozen inputs checked IN PLACE, inventory manifest bound to intake, intake exact payload and 49 direct original/copy pairs independently checked without executing upstream verifiers. All three reservations (150 IDs) disjoint from each other, 8,883 covered IDs and protected IDs. r718 active and r628 HELD reservations preserved. Flat references only; no corpus copies or recursive history expansion.
+
+Seven PDF downloads succeeded with generic headers. PDF bytes bound before extraction, derivatives bound before content search/read. Three records have selected primary and successor body readings; no whole-body or full-dependency audits. Current proof registry unavailable: HOLD. No direct MathDB requests, prohibited APIs/routes, browser, uploads or contacts. Inherited r578/r642/r684, OEIS403, OUP403 and other parked routes remain stopped; failures.json retains limitations. 338366 remains uncredited with text/figure reconstruction and unread-journal limitations.
+
+Run verifier under the fixed helper guard with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 and python3 -B. Manifest excludes only itself and final-verification-receipt.json; final receipt records manifest SHA256 and byte size and bounded negative rejection tests. Integrity PASS is not a mathematics or novelty PASS.

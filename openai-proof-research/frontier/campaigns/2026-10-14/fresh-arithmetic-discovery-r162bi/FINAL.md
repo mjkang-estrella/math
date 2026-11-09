@@ -1,0 +1,13 @@
+# Arithmetic discovery r162bi — PREFREEZE / no nominee
+
+No additional theorem or diagnostic was selected or frozen. No correctness/contribution grade, acceptance or campaign-count change is assigned. Parent alone adopts those decisions;19/20 and latestR041 remain unchanged.
+
+The complete stipulated Source141 proof already pays the existential and existential–universal counting-hierarchy results, including integer arithmetic-circuit inputs and its stronger actual Boolean, sign, controlled-family and sampling interfaces. Full canonical reading preceded the mathematical work.
+
+The retained author comparison constructs a short exact description of ONE good existential tuple by singleton-validating the source's coordinate labels and performing finite-string self-reduction. Every later circuit sign and numerical query refers to that same point. A complete separating-linear-form/trace derivation gives one common primitive coordinate and rational coordinate maps while retaining nonmonic inputs, added zero roots and arbitrary local multiplicities. Effective degree/height, query encoding, fixed oracle nesting, exact zero and output-length costs are charged. Unary-precision relative floats use binary exponents and are not claimed to satisfy exact input equalities.
+
+These are source/classical/actual-primary compositions, not an identified additional nonroutine operation. The stronger possibility of compiling the actual controlled samples and selectors into uniformly short ordinary arithmetic circuits remains unproved and UNFROZEN. Implicit coefficient access and semantic separation bounds do not supply that constructor. No necessity, impossibility, optimality, exhaustive-history or worldwide-priority claim is made, and no old target is reopened.
+
+All11 canonical texts119778 bytes were read completely;12 blobs/16 entries authenticated, with the compiled PDF authentication-only. Five primary PDFs were downloaded and88 distinct pages read across them; no complete-paper/transitive-ancestry claim. The BPR book was inaccessible. Exact versions, extents, late reads, clipping recoveries, extraction warnings and access limits are recorded privately. The five exact completed exceptions were read; ZERO optional history traversal was used.
+
+The mathematical record is private/DERIVATIONS.md; source/primary scope comparison is private/SOURCE-INTERFACES.md; provenance and limits are private/READING-LIMITS.md. A single finite multiplicity example is only a sanity check; no full source algorithm or downstream formal/manuscript/release work was executed. Detached anchors and artifact-verification instructions are in REPORT.md. Artifact checks are not mathematical gates.

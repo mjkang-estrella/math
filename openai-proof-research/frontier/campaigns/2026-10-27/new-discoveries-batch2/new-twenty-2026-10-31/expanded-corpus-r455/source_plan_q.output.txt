@@ -1,0 +1,175 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+RELEVANT expanded-corpus-r394/keyedresults.json {"mathdb_id": 355750, "title": "Coloring probability inequality for minimal elements of posets", "literal_statement": "Let $P$ be a connected $n$-element poset with minimal elements $m_1,\\ldots,m_s$. Define a coloring $c:P\\to\\mathcal{P}([s])$ by putting $i\\in c(x)$ if $x\\geq_P m_i$, where $[s]=\\{1,\\ldots,s\\}$. Let $L_{n-2}$ denote the labeling obtained after $n-2$ applications of promotion, and let $\\mathbb{P}$ denote the relevant probability distribution on labelings.\n\n**Coloring probability conjecture.**\n\n$$\n\\mathbb{P}\\left(c(L_{n-2}^{-1}(1))=\\{s\\}\\,\\middle|\\,L(m_{s-1})=n\\right)\\geq\\mathbb{P}\\left(c(L_{n-2}^{-1}(1))=\\{s\\}\\,\\middle|\\,L(m_s)=n\\right).\n$$\n\nThe paper states that this inequality would imply the general bound for tangled labelings by showing that the number of tangled labelings increases when $m_{s-1}\\lessdot m_s$; it remains open.", "original_provenance": "raw-provenance.json#records.355750", "source_url": "https://arxiv.org/abs/2208.08665", "disposition": "HOLD_PROMOTION", "assessment": "Need source uniform-labeling probability space, s>=2 conditioning and a promotion-compatible injection preserving the final colour event. Swapping the labels on two minima need not preserve promotion trajectories. Malformed s=1 domain is correction only.", "read_depth": "Full literal statement only; original primary not acquired/read", "credit": 0, "ordinary_survivor": false, "gates": {"fidelity": "original record preserved; source semantics/depth as stated", "mathematics": "public exclusion or unresolved exact lemma as above; no new complete full-scope solution", "prior": "exact allowlist after protected-name filter; current roots metadata only; concrete counterparts as above", "novelty": "NOT ESTABLISHED; public/open/empty arrays do not clear novelty", "significance": "NO new qualified significant result; no exclusion for smallness or standard tools alone", "formal": "NOT RUN; no Lean endpoint/replay/axioms audit", "independent_review": "NOT RUN for this lane; no children", "acceptance": "NONE; root only;52/60 beyond39 unchanged"}, "dormant_pi_plan": null}
+RELEVANT expanded-corpus-r397/keyedresults.json {"mathdb_id": 350594, "credit": 0, "candidate_ordinary_only": false, "disposition": "PARK: source-definition/proof gap", "finding_or_exact_gap": "Composition-indexed gamma-bar definition and equality classification unread; need both inequality and iff all2 composition equality, including corrected a_ notation. No reduction from a general matroid slogan is established.", "literal_statement": "Let $\\bar\\gamma(\\underline{a};x,y)$ be the composition-indexed quantity used in the source. Let $(a_0,a_,\\ldots,a_r)$ be a composition with $a_0=0$ and $a_r\\geq 2$. **Merino–Welsh conjecture for composition enumerators.**\n\n$$\n\\bar\\gamma(\\underline{a};2,0)+\\bar\\gamma(\\underline{a};0,2)\\geq 2\\bar\\gamma(\\underline{a};1,1),\n$$\n\nwith equality if and only if $\\underline{a}=(0,2,2,\\ldots,2)$. The source proposes this as a stronger conjecture intended to imply the matroidal Merino–Welsh conjecture; the notation and status are not otherwise established in the supplied excerpt.", "full_original_object": {"mathdb_id": 350594, "uuid": "93c2c215-1a53-4b79-8d95-35fb33e15c04", "canonical_url": "https://mathdb.com/p/350594/the-merino-welsh-inequality-for-composition-enumerators", "title": "The Merino–Welsh inequality for composition enumerators", "statement": "Let $\\bar\\gamma(\\underline{a};x,y)$ be the composition-indexed quantity used in the source. Let $(a_0,a_,\\ldots,a_r)$ be a composition with $a_0=0$ and $a_r\\geq 2$. **Merino–Welsh conjecture for composition enumerators.**\n\n$$\n\\bar\\gamma(\\underline{a};2,0)+\\bar\\gamma(\\underline{a};0,2)\\geq 2\\bar\\gamma(\\underline{a};1,1),\n$$\n\nwith equality if and only if $\\underline{a}=(0,2,2,\\ldots,2)$. The source proposes this as a stronger conjecture intended to imply the matroidal Merino–Welsh conjecture; the notation and status are not otherwise established in the supplied excerpt.", "statement_completeness": "full", "post_type": "conjecture", "status": "open", "tags": ["matroid-theory", "tutte-polynomial"], "importance": "corpus", "source_name": "Joseph P. S. Kung, “Inconsequential results on the Merino-Welsh conjecture for Tutte polynomials”, arXiv:2105.01825 (2021).", "source_url": "https://arxiv.org/abs/2105.01825", "first_stated_year": 2021, "first_stated_year_source_url": "https://arxiv.org/abs/2105.01825", "documented_by_year": null, "documented_by_source_url": null, "references": "**2 papers in this index state this conjecture** (2021). The statement above is taken from the most recent of them; the others are [arXiv:2104.04018](https://arxiv.org/abs/2104.04018).\n\nSource: https://arxiv.org/abs/2105.01825\n\nStatus: no resolution is reported in the source (as of May 2021).", "solutions": [], "solution_count": 0, "has_formal_statement": null, "has_bounty": null, "created_at": "2026-08-11T05:40:49.657370Z", "edited_at": null, "lastmod": "2026-09-27T05:26:49Z", "in_sitemap": true, "historical": false, "retrieval_source": "probxiv_2026-09-29"}, "provenance": {"chunk_path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/mathdb-normalized-chunk-0007.jsonl", "chunk_sha256": "b1ce46dd414d993bb20fc38fb02700271128c7142253bd9400840eaa93d0974d", "line_1based": 4929, "raw_sha256": "77f24656ea3c7d01fe1bf88f3e5559572b6a91a62cb636fddc3e085ff5dfd5b3", "decoded_statement_sha256": "b6b428f99d23b1784b96fa5a0eefbe524891714969b36306c2a6fc4b1498cd55"}, "raw_binding": "originals-keyed.json:350594", "source_files": [], "read_depth": "all original fields and literal statement read; primary mathematical body unread", "gates": {"fidelity": "LITERAL READ; primary definitions unverified", "mathematics": "UNRESOLVED", "prior": "No assigned-ID match in filtered exact completed JSON history; no literature clearance", "novelty": "NOT ESTABLISHED", "significance": "NOT QUALIFIED", "formal": "NOT RUN; no Lean/Pi", "independent_review": "NOT RUN", "acceptance": "NOT ACCEPTED"}}
+RELEVANT expanded-corpus-r49/results.json {"mathdb_id": 355748, "title": "Maximum degree of noninvertibility for promotion on posets", "literal_statement": "Let $P$ be an $n$-element poset, and let $\\partial$ denote promotion on labelings of $P$. Write $\\deg(\\partial)$ for its degree of noninvertibility.\n\n**Maximum noninvertibility conjecture.** For any poset $P$,\n\n$$\n\\deg(\\partial)\\leq\\frac{(n+2)(n+1)}{6}.\n$$\n\nIn other words, the degree of noninvertibility of promotion should be largest when $P$ is a chain. The stated value is attained for an $n$-element chain, while the general inequality remains open.", "provenance": {"chunk": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/mathdb-normalized-chunk-0009.jsonl", "line_1based": 42, "chunk_sha256": "e2f7f18e7d350aafecbf4e1e1d61fcd0ee1c2e6fde38a646bae50b0427bd4dfd", "raw_sha256": "6264ac06365b65529e4c6c1abbc787ec9fc42749c343a134ad4cf47ced7cb2ef", "statement_sha256": "3ac54a0c44f0c9d3b74b2859cb4913356f6cbbb0dc6c993514d9bcc4184aa2ea", "newline_preserved": true}, "raw_file": "raw/355748.jsonl", "source_url": "https://arxiv.org/abs/2208.08665", "outcome": "PARKED_no_tractable_exact_mechanism_in_pass", "discovery_credit": 0, "self_accepted": false, "new_review_depth": "primary_definition_theorem_conjecture_read", "primary_receipts": [{"utc": "2026-11-01T13:30:01.839698+00:00", "url": "https://arxiv.org/e-print/2208.08665", "status": 200, "sha256": "259cbd3bbb9937c1a10e721072f7daceeead588f8b57130a10b3d407881d8c02", "file": "sources/2208.08665.tar"}], "inherited_matches_count": 7, "inherited_matches_sample": ["/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-fresh-source-discovery-r130/sources/history-body-54.txt:790:355748\topen\tsol=0\tcorpus\tMaximum degree of noninvertibility for promotion on posets", "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-r128-r129-handback/copy-r130/sources/history-body-54.txt:790:355748\topen\tsol=0\tcorpus\tMaximum degree of noninvertibility for promotion on posets", "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-corpus-reconciliation-r307/available-record-ids.json:40043:  355748,", "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-coverage-queue-r309/shards.json:49306:      355748,", "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-coverage-queue-r309/source-url-groups.json:97252:    355748,", "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-coverage-merge-r315/shard-state.json:49650:      355748,"], "inherited_match_interpretation": "Bounded exact-ID/title grep (lines capped at 1200 chars) over batch history excluding mechanical corpus/screening/routing/coverage indexes and this lane; matches are administrative inventories/reservations or incidental digit substrings (byte sizes, hashes, listing rows). No unindexed old technical exclusion found. Not an exhaustive semantic audit.", "assessment": "Exact exhaustive check n<=6 confirms bound (max equals chain value); no proof; n>=7 not run."}
+{"bytes": 533934, "destination": "sources/1707.03459.pdf", "event": "success", "ordinal": 1, "previous": "532cecd2839eb3b87f28504a2f22069bb38e3d91b41f65723b8bedfe796fb8f8", "seq": 1, "sha256": "0801b4ac7ee1cb66258e4cd6bed4122f7d4f3180caa7de759cdc126539f4fdd6", "status": 200, "url": "https://arxiv.org/pdf/1707.03459", "utc": "2026-11-08T10:12:11.836360+00:00"}
+ 

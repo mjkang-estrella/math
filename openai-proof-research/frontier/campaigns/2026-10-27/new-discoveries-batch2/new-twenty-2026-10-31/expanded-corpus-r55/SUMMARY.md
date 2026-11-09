@@ -1,0 +1,32 @@
+# Expanded corpus r55 handback — 2026-11-01
+
+No new accepted credit. Accepted campaign count remains **4/20 beyond 39 prior**. Only root may accept. No shared files, historical reports, dependencies, git state, external accounts or publications were changed. No child agents or browser tabs were used.
+
+## Most useful result
+
+**361086: ordinary refutation of dense Kneser minimizer Conjecture 2.5.** Take n=7,k=2,m=11, so least t=6. The eleven pairs meeting {6,7} have induced Kneser maximum degree 4. Every eleven-pair family on six points has maximum degree at least5. The complete elementary proof, including the complement-graph case analysis needed for the latter bound, is in [KNESER-PROOF.md](KNESER-PROOF.md). A first off-by-one handshaking shortcut was caught and repaired; no proof depends on it.
+
+The source arXiv:2312.06370v4 definitions and exact Conjecture 2.5 were read and the displayed page visually checked. The conjecture has no large-n or k>2 proviso. Do not import the separate main theorem's asymptotic hypotheses. Independent exact enumeration checks all 1365 compressed families, with maxima5 or 6, corroborating the proof.
+
+**HOLD, not a candidate acceptance packet:** the 2025 journal mathematical body is unread after 403/challenge, the bounded specialist novelty comparison is incomplete, significance has not been independently reviewed, and no Lean endpoint was built. Following the source-gap instruction, this route was parked and other reserved claims investigated. No formal theorem, strict replay, axiom audit or upstream rebuild is claimed. Needed next evidence is a lawful readable published/accepted version, followed by exact semantic Lean formalization and independent review; no denied-route retry is recommended.
+
+## Scope and outcomes
+
+- Exactly 40 ID-keyed entries in [results.json](results.json). All 40 literal statements read; **10** had new primary definitions and selected theorem/proof-body review. The other 30 remain explicitly statement-only unresolved. Reading a statement is not primary review.
+- Sustained mechanisms: dense Kneser counterexample and corrected ordinary proof; exact trapezoid integration plus failed consecutive-monotonicity induction; Chebyshev oscillation with the source's polynomial left-inverse bridge. Crown representation and several additional primary routes are recorded in [ATTEMPTS.md](ATTEMPTS.md).
+- 361574 is excluded as a routine orthogonality argument with an explicit full curve-embedding bridge. The primary classical forward oscillation statement was read, but not its cited book proof; the necessary polynomial-product proof is written independently in ATTEMPTS.md. No assertion of an earlier printed resolution of this particular corollary.
+- 360848's broad paraphrase is already contradicted by its own Example 6.6; actual source Conjecture 6.5 is only four named families. 361186's 'maximum' is a sign/wording error directly exposed by its Hessian. Neither earns credit.
+- Exact rational trapezoid diagnostics enumerate all permutations through 7; no monotonicity counterexample found. Subdivision supplies alpha(qn)<=alpha(n), not consecutive monotonicity. The logarithmic exponent gap remains.
+- Recent public Colbrook–Drysdale crown extremality theorem was actually read in selected statement/proof sections. It settles fixed-order extremality, which is not by itself the exact largest-induced-crown claim 360853. No full-scope subsumption claimed.
+
+## Evidence and reproducibility
+
+[extracted.json](extracted.json), [statements.txt](statements.txt) and raw/ preserve the literal record lines with newline, one-based original chunk lines, verified chunk hashes and raw/statement hashes. All 20 corpus chunks were byte-checked against the ancestor manifest during extraction; no corpus history was copied. This inventory has95675 historical distinct IDs,87990 retrieved records and 7685 stubs; the old10000 queue is not the full corpus. Reservation-index absence establishes assignment nonoverlap only. Exact ID/history and all 40-title searches are retained; title search returned no matches in its documented bounded scope. Administrative hits and numerical coincidences are not inherited technical reviews. No old technical exclusion match was identified in that scope; no global nonreview assertion.
+
+[sources/receipts.jsonl](sources/receipts.jsonl) records dated HTTP status, actual response hashes and access failures. Sources were fetched without browser tabs;403/challenges were respected. MathDB/Palomar inherited403 is not clearance. Search output is retained in sources/search-receipt.json with its limited scope; no invented byte hashes for unread or failed bodies.
+
+Live /commits/HEAD checks confirmed OpenAI/math4eaee87548250b2682affda7d05d947c05554bae and Omega83b70a1d0d6a58bb32521c741805d845d401c5f8. [registry-screen.json](registry-screen.json) records byte-verified reuse of complete OpenAI preprints tree 3f56f68a176b4494c346091ea0a319651bc217ec and corrected complete Omega D5/Problems trees. These are path screens, not proof-body or all-history clearance. The truncated OpenAI root tree was not used as a completeness certificate. /commits/main was not used.
+
+Scripts: extract.py; history.py; history_titles.py; fetch.py; registry.py; kneser_attempt.py (MILP diagnostic, full log); kneser_exact.py (independent finite Python diagnostic, full log); trapezoid_attempt.py (exact rational integration diagnostic, full output); report.py. Each research computation self-limits CPU affinity to at most 2, CPU<=120s and AS<=6GiB, with external wall<=140s; smaller exact verification caps are recorded. All jobs finished; no background job remains. An initial overbroad history expression matched hashes and its own output; the final search uses numeric boundaries and excludes its own lane. This search correction has no mathematical significance.
+
+[environment.json](environment.json) pins observed Lean 4.34.1 commit 5045d0056413266e57c625dcd7c365b10e377c52 and the read-only mathlib revisiond13f23b723b8a846827a245b89c10fc7d3f11612, dependency-manifest hash and mutable-ledger snapshot hashes. Lean --version was observed; no theorem compilation or trust audit was performed. No sanitized strict extracted packet exists because no endpoint survived all qualification gates. The ordinary Kneser proof is the concrete mathematical handoff, with zero credit and all remaining gates stated.

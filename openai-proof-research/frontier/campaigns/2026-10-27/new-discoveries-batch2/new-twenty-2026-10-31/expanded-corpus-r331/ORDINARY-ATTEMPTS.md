@@ -1,0 +1,49 @@
+# Ordinary proof attempts — r331
+
+All arguments below are paper reasoning. No mathematical search, enumeration, solver, CAS or Lean execution was performed. These are unresolved or excluded routes, not accepted results.
+
+## 363413: global edge order and specific sequence irregularity
+
+Endpoint: for every finite graph in the intended nice graph class, choose one global total order of E and one E -> {1,...,M_G} coloring so that every pair of vertices has distinct incident words. Different degrees automatically distinguish words by length. Isolated-vertex loopholes in the compressed record are not treated as discoveries.
+
+Actual source definitions: arXiv:2406.03612 v1 introduces palette ordering by hypercube dimensions and then Conjecture 5 explicitly distinguishes the existential global-order parameter from the universal-order parameter. Theorem 1 proves the hypercube construction. The 2013 journal companion Section 3 defines both parameters and proves probabilistic bounds (Theorem 3.1). It does not furnish the conjectured sharp global existential endpoint.
+
+First mechanism: assign all degree-d vertices distinct words from k^d possibilities and identify equal-colored edge positions at endpoints. Pigeonhole gives k^d >= n_d, hence k >= M_G. The upper construction fails because words cannot be assigned independently: an edge must have the same color at both endpoints. In addition, each vertex word induces comparisons between its incident edges. Their union is a directed relation on E; a common edge order exists if and only if this relation is acyclic (a topological ordering proves sufficiency). This is an exact semantic constraint, not an implementation suggestion. Local palette choices alone omit it.
+
+Second mechanism: repair collisions by exchanging colors and local ranks. At saturation n_d=k^d, every word must occur once. For each color, its total number of occurrences across all vertex words must be even, since it equals twice the number of edges with that color. In a d-regular saturated graph the color count is d*k^(d-1), so this necessary parity condition does not itself provide a general counterexample: if k is even and d>=2 it is even; if k and d are odd then k^d vertices of odd degree would already violate the handshaking lemma. The promising parity obstruction disappears inside the genuine graph class. Varying ranks may remove an order cycle but can create palette collisions; no rank/color repair invariant has been proved.
+
+Third mechanism: induct on a leaf or on a graph decomposition. Removing a leaf changes its neighbor's degree class and changes M_G. Reinserting its edge inserts a color in an interior position of the old neighbor word. This may collide with an arbitrary existing word in the new degree class. The exact missing lemma is a simultaneous insertion and rank-repair lemma with no extra colors. The hypercube proof avoids this issue by a special two-copy complementary-palette pairing and a dimension matching; a general graph has no such decomposition. The universal-order C4 obstruction in the source does not refute existence of another order.
+
+Residual: neither a globally compatible k-color construction for every nice graph nor a concrete graph obstructing every global order is obtained. No Pi plan is warranted. Latest arXiv listing has only v1. The original proof's figure was not visually audited; journal/correction and all citing-body coverage remain incomplete.
+
+## 363589: metered parking monotonicity
+
+Endpoint: for all positive m,n and positive t1<t2, the number of successful preference words in [n]^m under the exact departure-after-parking convention decreases. Before car i arrives, active indices are max(1,i-t),...,i-1. A departing car leaves after its successor has parked, not before. Source Definition 1.1, Examples 2.5–2.7 and journal Conjecture 1 were read. Journal INTEGERS 25 (2025), A73, published 15 August 2025, preserves the conjecture. The September 29/October 1, 2026 Liu companion was fetched as public TeX and its outcome/fiber proof bodies were read.
+
+First mechanism: couple identical preference words for different meters. This is false pointwise. Source Example 2.7 has alpha=(3,3,3,3,4,5,6) for n=6. Under meter 2 the outcomes are (3,4,5,3,4,5,6), all successful; under meter 1 they are (3,4,3,4,5,6,X). Each entry follows from the previous t occupied sites, so this is a failure of the injection, not of the count conjecture. Conversely (5,5,5) succeeds for meter 1 and fails for meter 2 on six spots. These are known source examples and earn no credit.
+
+Second mechanism: count fibers of outcomes rather than preferences. Let O_t be the words p in [n]^m with p_i != p_j whenever 0<i-j<=t. For a feasible p define b_i^t(p) as the number of consecutive occupied sites immediately below p_i at arrival i. Then precisely the preferences p_i-b_i,...,p_i lead to that same outcome. Multiplying independent preference choices at each time proves
+
+    mpf_m,n(t) = sum_{p in O_t} product_i (1+b_i^t(p)).
+
+The converse holds because choosing each preference equal to its prescribed outcome realizes every feasible p; changing within each allowed interval retains that outcome by induction. This complete bridge is already Liu's outcome/fiber lemma, not new work.
+
+Now O_(t+1) is contained in O_t. However on an outcome in the smaller set the occupied sets grow with t, so b_i^(t+1)>=b_i^t. Thus deleting feasible outcomes and increasing retained fiber weights have opposite effects. Ordinary set inclusion of outcome words cannot prove the required inequality. The missing exact lemma is that the total weights of outcomes removed on increasing t dominate the retained weight increases, uniformly for every n and m.
+
+Third mechanism: lossless recoloring or displacement correction of outcomes. One could try to move outcomes left when an extra car departs earlier, recording the displaced preference in the freed interval. The source example shows that an early leftward move can push a later car rightward; a prefixwise monotone parking-position invariant is false. A successful injection must encode the lost chronological information reversibly without using preferences outside [n]. No such encoding was established. Liu's marked-fiber and affine-inclusion-exclusion identities preserve chronology but are not sign comparisons between departure schedules; using them as a monotonicity theorem would be a gap. The companion contains no occurrence of 'monoton' and its fiber proof does not prove this inequality. This is bounded body review, not an assertion of exhaustive prior-art absence.
+
+Residual: no full sum inequality, reversible injection or counterexample count. The zero-count regime t>=n,m>n and the classical regime t>=m-1 are source special cases, not the general endpoint. No Pi dispatch/solver plan.
+
+## 363989: a full route stopped by exact public subsumption
+
+Source Theorem 2 proves EKR at n>=2(p+s), Theorem 3 at n=2p+s and s=1. Trying to simply reuse its cyclic intervals for 2p+s<n<2p+2s lacks the requisite local interval bound. A different two-row cyclic template repairs this — but it is already Nagy's complete proof in arXiv:2407.17455 Theorem 4, read in full.
+
+For s=2k use n templates with row intervals [i-k,i+p-1] and [i,i+p+k-1]. An intersecting selection has at most p+k templates, by pairing disjoint candidates around a chosen template. For s=2k+1 use 2n templates with alternating row lengths p+k and p+k+1; at most 2p+2k+1 can be selected. Proper matchings-to-double-cycle bijections have equal multiplicity for every induced graph of signature (p,s), by permuting matching components and flipping their endpoints. Double counting (family member, proper bijection, template) bounds density by (2p+s)/(2n) in both parities. Vertex transitivity and total incidence count show that this is precisely star density. The vertex subset -> induced subgraph map is a bijection and preserves common vertices. This is the exact literal endpoint, including p=0 and s=0, not a nearby theorem. The original July 2024 companion and August 2025 journal chronology precede this task. Zero discovery credit; no formalization proposed.
+
+## Additional semantic checks
+
+363458 has an explicit public unicyclic witness C4,1, with edges 12,23,34,14,15,26,37,48, and the actual Proposition 5.3 proof. No search is needed to recognize that its only cycle is the initial C4, so the source counterexample covers the literal disjunction tree-or-unicyclic. We do not claim a new polynomial identity or audit upstream algebra.
+
+363666: source Conjecture 1.9.3 is over mod-2 cycles. Its symmetrized cycles are the specified a×C+C×a, with a disjoint from C in the deleted square; replacing these by arbitrary norms changes the question. Both projections of an off-diagonal staircase equal C, so projection alone cannot separate it from the permitted symmetrized cycle. In a planar embedding a winding parity might separate them; for arbitrary graphs a chosen drawing may have crossings on disjoint-edge square cells and the alleged cocycle no longer vanishes on boundaries. This is the precise obstruction, not a claimed proof or finite counterexample. The latest Russian source cites Dzhenzher 2025 for symmetric generation, a different assertion. That companion's body was not read; hold remains.
+
+364122: a literal binary represented matroid's two-element common-circuit question is classically a component test. Fundamental circuits with respect to a basis determine the components: echelon representation splits into blocks precisely when the fundamental-circuit hypergraph does, so this can be obtained by linear algebra and graph connectivity. No algorithm was executed. This routine observation cannot give new credit, and P membership does not prove non-NP-completeness without resolving P versus NP. The apparent source tension is explicitly unresolved.

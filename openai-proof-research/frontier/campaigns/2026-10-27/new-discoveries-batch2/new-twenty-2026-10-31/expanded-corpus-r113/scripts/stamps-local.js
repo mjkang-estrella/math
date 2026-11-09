@@ -1,0 +1,7 @@
+const base=[2,2,3,2,2,2,3,2,2],N=Number(process.argv[2]||22),start=Date.now();let bits=[],v=0;for(let r of base){for(let i=0;i<r;i++)bits.push(v);v^=1;}while(bits.length<N-1)bits.push(v),v^=1;let cache=new Map(),evaluated=0;
+function runs(b){let r=[1];for(let i=1;i<b.length;i++)if(b[i]===b[i-1])r[r.length-1]++;else r.push(1);return r;}
+function count(bits){let key=bits.join('');if(cache.has(key))return cache.get(key);let p=[0];
+function dfs(){let n=p.length;if(n===N)return 1;let pos=new Int8Array(n);for(let j=0;j<n;j++)pos[p[j]]=j;let sum=0,desc=(bits[n-1]===1)===((n-1)%2===0);
+for(let at=desc?0:pos[n-1]+1;at<=(desc?pos[n-1]:n);at++){let a=pos[n-1]+(pos[n-1]>=at),b=at;if(a>b)[a,b]=[b,a];let ok=true;for(let i=(n-1)%2;i+1<n;i+=2){let c=pos[i]+(pos[i]>=at),d=pos[i+1]+(pos[i+1]>=at);if(c>d)[c,d]=[d,c];if((a<c&&c<b&&b<d)||(c<a&&a<d&&d<b)){ok=false;break;}}if(ok){p.splice(at,0,n);sum+=dfs();p.splice(at,1);}}return sum;}
+let c=dfs();cache.set(key,c);evaluated++;let r=runs(bits);console.log(JSON.stringify({N,evaluated,bits:key,blocks:r,count:c,allowed:r.every((x,j)=>x<=3&&!(j&&x===3&&r[j-1]===3)),seconds:(Date.now()-start)/1000}));return c;}
+let best=count(bits);outer:for(let pass=0;pass<4;pass++){let next=bits,bscore=best;for(let j=0;j<bits.length;j++){let b=bits.slice();b[j]^=1;let c=count(b);if(c>bscore){next=b;bscore=c;}if(Date.now()-start>105000)break outer;}if(bscore===best)break;bits=next;best=bscore;}console.log(JSON.stringify({final_local_optimum:bits.join(''),count:best,evaluated}));

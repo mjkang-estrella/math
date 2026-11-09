@@ -1,0 +1,701 @@
+
+Target Pebbling in Trees
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+  /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+     the marker's display to know which way to toggle. The marker draws no box. */
+  .arxiv-html-header { display: contents; }
+  html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+  /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+     icon by making its span a block). */
+  .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+  /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+     arXiv's own render as they are (the logo on the bar, the funder logos on their white
+     chips). Important: ar5iv's dark rules are unlayered, as specific as
+     :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+  :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+  .ds-site-header img { background-color: transparent !important; }
+  /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+     were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+     header, the paper's bar (no site navigation, the paper's controls), takes the second and
+     stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+     The controls show their names. */
+  @media (min-width: 1280px) {
+    html { scroll-padding-top: 80px; }
+    .arxiv-html-site-chrome { display: contents; }
+    .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+    .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+    .arxiv-html-site-chrome .tool-icon { display: none; }
+  }
+  /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+     readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+     bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+     over the header and the paper: it shows only while open, under the chrome, in its place in
+     the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+     inset; the theme gives it none, so it met the screen edges. */
+  @media (max-width: 1279px) {
+    .arxiv-html-site-chrome .tool-wide { display: none; }
+    .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+    .ltx_page_navbar { position: absolute; top: auto; }
+    .arxiv-html-footer { padding-inline: 1rem; }
+  }
+Skip to main content
+      Report GitHub Issue
+      ×
+      Title:
+Content selection saved. Describe the issue below:
+      Description:
+      Submit without GitHub
+      Submit in GitHub
+    Why HTML?
+      Report Issue
+      Back to Abstract
+      Download PDF
+      Contents
+      Reading mode
+      Colour theme
+Abstract
+1 Introduction
+1.1 Graph Definitions
+1.2 Pebbling Definitions
+1.3 History
+1.4 Further Motivation
+1.5 Our Results
+2 Proofs
+2.1 Paths
+2.2 Trees
+3 Conclusion
+References
+    License: arXiv.org perpetual non-exclusive license
+arXiv:2504.10460v2 [math.CO] 22 Jan 2026
+Target Pebbling in Trees
+Matheus Adauto
+††thanks: 
+Department of Mathematics and Applied Mathematics, Virginia Commonwealth University, Richmond, Virginia, USA††thanks: 
+Instituto de Computação, Universidade Federal do Rio de Janeiro, Rio de Janeiro, Brazil††thanks: 
+adauto@ic.ufrj.br, adautomn@vcu.edu
+Viktoriya Bardenova
+11footnotemark: 
+          1
+††thanks: 
+bardenovav@vcu.edu
+Yunus Bidav
+11footnotemark: 
+          1
+††thanks: 
+bidavye@vcu.edu
+Glenn Hurlbert
+11footnotemark: 
+          1
+††thanks: 
+ghurlbert@vcu.edu
+Abstract
+Graph pebbling is a game played on graphs with pebbles on their vertices.
+A pebbling move removes two pebbles from one vertex and places one pebble on an adjacent vertex.
+A configuration  C  is a supply of pebbles at various vertices of a graph  G , and a distribution  D  is a demand of pebbles at various vertices of  G .
+The  D -pebbling number,  \pi(G,D) , of a graph  G  is defined to be the minimum number  m  such that every configuration of  m  pebbles can satisfy the demand  D  via pebbling moves.
+The special case in which  t  pebbles are demanded on vertex  v  is denoted  D=v^{t} , and the  t -fold pebbling number,  \pi_{t}(G) , equals  \max_{v\in G}\pi(G,v^{t}) .
+It was conjectured by Alcón, Gutierrez, and Hurlbert that the pebbling numbers of chordal graphs forbidding the pyramid graph can be calculated in polynomial time.
+Trees, of course, are the most prominent of such graphs.
+In 1989, Chung determined  {\pi}_{t}(T)  for all trees  T .
+In this paper, we provide a polynomial-time algorithm to compute the pebbling numbers  {\pi}(T,D)  for all distributions  D  on any tree  T , and characterize maximum-size configurations that do not satisfy  D .
+Keywords: graph pebbling, target pebbling, paths, trees
+MSC 2020: 05C57 (Primary), 05C05, 90B10, 91A43 (Secondary)
+1 Introduction
+Graph pebbling is a mathematical game or puzzle that involves moving pebbles along the edges of a connected graph, subject to certain rules.
+The objective of the game is to place a certain number of pebbles on specific vertices of the graph from any sufficiently large configuration of pebbles.
+The original application of graph pebbling involved only the case of placing a single pebble on a certain target.
+As a method to prove results in this realm, the problem was necessarily generalized in [6] to place multiple pebbles on a single target.
+Similarly, the problem was generalized in [7, 12] to placing pebbles on multiple targets.
+Good resources on this topic include [3, 14, 16, 18], and we list more specific references in Subsections 1.3 and 1.4, below.
+In this paper, we provide a formula for the target pebbling number of a tree, along with an algorithm for calculating it that runs in polynomial time.
+We begin with necessary graph theory and pebbling definitions in Subsections 1.1 and 1.2.
+In Subsections 1.3 and 1.4 we discuss the relevant history and motivation for our results.
+Subsection 1.5 contains our two main results regarding the formula and algorithm mentioned above, namely, Theorems 11 and 12.
+(It takes us time to develop the concepts and notation necessary to be able to state the formula in Corollary 21.)
+Then we prove these results in Section 2 and conclude in Section 3 with additional comments and questions.
+1.1 Graph Definitions
+In this paper a graph  G(V,E)  is simple and connected.
+We write  V  in place of  V(G)  unless different graphs need to be distinguished.
+The degree  {\sf deg}_{G}(v)  of a vertex  v  in a graph  G , is the number of edges incident to  v .
+The indegree  {\sf deg}_{G}^{-}(v)  of a vertex  v  in a digraph  G  equals the number of directed edges  uv  in  G , and the outdegree  {\sf deg}_{G}^{+}(v)  of a vertex  v  in a digraph  G  equals the number of directed edges  vu  in  G .
+In a connected graph  G  the distance from  u  to  v , denoted  {\sf dist}_{G}(u,v)  is the length of the shortest  u,v -path in  G .
+We ignore the subscripts in the above notations when the graph  G  is understood.
+The diameter of a graph  G  is the maximum distance between any pair of vertices  u  and  v ,  {\sf diam}(G)=\max_{u,v\in V}{\sf dist}(u,v) .
+A tree is a connected acyclic graph.
+A leaf is a vertex of degree 1; every other vertex is interior.
+Let the set of leaves of a tree  T  be denoted by  L(T) .
+A graph is chordal if it has no induced cycle of length 4 or more.
+A simplicial vertex in a graph is a vertex whose neighbors induce a clique.
+We will denote the set of simplicial vertices by  S(G) ; thus  S(T)=L(T)  when  T  is a tree.
+Chordal graphs are characterized recursively by either being complete or having a simplicial vertex whose removal leaves a chordal graph.
+A path partition of a tree  T=(V,E)  is a set of paths  {\cal P}=\{P_{1},\ldots,P_{\ell}\} , such that
+the paths are edge-disjoint and the union of the paths covers all edges of the tree  V(T)=\cup_{i=1}^{\ell}V(P_{i}) .
+For a multiset  a=\{a_{1},\ldots,a_{m}\}  of nonnegative integers, we will label its indices so that  a_{1}\geq a_{2}\geq\cdots\geq a_{m} .
+For two different multisets  a=\{a_{1}\geq a_{2}\geq\cdots\geq a_{m}\}  and  b=\{b_{1}\geq b_{2}\geq\cdots\geq b_{m}\} , we write  a\succ b  if there is some  j  such that  a_{i}=b_{i}  for all  i<j  and  a_{j}>b_{j} .
+When  a\succ b  we say that  a  majorizes  b .
+A maximum path partition of a tree is a path partition whose multiset of path lengths is not majorized by that of any other path partition.
+The following algorithm provides maximum path partition  {\cal P}=\{P_{1},\ldots,P_{\ell}\}  of a rooted tree  (T,r)  [6].
+Set  T_{0}=\{r\} , define  \ell  to be the number of leaves in  T  that are different from  r , and repeat the following two steps for each  1\leq i\leq\ell :
+(a) define  P_{i}  to be a maximum length path in  T  with one endpoint in  T_{i-1} , and
+(b) define  T_{i}=T_{i-1}\cup P_{i} .
+1.2 Pebbling Definitions
+A pebbling function  F  is any function  F:V\rightarrow{\mathbb{N}} .
+We define its support to be  {\sf supp}(F)=\{v\in V\mid F(v)>0\} , with  s(F)=|{\sf supp}(F)| .
+For a pebbling function we write  {\dot{F}}=\{v^{F(v)}\}_{v\in V}  for its multiset description, and if  {\sf supp}(F)=1  then we ignore the set braces; furthermore, if  F=\{v^{t}\}  we write  v^{t}  instead of  \{v^{t}\} , and if  t=1  we write  v  instead of  v^{1} .
+The size of  F  equals  |F|=\sum_{v\in V}F(v) .
+We use the shorthand notation  \min F=\min_{v}F(v) .
+A pebbling function  F  is called positive if  \min F>0 , and stacked if there is a unique  v\in V  with  F(v)>0 .
+For any two functions  F:V\rightarrow{\mathbb{N}}  and  F^{\prime}:V\rightarrow{\mathbb{N}}  the sum  {\dot{F}}+{\dot{F}}^{\prime}=\{v^{F(v)+F^{\prime}(v)}\}_{v\in V} .
+In particular, we can view a vertex  v  as the pebbling function  \{v\} , so that the sum  F+v  is obtained from the function  F  by increasing the value  F(v)  by 1.
+A configuration  C  is a pebbling function whose value  C(v)  represents the number of pebbles at vertex  v .
+A target  D  is a pebbling function whose value  D(v)  represents the demand of pebbles at vertex  v .
+The notion of a pebbling function was first introduced in [3].
+One point of doing so is to note that both configurations and targets are pebbling functions; albeit playing different roles (i.e., supply versus demand).
+In this way, a set of unified adjectives and notations can be used for both.
+Technically, however, it allows one to consider the sum of a configuration and a target, which plays a critical role in the proof of Theorem 13.
+For adjacent vertices  u  and  v , the pebbling step  u\mapsto v  consists of removing two pebbles from  u  and placing one pebble on  v .
+For a configuration  C  and target  D , we say that  C  is  D -solvable (or that there is a  (C,D) -solution, or that  G  has a  (C,D) -solution) if some sequence of pebbling steps places at least  D(v)  pebbles on each vertex  v , otherwise  C  is  D -unsolvable.
+For a solution  {\sigma}  that solves  \{v_{1},\ldots,v_{k}\}\subseteq{\dot{D}} ,  C[{\sigma}]  denotes the sub-configuration of pebbles used in  \sigma .
+A  (C,D) -solution  {\sigma}={\sigma}_{1}\ldots{\sigma}_{m}  is minimal if, for every  i ,  {\sigma}-{\sigma}_{i}  is not a  (C,D) -solution.
+For a  D -unsolvable configuration  C , we say that  C  is  D -maximal if adding a single additional pebble to any vertex of  G  yields a  D -solvable configuration.
+A configuration  C  is called  D -extremal if it is  D -maximal of maximum size.
+The  D -pebbling number,  \pi(G,D) , of a graph  G  is defined to be the minimum number  m  such that  G  is  (C,D) -solvable whenever  |C|\geq m ; that is, it is one more than the size of a  D -extremal configuration.
+The  t -fold pebbling number,  \pi_{t}(G) , equals  \max_{v\in G}\pi(G,v^{t}) ; when  t=1 , we simply write  \pi(G) .
+Also,  C  is solvable if it is  r -solvable for all  r .
+For a  (C,D) -solution  {\sigma}  and vertex  v\in{\dot{D}} , we write  {\sigma}_{v}  for the set of pebbling steps used to solve  v ; thus  {\sigma}  can be partitioned into  {\sigma}_{v}  over all  v\in{\dot{D}} .
+A vertex  v  is big in a configuration  C  if  C(v)\geq 2 .
+ B(C)  denotes the set of big vertices of a configuration  C .
+A potential vertex of a configuration  C  with respect to a target  D  is any vertex  v\in B(C)\cup({\sf supp}(C)\cap{\dot{D}}) .
+A pebbling step  u_{i}\mapsto v_{i}  is  r -greedy if  {\sf dist}(v_{i},r)<{\sf dist}(u_{i},r) , and a sequence of pebbling steps is  r -greedy if each of its steps is  r -greedy.
+A  (C,D) -solution  {\sigma}  is greedy if, for each  v\in{\dot{D}} ,  {\sigma}_{v}  is  v -greedy.
+A configuration  C  is  D -greedy if it has a greedy  D -solution.
+A graph  G  is  D -greedy if for every configuration  C  with  |C|\geq{\pi}(G,D) , there is a greedy  (C,D) -solution.
+For a  (C,D) -solution  {\sigma}=\{u_{i}\mapsto v_{i}\}_{i\in I} , we define its solution subgraph  G_{\sigma}  to be the digraph with vertices  \cup_{i}\{u_{i},v_{i}\}_{i\in I}  and arcs  \cup_{i}\{u_{i}v_{i}\}_{i\in I} .
+The cost of  {\sigma}  equals  {\sf cost}({\sigma})=|I|+|D| ; i.e. the number of pebbles used by  {\sigma} .
+1.3 History
+The basic lower and upper bounds for every graph are as follows.
+Fact 1 ([5, 6]).
+For every graph  G  we have  \max\{n,   2^{{\sf diam}(G)}\}\leq\pi(G)\leq(n(G)-{\sf diam}(G))(2^{{\sf diam}(G)}-1)+1 .
+The lower bound  \pi(G)\geq n  is sharp for cubes [6], 2-connected graphs with a dominating vertex, 3-connected graphs of diameter two [13], the Petersen graph, and many others, including, probabilistically, almost all graphs [10] (these are known as Class 0 graphs [13]).
+The lower bound  \pi(G)\geq 2^{{\sf diam}(G)}  is sharp for Cartesian products of paths [6], for example.
+The upper bound in Fact 1 is sharp for paths and complete graphs.
+It has been shown that deciding if  C  is  r -solvable is NP-complete for general graphs ([15, 18]), as well as for some specific graph classes (e.g., planar or diameter two [8] graphs)), while for others is in P (e.g., planar and diameter two graphs [17], trees [4]).
+Deciding if  {\pi}(G)\leq K  takes even longer, in general (in  {\pi}_{2}^{\sf P}  — see [18]), although formulas for  {\pi}(G)  that can be calculated in polynomial time are known for many classes of graphs (e.g., Cartesian products of paths [6], trees [4, 6], diameter two graphs [13, 20], sufficiently dense graphs [9], split graphs [2], powers of paths [3], and others — see [14]).
+In Theorem 12 we provide a polynomial-time algorithm for computing  {\pi}(T,D) .
+Some of the motivation for this work lies in the following conjecture.
+The pyramid is the 6-cycle with a triangle added to one of its maximum independent sets.
+We say that a graph is pyramid-free if it no induced subgraph is isomorphic to a pyramid.
+Conjecture 2 ([3]).
+If  G  is a pyramid-free chordal graph then  {\pi}(G)  can be calculated in polynomial time.
+Suppose  H  is a spanning subgraph (e.g. a spanning tree) of  G .
+Because any  (C,D) -solution in  H  is a  (C,D) -solution in  G , we have  {\pi}(G,D)\leq{\pi}(H,D) .
+Thus the calculation of pebbling numbers of trees is important.
+Chung [6] used a maximum  r -path partition of  T  to calculate the case in which  D=\{r\} .
+In this paper we solve the general case (see Corollary 21, below).
+In both cases the calculation involves a polynomial algorithm that decomposes the structure of an  n -vertex tree in relation to the target.
+We state in Theorem 12 that the algorithm runs in  O({\color[rgb]{0,0,0}s(D)\cdot n})  time.
+For the case  D=\{r\} , Chung used a maximum path partition  {\cal P}=\{P_{1},\ldots,P_{\ell}\}  of a given rooted tree  (T,r) .
+We note that Bunde, et al. [4] proved that a path partition of any tree can be constructed in linear time.
+Let  l_{i}  denote the length of the path  P_{i} ,  w_{i}  be the leaf vertex of  P_{i}  that is not in  \cup\_{j<i}P_{j} , and define the configuration  {\hat{C}}_{r,t}  on  T  by  {\hat{C}}_{r,t}(w_{1})=t2^{l_{1}}-1 ,  {\hat{C}}_{r,t}(w_{i})=2^{l_{i}}-1  for each  2\leq i\leq\ell , and  {\hat{C}}_{r,t}(x)=0  otherwise.
+We will refer to  {\hat{C}}_{r,t}  as a Chung configuration.
+We remark that a Chung configuration is not  t -fold  r -solvable — indeed, no pebble on  w_{i}  can reach the endpoint of  P_{i}  opposite from  w_{i} ; i.e., no pebble from  P_{i}  can reach  P_{i-1} .
+We note that  {\color[rgb]{0,0,0}{\hat{C}}_{r,t}(w_{1})}=\max{\hat{C}}_{{\color[rgb]{0,0,0}r,t}}  and observe that the unique  t -fold  r -solution of  {\hat{C}}_{r,t}+w_{1}  uses only the pebbles from  w_{1} .
+This property will be a key mechanism in our proofs below.
+The simplest example of the following theorem is that  {\pi}(P_{n})=2^{n-1} .
+Theorem 3 (Chung [6]).
+If  (T,r)  is a rooted tree then  {\pi}_{t}(T,r)=|{\hat{C}}_{r,t}|+1 .
+Thus, every rooted tree  (T,r)  has a  t -fold  r -extremal configuration  C  with  {\sf supp}(C){\ \subseteq\ }L(T) .
+In fact, more can be said.
+The simple, yet powerful lemma below was first observed by Moews.
+Lemma 4 (No-Cycle Lemma [19]).
+If  {\sigma}  is a minimal  (C,r) -solution in  G  then  G_{\sigma}  is acyclic.
+Note that this implies that minimal solutions in trees are greedy.
+Furthermore, this implies that if  C  is  t -fold  r -unsolvable on a tree  T , and  C(v)>0  for some interior vertex  v , then so is the configuration  C^{\prime}  defined by  C^{\prime}(v)=C(v)-1 ,  C^{\prime}(u)=C(u)+2  for some neighbor  u  of  v  that is farther from  r , and  C^{\prime}(w)=C(w)  for all other  w .
+In particular, since  |C^{\prime}|>|C| , this proves the following fact.
+Fact 5.
+For every rooted tree  (T,r) , every  t -fold  r -extremal configuration  C  on  T  has  {\sf supp}(C){\ \subseteq\ }L(T) .
+Later, Alcón and Hurlbert generalized this result to chordal graphs.
+Theorem 6 (Alcón, Hurlbert [3]).
+If  G  is chordal then, for all  r\in V  and  t\geq 1 , there is a  t -fold  r -extremal configuration  C  with  {\sf supp}(C){\ \subseteq\ }S(G) .
+This led to the following conjectured generalization.
+Conjecture 7.
+If  G  is chordal and  C  is  D -extremal then there is a  D -unsolvable configuration  C^{*}  with  |C^{*}|\geq|C|  and  {\sf supp}(C^{*}){\ \subseteq\ }S(G) .
+This conjecture had been shown for trees, in Theorem 8 of [7], in the case that  D(v)>0  for all  v\in V(G) .
+We prove it for trees and all  D  in Theorem 11.
+1.4 Further Motivation
+After Chung generalized the target  r  to  r^{t} , the next general target to be considered was  D=V .
+In [7], the pebbling number  {\pi}(G,V)  was called the cover pebbling number.
+For example, they proved that  {\pi}(P_{n},V)=2^{n}-1 .
+More generally, they defined the functions  {\alpha}(v,D)=\sum_{u\in V}D(u)2^{{\sf dist}(u,v)}  for  v\in V  and  {\alpha}(G,D)=\max_{v\in V}{\alpha}(v,D) , and proved that, for positive  D ,  {\pi}(T,D)={\alpha}(T,D)  for every tree  T .
+The authors also conjectured that the same formula holds for all graphs, which they proved for complete graphs — the formula simplifies in this case to  {\pi}(K_{n},D)=2|D|-\min D  for positive  D .
+The conjecture was eventually proven, independently, by Vuong and Wyckoff [22] and Sjostrand [21].
+Theorem 8 ([21, 22]).
+For positive  D  on any graph  G ,  {\pi}(G,V)={\alpha}(G,V) .
+The main technique in proving this fact is showing that any  D -extremal configuration is stacked.
+In general, for non-positive  D  this is not always true, as we see from Chung configurations on trees.
+However, for trees with non-positive targets, we are able to generalize the stacking notion to that of a superstack, which will have one “dominant” stack, in the manner of a Chung configuration.
+A new tool in attacking the pebbling number of graphs is the Weak Target Conjecture [12].
+Conjecture 9 (Weak Target Conjecture).
+Every graph  G  satisfies  \pi(G,D)\leq\pi_{|D|}(G)  for every target  D .
+Herscovici, et al. [12] showed that the conjecture is true for trees, cycles, complete graphs, and cubes.
+Hurlbert and Seddiq [16] verified it for the families of 2-paths and Kneser graphs  K(m,2) .
+Later, the authors of [3] proposed the more powerful Strong Target Conjecture.
+Conjecture 10 (Strong Target Conjecture).
+Every graph  G  satisfies  \pi(G,D)\leq\pi_{|D|}(G)-s(D)+1  for every target  D .
+They proved that trees and powers of paths11
+              1
+            The  k^{\rm th}  power  G^{(k)}  of a graph  G  adds to  G  all edges  xy  with  {\sf dist}_{G}(x,y)\leq k .  P_{n}^{(k)} 
+satisfies this stronger conjecture for all  n  and  k .
+In fact, the authors of [3] used these facts to derive the formula for  {\pi}(P_{n}^{(k)}) .
+The truth of Conjectures 9 and 10 may prove to be a useful tool in proving results for more general families of graphs.
+For example, it has been conjectured that the pebbling numbers of chordal graphs of a certain type can be calculated in polynomial time (see [1]).
+Furthermore, the use of general targets could be helpful in proving Graham’s conjecture (see [6]) that  \pi(G_{1}\mathbin{{\mathchoice{\vbox{\hrule height=0.5pt\hbox{\vrule width=0.5pt,height=4.0pt\kern 4.0pt\vrule width=0.5pt}\hrule height=0.5pt}}{\vbox{\hrule height=0.5pt\hbox{\vrule width=0.5pt,height=4.0pt\kern 4.0pt\vrule width=0.5pt}\hrule height=0.5pt}}{\vbox{\hrule height=0.3pt\hbox{\vrule width=0.3pt,height=2.1pt\kern 2.1pt\vrule width=0.3pt}\hrule height=0.3pt}}{\vbox{\hrule height=0.3pt\hbox{\vrule width=0.3pt,height=1.5pt\kern 1.5pt\vrule width=0.3pt}\hrule height=0.3pt}}}}G_{2})\leq\pi(G_{1})\pi(G_{2}) , where 
+ denotes the Cartesian product of connected graphs  G_{1}  and  G_{2} .
+Herscovici, et al. [11], generalized this to conjecture that  \pi(G_{1}\mathbin{{\mathchoice{\vbox{\hrule height=0.5pt\hbox{\vrule width=0.5pt,height=4.0pt\kern 4.0pt\vrule width=0.5pt}\hrule height=0.5pt}}{\vbox{\hrule height=0.5pt\hbox{\vrule width=0.5pt,height=4.0pt\kern 4.0pt\vrule width=0.5pt}\hrule height=0.5pt}}{\vbox{\hrule height=0.3pt\hbox{\vrule width=0.3pt,height=2.1pt\kern 2.1pt\vrule width=0.3pt}\hrule height=0.3pt}}{\vbox{\hrule height=0.3pt\hbox{\vrule width=0.3pt,height=1.5pt\kern 1.5pt\vrule width=0.3pt}\hrule height=0.3pt}}}}G_{2},D_{1}\times D_{2})\leq\pi(G_{1},D_{1})\pi(G_{2},D_{2}) .
+1.5 Our Results
+In this section we present our primary results, including a verification of Conjecture 7 for trees and an algorithm to compute the pebbling numbers  {\pi}(T,D)  and  {\pi}_{t}(T)  that runs in polynomial time.
+Theorem 11.
+If  T  is a tree and  C  is  D -extremal then  {\sf supp}(C){\ \subseteq\ }L(T) .
+We prove Theorem 11 in Subsection 2.2.
+From this key result, we develop an additional structure that can be imposed on  D -extremal configurations — see Lemma 20.
+It is Lemma 20 that enables us to write a formula for  {\pi}(T,D)  in Corollary 21.
+Theorem 12.
+For every tree  T  and target  D , the values of  {\pi}(T,D)  and  {\pi}_{t}(T)  can be computed in  O({\color[rgb]{0,0,0}s(D)\cdot n})  and  O(n^{2})  time, respectively.
+The proof of Theorem 12 can be found at the end of Section 2, and also rests on the structure imposed by Lemma 20.
+2 Proofs
+2.1 Paths
+Let  F=C+D  be a pebbling function on a graph.
+Define  {\cal A}=\langle a_{1},\ldots,a_{m}\rangle  to be the pebbling arrangement of  F , with  m=n+|C|+|D| , where  {\cal A}=\langle v_{1},v_{1,1},\ldots,v_{1,F(v_{1})},v_{2},v_{2,1},\ldots,v_{2,F(v_{2})},\ldots,v_{n},v_{n,1},\ldots,v_{n,F(v_{n})}\rangle .
+For example, in Figure 1 we have  G=P_{7}  with configuration  {\dot{C}}=\{v_{3}^{3},v_{4}^{21},v_{6}^{5}\} , target  {\dot{D}}=\{v_{1}^{2},v_{2},v_{5},v_{7}^{3}\} , and pebbling arrangement
+ {\cal A}=\langle v_{1},v_{1,1},v_{1,2},v_{2},v_{2,1},v_{3},v_{3,1},v_{3,2},v_{3,3},v_{4},v_{4,1},\ldots,v_{4,21},v_{5},v_{5,1},v_{6},v_{6,1},\ldots,v_{6,5},v_{7},v_{7,1},v_{7,2},v_{7,3}\rangle, 
+with  m=7+29+7=43 .
+We leave it to the reader to check that  C  is a maximal  D -unsolvable configuration.
+Next, let  {\cal C}  be the set of maximal  D -unsolvable configurations  C  having  {\sf supp}(C)\subseteq\{v_{1},v_{h},v_{n}\} .
+ v_{1}  v_{2}  v_{3}  v_{4}=v_{h}  v_{5}  v_{6}  v_{7}  C  C^{\prime}  C^{\prime\prime}  C^{*}  C_{1}  C_{n}  0  0  0  0  211  0  0  0  0  0  0  0  3  0  0  0  0  0  21  7  12  29  0  0  0  0  0  0  0  0  5  5  0  0  0  0  0  0  0  0  0  166  D  D^{\prime}=D^{\prime\prime}  D_{L}  D^{-}_{R}  D^{+}_{R}  2  0  2  1  0  1  0  0  0  0  1  1  1  0  0  3  3  3 
+Figure 1: A path  P  with both endpoints in  D , showing the sequence of configurations  C ,  C^{\prime} , …, and  C_{n} , (in  green), and targets  D ,  D^{\prime} , …, and  D_{R}^{+}  (in  red) that are used in the proof of Theorem 13.
+Theorem 13.
+If  P  is a path and  C  is  D -unsolvable then there is a  D -unsolvable configuration  C^{*}  with  |C^{*}|\geq|C|  and  {\sf supp}(C^{*}){\ \subseteq\ }L(P) .
+Proof.
+Let  G=P_{n} , with  |D|=t .
+We use induction on  n  and  t .
+When  n\leq 2  the statement is trivial, and when  t=1  the statement is proved by Theorem 6 (since  s(D)=1 ).
+Now we may assume that  n>2  and  t>1 .
+Suppose that some endpoint (without loss of generality,  v_{1} ) is not in  D . Suppose that the first target is on  v_{k} , for some  k , where  1<k<n .
+If  C_{[1,k-1]}  solves  v_{k} , we use the necessary pebbles to solve  v_{k} .
+Let  \sigma  be a minimum  (C_{[1,k-1]},v_{k}) -solution.
+ C[{\sigma}]  is the sub-configuration of pebbles used in  \sigma .
+Define  C^{\prime}=C-C[{\sigma}]  and  D^{\prime}=D-v_{k} .
+Then  C^{\prime}  is not  D^{\prime} -solvable, and so by induction on  t  (since  |D^{\prime}|<t ) we know that there exists a  D^{\prime} -unsolvable configuration  C^{\prime\prime} , such that  |C^{\prime\prime}|=|C^{\prime}|  and every interior vertex is empty.
+Finally, define  {\dot{C}}^{*}={\dot{C}}^{\prime\prime}+v_{1}^{|C[{\sigma}]|} .
+Then  C^{*}  is  D -unsolvable with every interior vertex empty.
+If  C_{[1,k-1]}  doesn’t solve  v_{k} , we then remove  C_{[1,k-1]} .
+Since  C_{[1,k-1]}  doesn’t solve  v_{k}  we define  C^{\prime}=C_{[k,n]}  and set  D^{\prime}=D .
+We remove vertices  v_{1}  through  v_{k-1}  and obtain a shorter path  P^{\prime}=P_{[k,n]} ; then  C^{\prime}  is  D^{\prime} -unsolvable on  P^{\prime} .
+We can apply induction on the number of vertices of  P^{\prime}  to obtain the configuration  C^{\prime\prime} , which is  D^{\prime} -unsolvable of size  |C^{\prime}|  and has  {\sf supp}(C^{\prime\prime})\subseteq\{v_{k},v_{n}\} .
+Let  {\dot{C}}^{*}=v_{1}^{|C_{[1,k]}|+C^{\prime\prime}(v_{k})}+({\dot{C}}^{\prime\prime}-v_{k}^{C^{\prime\prime}(v_{k})}) .
+Since  C^{\prime\prime}  is  D -unsolvable,  C^{*}  is also  D -unsolvable.
+If both endpoints are in  D  we define  {\cal A}=\langle a_{1},\ldots,a_{m}\rangle  be the pebbling arrangement (as shown before the statement of Theorem 13 and in Figure 1) of  C+D , with  m=n+|C|+|D| .
+Let  {\cal C}  be the set of maximal  D -unsolvable configurations  C  having  {\sf supp}(C)\subseteq\{v_{1},v_{h},v_{n}\} .
+Let  j  be the minimum such that  C_{\langle 1,j\rangle}  solves  D_{\langle 1,j\rangle} , and let  {\sigma}  denote this solution.
+Define  h=h(j)  to be such that each pebble  a_{j,i}  is on vertex  v_{h} .
+(In the example of Figure 1 we have  h=4 ,  |C[{\sigma}]|=3+14=17 , and  j=24 , since the  17^{\rm th}  pebble in  C[{\sigma}]  is  v_{4,14} , which is the  24^{\rm th}  element in  {\cal A} .)
+Note that  a_{j}\in C[{\sigma}] , which implies that  D(h)=0 .
+Hence  1<h<n .
+Moreover, the No-Cycle Lemma 4 implies that every step in  {\sigma}  moves from right to left (i.e. from some  v_{k}  to  v_{k-1} ).
+Therefore, the configuration  v_{h}^{|C[{\sigma}]|}  either solves  D_{\langle 1,j\rangle}  exactly (by being equal to  C[{\sigma}] ) or is  D_{\langle 1,j\rangle} -unsolvable.
+Define  C^{\prime}=C-C[{\sigma}] ,  D^{\prime}=D-D_{\langle 1,j\rangle}=D_{\langle j+1,m\rangle}=D_{[h,n]} , and let  {\cal A}^{\prime}=\langle a^{\prime}_{1},\ldots,a^{\prime}_{m^{\prime}}\rangle  be the pebbling arrangement of  C^{\prime}+D^{\prime} , where  m^{\prime}=(n-h+1)+|C^{\prime}|+|D^{\prime}| .
+(In Figure 1 we have  {\dot{C}}^{\prime}=\{v_{6}^{7}\} ,  {\dot{D}}^{\prime}=\{v_{5},v_{7}^{3}\}  and
+ {\cal A}^{\prime}=\langle v_{1},v_{2},v_{3},v_{4},v_{4,1},v_{4,2},\ldots,v_{4,7},v_{5},v_{5,1},v_{6},v_{6,1},\ldots,v_{6,5},v_{7},v_{7,1},v_{7,2},v_{7,3}\rangle 
+with  m^{\prime}=7+12+4=23 .)
+Then  {\cal A}^{\prime}  is  D^{\prime} -extremal.
+We now have that  |D^{\prime}|<|D| , so we can use induction on  t  to know that there is a  D^{\prime} -unsolvable configuration  C^{\prime\prime}  on  P_{[h,n]}  with  |C^{\prime\prime}|=|C^{\prime}|  and every interior vertex is empty; i.e.  {\sf supp}(C^{\prime\prime})\subseteq\{v_{h},v_{n}\} .
+We move  C[{\sigma}]  to  v_{h} ; i.e. define  {\dot{C}}^{*}={\dot{C}}^{\prime\prime}+v_{h}^{|C[{\sigma}]|} .
+(In Figure 1, we have  |C^{\prime\prime}|=|C^{\prime}|=12 , with  {\dot{C}}^{\prime}=\{v_{4}^{12}\} ,  {\dot{D}}^{\prime\prime}={\dot{D}}^{\prime}=\{v_{6},v_{7}^{3}\} ,  {\dot{C}}^{*}={\dot{C}}^{\prime\prime}+v_{h}^{|C[{\sigma}]|} , and  |C^{*}|=12+17=29 .)
+We argue by contradiction that  C^{*}  is  D -unsolvable.
+Indeed, suppose that  C^{*}  is  D -solvable.
+Then  D_{\langle 1,j\rangle}  must use all of  v_{h}^{|C[{\sigma}]|} , and possibly some pebbles from  C^{\prime\prime} .
+We are then left with a sub-configuration of  C^{\prime\prime}  to solve  D^{\prime\prime}=D_{\langle j+1,m\rangle} , which is impossible since  C^{\prime\prime}  is  D^{\prime\prime} -unsolvable.
+Hence  C^{*}  is  D -unsolvable.
+We now let  C_{1}  and  C_{n}  be maximal  D -unsolvable configurations stacked on  v_{1}  and  v_{n} , respectively, and prove by convexity that either  |C_{1}|\geq|C^{*}|  or  |C_{n}|\geq|C^{*}| .
+(See Figure 1: we need  2+1\cdot 2+1\cdot 2^{4}+3\cdot 2^{6}=212  pebbles stacked on  v_{1}  to solve  D , so  |C_{1}|=211 ; similarly,  |C_{7}|=166 .
+Observe that  29=|C^{*}|<(|C_{1}|+|C_{7}|)/2 .)
+Recall that  {\cal C}  is the set of maximal  D -unsolvable configurations  C  having  {\sf supp}(C)\subseteq\{v_{1},v_{h},v_{n}\} , which we observe is nonempty because of the existence of  C^{*} .
+We use the convexity of binary exponentiation to prove that the largest configuration in  {\cal C}  has no pebbles on  v_{h} .
+Let  {\dot{C}}^{+}={\dot{C}}^{*}+v_{1} ; then  C^{*}  solves  D  via the solution we call  {\sigma}^{+} .
+We denote by  D_{L}  the multiset of all target vertices  v_{i}  with  i<h  that are solved by  {\sigma}^{+}  using pebbles from  v_{h} ;
+ D_{R}^{-}  the multiset of all target vertices  v_{j}  with  j>h  that are solved by  {\sigma}^{+}  using pebbles from  v_{h} ;
+and  D_{R}^{+}  the multiset of all target vertices  v_{k}  with  k>h  that are solved by  {\sigma}^{+}  using pebbles from  v_{n} .
+(For example, in Figure 1 we have that  {\dot{D}}_{L}=\{v_{1}^{2},v_{2}^{1}\} ,  {\dot{D}}_{R}^{-}=v_{5} , and  {\dot{D}}_{R}^{+}=v_{7} .)
+Then
+ \displaystyle|C^{*}|=|C^{+}|-1 
+ \displaystyle=|C^{+}(v_{h})|+|C^{+}(v_{n})|-1 
+ \displaystyle=\left(\sum_{v_{i}\in D_{L}}2^{h-i}+\sum_{v_{j}\in D_{R}^{-}}2^{j-h}+\sum_{v_{k}\in D_{R}^{+}}2^{n-k}\right)-1. 
+As noted above, we know that  1<h<n .
+Suppose that some  v_{j}\in D_{R}^{-}  has  j-h<n-j ; i.e.  j<(n+h)/2 .
+Then define  C^{*^{\prime}}=C^{*}-v_{h}^{2^{j-h}}+v_{n}^{2^{n-j}} .
+We see that  C^{*^{\prime}}\in{\cal C}  and  |C^{*^{\prime}}|>|C^{*}| , and so we may assume that no such  j  exists; that is, every  v_{j}\in{\dot{D}}_{R}^{-}  has  j\geq(n+h)/2 .
+This implies that every  v_{k}\in{\dot{D}}_{R}^{+}  has  k\geq(n+h)/2>(n+1)/2 ; i.e.  k-1>n-k .
+Now we have
+ \displaystyle 2|C^{*}| 
+ \displaystyle=\left(2\sum_{v_{i}\in D_{L}}2^{h-i}+2\sum_{v_{j}\in D_{R}^{-}}2^{j-h}+2\sum_{v_{k}\in D_{R}^{+}}2^{n-k}\right)-2 
+ \displaystyle\leq\left(\sum_{v_{i}\in D_{L}}2^{n-i}+\sum_{v_{j}\in D_{R}^{-}}2^{j-1}+\sum_{v_{k}\in D_{R}^{+}}(2^{n-k}+2^{n-k})\right)-2 
+ \displaystyle<\left(\sum_{v_{i}\in D_{L}}(2^{i-1}+2^{n-i})+\sum_{v_{j}\in D_{R}^{-}}(2^{j-1}+2^{n-j})+\sum_{v_{k}\in D_{R}^{+}}(2^{k-1}+2^{n-k})\right)-2 
+ \displaystyle=|C_{1}|+|C_{n}|. 
+Hence  |C^{*}|<(|C_{1}|+|C_{n}|)/2 , and so either  |C_{1}|>|C^{*}|  or  |C_{n}|>|C^{*}| .
+This finishes the proof.
+∎
+Let  D  be a target on a graph  G  with  {\dot{D}}=\{v_{i_{1}},\ldots,v_{i_{t}}\}  so that  |D|=t .
+For a vertex  v  let  {\alpha}_{G}(v,D)  be the minimum number such that the configuration  v^{{\alpha}_{G}(v,D)}  solves  D  on  G .
+(Notice that this is the same function  {\alpha}  as used in Theorem 8, although  D  here is not necessarily positive.)
+For example  v_{1}^{2^{k}}  solves  v_{k+1}  on  P_{k+1}  but  v_{1}^{2^{k}-1}  does not, and so  {\alpha}_{P_{k+1}}(v_{1},v_{k+1})=2^{k} .
+For ease of reading, we shall write  {\alpha}  in place of  {\alpha}_{G}  when the graph  G  is understood.
+Now let  G=P_{n}  be the path  v_{1}\cdots v_{n} .
+For  1\leq j\leq t  define on  G   {\dot{D}}_{j}^{L}=\{v_{i_{1}},\ldots,v_{i_{j}}\}  and  {\dot{D}}_{j}^{R}=\{v_{i_{j}}\ldots,v_{i_{t}}\} .
+Additionally, define the configuration
+ {\dot{F}}_{j}=\{v_{1}^{{\alpha}_{P_{n}}(v_{1},{\dot{D}}_{j}^{L})-1},v_{n}^{{\alpha}_{P_{n}}(v_{n},{\dot{D}}_{j}^{R})-1}\}; 
+that is, the number of pebbles on  v_{1}  is one shy of the number that would solve all of  {\dot{D}}_{j}^{L} , and the number of pebbles on  v_{n}  is one shy of the number required to solve all of  {\dot{D}}_{j}^{R} .
+Finally, let  f_{j}=|F_{j}|  for  1\leq j\leq t , and define  f(D,n)=\max\{f_{1},f_{t}\}+1 .
+The following fact is evident.
+Fact 14.
+Given the target  {\dot{D}}=\{v_{i_{1}},\ldots,v_{i_{t}}\}  on the path  P_{n}  with vertex  v , let  d_{j}={\sf dist}(v,v_{i_{j}}) .
+Then  {\alpha}_{G}(v,D)=\sum_{j=1}^{t}2^{d_{j}} .
+Lemma 15.
+Given the target  {\dot{D}}=\{v_{i_{1}},\ldots,v_{i_{t}}\}  on the path  P_{n} , let  f_{k}  be defined as above.
+Then the sequence  f_{1},\ldots,f_{t}  is unimodal; in particular,
+ f_{h}>f_{h-1}  when  i_{h}\leq(n+1)/2  and  f_{h}<f_{h-1}  when  i_{h}>(n+1)/2 .
+Therefore  \max_{k}f_{k}=\max\{f_{1},f_{t}\} .
+Proof.
+From Fact 14 we obtain the following formula:
+ f_{k}=\sum_{j=1}^{h}\left(2^{{\sf dist}(v_{1},v_{i_{j}})}\right)-1+\sum_{j=h}^{t}\left(2^{{\sf dist}(v_{n},v_{i_{j}})}\right)-1. 
+From this it follows that  f_{h}-f_{h-1}=2^{{\sf dist}(v_{1},v_{i_{h}})}-2^{{\sf dist}(v_{n},v_{i_{h}})} , which is nonnegative if and only if  {\sf dist}(v_{1},v_{i_{h}})\geq{\sf dist}(v_{n},v_{i_{h}}) ; i.e.,  i_{h}-1\geq n-i_{h} .
+∎
+Corollary 16.
+Suppose that  D  is a target on the path  P_{n} .
+Then  \pi(P_{n},D)=f(D,n) .
+Proof.
+Let  D  be a target with  {\dot{D}}=\{v_{i_{1}},\ldots,v_{i_{t}}\} , where  i_{1}\leq\dots\leq i_{t} .
+For each  1\leq j\leq t  let  D_{L}(j)=\{v_{i_{1}},...,v_{i_{j}}\}  and  D_{R}(j)=\{v_{i_{j}},...,v_{i_{t}}\} .
+For each  1\leq j\leq t  let  L_{j}  be the maximum  D_{L}(j) -unsolvable stack on  v_{1} ,  R_{j}  be the maximum  D_{R}(j) -unsolvable stack on  v_{n} , and  F_{j}=L_{j}+R_{j} .
+By Fact 14  |L_{j}|={\alpha}(v_{1},D_{L}(j))-1  and  |R_{j}|={\alpha}(v_{n},D_{R}(j))-1 .
+For each  1\leq j\leq t  define  f_{j}=|F_{j}| .
+By Lemma 15, among all of the functions  f_{j} , the maximum value is achieved at one of the endpoints, so  |C|=\max_{j=1}^{t}f_{j}=\max\{f_{1},f_{t}\} .
+Suppose that  C  is a  D -extremal configuration.
+By Theorem 13 we may assume that  supp(C)\subseteq\{v_{1},v_{n}\} .
+Let  C_{L}=C_{v_{1}}  and  C_{R}=C_{v_{n}} .
+Define  j  to be the maximum such that  C_{L}  solves  D_{L}(j-1)  but not  D_{L}(j) .
+Then, by maximality of  C ,  C_{R}  solves  D_{R}(j+1)  but not  D_{R}(j) .
+Also, by maximality of  C ,  C_{L}=L_{j}  and  C_{R}=R_{j} ; therefore  C=F_{j} .
+Since  C  is  D -extremal,  C\in\{F_{1},F_{n}\} .
+Hence,  \pi(P_{n},D)=|C|+1=\max\{f_{1},f_{t}\}+1=f(D,n) .
+This concludes the proof.
+∎
+2.2 Trees
+Proof of Theorem 11.
+Let  T  be a tree with  n  vertices with  |D|=t .
+If  T  has  n\leq 3  or  |L(T)|=2 , then  T  is a path and the result follows from Theorem 13. So let assume otherwise, that  n\geq 4  and  |L(T)|\geq 3 .
+Additionally, if  s(D)=1 , then the result follows from Fact 5, so we assume that  s(D)\geq 2 , which implies that  t\geq 2 .
+Let  C  be a  D -extremal configuration — we may assume that  C  has the fewest number of interior pebbles among all such configurations.
+Let  P  be any leaf-split vertex path in  T , where  x  is a leaf of  P  and  y  be the split vertex (opposite of  x ) in  P .
+Define  P^{\prime}=P-y  and  T^{\prime}=T-P^{\prime} .
+Since  C  is extremal,  C  is  (D-w) -solvable for any  w\in D .
+Choose  v\in D  to be the closest to  x , let  w\in D-v , and let  {\sigma}  be a minimum  (C,D-w) -solution.
+We now analyze  {\sigma}_{v}  and define  C^{\prime}=C-C[{\sigma}]  and  D^{\prime}=D-v .
+Consider the case that  {\sigma}_{v}  comes from the  x -side of  v .
+If  {\sigma}_{v}  uses a pebble on an interior vertex  z , then the configuration that replaces that pebble by a pebble on  x  is a  D -extremal configuration with fewer interior pebbles, a contradiction.
+Hence,  C[{\sigma}]  is on  x  already.
+Since  {\sigma}_{v}  is minimum, there are no interior pebbles on  P^{\prime} .
+Since  C^{\prime}  is  D^{\prime} -extremal in  T  and  |D^{\prime}|<|D| , induction implies that  {\sf supp}(C^{\prime}){\ \subseteq\ }L(T) .
+Hence  {\sf supp}(C){\ \subseteq\ }L(T) .
+Now consider the case that  {\sigma}_{v}  comes from the  y -side of  v .
+Let  {\tau}  be the minimum number of pebbles needed to add to  C^{\prime}  at  y  to solve  D , and define  D^{\prime\prime}  on  T^{\prime}  by setting  D^{\prime\prime}(y)=D(y)+{\tau}  and  D^{\prime\prime}(u)=D(u)  for all  u\in T^{\prime}-y .
+Then  C^{\prime}  is  D^{\prime\prime} -extremal.
+We proceed by induction on the number of leaves since  |L(T^{\prime})|<|L(T)|  because  y  is a split vertex in  T .
+Hence  {\sf supp}(C^{\prime}){\ \subseteq\ }L(T) .
+Therefore  {\sf supp}(C){\ \subseteq\ }L(T) , which completes the proof.
+∎
+Let  {\cal C}  be the set of all  D -unsolvable configurations  C  for which  {\sf supp}(C){\ \subseteq\ }L(T) .
+For  C\in{\cal C}  and  v\in{\sf supp}(C) , define the stacked configuration  C_{v}  by  C_{v}(v)=C(v)  and  C_{v}(x)=0  otherwise, and also define  C_{v}^{+}  by  C_{v}^{+}(v)=C_{v}(v)+1  and  C_{v}^{+}(x)=0  otherwise.
+Next we say that  v  is a superstack if the configuration  C_{v}^{+}  is  D -solvable.
+Now let  C^{*}_{v}  be any  D -extremal configuration in  {\cal C}  containing  C_{v}  — which we call a superstack configuration — and define  {\cal C}^{*}  to be set of  C^{*}_{v}  for all leaves  v .
+Note that when  D=\{r^{t}\}  we have  C^{*}_{v}={\hat{C}}_{r,t} .
+As an aside, it is worth noting that superstacks do not characterize extremal configurations.
+Indeed, consider  K_{1,3}  with leaves  r ,  u , and  v , and target  D=r^{2} .
+Then  C_{1}=\{u^{7},v\}  and  C_{2}=\{u^{5},v^{3}\}  are both  D -extremal, but only  C_{1}  is a superstack.
+Define a  (C,D) -solution  {\sigma}  to be merging if there are distinct vertices  u ,  v , and  w  such that  {\sigma}  contains the pebbling steps  u\mapsto w  and  v\mapsto w ; otherwise, it is merge-free.
+Note that if  {\sigma}  is a merge-free solution of a single target then  T_{\sigma}  is a path.
+Such a vertex  w  is called a merging vertex of  {\sigma} ; observe that a merging vertex of  {\sigma}  is identified by having  {\sf deg}_{T_{\sigma}}^{-}(v)\geq 2 .
+For a  (C,D) -solution  {\sigma} , we define its merge number  \mu({\sigma})=\sum_{v}({\sf deg}_{T_{\sigma}}^{-}(v)-1)  over all its merging vertices  v .
+For a  D -solvable configuration  C , we define its merge number  \mu(C)=\min_{\sigma}\mu({\sigma})  over all  (C,D) -solutions  {\sigma} .
+For a  (C,D) -solution  {\sigma} , we define the source of  {\sigma}  to be  {\mathfrak{S}}({\sigma})=\{v\mid v\in{\sf supp}(C[{\sigma}])\} .
+If  {\mathfrak{S}}({\sigma})=\{w\}  then we say that  w  is the source of  {\sigma} .
+We record the following evident fact without proof.
+Fact 17.
+Let  a=\{a_{1},\ldots,a_{m}\}  be a multiset of nonnegative integers, written so that  a_{1}\geq\cdots\geq a_{m} .
+Let  1\leq j<j^{\prime}\leq m  and  c\leq a_{j^{\prime}} , and define  a^{\prime}=\{a^{\prime}_{1},\ldots,a^{\prime}_{m}\}  by  a^{\prime}_{j^{\prime}}=a_{j^{\prime}}-c ,  a^{\prime}_{j}=a_{j}+c , and  a^{\prime}_{i}=a_{i}  otherwise.
+Then  a^{\prime}\succ a .
+∎
+We will apply this notion to the multiset of values of a configuration  C : i.e.,  \{C(v)\}_{v\in V} .
+Lemma 18 (No-Merging Lemma).
+Let  D  be a target in a tree  T .
+Then there is a  D -extremal configuration  C , and a leaf with  C(v)=\max C , such that any  (C+v,D) -solution  {\sigma}  is non-merging.
+Observe that paths have these properties by Corollary 16.
+ 5  j  1  w  7  1  15  z  11  x  1  47  y 
+ 5  j  1  w  7  1  15  z  3  x  1  55  y 
+Figure 2: A tree  T  with target  D  (in  red) and  D -extremal configurations (in  green)  C  (on the left) and  C^{\prime}  (on the right), illustrating Lemma 18.
+Both  w  and  j  are merging vertices of the  (C+y,D) -solution  {\sigma} , with  w  on the  jy -path of  T_{\sigma} .
+Then the argument in the proof of Lemma 18 converts  C  to  C^{\prime}  by moving  2(2^{2})=8  pebbles from  x  to  y .
+Proof.
+When  s(D)=1  Lemma 18 follows from Theorem 3, and so we may assume that  s(D)\geq 2 .
+Let  C  be a  D -extremal configuration on a tree  T  with  C\succ C^{\prime}  for all  D -extremal configurations  C^{\prime} .
+By Theorem 11  {\sf supp}(C)\subseteq L(T) .
+Choose any  v  with  C(v)=\max C .
+If  \mu(C+v)=0  we are done, so we suppose that  \mu(C+v)>0  and let  {\sigma}  be a  (C+v,D) -solution, where  \mu(C+v)=\mu({\sigma}) .
+Choose a merging vertex  w , such that if  u  is a leaf in  T_{{\sigma}} , then  w  is the only merge vertex on the  uw -path of  T_{{\sigma}} .
+Then  {\mathfrak{S}}({\sigma}_{w})=\{x,y\} .
+Label  x  and  y  so that  C(x)\leq C(y) .
+(See Figure 2.)
+Suppose that  {\sigma}  moves exactly  k  pebbles from  x  onto  w .
+Then  2\leq k2^{d_{x}}\leq(C+v)(x)<(k+1)2^{d_{x}} .
+Define the configuration  C^{\prime}  by  C^{\prime}(x)=(C+v)(x)-k2^{d_{x}} ,  C^{\prime}(y)=(C+v)(y)+k2^{d_{x}} , and  C^{\prime}(u)=(C+v)(u)  for all other  u .
+If  C^{\prime}  is not  D -solvable, that contradicts  C  being  D -extremal, and so  C^{\prime}  is  D -solvable, so we assume that  C^{\prime}  is  D -solvable.
+Because  C^{\prime}  can only contribute an additional  k  pebbles to  w ,  C^{\prime}-v  is  D -unsolvable.
+Also,  |C^{\prime}-v|=|C| , and so  C^{\prime}-v  is  D -extremal.
+However,  C^{\prime}-v\succ C  by Fact 17, which is a contradiction.
+Therefore,  \mu(C+v)=0 , which completes the proof.
+∎
+For vertices  a,b\in T  denote by  T_{ab}  the unique  ab -path in  T .
+Define a bush to be an orientation of the edges of a tree with every vertex of indegree at most 1 and a unique vertex  u  of indegree 0.
+The vertex of indegree 0 is called the seed.
+Thus we may denote the bush with seed  a  by  B_{a} .
+Corollary 19.
+Let  D  be a target in a tree  T .
+Then there is a  D -extremal configuration  C , and a leaf  v  with  C(v)=\max C , such that the unique  (C+v,D) -solution  {\sigma}  has  |{\mathfrak{S}}({\sigma})|=1 .
+Observe that paths have this property by Corollary 16.
+Proof.
+The No-Merging Lemma 18 implies that, for  v\in L(T) , with  C(v)=\max C  the unique  (C+v,D) -solution  {\sigma}  is a pairwise disjoint
+union of bushes, in which
+ {\mathfrak{S}}({\sigma})  is the set of its seeds, necessarily containing  v .
+Thus, if  s(D)=1  then  |{\mathfrak{S}}({\sigma})|=1 .
+Hence we may assume that  s(D)\geq 2 .
+We derive the contradiction that if  {\sigma}  contains more than one bush then  C  is not  D -extremal.
+Let  B_{u}  be any bush and let  {\cal B}=\{B_{x}\}  be the set of all other bushes.
+For bushes  B_{x}  and  B_{y}  in  {\cal B}  we write  B_{y}\prec B_{x}  if  u  and  y  are in different components of  T-B_{x} .
+Because  T  is a tree, the relation  \prec  is transitive, and since  {\cal B}  is finite, there exists a minimal bush  B_{v}\in{\cal B} .
+(See Figure 3.)
+ u  1  2  1  x  1  w  1  3  1  2  v 
+ u  1  2  1  x  1  w  1  3  1  2  v 
+Figure 3: A tree  T  with bushes  B_{u}  (in  blue),  B_{x}  (in  green),  B_{w}  (in  brown), and  B_{v}  (in  orange), above, and
+the tree  T , redrawn with choice of  \prec -minimal bush  B_{v} , below.
+Now define  T^{\prime}=B_{u}\cup B_{v}\cup T_{uv} .
+Note that  T^{\prime}-E(T_{uv})  is a disjoint union of bushes  B_{z} , each with its seed  z\in V(T_{uv}) .
+Now define the pebbling function  D^{\prime}  on  T_{uv}  by  D^{\prime}(z)={\alpha}_{B_{z}}(z,D_{z}) , where  D_{z}=D\cap B_{z} .
+(See Figure 4.)
+ u  z_{u}  1  z_{v}  2  v 
+ u  1  4  2  4  v 
+Figure 4: The tree  T^{\prime}=B_{u}\cup B_{v}\cup T_{uv}  (derived from Figure 3), showing bushes  B_{z_{u}}  (in  blue) and  B_{z_{v}}  (in  orange), with corresponding seeds  z_{u}  and  z_{v} , above, and the pebbling function  D^{\prime}  on  T_{uv} .
+Clearly, a configuration with support in  \{u,v\}  solves  D_{u}\cup D_{v}  on  B_{u}\cup B_{v}  if and only if it solves  D^{\prime}  on  T_{uv} .
+Let  {\sigma}^{\prime}  be the  (C+v,D^{\prime}) -solution on  T_{uv}  induced by  {\sigma} .
+Because  C  is  D -extremal on  T , it is also  D^{\prime} -extremal on  T_{uv} .
+Therefore, by Lemma 15 and Corollary 16 we know that a pebble added to a  D^{\prime} -extremal configuration on a path consists of a single bush, contradicting that  {\sigma}^{\prime}  consists of two bushes.
+∎
+Lemma 20.
+If  D  is a target on a tree  T  then there is a  D -extremal configuration  C\in{\cal C}^{*} .
+Proof.
+For a target in  D  we can find a  D -extremal configuration  C  and a vertex  v  with  (C+v,D) -solution  {\sigma}  with  |{\mathfrak{S}}({\sigma})|=1  by Corollary 19; that is, vertex  v  is a superstack.
+By Theorem 11  {\sf supp}(C)\subseteq L(T) .
+Hence,  C\in{\cal C}^{*} .
+∎
+Let  f(T,D)=\max_{v\in L(T)}{|C_{v}^{*}|}+1 .
+The following corollary follows immediately from Lemma 19.
+Corollary 21.
+Suppose that  D  is a target on the tree  T .
+Then  \pi(T,D)=f(T,D) .
+  \Box 
+Now we discuss a method for calculating  f(T,D) .
+Let  T(D)  be the convex hull of  D ; that is, it is the smallest subtree of  T  that contains  D .
+Let  V^{\prime}=L(T(D))=\{v_{1},\ldots,v_{j}\} .
+For each  i ,  1\leq i\leq j , let  d^{\prime}_{i}=\sum_{v\in D}D(v)2^{{\sf dist}(v_{i},v)} .
+This equals the minimum number of pebbles placed on  v_{i}  that solves  D .
+Let  T_{i}^{-}  be the union of components of  T-v_{i}  that are disjoint from  T(D) , and set  T_{i}=T_{i}^{-}+v_{i} .
+For each  i  let  {\cal P}_{i}  denote a maximum path partition of the rooted tree  (T_{i},v_{i}) ,  C_{i}  denote its corresponding Chung configuration, and  w_{i}  be the leaf vertex opposite  v_{i}  in the longest path of  {\cal P}_{i} .
+Then there is some  i  such that  |C_{w_{i}}^{*}|+1=f(T,D) .
+Hence  C_{w_{i}}^{*}=C_{i}-w_{i}^{C_{i}(w_{i})}+w_{i}^{C_{w_{i}}^{+}(w_{i})} .
+Proof of Theorem 12.
+Choose any  v\in{\dot{D}}  and run breadth-first search from  v  on  T  to find the shortest paths from  v  to all other  u\in{\dot{D}} ; the union of those paths equals  T(D) , whose leaves equal  V^{\prime}=\{v_{1},\ldots,v_{j}\} , for some  j\leq s(D) .
+This can be done in  O(n)  steps.
+For each  i\leq j , run Dijkstra’s algorithm on  T(D)  to find the distances  {\sf dist}(u,v_{i})  for all  u\in V^{\prime} ; this calculates  d^{\prime}_{i}  for each  i  and takes  O({\color[rgb]{0,0,0}s(D)\cdot n})  steps.
+The construction of all path partitions takes  O(n)  steps (see [4]), and then finding the maximum in the definition of  f(T,D)  takes  j\leq s(D)  steps.
+Hence the entire process takes  O({\color[rgb]{0,0,0}s(D)\cdot n})  steps.
+∎
+3 Conclusion
+In light of our results for general targets on trees, we propose expanding Conjecture 2 to the following.
+Conjecture 22.
+If  G  is a pyramid-free chordal graph, and  D  is any target, then  {\pi}(G,D)  can be calculated in polynomial time.
+Along these lines, we offer the following proposition that may be of use in pursuit of this conjecture.
+Proposition 23.
+If  G  is chordal and  C  is maximal  D -unsolvable then  S(G)-{\sf supp}(D){\ \subseteq\ }{\sf supp}(C) .
+Proof.
+If some  v\in S(G)-{\sf supp}(D)  has  C(v)=0  then define the configuration  C^{\prime}  by  C^{\prime}(v)=1  and  C^{\prime}(u)=C(u)  for all other  u .
+Because  C  is  D -maximal,  C^{\prime}  solves  D ; let  {\sigma}^{\prime}  be a  (C^{\prime},D) -solution, which we assume to be acyclic by the No-Cycle Lemma.
+Because  C  is  D -unsolvable,  {\sigma}^{\prime}  contains a step  v\mapsto y , for some  y , which requires  {\sigma}^{\prime}  to also contain a step  x\mapsto v .
+Because  {\sigma}^{\prime}  is acyclic,  x\not=y .
+Now define  {\sigma}={\sigma}^{\prime}-(x\mapsto v\mapsto y)+(x\mapsto y)  and observe that  {\sigma}  is a  (C,D) -solution, which is a contradiction.
+∎
+Finally, in support of continued pursuit of Conjectures 7, 9, and 10, we offer some open problems that may aid progress towards this goal.
+Problem 24.
+Prove a No-Merging Lemma for specific families of chordal graphs such as split graphs, interval graphs,  k -trees, etc.
+Problem 25.
+Generalize Lemma 20 to specific families of chordal graphs such as split graphs, interval graphs,  k -trees, etc.
+References
+[1]
+Alcón, L., Gutierrez, M., and Hurlbert, G.
+Pebbling in split graphs.
+SIAM J. Discrete Math. 28, 3 (2014), 1449–1466.
+[2]
+Alcón, L., Gutierrez, M., and Hurlbert, G.
+Pebbling in semi-2-trees.
+Discrete Math. 340, 7 (2017), 1467–1480.
+[3]
+Alcón, L., and Hurlbert, G.
+Pebbling in powers of paths.
+Discrete Math. 346, 5-113315 (2023), 20pp.
+[4]
+Bunde, D., Chambers, E., Cranston, D., Milans, K., and West, D.
+Pebbling and optimal pebbling in graphs.
+J. Graph Theory 57 (2008), 215–238.
+[5]
+Chan, M., and Godbole, A. P.
+Improved pebbling bounds.
+Discrete Math. 308, 11 (2008), 2301–2306.
+[6]
+Chung, F. R. K.
+Pebbling in hypercubes.
+SIAM J. Discrete Math. 2, 4 (1989), 467–472.
+[7]
+Crull, B., Cundiff, T., Feltman, P., Hurlbert, G., Pudwell, L., Szaniszlo,
+Z., and Tuza, Z.
+The cover pebbling number of graphs.
+Discrete Math 296 (2005), 15–23.
+[8]
+Cusack, C., Lewis, T., Simpson, D., and Taggart, S.
+The complexity of pebbling in diameter two graphs.
+SIAM J. Discrete Math. 26 (2012), 919–928.
+[9]
+Czygrinow, A., and Hurlbert, G.
+Pebbling in dense graphs.
+Australas. J. Combin. 29 (2003), 201–208.
+[10]
+Czygrinow, A., Hurlbert, G., Kierstead, H., and Trotter, W. T.
+A note on graph pebbling.
+Graphs and Combin 18 (2002), 219–225.
+[11]
+Herscovici, D., Hester, B., and Hurlbert, G.
+Generalizations of graham’s pebbling conjecture.
+Discrete Math. 312, 15 (2012), 2286–2293.
+[12]
+Herscovici, D., Hester, B., and Hurlbert, G.
+t-pebbling and extensions.
+Graphs and Combin. 29 (2013), 955–975.
+[13]
+Hurlbert, G., Clarke, T., and Hochberg, R.
+Pebbling in diameter two graphs and products of paths.
+J. Graph Th. 25, 2 (1997), 119–128.
+[14]
+Hurlbert, G., and Kenter, F.
+Graph pebbling: A blend of graph theory, number theory, and
+optimization.
+Notices Amer. Math. Soc. 68, 11 (2021), 1900–1913.
+[15]
+Hurlbert, G., and Kierstead, H.
+Graph pebbling complexity and fractional pebbling.
+Unpublished (2005).
+[16]
+Hurlbert, G., and Seddiq, E.
+On the target pebbling conjecture.
+Combinatorics, Graph Theory and Computing, Springer Proc. Math.
+Stat. 448 (2024), 163–176.
+[17]
+Lewis, T., Cusack, C., and Dion, L.
+The complexity of pebbling reachability and solvability in planar and
+outerplanar graphs.
+Discrete Applied Mathematics 172 (2014), 62–74.
+[18]
+Milans, K., and Clark, B.
+The complexity of graph pebbling.
+SIAM J. Discrete Math. 20, 3 (2006), 769–798.
+[19]
+Moews, D.
+Pebbling graphs.
+J. Combin. Theory Ser. B 2 (1992), 244–252.
+[20]
+Pachter, L., Snevily, H., and Voxman, B.
+On pebbling graphs.
+Congr Numer 107 (1995), 65–80.
+[21]
+Sjostrand, J.
+The cover pebbling theorem.
+Electron. J. Combin. 12 Note 22 (2005), 5.
+[22]
+Vuong, A., and Wyckoff, I.
+Conditions for weighted cover pebbling of graphs.
+http://arXiv.org/abs/math.CO/0410410 (2004).
+    Experimental support, please
+    view the build logs
+    for errors. Generated by
+        L
+        A
+        T
+        E
+      xml
+    .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue" (
+          ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+        We gratefully acknowledge support from our major funders,
+        member institutions, ,
+        and all contributors.
+        About ·
+        Help ·
+        Contact ·
+        Subscribe ·
+        Copyright ·
+        Privacy ·
+        Accessibility ·
+        Operational Status (opens in new tab)

@@ -1,0 +1,53 @@
+# Sustained ordinary routes — r338
+
+No mathematical enumeration, solver, CAS, Lean or child process for mathematics was run. These are paper arguments. No candidate passes the required gates. Count 52/60; credit 0.
+
+## 360955: complete exact routine adaptation, excluded
+
+Source: arXiv:2311.18059v1, Definitions 1.5/1.7, Propositions 2.5/2.6, Conjecture 4.1. The live abstract page lists v1 only. The source itself supplies the reduction; this is not a novel family selected by ease.
+
+Number the n leaves from right to left by i=0,...,n-1. Put epsilon_i=1 if leaf i has delay 1, and 0 otherwise. At the first deletion only delay-1 leaves are eligible. Each contributes q^i. After that deletion all remaining original delays become max(1,f-1)=1. The remaining star has n-1 leaves with trivial delay; its polynomial is [n-1]_q!, by the unrestricted star recursion. Thus
+Q(T,f)=(sum_i epsilon_i q^i)[n-1]_q!.
+This is precisely source Proposition 2.5. If no leaf is eligible the empty sum and Q are zero, which is weakly unimodal. A zero-ray star has polynomial 1. For n=1, Q is constant; for n=2 the two coefficients epsilon_0,epsilon_1 form a unimodal sequence.
+
+For n>=2 put m=n-1 and P=sum_(i=0)^m epsilon_i q^i. Source Proposition 2.6 proves P[m]_q unimodal. Here is a clean direct verification so that no unproved bridge remains. Its coefficient c_k, with epsilon extended by zero, is sum_(j=0)^(m-1) epsilon_(k-j). For 0<=k<=m-1 it is the prefix sum epsilon_0+...+epsilon_k and hence nondecreasing. For m<=k<=2m-1 it is epsilon_(k-m+1)+...+epsilon_m and hence nonincreasing. The only comparison not covered is c_m-c_(m-1)=epsilon_m-epsilon_0. If it is nonnegative the peak may be taken at m; otherwise at m-1. This also works with arbitrary nonnegative real epsilon_i; binary values are more than enough.
+
+Elementary closure lemma: if a finite nonnegative sequence a_k, extended by zero to all integers, is unimodal with a mode at h, then its product with [r]_q is unimodal for every positive integer r. The new coefficients are b_k=sum_(j=0)^(r-1) a_(k-j), so
+b_k-b_(k-1)=a_k-a_(k-r).
+For k<=h this is nonnegative; for k>=h+r it is nonpositive. In the intervening interval h<k<h+r, the first term is nonincreasing as k increases and the second is nondecreasing. Thus the difference is nonincreasing on that interval and can change sign only from nonnegative to nonpositive. Together these facts give a mode for b. This proves the closure lemma, including zeros and plateaus, without assuming the input is symmetric or log-concave.
+
+Starting with P[n-1]_q, multiply successively by [1]_q,...,[n-2]_q. Repeated application gives P[n-1]_q! unimodal, exactly Conjecture 4.1 and the literal record. This is not the invalid general assertion that products of arbitrary unimodal polynomials are unimodal: only the explicitly proved uniform-factor closure is used.
+
+Attempts sustained: the first idea used symmetric-product closure, but general delay patterns need not be symmetric and source Corollary 2.7 covers only symmetric P. A second idea used the two large factors of Proposition 2.8 and coefficient differences. Reading further showed an even shorter exact bridge: Proposition 2.6 plus uniform-factor closure already suffices. The direct proof above removes the dependence on Proposition 2.8's displayed coefficient bookkeeping. No computation or special-instance inference is involved.
+
+Disposition: complete routine source/classical adaptation, zero substantive credit under the user's rule. This does not establish a new-to-literature theorem, and is not a candidate for Pi. Search found the original source and related plucking papers, not a worldwide novelty clearance. The original q-polynomial paper, strict-unimodality companion papers, all later citing bodies and rendered diagrams are not fully reviewed. The bounded exclusion does not require asserting their absence. No dormant execution plan is justified for this excluded result.
+
+## 360739: full ideal versus distinguished branch, HOLD
+
+Source: arXiv:2311.07675v1, Theorem 3.8, Corollary 3.9, Conjecture 3.10. Write z for the source's y. For each supported ordered pair i,j the cavity equation is
+1-X_ij*((1-b(j)z)-z^2 sum_m F_jm(s_jm-delta_im)X_jm)=0.
+The vertex equation is
+1-X_i*((1-b(i)z)-z^2 sum_m F_im s_im X_im)=0.
+The variables and ordered-pair support must be exactly those of Theorem 3.8; their structural origin matters. Generic arbitrary quadratic systems are not counterexamples to this claim.
+
+First route: use the Jacobian at z=0. The source has already done this: specialization gives all X=1 and Jacobian -I; its proof establishes the analytic generating-function branch is algebraic. This does not imply the entire generic fiber has finitely many points. To see the logical gap, consider unrelated polynomials (u-1)(zu-1) and (1-zu)(v-1). At z=0 their common solution is uniquely (1,1), with invertible Jacobian. Over C(z), the entire line u=1/z solves both, while (1,1) is the isolated ordinary branch. This is a logical countermodel to the inference, not an in-scope graph or conjecture counterexample. Thus neither the source's existing algebraicity result nor the implicit function theorem solves the full ideal problem.
+
+Second route: eliminate vertex variables before addressing cavity variables. In the quotient ring each vertex equation says X_i times its displayed denominator is 1. Hence the full quotient is the cavity quotient localized at the product of those denominators, with each X_i its forced inverse. If the cavity quotient is zero dimensional, this localization is zero dimensional. No vertex variable can become a free coordinate through a zero denominator: the constant 1 forbids it. This is a precise reduction of the full ideal problem, but does not prove the cavity premise.
+
+In the one-type case S=(d), the cavity relation is the univariate polynomial 1-(1-bz)x+z^2 F(d-1)x^2=0, nonzero because its constant is 1. When its supported variable exists it has finitely many roots; the vertex inverse then adds no dimension. This routine case cannot resolve arbitrary supported type matrices. Successive elimination on a general type graph encounters cyclic dependencies; no ordering that eliminates every cavity variable was found by ordinary reasoning.
+
+Third route: exclude positive-dimensional generic components by compactification or valuations. The leading forms of the cavity equations contain a coordinate factor X_ij times a linear combination of other cavity variables. At infinity these factors may vanish on coordinate strata, so ordinary total-degree Bezout cannot certify finiteness without proving those strata have no relevant components. The constants rule out zero affine cavity coordinates, but not poles as z tends to 0. Positivity of the physical branch does not constrain all complex branches of the ideal. Missing lemma: every generic-z component of this structurally constrained cavity system has dimension zero, or an exact source-admissible S,F,b producing a free component. No such general proof or witness is supplied.
+
+Limits: paper example matrices and figure captions were read, not rendered plots; no example search was run. The cited Avni–Breuer–Simon Theorem 6.6 proof is an identified unread comparator, and no complete journal/correction/citing-body check clears this target. That comparator concerns algebraicity of spectral branches; its actual body would be required before reusing it. Registry routing does not fill this gap. HOLD, no Pi plan.
+
+## 361088: gain-tree lattice counting, HOLD
+
+Source: arXiv:2312.06513, current v5; Definition 4.11 selects the rightmost predecessor attaining the gain difference. The source's tree is determined by maximal path weights with a tie rule, not just an arbitrary tree on region vertices. Theorem 8.7 provides a labeled a-Catalan-path bijection. Conjecture 8.10 requires polynomial counts for each fixed gain tree, for fixed n as a varies.
+
+First route: fix the gain order sigma and parent tree and use parent-edge weights as coordinates. Source Theorem 4.10 supplies nonnegative maximizing paths. Definition 4.11 and Lemma 4.12 impose equalities w(p(j),j)=g(j)-g(p(j)), and for certain intermediate vertices, w(i,j)=g(j)-g(i)-1. These suggest a description by inequalities in gain potentials and edge weights with integer bounds depending linearly on a. However one must also count all allowable remaining edges and enforce all negative-cycle conditions. Tree coordinates alone do not yet parametrize regions bijectively; omitting those fibers would count only a proxy.
+
+Second route: partition by which simple path attains each maximum and by boundary edge choices. For fixed n there are finitely many symbolic path types, so this suggests finite families of parameter-dependent integer polyhedra. This is an ordinary symbolic reduction, not an enumeration executed here. Even a completed such description would not itself prove the desired polynomial: rational polyhedra can produce quasipolynomial or piecewise counts. Required additional lemma: a disjoint integral decomposition with stable combinatorial type and polynomial weighted fibers for all allowed a, respecting strict tie inequalities. No total-unimodularity proof for the resulting path-comparison matrices was found. Difference-constraint integrality before projection does not automatically supply it after the parent/max conditions and fiber count are imposed.
+
+Third route: transfer the fixed-tree statistic to the Catalan-path bijection. Theorem 8.7 proves a bijection for all paths, but the gain tree is read from level/order comparisons, so one must prove those comparisons define a stable polynomially counted class as a changes. Polynomiality of the total a-Catalan count is insufficient to imply polynomiality of each tree fiber. Example 8.11 explicitly solves n=3: for the path tree, the case w(1,3)=a-1 contributes a^2-binomial(a,2); the other case contributes binomial(a,2); hence a^2. The second tree follows by subtraction. This complete source calculation is routine prior work, not a proof for arbitrary n. No general cancellation invariant extending it is proved.
+
+Versions: v1-v3 concluding contexts retain the conjecture under label 7.9; v4 discusses it under 8.9 and small-tree calculations; v5 uses 8.10 with Example 8.11. Earlier bodies beyond these local contexts were not fully compared. The live arXiv page lists journal DOI 10.5070/C65465681; its GET redirected to eScholarship and returned 202 with zero bytes. No retry or alternate protected route was attempted. Journal body, final corrections, diagrams and citing proofs are not cleared. HOLD, no Pi plan.

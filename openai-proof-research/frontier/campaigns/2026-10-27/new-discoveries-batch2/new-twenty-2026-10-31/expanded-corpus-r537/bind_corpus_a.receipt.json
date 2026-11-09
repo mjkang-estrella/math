@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-09T03:28:14.853333+00:00",
+  "name": "bind_corpus_a",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r537",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nimport pathlib,json,hashlib,glob,subprocess,sys,re\nlane=pathlib.Path('.').resolve()\nids=json.loads((lane/'reservation.json').read_text())['ids']\nwant=set(ids)\npaths=sorted(glob.glob('/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/mathdb-normalized-chunk-*.jsonl'))\nprint('chunks',len(paths))\nfound={}\nkeys=None\nfor p in paths:\n    data=pathlib.Path(p).read_bytes()\n    ch=hashlib.sha256(data).hexdigest()\n    off=0\n    for ln,raw in enumerate(data.split(b'\\n')[:-1] if data.endswith(b'\\n') else data.split(b'\\n'),1):\n        pass\n    lines=data.splitlines(keepends=True)\n    for ln,raw in enumerate(lines,1):\n        s=raw.rstrip(b'\\n')\n        try: o=json.loads(s)\n        except Exception: continue\n        i=o.get('mathdb_id') or o.get('id')\n        try: i=int(i)\n        except Exception: continue\n        if i in want:\n            if keys is None: keys=sorted(o.keys()); print('KEYS',keys)\n            found[i]=dict(chunk=p,chunk_sha256=ch,line=ln,raw_with_newline_sha256=hashlib.sha256(raw).hexdigest(),raw_no_newline_sha256=hashlib.sha256(s).hexdigest(),has_newline=raw.endswith(b'\\n'),raw=s.decode('utf8'),obj=o)\nprint('found',len(found),sorted(want-set(found)))\nstmtkey=[k for k in keys if 'statement' in k.lower()]\nprint('stmt keys',stmtkey)\nout={}\nfor i in ids:\n    r=found[i]; o=r['obj']\n    k='statement' if 'statement' in o else stmtkey[0]\n    # raw token\n    needle=('\"%s\":'%k).encode()\n    rawb=r['raw'].encode('utf8')\n    idx=rawb.find(needle)\n    if idx<0:\n        needle=('\"%s\": '%k).encode(); idx=rawb.find(needle)\n    start=rawb.find(b'\"',idx+len(needle))\n    j=start+1\n    while True:\n        c=rawb[j:j+1]\n        if c==b'\\\\': j+=2; continue\n        if c==b'\"': break\n        j+=1\n    token=rawb[start:j+1]\n    dec=json.loads(token)\n    assert dec==o[k]\n    out[str(i)]=dict(chunk_path=r['chunk'],chunk_sha256=r['chunk_sha256'],one_based_line=r['line'],raw_line_with_newline_sha256=r['raw_with_newline_sha256'],raw_line_without_newline_sha256=r['raw_no_newline_sha256'],has_trailing_newline=r['has_newline'],raw_line=r['raw'],statement_key=k,raw_statement_token_sha256=hashlib.sha256(token).hexdigest(),raw_statement_token_len=len(token),decoded_statement=dec,decoded_statement_utf8_sha256=hashlib.sha256(dec.encode('utf8')).hexdigest())\nw=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),'corpus-bindings.json'],input=json.dumps(out,indent=1,ensure_ascii=False,sort_keys=True)+'\\n',text=True,capture_output=True)\nprint('writer',w.returncode,w.stdout,w.stderr)\nfor i in ids[:7]:\n    r=found[i]; print('-----',i,r['line'],r['has_newline'],len(r['raw']))\n    print(out[str(i)]['decoded_statement'])\n    o=dict(r['obj']); o.pop('statement',None)\n    print('META',{k:(v if len(str(v))<300 else str(v)[:300]) for k,v in o.items() if k not in ('statement',)})\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 0.7684943070053123,
+  "sampled_group_rss_peak_bytes": 62541824,
+  "samples": 9,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 0.766772,
+  "stderr": ""
+}

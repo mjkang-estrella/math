@@ -1,0 +1,15 @@
+# r392: fifty literal reviews; zero proposals
+
+Exact r391 assignment: 50/50 literal statements read and separately disposed. Zero viable full-scope briefs. No accepted credit. Counts stay **9 additional / 39 total / next40**. Root alone reconciles breadth counts; this report does not update any index, reservation, ledger or public artifact.
+
+Coverage: 50 literal reviews; 2 selected successor primary-body reads; 2 selected proof-section reads; 0 complete dependency audits; 0 current registry clearances. No original AIM primary page was recovered. This is not a whole-corpus scientific review: all twenty r301 chunks were integrity-checked in place, and only the assigned fifty records were extracted.
+
+384542 is already covered at the literal existential level by Girouard–Polymerakis arXiv2403.08925v1 Theorem2: disk×circle has dimension three; volume element and boundary metric remain fixed while sigma1 diverges. Its Section4 proof was read. Full specialization and decisive volume/exponent calculations are in source-reading.md. No discovery nomination.
+
+384373 remains HOLD: a 2013 successor gives root counts through multiple Bezout/Hankel inertia computations, but no single-matrix universal bridge is claimed. The degenerate/common-root case prevents an unsupported appeal to the usual nonsingular Hermite form. Other entries remain at literal-level HOLD or PARK, with individual concrete reasons. Source labels and empty solutions were never novelty evidence.
+
+Input freeze: input-bindings.json is a read-only flat immutable SHA256+size reference list (516 actual files), made before scientific records/schema read. Root manifest was verified by hashing actual files, never by running its receipt-writing verifier. Actual originals and all20 corpus chunks were checked before content. No corpus/history copy was made. Exactly50 assigned IDs are disjoint from 1,183 reviewed IDs, the other50 r390 active reservations and 372627/372628/368940. r304 exclusions/historical dispositions and r363 disposition are bound. Upstream bytes and receipts remain untouched.
+
+Access limits: seven distinct selected AIM HTTPS routes failed hostname certificate validation, all retained in source-provenance.json/failures.json. No failed URL retried, no TLS bypass, no MathDB request, no browser/Google/GitHub API/raw/codeload/diff/ScienceDirect/account/publishing/upload operations. Search only routed to independent primary successor PDFs, which were retained with exact URL/UTC/hash before extraction. Search result snippets are not proof. Original workshop context, published correspondence, current registry state, and unexamined proof dependencies remain HOLD.
+
+Integrity validation: run the command in CHECKS.md. Separate verify.py rehashes frozen actual originals and all20chunks, read-only root manifest entries, assignment/disjointness, canonical records and literal hashes, source PDFs and exact payload set. Any mismatch exits nonzero. Integrity success does not certify novelty or mathematical truth. Manifest excludes only manifest.json and final-receipt.json. No numerical sweep, Lean or manuscript work.

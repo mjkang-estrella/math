@@ -1,0 +1,5 @@
+# Root r511 reconciliation
+
+Reconcile r508: exactly fifty new literal reviews, zero proposals and no credit. Coverage becomes 3,833 reported literal reviews; this is not full primary/proof/novelty coverage. Preserve three source-stated full-target exclusions (383495,392481,405217); 383344 remains HOLD_PUBLIC_PROOF because Eulerian convention and partial proof coverage are insufficient. Other rows remain HOLD/PARK. Four primary bodies inspected (two complete extracted local mathematical bodies, two partial); finite diagnostics are not proofs. Font/extraction warnings and truncated displays remain disclosed.
+
+Claude r504 remains rate-limited with fifty unreviewed reserved IDs. Sol r510 continues. New Sol r512 receives the next disjoint fifty. Existing r509 adjudications carry unchanged; no scientific upgrades or root mathematics. Counts stay 9 additional /39 total /next40. Root verifies immutable inputs, assignment, literal/canonical hashes and exact file membership only. No upstream verifier execution, MathDB requests or shared scientific changes.

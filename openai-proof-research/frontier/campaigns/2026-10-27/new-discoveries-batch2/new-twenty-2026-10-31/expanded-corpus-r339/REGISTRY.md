@@ -1,0 +1,3 @@
+# Current registry routing receipt
+
+Read current LeanPool page, candidate directory, LeanPool.lean and projects.yml on 2026-11-06 via public GET. Page head: 01db1d7049cf9668bda1e9e106875ee1278b43e6. Exact bytes and receipt hashes: sources/ and http/. Candidate/import/project indexes are routing only. Relevant keyword matches were inspected in projects.yml; betweenness was synthetic geometry and saturation was a convex-degree bound. No target gets novelty clearance from index absence. Erdős Problems home was fetched only, with no all-problem proof review. No GitHub API request was made. Search discovery and journal-preview limits are in SOURCE-LIMITS.md.

@@ -1,0 +1,4 @@
+extern int printf(const char*,...);extern int fflush(void*);typedef unsigned long long U;U rng=138;int n,k,A[64];long nodes,total;int unknown;
+U randx(){rng^=rng<<13;rng^=rng>>7;rng^=rng<<17;return rng;}
+int dfs(U left,int sum,U seen){nodes++;if(nodes>200000)return 2;if(!left)return 1;for(U q=left;q;q&=q-1){int j=__builtin_ctzll(q),s=(sum+A[j])%n;if(!(seen>>s&1)){int z=dfs(left^(1ULL<<j),s,seen|(1ULL<<s));if(z)return z;}}return 0;}
+int main(){for(n=26;n<=60;n++){int tested=0;total=0;unknown=0;for(int t=0;t<10000;t++){k=7+randx()%12;U mask=0;for(int j=0;j<k;j++){int v;do{v=1+randx()%(n-1);}while(mask>>v&1);mask|=1ULL<<v;A[j]=v;}nodes=0;int result=dfs((1ULL<<k)-1,0,0);total+=nodes;if(result==2)unknown++;if(!result){printf("FAIL n=%d k=%d\n",n,k);for(int j=0;j<k;j++)printf("%d ",A[j]);return 1;}tested++;}printf("n=%d samples=%d dfs_nodes=%ld unknown=%d NO_COUNTEREXAMPLE\n",n,tested,total,unknown);fflush(0);}}

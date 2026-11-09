@@ -1,0 +1,591 @@
+FILE run.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+FILE write_lane.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE reservation.json
+{
+  "utc": "2026-11-08T18:05:55.799268+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    375351,
+    369089,
+    369952,
+    371348,
+    371577,
+    363627,
+    364140,
+    364945,
+    364946,
+    357323,
+    357324,
+    358528,
+    359140,
+    360248,
+    361174,
+    354067,
+    354147,
+    356297,
+    349872,
+    351449
+  ],
+  "rows": [
+    {
+      "mathdb_id": 375351,
+      "canonical_url": "https://mathdb.com/p/375351/moss-pedersen-conjecture-on-balanced-subfamilies-of-maximum",
+      "title": "Moss\u2013Pedersen conjecture on balanced subfamilies of maximum complement-free families",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "boolean-lattice",
+        "extremal-combinatorics",
+        "set-families"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2606.16172",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 369089,
+      "canonical_url": "https://mathdb.com/p/369089/itai-zehavi-conjecture-on-independent-spanning-trees",
+      "title": "Itai\u2013Zehavi conjecture on independent spanning trees",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-connectivity",
+        "independent-spanning-trees",
+        "spanning-trees"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2506.23970",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 369952,
+      "canonical_url": "https://mathdb.com/p/369952/failure-of-the-matroid-matching-property-in-odd-dimensional",
+      "title": "Failure of the matroid matching property in odd-dimensional rigidity matroids",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "matroid-matching",
+        "rigidity-matroids"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2508.18838",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 371348,
+      "canonical_url": "https://mathdb.com/p/371348/kierstead-kostochka-ore-type-analogue-of-the-chen-lih-wu-con",
+      "title": "Kierstead-Kostochka Ore-type analogue of the Chen-Lih-Wu Conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "equitable-coloring",
+        "graph-coloring"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2511.03957",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 371577,
+      "canonical_url": "https://mathdb.com/p/371577/path-graph-incompatibility-robustness-conjecture",
+      "title": "Path-graph incompatibility robustness conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "quantum-measurement",
+        "semidefinite-programming"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2511.15954",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 363627,
+      "canonical_url": "https://mathdb.com/p/363627/lehel-s-approximate-conjecture-for-uniform-tight-cycles",
+      "title": "Lehel's approximate conjecture for uniform tight cycles",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "hypergraph-theory",
+        "ramsey-theory",
+        "tight-cycles"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2406.14468",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 364140,
+      "canonical_url": "https://mathdb.com/p/364140/the-dimension-conjecture-for-the-product-measure-locus-in-th",
+      "title": "The dimension conjecture for the product-measure locus in the permutation simplex",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "permutation-groups",
+        "probability-simplices",
+        "product-measures"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2407.20226",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 364945,
+      "canonical_url": "https://mathdb.com/p/364945/ge-xu-zhang-conjecture-for-clique-odd-colourings",
+      "title": "Ge\u2013Xu\u2013Zhang conjecture for clique odd-colourings",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-combinatorics",
+        "graph-colourings",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2409.16778",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 364946,
+      "canonical_url": "https://mathdb.com/p/364946/the-clique-conjecture-for-unique-chromatic-colourings",
+      "title": "The clique conjecture for unique-chromatic colourings",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-colourings",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2409.16778",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 357323,
+      "canonical_url": "https://mathdb.com/p/357323/polynomial-chromatic-number-conjecture-for-high-girth-inters",
+      "title": "Polynomial chromatic-number conjecture for high-girth intersection graphs of lines",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chromatic-number",
+        "intersection-graphs",
+        "lines-in-three-space"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2301.10129",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 357324,
+      "canonical_url": "https://mathdb.com/p/357324/polynomial-chromatic-number-conjecture-for-triangle-free-int",
+      "title": "Polynomial chromatic-number conjecture for triangle-free intersection graphs of projective lines",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chromatic-number",
+        "intersection-graphs",
+        "projective-geometry"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2301.10129",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 358528,
+      "canonical_url": "https://mathdb.com/p/358528/sublogarithmic-out-neighbourhood-chromatic-conjecture",
+      "title": "Sublogarithmic out-neighbourhood chromatic conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-coloring",
+        "tournaments"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2305.15585",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 359140,
+      "canonical_url": "https://mathdb.com/p/359140/avoiding-symmetrically-colored-even-length-aps",
+      "title": "Avoiding symmetrically colored even-length APs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "arithmetic-progressions",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2307.06914",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 360248,
+      "canonical_url": "https://mathdb.com/p/360248/the-good-ordering-conjecture-for-tournament-twin-width-and-c",
+      "title": "The good ordering conjecture for tournament twin-width and clique number",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-orderings",
+        "tournaments",
+        "twin-width"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2310.04265",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 361174,
+      "canonical_url": "https://mathdb.com/p/361174/bounded-region-realization-conjecture-for-hyperplane-arrange",
+      "title": "Bounded-region realization conjecture for hyperplane arrangements",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "hyperplane-arrangements"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2312.10010",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 354067,
+      "canonical_url": "https://mathdb.com/p/354067/the-b-conjecture-for-connected-jack-coefficients",
+      "title": "The b-conjecture for connected Jack coefficients",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "enumerative-combinatorics",
+        "jack-polynomials",
+        "symmetric-functions"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2203.14879",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 354147,
+      "canonical_url": "https://mathdb.com/p/354147/posa-type-degree-sequence-conjecture-for-monochromatic-cycle",
+      "title": "P\u00f3sa-type degree-sequence conjecture for monochromatic cycle partitions",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "degree-sequences",
+        "extremal-graph-theory",
+        "monochromatic-cycles"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2204.00496",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 356297,
+      "canonical_url": "https://mathdb.com/p/356297/the-logarithmic-length-conjecture-for-binary-words-with-a-pr",
+      "title": "The logarithmic-length conjecture for binary words with a prescribed number of subsequences",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "binary-words",
+        "combinatorics",
+        "subsequences"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2210.00342",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 349872,
+      "canonical_url": "https://mathdb.com/p/349872/large-expander-conjecture-for-high-genus-triangulations",
+      "title": "Large expander conjecture for high-genus triangulations",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "expander-graphs",
+        "high-genus-surfaces",
+        "random-maps"
+      ],
+      "first_stated_year": 2021,
+      "source_url": "https://arxiv.org/abs/2102.11680",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 351449,
+      "canonical_url": "https://mathdb.com/p/351449/grytczuk-kordulewski-niewiadomski-conjecture-on-extremal-squ",
+      "title": "Grytczuk\u2013Kordulewski\u2013Niewiadomski conjecture on extremal square-free words",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics-on-words",
+        "square-free-words"
+      ],
+      "first_stated_year": 2021,
+      "source_url": "https://arxiv.org/abs/2107.13123",
+      "finite_cue_count": 2
+    }
+  ],
+  "input_hashes": {
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/coverage-delta.json": "014e0d4835ddb95509b956de619aa969568b4e2c8a95dea06518648aa26b2644",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/routing-queue.jsonl": "b0a830b96c47b2b64c46686c318ad16d21a1985d18224fc246b88583e8201a95",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/tags/screening-tags.jsonl": "cfee4e3848c396dc462eff7aa883009c995243d77120d369fa4118f4e96dd45e"
+  },
+  "excluded_ids_count": 20630,
+  "eligible_metadata_rows_after_filters": 64217,
+  "finite_discrete_pool": 2790,
+  "selection": "reserve8 (reserve7 with classic colouring names also penalised; reserve6 with flagship-name conjectures ranked last; finite, kernel-checkable discrete conjectures): same eligibility and exclusions as earlier expanded-corpus reservations; first_stated_year >= 1900, solution_count 0, discrete keyword in MathDB tags or title; asymptotic/probabilistic/analytic language softly ranked later rather than excluded; ranked by finite-instance cue count, absence of hard_structural, few-parameter cue, review score, newer year, then ID.",
+  "limitation": "Unassigned in checked indexes, not globally unreviewed or novelty-cleared; no corpus-wide technical review claimed.",
+  "output_requirement": "Exactly20 ID-keyed dispositions with exact literal provenance, historical checks and actual source/proof review depth; sustain strongest exact mechanisms and finish full Lean endpoint if justified.",
+  "root_routing_note": "Metadata only, scientific clearance absent. Active formal peer directories filtered BEFORE reservation stat/open; target IDs/sourceURLs excluded using retained root metadata, no active-child file access."
+}
+
+TASK first 18000
+GPT-6.1 Sol high/default ONLY. Fixed20 source-led discovery and sustained full ordinary proof/counterexample investigation personally in /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r511. NO children, provider/model fallback, Lean/formal execution or self-credit. Latest user only6.1Sol supersedes old Pi/GLM/Claude allocations. Current57/60 beyond39 prior,96total. Root orchestrates; you do mathematics.
+FIRST shell command EXACTLY:
+timeout 20 python3 -I -B /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r511/bootstrap.py
+Read FULL printed TASK/AGENTS. SECOND command EXACTLY:
+timeout 140 python3 -I -B /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r511/verify_frozen.py before
+Bootstrap and standalone before/after verifiers are explicit cap exceptions. ALL other substantive local work under immutable EXACT ABSOLUTE /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r511/run.py UNIQUE_LABEL consuming Python stdin, and immutable ABSOLUTE /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r511/write_lane.py. Childcwd is ownlane, not workspace. No relative runner from unknown cwd, no --help/LABEL -- command probes, no direct unreceipted readers/navigation. Never rerun bootstrap or modify helpers/caps. Preserve failed receipts; no unchanged failed reruns. Reservation SHA256 80ddfa9ab0241dd6e4e5835acd4f4f3c341c7cb54d6144dbd535f213c08af038. Thirteen immutable frozen bindings, mutable outputs/search-budget/guard ledger not frozen.
+
+EXACT20 IDs fixed in reservation.json: [375351, 369089, 369952, 371348, 371577, 363627, 364140, 364945, 364946, 357323, 357324, 358528, 359140, 360248, 361174, 354067, 354147, 356297, 349872, 351449]. Preserve complete original JSONL newline objects from immutable corpus /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/mathdb-normalized-chunk-*.jsonl. Record chunk path/hash,one-based line,raw-line/hash,newline,raw statement token/hash and decoded UTF8 statement/hash. Read ALL20 literals before prioritizing; no reselection/padding. Metadata selection is NOT scientific clearance.
+
+PROTECTED ACTIVE peers high-girth-ur-matching-primary-qualification-sol-r2, tensor-dominant-orbit-jaja-primary-sol-r3: no read/hash/glob/list/poll, even metadata/reservation/status. Root excluded retained sibling IDs/sourceURLs and configured held targets using ROOT routing metadata; no active-child file access. Metadata selection is not scientific clearance. All code-loop/Polynexus/crown/tournament/transitive-bunkbed/bunkbed/Hat formal campaign bodies protected. File boundary, not topic ban. Historical access ONLY exact completed files listed in historical-results-allowlist.json; filter protected names BEFORE stat/open, do not recurse campaign/history bodies or follow embedded paths. All76 r395 acquired artifacts permanently quarantined: no read/reuse/refetch/mixedhistoryseed. Trust pinned accepted truth; no old certificate re-audit.
+
+Before significant investment reconcile exact allowlisted prior dispositions for these IDs/source scopes. Current accepted57 includes flat352972, source-bound diagonal rook-submonoid ORDERED operand-pair count352496, nonassociative full-support reduced rank7 Fin50 code-loop343790; 380362 underlyingloop separatelycredited. No recount acceptedfamily, helper, instance, formalization, source error, wording/domain/endpoint correction, known public solution or routine adaptation. A small witness/short proof/standard tool does not itself establish routine adaptation. Such exclusion needs COMPLETE applicable primary-result-to-target bridge and strongest contrary significance case. No earlier printed exact counterexample claim unless authenticated.
+
+Sustain strongest TWO/THREE credible exact FULL-scope ordinary routes beyond one shortcut; park hard flagship/analytic/infinite/no-mechanism after literal review with precise gap. Prefer finite witnesses or all-parameter constructive proofs with feasible literal Lean route; every standing/source hypothesis, quantifier, definition/bridge and field/range case paid. Read actual primary definitions/theorem/proof, material figures, companion/latest/final/corrections within budgets; recover material output truncations. Distinguish acquisition, abstract, definition, statement, proof and visual inspection. A source's own public solution earns zero. Check CURRENT public proof registries and applicable actual statement/proof bodies with chronology before qualification. Rootheads/search abstracts/README/no-hits/open labels are not proof or novelty. Concrete relevant unread theorem claim is a specific HOLD; generic worldwide unknown is not an automatic veto. Bounded nonmatches are not worldwide novelty. Accept upstream theorem truth at pinned OpenAI math sources/upstream.json with sources/CONTENTS.md/preprints-tree.json (tree.json truncated), independently justify every new deduction.
+NO mathematical programs, finite enumeration, numerical tests/experiments, CAS, solver, Lean/compiler/checker/formalAPI in this discovery lane. Hash/source/PDF/provenance processing permitted; ordinary mathematics personally. Full survivor requires actual FULLCANDIDATE.md and DORMANT-SOL-FORMAL-PLAN.md, no dispatch. Eventual credit needs exact full-literal Lean theorem or negation, all bridges, only propext/Classical.choice/Quot.sound, no sorry/admit/added axioms/unsafe/native_decide, independent adversarial fidelity/significance/deep body audit, fresh source-only strict replay, paper and root acceptance.
+
+Sole publicGET client immutable source_get_guard.py under run.py. ONE manually selected persisted EXACT plan/invocation, fields url/routes/destination/source_identity/purpose, identity/purpose>=12chars, NEW sources destination. ALL affected reserved IDstrings charged; shared four registry roots ALL20. Max12GET-HOPS perID48global, redirects precharged,timeout20s/body24MiB. No seed lists/batchloops/URLarrays/traversal/custom HTTP/requests/curl/wget/HEAD/nativeopen-fetch/browser/API/account/forms/POST/TLS/cookie bypass. Every denial/challenge/error/timeout/empty/oversize/guard failure artifact unavailable across host/query/version/cache/mirror/alternate delivery. No retry, no URLguessing after failure. Guard alone writes payload/append-only hashchain ledger/lock. Do not alter denials/guard/ledger/budgets/charging or backfill reporting. Recover saved outcomes after nonzero. On policy/budget violation STOP network immediately and record procedural FAIL/quarantine with original evidence, no silent reset. Native SEARCH wholelane maximum3 actual calls9 querystrings including screening/allroutes. Persist exact plan and PRECHARGE live counter before each call through runner/writer, save full response/inventory. No reset/engineHTTPemulation. NativeCPU/RSS unavailable. Only actual guarded primary bodies pay proof-body gates, search result excerpts are navigation.
+
+Inherited denials are binding even if source alias not machine-recognized. Read supplied inherited-denials.json. New graph-square final BIMS43(7)2017 article_1148 certificate failure and Finding Cactus Roots DOI10.1007/s00224-017-9825-2 redirect-cycle guard rejection are artifact-wide unavailable: no new delivery/retry/TLS/cookie workaround. Saved1604.03839v1 distinct cached input is not a new fetch permission. Gallian entire ds6 survey and CGT13 DOI10.1016/j.disc.2013.07.025 unavailable; no alternate survey/arxiv/author/cache search. r395source quarantine permanent. Guard reporting bug remains unchanged; failedprefix is honest, do not repair its history.
+
+Resources fixed:affinity<=2,childCPU115/supervisor120,AS6GiB,sampledgroupRSS6GiB,deadline130/outer140,arena2. True exits/output/resource receipts, synchronous reaping; no background work. Standalone verifierCPU120 is explicit exception, do not nest underchild115. Sampling misses transients,native tool telemetry and separate writer peaks unavailable; no universal cgroup/processcompliance claim. ALLwrites OWNlane ONLY,no/tmp/parent/shared/author/dependencies/git/install/publish/children. Frozen helpers/reservation/sidecar/denials/policy/history/TASK immutable; own outputs/budget/ledger mutable.
+
+Deliver actual ACTUALBRIEF.md or SUMMARY, EXACT20 ID-keyed separate literal/source/ordinary/prior/novelty/significance/formal/independent/acceptance gates; sustained derivations, failed mechanisms and exact unpaid lemmas; original provenance, literal/source/read/figure/HTTP/access/search/resource inventories. Actual SHA256 manifest includes EVERY completed receiptJSON, helpers, plans, denied outcomes, hashchain, frozen-after and all handoff files, with explicit precisely named terminal noncircular self-exclusions. Run standalone frozen-after at end, no subsequent frozen writes. Preserve failures/reap all jobs, no acceptance or credit. No acknowledgment-only or future-tense source-acquisition-as-proof handback. Zero qualified survivors is honest.
+
+
+LATEST ROOT ROUTING authoritative, supersedes historical handbacks: 57/60 beyond39 prior,96total. ONLYGPT-6.1Solhigh/default ALLagents,nochildren/fallback. Root orchestrates/documentary metadata only. ACTIVE/PLANNED high-girth-ur-matching-primary-qualification-sol-r2, tensor-dominant-orbit-jaja-primary-sol-r3 entirely protected evenmetadata/reservation/stat/read/hash/glob/list/poll.
+
+Accepted#56shoe324571fullcountable-lawuniformsup<=255/256<1 and#57CMDRR326555universalnonexistence fullyindependentlyreviewed/rootacceptedwithboundedprioraccess/historicalprocessqualifications;stale55/60zero-creditauthorhandbacks historical. Nohelper/finite-countable/constant/row-columnvariants recounted.
+Completed338620independentreview ordinaryPASS only explicitunrestrictedtwo-parameter whp reading n->infinity,k(n)=n-1,absolute c;notfixedk/growingcorank/balancedrank. Actualfulloriginal1803.02523v2 standingk<=n/no printedbalancedbound,extrazerosallowed,maximalminors only,butwhp/uniformitynotformallydefined. ActualGreaves-Syatriadi1808.06306v2/IEEE2019counterclaimConj1.5not1.9 completeboundednonmatch. SCIENTIFICPARK finalSIAM10.1137/20M1323345/source1803.02523HTTP403 ALLnewalternatebodydeliveryunavailable,onlyexplicitcopiedpredenialv2notfinalequivalence;informalasymptotics/significance/rankregime/currentregistryunqualified. Properrectangularfamily notk=nidentityendpoint;standardtools/shortness alone notroutineexclusion, no complete applicablepriorbridge authenticated. No newretrieval/formallane/credit.
+Completed351988independentordinaryPASS source-definedn>=2/explicitabsorbing-singletonconvention,actual2014extremalityprimary boundednonmatch/57+39familyboundednonoverlap. SCIENTIFICPARK finalDAM3892026DOI10.1016/j.dam.2026.03.043/source2109.09249 andapplicableSidorenko199410.1016/0012-365X(94)90388-3 denied403 ALLnewdeliveryblocked,noretrieval/formal/credit. Hammingfinal10.1007/s40863-022-00339-3/source1907.09644automaticcookieguardreject ALLnewdeliveryblocked;no manualretry/bypassestablished. Neighborhood354612final10.1002/jgt.23014/source2205.06464denied403 ALLnewdeliveryblocked,propercoloroctahedron correction0;distinctBickle353974original2203.10239/2023finalpublicrefutation0. LiNingJCTB2021redirect-only/CMUthesis202/allolddenialsbinding.
+Four exactpublicregistryROOTmetadataartifacts504unavailable:NOroot/README/tree/API/branch/versionalternate refresh/retry/reconstruction;notblanketban everydistinctproofpublication/repo,cannotindirectlyrestoredeniedmetadata. Cacheddatedheads navigationonly,nocurrentproof/chronology/noveltyclearance/worldwideabsence. IndependentlyidentifiedconcretematchingcounterclaimneedsactualbodyorpreciseHOLD. SpecificapplicableunreadbodyHOLD/genericworldwideunknownnotautomaticveto.
+Recentcompletedall0:r450340211actualsourceownstrongerDiracT4.4;337615specificKardosNarboni2019proofbodyHOLD;340492listarborability/333550two-rowbuttons/339730339731labelinggaps.336282Johnson-Steinerconverse isDISTINCT notbuttons,rootdraftmisattributioncorrectedbeforedispatchandoriginalgatesunchanged. r451350677/350678/350679actualZhu2611.01172 fixesparametersnotjointarbitraryminors/Hankel,350679(c)public;347351higher-exterioruniformrank/isotropymergegap,330954actualrecoloring-localizationdefinitioncorrection0. r452323005reversalformula/343308nullity-degree-domaincorrections0,331056concreteKeuschproofbodyunread;authorautomaticredirectFAIL/networkSTOPretained. r449352639/344760/376136actualpublic/sourceown0,338284singlevertexfactorboundary0/nontrivialproductgap,346690ONEcoloringALLs,k fixedhgap. Rootintakesdocumentary/provenance/routingonlynotmathproofvalidation.
+BOOKKEEPING: IMMUTABLEcharge_search.py,THIRTEENfrozenbindings. BeforeEACHnativeSEARCH persist plan top-levelqueriesEXACTstrings; invokeABSOLUTEhelperownplanpathUNDERrun.py. AuthenticateLIVEoldcounter+chargeledger BEFOREmutation,neverdirectbudget/chargeledgerediting. AfterchargeexactnativecallONCE,FULLactualresponseIMMEDIATELYsavedbeforeotherwork. Wholelane3calls9queries,failedattemptsstaycharged,norefund/reset/backfill. GETsolefixedguard. BEFOREsignificantinvestment exactIDkeys/scalarIDsANDexactsourceURLstructuralhistorymatches/readactualrelevantdispositions,noneighbortransfer;sourceown/strongertheoremproofs beforeclaimnew. Standalonefirsttwocommandsno dot/prosepunctuation;inertownverifierargumenttrue0/all13checkedundercapsrecordedinvocationdeviationnotautomaticexternalpolicybreach/abandonment. Genuineprotected/frozen/access/cap/network/budgetviolationsretainSTOP/disclosure. Allr39576acquisitionspermanentquarantine;latestuserONLYGPT-6.1Solhigh/default ALLagents,nochildren/fallback.
+
+LATEST: Active328748independent perfectmatchingliteral/source-range/specificpublicsmall-nconstruction/significance review ONLY,noformal. Author107>105central-switch n54,t50family self-check;actualsourceafterConj1.3discusseslargen andMeagherprimaryslidesreportpublicsmall-n phenomenonwithoutproof. Paystrict-vsweakintersectionandrangebeforeclaimnew;no inferredrangecorrectionorpriorbridgewithoutactualsource. Newreviewtarget1409.2057 notdenied;no duplicateinvestment/parameter/helpercredit. Recentr453338330sourceownrationalB=A/mrefutation and350142sourceownKempe/randompairrefutationpublic0;350349orbit3/4convergence gap/public>=5,348329rankedLatin deletion-vsL1removalgap,345905specificallalphabetweakshuffleprimaryproofHOLD. Latevisibledenial-overlaprecoveryafterretrieval retainedqualification;fullcapped-childoutputhadbeenread/saved,nouniversalretroactivePASS,noinheriteddeniedartifactrequested. r454342490balanced-subsequenceallwordinjectivity and329404exactcliquefactorgaps;340276sourceowncounterexample/335343strongerpublicrestricted-sumtheorem0,329896sourcecapacity-vsmultichoosabilitydefinitioncorrection0.15GETsuccess/acrosstwocompletedlanes,nonewdenial;2search6queries and3search9querieslivecontinuityauthenticated. Allrootintakesdocumentaryonly,notindependentmathvalidation.
+
+LATESTr455all0:336597ordinary all-parameterinverse-kernel algebraicproof author-only,selfchecknotindependentreview. SpecificallyidentifiedearlierexactByrne-Fulcher Invariants of Tutte partitions and a q-analogue,JCTB172May2025,DOI10.1016/j.jctb.2024.12.002/PIIS0095895624000996 actualpublisherbody403: ENTIREpriorworkALLnewalternatehost/query/version/arxiv/author/DOI/API/cache/mirror/bodydeliveriesUNAVAILABLE. No authenticatedprior-exclusionfromsnippets/no noveltyclearance. ParkatSPECIFICpriorbodyHOLD,nofreshretrieval/formallane. Different2017originalBollen-Crapo-Jurrius1707.03459 notthatdeniedwork,but target336597/1707.03459excludedfromnewinvestment.339903balancedshapeFK/330224sourcetrimmedB-lattice/350593publicloopless-colooplessmatroidrefutationzero.355749posetfiberinjection/quantitativecoupling and347515allcubicmatchingordersgap;14originalbodiesunread.8GETattempts7success1HTTP403,noalternate delivery;2search6querieslivecontinuityverified. Rootmetadata/ordinaryproposalnotnewscientificacceptance.
+
+LATESTmatching328748reviewCOMPLETED/PARK,notactive. Independentordinary107>105strict>50 PASS/fullv1printedunqualifiedscopeandstrictglyphVISUALLYpaid;originalsubsequentlarge-ncontext separate. Meagherslidespublicsmall-nclaim lacksconstruction/strictthreshold/cardinalitybridge:weak51largerthan15notnecessarilylargerthan105. Exact2017LindzeyEJC65pp130-142DOI10.1016/j.ejc.2017.05.005/PIIS019566981730063X/original1409.2057returned2668byteRedirectingHTMLonly: ENTIREsameworkALLnewalternatehost/query/version/arxiv/author/cache/mirror/API/DOI/body/metadataDELIVERIESUNAVAILABLE. Guardtransport200historyunchanged,manualclassificationseparate. Explicitcopiedv1onlynotfinalequivalence. Distinct1811.06160unread/notautomaticallydenied,butcannotindirectlyrestore2017work. Scientificrange/known-small-nadaptation/finalHOLD,nofreshretrieval/formallane/credit. No intendedlarge-nbreakthrough,unsupportedroutineexclusion orworldwidenoveltyclaim. Onefamilyonly,n54/alln/threshold/helper/formalizationnotrecounted.
+
+LATEST completed r456 and r457: neither has a qualified full-scope survivor. r456: 367030 lacks the modulo-four pairing of cycle-reversal orbits, despite actual final-source conjecture context; 369042 lacks arbitrary even-order redundant-generating-set classification; 371370 literal weak class refutation violates the source induced-subgraph definition and earns zero. r457: 364237 ordinary graph-metric classification has a COMPLETE source-Menger-to-target bridge, zero routine adaptation. Gaussian 358003 primitive-rank/unimodality proof, triangle-free POSH 357571 ordering lift, and refined greedy Tamari 357920 general-m residue-preserving recursion remain u

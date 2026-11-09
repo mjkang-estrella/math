@@ -1,0 +1,1 @@
+for a in "16 2" "24 2" "40 2" "16 3" "24 3" "24 4" "30 6"; do python3 scripts/strong_local.py $a 8000 5 2 > outputs/strong-local-$(echo $a | tr ' ' '-').json; python3 -c "import json;d=json.load(open('outputs/strong-local-$(echo $a | tr ' ' '-').json'));print(d['n'],d['c'],round(d['min_splus_minus_n'],5))"; done

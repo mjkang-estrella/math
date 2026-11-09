@@ -1,0 +1,311 @@
+===== ROOT-PREP.json 2128
+{
+  "utc": "2026-11-09T00:54:08.847923+00:00",
+  "lane": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r532",
+  "ids": [
+    345149,
+    344875,
+    324028,
+    371954,
+    354845,
+    347828,
+    339249,
+    334450,
+    330067,
+    328248,
+    328539,
+    328573,
+    380420,
+    368882,
+    364797,
+    345483,
+    330915,
+    373109,
+    365985,
+    348815
+  ],
+  "sources": [
+    "https://arxiv.org/abs/2001.03916",
+    "https://arxiv.org/abs/1912.05775",
+    "https://arxiv.org/abs/1208.5670",
+    "https://arxiv.org/abs/2512.09186",
+    "https://arxiv.org/abs/2206.00400",
+    "https://arxiv.org/abs/2009.01074",
+    "https://arxiv.org/abs/1805.05483",
+    "https://arxiv.org/abs/1610.09210",
+    "https://arxiv.org/abs/1503.02380",
+    "https://arxiv.org/abs/1406.7872",
+    "https://arxiv.org/abs/1408.1940",
+    "https://arxiv.org/abs/1408.2935",
+    "https://arxiv.org/abs/math/0702371",
+    "https://arxiv.org/abs/2506.14219",
+    "https://arxiv.org/abs/2409.10129",
+    "https://arxiv.org/abs/2002.04579",
+    "https://arxiv.org/abs/1507.04169",
+    "https://arxiv.org/abs/2602.11773",
+    "https://arxiv.org/abs/2411.18782",
+    "https://arxiv.org/abs/2011.14142"
+  ],
+  "reservation_sha256": "ab28379ea4e0ead273ed22d22c0cc2509b190c486073594f6c54e369743b90ee",
+  "selector_sha256": "aac470435f5dac62bc321fc234ff2a1daccb495f04d52f186995ab9b95278a45",
+  "task_sha256": "73c838ede2494365c284c58ad2b7d9e5a7a8408fad7e1ee0f56c429eb8b255e2",
+  "frozen_bindings": 13,
+  "history_files": 930,
+  "metadata_only": true,
+  "active_peers": [
+    "transitive-bunkbed-endpoint-assembly-formal-deepseek-r23",
+    "expanded-corpus-r531"
+  ],
+  "peer_ID_source_disjoint_asserted": true,
+  "accepted_new": 57,
+  "credit": 0,
+  "latest_denials": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/root-intake-r60/inherited-denials-r564.json",
+  "model": "claude-opus-5-5",
+  "reasoning_effort": "high",
+  "service_tier": "default",
+  "children": false
+}
+
+===== write_lane.py 681
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+===== charge_search.py 2373
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+===== search-budget.json 120
+{
+  "calls_used": 0,
+  "queries_used": 0,
+  "maximum_calls": 3,
+  "maximum_queries": 9,
+  "charged_before_call": true
+}
+
+===== model-policy-sol-only.json 452
+{
+  "utc": "2026-11-08T03:52:29.173754+00:00",
+  "user_instruction": "Do not use GLM5.3 for subagents now; only GPT6.1Sol",
+  "provider": "codex",
+  "model": "gpt-6.1-sol",
+  "options": {
+    "reasoningEffort": "high",
+    "serviceTier": "default"
+  },
+  "supersedes": "Prior2026-11-05PiGLMexecution/formalizationrouting; appliesallfutureandcontinuingsubagentsincludingexecution/replay/audit",
+  "preserve_existing_artifacts": true,
+  "accepted": 55
+}
+
+===== reservation 18285
+{
+  "utc": "2026-11-09T00:54:11.535787+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    345149,
+    344875,
+    324028,
+    371954,
+    354845,
+    347828,
+    339249,
+    334450,
+    330067,
+    328248,
+    328539,
+    328573,
+    380420,
+    368882,
+    364797,
+    345483,
+    330915,
+    373109,
+    365985,
+    348815
+  ],
+  "rows": [
+    {
+      "mathdb_id": 345149,
+      "canonical_url": "https://mathdb.com/p/345149/asymptotic-conjecture-on-bipartite-cayley-index-for-groups",
+      "title": "Asymptotic conjecture on bipartite Cayley index for groups",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 0,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "cayley-graphs",
+        "group-theory"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2001.03916",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 344875,
+      "canonical_url": "https://mathdb.com/p/344875/asymptotic-locating-chromatic-number-conjecture-for-regular",
+      "title": "Asymptotic locating chromatic number conjecture for regular palms",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 0,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-coloring",
+        "locating-coloring",
+        "trees"
+      ],
+      "first_stated_year": 2019,
+      "source_url": "https://arxiv.org/abs/1912.05775",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 324028,
+      "canonical_url": "https://mathdb.com/p/324028/the-conjecture-on-cycle-free-partial-transversals-of-latin-s",
+      "title": "The conjecture on cycle-free partial transversals of Latin squares",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 0,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "latin-squares",
+        "partial-transversals"
+      ],
+      "first_stated_year": 2012,
+      "source_url": "https://arxiv.org/abs/1208.5670",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 371954,
+      "canonical_url": "https://mathdb.com/p/371954/polynomial-bounds-for-forest-free-graphs",
+      "title": "Polynomial \u03c7-bounds for forest-free graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chi-boundedness",
+        "graph-coloring",
+        "induced-subgraphs"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2512.09186",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 354845,
+      "canonical_url": "https://mathdb.com/p/354845/single-survivor-conjecture-for-competing-urns-on-hypercubes",
+      "title": "Single-survivor conjecture for competing urns on hypercubes and discrete tori",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "interacting-particle-systems",
+        "probability"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2206.00400",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 347828,
+      "canonical_url": "https://mathdb.com/p/347828/rational-exponent-conjecture-for-the-bipartite-subdivision-f",
+      "title": "Rational exponent conjecture for the bipartite subdivision function",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "subdivision-functions",
+        "turan-type-problems"
+      
+===== allow 227524
+{
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/adverse-manuscript-r1/results.json": "8057644cb91a953dc772c8e88c899a150055d4669be5ede607c4b4f2661e14f1",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-parent-integration-r1.json": "0158fb07c599c2e0c6ee298f632ba25b98c96758aaebdd0695ab2683d4338548",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-review-r1/review.json": "54c90910a3664cf389cc5540347e30f8f0b027a3beaf91453d37fc9dcce27807",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/asep-manuscript-r1/results.json": "1888fbc3dd4b3ff27cc244344ab80364659e69e120a21a8315630aa8b3d6cfa0",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bicores-armstrong-source-parent-integration-r1.json": "19f8aab7593ddcfbf243a44691

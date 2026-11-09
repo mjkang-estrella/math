@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-08T16:40:09.441749+00:00",
+  "name": "history_reconcile",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r503",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nfrom pathlib import Path\nimport json,hashlib,re,subprocess,sys\nlane=Path.cwd()\ndef save(n,s):\n z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True);assert z.returncode==0\nrows=json.loads(Path('original-provenance.json').read_text());ids={str(x['id']) for x in rows};urls={x['object']['source_url'] for x in rows}\na=json.loads(Path('historical-results-allowlist.json').read_text());access=[];hits=[];skipped=[]\ndef protected(p):\n return any(any(t in c.lower() for t in ['r395','r463','r466','r482','r500','r502','hat','formal','code-loop','polynexus','crown','tournament','bunkbed']) for c in p.parts)\ndef matches(o,path=''):\n out=[]\n if isinstance(o,dict):\n  for k,v in o.items():\n   if str(k) in ids:out.append([path+'/'+k,v])\n   out+=matches(v,path+'/'+str(k))\n elif isinstance(o,list):\n  for i,v in enumerate(o):out+=matches(v,path+'/'+str(i))\n elif str(o) in ids or (isinstance(o,str) and o in urls):out.append([path,o])\n return out\nfor s,h in a.items():\n p=Path(s)\n if protected(p):skipped.append(s);continue\n b=p.read_bytes();actual=hashlib.sha256(b).hexdigest();assert actual==h,s\n access.append({'path':s,'sha256':actual})\n try:o=json.loads(b)\n except Exception:continue\n m=matches(o)\n if m:hits.append({'path':s,'matches':m})\nsave('history-access.json',json.dumps({'access':access,'preaccess_skipped':skipped},indent=2));save('history-matches.json',json.dumps(hits,indent=2));print('HISTORY',json.dumps(hits,ensure_ascii=False));print('access count',len(access),'skip',len(skipped))\nd=json.loads(Path('inherited-denials.json').read_text());print('DENIALS',json.dumps(d,ensure_ascii=False))\n# bind exact raw statement JSON tokens independently of reserialization\nprov=[]\nfor row in rows:\n raw=Path(f\"originals/{row['id']}.jsonl\").read_bytes();m=re.search(rb'\"statement\"\\s*:\\s*(\"(?:[^\"\\\\]|\\\\.)*\")',raw);assert m\n token=m.group(1);dec=json.loads(token).encode(); row.pop('object');row.update(statement_token=token.decode(),statement_token_sha256=hashlib.sha256(token).hexdigest(),statement_utf8_sha256=hashlib.sha256(dec).hexdigest());prov.append(row)\nsave('literal-bindings.json',json.dumps(prov,indent=2))\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 0.24616673297714442,
+  "sampled_group_rss_peak_bytes": 21766144,
+  "samples": 3,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 0.24558899999999997,
+  "stderr": ""
+}

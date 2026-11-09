@@ -1,0 +1,134 @@
+ROOT-PREP.json 2124
+TASK.txt 152881
+bootstrap-receipt.json 1263
+bootstrap.py 1250
+charge_search.py 2373
+denial_chunk_00000.output.txt 15015
+denial_chunk_00000.receipt.json 1165
+denial_chunk_105000.output.txt 15021
+denial_chunk_105000.receipt.json 1164
+denial_chunk_120000.output.txt 15021
+denial_chunk_120000.receipt.json 1163
+denial_chunk_135000.output.txt 15021
+denial_chunk_135000.receipt.json 1172
+denial_chunk_15000.output.txt 15019
+denial_chunk_15000.receipt.json 1159
+denial_chunk_150000.output.txt 15021
+denial_chunk_150000.receipt.json 1165
+denial_chunk_165000.output.txt 15021
+denial_chunk_165000.receipt.json 1165
+denial_chunk_180000.output.txt 15021
+denial_chunk_180000.receipt.json 1177
+denial_chunk_195000.output.txt 15021
+denial_chunk_195000.receipt.json 1164
+denial_chunk_210000.output.txt 15021
+denial_chunk_210000.receipt.json 1165
+denial_chunk_225000.output.txt 15021
+denial_chunk_225000.receipt.json 1163
+denial_chunk_240000.output.txt 15021
+denial_chunk_240000.receipt.json 1165
+denial_chunk_255000.output.txt 15021
+denial_chunk_255000.receipt.json 1176
+denial_chunk_270000.output.txt 15021
+denial_chunk_270000.receipt.json 1178
+denial_chunk_285000.output.txt 14299
+denial_chunk_285000.receipt.json 1161
+denial_chunk_30000.output.txt 15019
+denial_chunk_30000.receipt.json 1159
+denial_chunk_45000.output.txt 15019
+denial_chunk_45000.receipt.json 1167
+denial_chunk_60000.output.txt 15019
+denial_chunk_60000.receipt.json 1160
+denial_chunk_75000.output.txt 15019
+denial_chunk_75000.receipt.json 1159
+denial_chunk_90000.output.txt 15020
+denial_chunk_90000.receipt.json 1168
+frozen-before.json 93
+frozen-inputs.json 3152
+historical-results-allowlist.json 228257
+inherited-denials.json 299274
+model-policy-sol-only.json 452
+registry-roots.json 399
+reservation.json 18525
+reservation.sha256 83
+run.py 2401
+search-budget.json 120
+source_get_guard.py 9762
+task_chunk_00000.output.txt 15026
+task_chunk_00000.receipt.json 1149
+task_chunk_105000.output.txt 15021
+task_chunk_105000.receipt.json 1149
+task_chunk_120000.output.txt 15021
+task_chunk_120000.receipt.json 1156
+task_chunk_135000.output.txt 15021
+task_chunk_135000.receipt.json 1159
+task_chunk_15000.output.txt 15019
+task_chunk_15000.receipt.json 1163
+task_chunk_150000.output.txt 2924
+task_chunk_150000.receipt.json 1243
+task_chunk_30000.output.txt 15019
+task_chunk_30000.receipt.json 1144
+task_chunk_45000.output.txt 15019
+task_chunk_45000.receipt.json 1150
+task_chunk_60000.output.txt 15019
+task_chunk_60000.receipt.json 1163
+task_chunk_75000.output.txt 15019
+task_chunk_75000.receipt.json 1144
+task_chunk_90000.output.txt 15021
+task_chunk_90000.receipt.json 1146
+verify_frozen.py 742
+write_lane.py 681
+-----write_lane
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+-----charge_search
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+-----reservation keys ['utc', 'kind', 'ids', 'rows', 'input_hashes', 'excluded_ids_count', 'eligible_metadata_rows_after_filters', 'finite_discrete_pool', 'selection', 'limitation', 'output_requirement', 'root_routing_note']
+{"utc": "2026-11-09T01:39:30.065133+00:00", "kind": "expanded_cached_corpus_outside_old_10000_routing_queue", "ids": [359698, 340378, 328911, 379604, 327839, 317900, 331104, 342017, 375132, 376374, 368315, 361001, 356725, 349568, 350513, 338369, 320923, 321231, 334707, 388669], "rows": [{"mathdb_id": 359698, "canonical_url": "https://mathdb.com/p/359698/gerbner-nagy-patkos-vizer-counting-conjecture-for-tree-poset", "title": "Gerbner\u2013Nagy\u2013Patk\u00f3s\u2013Vizer counting conjecture for tree posets", "status": "open", "post_type": "conjecture", "statement_completeness": "full", "screening_tags": ["explicit_construction_or_example_request", "hard_structural", "open_question_formulation"], "review_priority_score": 13, "reviewed": false, "review_reason": "first_pass_tags_only_technical_review_pending", "mathdb_tags": ["extremal-combinatorics", "posets", "set-families"], "first_stated_year": 2023, "source_url": "https://arxiv.org/abs/2308.14863", "finite_cue_count": 1}, {"mathdb_id": 340378, "canonical_url": "https://mathdb.com/p/340378/asymptotic-induced-path-factor-conjecture-for-regular-graphs", "title": "Asymptotic induced path factor conjecture for regular graphs", "status": "open", "post_type": "conjecture", "statement_completeness": "full", "screening_tags": ["explicit_construction_or_example_request", "hard_structural", "open_question_formulation"], "review_priority_score": 13, "reviewed": false, "review_reason": "first_pass_tags_only_technical_review_pending", "mathdb_tags": ["graph-theory", "induced-path-factors", "regular-graphs"], "first_stated_year": 2018, "source_url": "https://arxiv.org/abs/1809.04394", "finite_cue_count": 1}, {"mathdb_id": 328911, "canonical_url": "https://mathdb.com/p/328911/the-minimum-degree-and-central-path-conjecture-for-tree-satu", "title": "The minimum-degree and central-path conjecture for tree saturation in hypercubes", "status": "open", "post_type": "conjecture", "statement_completeness": "full", "screening_tags": ["explicit_construction_or_example_request", "hard_structural", "open_question_formulation"], "review_priority_score": 13, "reviewed": false, "review_reason": "first_pass_tags_only_technical_review_pending", "mathdb_tags": ["graph-theory", "hypercubes", "saturation-number"], "first_stated_year": 2014, "source_url": "https://arxiv.org/abs/1409.7983", "finite_cue_count": 1}, {"mathdb_id": 379604, "canonical_url": "https://mathdb.com/p/379604/average-jump-number-conjecture-for-grids", "title": "Average j

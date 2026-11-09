@@ -1,0 +1,11 @@
+# 372627 independent review intake
+
+The resumed r376 Claude review is COMPLETE, superseding its previous API-rate-limit failure status. Reviewer SOURCE and MATH PASS for the exact arXiv v2 target; these are reviewer findings, not a root mathematical replay. Source record merges known divisible-by-12 case and upper bound with the conjectured remaining lower bound. The reviewer independently supplied complete upper witness words and reports full lower-period classification on 152 states/128 edges, two 12-cycles. Universal distance/window bridges and finite certificate are separated from diagnostic finite-n sweeps.
+
+Retain 372627 as a small full-scope candidate for targeted source/prior/substantive review. Do not accept or formalize yet. Published DMGT status/body, closest literature, current registry, and classical-adaptation boundary remain HOLD. Tiny certificate and a familiar algorithm alone do not prove exclusion; no complete prior applicability bridge has yet been demonstrated. Conversely this review is not novelty clearance. Treat 372627,372628 and source Conjecture 20 as one potential method family, without multiple-credit presumption.
+
+r382 already examined shared literature for 372628. Its actual preprint/supplement coverage and denied routes should be reused, not repeated; adapt only the relevant theorem scopes to 372627. r382's PARK of the larger certificate remains unchanged. The next reviewer should focus on genuinely new accessible evidence or exact deductions from retained bodies, and park promptly if the same access barriers prevent progress. No forbidden route retries or certificate rebuilding.
+
+Root hash-froze inputs before reading the two review reports and verifier, independently checks exact manifests, original refs, receipt/replay flags and recorded certificate counts. Root did not execute mathematical checkers or claim to audit the full proofs. A combined tool display truncated portions of reports; detailed follow-up review remains delegated. No coverage increment: 3,033 reported statement reviews. Counts unchanged: 9 additional / 39 total / next 40.
+
+Next task: Claude Opus 5.5 r468, one-hypothesis source/prior/substantive gate for 372627. Breadth proceeds separately. r376 is no longer a failed active task; its original rate-limit event remains historical.

@@ -1,0 +1,1 @@
+Initial frozen-file read requested verify.py at lane root, but verifier uses a different retained path. cat returned exit1 after printing SUMMARY.md; no content was inferred from the missing file. Located verifier within frozen payload before continuing.

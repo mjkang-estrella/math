@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-08T08:52:06.116527+00:00",
+  "name": "bind_and_reconcile",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r444",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nimport pathlib,json,hashlib,re,subprocess,sys,base64\nlane=pathlib.Path.cwd();W=str(lane/'write_lane.py')\ndef save(n,s):\n r=subprocess.run([sys.executable,'-I','-B',W,n],input=s,text=True,capture_output=True);assert r.returncode==0,r.stderr\nids=set(map(str,json.loads(pathlib.Path('reservation.json').read_text())['ids'])); rows={};prov={}\nroot=pathlib.Path('/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus')\nfor f in sorted(root.glob('mathdb-normalized-chunk-*.jsonl')):\n raw=f.read_bytes();chunkhash=hashlib.sha256(raw).hexdigest()\n for i,line in enumerate(raw.splitlines(keepends=True),1):\n  d=json.loads(line);key=str(d.get('mathdb_id'))\n  if key not in ids:continue\n  token=re.search(rb'\"statement\"\\s*:\\s*(\"(?:[^\"\\\\]|\\\\.)*\")',line).group(1)\n  save('originals/'+key+'.jsonl',base64.b64encode(line).decode()) if False else None\n  r=subprocess.run([sys.executable,'-I','-B',W,'originals/'+key+'.jsonl','--base64'],input=base64.b64encode(line).decode(),text=True,capture_output=True);assert r.returncode==0\n  rows[key]=d;prov[key]={'chunk_path':str(f),'chunk_sha256':chunkhash,'one_based_line':i,'raw_line_including_newline_sha256':hashlib.sha256(line).hexdigest(),'newline_hex':line[-1:].hex(),'raw_statement_token':token.decode(),'raw_statement_token_sha256':hashlib.sha256(token).hexdigest(),'decoded_statement_utf8_sha256':hashlib.sha256(d['statement'].encode()).hexdigest()}\nsave('original-provenance.json',json.dumps(prov,ensure_ascii=False,indent=2))\nallow=json.loads(pathlib.Path('historical-results-allowlist.json').read_text()); audit=[];hits=[]\nblocked=['expanded-corpus-r442','expanded-corpus-r443','expanded-corpus-r395','formal','code-loop','polynexus','crown','tournament','bunkbed','hat-']\nurls={r['source_url'] for r in rows.values()}\ndef visit(x,path):\n if isinstance(x,dict):\n  exact=any(str(v) in ids for k,v in x.items() if k in ['mathdb_id','id','problem_id','target_id']) or any(k in ids for k in x)\n  scope=any(v in urls for k,v in x.items() if isinstance(v,str) and ('url' in k or 'source' in k))\n  if exact or scope:hits.append({'file':current,'json_path':path,'match':'exact_id' if exact else 'exact_source_url','entry':x});return\n  for k,v in x.items():visit(v,path+'/'+str(k))\n elif isinstance(x,list):\n  for i,v in enumerate(x):visit(v,path+'/'+str(i))\nfor current,h in allow.items():\n if any(b in current.lower() for b in blocked):audit.append({'path':current,'state':'filtered_before_stat_open'});continue\n p=pathlib.Path(current);b=p.read_bytes();actual=hashlib.sha256(b).hexdigest();assert actual==h,current\n audit.append({'path':current,'sha256':actual,'state':'matched_allowlist_bytes'})\n try:visit(json.loads(b),'')\n except json.JSONDecodeError:audit[-1]['parse']='not_JSON'\nsave('history-access-inventory.json',json.dumps(audit,indent=2));save('history-exact-hits.json',json.dumps(hits,ensure_ascii=False,indent=2))\nprint('originals',len(rows),'history_files',len(audit),'hits',len(hits))\nfor j,x in enumerate(hits):print('HIT',j,x['file'],x['json_path'],json.dumps(x['entry'],ensure_ascii=False))\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 1.1094444820191711,
+  "sampled_group_rss_peak_bytes": 54104064,
+  "samples": 12,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 1.106921,
+  "stderr": ""
+}

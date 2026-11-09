@@ -1,0 +1,3 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(){for(int n=3;n<=12;n++){int N=2*n;uint32_t lim=1u<<N;vector<uint32_t>S(lim),D(lim);int mul[24][24],iv[24];for(int a=0;a<N;a++){iv[a]=a<n?(n-a)%n:a;for(int b=0;b<N;b++)mul[a][b]=((a%n+(a<n?1:-1)*(b%n)+n)%n)+n*((a/n)^(b/n));}long long ms=0,md=0,bal=1;for(uint32_t a=1;a<lim;a++){int x=__builtin_ctz(a);uint32_t b=a&(a-1),s=S[b]|(1u<<mul[x][x]),d=D[b]|1;for(uint32_t c=b;c;c&=c-1){int y=__builtin_ctz(c);s|=(1u<<mul[x][y])|(1u<<mul[y][x]);d|=(1u<<mul[x][iv[y]])|(1u<<mul[y][iv[x]]);}S[a]=s;D[a]=d;int delta=__builtin_popcount(s)-__builtin_popcount(d);ms+=delta>0;md+=delta<0;bal+=delta==0;}cout<<n<<" "<<ms<<" "<<md<<" "<<bal<<endl;}}

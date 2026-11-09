@@ -1,0 +1,3 @@
+extern int printf(const char*,...);
+extern int atoi(const char*);
+int main(int argc,char**argv){int n=atoi(argv[1]),p[16],inv[16];long long h[16][16]={0},count=0;for(int j=0;j<n;j++)p[j]=j;while(1){int a=0,b=0;for(int j=0;j<n;j++)inv[p[j]]=j;for(int j=0;j<n-1;j++){a+=((p[j]>p[j+1])==(j%2==0));b+=((inv[j]>inv[j+1])==(j%2==0));}h[a][b]++;count++;int i=n-2;while(i>=0&&p[i]>=p[i+1])i--;if(i<0)break;int j=n-1;while(p[j]<=p[i])j--;int t=p[i];p[i]=p[j];p[j]=t;int l=i+1,r=n-1;while(l<r){t=p[l];p[l++]=p[r];p[r--]=t;}}printf("{\"n\":%d,\"count\":%lld,\"hist\":[",n,count);for(int i=0;i<n;i++){if(i)printf(",");printf("[");for(int j=0;j<n;j++){if(j)printf(",");printf("%lld",h[i][j]);}printf("]");}printf("]}\n");}

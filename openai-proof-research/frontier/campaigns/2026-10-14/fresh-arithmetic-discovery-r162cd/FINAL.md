@@ -1,0 +1,17 @@
+# R162CD — PREFREEZE / no nominee
+
+No additional full theorem or diagnostic was selected or frozen. No correctness, contribution, acceptance or count is assigned. Parent disposition and all older scopes remain unchanged. This is the authorized Codex / GPT-6 Astra / high / default-speed research handoff.
+
+The research retained one labelled complete bipartite graph, one drawing, its actual edges and separate point-crossing, signed-intersection and odd-pair conventions. Both full Source165 proofs and their stronger operative interfaces are paid. The source ordinary crossing formulas, including continuous-arc optimality, are not nominees.
+
+The integrated author comparison integralizes the cycle pairing before reduction modulo two, applies the actual interpolation and subspace proofs in characteristic two, and obtains the full one-part-even parity comparison. Arbitrary adjacent parity admits a fully charged rank-defect repair; its cost repeats across the affected off-diagonal blocks. A smaller symmetry compression survives all local parity perturbations but is weaker than classical triple averaging. These are retained source/primary compositions, not an additional substantial result.
+
+The explored full unrestricted-parity route remains unproved. A sufficient algebraic statement would make the same detector generically nonsingular for every binary tournament on an odd number of nodes. If that statement held, one common set of labels for every actual star would follow by multiplying their finitely many nonzero determinant polynomials. The determinant assertion itself is missing. Alternatively, the exact primary realization law reduces the question to a Hamming-weight bound on one labelled affine parity set; that bound is also unproved. Neither route is necessary or exhaustive.
+
+An exact finite singular specialization defeats only an every-node-tuple claim. The SAME tournament has invertible specializations, so no generic counterexample or graph-drawing obstruction follows. Projecting to unlabelled rectangles loses pairs that are both odd and does not justify independent choices of representatives. No failed method is promoted to impossibility.
+
+The mathematical work and full compatibility calculations are in [private/DERIVATION.md](private/DERIVATION.md), with [private/SOURCE-INTERFACES.md](private/SOURCE-INTERFACES.md) and [private/WORKING.md](private/WORKING.md). Protected bodies and their metadata remain private/local under their original rights.
+
+Reading: all 17 canonical texts (111715 bytes), both actual wrappers, all includes, five figure TeXs, both bibliographies and READMEs. Nineteen source blobs and seven selected trees were authenticated; two compiled source PDFs were authentication-only. Five full primary PDF texts total 90 pages across four works, including both short and stronger long versions of one paper; three focused rendered pages were checked. The five exact completed exceptions were read. No optional original-history traversal occurred. Full ancestry, extraction, late-read, access-recovery and mode-timing limits are in [private/READING-LIMITS.md](private/READING-LIMITS.md); no exhaustive-history or priority claim is made.
+
+The packet is sealed with a sorted exact manifest and a read-only explicit-anchor verifier. REPORT.md is detached from the manifest but remains inside the authorized root. FINAL, MANIFEST and REPORT anchors are supplied in the final conversation. Artifact verification is separate from mathematical review. No downstream work is authorized or performed here.

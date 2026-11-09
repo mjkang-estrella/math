@@ -1,0 +1,11 @@
+# Standalone r468 handoff
+
+Exactly twenty fixed IDs were reviewed at literal level, with raw-newline/token/decoded provenance preserved. Zero qualified prospective survivors, zero formal dispatches, zero accepted credit. Accepted count remains57/60 beyond39 prior,96total.
+
+Five assigned original bodies were acquired and compared:329457,377975,377681,377110,376946. Fifteen assigned original bodies remain unread. A distinct Corteel primary paper and the exact dated public coefficient proof were also acquired. Seven guarded GETs succeeded, no new unavailable work or guard failure; one native search with three exact query strings was precharged against authenticated live counters and its full response saved. The four denied registry metadata artifacts were not refreshed; no current-head or worldwide novelty clearance is asserted.
+
+329457 is the source-own full public Roller Coaster theorem.377975 has a complete exact publicly posted proof, independently algebra-checked against actual Williams and Corteel definitions/theorems. Both earn zero.377110 unsigned Euler wording and322088 vacuous cancellation wording earn zero corrections only.376946 and377681 retain precise all-parameter gaps after sustained routes; see DERIVATIONS.md. Other IDs have separate precise screening gaps in results.json; no source-body clearance is imputed to them.
+
+All767 permitted historical files were scanned structurally for exact IDs and sourceURL scalar matches after filtering every relative path component BEFORE access. The sole exact source match was distinct320010 in the path-tree paper; its full disposition was read, not transferred. No active/quarantined/protected history was used. Independent review and root acceptance are absent. No FULLCANDIDATE or dormant formal plan is appropriate because no new complete survivor remains.
+
+Use results.json for exactly20 separate gate assessments; literal-provenance.json for original byte bindings; history-access.json and history-matches.json for bounded prior access; source/read/search/resource details in PROCEDURE.md and inventories. All recorded process receipts are genuine; sampling does not measure native-tool resources, transient maxima or separate writer peaks. The terminal manifest specifies its exact noncircular exclusions. No shared files, git, publication, children or mathematical programs were used.

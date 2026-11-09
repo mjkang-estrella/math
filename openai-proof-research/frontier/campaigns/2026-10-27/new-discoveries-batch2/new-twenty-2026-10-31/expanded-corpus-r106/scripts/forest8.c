@@ -1,0 +1,7 @@
+extern int printf(const char*,...);extern int fflush(void*);extern void*stdout;extern int atoi(const char*);
+unsigned adj[32];int n;unsigned long long state=106364967;
+unsigned rnd(){state^=state<<13;state^=state>>7;state^=state<<17;return state;}
+int connected(unsigned mask){if(!mask)return 0;unsigned seen=mask&-mask,old=0;while(old!=seen){old=seen;unsigned a=seen;while(a){int i=__builtin_ctz(a);a&=a-1;seen|=adj[i]&mask;}}return seen==mask;}
+int forest(unsigned mask){int vertices=__builtin_popcount(mask),edges=0,comps=0;unsigned rem=mask;for(int i=0;i<n;i++)if(mask>>i&1)edges+=__builtin_popcount(adj[i]&mask);while(rem){comps++;unsigned seen=rem&-rem,old=0;while(seen!=old){old=seen;unsigned a=seen;while(a){int i=__builtin_ctz(a);a&=a-1;seen|=adj[i]&rem;}}rem&=~seen;}return edges/2==vertices-comps;}
+int cut(){unsigned full=(1u<<n)-1;for(unsigned s=0;s<=full;s++)if(__builtin_popcount(full^s)>=2&&forest(s)&&!connected(full^s))return 1;return 0;}
+int main(int argc,char**argv){int shard=atoi(argv[1]);for(n=8;n<=8;n++){long long tested=0,fail=0;int m=n*(n-1)/2;for(unsigned long long b=((1ull<<m)*shard/8);b<((1ull<<m)*(shard+1)/8);b++){if(__builtin_popcountll(b)>=3*n-6)continue;for(int i=0;i<n;i++)adj[i]=0;int k=0;for(int i=0;i<n;i++)for(int j=0;j<i;j++,k++)if(b>>k&1){adj[i]|=1u<<j;adj[j]|=1u<<i;}tested++;if(!cut()){fail++;printf("FAIL %d %llu\n",n,b);}}printf("exhaustive n %d tested %lld failures %lld\n",n,tested,fail);fflush(stdout);}}

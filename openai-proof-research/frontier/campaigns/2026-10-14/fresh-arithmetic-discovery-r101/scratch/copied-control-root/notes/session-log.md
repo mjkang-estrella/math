@@ -1,0 +1,13 @@
+# r101 durable session log
+
+2026-10-20. Codex/GPT-6 Astra, high, serviceTier default. Complete common and role briefs read; role runner overrides common Factory-only provenance. No freeze/nominee. Inputs copied and SHA256 bound before further work. No git or nested agents.
+
+First algebra observation to check against full source: if f(Dx-i)=lambda(D)g(x), then cont(f) divides lambda(D)cont(g) by coefficient divisibility. This alone is routine and cannot support a nominee.
+
+Complete integer and prime operative TeX sections read (including recovery read of clipped lift boundary), plus main files, figures and bibliographies. Strong reduction identified: normalize once at local roots, retain affine prime test T_l=r+D0(r_l+l*x), primitive with slope D0*l. Local nonconstant coefficients unit at all primes; allowed interpolation supplies degree-only small-prime derivative bound. Kernel needs phi(D0*l)/(D0*l), unit counts phi(D0*l*b)/phi(D0*l). Fixed D0,M affect only constants/thresholds. This looks like a routine compatible combination of stipulated operations, not a new substantial bridge. Full analytic accounting and strongest primary/history comparison pending; no freeze.
+
+Full DEG author scope frozen before extended drafting: 0cd522d5e521dfe030f8993052786693c85cef31a7deaaab67acb7254fbf77a3. All scope/quantifiers retained. Primary reads now include Lucier auxiliary/content proofs, Rice 2013 affine-prime proof and appendices, Rice 2019 sieve/Hensel/exponential-sum proofs, and Adajar et al v2 auxiliary/iteration/complete-moduli interfaces. Working classification is routine source composition, not a substantial-result nomination. Distinct local-only thinning extension to be tested by a polynomial-phase mask.
+
+Full frozen DEG author proof drafted with root normalization, coherent (F_l,T_l), degree-only allowed derivative interpolation, tuple covariance, phi(D0*l) prime weight, both arc estimates, exact avoidance transport and simultaneous-l induction. No author gap presently identified relative to stipulated operations; no independent gate. The distinct local-density thinning test fails by the sqrt(2)*(p-1)^2 phase mask; full diagnostic saved. No new substantial operation identified.
+
+Late history coverage repair: existing frontier/scouts and top-level proposals/notes/findings searched, no lexical hits. i07/i18/i82 selected hit contexts inspected; unrelated mechanisms. Lucier PDF printed pp81,84 visually inspected. Exact degree-four pair diagnostic passed 20 finite coherence inputs; no proof gate. Full source/primary register and read limits finalized. Next action: one seal and bounded read-only copied controls, with original preservation.

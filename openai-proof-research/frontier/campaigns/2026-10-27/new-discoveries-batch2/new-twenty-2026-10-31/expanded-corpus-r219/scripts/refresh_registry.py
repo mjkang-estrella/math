@@ -1,0 +1,6 @@
+import json,re,pathlib
+D=pathlib.Path(__file__).resolve().parents[1];out=json.loads((D/'outputs/registry-screen.json').read_text());pat=r'2606[._-](04854|10885|13472|24016|25493|31702)|2607[._-](00153|03315|06396|15311|16356|19946|20157|24724|25412|26266|26606)|Ostmann|DemoStrong|LengthArea|Transferal|Bisimplicial|Zeolite|Heged|Rapaport|CircuitDouble|CycleDouble|Ohba|SingularPart|PerfectPower|AcyclicSep|EllisKeller|NormDense|EuclideanRamsey|PetersenColor'
+for f in ['omega-D5-tree.json','omega-Problems-complete.json','openai-preprints-complete.json']:
+ x=json.loads((D/'http'/f).read_text());out[f]={'truncated':x.get('truncated'),'entries':len(x['tree']),'hits':[v for v in x['tree'] if re.search(pat,v['path'],re.I)]}
+out['github_repository_searches']=[json.loads(p.read_text()) for p in sorted((D/'http').glob('github-search-*.json.receipt.json'))];out['limitations']='Bounded path and metadata screen, selected matching bodies only. Root recursive OpenAI and Omega trees were truncated, so complete preprints, D5 and Problems subtrees were fetched separately. OpenAI lean subtree still truncated; no complete all-Lean clearance. LeanPool projects plus candidates metadata screened; not every proof body.'
+(D/'outputs/registry-screen.json').write_text(json.dumps(out,indent=2)+'\n')

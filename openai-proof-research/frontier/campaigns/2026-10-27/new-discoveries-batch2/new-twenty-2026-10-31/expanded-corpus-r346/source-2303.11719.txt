@@ -1,0 +1,1669 @@
+
+On the minimum number of inversions to make a digraph 𝑘-(arc-)strong.
+ // Restore the saved color scheme preference, or
+ // enact the browser preference if "automatic", 
+ // without expecting DOM load to have completed.
+ //
+ // Also restore any saved readingmode and ToC display preferences.
+ function initializeReadingPreferences() {
+ let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+ if (saved_theme === "automatic") {
+ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+ saved_theme = "dark";
+ }
+ }
+ if (saved_theme == "dark") {
+ document.documentElement.setAttribute("data-theme", "dark");
+ } else {
+ document.documentElement.setAttribute("data-theme", "light");
+ }
+ const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+ if (tocDisplay) {
+ document.documentElement.setAttribute("data-toc-display", tocDisplay);
+ }
+ const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+ if (readingMode) {
+ document.documentElement.setAttribute("data-reading-mode", readingMode);
+ }
+ }
+ // Run as soon as JS starts, to minimize repainting
+ initializeReadingPreferences();
+ /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+ the marker's display to know which way to toggle. The marker draws no box. */
+ .arxiv-html-header { display: contents; }
+ html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+ /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+ icon by making its span a block). */
+ .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+ /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+ arXiv's own render as they are (the logo on the bar, the funder logos on their white
+ chips). Important: ar5iv's dark rules are unlayered, as specific as
+ :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+ :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+ .ds-site-header img { background-color: transparent !important; }
+ /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+ were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+ header, the paper's bar (no site navigation, the paper's controls), takes the second and
+ stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+ The controls show their names. */
+ @media (min-width: 1280px) {
+ html { scroll-padding-top: 80px; }
+ .arxiv-html-site-chrome { display: contents; }
+ .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+ .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+ .arxiv-html-site-chrome .tool-icon { display: none; }
+ }
+ /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+ readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+ bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+ over the header and the paper: it shows only while open, under the chrome, in its place in
+ the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+ inset; the theme gives it none, so it met the screen edges. */
+ @media (max-width: 1279px) {
+ .arxiv-html-site-chrome .tool-wide { display: none; }
+ .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+ html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+ .ltx_page_navbar { position: absolute; top: auto; }
+ .arxiv-html-footer { padding-inline: 1rem; }
+ }
+Skip to main content
+ Report GitHub Issue
+ ×
+ Title:
+Content selection saved. Describe the issue below:
+ Description:
+ Submit without GitHub
+ Submit in GitHub
+ [FIGURE archive] 
+ Why HTML?
+ Report Issue
+ Back to Abstract
+ Download PDF
+ Contents
+ Reading mode
+ Colour theme
+Abstract
+1 Introduction
+2 Preliminaries
+2.1 Notation
+2.2 Preliminary results
+3 Bounds on $\sinv^{\prime}_{k}(n)$ 
+4 Complexity of computing $\sinv_{k}$ and $\sinv^{\prime}_{k}$ 
+4.1 Inversions to become $k$ -arc-strong
+4.2 Inversions to become $k$ -strong
+5 Bounds on $M^{\prime}_{k}$ and $M_{k}$ 
+5.1 Values of $M^{\prime}_{1}$ , $M_{1}$ , $M^{\prime}_{2}$ and $M_{2}$ 
+5.2 Lower bound on $m^{\prime}_{k}(2k+1)$ 
+5.3 Upper bounds on $M_{k}$ and transitive tournaments
+5.4 Upper bound on $M^{\prime}_{k}$ 
+5.4.1 Preliminaries
+5.4.2 Main proof for tournaments of size $2k+1$ 
+5.4.3 Bigger tournaments
+6 Upper bounds on $m_{k}(n)$ 
+6.1 First upper bounds on $m_{k}(n)$ 
+6.2 Linear upper and lower bounds on $N_{k}(1)$ 
+6.3 Better upper bound on $N_{k}(3)$ 
+6.4 Upper bounds for $k$ large
+7 Conclusion
+References
+ License: arXiv.org perpetual non-exclusive license
+arXiv:2303.11719v4 [math.CO] 11 Dec 2025
+On the minimum number of inversions to make a digraph $k$ -(arc-)strong.
+Julien Duron
+Affiliation: École normale supérieure de Lyon, LIP, France
+Frédéric Havet
+Affiliation: Université Côte d’Azur, CNRS, Inria, I3S, Sophia Antipolis, France
+Florian Hörsch
+Affiliation: CISPA Saarbrücken, Germany
+florian.hoersch@cispa.de
+Clément Rambaud
+Affiliation: Université Côte d’Azur, CNRS, Inria, I3S, Sophia Antipolis, France
+Affiliation: DIENS, École normale supérieure, CNRS, PSL University, Paris, France
+Abstract
+The inversion of a set $X$ of vertices in a digraph $D$ consists of reversing the direction of all arcs of $D\langle X\rangle$ . We study $\sinv^{\prime}_{k}(D)$ (resp. $\sinv_{k}(D)$ ) which is (for some positive integer $k$ ) the minimum number of inversions needed to transform $D$ into a $k$ -arc-strong (resp. $k$ -strong) digraph or $+\infty$ if no such transformation exists.
+Note that $\sinv^{\prime}_{k}(D)\leq\sinv_{k}(D)$ .
+We set $\sinv^{\prime}_{k}(n)=\max\{\sinv^{\prime}_{k}(D)\mid D~\mbox{is a $2k$-edge-connected digraph of order $n$}\}$ . We show the following results where $k$ is a fixed integer for $(i)-(vi)$ :
+(i) 
+ $\frac{1}{2}\log(n-k+1)\leq\sinv^{\prime}_{k}(n)\leq\log n+4k-3$ for every $n\geq k$ ;
+(ii) 
+for any fixed positive integer $t$ , deciding whether a given oriented graph $D$ with $\sinv^{\prime}_{k}(D)<+\infty$ satisfies $\sinv^{\prime}_{k}(D)\leq t$ is NP-complete;
+(iii) 
+for any fixed positive integer $t$ , deciding whether a given oriented graph $D$ with $\sinv_{k}(D)<+\infty$ satisfies $\sinv_{k}(D)\leq t$ is NP-complete;
+(iv) 
+if $T$ is a tournament of order at least $2k+1$ , then
+ $\sinv_{k}(T)\leq 2k$ ,
+and $\sinv^{\prime}_{k}(T)\leq\frac{4}{3}k+o(k)$ ;
+(v) 
+ $\frac{1}{2}\log(2k+1)\leq\sinv^{\prime}_{k}(T)$ for some tournament $T$ of order $2k+1$ ;
+(vi) 
+if $T$ is a tournament of order at least $19k-2$ (resp. $11k-2$ ), then
+ $\sinv_{k}(T)\leq 1$ (resp. $\sinv_{k}(T)\leq 3$ );
+(vii) 
+for every $\epsilon>0$ , there exists $C$ such that for every positive integer $k$ and every tournament $T$ on at least $2k+1+\epsilon k$ vertices, we have $\sinv_{k}(T)\leq C$ .
+Keywords: inversion; tournament; $k$ -strong; $k$ -arc-strong.
+1 Introduction
+Notation not given below is consistent with [7]. For some positive integer $k$ , we denote by $[k]$ the set $\{1,2,\dots,k\}$ , and we use $\log$ to refer to the logarithm to the base 2. A digraph may contain digons, those are pairs of arcs in opposite direction between the same two vertices, but no parallel arcs or loops while an oriented graph is a digraph without digons. A multigraph may contain parallel edges, but no loops, while a multigraph with no parallel edges is called a graph. When the graph or digraph is clear from the context, we use $n$ for its number of vertices.
+A feedback arc set in a digraph is a set of arcs whose reversal results in an acyclic digraph.
+Considering an arbitrary ordering $(v_{1},\dots,v_{n})$ of the vertices of a digraph $D$ and a smallest set among the one containing the forward arcs (i.e. arcs $v_{i}v_{j}$ with $i<j$ ) and the one containing the backward arcs (i.e. arcs $v_{i}v_{j}$ with $i>j$ ), one gets that $D$ has a feedback arc set of size at most $|A(D)|/2$ .
+In particular, every oriented graph of order $n$ has a feedback arc set of size at most $\frac{1}{2}\binom{n}{2}$ .
+This bound is almost tight : de la Vega [20] showed that there are infinitely many oriented graphs with no feedback arc set of size less than $\frac{1}{2}\binom{n}{2}-1.73n^{3/2}$ .
+Finding a minimum cardinality feedback arc set of a given digraph is an important and heavily studied algoritmic problem. It is one of the first problems shown to be NP-hard listed by Karp in [29].
+Furthermore, it is hard to approximate. For arbitrary digraphs, the best
+known ratio is $\bigO(\log n\log\log n)$ due to Even et al. [18]. It was proven to be APX-hard by Kann [28]. This was later strengthened by Dinur and Safra who showed that, unless P is
+equal to NP, it cannot be approximated within a factor of better than about $1.36$  [16].
+For tournaments, which are orientations of complete graphs, the problem was proven to remain NP-complete, independently by Alon [3] and Charbit, Thomassé, and Yeo [15]. On the other hand, a polynomial-time approximation scheme was provided by Kenyon-Mathieu and Schudy  [30], improving on an earlier $3$ -approximation algorithm by Ailon, Charikar, and Newman [1].
+To make a digraph $D$ acyclic, one can use a different operation from arc reversal, called inversion.
+The inversion of a set $X$ of vertices consists in reversing the direction of all arcs of $D\langle X\rangle$ .
+We say that we invert $X$ in $D$ . The resulting digraph is denoted by $\Inv(D;X)$ .
+If $(X_{i})_{i\in I}$ is a family of subsets of $V(D)$ , then $\Inv(D;(X_{i})_{i\in I})$ is the digraph obtained after inverting the
+ $X_{i}$ one after another. Observe that this is independent of the order in which we invert the $X_{i}$  : $\Inv(D;(X_{i})_{i\in I})$ is obtained from $D$ by reversing exactly those arcs for which an odd number of the $X_{i}$ contain its two endvertices.
+A decycling family of a digraph $D$ is a family $(X_{i})_{i\in I}$ of subsets of $V(D)$ such that
+ $\Inv(D;(X_{i})_{i\in I})$ is acyclic.
+A digraph admits a decycling family if and only if it does not contain any digon. Indeed, observe that an inversion operation changes the orientation of either none or both of the arcs in a digon. Hence, a digraph containing a digon cannot be made acyclic by inversions.
+Conversely, in an oriented graph, the pairs of endvertices of the arcs of a minimal feedback arc-set form a decycling family.
+The inversion number of an oriented graph $D$ , denoted by $\inv(D)$ , is the minimum number of inversions needed to transform $D$ into an acyclic oriented graph, that is, the minimum cardinality of a decycling family.
+This parameter was first introduced by Belkhechine et al. in [13] and then studied in several papers [6, 39, 4, 2].
+In particular, Belkhechine et al. proved in [13] that, for any fixed integer $k$ , deciding whether a given tournament has inversion number at most $k$ is polynomial-time solvable. In contrast, Bang-Jensen et al. [6] proved that deciding whether a given digraph has inversion number  $1$ is NP-complete. This was generalized by Alon et al. [2]: for any fixed positive integer $k$ , deciding whether a given digraph has inversion number at most $k$ is NP-complete.
+Further, the extremal question of determining the maximum integer $\inv(n)$ of the inversion numbers of all oriented graphs on $n$ vertices has been investigated.
+Independently, Aubian et al. [4] and Alon et al. [2] proved
+ $n-2\sqrt{n\log n}\leq\inv(n)\leq n-\lceil\log(n+1)\rceil$ .
+The main purpose of this article is to study the possibilities of applying the inversion operation to obtain a different objective than the resulting digraph being acyclic. Instead of making a digraph acyclic, we are interested in making it satisfy a prescribed connectivity property.
+A digraph $D$ is strongly connected or simply strong (resp. $k$ -arc-strong for some positive integer $k$ ), if for any partition $(V_{1},V_{2})$ of $V(D)$ with $V_{1},V_{2}\neq\emptyset$ there is an arc (resp. at least $k$ arcs) with tail in $V_{1}$ and head in $V_{2}$ .
+Similarly, a multigraph $G$ is connected (resp. $k$ -edge-connected for some positive integer $k$ ), if for any partition $(V_{1},V_{2})$ of $V(G)$ with $V_{1},V_{2}\neq\emptyset$ there is an edge (resp. at least $k$ edges) with one endvertex in $V_{1}$ and one endvertex in $V_{2}$ . We further say that $G$ is $k$ -connected if $|V(G)|\geq k+1$ and $G-S$ is connected for every $S\subseteq V(G)$ with $|S|\leq k-1$ .
+For a given digraph $D$ , we denote by $\UG(D)$ the undirected multigraph that we
+obtain by suppressing the orientations of the arcs. A digraph is $k$ -connected (resp. $k$ -edge-connected) if its underlying multigraph $\UG(D)$ is.
+Clearly, a digraph $D$ can be made $k$ -arc-strong by reversing some arcs if and only if the edges of $\UG(D)$ can be oriented such that the resulting digraph
+is $k$ -arc-strong.
+Robbins’ Theorem [36] asserts that a graph admits a strong orientation if and only if it is 2-edge-connected, and more generally, Nash–Williams’ weak orientation theorem [35] asserts that a graph admits a $k$ -arc-strong orientation
+if and only if it is $2k$ -edge-connected.
+We can hence decide in polynomial time whether a given digraph can be transformed into a $k$ -arc-strong digraph via arc reversals, applying standard flow algorithms to its underlying graph. Furthermore, it is well-known that, if this is the case, then, by reducing to a minimum-cost submodular flow problem, one can determine, in polynomial time, a minimum set of arcs in $D$ whose reversal gives a $k$ -arc-strong digraph, see Section 8.8.4 of [7] for details.
+It is easy to see that the number of necessary arc reversals to make a $2k$ -edge-connected digraph $D$ $k$ -arc-strong cannot be bounded by a function depending only on $k$ . For example, one can consider digraphs that contain a number of sinks which is linear in the number of vertices of the graph, where a sink is a vertex with no outgoing arc.
+However, Bang-Jensen and Yeo [12] proved that for tournaments, the size of such a set is always bounded by a quadratic function of $k$ . Precisely, they showed that every tournament on at least $2k+1$ vertices can be made $k$ -arc-strong by reversing at most $\frac{1}{2}k(k+1)$ arcs. This result is tight for the transitive tournaments.
+We are interested in the problem of using inversions to make a digraph $k$ -arc-strong.
+A $k$ -arc-strengthening family of a digraph $D$ is a family $(X_{i})_{i\in I}$ of subsets of $V(D)$ such that
+ $\Inv(D;(X_{i})_{i\in I})$ is $k$ -arc-strong.
+The $k$ -arc-strong inversion number of a digraph $D$ , denoted by $\sinv^{\prime}_{k}(D)$ , is the minimum number of inversions needed to transform $D$ into a $k$ -arc-strong digraph, that is, the minimum cardinality of a $k$ -arc-strengthening family.
+We first deal with the extremal behaviour of $\sinv^{\prime}_{k}(D)$ for some fixed $k$ , that is, we deal with the question of finding the maximum number of necessary inversions to make a $2k$ -edge-connected digraph on a fixed number of vertices $k$ -arc-strong. To this end, we define $\sinv^{\prime}_{k}(n)=\max\{\sinv^{\prime}_{k}(D)\mid D~$ is a $2k$ -edge-connected digraph of order $n$ $\}$ . It turns out that $\sinv_{k}^{\prime}(n)$ is an unbounded, but slowly growing, function. We are able to determine $\sinv_{k}^{\prime}(n)$ up to a constant multiplicative factor of roughly 2. More precisely, we show the following result:
+Theorem 1.1.
+For any pair of positive integers $k,n$ with $n\geq k+2$ , we have
+ $\frac{1}{2}\log(n-k+1)\leq\sinv^{\prime}_{k}(n)\leq\log n+4k-3.$ 
+Observe that the condition $n\geq k+2$ is necessary for $\sinv_{k}^{\prime}(n)$ to be well-defined.
+Next, we consider the algorithmic complexity of computing $\sinv_{k}^{\prime}(D)$ for a given digraph $D$ and a fixed integer $k$ . We show that this problem is NP-hard. More precisely, we show the following, slightly stronger, result.
+Theorem 1.2.
+Deciding whether a given oriented graph $D$ satisfies $\sinv^{\prime}_{k}(D)\leq t$ is NP-complete for all pairs of positive integers $k$ and $t$ .
+Furthermore, we show that there is little hope to approximate $\sinv^{\prime}_{k}(D)$ in polynomial time.
+Theorem 1.3.
+Unless P=NP, there do not exist any integers $c_{1},c_{2},k$ with $1\leq c_{1}\leq c_{2}$ and $k\geq 1$ for which there exists a polynomial-time algorithm that can assert whether a given $2k$ -edge-connected oriented graph can be made $k$ -arc-strong by at most $c_{1}$ inversions or cannot be made $k$ -arc-strong by at most $c_{2}$ inversions.
+As a related problem, one may also want to make a digraph $k$ -strong.
+A digraph $D$ is $k$ -strong if $|V(D)|\geq k+1$ and for any set $S\subseteq V(D)$ with fewer than $k$ vertices, $D-S$ is strong.
+A digraph which can be made $k$ -strong by reversing arcs
+is $k$ -strengthenable.
+The $1$ -strengthenable digraphs are the $2$ -edge-connected ones, because
+being $1$ -strong is the same as being strong or $1$ -arc-strong.
+Thomassen [40] proved that the $2$ -strengthenable digraphs are the $4$ -edge-connected digraphs $D$ such that $D-v$ is $2$ -edge-connected for every vertex $v\in V(D)$ . On the other hand, it is NP-hard to compute the minimum number of arc reversals needed to make a given digraph 2-strong, as shown by Bang-Jensen et al. in  [10].
+Furthermore, in contrast to the anologous problem for $k$ -arc-strengthenable digraphs, for $k\geq 3$ , it is NP-complete to decide whether a digraph is $k$ -strengthenable. Indeed, Durand de Gevigney [17] proved that it is NP-complete to decide whether an undirected graph has a $k$ -strong orientation for any $k\geq 3$ .
+It is also natural to use inversions to make a digraph $k$ -strong.
+A $k$ -strengthening family of a digraph $D$ is a family $(X_{i})_{i\in I}$ of subsets of $V(D)$ such that
+ $\Inv(D;(X_{i})_{i\in I})$ is $k$ -strong.
+The $k$ -strong inversion number of a $k$ -strengthenable digraph $D$ , denoted by $\sinv_{k}(D)$ , is the minimum number of inversions needed to transform $D$ into a $k$ -strong digraph, that is, the minimum cardinality of a $k$ -strengthening family.
+It follows directly from the fact that every $k$ -strong digraph is $k$ -arc-strong that $\sinv_{k}(D)\geq\sinv^{\prime}_{k}(D)$ holds for every $k$ -strengthenable digraph $D$ .
+In the light of the complexity result of Durand de Gevigney [17], it seems difficult to obtain an extremal result in the shape of Theorem 1.1 for $k$ -strong digraphs. However, we give the following complexity results which are the natural analogues of Theorems 1.2 and 1.3.
+Theorem 1.4.
+Deciding whether a given $k$ -strengthenable oriented graph $D$ satisfies $\sinv_{k}(D)\leq t$ is NP-complete for all pairs of positive integers $k$ and $t$ .
+Theorem 1.5.
+Unless P=NP, there do not exist any integers $c_{1},c_{2},k$ with $1\leq c_{1}\leq c_{2}$ and $k\geq 1$ for which there exists a polynomial-time algorithm that can assert whether a given $k$ -strengthenable oriented graph can be made $k$ -strong by at most $c_{1}$ inversions or cannot be made $k$ -strong by at most $c_{2}$ inversions.
+In the remainder of this article, we focus on a particular kind of oriented graphs, namely tournaments. No tournament on fewer than $2k+1$ vertices is $k$ -arc-strong, and thus no tournament on fewer than $2k+1$ vertices is $k$ -arc-strengthenable. On the other hand, it is not hard to show that every tournament of order at least $2k+1$ is $k$ -strengthenable. Moreover, every tournament on at least $2k+1$ vertices can be made $k$ -strong by reversing the orientation of at most $\frac{1}{4}(4k-2)(4k-3)$ arcs, see e.g. [7], p. 379.
+Further, the following improvement was conjectured by Bang-Jensen. See [7].
+Conjecture 1.6 (Bang-Jensen, 1994).
+Every tournament on at least $2k+1$ vertices can be made $k$ -strong by reversing at most $\frac{1}{2}k(k+1)$ arcs.
+This would be tight as shown by the transitive tournaments.
+Bang-Jensen, Johansen, and Yeo [11] proved a weaker version of this conjecture where $2k+1$ is replaced by $3k-1$ .
+It is then natural to ask whether or not we can make a tournament $k$ -strong or $k$ -arc-strong using significantly fewer than $\frac{1}{2}k(k+1)$ inversions. This leads us to consider $M_{k}=\max\{\sinv_{k}(T)\mid T~\mbox{tournament of order at least $2k+1$}\}$ and $M^{\prime}_{k}=\max\{\sinv^{\prime}_{k}(T)\mid T~\mbox{tournament of order at least $2k+1$}\}$ .
+We show that these numbers are indeed significantly smaller than $\frac{1}{2}k(k+1)$ , but cannot be bounded by a constant independent of $k$ . More precisely, we show the following result.
+Theorem 1.7.
+For every sufficiently large integer $k$ , we have
+ $\frac{1}{2}\log(2k+1)\leq M^{\prime}_{k}\leq M_{k}\leq 2k.$ 
+The lower bound is obtained by a counting argument.
+We also prove that $M_{1}=M^{\prime}_{1}=1$ and $M_{2}=M^{\prime}_{2}=2$ showing that the upper bound is not tight for $k=1,2$ .
+We also prove a better upper for $M^{\prime}_{k}$ for large values of $k$ .
+Theorem 1.8.
+ $M^{\prime}_{k}\leq\frac{4}{3}k+o(k)$ .
+However, we believe that this bound, as well as the others, is not tight.
+Problem 1.9.
+Find better bounds on $M_{k}$ and $M^{\prime}_{k}$ .
+We further study the question of how the parameters $\sinv_{k}$ and $\sinv^{\prime}_{k}$ behave when fixing $k$ and considering tournaments whose size is significantly larger than $2k+1$ . As a first result, we prove that every sufficiently large tournament can be made $k$ -strong (and thus also $k$ -arc-strong) in one inversion.
+Theorem 1.10.
+Let $n$ and $k$ be positive integers with $n\geq 19k-2$ . If $T$ is a tournament on $n$ vertices, then $\sinv^{\prime}_{k}(T)\leq\sinv_{k}(T)\leq 1$ .
+In fact, it is
+relatively straightforward to see that $\sinv_{k}(T)\leq 1$ for tournaments $T$ of even larger
+order relative to $k$ (see Theorem 6.1).
+This leads us to the study of the functions
+ $m_{k}(n)=\max\{\sinv_{k}(T)\mid T~\mbox{tournament of order}~n\}$ and $m^{\prime}_{k}(n)=\max\{\sinv^{\prime}_{k}(T)\mid T~\mbox{tournament of order}~n\}$ for all $n\geq 2k+1$ . We believe that $m_{k}$ and $m_{k}^{\prime}$ have the following monotonic behaviour.
+Conjecture 1.11.
+Let $k$ be a positive integer.
+(i) 
+ $m_{k}$ and $m^{\prime}_{k}$ are non-increasing mappings.
+(ii) 
+ $M_{k}=m_{k}(2k+1)$ and $M^{\prime}_{k}=m^{\prime}_{k}(2k+1)$ .
+Note that (i) implies (ii).
+This conjecture is motivated by the fact that one can easily prove that $m_{k}$ and $m^{\prime}_{k}$ are non-increasing for $n>4k-2$ . See Section 7.
+Therefore, in order to approach Problem 1.9, it is sufficient to consider tournaments whose order is in the range from $2k+1$ to $4k-2$ .
+Theorem 1.10 implies that, for every pair of positive integers $k$ and $i$ , there is a smallest integer $N_{k}(i)$ such that
+ $m_{k}(n)\leq i$ for all $n\geq N_{k}(i)$ .
+Similarly, for every pair of positive integers $k$ and $i$ , there is a smallest integer $N^{\prime}_{k}(i)$ such that
+ $m^{\prime}_{k}(n)\leq i$ for all $n\geq N^{\prime}_{k}(i)$ .
+Since $m^{\prime}_{k}(n)\leq m_{k}(n)$ for all $k$ and $n$ , we have $N^{\prime}_{k}(i)\leq N_{k}(i)$ for all $k$ and $i$ .
+It is natural to ask the following questions.
+Problem 1.12.
+Let $k,i,n$ be positive integers, and let $T$ be a tournament on $n$ vertices.
+What is the minimum integer $N_{k}(i)$ such that $\sinv_{k}(T)\leq i$ if $n\geq N_{k}(i)$ ?
+What is the minimum integer $N^{\prime}_{k}(i)$ such that $\sinv^{\prime}_{k}(T)\leq i$ if $n\geq N^{\prime}_{k}(i)$ ?
+Theorem 1.10 states $N^{\prime}_{k}(1)\leq N_{k}(1)\leq 19k-2$ .
+Since the transitive tournament on $3k-1$ vertices satisfies $\sinv^{\prime}_{k}(TT_{3k+1})=\sinv_{k}(TT_{3k+1})=2$ (Theorem 5.9), we have $N_{k}(1)\geq N^{\prime}_{k}(1)\geq 3k$ . We further establish the following better lower bounds for $N_{k}(1)$ and $N_{k}^{\prime}(1)$ by giving simple examples.
+Proposition 1.13.
+For any positive integer $k$ , we have $N_{k}(1)\geq 5k-2$ and $N^{\prime}_{k}(1)\geq 4k-2$ .
+We further show that a significantly smaller tournament can still be dealt by three inversions.
+Theorem 1.14.
+For any positive integer $k$ , we have $N^{\prime}_{k}(3)\leq N_{k}(3)\leq 11k-2$ .
+Finally, using probabilistic methods, we prove that every tournament that is a constant factor bigger than $2k$ can be made $k$ -strong by a constant number of inversions. More precisely, we prove the following result.
+Theorem 1.15.
+There exists a function $f\colon\mathbb{R}_{>0}\to\mathbb{N}$ such that for every $\epsilon>0$ and every positive integer $k$ ,
+if $T$ is an $n$ -vertex tournament with $n\geq 2k+1+\epsilon k$ , then $\sinv_{k}(T)\leq f(\epsilon)$ .
+The fact that $m_{k}(n)=1$ for $n$ sufficiently large implies that the set ${\cal F}_{k}$ of tournaments $T$ such that $\sinv_{k}(T)>1$ is finite.
+This implies that computing $\sinv_{k}$ and $\sinv^{\prime}_{k}$ for fixed $k$ can be done in polynomial time for tournaments.
+Corollary 1.16.
+Let $k$ be a positive integer. We can compute $\sinv_{k}(T)$ (resp. $\sinv^{\prime}_{k}(T)$ ) for a given tournament $T$ on $n$ vertices in $O(n^{7/2})$ time (resp. $O(n^{2})$ time).
+Proof.
+We first check in constant time, whether $T$ is in ${\cal F}_{k}$ . If yes, then we can return $\sinv_{k}(T)$ and $\sinv^{\prime}_{k}(T)$ that may be stored in some precomputed table.
+If not, then $\sinv^{\prime}_{k}(T)\leq\sinv_{k}(T)\leq 1$ . We then check in $O(n^{7/2})$ time using algorithms due to Even and Tarjan [19] or Galil [23] based on flow (resp. $O(n^{2})$ time using Mansour and Schieber’s [32] algorithm based on flow or Gabow’s algorithm [22] based on matroids) whether $T$ is $k$ -strong (resp. $k$ -arc-strong) to determine whether $\sinv_{k}(T)$ (resp. $\sinv^{\prime}_{k}(T)$ ) is equal to $0$ or $1$ . ∎
+This article is structured as follows. We give some notation and a collection of preliminary results in Section 2. In Section 3, we prove Theorem 1.1. In Section 4, we prove the complexity results, namely Theorems 1.2 to 1.5. The results on tournaments are contained in Section 5, in which we prove Theorem 1.7, and in Section 6, in which we prove Theorems 6.1, 1.10, 1.14 and 1.15 and Proposition 1.13.
+2 Preliminaries
+In Section 2.1, we introduce some formal notation and in Section 2.2, we give a collection of auxiliary results.
+2.1 Notation
+A mixed graph $G=(V,E,A)$ is a triple consisting of a set $V$ of elements called vertices, a set $E$ of unordered pairs of vertices called edges, and a set $A$ of ordered pairs of vertices called arcs.
+Hence a multigraph can be seen as a mixed graph whose arc set is empty, while a digraph can be seen as a mixed graph whose edge set is empty and that does not contain parallel arcs.
+Given a mixed graph $G$ , its vertex set is denoted by $V(G)$ , its edge set is denoted by $E(G)$ and its arc set by $A(G)$ .
+The underlying graph $\UG(G)$ of a mixed graph $G$ is the undirected multigraph that we obtain by suppressing the orientations of the arcs (i.e. replacing each arc by an edge between its two endvertices).
+An orientation of a mixed graph $G$ is a digraph obtained by giving an orientation to every edge, i.e.
+replacing each edge by one of the two arcs between its endvertices.
+Let $S,S^{\prime}$ be disjoint sets of vertices in a mixed graph $G$ .
+We denote by $\delta_{G}(S,S^{\prime})$ the set of edges of $E(G)$ with exactly one endvertex in $S$ and one endvertex in $S^{\prime}$ . We use $\delta_{G}(S)$ for $\delta_{G}(S,V(G)\setminus S)$ .
+We also denote by $\delta^{+}_{G}(S,S^{\prime})$ (resp. $\delta^{-}_{G}(S,S^{\prime})$ ) the set of arcs in $A(G)$ with tail (resp. head) in $S$ and head (resp. tail) in $S^{\prime}$ . Again, we use $\delta^{+}_{G}(S)$ (resp. $\delta^{-}_{G}(S)$ ) for $\delta^{+}_{G}(S,V(G)\setminus S)$ (resp. $\delta^{-}_{G}(S,V(G)\setminus S)$ ).
+The degree (resp. out-degree, in-degree) of $S$ in $G$ is $d_{G}(S)=|\delta_{G}(S)|$ 
+(resp.
+ $d^{+}_{G}(S)=|\delta^{+}_{G}(S)|$ , $d^{-}_{G}(S)=|\delta^{-}_{G}(S)|$ ). We further use $d_{G}(S,S^{\prime})=|\delta_{G}(S,S^{\prime})|$ ,
+ $d^{+}_{G}(S,S^{\prime})=|\delta^{+}_{G}(S,S^{\prime})|$ , and
+ $d^{-}_{G}(S,S^{\prime})=|\delta^{-}_{G}(S,S^{\prime})|$ .
+Let $N_{G}(S)$ (resp. $N_{G}^{+}(S)$ , $N_{G}^{-}(S)$ ) denote the set of vertices in $V(G)\setminus S$ that are incident to at least one edge (arc) in $\delta_{G}(S)$ (resp. $\delta_{G}^{+}(S)$ , $\delta_{G}^{-}(S)$ ).
+The degree (resp. out-degree, in-degree) of a vertex $v$ in $G$ is $d_{G}(v)=d_{G}(\{v\})$ (resp.
+ $d^{+}_{G}(v)=d^{+}_{G}(\{v\})$ , $d^{-}_{G}(v)=d^{-}_{G}(\{v\})$ ).
+For simplicity, when the mixed graph is clear from the context, the subscript $G$ is omitted.
+Let $D$ be a digraph.
+A sink (resp. source) in a digraph is a vertex with out-degree $0$ (resp. in-degree $0$ ).
+We say that $D$ is eulerian if $d_{D}^{-}(v)=d_{D}^{+}(v)$ holds for every vertex $v$ .
+Let $A$ and $B$ be two disjoint sets in $D$ .
+If $ab$ is an arc for all pairs $(a,b)$ in $A\times B$ , then we write $A\Rightarrow B$ .
+Let $u,v$ be two distinct vertices in $D$ . The strong-connectivity from $u$ to $v$ in $D$ , denoted by $\kappa_{D}(u,v)$ , is the maximal number $\alpha$ such that $D-X$ contains a $(u,v)$ -path for every $X\subseteq V(D)\setminus\{u,v\}$ with $|X|\leq\alpha-1$ . For some $S\subseteq V(D)$ and positive integer $k$ , we say that $S$ is $k$ -strong in $D$ if $\kappa_{D}(u,v)\geq k$ for all $u,v\in S$ .
+2.2 Preliminary results
+We use several times without explicitly mentioning it that for every positive integer $k$ , there is a $k$ -strong tournament on $2k+1$ vertices. One example for such a tournament is the socalled rotative tournament whose vertex set is $[2k+1]$ and where an arc is oriented from $i$ to $j$ if $i-j\in[k]({\rm mod}~2k+1)$ .
+We need the following simple result that allows us to extend a set which is $k$ -strong in a digraph.
+Proposition 2.1.
+Let $D$ be a digraph, let $S$ be a $k$ -strong set in $D$ and let $v\in V(D)\setminus S$ . If $v$ has at least $k$ in-neighbours in $S$ and at least $k$ out-neighbours in $S$ , then $S\cup\{v\}$ is $k$ -strong in $D$ .
+Proof.
+Suppose for the sake of a contradiction that there is a set $X\subseteq V(D)$ of size at most $k-1$ and a pair $(s,t)$ of vertices in $(S\cup\{v\})\setminus X$ such that there is no $(s,t)$ -path in $D-X$ .
+If $s,t\in S$ , then this contradicts the fact that $S$ is $k$ -strong in $D$ .
+Thus exactly one of $s$ and $t$ is $v$ . Without loss of generality, suppose $s\in S$ and $t=v$ .
+Since $|N^{-}(v)\cap S|\geq k$ , $v$ has an in-neighbour $t_{0}\in S-X$ , and as $S$ is $k$ -strong in $D$ , there is an $(s,t_{0})$ -path in $D-X$ , and so there is an $(s,t)$ -path in $D-X$ , a contradiction.
+∎
+The well-known following result is helpful for applying Proposition 2.1. It follows directly from Proposition 2.2.2 of [9].
+Proposition 2.2.
+Let $T$ be a tournament on at least $4k-1$ vertices for some positive integer $k$ . Then there exists some $v\in V(T)$ with $\min\{d_{T}^{+}(v),d_{T}^{-}(v)\}\geq k$ .
+We need the following simple characterization of $k$ -arc-strong tournaments of order $2k+1$ .
+Proposition 2.3 (Folklore).
+A tournament on $2k+1$ vertices is $k$ -arc-strong if and only if it is eulerian.
+For sake of completeness, we give a short proof of this fact.
+Proof.
+Let $T$ be a tournament on $2k+1$ vertices.
+If $T$ is $k$ -arc-strong, then every vertex $u$ in $T$ has in- and out-degree at least $k$ , but since $d_{T}^{+}(u)+d_{T}^{-}(u)=2k$ , we deduce that $d_{T}^{+}(u)=d_{T}^{-}(u)$ and so $T$ is eulerian.
+Reciprocally, if $T$ is eulerian, then $d_{T}^{+}(u)=d_{T}^{-}(u)=k$ for every vertex $u$ of $T$ .
+Now consider a partition $(V_{1},V_{2})$ of $V(T)$ where $V_{1}$ and $V_{2}$ are non-empty.
+Then the number of arcs from $V_{1}$ to $V_{2}$ is at least
+ $\displaystyle\sum_{v\in V_{1}}d_{T}^{+}(v)-\binom{|V_{1}|}{2}$ 
+ $\displaystyle\geq|V_{1}|\left(k-\frac{|V_{1}|-1}{2}\right)$ 
+ $\displaystyle\geq k$ 
+and so $T$ is $k$ -arc-strong.
+∎
+We need the following orientation property of mixed graphs that can be found in [21].
+Proposition 2.4.
+Let $H$ be a mixed graph whose underlying graph is eulerian. Then $H$ has an eulerian orientation if and only if $d_{H}(S)\geq d_{H}^{+}(S)-d_{H}^{-}(S)$ for all $S\subseteq V(H)$ .
+Finally, we state two basic tools from probability theory.
+Proposition 2.5 (Union Bound).
+Let $E_{1},\ldots,E_{\ell}$ be a set of events in a random experiment and $E$ the event that at least one of $E_{1},\ldots,E_{\ell}$ occurs. Then $\Pr(E)\leq\sum_{i=1}^{\ell}\Pr(E_{i})$ .
+Proposition 2.6 (Chernoff’s Bound).
+If $X$ is a random variable following a binomial law with parameters $p\in[0,1]$ and $n\geq 0$ , then
+for every $\epsilon\in[0,1]$ 
+ $\Pr[X\leq(1-\epsilon)pn]\leq\exp\left(-\frac{\epsilon^{2}}{2}pn\right).$ 
+We refer the reader to [34, Part II, Section 5] for an introduction to the probabilistic method, including proofs of Propositions 2.5 and 2.6.
+3 Bounds on $\sinv^{\prime}_{k}(n)$ 
+This section is dedicated to the extremal results we have on the $k$ -arc-strong inversion number. In particular, we prove Theorem 1.1, which we restate.
+See 1.1
+First, we prove the upper bound.
+Let $d$ be a positive integer.
+A multigraph $G$ is said to be $d$ -degenerate if every submultigraph of $G$ has a vertex of degree at most $d$ .
+Every $d$ -degenerate graph admits a $d$ -degenerate ordering, that is an ordering $(v_{1},\dots,v_{n})$ of the vertices of $G$ such that every vertex has at most $d$ neighbours with lower indices.
+We shall need the following proposition, which, as observed in [10], is a direct consequence of Corollary 2 in [31].
+Proposition 3.1.
+Let $G$ be a multigraph that has a $k$ -arc-connected orientation for some positive integer $k$ 
+and let $(e_{1},f_{1}),\dots,(e_{t},f_{t})$ be a collection of pairwise disjoint pairs of parallel edges in G. Then G has
+a $k$ -arc-connected orientation in which $e_{i}$ and $f_{i}$ are oriented in opposite directions for $i=1,\dots,t$ .
+We use the following result which has recently been proved in a related paper by the second, third, and fourth author [26].
+Theorem 3.2 ([26]).
+Let $G$ be an $n$ -vertex $d$ -degenerate graph.
+For any two orientations $\vec{G}_{1},\vec{G}_{2}$ of $G$ , one can transform $\vec{G}_{1}$ into $\vec{G}_{2}$ by inverting at most $\log n+2d-1$ sets.
+Let $G$ be a multigraph and let $S$ be a subset of $V(G)$ with $\emptyset\subsetneq S\subsetneq V(G)$ .
+The $S$ -cut in $G$ , denoted by $\delta_{G}(S)$ , is the set of all the edges $uv$ in $G$ with $u\in S$ and $v\not\in S$ .
+A cut in $G$ is an $S$ -cut for some non-trivial set $S$ (that is $S\neq\emptyset$ and $S\neq V(G)$ ).
+Note that a multigraph is $k$ -edge-connected if and only if there is no cut in $G$ of size at most $k-1$ .
+For all pair of distinct vertices $u,v$ in $G$ , a $(u,v)$ -cut in $G$ is a cut $\delta_{G}(S)$ of $G$ with $u\in S$ and $v\not\in S$ .
+A multigraph $G$ is minimally $k$ -edge-connected if it is $k$ -edge-connected and
+ $G\setminus e$ is not $k$ -edge-connected
+for any edge $e\in E(G)$ .
+Equivalently, for every edge $uv$ , there is a cut of size exactly $k$ containing $uv$ .
+The next result gives an upper bound on the number of edges in a multigraph where each edge is contained in a small cut.
+Lemma 3.3.
+Let $n$ and $k$ be positive integers with $n\geq k+1$ , and let $G$ be an $n$ -vertex multigraph.
+If for every edge $uv\in E(G)$ there is a $(u,v)$ -cut of size at most $k$ in $G$ , then $G$ has at most $k(n-1)$ edges.
+Proof.
+Let $F_{1},\ldots,F_{k}$ be a set of $k$ edge-disjoint spanning forests in $G$ such that $\sum_{i=1}^{k}|E(F_{i})|$ is maximized.
+If there is an edge $e=uv\in E(G)\setminus\bigcup_{i=1}^{k}E(F_{i})$ , then, as $e$ cannot be added to $E(F_{i})$ , we obtain that $F_{i}$ contains a $(u,v)$ -path for $i\in[k]$ .
+Hence $G\setminus e$ does have any $(u,v)$ -cut whose size is smaller than $k$ , a contradiction.
+This yields $|E(G)|=\sum_{i=1}^{k}|E(F_{i})|\leq k(n-1)$ .
+∎
+We are now ready to prove the upper bound in Theorem 1.1.
+Lemma 3.4.
+Let $n$ and $k$ be positive integers with $n\geq k+1$ . Then,
+for every $2k$ -edge-connected $n$ -vertex digraph $D$ , $\sinv^{\prime}_{k}(D)\leq\log n+4k-3$ .
+Proof.
+Without loss of generality, suppose that $D$ is minimally $2k$ -edge-connected.
+Then by Lemma 3.3, every subgraph of $\UG(D)$ has average degree smaller than $2k$ .
+This implies that $\UG(D)$ is $(2k-1)$ -degenerate.
+Let $D_{0}$ be the subdigraph obtained from $D$ by removing all digons.
+By Proposition 3.1, there is an orientation $D^{\prime}_{0}$ of $\UG(D_{0})$ such that together with the digons of $D$ , this digraph is $k$ -arc-strong.
+By Theorem 3.2, there is a set $\mathcal{X}$ of at most $\log n+2(2k-1)-1$ inversions transforming $D_{0}$ into $D^{\prime}_{0}$ . Since digons are preserved by inversions, we deduce that $\Inv(D;\mathcal{X})$ is $k$ -arc-strong, and so $\sinv^{\prime}_{k}(D)\leq\log n+4k-3$ .
+∎
+In order to prove the lower bound in Theorem 1.1, we first need the following intermediate result.
+Lemma 3.5.
+For every positive integer $t$ , there exists a 2-edge-connected digraph $D$ on $2^{t-1}+1+\binom{2^{t-1}+1}{2}$ vertices with a specified vertex $s$ such that each digraph obtained from $D$ by applying at most $t-1$ inversions contains a sink or source distinct from $s$ .
+Proof.
+Let first $S$ be a set of $2^{t-1}+1$ vertices. Now we obtain the digraph $D$ by adding a vertex $v_{\{s_{1},s_{2}\}}$ as well as the arcs $s_{1}v_{\{s_{1},s_{2}\}}$ and $s_{2}v_{\{s_{1},s_{2}\}}$ for every $\{s_{1},s_{2}\}\subseteq S$ . It is easy to see that $D$ is 2-edge-connected and that the number of vertices of $D$ is $2^{t-1}+1+\binom{2^{t-1}+1}{2}$ . Now let $D^{\prime}$ be obtained from $D$ by inverting a collection of $t-1$ sets $X_{1},\ldots,X_{t-1}\subseteq V(D)$ . As $|S|=2^{t-1}+1$ , there exist distinct vertices $s_{1},s_{2}\in S$ such that for $i=1,\ldots,t-1$ , we have either $\{s_{1},s_{2}\}\subseteq X_{i}$ or $\{s_{1},s_{2}\}\cap X_{i}=\emptyset$ .
+Then in each of the $t-1$ inversions, either both or none of the arcs incident to $v_{\{s_{1},s_{2}\}}$ are inverted. We obtain that $v_{\{s_{1},s_{2}\}}$ is either a source or a sink in $D^{\prime}$ . The statement hence follows for an arbitrary $s\in S$ .
+∎
+The next lemma gives a construction of graphs of arbitrary size that need a significant amount of inversions to become strong.
+Lemma 3.6.
+For every positive integer $n\geq 3$ , there is a 2-edge-connected digraph $D$ on $n$ vertices such that any digraph obtained from $D$ by applying at most $\frac{1}{2}\lceil\log n\rceil-1$ inversions contains a sink or a source.
+Proof.
+For $n=3,4$ , the statement is clearly true. We may therefore suppose that $n\geq 5$ and hence $\frac{3}{2\sqrt{2}\sqrt{n}}\leq\frac{1}{2}$ .
+Let $n^{\prime}=2^{\frac{1}{2}\lceil\log n\rceil-1}+1+\binom{2^{\frac{1}{2}\lceil\log n\rceil-1}+1}{2}$ . By Lemma 3.5, there is a digraph $D^{\prime}$ on $n^{\prime}$ vertices together with a vertex $s\in V(D^{\prime})$ such that every graph obtained from $D^{\prime}$ by applying at most $\frac{1}{2}\lceil\log n\rceil-1$ inversions contains a sink or source distinct from $s$ .
+Next observe that
+ $\displaystyle n^{\prime}$ 
+ $\displaystyle=2^{\frac{1}{2}\lceil\log n\rceil-1}+1+\binom{2^{\frac{1}{2}\lceil\log n\rceil-1}+1}{2}$ 
+ $\displaystyle=2^{\frac{1}{2}\lceil\log n\rceil-1}+1+\frac{1}{2}(2^{\frac{1}{2}\lceil\log n\rceil-1}+1)2^{\frac{1}{2}\lceil\log n\rceil-1}$ 
+ $\displaystyle\leq 2^{\frac{1}{2}\log n-\frac{1}{2}}+1+\frac{1}{2}(2^{\frac{1}{2}\log n-\frac{1}{2}}+1)2^{\frac{1}{2}\log n-\frac{1}{2}}$ 
+ $\displaystyle=\frac{\sqrt{n}}{\sqrt{2}}+1+\frac{1}{2}\left(\frac{\sqrt{n}}{\sqrt{2}}+1\right)\frac{\sqrt{n}}{\sqrt{2}}$ 
+ $\displaystyle=\frac{n}{4}+\frac{3}{2\sqrt{2}}\sqrt{n}+1$ 
+ $\displaystyle=\frac{n}{4}+\frac{3}{2\sqrt{2}\sqrt{n}}n+1$ 
+ $\displaystyle\leq\frac{n}{4}+\frac{n}{2}+\frac{n}{4}$ 
+ $\displaystyle=n.$ 
+We now obtain $D$ from $D^{\prime}$ by adding a new set of $n-n^{\prime}$ vertices and for each of them, adding a digon linking it to $s$ . By construction, $D$ has $n$ vertices. Further, as the same property holds for $D^{\prime}$ , in any graph obtained from $D$ by at most $\frac{1}{2}\lceil\log n\rceil-1$ inversions, one of the vertices in $V(D^{\prime})\setminus\{s\}$ is a source or a sink.
+∎
+We are now ready to prove the lower bound in Theorem 1.1.
+Lemma 3.7.
+For every pair of positive integers $n,k$ with $n\geq k+2$ , there is a $2k$ -edge-connected digraph $D$ on $n$ vertices such that $\sinv^{\prime}_{k}(D)\geq\frac{1}{2}\log(n-k+1)$ .
+Proof.
+By assumption, we have $n-k+1\geq 3$ .
+Hence, by Lemma 3.6, there exists a 2-edge-connected digraph $D_{0}$ on $n-k+1$ vertices such that any digraph obtained from $D_{0}$ by inverting fewer than $\frac{1}{2}\log(n-k+1)$ sets has a sink or a source. Now let $D$ be the digraph obtained
+from $D_{0}$ by adding a set $S$ of $k-1$ vertices, for any pair of vertices in $S$ a digon linking them, and for every vertex in $S$ and every vertex in $V(D_{0})$ a digon linking these vertices. One can check that $D$ has $n$ vertices and is $2k$ -edge-connected.
+Now consider a family of subsets $\cal X$ such that
+ $D^{\prime}=\Inv(D;{\cal X})$ is $k$ -arc-strong. Any vertex $v\in V(D_{0})$ is linked to the vertices of $S$ by digons in $D$ . Since an inversion transforms a digon into a digon, it is also connected to the vertices of $S$ by digons in $D^{\prime}$ . Hence, in $D^{\prime}$ , $v$ has at least one in-neighbour and one out-neighbour in $V(D_{0})$ . In other words, the subdigraph of $D^{\prime}$ induced by $V(D_{0})$ has no source and no sink. Thus $|{\cal X}|\geq\frac{1}{2}\log(n-k+1)$ .
+Therefore $\sinv^{\prime}_{k}(D)\geq\frac{1}{2}\log(n-k+1)$ .
+∎
+Finally, Lemmas 3.4 and 3.7 imply Theorem 1.1.
+4 Complexity of computing $\sinv_{k}$ and $\sinv^{\prime}_{k}$ 
+In this section, we deal with the complexity of computing the parameters $\sinv_{k}(D)$ and $\sinv^{\prime}_{k}(D)$ for a given digraph $D$ . More concretely, we prove Theorems 1.2, 1.3, 1.4, and 1.5.
+In order to prove these results in this section, we shall use another well-studied hypergraph parameter. Let $H$ be a hypergraph. For some positive integer $k$ , a $k$ -colouring of $H$ is a mapping $\phi:V(H)\rightarrow[k]$ such that every hyperedge $e\in E(H)$ contains two vertices $u$ and $v$ with $\phi(u)\neq\phi(v)$ . The chromatic number of $H$ , denoted by $\chi(H)$ is the smallest integer $k$ such that $H$ admits a $k$ -colouring. Generalizing the definition for graphs, for some $S\subseteq V(H)$ , the $S$ -cut, denoted by $\delta_{H}(S)$ , is the set of hyperedges $e\in E(H)$ satisfying $e\cap S\neq\emptyset$ and $e\setminus S\neq\emptyset$ .
+A cut cover of $H$ is a collection $X_{1},\ldots,X_{t}$ of subsets of $V(H)$ such that $\cup_{i=1}^{t}\delta_{H}(X_{i})=E(H)$ .
+The cut covering number of $H$ , denoted by $\cc(H)$ , is the minimum integer $t$ such that there is a cut cover of $H$ of size $t$ .
+The following well-known result shows a close relationship between the cut covering number and the chromatic number. It was proved in [25] for graphs and literally generalizes to hypergraphs.
+Proposition 4.1 (Harary, Hsu, and Miller [25]).
+For any hypergraph $H$ , we have $\cc(H)=\lceil\log(\chi(H))\rceil$ .
+It is well-known that the problem of deciding whether a given graph can be coloured with $t$ colours is NP-hard for any $t\geq 3$ (see [37]). Moreover, the problem of deciding whether a hypergraph is 2-colourable is also NP-hard (see [37]). It hence follows from Proposition 4.1 that deciding whether the cut covering number of a given hypergraph is at most $t$ is NP-hard for any integer $t\geq 1$ .
+We shall show a reduction from this problem to the one of deciding whether $\sinv^{\prime}_{k}(D)\leq t$ for a given oriented graph $D$ .
+We need the following result of Guruswami, Hastad, and Sudan [24].
+Proposition 4.2 (Guruswami, Hastad, and Sudan [24]).
+Unless P=NP, there do not exist any integers $c_{1},c_{2}$ with $2\leq c_{1}\leq c_{2}$ for which there exists a polynomial-time algorithm that distinguishes a $c_{1}$ -colourable hypergraph from a not $c_{2}$ -colourable hypergraph.
+As a consequence, we directly obtain a negative result concerning the approximation of the cut covering number from Proposition 4.1.
+Proposition 4.3.
+Unless P=NP, there do not exist any integers $c_{1},c_{2}$ with $1\leq c_{1}\leq c_{2}$ for which there exists a polynomial-time algorithm that distinguishes a hypergraph of cut covering number at most $c_{1}$ from a hypergraph of cut covering number more than $c_{2}$ .
+We shall also use the following notation.
+Given a digraph $D$ and a set $X$ of vertices in $D$ , we denote by $\partial_{D}(X)$ the set of edges of $\UG(D)$ with exactly one endvertex in $X$ :
+ $\partial_{D}(X)=\delta_{\UG(D)}(X)$ .
+4.1 Inversions to become $k$ -arc-strong
+In this subsection, we prove Theorems 1.2 and 1.3. The two proofs are based on a reduction given by the following lemma.
+Lemma 4.4.
+Given a hypergraph $H$ and a positive integer $k$ , one can construct in polynomial time an oriented graph $D$ such that $\sinv^{\prime}_{k}(D)=\cc(H)$ and $|V(D)|=|V(H)|+(2k+1)|E(H)|+2k+1$ .
+Proof.
+Let $<$ be an arbitrary ordering on $V(H)$ .
+We let $V(D)$ be the disjoint union of $V(H)$ , sets of vertices $Z_{e}=\{z^{1}_{e},\ldots,z_{e}^{2k+1}\}$ for every $e\in E(H)$ , and a set of vertices $W=\{w_{1},\ldots,w_{2k+1}\}$ . We add arcs to $D$ such that $D\langle W\rangle$ is a $k$ -arc-strong tournament. We let $A(D)$ contain an arc from $v$ to $w_{i}$ for every $v\in V(H)$ and every $i=1,\ldots,k$ and an arc from $w_{i}$ to $v$ for every $v\in V(H)$ and every $i=k+1,\ldots,2k$ . Next for every $e\in E(H)$ , we add arcs to $D$ such that $D\langle Z_{e}\rangle$ is a $k$ -arc-strong tournament. Finally, for every $e\in E(H)$ , consider $u,v\in e$ with $u<v$ and $v<v^{\prime}$ for all $v^{\prime}\in e\setminus\{u,v\}$ . We add the arcs $uz_{e}^{i}$ and ${z_{e}^{i}}v$ for $i=2,\ldots,k$ and the arc $v^{\prime}{z_{e}^{1}}$ for all $v^{\prime}\in e$ . This finishes the description of $D$ . Observe that $|V(D)|=|V(H)|+(2k+1)|E(H)|+2k+1$ .
+We now show that $\sinv^{\prime}_{k}(D)=\cc(H)$ .
+Let us first show that $\sinv^{\prime}_{k}(D)\leq\cc(H)$ .
+Let $(X_{1},\ldots,X_{\cc(H)})$ be a minimum-size cut cover of $H$ .
+For every $e\in E(H)$ , there is a smallest $\alpha(e)$ such that $e\cap X_{\alpha(e)}$ and $e\setminus X_{\alpha(e)}$ are nonempty.
+Now for $i\in[\cc(H)]$ , let $X^{\prime}_{i}=X_{i}\cup\{z_{e}^{1}:\alpha(e)=i\}$ .
+Let $D^{\prime}$ be the digraph obtained from $D$ by inverting $X^{\prime}_{1},\ldots,X^{\prime}_{\cc(H)}$ . We will show that $D^{\prime}$ is $k$ -arc-strong.
+Let $S\subseteq V(D)$ be non-empty and suppose that $\min\{d_{D^{\prime}}^{-}(S),d_{D^{\prime}}^{+}(S)\}<k$ .
+By symmetry, we may suppose that $S\cap W\neq\emptyset$ .
+As $D^{\prime}\langle W\rangle=D\langle W\rangle$ is $k$ -arc-strong, we obtain $W\subseteq S$ .
+Next observe that in $D^{\prime}$ every $v\in V(H)$ is incident to at least $k$ arcs coming from $W$ and $k$ arcs going to $W$ . Thus $V(H)\subseteq S$ . Now consider some $e\in E(H)$ and let $u,v\in e$ with $u<v$ and $v<v^{\prime}$ for all $v^{\prime}\in e\setminus\{u,v\}$ .
+As $D^{\prime}\langle Z_{e}\rangle=D\langle Z_{e}\rangle$ and $D\langle Z_{e}\rangle$ is $k$ -arc-strong by construction, we obtain that either $Z_{e}\subseteq S$ or $Z_{e}\cap S=\emptyset$ .
+Observe that, by construction, $z_{e}^{1}$ has an in-neighbour and an out-neighbour in $V(H)$ in $D^{\prime}$ .
+Further observe that $A(D^{\prime})$ contains the arcs $uz_{e}^{i}$ and $z_{e}^{i}v$ for all $i\in\{2,\ldots,k\}$ .
+Thus $D^{\prime}$ contains $k$ arcs from $V(H)$ to $Z_{e}$ and $k$ arcs from $Z_{e}$ to $V(H)$ , and we obtain that $Z_{e}\subseteq S$ .
+This yields $S=V(D^{\prime})$ , so $D^{\prime}$ is $k$ -arc-strong. Thus $\sinv^{\prime}_{k}(D)\leq\cc(H)$ .
+Let us now show that $\cc(H)\leq\sinv^{\prime}_{k}(D)$ .
+Let $(X_{1},\ldots,X_{t})$ be a minimum-size $k$ -arc-strengthening family of $D$ .
+Let $D^{\prime}=\Inv(D;(X_{i})_{i\in[t]})$ and for $i\in[t]$ , let $X_{i}^{\prime}=X_{i}\cap V(H)$ .
+We claim that $(X^{\prime}_{1},\dots,X^{\prime}_{t})$ is a cut cover of $H$ .
+In other words, for every $e\in E(H)$ , there is some $i\in[t]$ such that $X^{\prime}_{i}\cap e\neq\emptyset$ and $e\setminus X_{i}^{\prime}\neq\emptyset$ .
+Suppose otherwise. It follows that there is exactly one arc entering $Z_{e}$ incident to $z_{e}^{j}$ in $D^{\prime}$ , for every $j=2,\ldots,k$ . As $D^{\prime}$ is $k$ -arc-strong, we obtain that in $D^{\prime}$ , there exists at least one arc entering $Z_{e}$ incident to $z_{e}^{1}$ and at least one arc entering $Z_{e}$ incident to $z_{e}^{1}$ . By assumption, for every $i\in[t]$ either $e\subseteq X_{i}$ or $e\cap X_{i}=\emptyset$ holds. Thus we deduce that for every $j\in[k]$ , either all the arcs corresponding to edges in $\partial_{D}(Z_{e})\cap\partial_{D}(z_{e}^{j})$ are inverted or none of them are, a contradiction.
+Therefore, $(X_{1}^{\prime},\ldots,X_{t}^{\prime})$ is a cut cover of $H$ , and so $\cc(H)\leq t=\sinv^{\prime}_{k}(D)$ .
+∎
+Let $k$ and $t$ be two positive integers.
+Lemma 4.4 and the NP-hardness of deciding whether a given hypergraph $H$ satisfies $\cc(H)\leq t$ for all $t\geq 1$ directly imply that deciding whether a given oriented graph $D$ satisfies $\sinv^{\prime}_{k}(D)\leq t$ is NP-hard.
+This problem is clearly in NP because a family $\mathcal{X}$ such that $\Inv(D;\mathcal{X})$ is $k$ -arc-strong is a polynomial-size certificate that $\sinv^{\prime}_{k}(D)\leq|\mathcal{X}|$ .
+Hence it is NP-complete, which proves Theorem 1.2.
+Moreover, Proposition 4.3 and Lemma 4.4 imply Theorem 1.3.
+4.2 Inversions to become $k$ -strong
+In this subsection, we prove Theorems 1.4 and 1.5. The two proofs are based on a reduction given by the following lemma.
+Lemma 4.5.
+Given a hypergraph $H$ and a positive integer $k$ , one can construct in polynomial time a $k$ -strengthenable oriented graph $D$ such that $\sinv_{k}(D)=\cc(H)$ and $|V(D)|=|V(H)|+(2k+1)|E(H)|+2k+1$ .
+Proof.
+Let $V(D)$ be the disjoint union of $V(H)$ , sets of vertices $Z_{e}=\{z^{1}_{e},\ldots,z_{e}^{2k+1}\}$ for every $e\in E(H)$ , and a set of vertices $W=\{w_{1},\ldots,w_{2k+1}\}$ .
+We add arcs to $D$ such that $D\langle W\rangle$ is a $k$ -strong tournament.
+Let $A(D)$ contain an arc from $v$ to $w_{i}$ for every $v\in V(H)$ and every $i\in[k]$ and an arc from $w_{i}$ to $v$ for every $v\in V(H)$ and every $i\in\{k+1,\ldots,2k\}$ .
+Next for every $e\in E(H)$ , we add arcs to $D$ such that $D\langle Z_{e}\rangle$ is a $k$ -strong tournament.
+Further, for every $e\in E(H)$ , $i\in[k]$ and $j\in[k-1]$ , we add an arc from $z_{e}^{i}$ to $w_{j}$ and for every $e\in E(H)$ , $i\in\{k+1,\ldots,2k\}$ and $j\in[k-1]$ , we add an arc from $w_{j}$ to $z_{e}^{i}$ .
+Finally, for every $e\in E(H)$ and $v\in e$ , we add the arc $vz_{e}^{1}$ . This finishes the description of $D$ .
+Observe that $|V(D)|=|V(H)|+(2k+1)|E(H)|+2k+1$ .
+We now show that $\sinv_{k}(D)=\cc(H)$ .
+Note that this implies that $\sinv_{k}(D)$ is finite and thus $D$ is $k$ -strengthenable.
+We first show that $\sinv_{k}(D)\leq\cc(H)$ . Let $(X_{1},\ldots,X_{t})$ be an optimal cut cover of $H$ .
+Now for every $e\in E(H)$ , there is a smallest $\alpha(e)$ such that $e\cap X_{\alpha(e)}$ and $e\setminus X_{\alpha(e)}$ are nonempty.
+Now for every $i\in[t]$ , let $X^{\prime}_{i}=X_{i}\cup\{z_{e}^{1}:\alpha(e)=i\}$ . Let $D^{\prime}$ be the digraph obtained from $D$ by inverting $X^{\prime}_{1},\ldots,X^{\prime}_{t}$ .
+We will show that $D^{\prime}$ is $k$ -strong. Let $Y\subseteq V(D)$ with $|Y|\leq k-1$ . We need to show that $D^{\prime}-Y$ is strongly connected.
+As $D\langle W\rangle$ is $k$ -strong, we obtain that $W\setminus Y$ is contained in a single strongly connected component $S$ of $D^{\prime}-Y$ . Next observe that every $v\in V(H)\setminus Y$ has an in-neighbour and an out-neighbour in $S$ , so $V(H)\setminus Y\subseteq S$ .
+Now consider some $e\in E(H)$ . As $D^{\prime}\langle Z_{e}\rangle=D\langle Z_{e}\rangle$ is $k$ -strong, we obtain that $Z_{e}\setminus Y$ is contained in a single strongly connected component of $D^{\prime}-Y$ .
+If $Y\neq\{w_{1},\ldots,w_{k-1}\}$ , then there is at least one arc from $Z_{e}\setminus Y$ to $W\setminus Y$ and there is at least one arc from $W\setminus Y$ to $Z_{e}\setminus Y$ , so $Z_{e}\setminus Y\subseteq S$ .
+Finally, if $Y=\{w_{1},\dots,w_{k-1}\}$ , observe that, by construction, $D^{\prime}$ contains an arc from $V(H)$ to $z_{e}^{1}$ and an arc from $z_{e}^{1}$ to $V(H)$ .
+Again, we obtain $Z_{e}\setminus Y\subseteq S$ . This yields that $D^{\prime}$ is $k$ -strong. We hence have $\sinv_{k}(D)\leq t=\cc(H)$ .
+We now show that $\cc(H)\leq\sinv_{k}(D)$ .
+Let $(X_{1},\ldots,X_{t})$ be a minimum $k$ -strengthening family of $D$ .
+For $i=1,\ldots,t$ , let $X_{i}^{\prime}=X_{i}\cap V(H)$ .
+We claim that $(X^{\prime}_{1},\dots,X^{\prime}_{t})$ is a cut cover of $H$ .
+In other words, for every $e\in E(H)$ , there is some $i\in\{1,\ldots,t\}$ such that $e\cap X_{i}$ and $e\setminus X_{i}$ are nonempty.
+Suppose otherwise, that is for every $i\in[t]$ either $e\subseteq X_{i}$ or $e\cap X_{i}=\emptyset$ holds.
+Thus all the arcs corresponding to edges in $\partial_{D}(Z_{e})\cap\partial_{D}(z_{e}^{1})$ are inverted or none of them. This yields that in $D^{\prime}-\{w_{1},\ldots,w_{k-1}\}$ , there is either no arc entering $Z_{e}$ or no arc leaving $Z_{e}$ . Hence $D^{\prime}-\{w_{1},\ldots,w_{k-1}\}$ is not strongly connected, a contradiction.
+Therefore, we obtain that $(X_{1}^{\prime},\ldots,X_{t}^{\prime})$ is a cut cover for $H$ . Thus $\cc(H)\leq t=\sinv_{k}(D)$ , and we conclude that $\cc(H)=\sinv_{k}(D)$ .
+∎
+Let $k$ and $t$ be two positive integers.
+Lemma 4.5 and the NP-hardness of deciding whether a given hypergraph $H$ satisfies $\cc(H)\leq t$ for all $t\geq 1$ directly imply that deciding whether a given oriented graph $D$ satisfies $\sinv_{k}(D)\leq t$ is NP-hard.
+This problem is clearly in NP because a family $\mathcal{X}$ such that $\Inv(D;\mathcal{X})$ is $k$ -strong is a polynomial-size certificate that $\sinv^{\prime}_{k}(D)\leq|\mathcal{X}|$ .
+Hence it is NP-complete, which proves Theorem 1.4.
+Moreover Proposition 4.3 and Lemma 4.5 imply Theorem 1.5.
+Lemma 4.5 and the NP-hardness of deciding whether a given hypergraph $H$ satisfies $\cc(H)\leq t$ for all $t\geq 1$ directly imply the following.
+Corollary 4.6.
+Let $t$ and $k$ be positive integers.
+Deciding whether $\sinv_{k}(D)\leq t$ for a given oriented graph $D$ is NP-complete.
+5 Bounds on $M^{\prime}_{k}$ and $M_{k}$ 
+This section is dedicated to giving upper and lower bounds on $M_{k}$ and $M_{k}^{\prime}$ , in particular proving Theorems 1.7 and 1.8. First, in Section 5.1, we completely determine $M_{k}$ and $M_{k}^{\prime}$ for some small values of $k$ . Next, in Section 5.2, we prove Theorem 5.4, which is the lower bound in Theorem 1.7 and a slight extension of this result. In Section 5.3, we prove Theorem 5.8, which is the upper bound in Theorem 1.7. We further give a slight improvement of this result for tournaments on exactly $2k+1$ vertices. Finally, in Section 5.4, we give the somewhat involved, probabilistic proof of Theorem 1.8.
+5.1 Values of $M^{\prime}_{1}$ , $M_{1}$ , $M^{\prime}_{2}$ and $M_{2}$ 
+We here provide the exact values of $M_{i}$ and $M_{i}^{\prime}$ for $i\in\{1,2\}$ .
+Proposition 5.1.
+Let $T$ be a tournament of order $n\geq 3$ .
+We have $\sinv_{1}(T)=\sinv^{\prime}_{1}(T)=0$ if $T$ is strong and $\sinv_{1}(T)=\sinv^{\prime}_{1}(T)=1$ otherwise.
+In particular, $m_{1}(n)=m^{\prime}_{1}(n)=1$ for all $n\geq 3$ and $M_{1}=M^{\prime}_{1}=1$ .
+Proof.
+Trivially, if $T$ is strong, then $\sinv_{1}(T)=0$ .
+If $T$ is not strong, then $\sinv_{1}(T)\geq 1$ . Now consider a hamiltonian path of $T$ .
+Such a path does exist by Redei’s Theorem (see e.g. Theorem 1.4.2 in [7]). Let $x$ be its initial vertex and $y$ its terminal vertex.
+As $T$ is not strong, we have $xy\in A(T)$ , and hence inverting $\{x,y\}$ yields a tournament with a directed hamiltonian cycle because $V(T)\setminus\{x,y\}\neq\emptyset$ .
+It follows that this tournament is strong, and so $\sinv_{1}(T)=1$ .
+∎
+For every integer $n$ , let $TT_{n}$ be the unique (up to isomorphism) acyclic tournament of order $n$ .
+Let $\vec{C}_{3}$ be the directed triangle, and let $S_{4}$ be the unique (up to isomorphism) strong tournament of order $4$ .
+Its vertex set is $\{a,b,c,d\}$ and its arc set is $\{ab,bc,cd,da,ca,db\}$ .
+Proposition 5.2.
+ $M_{2}=M^{\prime}_{2}=2$ .
+Proof.
+The rotative tournament $R_{5}$ of order $5$ is the only 2-arc-strong tournament of order $5$ .
+As observed in [13], we have $\inv(R_{5})=2$ , so $\sinv^{\prime}_{2}(TT_{5})=2$ .
+Hence $M_{2}\geq M^{\prime}_{2}\geq 2$ .
+Let us now prove that $M_{2}\leq 2$ .
+We shall prove by induction on $n$ that every tournament $T$ of order at least $5$ satisfies $\sinv_{2}(T)\leq 2$ .
+Assume first that $T$ is a tournament of order $5$ .
+If $T$ is strong, then, by Camion’s theorem [14], it has a hamiltonian cycle
+ $v_{1}v_{2}v_{3}v_{4}v_{5}v_{1}$ . Let $A^{+}=A(T)\cap\{v_{1}v_{3},v_{2}v_{4},v_{3}v_{5},v_{4}v_{1},v_{5}v_{2}\}$ and $A^{-}=A(T)\cap\{v_{3}v_{1},v_{4}v_{2},v_{5}v_{3},v_{1}v_{4},v_{2}v_{5}\}$ .
+We have $|A^{+}|+|A^{-}|=5$ , so one of the two sets $A^{+},A^{-}$ has at most two arcs. Reversing the arcs of this set, one after another, yields the 2-strong tournament $R_{5}$ .
+Assume now that $T$ is not strong.
+Then by possibly replacing $T$ by its converse, that is the tournament $\Inv(D,V(D))$ , one of the following property holds.
+• 
+ $T=TT_{5}$ with hamiltonian path $v_{1}v_{2}v_{3}v_{4}v_{5}$ . Then inverting $\{v_{1},v_{2},v_{4},v_{5}\}$ and $\{v_{1},v_{5}\}$ yields $R_{5}$ .
+• 
+ $S_{4}\Rightarrow\{x\}$ . Then inverting $\{c,d,x\}$ and $\{c,d\}$ yields $R_{5}$ .
+• 
+ $(\{x\}\Rightarrow\vec{C}_{3})\Rightarrow\{y\}$ with $\vec{C}_{3}=abca$ . Then inverting $\{a,x,y\}$ yields $R_{5}$ .
+• 
+ $(\{x\}\Rightarrow\{y\})\Rightarrow\vec{C}_{3}$ with $\vec{C}_{3}=abca$ .
+Then inverting $\{a,b,c,y\}$ and $\{a,x,y\}$ yields $R_{5}$ .
+As $\sinv_{2}(\Inv(D,V(D)))=\sinv_{2}(D)$ for digraph $D$ , the statement follows.
+Assume now that $T$ has at least $6$ vertices.
+Assume first $T$ has a vertex $v$ such that $\min\{d^{+}(v),d^{-}(v)\}\geq 2$ .
+By the induction hypothesis, $\sinv_{2}(T-v)\leq 2$ , so there is a family ${\cal X}$ of at most two subsets of $V(T-v)$ such that
+ $\Inv(T-v;{\cal X})$ is $2$ -strong.
+Now $\Inv(T;{\cal X})-v=\Inv(T-v;{\cal X})$ and $\min\{d^{+}(v),d^{-}(v)\}\geq 2$ . Thus, by Lemma 2.1,
+ $\Inv(T;{\cal X})$ is $2$ -strong, and it follows that $\sinv_{2}(T)\leq|{\cal X}|\leq 2$ .
+Assume now that every vertex has either in-degree at most $1$ or out-degree at most $1$ . Then necessarily $T$ must be the tournament $\vec{C}_{3}\Rightarrow\vec{C}_{3}$ .
+Let $V(T)=\{a,b,c,d,e,f\}$ with $\{a,b,c\}\Rightarrow\{d,e,f\}$ .
+Then inverting $\{a,b,c,d\}$ and $\{a,d,e,f\}$ transforms $T$ into a $2$ -strong tournament.
+∎
+5.2 Lower bound on $m^{\prime}_{k}(2k+1)$ 
+We shall first show the lower bound $m^{\prime}_{k}(2k+1)=\Omega(\log k)$ . We need the following result.
+Theorem 5.3 (McKay [33]).
+Let $n$ be an odd integer.
+The number of labelled eulerian tournaments on $n$ vertices is
+ $\left(\frac{2^{n+1}}{\pi n}\right)^{\frac{n-1}{2}}\sqrt{\frac{n}{\mathrm{e}}}(1+o(1)).$ 
+We are now ready to prove the lower bound in Theorem 1.7.
+Theorem 5.4.
+For every sufficiently large $k$ , $m^{\prime}_{k}(2k+1)\geq\frac{1}{2}\log(2k+1)$ .
+Proof.
+By Theorem  5.3, we may choose an integer $k_{0}$ such that for all $k\geq k_{0}$ and for $n=2k+1$ , the number of labelled eulerian tournaments on $n$ vertices is at most $\left(\frac{2^{n+1}}{\pi n}\right)^{\frac{n-1}{2}}\sqrt{n}$ and $\frac{n-1}{2}(\log\pi-1)>\log n$ . Now fix some $k\geq k_{0}$ and let $n=2k+1$ . By Proposition 2.3, all the $k$ -arc-strong tournaments on $n$ vertices are eulerian. For two labelled tournaments $T,T^{\prime}$ on the same vertex set, we say that $T^{\prime}$ is reachable from $T$ by $t$ inversions for some positive integer $t$ , if there is a family of sets $(X_{1},\ldots,X_{t})$ such that $\Inv(T;X_{1},\ldots,X_{t})=T^{\prime}$ . Observe that there are $2^{n}$ possibilities to choose $X_{i}$ for $i=1,\ldots,t$ , hence the number of tournaments reachable from $T$ by $t$ inversions is at most $(2^{n})^{t}=2^{nt}$ . Therefore,
+the number of $n$ -vertex labelled tournaments that are reachable by $t$ inversions from an eulerian one is at most
+ $\displaystyle 2^{nt}\left(\frac{2^{n+1}}{\pi n}\right)^{\frac{n-1}{2}}\sqrt{n}$ 
+ $\displaystyle=$ 
+ $\displaystyle 2^{\binom{n}{2}}\cdot 2^{nt}\left(\frac{2}{\pi n}\right)^{\frac{n-1}{2}}\sqrt{n}$ 
+ $\displaystyle=$ 
+ $\displaystyle 2^{\binom{n}{2}}\cdot 2^{nt+\frac{n-1}{2}(1-\log(\pi)-\log n)+\frac{1}{2}\log n}$ 
+ $\displaystyle<$ 
+ $\displaystyle 2^{\binom{n}{2}}\cdot 2^{nt-\frac{1}{2}n\log n}$ 
+If $t\leq\frac{1}{2}\log n$ , then $nt-\frac{1}{2}n\log n\leq 1$ , so the number of such tournaments is fewer than $2^{\binom{n}{2}}$ . It follows that there is at least one tournament $T^{*}$ on $2k+1$ vertices which cannot be reached from an eulerian tournament by at most $t$ inversions. Thus $\sinv^{\prime}_{k}(T^{*})>t$ .
+∎
+Theorem 5.4 can be slightly generalised to tournaments on $2k+c$ vertices for small integers $c$ . To do so, we will need the following generalisation of Theorem 5.3.
+For a positive integer $n$ and a collection of integers $\alpha_{1},\dots,\alpha_{n}$ , we denote by
+ $NT(n;\alpha_{1},\dots,\alpha_{n})$ the number of labelled tournaments
+on $[n]$ in which the vertex $i$ satisfies $d^{+}(i)-d^{-}(i)=\alpha_{i}$ .
+Theorem 5.5 (Spencer [38] and McKay [33]).
+Let $c$ be an integer and let $\epsilon>0$ .
+There is an integer $n_{0}$ such that for every $n\geq n_{0}$ ,
+for every $\alpha_{1},\dots,\alpha_{n}\in[-c,c]$ , we have
+ $NT(n,\alpha_{1},\dots,\alpha_{n})\leq\left(\frac{2^{n+1}}{\pi n}\right)^{(n-1)/2}\sqrt{\frac{n}{\mathrm{e}}}\exp\left(-\frac{1-\epsilon}{2n}\sum_{i=1}^{n}\alpha_{i}^{2}\right).$ 
+Corollary 5.6.
+For all integers $k$ and $c$ , the number of labelled tournaments $T$ on $n=2k+c$ vertices
+such that every vertex has in- and out-degree at least $k$ is at most
+ $2^{\log(2c)n}\left(\frac{2^{n+1}}{\pi n}\right)^{(n-1)/2}\sqrt{\frac{n}{\mathrm{e}}}$ for $k$ large enough.
+Proof.
+By Theorem 5.5 for $\epsilon=1$ ,
+for $k$ large enough,
+the number of labelled tournaments $T$ on $n=2k+c$ vertices
+such that every vertex has in- and out-degree at least $k$ is at most
+ $\left(\frac{2^{n+1}}{\pi n}\right)^{(n-1)/2}\sqrt{\frac{n}{\mathrm{e}}}\sum_{(\alpha_{1},\dots,\alpha_{n})\in\{-c+1,\dots,c-1\}^{n}}1,$ 
+which is
+ $\left(\frac{2^{n+1}}{\pi n}\right)^{(n-1)/2}\sqrt{\frac{n}{\mathrm{e}}}(2c-1)^{n}$ 
+and the corollary follows from the fact that $(2c-1)^{n}\leq 2^{\log(2c)n}$ .
+∎
+Theorem 5.7.
+For every fixed positive integer $c$ , and for every positive integer $k$ large enough compared to $c$ , there exists a tournament
+ $T$ on $2k+c$ vertices such that $\sinv^{\prime}_{k}(T)>\frac{1}{2}\log(2k+c)-\log(2c)$ .
+In particular, $m^{\prime}_{k}(2k+c)$ is unbounded for every fixed $c$ .
+Proof.
+By Corollary 5.6,
+the number of labelled tournaments $T$ on $n=2k+c$ vertices with $\sinv^{\prime}_{k}(T)\leq t$ 
+is for $k$ large enough at most
+ $2^{nt}2^{\log(2c)n}\left(\frac{2^{n+1}}{\pi n}\right)^{(n-1)/2}\sqrt{\frac{n}{\mathrm{e}}}<2^{\binom{n}{2}}2^{nt-\frac{1}{2}n\log n+\log(2c)n}$ 
+which is at most $2^{\binom{n}{2}}$ if $t\leq\frac{1}{2}\log n-\log(2c)$ .
+Hence there exists a tournament $T^{*}$ with $\sinv^{\prime}_{k}(T^{*})>\frac{1}{2}\log(2k+c)-\log(2c)$ .
+∎
+5.3 Upper bounds on $M_{k}$ and transitive tournaments
+In this section, we give some upper bounds on $M_{k}$ for all positive integers $k$ . Most notably, we prove the upper bound in Theorem 1.7.
+Theorem 5.8.
+ $M_{k}\leq 2k$ .
+Proof.
+Let $T$ be a tournament with $V(T)=\{v_{1},\ldots,v_{n}\}$ with $n\geq 2k+1$ . Further, let $T^{\prime}$ be a $k$ -strong tournament on $\{v_{1},\ldots,v_{2k+1}\}$ . We now define sets $X_{1},\ldots,X_{2k}$ .
+Suppose that the sets $X_{1},\ldots,X_{i-1}$ have already been created and let $T_{i-1}$ be the graph obtained from $T$ by inverting $X_{1},\ldots,X_{i-1}$ .
+Now let $X_{i}=\{v_{i}\}\cup A_{i}\cup B_{i}$ , where
+ $A_{i}$ is the set of vertices $v_{j}$ with $j\in\{i+1,\ldots,2k+1\}$ for which the edge $v_{i}v_{j}$ has a different orientation in $T^{\prime}$ and $T_{i-1}$ ,
+and $B_{i}$ is, when $i\leq k$ (resp. $i\geq k+1$ ), the set of vertices $v_{j}$ with $j\geq 2k+2$ for which $T_{i-1}$ contains the arc $v_{i}v_{j}$ (resp. $v_{j}v_{i}$ ).
+We still need to show that $T_{2k}$ is $k$ -strong. Observe that $T_{2k}\langle\{v_{1},\ldots,v_{2k+1}\}\rangle=T^{\prime}$ which is $k$ -strong by assumption. Moreover, for any $j\geq 2k+2$ , $T_{2k}$ contains the arcs $v_{j}v_{i}$ for $i=1,\ldots,k$ and the arcs $v_{i}v_{j}$ for $i=k+1,\ldots,2k$ . Hence, by Lemma 2.1, $T_{2k}$ is $k$ -strong.
+∎
+Theorems 5.4 and 5.8 directly imply Theorem 1.7.
+It is tempting to improve the upper bound in Theorem 1.7. While we are not able to provide an improvement for the general case, we show in the following that a small improvement can be achieved in a seemingly critical case, namely when the size of the tournament is exactly $2k+1$ . We first need the following result.
+Theorem 5.9.
+Let $n,k$ be integers with $n\geq 2k+1$ .
+ $\sinv_{k}(TT_{n})=\sinv^{\prime}_{k}(TT_{n})=\left\{\begin{array}[]{l l}2&\text{ if~~}2k+1\leq n<3k\\
+1&\text{ if~~}3k\leq n.\\
+\end{array}\right.$ 
+Proof.
+We first prove that $\sinv_{k}(n)\leq 2$ . Let $(v_{1},\dots,v_{n})$ be the unique ordering of $V(TT_{n})$ such that
+ $v_{i}v_{j}\in A(TT_{n})$ for every $i<j$ .
+Let $X_{0}=\{v_{i}\mid i\text{ even}\}$ and $X_{1}=\{v_{i}\mid i\text{ odd}\}$ .
+We claim that $T^{\prime}=\Inv(TT_{n};X_{0},X_{1})$ is $k$ -strong.
+Consider a set $Y$ of at most $k-1$ vertices of $T^{\prime}$ .
+Let $i_{0}$ (resp. $j_{0}$ ) be the smallest (resp. largest) even integer $\ell$ such that $v_{\ell}\not\in Y$ , and let
+ $i_{1}$ (resp. $j_{1}$ ) be the smallest (resp. largest) odd integer $\ell$ such that $v_{\ell}\not\in Y$ .
+Observe that $j_{0}>i_{1}$ and $j_{1}>i_{0}$ since $|Y|<k$ and $n\geq 2k+1$ .
+In particular, $v_{i_{1}}v_{j_{0}},v_{i_{0}}v_{j_{1}}\in A(T^{\prime})$ .
+Since $T^{\prime}\langle X_{0}\rangle-Y$ (resp. $T^{\prime}\langle X_{1}\rangle-Y$ ) is a transitive tournament with source $v_{j_{0}}$ and sink $v_{i_{0}}$ (resp. source $v_{j_{1}}$ and sink $v_{i_{1}}$ ), there are hamiltonian paths $P_{0}$ from $v_{j_{0}}$ to $v_{i_{0}}$ in $T^{\prime}\langle X_{0}\rangle-Y$ and $P_{1}$ from $v_{j_{1}}$ to $v_{i_{1}}$ in $T\langle X_{1}\rangle-Y$ .
+Finally $P_{0}v_{i_{0}}v_{j_{1}}P_{1}v_{i_{1}}v_{j_{0}}$ is an hamiltonian directed cycle of $T^{\prime}-Y$ , and so $T^{\prime}-Y$ is strong.
+Hence $T^{\prime}$ is $k$ -strong, and $\sinv_{k}(TT_{n})\leq 2$ .
+Let us now prove that $\sinv^{\prime}_{k}(TT_{n})\geq 2$ if $n\leq 3k-1$ .
+Suppose for a contradiction that there exists $X\subseteq V(TT_{n})$ such that $T^{\prime}=\Inv(TT_{n};X)$ is $k$ -arc-strong.
+Then, for every $i\leq k$ , since $v_{i}$ has in-degree $i-1$ in $TT_{n}$ , we have $v_{i}\in X$ .
+Similarly, for every $i\geq n-k+1$ , since $v_{i}$ has out-degree $n-i$ in $TT_{n}$ , we have $v_{i}\in X$ .
+But then every out-neighbour of $v_{1}$ in $T^{\prime}$ is in $\{v_{k+1},\dots,v_{n-k}\}$ and so $d^{+}_{T^{\prime}}(v_{1})\leq n-2k<k$ .
+Hence $T^{\prime}$ is not $k$ -arc-strong, a contradiction.
+Finally, let us show that $\sinv_{k}(TT_{n})\leq 1$ if $n\geq 3k$ .
+Let $(v_{1},\dots,v_{n})$ be the unique ordering of $V(TT_{n})$ such that
+ $v_{i}v_{j}\in A(TT_{n})$ for every $i<j$ .
+Let $A=\{v_{1},\dots,v_{k}\},B=\{v_{k+1},\dots,v_{2k}\}$ and $C=\{v_{2k+1},\dots,v_{n}\}$ .
+In $T^{\prime}=\Inv(TT_{n};A\cup C)$ , we have $A\Rightarrow B,B\Rightarrow C$ and $C\Rightarrow A$ . Since $|A|,|B|,|C|\geq k$ , $T^{\prime}$ is $k$ -strong.
+∎
+As mentioned in the introduction, it was proven independently by Alon et al. [2] and Aubian et al. [5] that $\inv(n)\leq n-\lceil\log(n+1)\rceil$ . Hence , every tournament of order $2k+1$ can be made acyclic in at most $2k-\lceil\log(k+1)\rceil$ inversions, and $k$ -strong in two more inversions by Theorem 5.9. Thus we have the following.
+Corollary 5.10.
+ $m_{k}(2k+1)\leq 2k-\lceil\log(k+1)\rceil+2$ .
+5.4 Upper bound on $M^{\prime}_{k}$ 
+This section is dedicated to proving Theorem 1.8. First, we give some auxiliary results in Section 5.4.1. Next, in Section 5.4.2, we show the result when restricting to tournaments of size exactly $2k+1$ . We finally generalize this to bigger tournaments in Section 5.4.3.
+5.4.1 Preliminaries
+We here collect some auxiliary results we need for the proof of Theorem 1.8.
+We first need a basic result combining probability and linear algebra.
+Proposition 5.11.
+Let $A\in\mathbb{F}_{2}^{q\times q^{\prime}}$ be a matrix whose rank is $q$ for some integers $q,q^{\prime}$ with $q\leq q^{\prime}$ . Further, let $\vec{v}\in\mathbb{F}_{2}^{q}$ be a fixed vector and let another vector $\vec{w}\in\mathbb{F}_{2}^{q^{\prime}}$ be drawn uniformly at random. Then $\Pr(A\vec{w}=\vec{v})=2^{-q}$ .
+The simple proof of the following result is similar to the one of Theorem 5.8 (see [26, Lemma 2.1]).
+Proposition 5.12.
+Let $T_{1},T_{2}$ be tournaments with $V(T_{1})=V(T_{2})$ . Then there is a collection of $|V(T_{1})|-1$ subsets $X_{1},\ldots,X_{|V(T_{1})|-1}$ of $V(T_{1})$ such that $\Inv(T_{1};X_{1},\ldots,X_{|V(T_{1})|-1})=T_{2}$ .
+We are now ready to give the last preliminary result.
+Proposition 5.13.
+Let $T$ be a tournament on $2k+1$ vertices and $X\subseteq V(T)$ with $|X|\leq\frac{2}{3}k$ such that $d_{T}^{-}(x)=d_{T}^{+}(x)=k$ for all $x\in X$ . Then there exists a $k$ -arc-strong tournament $T^{\prime}$ on $V(T)$ such that all the edges in $E(\UG(T)\langle X\rangle)\cup\delta_{\UG(T)}(X)$ have the same orientation in $T$ and $T^{\prime}$ .
+Proof.
+Let $H$ be the mixed graph which is obtained from $\UG(T)$ by giving all edges in $E(\UG(T)\langle X\rangle)\cup\delta_{\UG(T)}(X)$ the orientation they have in $T$ . Now consider some $S\subseteq V(T)$ .
+Let $x\in S\cap X$ . Since $d_{H}^{+}(x)=d_{H}^{-}(x)$ , we have
+ $\displaystyle d_{H}^{+}(S\setminus\{x\})-d_{H}^{-}(S\setminus\{x\})$ 
+ $\displaystyle=\left(d_{H}^{+}(S)-d_{H}^{+}(x,V(H)\setminus S)+d_{H}^{+}(S\setminus\{x\},x)\right)$ 
+ $\displaystyle\qquad-\left(d_{H}^{-}(S)-d_{H}^{-}(x,V(H)\setminus S)+d_{H}^{-}(S\setminus\{x\},x)\right)$ 
+ $\displaystyle=d_{H}^{+}(S)-d_{H}^{+}(S)$ 
+ $\displaystyle\qquad+d_{H}^{+}(S\setminus\{x\},x)+d_{H}^{+}(V(H)\setminus S,x)$ 
+ $\displaystyle\qquad-d_{H}^{+}(x,V(H)\setminus S)-d_{H}^{+}(x,S\setminus\{x\}))$ 
+ $\displaystyle=d_{H}^{+}(S)-d_{H}^{+}(S)+d_{H}^{-}(x)-d_{H}^{+}(x)$ 
+ $\displaystyle=d_{H}^{+}(S)-d_{H}^{-}(S).$ 
+Repeatedly applying this argument, we obtain $d_{H}^{+}(S)-d_{H}^{-}(S)=d_{H}^{+}(S\setminus X)-d_{H}^{-}(S\setminus X)\leq d_{H}^{+}(S\setminus X)\leq|S\setminus X|\cdot|X|$ since every arc in $H$ has an extremity in $X$ . Symmetrically, we obtain $d_{H}^{+}(S)-d_{H}^{-}(S)=d_{H}^{-}(V(H)\setminus S)-d_{H}^{+}(V(H)\setminus S)=d_{H}^{-}(V(H)\setminus(S\cup X))-d_{H}^{+}(V(H)\setminus(S\cup X))\leq|V(H)\setminus(S\cup X)|\cdot|X|$ .
+As $|X|\leq\frac{2}{3}k\leq\frac{1}{2}|V(H)\setminus X|=\frac{1}{2}(|S\setminus X|+|V(H)\setminus(S\cup X)|)$ , we obtain
+ $\displaystyle d_{H}^{+}(S)-d_{H}^{-}(S)$ 
+ $\displaystyle\leq\min\{|S\setminus X|,\ |V(H)\setminus(S\cup X)|\}\cdot|X|$ 
+ $\displaystyle\leq\min\{|S\setminus X|,\ |V(H)\setminus(S\cup X)|\}\cdot\tfrac{1}{2}(|S\setminus X|+|V(H)\setminus(S\cup X)|)$ 
+ $\displaystyle\leq\min\{|S\setminus X|,\ |V(H)\setminus(S\cup X)|\}\cdot\max\{|S\setminus X|,\ |V(H)\setminus(S\cup X)|\}$ 
+ $\displaystyle=|S\setminus X|\cdot|V(H)\setminus(S\cup X)|$ 
+ $\displaystyle=d_{H}(S).$ 
+Hence, by Proposition 2.4, there is an eulerian orientation $T^{\prime}$ of $T$ such that all the edges in $\UG(T)\langle X\rangle\cup\delta_{\UG(T)}(X)$ have the same orientation in $T$ and $T^{\prime}$ . As $|V(T)|=2k+1$ , the tournament $T^{\prime}$ is $k$ -arc-strong by Proposition 2.3.
+∎
+5.4.2 Main proof for tournaments of size $2k+1$ 
+We here give the proof of Theorem 1.8 for tournaments of size $2k+1$ . More precisely, we prove the following statement.
+Theorem 5.14.
+For every $\epsilon>0$ , there is an integer $k_{0}$ such that for every $k\geq k_{0}$ and for every tournament $T$ on $2k+1$ vertices, we have $\sinv^{\prime}_{k}(T)\leq(\frac{4}{3}+\epsilon)k$ .
+Proof.
+Let $\epsilon>0$ . We may assume $\epsilon\leq 1/3$ .
+We choose $k_{0}$ large enough so that for all $k\geq k_{0}$ , the three following inequalities hold:
+• 
+ $\lceil\log^{2}k\rceil+\lceil\frac{1}{4}\log k\rceil+\frac{2k}{3\lceil\frac{1}{4}\log k\rceil}\leq\epsilon k$ 
+• 
+ $16\log(k)\cdot\lceil\frac{1}{4}\log k\rceil\leq\sqrt{k}$ .
+• 
+ $10\log k\leq k^{\frac{1}{8}}$ ,
+In particular, the last inequality is wrong for $k=2^{12}$ which implies $k_{0}\geq 2^{12}$ . Thus the following inequalities also hold for all $k\geq k_{0}$ :
+ $\lceil\frac{1}{4}\log k\rceil\leq\frac{1}{3}k$ ;
+ $\lceil\frac{1}{4}\log k\rceil\leq\sqrt{k}$ ;
+ $k\geq 13$ ;
+ $3\lceil\frac{1}{4}\log k\rceil\leq\log k$ .
+Let $T$ be a tournament on $2k+1$ vertices for some $k\geq k_{0}$ . Let $A\subseteq V(T)$ be an arbitrary subset of $V(T)$ with $|A|=k$ and $B=V(T)\setminus A$ .
+For some $b\in B$ and a tournament $\tilde{T}$ on $V(T)$ , we denote $|k-d_{\tilde{T}}^{-}(b)|$ by $\defect_{\tilde{T}}(b)$ , the defect of $b$ in $\tilde{T}$ . Let $q=\lceil\frac{1}{4}\log k\rceil$ and $q^{*}=\lceil\log^{2}k\rceil$ . We now choose $q^{*}$ sets $X_{1},\ldots,X_{q^{*}}\subseteq V(T)$ independently and uniformly at random.
+Let $T^{\prime}=\Inv(T;X_{1},\ldots,X_{q^{*}})$ . For some $b\in B$ , we denote by $\vec{b}$ the vector in $\mathbb{F}_{2}^{q^{*}}$ whose $i$ -th entry is 1 if $b\in X_{i}$ and 0 otherwise for $i\in[q^{*}]$ .
+Observe that by the choice of $X_{1},\ldots,X_{q^{*}}$ , the vectors $\{\vec{b}\mid b\in B\}$ follow a uniform distribution and are mutually independent.
+We now define a list of possible events:
+ $E_{1}$ 
+: There is some $b\in B$ with $\defect_{T^{\prime}}(b)\geq 2\sqrt{k}\log k$ .
+ $E_{2}$ 
+: There are some $b_{1},\ldots,b_{q}\in B$ such that $\vec{b}_{1},\ldots,\vec{b}_{q}$ are linearly dependent.
+ $E_{3}$ 
+: There are some $b_{1},\ldots,b_{q}\in B$ such that $\vec{b}_{1},\ldots,\vec{b}_{q}$ are linearly independent and a sequence $(\star_{1},\ldots,\star_{q})\in\{+,-\}^{q}$ such that $|\bigcap_{i=1}^{q}N_{T^{\prime}}^{\star_{i}}(b_{i})\cap A|\leq 5\sqrt{k}\log k$ .
+Lemma 5.15.
+If none of $E_{1}$ , $E_{2}$ and $E_{3}$ occur, then $\sinv_{k}^{\prime}(T)\leq(\frac{4}{3}+\epsilon)k$ .
+Proof.
+Let $(B_{1},\ldots,B_{t})$ be a maximal collection of disjoint subsets of $B$ with the following properties:
+• 
+ $|B_{i}|=q$ for $i=1,\ldots,t$ ,
+• 
+ $\defect_{T^{\prime}}(b)\equiv\defect_{T^{\prime}}(b^{\prime})\mod 2$ for all $b,b^{\prime}\in B_{i}$ for $i=1,\ldots,t$ ,
+• 
+ $tq\leq\frac{2}{3}k$ .
+Claim 5.15.1.
+ $|\bigcup_{i=1}^{t}B_{i}|\geq\frac{2}{3}k-q$ .
+Proof of claim. Suppose otherwise. Observe that, as $\lceil\frac{1}{4}\log k\rceil\leq\frac{1}{3}k$ , we have $|B\setminus(\bigcup_{i=1}^{t}B_{i})|=|B|-|\bigcup_{i=1}^{t}B_{i}|\geq(k+1)-(\frac{2}{3}k-q)\geq\frac{1}{3}k+q\geq 2q$ .
+By the Pigeonhole Principle, there exists a set $B_{0}\subseteq B\setminus(\bigcup_{i=1}^{t}B_{i})$ with $|B_{0}|=q$ such that $\defect_{T^{\prime}}(b)\equiv\defect_{T^{\prime}}(b^{\prime})\mod 2$ for all $b,b^{\prime}\in B_{0}$ . Hence $B_{0}$ can be added to $\mathcal{B}$ without violating any of the above conditions, a contradiction to the maximality of $(B_{1},\ldots,B_{t})$ .
+ $\lozenge$ 
+Claim 5.15.2.
+Let $i\in[t]$ .
+There is a set $Y_{i}\subseteq B_{i}\cup A$ such that $\defect_{\Inv(T^{\prime};Y_{i})}(b)=0$ for all $b\in B_{i}$ .
+Proof of claim. Let $p=\max\{\defect_{\Inv(T^{\prime};B_{i})}(b)\mid b\in B_{i}\}$ . Observe that $p\leq\max\{\defect_{T^{\prime}}(b)+q-1\mid b\in B_{i}\}$ . Hence, as $E_{1}$ does not occur and $q=\lceil\frac{1}{4}\log k\rceil\leq\sqrt{k}\log k$ , we have $p\leq 2\sqrt{k}\log k+\sqrt{k}\log k=3\sqrt{k}\log k$ . We shall now build a sequence of sets $Y_{i}^{0},\ldots,Y_{i}^{p}$ with the following properties:
+• 
+ $Y_{i}^{0}=B_{i}$ ,
+• 
+ $Y_{i}^{j+1}$ is obtained from $Y_{i}^{j}$ by adding one vertex from $A\setminus Y_{i}^{j}$ for $j=0,\ldots,p-1$ ,
+• 
+ $\max\{\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b)\mid b\in B_{i}\}=p-j$ for $j=0,\ldots,p$ .
+The statement then follows for $Y_{i}=Y_{i}^{p}$ .
+Suppose that we have already created the sets $Y_{i}^{0},\ldots,Y_{i}^{j}$ for some $j$ with $0\leq j\leq p-1$ and now want to create $Y_{i}^{j+1}$ .
+Let $(b_{1},\ldots,b_{q})$ be an arbitrary ordering of the vertices in $B_{i}$ .
+For every $\mu\in[q]$ , if $\max\{\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b)\mid b\in B_{i}\}=d_{\Inv(T^{\prime};Y_{i}^{j})}^{-}(b_{\mu})-k$ , let $\star_{\mu}=-$ , if $\max\{\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b)\mid b\in B_{i}\}=k-d_{\Inv(T^{\prime};Y_{i}^{j})}^{-}(b_{\mu})$ , let $\star_{\mu}=+$ , otherwise choose $\star_{\mu}\in\{+,-\}$ arbitrarily.
+As $E_{2}$ does not occur, $\vec{b}_{1},\ldots,\vec{b}_{q}$ are linearly independent.
+Moreover, as $E_{3}$ does not occur, $|\bigcap^{q}_{\mu=1}N^{\star_{\mu}}_{T^{\prime}}(b_{\mu})\cap A|\geq 5\sqrt{k}\log k$ .
+As $p\leq 3\sqrt{k}\log k$ , and $q\leq\sqrt{k}\log k$ , we have $|Y_{i}^{j}|\leq p+q\leq 4\sqrt{k}\log k$ .
+Thus $(\bigcap_{\mu=1}^{q}N_{T^{\prime}}^{\star_{\mu}}(b_{\mu})\cap A)\setminus Y_{i}^{j}\neq\emptyset$ .
+We can hence choose some $y\in(\bigcap_{\mu=1}^{q}N^{\star_{\mu}}_{T^{\prime}}(b_{\mu})\cap A)\setminus Y_{i}^{j}$ and define $Y_{i}^{j+1}=Y_{i}^{j}\cup\{y\}$ .
+By definition, $Y_{i}^{j+1}$ is obtained from $Y_{i}^{j}$ by adding one vertex in $A\setminus Y_{i}^{j}$ .
+In order to see that the last property holds, let $\mu\in[q]$ .
+If $\max\{\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b)\mid b\in B_{i}\}=d_{\Inv(T^{\prime};Y_{i}^{j})}^{-}(b_{\mu})-k$ , we have $\star_{\mu}=-$ and hence $y\in N^{-}_{\Inv(T^{\prime};Y_{i}^{j})}(b_{\mu})$ .
+As $d_{\Inv(T^{\prime};Y_{i}^{j})}^{-}(b_{\mu})-k>0$ , we obtain $\defect_{\Inv(T^{\prime};Y_{i}^{j+1})}(b_{\mu})=d_{\Inv(T^{\prime};Y_{i}^{j+1})}^{-}(b_{\mu})-k=d_{\Inv(T^{\prime};Y_{i}^{j})}^{-}(b_{\mu})-k-1=p-j-1=p-(j+1)$ .
+Similarly, if $\max\{\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b)\mid b\in B_{i}\}=k-d_{\Inv(T^{\prime};Y_{i}^{j})}^{-}(b_{\mu})$ , then $\defect_{\Inv(T^{\prime};Y_{i}^{j+1})}(b)=p-(j+1).$ 
+Otherwise, let $b^{\prime}\in B$ with $\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b^{\prime})=p-j$ .
+As $\defect_{T^{\prime}}(b_{\mu})\equiv\defect_{T^{\prime}}(b^{\prime})\mod 2$ , we have $\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b_{\mu})\equiv\defect_{T^{\prime}}(b_{\mu})+|Y_{i}^{j}|-1\equiv\defect_{T^{\prime}}(b^{\prime})+|Y_{i}^{j}|-1\equiv\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b^{\prime})\mod 2$ , hence $\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b_{\mu})\leq\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b^{\prime})-2$ .
+This yields $\defect_{\Inv(T^{\prime};Y_{i}^{j+1})}(b_{\mu})\leq\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b_{\mu})+1\leq\defect_{\Inv(T^{\prime};Y_{i}^{j})}(b^{\prime})-2+1=p-(j+1)$ .
+ $\lozenge$ 
+Let $T^{\prime\prime}=\Inv(T^{\prime};(Y_{1},\ldots,Y_{t}))$ . Observe that by definition of the sets $Y_{i}$ , we have $\defect_{T^{\prime\prime}}(b)=0$ for all $b\in\bigcup_{i=1}^{t}B_{i}$ .
+As $|\bigcup_{i=1}^{t}B_{i}|=qt\leq\frac{2}{3}k$ , we obtain by Proposition 5.13 that there is a $k$ -arc-strong tournament $T^{\prime\prime\prime}$ on $V(T)$ such that all the edges in $\UG(T)\langle\bigcup_{i=1}^{t}B_{i}\rangle\cup\delta_{\UG(T)}(\bigcup_{i=1}^{t}B_{i})$ have the same orientation in $T^{\prime\prime}$ and $T^{\prime\prime\prime}$ .
+Further, by Proposition 5.12, there is a collection of $r=|V(T)\setminus\bigcup_{i=1}^{t}B_{i}|-1$ subsets $Z_{1},\ldots,Z_{r}$ of $V(T)\setminus\bigcup_{i=1}^{t}B_{i}$ such that $\Inv(T^{\prime\prime}\langle V(T)\setminus\bigcup_{i=1}^{t}B_{i}\rangle;Z_{1},\ldots,Z_{r})=T^{\prime\prime\prime}\langle V(T)\setminus\bigcup_{i=1}^{t}B_{i}\rangle$ .
+We obtain that $\Inv(T;X_{1},\ldots,X_{q^{*}},\linebreak Y_{1},\ldots,Y_{t},Z_{1},\ldots,Z_{r})=\Inv(T^{\prime};Y_{1},\ldots,Y_{t},Z_{1},\ldots,Z_{r})=\Inv(T^{\prime\prime};Z_{1},\ldots,Z_{r})=T^{\prime\prime\prime}$ .
+As $T^{\prime\prime\prime}$ is $k$ -arc-strong, we have $\sinv_{k}^{\prime}(T)\leq q^{*}+t+r$ .
+Now $q^{*}=\lceil\log^{2}k\rceil$ , $t\leq\frac{2k}{3q}=\frac{2k}{3\lceil\frac{1}{4}\log k\rceil}$ , and $r=|V(T)|-|\bigcup_{i=1}^{t}B_{i}|-1\leq 2k-(\frac{2}{3}k-q)=\frac{4}{3}k+q=\frac{4}{3}k+\lceil\frac{1}{4}\log k\rceil$ by Claim 5.15.1.
+Thus $\sinv_{k}^{\prime}(T)\leq\frac{4}{3}k+\lceil\log^{2}k\rceil+\lceil\frac{1}{4}\log k\rceil+\frac{2k}{3\lceil\frac{1}{4}\log k\rceil}\leq\frac{4}{3}k+\epsilon k$ .
+∎
+In the following lemmas, we show that the probability of each of $E_{1},E_{2}$ and $E_{3}$ is small.
+Lemma 5.16.
+ $\Pr(E_{1})<\frac{1}{3}$ .
+Proof.
+Let $b\in B$ . We first bound the probability that $\vec{b}=\vec{0}$ . Due to the independent and uniform choice of $(X_{1},\ldots,X_{q^{*}})$ , we have $\Pr[\vec{b}=\vec{0}]=2^{-q^{*}}\leq 2^{-2\log k}=\frac{1}{k^{2}}$ .
+Now suppose that $\vec{b}\neq\vec{0}$ . Once $\vec{b}$ has been revealed, for every $v\in V(T)$ , let $\Gamma_{v}$ be a random variable which is 1 if $T^{\prime}$ contains the arc $bv$ and 0 otherwise and let $\Gamma=\sum_{v\in V(T-b)}\Gamma_{v}$ . Observe that, due to the independent and uniform choice of $(X_{1},\ldots,X_{q^{*}})$ , we have $\Pr(\Gamma_{v}=1)=\frac{1}{2}$ for all $v\in V(T-b)$ and the $\Gamma_{v}$ are independent. This yields that $\Gamma\sim\Bin(2k,\frac{1}{2})$ . Further, observe that $\defect_{T^{\prime}}(b)\leq 2\sqrt{k}\log k$ if and only if $k-2\sqrt{k}\log k\leq\Gamma\leq k+2\sqrt{k}\log k$ . By Chernoff’s Bound (Proposition 2.6), we obtain
+ $\displaystyle\Pr\left[\Gamma<k-2\sqrt{k}\log k\right]$ 
+ $\displaystyle\leq\Pr\left[\Gamma<\left(1-\frac{2\sqrt{k}\log k}{k}\right)k\right]$ 
+ $\displaystyle\leq\exp\left(-\frac{4k\log^{2}k}{2k^{2}}k\right)$ 
+ $\displaystyle\leq\exp(-2\log k)$ 
+ $\displaystyle\leq\exp(-2\ln k)$ 
+ $\displaystyle=\frac{1}{k^{2}}.$ 
+Similarly, since $2k-\Gamma\sim\Bin(2k,\frac{1}{2})$ , we obtain that $\Pr[\Gamma>k+2\sqrt{k}\log k]\leq\frac{1}{k^{2}}$ .
+This yields that
+ $\displaystyle\Pr[\defect_{T^{\prime}}(b)$ 
+ $\displaystyle>2\sqrt{k}\log k]$ 
+ $\displaystyle=\Pr[\vec{b}=\vec{0}]\cdot\Pr[\defect_{T^{\prime}}(b)>2\sqrt{k}\log k\mid\vec{b}=\vec{0}]+\Pr[\vec{b}\neq 0]\cdot\Pr[\defect_{T^{\prime}}(b)>2\sqrt{k}\log k\mid\vec{b}\neq\vec{0}]$ 
+ $\displaystyle\leq\Pr[\vec{b}=\vec{0}]+\Pr[\Gamma<k-2\sqrt{k}\log k\mid\vec{b}\neq\vec{0}]+\Pr[\Gamma>k+2\sqrt{k}\log k\mid\vec{b}\neq\vec{0}]$ 
+ $\displaystyle\leq\frac{3}{k^{2}}.$ 
+As there are $k+1$ vertices contained in $B$ , by the Union Bound (Proposition 2.5),
+ $\Pr(E_{1})\leq(k+1)\frac{3}{k^{2}}<\frac{1}{3}$ , as $k\geq 10$ .
+∎
+Lemma 5.17.
+ $\Pr(E_{2})<\frac{1}{3}$ .
+Proof.
+Let $b_{1},\ldots,b_{q}\in B$ . Recall that $\vec{b}_{1},\ldots,\vec{b}_{q}$ are independent and uniformly distributed. For $i\in[q]$ , observe that if $\vec{b}_{1},\ldots,\vec{b}_{i}$ are linearly independent, they span a vector space containing $2^{i}$ elements. Hence
+ $\displaystyle\Pr[\vec{b}_{1},\ldots,\vec{b}_{q}\text{ linearly dependent}]$ 
+ $\displaystyle=\sum_{i=1}^{q}\Pr[\vec{b}_{1},\ldots,\vec{b}_{i}\text{ linearly dependent}\mid\vec{b}_{1},\ldots,\vec{b}_{i-1}\text{ linearly independent }]$ 
+ $\displaystyle\qquad\qquad\times\Pr[\vec{b}_{1},\ldots,\vec{b}_{i-1}\text{ linearly independent}]$ 
+ $\displaystyle\leq\sum_{i=1}^{q}\Pr[\vec{b}_{1},\ldots,\vec{b}_{i}\text{ linearly dependent}\mid\vec{b}_{1},\ldots,\vec{b}_{i-1}\text{ linearly independent}]$ 
+ $\displaystyle=\sum_{i=1}^{q}\frac{2^{i-1}}{2^{q^{*}}}$ 
+ $\displaystyle\leq\frac{2^{q}}{2^{q^{*}}}$ 
+ $\displaystyle\leq 2^{-2\log(k)q}~~~~\mbox{because $q^{*}\geq\log^{2}k\geq 3\log(k)q\geq 2\log(k)q+q$}$ 
+ $\displaystyle=k^{-2q}.$ 
+Observe that there are $\binom{k+1}{q}$ possibilities to choose $b_{1},\ldots,b_{q}$ . Hence the Union Bound (Proposition 2.5) yields $\Pr(E_{2})\leq\binom{k+1}{q}k^{-2q}\leq(2k)^{q}k^{-2q}=\left(\frac{2}{k}\right)^{q}<\frac{1}{3}$ 
+as $q\geq 1$ and $k\geq 7$ .
+∎
+Lemma 5.18.
+ $\Pr(E_{3})<\frac{1}{3}$ .
+Proof.
+Let $b_{1},\ldots,b_{q}\in B$ such that $\vec{b}_{1},\ldots,\vec{b}_{q}$ are linearly independent and let $(\star_{1},\ldots,\star_{q})\in\{+,-\}^{q}$ . Once $\vec{b}_{1},\ldots,\vec{b}_{q}$ revealed, for every $a\in A$ , let $\Gamma_{a}$ be a random variable that is 1 if $a\in\bigcap_{i=1}^{q}N_{T^{\prime}}^{\star_{i}}(b_{i})$ and 0 otherwise and let $\Gamma=\sum_{a\in A}\Gamma_{a}$ .
+Observe that, due to the independent and uniform choice of $(X_{1},\ldots,X_{q^{*}})$ and by Proposition 5.11, we have that $\Pr[\Gamma_{a}=1]=\frac{1}{2^{q}}$ for all $a\in A$ and that the $\Gamma_{a}$ are independent. This yields that $\Gamma\sim\Bin(k,\frac{1}{2^{q}})$ . Further observe that $\Gamma=|\bigcap_{i=1}^{q}N_{T^{\prime}}^{\star_{i}}(b_{i})\cap A|$ .
+Now, since $10\log k\leq k^{\frac{1}{8}}$ and $q=\lceil\frac{1}{4}\log k\rceil\leq\frac{3}{8}\log k$ , we obtain $5\sqrt{k}\log k\leq\frac{1}{2}k^{\frac{5}{8}}=\frac{1}{2}k2^{-\frac{3}{8}\log k}\leq\frac{1}{2}k2^{-q}$ .
+By Chernoff’s Bound (Proposition 2.6), we obtain
+ $\displaystyle\Pr[\Gamma<5\sqrt{k}\log k]$ 
+ $\displaystyle\leq\Pr\left[\Gamma<\left(1-\frac{1}{2}\right)k2^{-q}\right]$ 
+ $\displaystyle\leq\exp\left(-\frac{1}{8}k2^{-q}\right)$ 
+ $\displaystyle\leq\exp\left(-\frac{1}{8}\sqrt{k}\right)$ 
+ $\displaystyle\leq\exp(-2q\log k)~~~~~\mbox{because $\sqrt{k}\geq 16\log k\lceil\frac{1}{4}\log k\rceil$}$ 
+ $\displaystyle\leq\exp(-2q\ln k)$ 
+ $\displaystyle=k^{-2q}.$ 
+Observe that there are $\binom{k+1}{q}$ possibilities to choose $b_{1},\ldots,b_{q}$ and for each of those, there are $2^{q}$ possibilities to choose $(\star_{1},\ldots,\star_{q})$ . Hence the Union Bound (Proposition 2.5) yields $\Pr(E_{3})\leq\binom{k+1}{q}2^{q}k^{-2q}\leq(2k)^{q}2^{q}k^{-2q}=\left(\frac{4}{k}\right)^{q}<\frac{1}{3}$ , as $q\geq 1$ and $k\geq 13$ .
+∎
+We are now ready to conclude the proof of Theorem 5.14. By Lemmas 5.16, 5.17 and 5.18 and the Union Bound (Proposition 2.5), we obtain that, with positive probability, none of $E_{1}$ , $E_{2}$ and $E_{3}$ occur. Hence the statement follows from Lemma 5.15.
+∎
+5.4.3 Bigger tournaments
+We now show how to extend this result to larger tournaments and derive Theorem 1.8 from Theorem 5.14.
+See 1.8
+Proof.
+Let $\epsilon>0$ .
+We shall prove that there is an integer $k^{*}$ such that for every $k\geq k^{*}$ and for every tournament $T$ on at least $2k+1$ vertices, we have $\sinv^{\prime}_{k}(T)\leq(\frac{4}{3}+\epsilon)k$ .
+By Theorem 5.14, there is an integer $k_{0}$ such that for every $k\geq k_{0}$ and for every tournament $T$ on at least $2k+1$ vertices, we have $\sinv^{\prime}_{k}(T)\leq(\frac{4}{3}+\frac{\epsilon}{2})k$ . Further, let $k_{1}$ be an integer such that $\frac{\epsilon}{2}k\geq 6\log k\sqrt{k}+1$ , $\sqrt{k}\geq 3\log k$ and $\log k\geq 5$ hold for all $k\geq k_{1}$ .
+Set $k^{*}=\max\{k_{0},k_{1}\}$ .
+We now fix an integer $k\geq k^{*}$ and prove that for every tournament $T$ on $n\geq 2k+1$ vertices, we have $\sinv^{\prime}_{k}(T)\leq(\frac{4}{3}+\frac{\epsilon}{2})k+\min\{n-(2k+1),6\log k\sqrt{k}+1\}$ from which the statement follows immediately. Suppose that $T$ is a tournament that does not satisfy this statement and whose number $n$ of vertices is minimum with respect to this property.
+Case 1.
+ $n>4k-2$ .
+By Proposition 2.2, there is some $v\in V(T)$ with $\min\{d_{T}^{+}(v),d_{T}^{-}(v)\}\geq k$ . By the minimality of $T$ , there is a collection $\mathcal{X}$ of $(\frac{4}{3}+\frac{\epsilon}{2})k+\min\{(n-1)-(2k+1),6\log k\sqrt{k}+1\}$ subsets of $V(T-v)$ such that $\Inv(T-v;\mathcal{X})$ is $k$ -arc-strong. By Proposition 2.1, we obtain that $\Inv(T;\mathcal{X})$ is $k$ -arc-strong. As $(\frac{4}{3}+\frac{\epsilon}{2})k+\min\{(n-1)-(2k+1),6\log k\sqrt{k}+1\}\leq(\frac{4}{3}+\frac{\epsilon}{2})k+\min\{n-(2k+1),6\log k\sqrt{k}+1\}$ , we obtain a contradiction.
+Case 2.
+ $2k+1+6\log k\sqrt{k}<n\leq 4k-2$ .
+Let $A$ be an arbitrary subset of $V(T)$ of size $2k+1+\lfloor 6\sqrt{k}\log k\rfloor$ and let $B=V(T)\setminus A$ . We now choose a subset $X$ of $A$ uniformly at random and let $T^{\prime}=\Inv(T;B\cup X)$ . Now consider some $b\in B$ . For every $a\in A$ , let $\Gamma_{a}$ be the probability that $ab\in A(T^{\prime})$ and observe that $\Gamma=\sum_{a\in A}\Gamma_{a}$ is exactly $|N^{-}_{T^{\prime}}(b)\cap A|$ .
+Due to the uniform choice of $X$ , we have $\Pr[ab\in A(T)]=\frac{1}{2}$ and that the $\Gamma_{a}$ are independent. This yields $\Gamma\sim\Bin(2k+1+\lfloor 6\sqrt{k}\log k\rfloor,\frac{1}{2})$ . By Chernoff’s Bound (Proposition 2.6), we obtain
+ $\displaystyle\Pr[\Gamma<k]$ 
+ $\displaystyle\leq\Pr\left[\Gamma<\left(1-\frac{\sqrt{k}\log k}{k}\right)\frac{1}{2}\left(2k+1+\lfloor 6\sqrt{k}\log k\rfloor\right)\right]$ 
+ $\displaystyle\leq\exp(-\log^{2}(k)/2)$ 
+ $\displaystyle\leq\exp(-2\log k)~~~~~~~\mbox{because $k\geq 16$}$ 
+ $\displaystyle\leq\exp(-2\ln k)$ 
+ $\displaystyle=\frac{1}{k^{2}}.$ 
+Similarly, we obtain $\Pr[|N^{+}_{T^{\prime}}(b)\cap A|<k]\leq\frac{1}{k^{2}}$ . As $B$ contains at most $(4k-3)-(2k+1+\lfloor 6\sqrt{k}\log k\rfloor)\leq 2k$ elements, the Union Bound (Proposition 2.5) yields that the probability that there is at least one $b\in B$ with $\min\{|N^{-}_{T^{\prime}}(b)\cap A|,|N^{+}_{T^{\prime}}(b)\cap A|\}\leq k$ is at most $\frac{2}{k^{2}}2k=\frac{4}{k}<1$ , as $k\geq 5$ .
+Hence, with positive probability, we have $\min\{|N^{-}_{T^{\prime}}(b)\cap A|,|N^{+}_{T^{\prime}}(b)\cap A|\}\geq k$ for all $b\in B$ .
+Thus there is $X_{0}$ such that every vertex of $B$ has at least $k$ in-neighbours and $k$ out-neighbours in $A$ in the tournament $T^{\prime}_{0}=\Inv(T;B\cup X_{0})$ .
+Further, by the minimality of $T$ and as $|V(T_{0})|-2k+1=6\sqrt{k}\log k$ , there is a collection $\mathcal{X}$ of $\sinv^{\prime}_{k}(T_{0}\langle A\rangle)\leq(\frac{4}{3}+\frac{\epsilon}{2})k+\lfloor 6\log k\sqrt{k}\rfloor$ sets such that $\Inv(T^{\prime}_{0}\langle A\rangle;\mathcal{X})$ is $k$ -arc-strong. Hence, by Proposition 2.1, we obtain that $\Inv(T;\{X_{0}\}\cup\mathcal{X})$ is $k$ -arc-strong, a contradiction.
+Case 3.
+ $2k+2\leq n\leq 2k+6\sqrt{k}\log k$ .
+Let $v\in V(T)$ be an arbitrary vertex. We can then find a set $X\subseteq V(T)$ such that for $T^{\prime}=\Inv(T;X)$ , we have $\min\{d_{T^{\prime}}^{+}(v),d_{T^{\prime}}^{-}(v)\}\geq k$ . Further, by the minimality of $T$ , there is a collection $\mathcal{X}$ of $\sinv^{\prime}_{k}(T^{\prime}-v)\leq(\frac{4}{3}+\frac{\epsilon}{2})k+n-(2k+1)-1$ sets such that $\Inv(T^{\prime}-v;\mathcal{X})$ is $k$ -arc-strong. Hence by Proposition 2.1, we obtain that $\Inv(T;\{X\}\cup\mathcal{X})$ is $k$ -arc-strong, a contradiction.
+∎
+6 Upper bounds on $m_{k}(n)$ 
+In this section, we prove several results showing that tournaments on significantly more than $2k$ vertices can be made $k$ -strong by a small number of inversions. More precisely, in Subsection 6.1 we prove Theorem 6.1 and Proposition 1.13, in Subsection 6.2 we prove Theorem 1.10, in Subsection 6.3 we prove Theorem 1.14, and in Subsection 6.4, we prove Theorem 1.15.
+6.1 First upper bounds on $m_{k}(n)$ 
+In this subsection, we first establish that, for every fixed $k$ , every tournament which is sufficiently large in comparison to $k$ can be made $k$ -strong by a single inversion. While this result ( Theorem 6.1) is clearly weaker than Theorem 1.10, it justifies some of the notation used later on, and may serve as a warm-up exercise of the more involved proof of Theorem 1.10.
+Theorem 6.1.
+Let $n,k$ be positive integers and let $T$ be a tournament on $n$ vertices.
+If $n\geq(2k-1)2^{2k}$ , then $\sinv^{\prime}_{k}(T)\leq\sinv_{k}(T)\leq 1$ .
+Proof.
+Let $T$ be a tournament of order $n\geq(2k-1)2^{2k}$ .
+It is easy and well-known that if $D$ is an acyclic digraph, $x$ a source in $D$ , and $D-x$ is contained (as a subdigraph) in every tournament of order $n$ , then $D$ is contained (as a subdigraph) in every tournament of order $2n$ .
+An easy induction yields that $T$ contains three sets
+ $A_{1},A_{2},A_{3}$ such that $A_{1}\Rightarrow(A_{2}\cup A_{3})$ and
+ $A_{2}\Rightarrow A_{3}$ with $|A_{1}|=|A_{3}|=k$ and $|A_{2}|=2k-1$ .
+Set $A=A_{1}\cup A_{2}\cup A_{3}$ .
+Let $I$ be the set of vertices in $V(T)\setminus A$ that have either fewer than $k$ out-neighbours in $A$ or fewer than $k$ in-neighbours in $A$ .
+Let $X=A_{1}\cup A_{3}\cup I$ .
+Let us prove that $T^{\prime}=\Inv(T;X)$ is $k$ -strong.
+In $T^{\prime}$ , we have $A_{1}\Rightarrow A_{2}\Rightarrow A_{3}\Rightarrow A_{1}$ . Since the three sets $A_{1}$ , $A_{2}$ , and $A_{3}$ have size at least $k$ , the tournament $T^{\prime}\langle A\rangle$ is $k$ -strong.
+Now consider a vertex $v$ in $V(T)\setminus A$ .
+If $v\notin I$ , then no arcs incident to $v$ have been reversed so its in- and out-degree have been unchanged and are at least $k$ by definition of $I$ .
+If $v\in I$ , then all the arcs between $v$ and $A_{1}\cup A_{3}$ have been reversed and those between $v$ and $A_{2}$ are unchanged.
+If $v$ has fewer than $k$ out-neighbours in $A$ in $T$ , then $|N^{+}_{T^{\prime}}(v)\cap A|\geq|N^{-}_{T}(v)\cap(A_{1}\cup A_{3})|\geq 2k-d^{+}_{T}(v)\geq k$ , and $|N^{-}_{T^{\prime}}(v)\cap A|\geq|N^{-}_{T}(v)\cap A_{2}|\geq 2k-1-d^{+}_{T}(v)\geq k$ .
+Similarly, if $v$ has fewer than $k$ in-neighbours in $A$ in $T$ , then
+ $|N^{+}_{T^{\prime}}(v)\cap A|\geq k$ and $|N^{-}_{T^{\prime}}(v)\cap A|\geq k$ .
+Thus, by
+Lemma 2.1, $T^{\prime}$ is $k$ -strong.
+Hence $\sinv_{k}(T)\leq 1$ .
+∎
+6.2 Linear upper and lower bounds on $N_{k}(1)$ 
+In this subsection, we shall prove Theorem 1.10 which states that $N_{k}(1)\leq 19k-2$ . To prove it we need some preliminaries.
+For a digraph $D$ , let $\sigma=(v_{1},v_{2},\ldots,v_{n})$ be an ordering of the vertices of $D$ . An arc $v_{i}v_{j}$ is forward (according to $\sigma$ ) if $i<j$ and backward (according to $\sigma$ ) if $j<i$ .
+A median order of $D$ is an ordering of the vertices of $D$ with the maximum number of forward arcs, or, equivalently, the minimum number of backward arcs.
+Let us note basic well-known properties of median orders of
+tournaments (the “feedback property” in [27]).
+Lemma 6.2.
+Let $T$ be a tournament and $(v_{1},v_{2},\ldots,v_{n})$ a
+median order of $T$ . Then, for any two indices $i,j$ with $1\leq i<j\leq n$ :
+(M1) 
+ $(v_{i},v_{i+1},\ldots,v_{j})$ is a median order of the
+induced subtournament $T\langle\{v_{i},v_{i+1},\ldots,v_{j}\}\rangle$ .
+(M2) 
+the vertex $v_{i}$ is an in-neighbour of at least half of the vertices
+ $v_{i+1},v_{i+2},\ldots,v_{j}$ , and the vertex $v_{j}$ is an out-neighbours of at least half of the vertices $v_{i},v_{i+1},\ldots,v_{j-1}$ . In particular, for every $1\leq i\leq n-1$ , $v_{i}v_{i+1}\in A(T)$ .
+Given two vertices $u,v$ of some digraph $D$ , we say that $v$ is reachable from $u$ if $D$ contains a directed $uv$ -path. For $v\in V(D)$ , we use $R^{+}_{D}(v)$ (resp. $R^{-}_{D}(v)$ ) for the set of vertices which are reachable from $v$ in $D$ (resp. from which $v$ is reachable in $D$ ). Note that $v\in R^{+}_{D}(v)\cap R^{-}_{D}(v)$ .
+Lemma 6.3.
+Let $T$ be a tournament with median order $(v_{1},v_{2},\ldots,v_{n})$ .
+Let $F$ be a subset of vertices such that $v_{1}\notin F$ .
+Then $|R^{+}_{T-F}(v_{1})|\geq n-2|F|$ .
+Proof.
+We prove the result by induction on $n+|F|$ , the result holding trivially by (M2) if $|F|=0$ .
+If all the out-neighbours of $v_{1}$ in $T$ are in $|F|$ , then by (M2), $|N_{T}^{-}(v_{1})|\leq|N_{T}^{+}(v_{1})|\leq|F|$ . Hence $n-1\leq 2|F|$ , and the result holds.
+Henceforth we may assume that $v_{1}$ has an out-neighbour not in $F$ .
+Let $i_{0}$ be the smallest index of such a vertex.
+Let $T_{0}=T\langle\{v_{1},\dots,v_{i_{0}-1}\}\rangle$ , $T_{1}=T\langle\{v_{i_{0}},\dots,v_{n}\}\rangle$ , $F_{0}=F\cap V(T_{0})$ and $F_{1}=F\cap V(T_{1})$ .
+By (M1), $(v_{1},v_{2},\ldots,v_{i_{0}-1})$ is a median order of $T_{0}$ and $(v_{i_{0}},\ldots,v_{n})$ is a median order of $T_{1}$ .
+By definition of $i_{0}$ , all out-neighbours of $v_{1}$ in $T_{0}$ are in $F_{0}$ . Thus, as above, we have $i_{0}-2\leq 2|F_{0}|$ .
+By the induction hypothesis, $|R^{+}_{T_{1}-F_{1}}(v_{i_{0}})|\geq n-i_{0}+1-2|F_{1}|$ .
+Now $R^{+}_{T_{1}-F_{1}}(v_{i_{0}})\cup\{v_{1}\}\subseteq R^{+}_{T-F}(v_{1})$ . Hence
+ $|R^{+}_{T-F}(v_{1})|\geq|R^{+}_{T_{1}-F_{1}}(v_{i_{0}})|+1\geq n-i_{0}+2-2|F_{1}|\geq n-2|F_{0}|-2|F_{1}|=n-2|F|.$ 
+∎
+We are now ready to prove the main lemma of the proof of Theorem 1.10.
+Lemma 6.4.
+Let $k$ be a positive integer, let $T$ be a tournament on $12k$ vertices and let $(A,B)$ be a bipartition of $V(T)$ such that $|A|=|B|=6k$ .
+Then there is a set $X\subseteq V(T)$ with $|X\cap A|=|X\cap B|=2k$ such that for $T^{\prime}=\Inv(T;X)$ and for any $Y\subseteq V(T)$ with $|Y|\leq k-1$ , we have that $T^{\prime}-Y$ contains a directed path from $a$ to $B\setminus Y$ for every $a\in A\setminus Y$ ,
+and $T^{\prime}-Y$ contains a directed path from $A\setminus Y$ to $b$ for every $b\in B\setminus Y$ .
+Proof.
+Let $(a_{1},\ldots,a_{6k})$ be a median order of $T\langle A\rangle$ and let $(b_{1},\ldots,b_{6k})$ be a median order of $T\langle B\rangle$ .
+Let $A_{0}$ be the set of vertices in $\{a_{4k+1},\ldots,a_{6k}\}$ which have fewer than $k$ out-neighbours in $B$ in $T$ . Further, let $A_{1}=\{a_{1},\ldots,a_{2k-|A_{0}|}\}$ .
+Observe that $|A_{0}\cup A_{1}|=|A_{0}|+|A_{1}|=2k$ .
+Similarly, let $B_{0}$ be the set of vertices in $\{b_{1},\ldots,b_{2k}\}$ that have fewer than $k$ in-neighbours in $A$ and let $B_{1}=\{b_{4k+|B_{0}|+1},\ldots,b_{6k}\}$ .
+Observe that $|B_{0}\cup B_{1}|=|B_{0}|+|B_{1}|=2k$ . Let $X=A_{0}\cup A_{1}\cup B_{0}\cup B_{1}$ and let $T^{\prime}=\Inv(T;X)$ .
+Consider any $Y\subseteq V(T)$ with $|Y|\leq k-1$ .
+In order show that $T^{\prime}$ has the desired properties, by symmetry, it suffices to prove that $T^{\prime}-Y$ contains a directed path from $a$ to $B\setminus Y$ for every $a\in A\setminus Y$ .
+Suppose by contradiction that this is not true. Then there is a largest integer $i\in[6k]$ such that $a_{i}\in A\setminus Y$ and $T^{\prime}-Y$ does not contain a directed path from $a_{i}$ to $B\setminus Y$ . We will distinguish several cases.
+Case 1.
+ $i\in\{4k+1,\ldots,6k\}$ and $a_{i}\in A\setminus A_{0}$ .
+In this case, by the choice of $A_{0}$ , we have
+ $\displaystyle|(N_{T^{\prime}}^{+}(a_{i})\cap B)\setminus Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle=|N_{T}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle\geq k-(k-1)$ 
+ $\displaystyle=1,$ 
+so $a_{i}$ has an out-neighbour in $B\setminus Y$ in $T^{\prime}-Y$ , a contradiction.
+Case 2.
+ $i\in\{4k+1,\ldots,6k\}$ and $a_{i}\in A_{0}$ .
+In this case, by the choice of $A_{0}$ , we have
+ $\displaystyle|(N_{T^{\prime}}^{+}(a_{i})\cap B)\setminus Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap(B_{0}\cup B_{1})|-|Y|$ 
+ $\displaystyle=|B_{0}\cup B_{1}|-|N_{T^{\prime}}^{-}(a_{i})\cap(B_{0}\cup B_{1})|-|Y|$ 
+ $\displaystyle=|B_{0}\cup B_{1}|-|N_{T}^{+}(a_{i})\cap(B_{0}\cup B_{1})|-|Y|$ 
+ $\displaystyle\geq|B_{0}\cup B_{1}|-|N_{T}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle\geq 2k-(k-1)-(k-1)$ 
+ $\displaystyle=2,$ 
+so $a_{i}$ has an out-neighbour in $B\setminus Y$ in $T^{\prime}-Y$ , a contradiction.
+Case 3.
+ $i\in\{2k-|A_{0}|+1,\ldots,4k\}$ .
+As $(a_{1},\ldots,a_{6k})$ is a median order of $T\langle A\rangle$ , and by (M2) applied to $T\langle A\rangle$ , we have
+ $\displaystyle|(N_{T^{\prime}}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{6k}\})\setminus Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{6k}\}|-|Y|$ 
+ $\displaystyle=|N_{T}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{6k}\}|-|Y|$ 
+ $\displaystyle\geq\frac{1}{2}|\{a_{i+1},\ldots,a_{6k}\}|-|Y|$ 
+ $\displaystyle\geq\frac{1}{2}(6k-i)-(k-1)$ 
+ $\displaystyle=2k+1-\frac{i}{2}$ 
+ $\displaystyle\geq 2k+1-2k$ 
+ $\displaystyle=1.$ 
+Hence there is some $j>i$ such that $a_{j}\in A\setminus Y$ and $T^{\prime}-Y$ contains the arc $a_{i}a_{j}$ . By the maximality of $i$ , there is a directed path from $a_{j}$ to $B\setminus Y$ in $T^{\prime}-Y$ . Hence $T^{\prime}-Y$ also contains a directed path from $a_{i}$ to $B\setminus Y$ , a contradiction.
+Case 4.
+ $i\in\{1,\ldots,2k-|A_{0}|\}$ .
+As $(a_{1},\ldots,a_{6k})$ is a median order of $T\langle A\rangle$ and by (M2) applied to $T\langle A\rangle$ , we have
+ $\displaystyle|(N_{T^{\prime}}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{6k}\})\setminus Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{6k}\}|-|Y|$ 
+ $\displaystyle\geq|N_{T}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{6k}\}|-|(A_{0}\cup A_{1})\cap\{a_{i+1},\ldots,a_{6k}\}|-|Y|$ 
+ $\displaystyle\geq\frac{1}{2}|\{a_{i+1},\ldots,a_{6k}\}|-|(A_{0}\cup A_{1})\cap\{a_{i+1},\ldots,a_{6k}\}|-|Y|$ 
+ $\displaystyle\geq\frac{1}{2}(6k-i)-(2k-i)-(k-1)$ 
+ $\displaystyle=\frac{i}{2}+1$ 
+ $\displaystyle\geq 1.$ 
+Hence there is some $j>i$ such that $a_{j}\in A\setminus Y$ and $T^{\prime}-Y$ contains the arc $a_{i}a_{j}$ . By the maximality of $i$ , there is a directed path from $a_{j}$ to $B\setminus Y$ in $T^{\prime}-Y$ . Hence $T^{\prime}-Y$ also contains a directed path from $a_{i}$ to $B\setminus Y$ , a contradiction.
+∎
+We are now ready to prove Theorem 1.10, which states $N_{k}(1)\leq 19k-2$ .
+Proof of Theorem 1.10.
+Assume $n\geq 19k-2$ .
+Let $(v_{1},\ldots,v_{n})$ be a median order of $T$ .
+Let $B=\{v_{1},\dots,v_{6k}\}$ , $A=\{v_{n-6k+1},\ldots,v_{n}\}$ and $C=V(T)\setminus(A\cup B)$ . We have $|C|\geq 7k-2$ .
+By Lemma 6.4, applied to $T\langle A\cup B\rangle$ , there is a subset $X$ of $A\cup B$ such that,
+for $T_{1}=\Inv(T;X)$ , we have
+(i) 
+ $|X\cap B|=|X\cap A|=2k$ ;
+(ii) 
+for any $Y\subseteq V(T)$ with $|Y|\leq k-1$ , $T_{1}-Y$ contains a directed path from $a$ to $B\setminus Y$ for every $a\in A\setminus Y$ ;
+(iii) 
+for any $Y\subseteq V(T)$ with $|Y|\leq k-1$ , $T_{1}-Y$ contains a directed path from $A\setminus Y$ to $b$ for every $b\in B\setminus Y$ .
+Let us now prove that $T_{1}$ is $k$ -strong, which implies $\sinv_{k}(T)\leq 1$ .
+Let $F$ be a set of at most $k-1$ vertices of $T_{1}$ .
+We first need the following intermediate result.
+Claim 6.4.1.
+Let $b\in B\setminus F$ and $a\in A\setminus F$ . Then $T_{1}-F$ contains a directed path from $b$ to $a$ .
+Proof of claim. By construction, there is some $i\in\{1,\ldots,6k\}$ such that $b=v_{i}$ . Let $S=((X\cap B)\cup F)\cap\{v_{i+1},\ldots,v_{n-6k}\}$ and let $T^{\prime}=T\langle\{v_{i},\ldots,v_{n-6k}\}\rangle$ . By (M2), every vertex in $S$ and every vertex in $C\setminus F$ is reachable from $b$ in $T^{\prime}$ . On the other hand, there is obviously no vertex in $S$ reachable from $b$ in $T^{\prime}-S$ . Further, by (M1), $(v_{i},\ldots,v_{n-6k})$ is a median order of $T^{\prime}$ .
+By Lemma 6.3 applied to $T^{\prime}$ and $S$ , this yields
+ $\displaystyle 2|S|$ 
+ $\displaystyle\geq|R^{+}_{T^{\prime}}(b)|-|R^{+}_{T^{\prime}-S}(b)|$ 
+ $\displaystyle=|R^{+}_{T^{\prime}}(b)\cap B|-|R^{+}_{T^{\prime}-S}(b)\cap B|$ 
+ $\displaystyle\qquad+|R^{+}_{T^{\prime}}(b)\cap(C\cap F)|-|R^{+}_{T^{\prime}-S}(b)\cap(C\cap F)|$ 
+ $\displaystyle\qquad+|R^{+}_{T^{\prime}}(b)\cap(C\setminus F)|-|R^{+}_{T^{\prime}-S}(b)\cap(C\setminus F)|$ 
+ $\displaystyle\geq|S|+|C\setminus F|-|R^{+}_{T^{\prime}-S}(b)\cap(C\setminus F)|.$ 
+For every $v\in C\setminus F$ , if $v$ is reachable from $b$ in $T^{\prime}-S$ , then $v$ is clearly reachable from $b$ in $T_{1}-F$ . Since $|X\cap B|\leq 2k$ and $|F|\leq k-1$ , we obtain
+ $\displaystyle|R^{+}_{T_{1}-F}(b)\cap(C\setminus F)|$ 
+ $\displaystyle\geq|R^{+}_{T^{\prime}-S}(b)\cap(C\setminus F)|$ 
+ $\displaystyle\geq|C\setminus F|-|S|$ 
+ $\displaystyle\geq|C\setminus F|-(|X\cap B|+|F|)$ 
+ $\displaystyle\geq|C\setminus F|-\big(2k+(k-1)\big)$ 
+ $\displaystyle=|C\setminus F|-(3k-1).$ 
+A similar argument shows that $|R^{-}_{T_{1}-F}(a)\cap(C\setminus F)|\geq|C\setminus F|-(3k-1)$ . As $|C|\geq n-12k\geq 7k-2$ , we obtain
+ $\displaystyle|(R^{+}_{T_{1}-F}(b)\cap(C\setminus F))\cap(R^{-}_{T_{1}-F}(a)\cap(C\setminus F))|$ 
+ $\displaystyle=|R^{+}_{T_{1}-F}(b)\cap(C\setminus F)|+|R^{-}_{T_{1}-F}(a)\cap(C\setminus F)|$ 
+ $\displaystyle\qquad-|(R^{+}_{T_{1}-F}(b)\cap(C\setminus F))\cup(R^{-}_{T_{1}-F}(a)\cap(C\setminus F))|$ 
+ $\displaystyle\geq|R^{+}_{T_{1}-F}(b)\cap(C\setminus F)|+|R^{-}_{T_{1}-F}(a)\cap(C\setminus F)|-|C\setminus F|$ 
+ $\displaystyle\geq 2\big(|C\setminus F|-(3k-1)\big)-|C\setminus F|$ 
+ $\displaystyle=|C\setminus F|-2(3k-1)$ 
+ $\displaystyle\geq|C|-|F|-(6k-2)$ 
+ $\displaystyle\geq(7k-2)-(k-1)-(6k-2)$ 
+ $\displaystyle=1.$ 
+Hence there is a vertex $v^{*}\in\{v_{6k+1},\ldots,v_{n-6k}\}\cap(R^{+}_{T_{1}-F}(b)\cap(C\setminus F))\cap(R^{-}_{T_{1}-F}(a)\cap(C\setminus F))$ . By definition, $T_{1}-F$ contains a directed path from $b$ to $v^{*}$ and a directed path from $v^{*}$ to $a$ . Hence $T_{1}-F$ contains a directed path from $b$ to $a$ .
+ $\lozenge$ 
+We are now ready to show that $T_{1}-F$ is strong.
+Let $x$ and $y$ be two vertices in $T_{1}-F$ . It suffices to show that $y$ is reachable from $x$ in $T_{1}-F$ .
+We first show that there is a path from $x$ to $B\setminus F$ . Clearly, we may suppose that $x\in(A\cup C)\setminus F.$ Then, since $|A|>2|F|$ , Lemma 6.3 implies that
+there is a vertex $x^{\prime}\in A\setminus F$ reachable from $x$ in $T-F-B$ , and so in $T_{1}-F$ .
+By (ii), there is a directed path from $x^{\prime}$ to a vertex $u$ in $B\setminus F$ in $T_{1}-F$ .
+Hence there is a directed path $P_{x}$ from $x$ to $u$ in $T_{1}-F$ .
+Similarly, by directional duality, in $T_{1}-F$ , there is a directed path $P_{y}$ from a vertex $w\in A\setminus F$ to $y$ .
+Finally, by Claim 6.4.1, there exists a path $Q$ from $u$ to $w$ in $T_{1}-F$ . Then
+ $P_{x}QP_{y}$ is a path from $x$ to $y$ in $T_{1}-F$ .
+This proves that $T_{1}-F$ is strong.
+∎
+Finally, we give the proof of Proposition 1.13, which states that $N_{k}(1)\geq 5k-2$ and $N_{k}^{\prime}(1)\geq 4k-1$ .
+Proof of Proposition 1.13.
+Let $T_{1}$ be a tournament of order $5k-3$ whose vertex set has a partition $(A,B,C)$ such that $T_{1}\langle A\rangle$ and $T_{1}\langle C\rangle$ are eulerian tournaments of order $2k-1$ , and $A\Rightarrow B\cup C$ and $B\Rightarrow C$ .
+We shall prove that $\sinv_{k}(T_{1})>1$ .
+Assume for a contradiction that there is a set $X$ of vertices such that $T_{1}^{\prime}=\Inv(T_{1};X)$ is $k$ -strong.
+Every vertex of $A$ (resp. $C$ ) has in-degree (resp. out-degree) $k-1$ in $T_{1}$ , and so belongs to $X$ .
+Thus $A\cup C\subseteq X$ , and so $C\Rightarrow A$ in $T_{1}^{\prime}$ . Hence $T_{1}^{\prime}-B$ is not strong. Since $|B|=k-1$ , $T_{1}^{\prime}$ is not $k$ -strong, a contradiction.
+Now let $T_{2}$ be a tournament of order $4k-2$ whose vertex set has a partition $(A,B)$ such that $T_{2}\langle A\rangle$ and $T_{2}\langle B\rangle$ are eulerian tournaments of order $2k-1$ , and $A\Rightarrow B$ .
+We shall prove that $\sinv_{k}^{\prime}(T_{1})>1$ .
+Assume for a contradiction that there is a set $X$ of vertices such that $T_{2}^{\prime}=\Inv(T_{2};X)$ is $k$ -arc-strong.
+Every vertex of $A$ (resp. $B$ ) has in-degree (resp. out-degree) $k-1$ in $T_{2}$ , and so belongs to $X$ .
+Thus $X=V(T_{2})$ , and so $T_{2}^{\prime}$ is isomorphic to $T_{2}$ . Hence $T_{2}^{\prime}$ is not $k$ -arc-strong, a contradiction.
+∎
+6.3 Better upper bound on $N_{k}(3)$ 
+This section is dedicated to the proof of Theorem 1.14. The structure is analogous to the proof of Theorem 1.10 in Section 6.2.
+First we show a result which is very similar to Lemma 6.4.
+Lemma 6.5.
+Let $k$ be a positive integer, $T$ a tournament on $8k$ vertices and $(A,B)$ a bipartition of $V(T)$ such that $|A|=|B|=4k$ .
+There is a family ${\cal X}$ of three subsets of $V(T)$ such that the following hold with $T^{\prime}=\Inv(T;{\cal X})$ .
+(i) 
+ $T^{\prime}\langle A\rangle=T\langle A\rangle$ and $T^{\prime}\langle B\rangle=T\langle B\rangle$ ;
+(ii) 
+for any $Y\subseteq V(T)$ with $|Y|\leq k-1$ , $T^{\prime}-Y$ contains a directed path from $a$ to $B\setminus Y$ for every $a\in A\setminus Y$ ;
+(iii) 
+for any $Y\subseteq V(T)$ with $|Y|\leq k-1$ , $T^{\prime}-Y$ contains a directed path from $A\setminus Y$ to $b$ for every $b\in B\setminus Y$ .
+Proof.
+Let $(a_{1},\ldots,a_{4k})$ be a median order of $T\langle A\rangle$ and let $(b_{1},\ldots,b_{4k})$ be a median order of $T\langle B\rangle$ . Let $A_{0}$ be the set of vertices in $\{a_{2k+1},\ldots,a_{4k}\}$ which have fewer than $k$ out-neighbours in $B$ in $T$ . Further, let $A_{1}=\{a_{1},\ldots,a_{2k-|A_{0}|}\}$ . Observe that $|A_{0}\cup A_{1}|=|A_{0}|+|A_{1}|=2k$ . Similarly, let $B_{0}$ be the set of vertices in $\{b_{1},\ldots,b_{2k}\}$ that have fewer than $k$ in-neighbours in $A$ and let $B_{1}=\{b_{2k+|B_{0}|+1},\ldots,b_{4k}\}$ . Observe that $|B_{0}\cup B_{1}|=|B_{0}|+|B_{1}|=2k$ . Now let $X_{1}=A_{0}\cup A_{1}$ , $X_{2}=B_{0}\cup B_{1}$ ,
+ $X_{3}=X_{1}\cup X_{2}$ , and ${\cal X}=(X_{i})_{i\in[3]}$ Let $T^{\prime}=\Inv(T;{\cal X})$ . Observe that $T^{\prime}$ is obtained from $T$ by reversing the arcs between $X_{1}$ and $X_{2}$ . In particular, (i) holds.
+We only show (ii) as (iii) follows symmetrically.
+Let $Y\subseteq V(T)$ with $|Y|\leq k-1$ . Suppose for the sake of a contradiction that (ii) does not hold. There is a largest integer $i\in[4k]$ such that $a_{i}\in A\setminus Y$ and $T^{\prime}-Y$ does not contain a directed path from $a_{i}$ to $B\setminus Y$ . We will distinguish several cases.
+Case 1.
+ $i\in\{2k+1,\ldots,4k\}$ and $a_{i}\in A\setminus A_{0}$ .
+In this case, by the choice of $A_{0}$ , we have
+ $\displaystyle|(N_{T^{\prime}}^{+}(a_{i})\cap B)\setminus Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle=|N_{T}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle\geq k-(k-1)$ 
+ $\displaystyle=1,$ 
+so $a_{i}$ has an out-neighbour in $B\setminus Y$ in $T^{\prime}-Y$ , a contradiction.
+Case 2.
+ $i\in\{2k+1,\ldots,4k\}$ and $a_{i}\in A_{0}$ .
+In this case, by the choice of $A_{0}$ , we have
+ $\displaystyle|(N_{T^{\prime}}^{+}(a_{i})\cap B)\setminus Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap(B_{0}\cup B_{1})|-|Y|$ 
+ $\displaystyle=|B_{0}\cup B_{1}|-|N_{T^{\prime}}^{-}(a_{i})\cap(B_{0}\cup B_{1})|-|Y|$ 
+ $\displaystyle=|B_{0}\cup B_{1}|-|N_{T}^{+}(a_{i})\cap(B_{0}\cup B_{1})|-|Y|$ 
+ $\displaystyle\geq|B_{0}\cup B_{1}|-|N_{T^{\prime}}^{+}(a_{i})\cap B|-|Y|$ 
+ $\displaystyle\geq 2k-(k-1)-(k-1)$ 
+ $\displaystyle=2,$ 
+so $a_{i}$ has an out-neighbour in $B\setminus Y$ in $T^{\prime}-Y$ , a contradiction.
+Case 3.
+ $i\in[2k]$ .
+As $(a_{1},\ldots,a_{4k})$ is a median order of $T\langle A\rangle=T^{\prime}\langle A\rangle$ , by (M2) we have
+ $\displaystyle|(N_{T^{\prime}}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{4k}\})\setminus Y|$ 
+ $\displaystyle\geq|N_{T^{\prime}}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{4k}\}|-|Y|$ 
+ $\displaystyle=|N_{T}^{+}(a_{i})\cap\{a_{i+1},\ldots,a_{4k}\}|-|Y|$ 
+ $\displaystyle\geq\frac{1}{2}|\{a_{i+1},\ldots,a_{4k}\}|-|Y|$ 
+ $\displaystyle\geq\frac{1}{2}(4k-i)-(k-1)$ 
+ $\displaystyle=k+1-\frac{i}{2}$ 
+ $\displaystyle\geq k+1-k$ 
+ $\displaystyle=1.$ 
+Hence there is some $j>i$ such that $a_{j}\in A\setminus Y$ and $T^{\prime}-Y$ contains the arc $a_{i}a_{j}$ . By the maximality of $i$ , there is a directed path from $a_{j}$ to $B\setminus Y$ in $T^{\prime}-Y$ . Hence $T^{\prime}-Y$ also contains a directed path from $a_{i}$ to $B\setminus Y$ , a contradiction.
+∎
+We now prove the upper bound on $N_{k}(3)$ , which we restate here.
+See 1.14
+Proof.
+Let $T$ be a tournament on $n\geq 11k-2$ vertices.
+Let $(v_{1},\ldots,v_{n})$ be a median order of $T$ .
+Let $B=\{v_{1},\dots,v_{4k}\}$ , $A=\{v_{n-4k+1},\ldots,v_{n}\}$ and $C=V(T)\setminus(A\cup B)$ . We have $|C|\geq 3k-2$ .
+By Lemma 6.5 applied to $T\langle A\cup B\rangle$ , there is a family ${\cal X}$ of three subsets of $A\cup B$ such that
+for $T_{1}=\Inv(T;\mathcal{X})$ we have
+(i) 
+ $T_{1}\langle A\rangle=T\langle A\rangle$ and $T_{1}\langle B\rangle=T\langle B\rangle$ ;
+(ii) 
+for any $Y\subseteq V(T)$ with $|Y|\leq k-1$ , $T_{1}-Y$ contains a directed path from $a$ to $B\setminus Y$ for every $a\in A\setminus Y$ ;
+(iii) 
+for any $Y\subseteq V(T)$ with $|Y|\leq k-1$ , $T_{1}-Y$ contains a directed path from $A\setminus Y$ to $b$ for every $b\in B\setminus Y$ .
+Let $T_{1}=\Inv(T;\mathcal{X})$ .
+Let us now prove that $T_{1}$ is $k$ -strong, which implies $\sinv_{k}(T)\leq 3$ .
+Note that $T\langle A\cup C\rangle$ , as well as $T\langle B\cup C\rangle$ are unchanged by the inversions.
+Let $F$ be a set of at most $k-1$ vertices of $T_{1}$ . Let us show that $T_{1}-F$ is strong.
+Let $x$ and $y$ be two vertices in $T_{1}-F$ . It suffices to show that $y$ is reachable from $x$ in $T_{1}-F$ .
+Let us first show that there is a vertex $u\in B\setminus F$ that is reachable from $x$ in $T_{1}-F$ . It is trivial if $x\in B$ , so we may suppose that $x\in A\cup C$ .
+Lemma 6.3 asserts that from any vertex of $(A\cup C)\setminus F$ one can reach a vertex of $A\setminus F$ in $T_{1}-F$ . Thus there exists a vertex $x^{\prime}\in A\setminus F$ reachable from $x$ in $T_{1}-F$ . By (ii), there is a directed path from $x^{\prime}$ to a vertex $u$ in $B\setminus F$ in $T_{1}-F$ .
+Hence there is a directed path $P_{x}$ from $x$ to $u$ in $T_{1}-F$ .
+Similarly, by directional duality, in $T_{1}-F$ , there is a directed path $P_{y}$ from a vertex $w\in A\setminus F$ to $y$ .
+By Lemma 6.3, we have $|R^{+}_{T\langle B\cup C\rangle-F}(u)\cap(C\setminus F)|\geq|C|-2|F\cap(B\cup C)|=|C\setminus F|-|F\cap C|-2|F\cap B|.$ Similarly, we obtain $|R^{-}_{T\langle A\cup C\rangle-F}(w)\cap(C\setminus F)|\geq|C\setminus F|-|F\cap C|-2|F\cap A|.$ 
+This yields
+ $\displaystyle|R^{+}_{T\langle B\cup C\rangle-F}(u)\cap R^{-}_{T\langle A\cup C\rangle-F}(w)|$ 
+ $\displaystyle=|(R^{+}_{T\langle B\cup C\rangle-F}(u)\cap(C\setminus F))\cap(R^{-}_{T\langle A\cup C\rangle-F}(w)\cap(C\setminus F))|$ 
+ $\displaystyle=|R^{+}_{T\langle B\cup C\rangle-F}(u)\cap(C\setminus F)|+|R^{-}_{T\langle A\cup C\rangle-F}(w)\cap(C\setminus F)|$ 
+ $\displaystyle\qquad-|(R^{+}_{T\langle B\cup C\rangle-F}(u)\cap(C\setminus F))\cap(R^{-}_{T\langle A\cup C\rangle-F}(w)\cap(C\setminus F))|$ 
+ $\displaystyle\geq(|C\setminus F|-|F\cap C|-2|F\cap B|)+(|C\setminus F|-|F\cap C|-2|F\cap A|)-|C\setminus F|$ 
+ $\displaystyle=|C\setminus F|-2|F|$ 
+ $\displaystyle\geq|C|-3|F|$ 
+ $\displaystyle\geq(3k-2)-3(k-1)$ 
+ $\displaystyle=1.$ 
+Thus there is a vertex of $C\setminus F$ in $R^{+}_{T\langle B\cup C\rangle-F}(u)\cap R^{-}_{T\langle A\cup C\rangle-F}(w)$ , and so there exists a directed path $Q$ from $u$ to $w$ in $T_{1}-F$ .
+Then $P_{x}QP_{y}$ is a directed path from $x$ to $y$ in $T_{1}-F$ .
+∎
+All the results of the previous subsections imply the following.
+Corollary 6.6.
+ $m_{k}(n)\leq\left\{\begin{array}[]{ll}2k&\text{if~ $n\geq 2k+1$,}\\
+3&\text{if~ $n\geq 11k-2$,}\\
+1&\text{if~ $n\geq 19k-2$.}\end{array}\right.$ 
+6.4 Upper bounds for $k$ large
+In this section, we show that if a tournament has at least $2k+1+\epsilon k$ vertices for some positive integer $k$ and some $\epsilon>0$ , then it can be made $k$ -strong by inverting a family of sets whose cardinality only depends on $\epsilon$ .
+The proof consists in drawing this family uniformly at random, under the constraint that every vertex is contained in at least one of the sets.
+To analyse this procedure we will need Chernoff’s Bound (Proposition 2.6) as well as the two following technical lemmas.
+Lemma 6.7.
+Let $\vec{u}\neq\vec{v}\in\mathbb{F}_{2}^{t}\setminus\{\vec{0}\}$ and $x,y\in\mathbb{F}_{2}$ be fixed, and let $\vec{w}\in\mathbb{F}_{2}^{t}\setminus\{\vec{0}\}$ 
+be drawn uniformly at random. Then $\Pr[\vec{u}\cdot\vec{w}=x,\vec{v}\cdot\vec{w}=y]\geq\frac{1}{4}-\frac{3}{4}\frac{1}{2^{t}-1}$ .
+Proof.
+As $\vec{u}\neq\vec{v}$ , the mapping $\mathbb{F}_{2}^{t}\to\mathbb{F}_{2}^{2},\vec{w}\mapsto(\vec{u}\cdot\vec{w},\vec{v}\cdot\vec{w})$ is surjective and linear.
+As a consequence, there are $\frac{1}{4}2^{t}$ vectors $\vec{w}\in\mathbb{F}_{2}^{t}$ which satisfy $\vec{u}\cdot\vec{w}=x$ and $\vec{v}\cdot\vec{w}=y$ .
+Thus by possibly removing the solution $\vec{w}=0$ , we obtain $\Pr[\vec{u}\cdot\vec{w}=x,\vec{v}\cdot\vec{w}=y]\geq\frac{2^{t-2}-1}{2^{t}-1}=\frac{1}{4}-\frac{3}{4}\frac{1}{2^{t}-1}$ .
+∎
+Lemma 6.8.
+Let $\epsilon>0$ , let $t\geq 16$ be an integer, and let $k\geq\frac{8t}{\epsilon}$ be an integer.
+Let $U,V\in(\mathbb{F}_{2}^{t}\setminus\{\vec{0}\})^{\lceil\epsilon k/8\rceil}$ be drawn uniformly at random and
+ $W\in\mathbb{F}_{2}^{\lceil\epsilon k/8\rceil\times\lceil\epsilon k/8\rceil}$ be fixed.
+Then $\Pr[U^{\top}\cdot V=W]\leq 2^{-\epsilon tk/128}$ .
+Proof.
+Note that since $k\geq\frac{8t}{\epsilon}$ , we have
+ $\lceil\epsilon k/8\rceil\geq t\geq t/2+1$ .
+First we bound the probability that $\rk(U)\leq t/2$ . If $U$ has rank at most $t/2$ , then there is a choice of $\lfloor t/2\rfloor$ columns of $U$ such that all the other ones are in the linear span of these selected columns.
+Since the linear span of $\lfloor t/2\rfloor$ vectors has dimension at most $t/2$ , and so size at most $2^{t/2}$ , we deduce the following.
+ $\begin{array}[]{r l l}\Pr\left[\rk(U)\leq t/2\right]&\leq\binom{\lceil\epsilon k/8\rceil}{\lfloor t/2\rfloor}\left(\frac{2^{\lfloor t/2\rfloor}-1}{2^{t}-1}\right)^{\lceil\epsilon k/8\rceil-\lfloor t/2\rfloor}&\\
+&\leq\binom{\lceil\epsilon k/8\rceil}{\lfloor t/2\rfloor}\left(\frac{2^{t/2}-1}{2^{t}-1}\right)^{\epsilon k/8-t/2}&\\
+&\leq 2^{\epsilon k/8+1}\left(\frac{2^{t/2}-1}{2^{t}-1}\right)^{\epsilon k/16}&\text{ because $\displaystyle\frac{t}{2}\leq\frac{\epsilon k}{16}$ since }k\geq\frac{8t}{\epsilon}\\
+&\leq 2^{\epsilon k/4}(2^{t/2})^{-\epsilon k/16}&\\
+&\leq 2^{\epsilon tk/64}2^{-\epsilon tk/32}&\text{ because }t\geq 16\\
+&=2^{-\epsilon tk/64}.&\\
+\end{array}$ 
+Now we assume that $\rk(U)>t/2$ .
+Then for every column $v$ of $V$ , $v$ must be chosen in an affine space of dimension at most $t-\lfloor t/2\rfloor-1\leq t/2$ .
+It follows that
+ $\begin{split}\Pr[U^{\top}\cdot V=W\mid\rk(U)>t/2]&\leq\left(\frac{2^{t/2}-1}{2^{t}-1}\right)^{\lceil\epsilon k/8\rceil}\\
+&\leq(2^{-t/2})^{\epsilon k/8}\\
+&=2^{-\epsilon tk/16}.\\
+\end{split}$ 
+Therefore
+ $\begin{split}\Pr[U^{\top}\cdot V=W]&\leq\Pr\left[\rk(U)\leq t/2\right]+\Pr[U^{\top}\cdot V=W\mid\rk(U)>t/2]\\
+&\leq 2^{-\epsilon tk/64}+2^{-\epsilon tk/16}\leq 2\cdot 2^{-\epsilon tk/64}.\end{split}$ 
+We know that $\epsilon tk\geq 8t^{2}\geq 2\cdot 64$ , thus $2^{-\epsilon tk/64}\leq 1/4$ . As $2x\leq\sqrt{x}$ for any $x\in[0,1/4]$ , we end with $\Pr[U^{\top}\cdot V=W]\leq 2\cdot 2^{-\epsilon tk/64}\leq 2^{-\epsilon tk/128}$ .
+∎
+For technical reasons, we prove the following seemingly weaker restatement of Theorem 1.15.
+Theorem 6.9.
+There exists a function $f\colon\mathbb{R}_{>0}\to\mathbb{N}$ such that for every $\epsilon>0$ and every positive integer $k$ ,
+if $T$ is an $n$ -vertex tournament with $n\geq 2k+2\epsilon k+2$ , then $\sinv_{k}(T)\leq f(\epsilon)$ .
+It is not difficult to see that Theorem 6.9 actually implies Theorem 1.15.
+Indeed, given a function $f$ like in Theorem 6.9 at hand, define $f^{\prime}:\mathbb{R}_{>0}\to\mathbb{N}$ by $f^{\prime}(\epsilon)=\max\{\frac{4}{\epsilon},f(\frac{\epsilon}{2})\}$ .
+Let $T$ be a tournament with $|V(T)|\geq 2k+1+\epsilon k$ for some positive integer $k$ .
+If $k\leq\frac{2}{\epsilon}$ , then Theorem 5.8 yields $\sinv_{k}(T)\leq 2k\leq\frac{4}{\epsilon}\leq f^{\prime}(\epsilon)$ .
+Otherwise, we have $|V(T)|\geq 2k+1+\epsilon k\geq 2k+2+\frac{\epsilon}{2}k$ , so $\sinv_{k}(T)\leq f(\frac{\epsilon}{2})\leq f^{\prime}(\epsilon)$ by Theorem 6.9.
+Proof.
+Without loss of generality, we may assume $\epsilon\leq\frac{1}{3}$ .
+Let $C$ be a constant such that $\sinv_{k}(T)\leq 1$ if $n\geq Ck$ , which exists by Theorem 1.10. Let $t$ be the smallest integer such that
+• 
+ $t\geq 16$ ,
+• 
+ $t\geq\log(1+\frac{48}{\epsilon})$ , and
+• 
+ $t\geq\frac{128}{\epsilon}(2C+2+\epsilon/4)+16$ .
+Clearly, $t$ is well defined and depends only on $\epsilon$ .
+Let $k_{0}$ be the smallest integer such that for every $k^{\prime}\geq k_{0}$ ,
+ $(2^{t}-1)\exp\left(-\epsilon^{2}\frac{(2+\epsilon)k^{\prime}}{24}\right)+3(Ck^{\prime})^{2}\exp\left(-\epsilon^{2}\frac{(2+\epsilon)k^{\prime}}{4096}\right)+2^{-k^{\prime}}<1.$ 
+(1)
+We now prove the statement for $f(\epsilon)=\max\{t,2k_{0}-2,\lceil\frac{16t}{\epsilon}\rceil-2\}$ . If $k<k_{0}$ , then we conclude directly using Theorem 5.8 that $\sinv_{k}(T)\leq 2k\leq 2k_{0}-2\leq f(\epsilon)$ . Similarly, if $k\leq\frac{8t}{\epsilon}-1$ , then we conclude by Theorem 5.8 that $\sinv_{k}(T)\leq\frac{16t}{\epsilon}-2\leq f(\epsilon)$ .
+Moreover, if $n\geq Ck$ , we have $\sinv_{k}(T)\leq 1\leq f(\epsilon)$ .
+Henceforth, we may assume $k\geq\max\{k_{0},\frac{8t}{\epsilon}-1\}$ and $n\leq Ck$ .
+For every vertex $u\in V(T)$ , we choose uniformly and independently at random a vector $\vec{u}\in\mathbb{F}_{2}^{t}\setminus\{\vec{0}\}$ .
+For $i\in[t]$ , let $X_{i}=\{u\in V(T)\mid\vec{u}_{i}=1\}$ .
+We will prove that with positive probability, the tournament $T^{\prime}=\Inv(T;X_{1},\dots,X_{t})$ is $k$ -strong.
+Note that for every arc $uv\in A(T)$ , we have $uv\in A(T^{\prime})$ if and only if $\vec{u}\cdot\vec{v}=0$ .
+For two disjoint subsets $A$ and $B$ of vertices of $T^{\prime}$ , a directed $(A,B)$ -matching is a set of arcs with tails in $A$ , heads in $B$ , and without common tail or common head.
+Claim 6.9.1.
+If $T^{\prime}$ is not $k$ -strong, then at least one of the following events occurs:
+ $E_{1}$ 
+: there is a vector $\vec{z}\in\mathbb{F}_{2}^{t}\setminus\{\vec{0}\}$ such that $|\{v\in V(T)\mid\vec{v}\neq\vec{z}\}|<k$ ,
+ $E_{2}$ 
+: there are $u,v\in V(T)$ with $\vec{u}\neq\vec{v}$ such that $\min\{|N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{-}(v)|,|N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{+}(v)|,|N_{T^{\prime}}^{-}(u)\cap N_{T^{\prime}}^{-}(v)|\}\leq\left(1+\frac{\epsilon}{4}\right)\frac{k}{2}$ ,
+ $E_{3}$ 
+: there are disjoint sets $A,B\subseteq V(T^{\prime})$ with $|A|,|B|\geq\left(1+\frac{\epsilon}{4}\right)\frac{k}{2}$ 
+with no directed $(A,B)$ -matching of size at least $\frac{k}{2}$ .
+Proof of claim. Assume that none of  $E_{1}$ ,  $E_{2}$ and  $E_{3}$ holds.
+Suppose for a contradiction that there is a set $X$ of at most $k-1$ vertices, and a partition $(V_{1},V_{2})$ of $V(T^{\prime}-X)$ into nonempty sets such that $V_{2}\Rightarrow V_{1}$ in $T^{\prime}-X$ .
+Since  $E_{1}$ does not hold, there exist $x,y\in V_{1}\cup V_{2}$ with $\vec{x}\neq\vec{y}$ . If both $x$ and $y$ are in $V_{1}$ (resp. $V_{2}$ ), consider $v\in V_{2}$ (resp. $u\in V_{1}$ ) and either $\vec{x}\neq\vec{v}$ or $\vec{y}\neq\vec{v}$ (resp. $\vec{x}\neq\vec{u}$ or $\vec{y}\neq\vec{u}$ ).
+If $x\in V_{1}$ and $y\in V_{2}$ we set $u=x$ and $v=y$ ,
+and if $y\in V_{2}$ and $x\in V_{1}$ we set $u=y$ and $v=x$ .
+In all cases, there are $u\in V_{1}$ and $v\in V_{2}$ with $\vec{u}\neq\vec{v}$ .
+Now, as   $E_{2}$ does not hold, we have $|N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{-}(v)|,|N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{+}(v)|,|N_{T^{\prime}}^{-}(u)\cap N_{T^{\prime}}^{-}(v)|\geq(1+\epsilon/4)\frac{k}{2}$ .
+Finally, as  $E_{3}$ does not hold,
+there is a directed $(N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{+}(v),N_{T^{\prime}}^{-}(u)\cap N_{T^{\prime}}^{-}(v))$ -matching $M$ of size at least $k/2$ in $T^{\prime}$ .
+For every arc $e=xy\in M$ , observe that $P_{e}=uxyv$ is a directed $(u,v)$ -path in $T^{\prime}$ .
+Furthermore, for every $x\in N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{-}(v)$ , observe that $P_{x}=uxv$ is a directed $(u,v)$ -path in $T^{\prime}$ .
+This yields a collection of at least $k$ internally vertex-disjoint $(u,v)$ -paths in $T^{\prime}$ ,
+a contradiction since every $(u,v)$ -path meets $X$ which has size at most $k-1$ .
+ $\lozenge$ 
+We will show that with positive probability none of the events   $E_{1}$ ,  $E_{2}$ and  $E_{3}$ occurs.
+Claim 6.9.2.
+ $\Pr(E_{1})\leq(2^{t}-1)\exp\left(-\epsilon^{2}\frac{n}{16}\right)$ 
+Proof of claim. If $\vec{c}\in\mathbb{F}_{2}^{t}\setminus\{\vec{0}\}$ is fixed, then $Y_{\vec{c}}=|\{u\in V(T)\mid\vec{u}\neq\vec{c}\}|$ is a random variable
+having a binomial law with parameters $n$ and $1-\frac{1}{2^{t}-1}$ .
+As
+ $\epsilon\leq\frac{1}{3}$ and $t\geq 2$ , we have $k\leq\frac{1}{2}n\leq\frac{2}{3}\cdot\frac{5}{6}n\leq(1-\frac{1}{2^{t}-1})(1-\frac{\epsilon}{2})n$ . By Chernoff’s Bound (Proposition 2.6), and because $t\geq 2$ , we have
+ $\displaystyle\Pr[\exists\vec{c}\in\mathbb{F}_{2}^{t}\setminus\{\vec{0}\},Y_{\vec{c}}<k]$ 
+ $\displaystyle\leq\sum_{\vec{c}\in\mathbb{F}_{2}^{t}\setminus\{0\}}\Pr[Y_{\vec{c}}<k]$ 
+ $\displaystyle\leq\sum_{\vec{c}\in\mathbb{F}_{2}^{t}\setminus\{0\}}\Pr\left[Y_{\vec{c}}<\left(1-\frac{\epsilon}{2}\right)\left(1-\frac{1}{2^{t}-1}\right)n\right]$ 
+ $\displaystyle\leq(2^{t}-1)\exp\left(-\left(\frac{\epsilon}{2}\right)^{2}\left(1-\frac{1}{2^{t}-1}\right)\frac{n}{2}\right)$ 
+ $\displaystyle\leq(2^{t}-1)\exp\left(-\epsilon^{2}\frac{n}{16}\right),$ 
+as claimed.
+ $\lozenge$ 
+Claim 6.9.3.
+ $\Pr(E_{2})\leq 3n(n-1)\exp\left(-\epsilon^{2}\frac{n-2}{4096}\right)$ 
+Proof of claim. Let $u,v$ be distinct vertices and let
+ $A=N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{-}(v),B=N_{T^{\prime}}^{+}(u)\cap N_{T^{\prime}}^{+}(v)$ and $C=N_{T^{\prime}}^{-}(u)\cap N_{T^{\prime}}^{-}(v)$ .
+Let $X\in\{A,B,C\}$ .
+Once $\vec{u}$ and $\vec{v}$ have been revealed, for every vertex $w\neq u,v$ , let $Y_{w}$ be a random variable with $Y_{w}=1$ if $w\in X$ , $Y_{w}=0$ otherwise.
+By Lemma 6.7, $Y_{w}$ is a random variable following a Bernoulli distribution whose parameter is at least $\frac{1}{4}(1-\frac{3}{2^{t}-1})$ . Further, the $Y_{w}$ are mutually independent.
+We now define a random variable $X_{w}$ for every $w\in V(T)\setminus\{u,v\}$ as follows.
+If $Y_{w}=0$ , set $X_{w}=0$ , and otherwise set $X_{w}=1$ with probability $\frac{\frac{1}{4}(1-\frac{3}{2^{t}-1})}{\Pr[Y_{w}=1]}$ and $X_{w}=0$ otherwise, where the latter random experiments are executed independently. Observe that, as the $Y_{w}$ are mutually independent, so are the $X_{w}$ . Moreover, $\Pr[X_{w}=1]=\frac{1}{4}(1-\frac{3}{2^{t}-1})$ 
+and $\sum_{w\in V(T)\setminus\{u,v\}}X_{w}\geq|X|$ .
+We have $(1+\frac{\epsilon}{4})\frac{k}{2}\leq\frac{1+\frac{\epsilon}{4}}{2+\epsilon}(n-2)/2=\frac{1}{2}\left(1-\frac{\frac{\epsilon}{4}}{1+\frac{\epsilon}{2}}\right)\frac{n-2}{2}\leq\frac{1}{4}\left(1-\frac{\epsilon}{8}\right)(n-2)$ since $n\geq(2+\epsilon)k+2$ .
+Moreover, as $t\geq\log(\frac{48}{\epsilon}+1)$ we have
+ $\frac{1}{4}(1-\epsilon/8)\leq\frac{1}{4}(1-\epsilon/16)^{2}\leq\frac{1}{4}\left(1-\frac{3}{2^{t}-1}\right)(1-\frac{\epsilon}{16})=\left(\frac{1}{4}-\frac{3}{4(2^{t}-1)}\right)\left(1-\frac{\epsilon}{16}\right)$ .
+Hence $\left(1+\frac{\epsilon}{4}\right)\frac{k}{2}\leq\left(1-\frac{\epsilon}{16}\right)\left(\frac{1}{4}-\frac{3}{4(2^{t}-1)}\right)(n-2)$ , and by Chernoff’s Bound (Proposition 2.6)
+ $\displaystyle\Pr\left[|X|\leq\left(1+\frac{\epsilon}{4}\right)\frac{k}{2}\right]$ 
+ $\displaystyle\leq\Pr\left[|X|\leq\left(1-\frac{\epsilon}{16}\right)\left(\frac{1}{4}-\frac{3}{4(2^{t}-1)}\right)(n-2)\right]$ 
+ $\displaystyle\leq\exp\left(-\left(\frac{\epsilon}{16}\right)^{2}\left(\frac{1}{4}-\frac{3}{4(2^{t}-1)}\right)\frac{n-2}{2}\right)$ 
+ $\displaystyle\leq\exp\left(-\epsilon^{2}\frac{n-2}{4096}\right)$ 
+since $t\geq 5$ implies $\frac{3}{2^{t}-1}\leq\frac{1}{8}$ .
+Hence, by the Union Bound (Proposition 2.5), $\Pr\left[\min\{|A|,|B|,|C|\}\leq\left(1+\frac{\epsilon}{4}\right)\frac{k}{2}\right]\leq\sum_{X\in\{A,B,C\}}\Pr\left[|X|\leq\left(1+\frac{\epsilon}{4}\right)\frac{k}{2}\right]\leq 3\exp\left(-\epsilon^{2}\frac{n-2}{4096}\right)$ .
+Finally, by the Union Bound over $u,v$ , the probability that there exist $u,v$ distinct such that $\min\{|A|,|B|,|C|\}\leq\left(1+\frac{\epsilon}{4}\right)\frac{k}{2}$ is at most
+ $3n(n-1)\exp\left(-\epsilon^{2}\frac{n-2}{4096}\right)$ .
+ $\lozenge$ 
+For two disjoint sets of vertices $X,Y$ in $T^{\prime}$ , we denote by $\mu_{T^{\prime}}(X,Y)$ the size of a largest directed $(X,Y)$ -matching in $T^{\prime}$ .
+Claim 6.9.4.
+ $\Pr(E_{3})\leq 2^{-k}$ .
+Proof of claim. Let $A,B\subseteq V(T^{\prime})$ be disjoint sets of $\lceil(1+\frac{\epsilon}{4})\frac{k}{2}\rceil$ vertices.
+We shall prove that with high probability there is a directed $(A,B)$ -matching in $T^{\prime}$ of size at least $\frac{k}{2}$ .
+Let $M$ be a maximal directed $(A,B)$ -matching and let $Y_{A}$ (resp. $Y_{B}$ ) the the set of vertices in $A$ (resp. in $B$ ) incident to no arc of $M$ .
+Then $Y_{B}\Rightarrow Y_{A}$ in $T^{\prime}$ since $M$ is maximal.
+Moreover, if $|M|\leq k/2$ , then $|Y_{A}|,|Y_{B}|\geq(1+\frac{\epsilon}{4})\frac{k}{2}-\frac{k}{2}=\frac{\epsilon}{8}k$ .
+For every such $Y_{A}\subseteq A,Y_{B}\subseteq B$ , we identify $Y_{A}$ and $Y_{B}$ with the matrices whose columns are the $\vec{u}$ for $u\in Y_{A}$ (resp. $u\in Y_{B}$ ).
+We also denote by $T(Y_{B},Y_{A})$ the $|Y_{B}|\times|Y_{A}|$ matrix over $\mathbb{F}_{2}$ whose cell $(b,a)$ equals $1$ if and only if $ab\in A(T)$ .
+Then observe that $Y_{B}\Rightarrow Y_{A}$ in $T^{\prime}$ if and only if $Y_{B}^{\top}\cdot Y_{A}=T(Y_{B},Y_{A})$ .
+By these observations, we have
+ $\begin{array}[]{r c l}\Pr[\mu_{T^{\prime}}(A,B)<k]&\leq&\Pr[\exists Y_{A}\subseteq A,|Y_{A}|\geq\frac{\epsilon}{8}k,\exists Y_{B}\subseteq B,|Y_{B}|\geq\frac{\epsilon}{8}k,Y_{B}\Rightarrow Y_{A}\text{ in }T^{\prime}]\\
+&\leq&\Pr[\exists Y_{A}\subseteq A,|Y_{A}|\geq\frac{\epsilon}{8}k,\exists Y_{B}\subseteq B,|Y_{B}|\geq\frac{\epsilon}{8}k,Y_{B}^{\top}\cdot Y_{A}=T(Y_{B},Y_{A})]\\
+&\leq&2^{2\left\lceil(1+\frac{\epsilon}{4})\frac{k}{2}\right\rceil}2^{-\frac{\epsilon tk}{128}}\hskip 28.45274pt\text{ by Lemma~\ref{lemma:proba_3} and the Union Bound}\\
+&\leq&2^{\left(1+\frac{\epsilon}{4}\right)k+2}2^{-\frac{\epsilon tk}{128}}\\
+&\leq&2^{-(2C+1)k}\\
+\end{array}$ 
+as $t\geq\frac{128}{\epsilon}\left(2C+2+\frac{\epsilon}{4}\right)+16$ and $\frac{\epsilon k}{64}\geq\frac{1}{8}$ .
+It follows from the Union Bound (Proposition 2.5) that $\Pr(E_{3})\leq 2^{2n}2^{-(2C+1)k}\leq 2^{-k}$ using the fact that $n\leq Ck$ .
+ $\lozenge$ 
+We can now conclude using Claims 6.9.1, 6.9.2, 6.9.3
+and 6.9.4 and the Union Bound:
+ $\begin{split}\Pr[T^{\prime}\text{ not }k\text{-strong}]&\leq\Pr(E_{1})+\Pr(E_{2})+\Pr(E_{3})\\
+&\leq(2^{t}-1)\exp\left(-\epsilon^{2}\frac{n}{16}\right)+3n^{2}\exp\left(-\epsilon^{2}\frac{n-2}{4096}\right)+2^{-k}\\
+&\leq(2^{t}-1)\exp\left(-\epsilon^{2}\frac{(2+\epsilon)k}{16}\right)+3(Ck)^{2}\exp\left(-\epsilon^{2}\frac{(2+\epsilon)k}{4096}\right)+2^{-k}\\
+&<1,\\
+\end{split}$ 
+by (1).
+This proves that there exist $X_{1},\dots,X_{t}\subseteq V(T)$ such that $T^{\prime}=\Inv(T;X_{1},\dots,X_{t})$ is $k$ -strong.
+∎
+7 Conclusion
+In this paper, we investigated the minimum number of inversions needed to make a digraph $k$ -strong or $k$ -arc-strong.
+Many open questions remain.
+From an algorithmic perspective, it would be interesting to gain a deeper understanding of the complexity when the problem is restricted to tournaments. While the complexity for fixed $k$ is settled by Corollary 1.16, the following question remains open:
+Problem 7.1.
+What is the complexity of computing $\sinv_{k}(T)$ (resp. $\sinv^{\prime}_{k}(T)$ ) for a given tournament $T$ if $k$ is part of the input ?
+Regarding bounds, we provided many on $\sinv_{k}(n)$ and $\sinv^{\prime}_{k}(n)$ . But those functions still need to be better understood.
+Firstly, it would be nice to better understand the asymptotic behaviour of $\sinv_{k}(n)$ and determine whether an analogue of Theorem 1.1 exists for $\sinv_{k}$ .
+Problem 7.2.
+Find good lower and upper bounds on $\sinv_{k}(n)$ .
+Secondly, we posed Conjecture 1.11 which we restate.
+See 1.11
+Conjecture 1.11 is motivated by the following consideration. By Proposition 2.2, every tournament $T$ of order $n>4k-2$ has a vertex $v$ with $d_{T}^{-}(v)\geq k$ and $d_{T}^{+}(v)\geq k$ .
+Moreover, adding a vertex with in- and out-degree at least $k$ to a $k$ -(arc-)strong digraph results in a $k$ -(arc-)strong digraph.
+Hence any $k$ (-arc)-strengthening family of $T-v$ is also a $k$ -(arc-)strengthening family of $T$ . Thus $\sinv_{k}(T)\leq\sinv_{k}(T-v)\leq m_{k}(n-1)$ and $\sinv^{\prime}_{k}(T)\leq\sinv^{\prime}_{k}(T-v)\leq m^{\prime}_{k}(n-1)$ . Hence $m_{k}(n)\leq m_{k}(n-1)$ and $m^{\prime}_{k}(n)\leq m^{\prime}_{k}(n-1)$ .
+Therefore, in order to approach Conjecture 1.11 and Problem 1.9, it is sufficient to consider tournaments whose order is in the range from $2k+1$ to $4k-2$ .
+Another intriguing question is whether $M_{k}=M^{\prime}_{k}$ .
+Problem 7.3.
+Is it true that $M_{k}=M^{\prime}_{k}$ for every positive integer $k$ ?
+In Subsection 5.1, we proved that this is the case for $k=1,2$ .
+Furthermore, there is still a significant gap between the logarithmic lower bounds and the linear upper bounds on $M^{\prime}_{k}$ and $M_{k}$ . Therefore it would be good to improve these.
+A first question is the following.
+Problem 7.4.
+Are $M^{\prime}_{k}$ and $M_{k}$ sublinear functions of $k$ ?
+We also proved a collection of bounds for $N_{k}(1)$ and $N_{k}(3)$ . It would be interesting to have stronger bounds on $N_{k}(i)$ for any integer $i$ . In particular, a tight bound for $N_{k}(1)$ would be satisfying.
+Finally, Theorem 1.15 states that every tournament that is a constant factor bigger than $2k$ can be made $k$ -strong by a constant number of inversions. It would be interesting to know if this result can be strengthened in the following way:
+Problem 7.5.
+Is there an integer $t$ such that for every $\epsilon>0$ , there is an integer $k_{0}$ such that for every $k\geq k_{0}$ , for every tournament $T$ on at least $(2+\epsilon)k$ vertices, we have $\sinv_{k}(T)\leq t$ ?
+Proposition 1.13 shows that such an integer would have to satisfy $t\geq 2$ , so $t=2$ is the first open case. The analogous statement for $\sinv^{\prime}_{k}$ is also open.
+References
+[ACN08]
+N. Ailon, M. Charikar, and A. Newman (2008)
+Aggregating inconsistent information: ranking and clustering.
+Journal of the ACM 55 (5).
+External Links: ISSN 0004-5411,
+Link,
+Document
+Cited by: §1.
+[APS+24]
+N. Alon, E. Powierski, M. Savery, A. Scott, and E. Wilmer (2024)
+Invertibility of digraphs and tournaments.
+SIAM Journal on Discrete Mathematics 38 (1), pp. 327–347.
+Note: arXiv:2212.11969
+External Links: ISSN 1095-7146,
+Link,
+Document
+Cited by: §1,
+§5.3.
+[ALO06]
+N. Alon (2006)
+Ranking tournaments.
+SIAM Journal on Discrete Mathematics 20, pp. 137–142.
+Cited by: §1.
+[AHH+25]
+G. Aubian, F. Havet, F. Hörsch, F. Kingelhoefer, N. Nisse, C. Rambaud, and Q. Vermande (2025)
+Problems, proofs, and disproofs on the inversion number.
+The Electronic Journal of Combinatorics 32 (1), pp. .
+External Links: Document
+Cited by: §1.
+[AHH+22]
+G. Aubian, F. Havet, F. Hörsch, F. Klingelhoefer, N. Nisse, C. Rambaud, and Q. Vermande (2022)
+Problems, proofs, and disproofs on the inversion number.
+ arXiv.
+Note: arXiv:2212.09188
+External Links: Document,
+Link
+Cited by: §5.3.
+[BdH22]
+J. Bang-Jensen, J. C. F. da Silva, and F. Havet (2022)
+On the inversion number of oriented graphs.
+Discrete Mathematics & Theoretical Computer Science 23 (2), pp. # 8.
+Note: arXiv:2105.04137
+Cited by: §1.
+[BG09]
+J. Bang-Jensen and G. Z. Gutin (2009)
+Digraphs: theory, algorithms and applications.
+ Springer-Verlag, London.
+Cited by: §1,
+§1,
+§1,
+§1,
+§5.1.
+[BG18]
+J. Bang-Jensen and G. Gutin (2018)
+Classes of directed graphs.
+Springer Monographs in Mathematics, Vol. 11, Springer.
+External Links: ISBN 978-3-319-71839-2
+Cited by: 9.
+[BH18]
+J. Bang-Jensen and F. Havet (2018)
+Tournaments and semicomplete digraphs.
+See 8, In Classes of Directed Graphs,
+pp. 35–124 (English).
+External Links: Document
+Cited by: §2.2.
+[BHK23a]
+J. Bang-Jensen, F. Hörsch, and M. Kriesell (2023)
+Complexity of (arc)-connectivity problems involving arc-reversals or deorientations.
+Theoretical Computer Science 973, pp. 114097.
+Note: arXiv:2303.03296
+External Links: ISSN 0304-3975,
+Link,
+Document
+Cited by: §1,
+§3.
+[BJY23b]
+J. Bang-Jensen, K. S. Johansen, and A. Yeo (2023)
+Making a tournament $k$ -strong.
+Journal of Graph Theory 103 (1), pp. 5–11.
+External Links: Document,
+Link,
+https://onlinelibrary.wiley.com/doi/pdf/10.1002/jgt.22900
+Cited by: §1.
+[BY04]
+J. Bang-Jensen and A. Yeo (2004)
+Making a tournament $k$ -arc-strong by reversing or deorienting arcs.
+Discrete Applied Mathematics 136 (2), pp. 161–171.
+Note: The 1st Cologne-Twente Workshop on Graphs and Combinatorial Optimization
+External Links: ISSN 0166-218X,
+Document,
+Link
+Cited by: §1.
+[BBB+10]
+H. Belkhechine, M. Bouaziz, I. Boudabbous, and M. Pouzet (2010)
+Inversion dans les tournois.
+Comptes Rendus Mathematique 348 (13-14), pp. 703–707.
+Cited by: §1,
+§5.1.
+[CAM59]
+P. Camion (1959)
+Chemins et circuits hamiltoniens des graphes complets.
+Comptes rendus hebdomadaires des séances de l’académie des sciences 249 (21), pp. 2151–2152.
+Cited by: §5.1.
+[CTY07]
+P. Charbit, S. Thomassé, and A. Yeo (2007)
+The minimum feedback arc set problem is NP-hard for tournaments.
+Combinatorics, Probability and Computing 16, pp. 1–4.
+Cited by: §1.
+[DS05]
+I. Dinur and S. Safra (2005)
+On the hardness of approximating minimum vertex cover.
+Annals of Mathematics, Second Series 162 (1), pp. 439–485 (English).
+External Links: ISSN 0003-486X
+Cited by: §1.
+[DUR20]
+O. Durand de Gevigney (2020)
+On Frank’s conjecture on $k$ -connected orientations.
+Journal of Combinatorial Theory, Series B 141, pp. 105–114.
+Note: arXiv:1212.4086
+External Links: ISSN 0095-8956,
+Document,
+Link
+Cited by: §1,
+§1.
+[ENS+95]
+G. Even, J. Naor, B. Schieber, and M. Sudan (1995)
+Approximating minimum feedback sets and multi-cuts in directed graphs.
+In Integer Programming and Combinatorial Optimization, 4th International
+IPCO Conference, Copenhagen, Denmark, May 29-31, 1995, Proceedings, E. Balas and J. Clausen (Eds.),
+Lecture Notes in Computer Science, Vol. 920, pp. 14–28.
+Cited by: §1.
+[ET75]
+S. Even and R. E. Tarjan (1975)
+Network flow and testing graph connectivity.
+SIAM Journal on Computing 4 (4), pp. 507–518.
+External Links: Document
+Cited by: §1.
+[FER83]
+W. Fernandez de la Vega (1983)
+On the maximum cardinality of a consistent set of arcs in a random tournament.
+Journal of Combinatorial Theory, Series B 35 (3), pp. 328–332.
+External Links: ISSN 0095-8956,
+Document,
+Link
+Cited by: §1.
+[FF10]
+L. R. Ford and D. R. Fulkerson (2010)
+Flows in networks.
+ Princeton University Press, USA.
+External Links: ISBN 0691146675
+Cited by: §2.2.
+[GAB91]
+H. N. Gabow (1991)
+A matroid approach to finding edge connectivity and packing arborescences.
+In Proceedings of the Twenty-Third Annual ACM Symposium on Theory of Computing,
+STOC ’91, pp. 112–122.
+External Links: ISBN 0897913973,
+Link,
+Document
+Cited by: §1.
+[GAL80]
+Z. Galil (1980)
+Finding the vertex connectivity of graphs.
+SIAM Journal on Computing 9 (1), pp. 197–199.
+External Links: Document
+Cited by: §1.
+[GHS00]
+V. Guruswami, J. Hastad, and M. Sudan (2000)
+Hardness of approximate hypergraph coloring.
+In Proceedings 41st Annual Symposium on Foundations of Computer Science,
+Vol. , pp. 149–158.
+External Links: Document
+Cited by: Proposition 4.2,
+§4.
+[HHM77]
+F. Harary, D. Hsu, and Z. Miller (1977)
+The biparticity of a graph.
+Journal of Graph Theory 1 (2), pp. 131–133.
+External Links: Document,
+Link,
+https://onlinelibrary.wiley.com/doi/pdf/10.1002/jgt.3190010208
+Cited by: Proposition 4.1,
+§4.
+[HHR24]
+F. Havet, F. Hörsch, and C. Rambaud (2024)
+Diameter of the inversion graph.
+Note: arXiv:2405.04119
+External Links: 2405.04119
+Cited by: Theorem 3.2,
+§3,
+§5.4.1.
+[HT00]
+F. Havet and S. Thomassé (2000)
+Median orders of tournaments: a tool for the second neighborhood problem and sumner’s conjecture.
+Journal of Graph Theory 35 (4), pp. 244–256.
+External Links: Document,
+Link,
+https://onlinelibrary.wiley.com/doi/pdf/10.1002/1097-0118%28200012%2935%3A4%3C244%3A%3AAID-JGT2%3E3.0.CO%3B2-H
+Cited by: §6.2.
+[KAN92]
+V. Kann (1992)
+On the approximability of np-complete optimization problems.
+Ph.D. Thesis, Department of Numerical Analysis and Computing Science, Royal Institute of Technology, Stockholm.
+Cited by: §1.
+[KAR72]
+R. M. Karp (1972)
+Reducibility among combinatorial problems.
+In Complexity of Computer Computations,
+The IBM Research Symposia Series, pp. 85–103.
+Cited by: §1.
+[KS07]
+C. Kenyon-Mathieu and W. Schudy (2007)
+How to rank with few errors.
+In Proceedings of the Thirty-Ninth Annual ACM Symposium on Theory of Computing,
+STOC ’07, pp. 95–103.
+External Links: ISBN 9781595936318,
+Link,
+Document
+Cited by: §1.
+[KS06]
+Z. Király and Z. Szigeti (2006)
+Simultaneous well-balanced orientations of graphs.
+Journal of Combinatorial Theory, Series B 96 (5), pp. 684–692.
+External Links: ISSN 0095-8956,
+Document,
+Link
+Cited by: §3.
+[MS89]
+Y. Mansour and B. Schieber (1989)
+Finding the edge connectivity of directed graphs.
+Journal of Algorithms 10 (1), pp. 76–85.
+External Links: ISSN 0196-6774,
+Document,
+Link
+Cited by: §1.
+[MCK90]
+B. D. McKay (1990)
+The asymptotic numbers of regular tournaments, eulerian digraphs and eulerian oriented graphs.
+Combinatorica 10 (4), pp. 367–377.
+Cited by: Theorem 5.3,
+Theorem 5.5.
+[MR02]
+M. Molloy and B. Reed (2002)
+Graph colouring and the probabilistic method.
+Vol. 23, Springer Science & Business Media.
+Cited by: §2.2.
+[NAS60]
+C. S. J.A. Nash-Williams (1960)
+On orientations, connectivity and odd-vertex-pairings in finite graphs.
+Canadian Journal of Mathematics 12, pp. 555–567.
+Cited by: §1.
+[ROB39]
+H. E. Robbins (1939)
+A theorem on graphs, with an application to a problem on traffic control.
+American Mathematical Monthly 46 (5), pp. 281–283.
+Cited by: §1.
+[SCH78]
+T. J. Schaefer (1978)
+The complexity of satisfiability problems.
+In Proceedings of the tenth annual ACM symposium on Theory of computing,
+pp. 216–226.
+Cited by: §4.
+[SPE74]
+J. H. Spencer (1974)
+Random regular tournaments.
+Periodica Mathematica Hungarica 5 (2), pp. 105–120 (en).
+External Links: ISSN 0031-5303, 1588-2829,
+Link,
+Document
+Cited by: Theorem 5.5.
+[TSP22]
+B. Thatte, H. Si Kaddour, and M. Pouzet (2022)
+On the boolean dimension of a graph and other related parameters.
+Discrete Mathematics & Theoretical Computer Science 23.
+Note: arXiv:2105.00206
+Cited by: §1.
+[THO15]
+C. Thomassen (2015)
+Strongly 2-connected orientations of graphs.
+Journal of Combinatorial Theory, Series B 110, pp. 67–78.
+External Links: ISSN 0095-8956,
+Document,
+Link
+Cited by: §1.
+ Experimental support, please
+ view the build logs
+ for errors. Generated by
+ L
+ A
+ T
+ E
+ xml
+ [FIGURE [LOGO]] 
+ .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+ support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+ methods listed below:
+Click the "Report Issue" (
+ ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+ may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+ should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+ all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+ We gratefully acknowledge support from our major funders,
+ member institutions, ,
+ and all contributors.
+ About ·
+ Help ·
+ Contact ·
+ Subscribe ·
+ Copyright ·
+ Privacy ·
+ Accessibility ·
+ Operational Status (opens in new tab)

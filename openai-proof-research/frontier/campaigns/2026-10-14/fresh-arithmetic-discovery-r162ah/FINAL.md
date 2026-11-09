@@ -1,0 +1,12 @@
+# r162ah — PREFREEZE/no nominee
+Local same-author research continuation; no mathematical gate or campaign increment.
+
+Full C remains unchanged: for every dimension and every independent log-concave Borel pair, including affine-subspace laws and points, with positive summed covariance Sigma, seek one numerical c>0 such that h(X+Y)-n-(1/2)logdetSigma >= c tr(M(I-M)), M=Sigma^(-1/2)Cov(X)Sigma^(-1/2). Arbitrary within-input dependence, every covariance spectrum and the entire deficit regime remain. Neither C nor its negation is proved. No theorem was frozen or author proof nominated.
+
+The private research notebook contains new joint calculations: an exact common-flag exchange and complementary random-allocation budget; a real log-concave obstruction to bounding every averaged coordinate increment by the scalar constant; an exact positive variational formula for posterior curvature, including moving-boundary energy; a global lift retaining the original covariance allocation, with exact mixed-derivative cancellation; and the explicit correction between the paid source curvature weight and an exact covariance-allocation field. An actual dependent-pair test varies the covariance allocation while keeping the summed law fixed. These are research derivations and method tests, not smaller nominees or counterexamples to C.
+
+The unresolved obligations are precise. The allocation formula requires a uniform interior gain after the SAME information/scalar gains pay ALL off-diagonal conditional-information costs. The source route must control the actual field correction and then recover the original overlap against ONE available source remainder. Neither operation is established. Separate input/coordinate winners, an extra mixed square that cancels algebraically, or reused source surplus do not close them.
+
+Prior operative reading is retained. Two source proof bodies were freshly reread for the source compatibility calculation; no new primary or history traversal occurred. Primary ancestry remains incomplete. Exact fresh extents and prior limits are in packet/private/READING-LIMITS.md and reading-record.json. All prior scopes/dispositions and sealed bytes are preserved. Codex / GPT-6 Astra / high / default; campaign19/20 latestR041, parent alone adopts gates/counts.
+
+The fresh exact manifest, detached FINAL/MANIFEST/outside-REPORT anchors and read-only explicit-anchor verifier accompany this handoff. Artifact checks are not mathematical gates.

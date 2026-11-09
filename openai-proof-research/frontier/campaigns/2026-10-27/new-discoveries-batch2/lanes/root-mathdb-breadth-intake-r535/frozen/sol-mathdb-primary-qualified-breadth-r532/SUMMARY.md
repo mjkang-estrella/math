@@ -1,0 +1,23 @@
+# r532 breadth handback
+
+50/50 assigned literal statements read, with original chunk/line, exact UTF8 statement hash and canonical complete-record hash in dispositions.json. Baseline is 4,233 reported literal reviews, not full-corpus technical coverage. Root may reconcile these 50 disjoint reviews; this lane does not alter shared coverage. Six rows have selected primary-passage review from four papers; zero whole-primary-body or full-dependency audits. Zero hypothesis briefs, zero discovery credit. Campaign counts remain 9 additional / 39 total / next 40.
+
+Hall arXiv:2601.01211v1 explicitly settles rows 372399 and 372400 in Corollaries 3.24 and 3.22. The actual section 5.6 main proof was read, including its stated dependencies; those dependencies were not independently audited. These are direct posted-result exclusions, irrespective of the database's conjecture labels.
+
+For 371527 the actual v1 and current v2 Conjecture 4.5 retain unrestricted graphs of girth at least k. A 24-vertex cubic girth-seven graph is constructed explicitly in bounded-checks.json. BFS verified girth seven. Removing s vertices leaves at least 36-3s edges, whereas a nonempty forest on 24-s vertices has at most 23-s edges. Therefore s>=7 and alpha1<=17<132/7=24-36/7. This is retained as an uncredited elementary classical cycle-rank/degree-count adaptation on a standard small cubic graph. No exact maximum, minimality, formal endpoint, literature priority or novelty clearance is claimed; it is not a proposed hypothesis.
+
+The three-action game row 371183 matches Conjecture 14 in v1 and v2. Its full iff/first-heap claim needs an all-heap recurrence invariant, not a finite sweep or the source's two-action theorem. The cited follow-up body is unread. Fort row 372803 needs a four-vertex marginal-gain structural argument; the read Lemma 3.6 gives three and the grid example defeats only the stronger fort-size bound. Neither supplies a justified full-scope route. Both remain HOLD. The remaining rows have individual technical dispositions, including reported public resolutions and two literal wording/formula deficiencies. Metadata never counts as review or novelty.
+
+Integrity: intake exact payload, 58 direct original/copy pairs, actual 20 original r301 corpus chunks and eight frozen inputs checked in place against the bound inventory. The three breadth reservation sets (150 IDs) are pairwise disjoint and avoid all 4,233 covered IDs and protected IDs. Relevant original flat references are hashed, without recursive historical tree copies. The independent read-only verify.py rechecks these, original records, literal/canonical hashes and exact payload. Bounded fixture tests reject hash, size and extra-file mutations with nonzero exits. Integrity PASS is not mathematical or novelty acceptance.
+
+Source bytes and derivatives were bound before content inspection. Exact URLs, UTC, versions and hashes are in source-download-bindings.json, latest-download-bindings.json and derivative binding files; candid selected-body coverage is in source-coverage.json. Eight lawful arXiv HTML GETs returned 200. No MathDB requests, prohibited routes, PDF work, registry requests, Lean, manuscripts, git or shared-file changes. Current registry remains unavailable/HOLD with no absence-of-hits inference. Protected/parked/retired targets were not reopened.
+
+Failure/deviations: BeautifulSoup was unavailable; the failed extractor is preserved and a separate standard-library parser used under the same guard. Truncated combined displays were followed by bounded literal-statement reads; no entire historical or primary body clearance claimed. A temporary 50-record reading derivative was removed after required fields were attached to dispositions; the final lane uses flat original references and required literal statements. See failures.json. Historical producer scripts bind.py/read.py/assemble.py record the workflow and are not acceptance verifiers.
+
+Run independent verification from any directory using:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python3 -B /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python3 -B /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-mathdb-primary-qualified-breadth-r532/verify.py
+```
+
+manifest.json covers every payload including the verifier, excluding only itself and verification-receipt.json. The separate final receipt supplies its exact SHA256, size and verification outcome.

@@ -1,0 +1,2470 @@
+FULL cascade CHARS 117398
+                                                                                                                                                                                    1
+
+
+
+
+                                                        Model Approximation Using Cascade of
+                                                                Tree Decompositions
+                                                                                 Navid Tafaghodi Khajavi and Anthony Kuh
+                                                                                   Deptartment of Electrical Engineering,
+                                                                             University of Hawaii at Manoa, Honolulu, HI 96822
+                                                                                 Email: navidt@hawaii.edu, kuh@hawaii.edu
+
+
+
+                                            Abstract—We conduct a study of graphical models and discuss           There are methods in the literature such as the Chow-Liu
+                                         the quality of the statistical model approximation, especially        minimum spanning tree (MST) [2], the first order Markov
+                                         when considering large graphs. We are specifically looking at         chain approximation [4] and penalized likelihood methods
+                                         the statistical model approximation for jointly Gaussian random
+
+
+
+
+arXiv:1808.03504v1 [cs.IT] 10 Aug 2018
+                                         vectors. For Gaussian random vectors, one of the earliest model       such as LASSO [5] that can be used to approximate the
+                                         approximation methods is the covariance selection which is            correlation matrix with a more sparse graph while retaining
+                                         discussed by Dempster [1]. Moreover, one of the simplest, widely      good accuracy. The Chow-Liu MST algorithm for Gaus-
+                                         used approximation models is a tree model that can be computed        sian distribution is to find the optimal tree structure using
+                                         efficiently using the Chow-Liu algorithm [2]. This algorithm gives    a Kullback-Leibler (KL) divergence cost function [1]. The
+                                         the optimal tree approximation for Gaussian distributions in the
+                                         sense of the Kullback-Leibler (KL) divergence.                        Chow-Liu algorithm utilizes the Kruskal algorithm [6]. The
+                                            In this paper, we present a general, multistage framework          first order Markov chain approximation uses a regret cost func-
+                                         for graphical model approximation using a cascade of models           tion to output a chain structured graph [4]. Penalized likelihood
+                                         such as trees. In particular, we look at the problem of covari-       methods simplify the graph representation by eliminating
+                                         ance matrix approximation for Gaussian distributions as linear        some of the edges from the graphical structure, or in other
+                                         transformations of tree models. This is a new way to decompose
+                                         the covariance matrix. Here, we propose an algorithm which            words, imposing a sparsity condition on the inverse covariance
+                                         incorporates the Cholesky factorization method to compute the         matrix that represents the graphical model. Recently, a tree
+                                         decomposition matrix and thus can approximate a simple graph-         approximation in a linear, underdetermined model is proposed
+                                         ical model using a cascade of the Cholesky factorization of the       in [7] where the solution is based on expectation, maximization
+                                         tree approximation transformations. The Cholesky decomposition        (EM) algorithm combined with the Chow Liu algorithm.
+                                         enables us to achieve a tree structure factor graph at each cascade
+                                         stage of the algorithm which facilitates the use of the message          Tree approximation algorithms are among the algorithms
+                                         passing algorithm since the approximated graph has less loops         that reduce the number of computations in order to achieve
+                                         compared to the original graph. The overall graph is a cascade        quicker approximate solutions to a variety of problems. The
+                                         of factor graphs with each factor graph being a tree. This is a       tree approximations are made as it is much simpler to perform
+                                         different perspective on the approximation model, and algorithms
+                                         such as Gaussian belief propagation can be used on this overall
+                                                                                                               inference and estimation on trees rather than graphs that have
+                                         graph. Here, we present theoretical result that guarantees the        cycles or loops. An example is applying the Gaussian belief
+                                         convergence of the proposed model approximation using the             propagation (BP) algorithm [8] which will converge to the
+                                         cascade of tree decompositions. In the simulations, we look at        maximum likelihood solution over loop-free graphs. 1 While
+                                         synthetic and real data and measure the performance of the            these algorithms approximate the correlation matrix with a
+                                         proposed framework by comparing the KL divergences.
+                                                                                                               more sparse graph, in many cases as the number of nodes
+                                                                                                               increases in large datasets, they fail to retain the desired
+                                                                I. I NTRODUCTION                               accuracy [10]. As a result, in many applications, we need to
+                                            Learning from high dimensional data requires large compu-          go beyond the tree structure approximation to achieve design
+                                         tational power which is not always available. The complexity          accuracy that can be translated to any model approximation
+                                         limitation for different applications force us to compromise          that can achieve a KL divergence bellow a certain design
+                                         between the accuracy of the learning algorithm and its time           threshold.
+                                         complexity by using the best possible approximation algorithm            Another related and mature body of work in literature is on
+                                         subject to constraints on the graphical structure. There are          mixture models [11] and [12], including works on mixtures
+                                         many approximation algorithms that are proposed to impose             of tree approximations [13], [14] and [15] and Gaussian
+                                         structure given data. In signal processing and machine learning       mixture model (GMM) [16] for graphical models. While in
+                                         a fundamental problem is to balance performance quality (i.e.         this paper, we are generalizing a single-tree approximation
+                                         minimizing cost function) with computational complexity. A            algorithm and using a sequence of tree approximations for
+                                         powerful tool in order to address this trade-off is graphical         sparse model approximation, the aforementioned mixture of
+                                         model selection. Model selection methods provide approxi-             tree approximation methods consider parallel trees.
+                                         mated models with desired accuracy as needed for different
+                                         applications. Given data, different model selection algorithms           1 The convergence of Gaussian BP with multiple loops is analyzed in
+                                         impose different structure to model data [3].                         literature [9].
+                                                                                                                                                2
+
+
+
+   The purpose of this paper is to reduce the computation com-        large [10] leading us to consider more complex graphical
+plexity of distributed algorithms in various applications while       structures. Recently, [3] also considered a BP approach for
+maintaining the desired approximation quality. To achieve             state estimation in power grid.
+this goal we approximate the associated Gaussian graphical               The rest of this paper is organized as follows. In section
+model with a simpler, more tractable model. In this paper,            II we provide a summary of Gaussian tree approximation.
+we consider jointly Gaussian data and use cascade of tree             The Gaussian model approximation as a transformation is also
+transformation decompositions in order to perform model               discussed in this section. Section III presents the theory behind
+approximation for graphical models. The tree structure model          the proposed model approximation framework. The symmetric
+is considered since this structure is simple and the optimal          correlation approximation matrix (CAM) is defined and the
+solution that minimizes the KL divergence can be easily               convergence theorem is discussed in this section. Section IV
+computed using the Chow-Liu algorithm [2]. Furthermore, the           provides a greedy algorithm for the model approximation
+tree structure model is a loop-free model and simplifies the          using cascade of tree decompositions. The proposed algorithm
+implementation of distributed algorithms such as Gaussian             is based on the symmetric CAM, the tree approximation
+BP. The cascade tree framework enables us to approximate              algorithm and its Cholesky decomposition. This algorithm is
+a complex model with multiple stages of simple tractable              suitable for message passing and Gaussian BP over factor
+models such as the tree structured model. We pick trees as the        graphs since we use the Cholesky decomposition at each of
+model and the Cholesky decomposition to factor the the tree           the cascade stages. In section IV we also present a simple
+structured covariance matrix at each stage of the cascade algo-       example illustrating the Cholesky algorithm transformations
+rithm. Implementation of the Cholesky decomposition with the          and the cascade of factor graphs. Section V provides some
+proper node ordering (permutation matrix) enables us to draw          simulations over synthetic examples as well as a real solar
+a tree structured factor graph for each step of the cascade           data example from the island of Oahu obtained from NREL
+tree decomposition transformation. This property facilitates          website and investigates the quality of the proposed model
+the use of Gaussian BP algorithm over the aforementioned              approximation by looking at the KL divergence. Finally,
+factor graph. We perform some simulations to confirm the              Section VI summarizes results of this paper.
+results of this paper by looking at synthetic and real data                 Notation: Upper case and lower case letters denote ran-
+and compare the performance of the proposed framework by              dom variables and their realizations, respectively; underlined
+comparing KL divergences. We also consider the singular               letters stand for vectors; boldface upper case letters denote
+value decomposition (SVD) and compare its performance                 matrices; (·)T , tr{·} and | · | stand for transpose, trace and
+to the Cholesky decomposition. Our simulation results also            determinant of a matrix. In the rest of this paper, with
+confirm the advantages of the cascade tree framework.                 shorthand notion, when we use the KL divergence between
+   Many engineering and computer science applications re-             covariance matrices it means the KL divergence between their
+quire using graphs to model dependencies between nodes of             associated multivariate, zero-mean Gaussian distributions.
+the graph. These applications include a diversity of areas from
+social networking to biomedical applications to transportation                     II. G AUSSIAN TREE APPROXIMATION
+models to energy models. For these applications graphs must
+be approximated by simpler structures to reduce computational            In this section, we first review the tree approximation
+complexity. Here we briefly discuss an energy application.            algorithm for Gaussian distributions. Then we explain the
+   Smart grid applications: An electric distribution grid with        framework for the covariance transformation decomposition
+measurements, distributed renewable energy sources, and de-           for any given model such as the tree model. The tree structure
+cision making capabilities is referred to as the smart grid           is a simple graphical model and can be computed efficiently.
+[17]. Smart grids often have large number of states (e.g.             The loop-free structure of the tree structure also facilitates the
+node voltages) making it computationally inefficient to gather        implementation of distributed algorithms such as Gaussian BP.
+the data and perform central state estimation in real-time            Later in the next section, we use the cascade of tree transfor-
+fashion. Moreover, central state estimation requires many             mation decompositions to perform model approximation for
+communication links between sensors on the distribution grid          graphical models.
+resulting in large costs. In contrast, distributed state estimators
+can give reasonably good estimates for large power grid               A. Tree approximation for Gaussian distributions
+systems in real-time while decreasing the number of necessary
+                                                                         In the tree approximation, we want to approximate a multi-
+communications links. This fact causes a trade off between
+                                                                      variate distribution by the product of lower order component
+calculation time and accuracy of estimation. The distributed
+                                                                      distributions [18]. Let X ∼ N (0, Σ) (i.e. jointly Gaussian
+state estimation method over a factor graph based on loopy
+                                                                      with mean 0 and covariance matrix Σ) where X ∈ Rn have
+Gaussian BP proposed in [4] can perform in real-time fashion.
+                                                                      the graph representation G = (V, E) where sets V and E are the
+To assure the convergence of loopy Gaussian BP algorithm,
+                                                                      set of all vertices and edges of the graph representing X.2 Let
+[4] considers simple models of the distributed renewable
+                                                                      X T ∼ N (0, e  Σ) have the graph representation GT = (V, ET )
+energy sources by approximating covariance matrices of the
+                                                                      where ET ⊆ E is a set of edges that represents a tree structure.
+distributed renewable energy sources with simpler covariance
+matrices that have tree-like structures. However tree-like struc-       2 Here, we assume that all nodes are connected in the graphical structure
+tures are poor approximates when the number of nodes is               of vector X.
+                                                                                                                                          3
+
+
+
+The joint probability density function can be represented by
+joint pdfs of two variables and marginal PDFs in the following              N (0, I)                  C                  N (0, Σ)
+convenient form
+                  Y       fX u ,X v (xu , xv ) Y                    Fig. 1a. Transformation from N (0, I) to N (0, Σ) using decomposition of
+    fX T (x) =                                   fX o (xo ). (1)    the covariance matrix, Σ.
+                         fX u (xu )fX v (xv )
+               (u,v)∈ET                     o∈V
+
+Definition 1. Let TΣ denote the set of all positive definite
+                                                                            N (0, I)                 CM                 N (0, ΣM )
+covariance matrices with following properties:
+1) These covariance matrices have tree structured Gaussian
+graphical models;                                                   Fig. 1b. Transformation from N (0, I) to N (0, ΣM ) using decomposition
+2) Picking any covariance matrix in this set, Σ  e ∈ TΣ , the       of the model covariance matrix, ΣM .
+                             e
+Gaussian distributions N (0, Σ) and N (0, Σ) have the same
+marginal distributions and joint distribution of two variables
+                                                                           N (0, ∆)                  CM                  N (0, Σ)
+over the tree structured graph, GT .
+   In the above definition N (0, e
+                                 Σ) obeys the product rule given
+                                                                    Fig. 1c. Transformation from N (0, ∆) to N (0, Σ) using decomposition of
+in (1). Also, note that, the cardinality of the set TΣ is finite    the model covariance matrix, ΣM .
+[19] since the number of all possible tree structured graphs
+with n nodes is finite.
+                                                                    a square matrix that factors the covariance matrix Σ, i.e.
+Definition 2. The KL divergence between two multivariate            Σ , CCT . In this scenario, the decomposition matrix C is
+continuous distributions pX (X) and qX (X) is defined as            also the transformation matrix. We focus on the decomposition
+                             Z
+                                          pX (x)                   matrix C in more detail in section IV, some of the possible
+        D pX (x)||qX (x) =      pX (x) log        dx                matrix decompositions that can be used to efficiently com-
+                              X            qX (x)
+                                                                    pute C are the Cholesky decomposition and singular value
+where X is the feasible set.                                       decomposition (SVD). Let’s assume that the desired model
+   Chow-Liu MST method [2], was initially proposed for              covariance matrix, ΣM and its decomposition matrix, CM ,
+approximating the joint distribution of discrete variables by       i.e. ΣM , CM CTM , are given. Then, from figure 1b, the
+product of lower order distributions similar to (1) which           model distribution N (0, ΣM ) is the transformation of the mul-
+involves no more than the pair of variables. The proposed           tivariate standard normal distribution. However, to generate
+KL divergence is used to quantify the distance between any          the Gaussian distribution with covariance matrix, N (0, Σ),
+distribution and its tree structure approximation.                  using the model decomposition matrix, CM , the input dis-
+   The Chow-Liu MST algorithm for Gaussian distributions,           tribution, N (0, Σ), has to have a certain covariance matrix,
+minimizes the following optimization problem in order to find       ∆. This covariance matrix is called the symmetric correlation
+the optimal tree structured covariance matrix, ΣT ∈ TΣ              approximation matrix and is defined as ∆ = C−1      M ΣCM .
+                                                                                                                               −T
+
+                                                                    We will give a formal definition for the symmetric CAM in
+             ΣT = arg min D(fX (x)||fX T (x)).               (2)    section III where we consider cascade of tree approximation
+                      e
+                      Σ∈TΣ
+                                                                    decompositions for graphical model approximation.
+Here, D⋆ , − 12 log(|ΣΣ−1  T |) is minimum the KL divergence        Remark: Invariance of Gaussian KL divergence with respect
+that gives the distance between the given distribution and its      to transformation. The KL divergence between the input
+optimal tree approximation. It is shown in [2] that the optimal     Gaussian distributions in figures 1b and 1c is invariant to
+solution for this problem 2 can be found efficiently using          the transformation CM , i.e. it is equal to the KL divergence
+greedy algorithms [6], [20]. Their algorithm can be easily          between the output Gaussian distributions in figures 1b and
+generalized for approximating the optimal tree structure of         1c, (D(∆||I) = D(Σ||ΣM )).
+the joint distribution of Gaussian variables using equation (1)     Remark: In the rest of this paper we consider the tree
+by adding edges one at a time [21]. In other words, given           approximation as our model.
+the knowledge of Σ, the Chow-Liu algorithm can efficiently
+compute the optimal solution, i.e. ΣT = chowliu(Σ).                  III. M ODEL A PPROXIMATION U SING C ASCADE OF T REE
+Remark: In case that the covariance matrix Σ is not available,                   D ECOMPOSITIONS P RINCIPLE
+we can replace it with the empirical covariance matrix obtained
+                                                                       In this section, we focus on the cascade of trees framework
+from data.
+                                                                    for model selection using the tree decomposition transforma-
+                                                                    tions. We formulate the problem by considering the tree ap-
+B. Gaussian model approximation as a transformation                 proximation as a transformation and we use multiple stages of
+   Any zero-mean multivariate Gaussian distribution such as         these cascade trees to do model approximation. Let Σ , CCT
+N (0, Σ) where Σ is the covariance matrix, can be obtained          and ΣT , CT CTT where C and CT are square transformation
+through a linear transformation of the multivariate standard        matrices that decompose the covariance matrices, Σ and ΣT .
+normal distribution, N (0, I) (figure 1a) where I is the identity   Without loss of generality, in the rest of this paper, we
+matrix. Moreover, the decomposition matrix C is defined as          look at the zero-mean Gaussian distributions with normalized
+                                                                                                                                                      4
+
+
+
+
+                   Z i ∼ N (0, ∆i )              CT i          Z i−1       ...       Z1         CT 1             X ∼ N (0, Σ)
+
+Fig. 2a. The i stages of the model transformation from Z i ∼ N (0, ∆i ) to X ∼ N (0, Σ) using cascade tree decompositions.
+
+
+
+                       W ∼ N (0, I)              CT l                     ...                   CT 1           X Ml ∼ N (0, ΣMl)
+
+
+Fig. 2b. The l stages of model approximation using cascade tree transformation decomposition framework. The model approximation is generated by passing
+W ∼ N (0, I) through the l steps of cascade trees and is X Ml ∼ N (0, ΣMl ).
+
+
+
+covariance matrix Σ, i.e. covariance and correlation matrices                   Lemma 1. Let W ∼ N (0, I), then
+are the same. Factoring covariances enable us to look at the                    (a) D(fZ i (z)||fW (w)) = D(fZ i−1 (z)||fX T (x)),
+problem as a transformation, as it is shown in figure 1. There                                                               i
+                                                                                (b) D(fZ i−1 (z)||fX T (x)) ≤ D(fZ i−1 (z)||fW (w)),
+are different decomposition algorithms to factor covariances                                           i
+
+such as the Cholesky decomposition and SVD. While we                            where in (b) equality happens when fZ i−1 (z) = fW (w), i.e
+discuss the performance of the cascade of trees framework                       ∆i−1 = I.
+for model selection here, picking the decomposition algorithm
+will be discussed in section IV.                                                Proof. Proof of part (a) is based on the definition of KL
+                                                                                divergence for jointly Gaussian distribution and tr{∆i } = n
+Definition 3. The symmetric correlation approximation matrix                    as follow
+(CAM) for the tree approximation model is defined as ∆ ,
+                                                                                                                1
+CT−1 Σ CT−T .                                                                        D(fZ i−1 (z)||fX T (x)) = − log(|∆i−1 Σ−1 Ti |)
+                                                                                                       i        2
+   The symmetric CAM for each step of the cascade tree                                                          1
+                                                                                                             = − log(|C−1            −T
+                                                                                                                          Ti ∆i−1 CTi |)
+algorithm is also defined using the transformation matrix CTi                                                   2
+and the previous step symmetric CAM.                                                                            1
+                                                                                                             = − log(|∆i |)
+                                                                                                                2
+Definition 4. The symmetric correlation approximation matrix                                                 = D(fZ i (z)||fW (w)).
+for the i-th step of the cascade tree approximation is defined as
+                      −T
+∆i , C−1  Ti ∆i−1 CTi where ∆0 , Σ, ΣTi = chowliu(∆i−1 )                          Proof of part (b) follows from the KL divergence definition
+and ΣTi , CTi CTTi where CTi is the decomposition for the                       for Gaussian distributions and
+i-the step covariance matrix, ΣTi .
+                                                                                       D(fZ i−1 (z)||fW (w)) = D(fZ i−1 (z)||fX T (x))
+   Figures 2a and 2b show schematic diagrams associated with                                                                           i
+
+the cascade tree framework. In figure 2a, we want to model the                                                 + D(fX T (x)||fW (w))
+                                                                                                                          i
+zero-mean multivariate Gaussian distribution, X ∼ N (0, Σ),                                                    ≥ D(fZ i−1 (z)||fX T (x)).
+                                                                                                                                       i
+using the cascade of tree decomposition transformations. Let
+X Ti ∼ N (0, ΣTi ) be the tree approximation distribution                       Equality only happens if |ΣTi | = 1. Since tr{∆i−1 } = n,
+for the residue random vector Z i−1 ∼ N (0, ∆i−1 )3 where                       then the covariance selection rule [1] dictates tr{ΣTi } = n,
+ΣTi is the tree approximation covariance matrix for ∆i−1 ,                      and thus the equality only happens if ∆i−1 = I.
+i.e. ΣTi = chowliu(∆i−1 ). As shown in figures 2a, the i-
+stage cascade tree decomposition, transforms the zero-mean                         Lemma 1 states that the distribution of the i-th step residue
+Gaussian random vector Z i to the zero-mean Gaussian random                     random vector Z i converges to the normal Gaussian random
+vector X.                                                                       vector W . Thus, in the cascade tree model approximation
+Remark: For all i ≥ 1, tr{∆i } = n. Trace of the CAM, ∆i                        algorithm, we fix the number of cascade stages, l, and input
+is equal to n, since the covariance matrix ΣTi at each iteration                the normal Gaussian random vector W to the cascade trees
+is obtained by the Chow-Liu algorithm and thus satisfies the                    with l stages to do model approximation. The l-th step model
+covariance selection rules [1], i.e. tr{(∆i−1 − ΣTi )Σ−1Ti } = 0                covariance matrix approximation is
+and thus tr{∆i−1 Σ−1  Ti } =  n.
+   In figure 2b we use the cascade tree decompositions to                                              ΣMl = CMl CTMl
+construct the approximation model. If we just use one tree,
+                                                                                where CMl = CT1 CT2 ...CTi ...CTl is the model transforma-
+CT1 we have a tree approximation. For a cascade of l trees
+                                                                                tion. Note that, this is a backward construction (figure 2a).
+the approximation model is constructed using a backwards
+algorithm via the following cascade of linear tree approxima-                   Lemma 2. KL divergence upper bound.
+tions; (CTl CTl−1 . . . CT1 )(CTl CTl−1 . . . CT1 )T = ΣMl . We
+also have following properties in lemma 1 and lemma 2.                                 D(fX (x)||fX M (x)) ≤ D(fX (x)||fX M                (x))
+                                                                                                           i                         i−1
+
+  3Z
+       0 ∼ N (0, Σ).                                                            with equality only happens if ∆i−1 = I.
+                                                                                                                                                  5
+
+
+
+Proof.                                                                Proof. This lemma is a simplified version of the result pre-
+                              (a)                                     sented in [22] where the Cholesky decomposition preserves
+         D(fX (x)||fX M (x)) = D(fZ i (z)||fW (w))                    the pattern of zeros corresponding to a co-chordal or homoge-
+                        i
+                              (b)                                     neous graph associated with a specific type of vertex ordering
+                               = D(fZ i−1 (z)||fX T (x))
+                                                    i                 (permutation matrix).
+                              (c)
+                               ≤ D(fZ i−1 (z)||fW (w))                   Theorem 4 guarantees the existence of a loop-free factor
+                              (d)                                     graph based on the Cholesky decomposition coefficients of
+                               = D(fX (x)||fX M          (x))
+                                                   i−1                the inverse decomposition.
+where (a) and (d) are because of the invariance of KL diver-             Figure 4a shows the schematic of the i-th stage of the
+gence between Gaussian distributions to the transformation;           model transformation based on the proper permutation of
+(b) and (c) follow from lemma 1. Equality in (c) holds if             the Cholesky decomposition. To compute matrices Pi and
+fZ i−1 (z) = fW (w).                                                  Li and reconstruct Z i−1 from Z i , we need to first compute
+                                                                      the i-th stage tree approximation covariance matrix, ΣTi =
+Theorem 3. The Cascade tree decomposition transfor-                   chowliu(∆i−1 ). Next, we use the result of theorem 4 to find
+mation. As the number of cascade trees, i, increases, the             the proper re-order of the nodes. To do that, we look at the
+KL divergence between the distribution of X and the model             graph structure of the tree covariance matrix, ΣTi , and pick
+distribution decreases, i.e. D(fX (x)||fX M (x)) converges to         the nodes such that the graph associated with the subset of the
+a finite value.
+                                           i
+                                                                      picked nodes is always connected4. After that, we compute
+                                                                      the Cholesky decomposition as Li = Cholesky(Pi ΣTi PTi )
+Proof. Proof follows directly from lemma 2 and positivity of          which has a sparse inverse. Next, we permute Li to get the
+KL divergence.                                                        tree approximation transformation matrix, CTi . This process
+Conjecture 1. The KL divergence converges to 0.                       is shown in figure 4b. The model approximation covariance
+                                                                      matrix after the l-th iteration is given as follow
+Remark: Theorem 3 states that the KL divergence between the
+model approximation and the original distribution decreases as                                  ΣMl = CMl CTMl
+we add more stages of the cascade trees (Lemma 2) and we
+                                                                      where CMl = P−1          −T −1        −T      −1
+                                                                                        1 L1 P1 P2 L2 P2 . . . Pl Ll Pl .
+                                                                                                                           −T
+conjecture it will go to zero as the number of cascade trees
+                                                                         Using the Cholesky decomposition with the proper
+goes to infinity. Note that, it is exactly equal to zero if at some
+                                                                      permutation matrix at each iteration enables us to draw
+iteration of the cascade tree ∆i−1 = I.
+                                                                      loop-free factor graph at each iteration of the cascade trees’
+                                                                      framework. The factor graph representation is useful in order
+                       IV. A LGORITHM
+                                                                      to run message passing algorithm and loopy GBP over the
+   In order to use the cascade tree transformation decompo-           overall loopy factor graph. The greedy algorithm based on the
+sition framework presented in section III, we need to pick a          Cholesky decomposition presented in figure 4b is as follow:
+factorization scheme. Here we pick the Cholesky factorization.
+The main reason is that this scheme can preserve the sparsity           Greedy Model Approximation Algorithm using Cascade
+pattern of the covariance matrix and thus is suitable to run          Trees’ Framework and the Cholesky Decomposition
+message passing algorithms over factor graphs. Also, using
+the Cholesky decomposition, without loss of generality the               •   Initialization Step [i = 0]:
+diagonal coefficients of the symmetric CAM at all cascade                      – ∆0 = Σ
+stages are equal to one. Figure 3 shows a sample tree structured
+graph and its factor graph representation using the coefficients         •   Continue updating [i-th Step]:
+of the inverse of the Cholesky decomposition matrix, Q.                       – i←i+1
+                                                                              – ΣTi = chowliu(∆i−1 )
+A. Greedy Model Approximation Algorithm                                       – Given ΣTi , compute the proper node ordering and
+   Here we present a greedy algorithm based on the cascade                       construct the permutation matrix, Pi .
+trees principle. This algorithm consists of two general steps:                – Li = Cholesky(Pi ΣTi PTi )
+   - Finding the optimal Chow Liu tree,                                       – CTi = P−1        −T
+                                                                                          i Li Pi
+   - Performing the Cholesky decomposition such that it pre-
+                                                                              – ∆i = C−1 Ti ∆i−1 CTi
+                                                                                                    −T
+     serves the tree graph structure.
+Given the symmetric CAM at each iteration of the greedy                  •   Stopping criterion5: i ≤ l
+algorithm, we can efficiently find the optimal tree structure
+                                                                         4 If at any step of the algorithm, the tree graph structure associated with
+covariance matrix.
+                                                                      ΣTi becomes disconnected, we will seek the same procedure for each of the
+Theorem 4. There exists a permutation matrix such that the            disjoint segments of the graph.
+                                                                         5 We can stop the algorithm sooner if for some i the KL divergence goal
+inverse of the Cholesky decomposition preserves the sparsity
+                                                                      is satisfied, i.e. D(fZ i (z)||fW (w)) ≤ δ where δ is the maximum KL
+pattern (position of zeros) of the inverse of the tree approxi-       divergence between the original distribution and the approximated model
+mation covariance matrix [22].                                        distribution.
+                                                                                                                                                       6
+
+
+
+
+                                                                                      Z11          q11                            X11
+
+                                                                                                                  q21
+                              X11
+
+                                      ρ1                                              Z12          q22             +              X12
+                                        4
+                          2
+                       ρ1
+                                                                                                                  q31
+           X12                  ρ13          X14
+                                                                                      Z13          q33             +              X13
+
+                                                                                                                  q41
+                                                ρ45
+                              X13                                                     Z14          q44             +              X14
+
+                                             X15                                                                  q54
+
+
+                                                                                      Z15          q55             +              X15
+
+Fig. 3. Left: Tree representation of the random vector X (ρij ’s are the correlation coefficients). Right: Factor graph representation with 5 nodes where
+Q = L−1 and qij ’s are the coefficients of the matrix Q.
+
+
+
+                 Zi           CT i          Z i−1          →              Zi                P−T
+                                                                                             i           Li            P−T
+                                                                                                                        i
+                                                                                                                                    Z i−1
+
+
+Fig. 4a. Left: The i-th stage of the model transformation from Z i to Z i−1 . Right: The i-th stage of the model transformation from Z i to Z i−1 using
+proper permutation matrix and the Cholesky decompositions.
+
+
+
+                 W            P−T
+                               l             Ll           P−T
+                                                           l
+                                                                           ...              P−T
+                                                                                             1           L1            P−T
+                                                                                                                        1
+                                                                                                                                    X Ml
+
+
+Fig. 4b. The l stages of cascade tree model approximation using the Cholesky decomposition with proper order (permutation) to keep the sparsity pattern
+in the inverse of The Cholesky decomposition. The model approximation is generated by passing W ∼ N (0, I) through the l steps cascade trees and is
+X Ml ∼ N (0, ΣMl ).
+
+
+
+  •   Output Li ’s and Pi ’s as well as the approximated model                   presented here, then diagonal coefficients of the approximated
+      covariance matrix ΣMl = CMl CTMl where CMl =                               matrix is always the same as diagonal coefficients of the
+      CT1 . . . CTl for some i satisfying the stopping criterion.                covariance matrix, Σ, i.e. the proposed algorithm preserves
+                                                                                 variances.
+Remark: In any step of the algorithm, if the graph correspond
+to the ∆i become disconnected, we will do tree approximation
+for each of the connected subgraphs.                                             B. Complexity of the cascade tree algorithm
+
+Theorem 5. There exists a cascade tree approximation al-                           Chow-Liu algorithm has the complexity of O(n2 log(n))
+gorithm to generate the model approximation M′i such that                        while the Cholesky decomposition complexity is O(n3 ). Thus,
+after at most n − 1 iteration, the model approximation error                     the overall complexity of the algorithm is O(l n3 ) since we
+(KL divergence) is exactly equal to zero, i.e. Σ = ΣMn−1 . In                    run the algorithm for at most l cascade stages. Moreover, the
+other words,                                                                     maximum number of edges in the resulting factor graph is ln.
+
+                      D(fX (x)||fX M′       (x)) = 0.
+                                      n−1
+
+                                                                                 C. Example with 5 nodes
+Proof. Proof is given in appendix A.
+                                                                                    In this example, we start with a zero mean Gaussian
+Theorem 6. Diagonal Coefficients of the Symmetric CAM.
+                                                                                 distribution with covariance matrix Σ (or ∆0 ) for random
+Diagonal coefficients of the symmetric CAM at each step of the
+                                                                                 vector X as follows
+the greedy model approximation algorithm using the Cholesky
+factorization, are equal to one.                                                                                          
+                                                                                                      1 0.9 0.6 0.8 0.7
+Proof. Proof is given in appendix B.                                                                0.9 1 0.5 0.6 0.6
+                                                                                                                          
+                                                                                              Σ=   0.6 0.5 1 0.4 0.1 .
+                                                                                                                           
+  Theorem 6 shows that if we pick the Cholesky factorization                                        0.8 0.6 0.4 1 0.8
+and we follow the greedy model approximation algorithm                                               0.7 0.6 0.1 0.8 1
+                                                                                                                                            7
+
+
+
+                                                                                   Z11           1                 X11
+
+                                                                                                         −2.064
+                           X11
+                                                                                   Z12         2.294           +   X12
+                                          0.
+                                               8
+                      9
+                 0.                                                                                      −0.750
+         X12                  0.6                  X14
+                                                                                   Z13         1.250           +   X13
+
+                                                    0.8                                                  −1.333
+                           X13
+                                                                                   Z14         1.666           +   X14
+                                                   X15
+                                                                                                         −1.333
+
+                                                                                   Z15         1.666           +   X15
+
+Fig. 5. First stage cascade tree representation for the 5 nodes example and its Factor graph representation.
+
+
+                                                                      Z21          Z21           1                 Z11       Z11
+
+                                                                                                           −0.1
+                           Z11
+                                                                      Z22          Z25         1.033           +   Z15       Z12
+
+                                                                                                         −0.260
+                          −0.458
+         Z12                                       Z14
+                                       0 .1                           Z23          Z22         1.182           +   Z12       Z13
+                           0 .2
+                                  54
+                                                                                                          0.630
+
+
+                          −0.533
+                                                                      Z24          Z23         1.125           +   Z13       Z14
+         Z13                                       Z15
+
+                                                                                                          0.516
+
+                                                                      Z25          Z24         1.005           +   Z14       Z15
+
+Fig. 6. Second stage cascade tree representation for the 5 nodes example and its Factor graph representation.
+
+
+
+We want to approximate the random vector X with 2 stages of                     The CAM matrix, ∆1 , is the covariance matrix of the residue
+cascade trees as X M . First step tree approximation covariance                 random vector, Z 1 , and Z 1 = Q1 X or equivalently X =
+matrix T1 is                                                                    CT1 Z 1 where CT1 = Q−1  1 . Also, the KL divergence for the
+                                                                              first step is D(X||X M1 ) = 0.375. Then, the second step tree
+                  1      0.9       0.6    0.8 0.64                              approximation covariance matrix T2 is
+                0.9
+                         1       0.54 0.72 0.576   
+               
+        T1 =  0.6 0.54             1     0.48 0.374                                                                     
+                                                                                           1   0.025 −0.053 −0.011   0.1
+                0.8 0.72 0.48             1     0.8                                    0.025
+                                                                                                 1    −0.134 −0.458 0.252 
+                                                                                                                           
+                 0.64 0.576 0.374 0.8             1
+                                                                                   T2 = 
+                                                                                        −0.053 −0.134   1     0.061 −0.533
+                                                                                                                           
+while its Cholesky decomposition inverse, Q1 is
+                                                                                        −0.011 −0.458 0.061     1   −0.115
+                                                                                         0.1  0.252 −0.533 −0.115    1
+                1       0      0        0       0
+            −2.064 2.294
+                              0        0       0 
+                                                                               while its Cholesky decomposition inverse, Q2 , which is com-
+     Q1 =    −0.75     0     1.25      0       0 ,                            puted using
+                                                 
+            −1.333     0      0     1.666      0 
+                0       0      0    −1.333 1.666                                                Q2 = PT2 Cholesky(P2 T2 PT2 )−1 P2
+and the permutation matrix, P1 is identity. To proceed to the
+second stage, we first compute the symmetric CAM, ∆1 as                         is as follow
+                                                                                                                          
+             1      0         0          0        0.1                                            1     0     0     0     0
+          0        1     −0.1147 −0.458 0.252                                                0    1.033   0     0   −0.260
+                                                                                                                          
+          
+   ∆1 =  0 −0.114            1      −0.166 0.374                                            
+                                                                                         Q2 =  0      0   1.182   0   0.630 
+                                                       .                                                                    ,
+           0 −0.458 −0.458              1      −0.133                                        0    0.516   0   1.125   0 
+            0.1 0.252       0.252    −0.133        1                                            −0.1   0     0     0   1.005
+                                                                                                                                  8
+
+
+
+where the permutation matrix, P2 , is                              approximation. The plot on the top right indicates the sparsity
+                                                                 pattern of the inverse of third approximated model, while the
+                        1 0 0 0          0
+                                                                   bottom right plot shows the third stage tree approximation.
+                      0 0 0 0
+                                        1
+                                                                  In Figure 7 the Chow-Liu tree approximation shown in the
+                P2 = 0 1 0 0           0
+                                          .                       bottom left is a poor approximation of the top left plot by
+                      0 0 1 0           0
+                                                                   comparing the two gray-scale plots. The top middle plot is
+                        0 0 0 1          0
+                                                                   a better approximation of the top left plot and the top right
+Furthermore, the residue random vectors, Z 1 and Z 2 , have        plot provides the best approximation to the top left plot. The
+the following relationship Z 2 = Q2 Z 1 or equivalently Z 1 =      top right plot consists of the cascade of three trees having a
+CT2 Z 2 where CT2 = Q−1   2 . To approximate the model random      maximum of 3 × 249 edges as compared to the top left plot
+vector X M2 using two stage of the cascade tree, we replace        which represents a graph with more than 30000 edges.
+the second residue random vector, Z 2 , with the random               Figure 8 plots the log-scaled KL divergence between the
+vector W . Also, the KL divergence for the second step is          random vector X and the approximation model vector X M
+D(X||X M2 ) = 0.051. Figure 5 shows the Chow-Liu tree and          after the i-th step of the cascade trees approximation with
+the factor graph representation for of it and figure 6 shows the   respect to the number of cascade trees transformation that are
+second stage of the algorithm. Since the permutation matrix        used in the approximation, i. This figure plots the result of the
+is not identity in the second step of the algorithm, we need to    cascade trees decomposition algorithm for the performance
+change the ordering as it is shown in figure 6. For this example   of three different tree structures, the optimal Chow liu tree,
+a cascade of two trees produces a linear transformation that       the Star tree without permutation, and the optimal star tree
+approximates the Gaussian vector X closely.                        with permutation, as we add more cascade steps. The left plot
+                                                                   compares the performance of the cascade trees approximation
+        V. S IMULATION R ESULTS AND D ISCUSSION                    for different choices of tree structures after 10 steps of the
+   In this section, we consider some examples of covariance        cascade trees decompositions, while the right plot runs the
+matrices for Gaussian random vector X. We present some             cascade trees algorithm for 249 steps. Looking only at the KL
+simulation results on both synthetically generated covariance      divergence we can easily see that using the greedy algorithm
+matrices and the covariance matrix generated from the island       presented in section IV clearly has a better performance when
+of Oahu real solar dataset. We also present the simulation         we only have small number of cascade stages. On the other
+results on the performance of the cascade tree decomposition       hand, running the cascade tree framework using the star tree
+transformation framework using different factorization meth-       approximation at each stage for 249 stages, the KL divergence
+ods. Specially, we look at the performance of the presented        goes to zero. Note that, figure 9 plots the KL divergence in
+algorithm in section IV which is based on the Cholesky             linear scale. If we compare the Chow-Liu tree to a cascade
+decomposition and the proper permutation to keep the sparsity      of two trees/ three trees the KL divergence decreases by
+pattern in the inverse of the Cholesky factorization. We also      respectively 35%/ 50% (figure 9).
+look at the performance of the singular value decomposition        Remark: In the i-th iteration of the always star approximation
+and the Cholesky factorization without the proper permuta-         we picked node i as the star node to do the approximation
+tion (does not keep the sparsity pattern). Looking at other        without any optimization (permutation matrix is equal to the
+covariance matrices factorization methods gives some insight       identity matrix).
+on how good is the performance of the greedy algorithm which          Figure 10 plots the KL divergence between the random
+is presented in section IV.                                        vector X and the approximation model vector X M after the
+Remark: In all of our simulation results we only consider 16       i-th step of the cascade trees approximation with respect to
+digits precision after the floating point.                         the number of cascade trees transformation that are used in
+                                                                   the approximation, i, for a graph of 100 nodes. This figure
+A. Synthetic data                                                  plots the result of the cascade trees framework with different
+                                                                   decompositions such as the Cholesky LLT (keep the sparsity),
+   We randomly generate synthetic covariance matrix such that      the Cholesky UUT (does not keep the sparsity) and the
+its graphical structure has about half of all possible edges and   SVD. From figure 10 we see that three of the decomposition
+then we normalize it to have ones along the diagonal.              transformations perform similarly with the star decomposition
+   Figure 7 plots the gray scaled, sparsity pattern for the        transformation performing the worse.
+inverse of a randomly generated, synthetic covariance matrix
+and various approximations of it. The top left plot shows
+the inverse of the original normalized covariance matrix.
+                                                                   B. The Oahu solar measurement grid dataset
+The graph associated with this inverse covariance matrix has
+           2
+around n2 number of edges. The bottom left plot indicates             In this Example, the covariance matrix is calculated based
+the first stage of the cascade tree approximation (the optimal     on datasets presented in [23]. The Oahu solar measurement
+Chow-Liu solution) or the approximated model after the first       grid dataset is obtained from the National Renewable Energy
+stage of the greedy algorithm. The top middle plot shows the       Laboratory (NREL) website [24]. This dataset consists of 19
+inverse of the second approximated model while the plot on         sensors (17 horizontal sensors and two tilted sensors). For this
+the bottom middle indicates the inverse of the second stage tree   dataset we normalized using standard normalization method
+                                                                                                                                                                                                                      9
+
+
+
+
+                 The normalized covariance matrix (Σ)                                    The model after two tree stages (ΣM )                                          The model after three tree stages (ΣM )
+                                                                                                                                                          2                                                       3
+                                                 1                                                                                                    1                                                       1
+
+                      50                                                0.8               50                                                          0.8                50                                   0.8
+
+          100                                                           0.6              100                                                          0.6               100                                   0.6
+
+          150                                                           0.4              150                                                          0.4               150                                   0.4
+
+          200                                                           0.2              200                                                          0.2               200                                   0.2
+
+          250                                                           0                250                                                          0                 250                                   0
+                                                50 100 150 200 250                             50 100 150 200 250                                                              50 100 150 200 250
+
+                                       The first stage tree (ΣT )                         The second stage tree (ΣT )                                                      The third stage tree (ΣT )
+                                                                1                                                                               2                                                  3
+                                                                        1                                                                             1                                                       1
+
+                      50                                                0.8               50                                                          0.8                50                                   0.8
+
+          100                                                           0.6              100                                                          0.6               100                                   0.6
+
+          150                                                           0.4              150                                                          0.4               150                                   0.4
+
+          200                                                           0.2              200                                                          0.2               200                                   0.2
+
+          250                                                           0                250                                                          0                 250                                   0
+                                                50 100 150 200 250                             50 100 150 200 250                                                              50 100 150 200 250
+                                                                              Sparsity pattern of inverse covariance matrix
+
+Fig. 7. Gray scaled, sparsity pattern for the inverse of a randomly generated, synthetic covariance matrix. Top left: Inverse of the original normalized
+covariance matrix, Bottom left: Inverse of the first stage tree approximation and first model. Top middle: Inverse of the second approximated model, Bottom
+middle: Inverse of the second stage tree approximation. Top right: Inverse of the third approximated model, Bottom right: Inverse of the third stage tree
+approximation.
+
+
+                                                             Quality of the approximated model after i stages of cascade trees, 250 nodes
+                                        3
+                                       10
+                                                            Cholesky (tree)                                                            4                       Cholesky (tree)
+                                                                                                                                      10
+                                                            Cholesky (always star)                                                                             Cholesky (always star)
+
+
+
+
+          KL divergence (D(Σ||ΣMi ))
+                                                            Cholesky (always star − optimized)                                         2
+                                                                                                                                                               Cholesky (always star − optimized)
+                                                                                                                                      10
+
+
+
+
+                                                                                                         KL divergence (D(Σ||ΣMi ))
+                                                                                                                                       0
+                                                                                                                                      10
+
+                                        2
+                                       10                                                                                              −2
+                                                                                                                                      10
+
+
+                                                                                                                                       −4
+                                                                                                                                      10
+
+
+                                                                                                                                       −6           KL divergence at i = 249 is exactly 0.
+                                                                                                                                      10
+
+
+                                        1                                                                                              −8
+                                       10                                                                                             10
+                                            0           2           4         6      8          10                                          0             50      100         150         200           250
+                                                        Number of cascade stages (i)                                                                       Number of cascade stages (i)
+
+Fig. 8. KL divergence between the distribution of the random vector X and the model distribution after the i-th step of the cascade approximation v.s. the
+index of the cascade trees, i, for a graph with 250 nodes. Right: Comparing the performance of three different tree structures, the optimal Chow liu tree, the
+Star tree without permutation, and the optimal star tree with permutation, as we add more cascade steps. left: Zoomed into 10 cascade trees decompositions.
+
+
+
+and the zenith angle normalization method [23]6 . From the                                                                     tree approximation or the optimal Chow-Liu approximated
+data obtained from these 19 solar sensors at the island of Oahu,                                                               model. The top middle plot shows the inverse of the second
+we computed the spatial covariance matrix during the summer                                                                    approximated model while the plot on the bottom middle
+season at 12:00 PM averaged over a window of 5 minutes.                                                                        indicates the inverse of the second stage tree approximation.
+   Figure 11 plots the gray scaled, sparsity pattern for the                                                                   The plot on the top right indicates the sparsity pattern of the
+inverse of the Oahu solar measurement grid covariance matrix                                                                   inverse of third approximated model, while the ottom right
+and various approximations of it. The top left plot shows the                                                                  plot shows the third stage tree approximation.
+inverse of the original normalized covariance matrix while
+                                                                                                                                  Figure 12 plots the log-scaled KL divergence between the
+the bottom left plot indicates the first stage of the cascade
+                                                                                                                               distribution of the random vector X and the distribution of
+   6 See [23] for more detailed description of dataset and other details about                                                 the model distribution after the i-th step of the cascade trees
+the normalization methods for the solar irradiation covariance matrix.                                                         approximation with respect to the number of cascade trees
+                                                                                                                                                                                                                                                    10
+
+
+
+                                     Quality of the approximated model after i stages of cascade trees, 250 nodes
+                                     350                                                                                                                                       140
+                                                                                    Cholesky (tree)                                                                                                               SVD (Is Not Sparse)
+                                                                                    Cholesky (Always Star)                                                                                                                      T
+                                     300                                                                                                                                       120                                Cholesky−LL (Optimal Tree)
+                                                                                                                                                                                                                  Cholesky−UUT (Is Not Sparse)
+
+
+
+
+                                                                                                                                                K L diverg ence (D(Σ||ΣMi ))
+                                                                                                                                                                                                                  Cholesky (Always Star)
+                                     250                                                                                                                                       100
+
+
+
+
+        KL divergence (D(Σ||ΣMi ))
+                                     200                                                                                                                                        80
+
+
+                                     150                                                                                                                                        60
+
+
+                                     100                                                                                                                                        40
+                                                                X: 3
+                                                                Y: 54.13
+
+                                      50                                                                                                                                        20
+
+
+                                       0                                                                                                                                         0
+                                           0          2          4             6              8           10                                                                         0      2            4            6             8          10
+                                                            Number of cascade stages (i)                                                                                                             Number of cascade stages
+
+
+
+Fig. 9. KL divergence between the distribution of the random vector                                                                Fig. 10. KL divergence between the distribution of the random
+X and the model distribution after the i-th step of the cascade                                                                    vector X and the model distribution after the i-th step of the cascade
+approximation v.s. the index of the cascade trees, i, for a graph with                                                             approximation v.s. the index of the cascade trees, i for a graph with
+250 nodes.                                                                                                                         100 nodes using different decompositions.
+
+
+                                                                                                  The model after two tree stages (Σ )                                                   The model after three tree stages (Σ )
+  The normalized covariance matrix (Σ)                                                                                                  M                                                                                               M
+                                                                                                                                         2                                                                                                3
+                                     1                                                                                                      1                                                                                            1
+
+                     5                                                                                   5                                                                                       5
+
+       10                                                                     0.5                      10                                   0.5                                                 10                                       0.5
+
+       15                                                                                              15                                                                                       15
+
+                                                                              0                                                             0                                                                                            0
+                                               5   10      15                                                       5   10   15                                                                            5     10     15
+
+                          The first stage tree (ΣT )                                                   The second stage tree (ΣT )                                                              The third stage tree (ΣT )
+                                                                      1                                                             2                                                                                               3
+                                                                              1                                                             1                                                                                            1
+
+                     5                                                                                   5                                                                                       5
+
+       10                                                                     0.5                      10                                   0.5                                                 10                                       0.5
+
+       15                                                                                              15                                                                                       15
+
+                                                                              0                                                             0                                                                                            0
+                                               5   10      15                                                       5   10   15                                                                            5     10     15
+                                      Sparsity pattern of the inverse covariance matrix, Oahu Solar dataset, 19 sensors
+
+Fig. 11. Gray scaled, sparsity pattern for the inverse of the covariance matrix generated using the Oahu solar measurement grid dataset. Top left: Original
+normalized covariance matrix, Bottom left: first stage tree approximation and first model. Top middle: second approximated model, Bottom middle: second
+stage tree approximation. Top right: third approximated model, Bottom right: third stage tree approximation.
+
+
+
+transformation that are used in the approximation, i. This                                                                   with different decompositions such as the Cholesky LLT
+figure compares the performance of the proposed cascade                                                                      (keep the sparsity), the Cholesky UUT (does not keep the
+trees approximation with different decomposition choices with                                                                sparsity) and the SVD. From figure 12 we see that three of
+the optimal star tree approximation. Looking only at the KL                                                                  the decomposition transformations perform similarly with the
+divergence we can easily see that using the greedy algorithm                                                                 star decomposition transformation performing the worse. If we
+presented in section IV clearly has a better performance when                                                                compare the Chow-Liu tree to a cascade of two trees/ three
+we only have small number of cascade stages comparing to                                                                     trees the KL divergence decreases by respectively more than
+the star tree structure. On the other hand, running the cascade                                                              50%/ 80%. By using the Chow-Liu algorithm to produce trees
+tree framework using the star tree approximation at each                                                                     and then using the Cholesky factorization in general, this algo-
+stage for 18 stages, the KL divergence goes the zero. This                                                                   rithm performs well as the KL divergence decreases relatively
+figure also plots the result of the cascade trees framework                                                                  quickly. However, by using the star network systematically
+                                                                                                                                                                                                           11
+
+
+
+
+                                      2
+                                                   Quality of the approximated model after i stages of cascade trees
+                                                                                                                                  imation at each iteration we look at simple, easy to compute
+                                     10
+                                                                                            SVD (Is Not Sparse)                   non-tree models, such as ring models. Here we focused on a
+                                                                                                          T
+                                      1
+                                     10                                                     Cholesky−LL (Optimal Tree)
+                                                                                                           T
+                                                                                                                                  backwards cascade model. We are currently also considering
+                                                                                            Cholesky−UU (Is Not Sparse)
+                                      0
+                                     10
+                                                                                            Cholesky (Always Optimal Star)        forward cascade models. We are also looking more deeply at
+                                                                                                                                  the convergence of these cascade tree algorithms.
+
+
+
+        KL divergence (D(Σ||ΣMi ))
+                                      −1
+                                     10
+
+
+                                      −2
+                                     10
+                                                                                                                                                          ACKNOWLEDGMENT
+                                      −3
+                                     10
+                                                                                                                                    This work was supported in part by NSF grant ECCS-
+                                      −4
+                                     10
+                                                                                                                                  1310634, the Center for Science of Information (CSoI), an
+                                      −5
+                                     10
+                                                                                                                                  NSF Science and Technology Center, under grant agreement
+                                                                KL divergence at i = 18 is exactly 0                              CCF-0939370, and the University of Hawaii REIS project.
+                                      −6
+                                     10                         for the always star approximation.
+
+                                      −7
+                                     10
+                                           0   2        4          6         8         10
+                                                                  Number of cascade stages (i)
+                                                                                                  12          14       16    18
+                                                                                                                                                               R EFERENCES
+                                                                                                                                   [1] A. P. Dempster, “Covariance selection,” Biometrics, vol. 28, no. 1, pp.
+Fig. 12. KL divergence between the distribution of the random vector X and                                                             157–175, March 1972.
+the model distribution after the i-th step of the cascade approximation v.s. the                                                   [2] C. K. Chow and C.N. Liu, “Approximating discrete probability dis-
+index of the cascade trees, i, for the island of Oahu solar data using different                                                       tributions with dependence trees,” IEEE Transactions on Information
+decompositions.                                                                                                                        Theory, pp. 462–467, 1968.
+                                                                                                                                   [3] Justin HG Dauwels, On graphical models for communications and
+                                                                                                                                       machine learning: Algorithms, bounds, and analog implementation,
+                                                                                                                                       vol. 17, ETH Zurich, 2006.
+on all nodes except one we can guarantee that the cascade                                                                          [4] N. T. Khajavi and A. Kuh, “First order Markov chain approximation
+algorithm converges to the model after n − 1 steps.                                                                                    of microgrid renewable generators covariance matrix,” in Proc. IEEE
+Remark: This greedy algorithm is a new way to decompose                                                                                International Symposium on Information Theory, Istanbul, Turkey (ISIT’
+                                                                                                                                       13), July 2013, pp. 1207–1211.
+covariance matrices. We want to use the Chow-Liu algorithm                                                                         [5] N. Meinshausen and P. Buhlmann, “Model selection through sparse
+since it results in the KL divergence initially decaying faster.                                                                       maximum likelihood estimation,” Annals of Statistics, pp. 1436–1464,
+However if we use star network, the KL divergence goes to                                                                              2006.
+                                                                                                                                   [6] Joseph B Kruskal, “On the shortest spanning subtree of a graph and the
+zero after at most n − 1 steps.                                                                                                        traveling salesman problem,” Proceedings of the American Mathematical
+                                                                                                                                       society, vol. 7, no. 1, pp. 48–50, 1956.
+                       VI. CONCLUSION                                                                                              [7] Navid Tafaghodi Khajavi, “Latent tree approximation in linear model,”
+                                                                                                                                       in Acoustics, Speech and Signal Processing (ICASSP), 2017 IEEE
+   In this paper, we look at the graphical model as a trans-                                                                           International Conference on. IEEE, 2017, pp. 5940–5944.
+formation and introduce a general framework to do model                                                                            [8] H.-A. Loeliger, J. Dauwels, J. Hu, S. Korl, L. Ping, and F. R. Kschis-
+approximation for graphical models. This new framework,                                                                                chang, “The factor graph approach to model-based signal processing,”
+                                                                                                                                       Proceedings of the IEEE, vol. 95, no. 6, pp. 1295–1322, June 2007.
+which we call the cascade trees framework, approximates a
+                                                                                                                                   [9] Yair Weiss and William T Freeman, “Correctness of belief propagation
+complex, hard to compute model with a cascade of simpler,                                                                              in gaussian graphical models of arbitrary topology,” in Advances in
+more efficient tree models, that can be easily computed. To                                                                            neural information processing systems, 2000, pp. 673–679.
+compute the optimal tree approximation at each stage of the                                                                       [10] N. T. Khajavi and A. Kuh, “The quality of the covariance selec-
+                                                                                                                                       tion through detection problem and AUC bounds,” arXiv preprint
+cascade trees framework, we used the Chow-Liu algorithm. In                                                                            arXiv:1605.05776, 2016.
+the computation of cascade tree framework we look at the best                                                                     [11] Michael Irwin Jordan, Learning in graphical models, vol. 89, Springer
+possible decomposition methods and we defined an important                                                                             Science & Business Media, 1998.
+                                                                                                                                  [12] Daphne Koller and Nir Friedman, Probabilistic graphical models:
+quantity, the symmetric CAM. The symmetric CAM allows                                                                                  principles and techniques, MIT press, 2009.
+us to use this cascade tree framework by creating a residual                                                                      [13] Anima Anandkumar, Daniel J Hsu, Furong Huang, and Sham M Kakade,
+correlation matrix at each step. The residual correlation matrix                                                                       “Learning mixtures of tree graphical models,” in Advances in Neural
+                                                                                                                                       Information Processing Systems, 2012, pp. 1052–1060.
+can be viewed as the remaining part of the original correlation                                                                   [14] Roberto Santana, Alberto Ochoa-Rodriguez, and Marta R Soto, “The
+matrix not approximated by previous iterations. Here we used                                                                           mixture of trees factorized distribution algorithm,” in Proceedings of
+a backward construction method. For the proposed cascade                                                                               the 3rd Annual Conference on Genetic and Evolutionary Computation.
+                                                                                                                                       Morgan Kaufmann Publishers Inc., 2001, pp. 543–550.
+trees algorithm, the algorithm we picked uses the Cholesky                                                                        [15] Marina Meila and Michael I Jordan, “Learning with mixtures of trees,”
+lower diagonal decomposition of the covariance matrix. This                                                                            Journal of Machine Learning Research, vol. 1, no. Oct, pp. 1–48, 2000.
+choice of decomposition is favorable since it preserves the                                                                       [16] Sanjoy Dasgupta, “Learning mixtures of Gaussians,” in Foundations of
+                                                                                                                                       computer science, 1999. 40th annual symposium on. IEEE, 1999, pp.
+sparsity pattern of the inverse covariance matrix. We present                                                                          634–644.
+results that guarantees the convergence of the proposed model                                                                     [17] Janaka B Ekanayake, Nick Jenkins, Kithsiri Liyanage, Jianzhong Wu,
+approximation using the cascade of tree decompositions. We                                                                             and Akihiko Yokoyama, Smart grid: technology and applications, John
+                                                                                                                                       Wiley & Sons, 2012.
+confirm those results using the examples provided in the
+                                                                                                                                  [18] P. M. Lewis II, “Approximating probability distributions to reduce
+simulation section where we look at synthetic and real data                                                                            storage requirements,” Information and control, vol. 2, no. 3, pp. 214–
+and compare the performance of the propose framework by                                                                                225, 1959.
+comparing KL divergences.                                                                                                         [19] Curtis Greene and Glenn A Iba, “Cayley’s formula for multidimensional
+                                                                                                                                       trees,” Discrete Mathematics, vol. 13, no. 1, pp. 1–11, 1975.
+   In future research, a more generalized case than cascade of                                                                    [20] R. C. Prim, “Shortest connection networks and some generalizations,”
+tree models can be considered where instead of tree approx-                                                                            Bell system technical journal, vol. 36, no. 6, pp. 1389–1401, 1957.
+                                                                                                                                              12
+
+
+
+[21] A. Kavcic and J. M. F. Moura, “Matrices with banded inverses:              where Q1 and Q2 can be computed from the following
+     Inversion algorithms and factorization of Gauss-Markov processes,”
+     IEEE Transactions on Information Theory, vol. 46, pp. 1495–1509, July                             Σ−1   T
+                                                                                                        1 = Q1 Q1 ,
+     2000.
+[22] Kshitij Khare and Bala Rajaratnam, “Sparse matrix decompositions and                              e −1 = QT Q2 ,
+                                                                                                       Σ 2|1   2
+     graph characterizations,” Linear Algebra and its Applications, vol. 437,
+     no. 3, pp. 932–947, 2012.                                                  and Q21 as follow
+[23] Navid Tafaghodi Khajavi, Anthony Kuh, and Narayana P Santhanam,
+     “Spatial correlations for solar PV generation and its tree approximation
+     analysis,” in Proceedings of the Asia-Pacific Signal and Information
+                                                                                                     Q21 = −Q2 Σ21 Σ−1
+                                                                                                                    1 .
+     Processing Association Annual Summit and Conference (APSIPA ASC),
+     Dec 2014, pp. 1–5.                                                           Computing QΣQT , we have
+[24] NREL.         Solar     irradiance    website.      [Online].     Avail-
+     able: http://www.nrel.gov/midc/, ,” .                                                       (QΣQT )1 = Q1 Σ1 QT1 = I
+[25] K. B. Petersen and M. S. Pedersen, The Matrix Cookbook, Techni-
+     cal University of Denmark, http://www2.imm.dtu.dk/pubdb/p.php?3274,        and
+     October 2008.
+                                                                                         (QΣQT )12 = Q1 Σ12 QT2 + Q1 Σ1 Q12
+                           A PPENDIX A                                                                = Q1 (Σ12 − Σ1 Σ−1      T
+                                                                                                                      1 Σ12 )Q2
+                       P ROOF OF T HEOREM 5                                                           = Q1 (0)QT2 = 0,
+   The proof is by construction. At each step we use a star
+                                                                                and
+approximation graph (a tree with one node connected to all
+other nodes). The Cholesky factorization is used to ensure that                    (QΣQT )2 = Q21 Σ1 Q12 + Q2 Σ21 Q12
+the sparsity pattern occurs in the inverse Cholesky matrix.                                    + Q21 Σ12 Q2 + Q2 Σ2 QT2
+   The first star approximation structure is constructed such
+that all the other nodes are connected to the first node. Then,                                = Q2 Σ21 Σ1−1 Σ1 Σ−1     T
+                                                                                                                 1 Σ12 Q2
+the Cholesky decomposition is computed where the inverse                                       − Q2 Σ21 Σ−1     T
+                                                                                                         1 Σ12 Q2
+Cholesky decomposition preserves the star structure. This                                      − Q2 Σ21 Σ−1                T
+                                                                                                         1 Σ12 Q2 + Q2 Σ2 Q2
+particular construction causes node 1 to become disconnected
+                                                                                               = −Q2 Σ21 Σ−1                T
+                                                                                                          1 Σ12 Q2 + Q2 Σ2 Q2
+from the rest of the graph (construction of ∆1 ).
+                                                                                               (a)
+   A formal, algebraic proof for this claim is given as follow.                                = Q2 (Σ2 − Σe2 + Σ e 2 − Σ21 Σ−1 Σ12 )QT
+                                                                                                                             1        2
+We generally partition the covariance matrix Σ as                                                             e 2 )QT ,
+                                                                                             = I + Q2 (Σ2 − Σ         2
+                             Σ1 Σ12
+                      Σ=                 .                                      where (a) is true since we add and subtract Σ   e 2.
+                             Σ21 Σ2
+                                                                                                                              e
+                                                                                   All diagonal coefficients of Q2 (Σ2 − Σ2 )QT2 are zeros,
+According to the covariance selection rules from Dempster                       since according to the covariance selection theorem [1], diag-
+theorem [1], the model covariance matrix has the same coef-                                                 e 2 are equal, and Q2 is diagonal.
+                                                                                onal coefficients of Σ2 and Σ
+ficients as the covariance matrix, Σ, at non-zero places in the                 Remark: Note that all diagonal coefficients of (QΣQT )2 are
+                                                  e denotes the
+inverse. For the sake of notation simplicity, let Σ                                                                                  e 2 )QT are
+                                                                                ones since all diagonal coefficients of Q2 (Σ2 − Σ         2
+first stage model covariance matrix. For the proof of this part,                zeros.
+we want the model inverse covariance matrix to have zeros at                       Overall, the QΣQT (symmetric CAM) has the following
+the block position of Σ2 . Thus, the model covariance matrix,                   structure
+e has the following partitioned covariance matrix
+Σ,                                                                                                                                
+                                                                                                        I        0
+                       e     Σ1 Σ12                                                                          1 ⊡ ··· ⊡ 
+                      Σ=                 .                                                                                        
+                             Σ21 e  Σ2                                                                                 ..      .. 
+                                                                                                   T   
+                                                                                            QΣQ =  0 ⊡ 1                   .    . 
+                                                                                                                                   .
+  Using matrix inversing lemma [25] we have                                                                  .. . .    .          
+        "                                               #                                                     .     .    . . ⊡ 
+          Σ−1
+           1  + Σ−11  Σ12 e
+                          Σ−1   Σ21 Σ−1
+                                     1  −Σ−1
+                                           1  Σ12 eΣ−1                                                       ⊡ ... ⊡ 1
+ e =
+ Σ −1                       2|1                     2|1
+                                                          ,
+                  e −1 Σ21 Σ−1
+                 −Σ                          e −1
+                                             Σ
+                     2|1      1                2|1                              For the star tree approximation we have
+Where Schur compliment,                                                                                                          
+                                                                                                               1 0 ···          0
+                     e 2|1 = Σ
+                     Σ       e 2 − Σ21 Σ−1 Σ12                                                               0 1 ⊡             ⊡ 
+                                        1                                                                                        
+                                                                                           ∆1 = QΣQT =  .                        .
+is the conditional covariance and is diagonal.                                                               .. ⊡ . . .        ⊡ 
+   The inverse of model covariance matrix can be factor as                                                      0   ⊡       ⊡   1
+                             e −1 = QT Q
+                             Σ                                                     Repeating this construction process recursively, at the i-th
+                                                                                iteration, node i+1 to node n are all connected to the i-th node
+where Q is the inverse of the lower tridiagonal Cholesky                        in the i-th star approximation structure and thus, the i-th node
+decomposition of e
+                 Σ and can be partitioned as                                    become disconnected from the rest of the graph. Repeating
+                                   
+                          Q1    0                                               this procedure for n − 1 iterations, we get ∆n−1 = I which
+                   Q=                 ,                                         translates to zero model approximation error.
+                          Q21 Q2
+                                                                               13
+
+
+
+   Note that, we can also optimize the choice of the star tree by
+minimizing the KL divergence by exhaustively searching over
+all the n possible star structures at each step of the cascade
+tree approximation algorithm.
+
+                            A PPENDIX B
+                       P ROOF OF T HEOREM 6
+   Our goal is to show that all diagonal coefficients of the
+symmetric CAM are equal to one. For simplicity and without
+losing generality of the proof we can assume that the permuta-
+tion matrix is identity, i.e. we start with an appropriate ordering
+that satisfies theorem 4 conditions. Let Q be the inverse
+Cholesky factorization of the tree model covariance matrix.
+Let us also assume that the tree model is connected. With
+these assumptions, matrix Q has one non-zero coefficients
+in the first row (on the diagonal) and exactly two non-zero
+coefficients in each other row (one on the diagonal and one
+on its left), i.e. ∀ j < i ≤ n, qji 6= 0 and qii 6= 0. This
+is true since Q is a lower triangular matrix that preserves tree
+structure.
+   We can right the symmetric CAM as follow
+                  QΣQT = Q(Σ − Σe+eΣ)QT
+                       = I + Q(Σ − e
+                                   Σ)QT .
+
+Note that, the difference Σ − eΣ has zeros at positions ji and
+ij where qji 6= 0. To prove this lemma, we need to show
+that (Q(Σ − e Σ)QT )ii = 0 or equivalently we need to show
+that ith row of Q(Σ − Σ) e times the transpose of the ith row
+(i > 1) of Q is 0. There are only two non-zero coefficients in
+the ith row of Q, at positions ii and ji. Thus we only need to
+compute (Q(Σ − e   Σ))ii and (Q(Σ − e   Σ))ji . It is easy to see
+              e
+that (Q(Σ − Σ))ii = 0. For (Q(Σ − Σ))   e ji , we have
+
+[0 . . . 0 qji 0 . . . 0 qii 0 . . . 0][⊡ . . .⊡ 0 ⊡. . .⊡ 0 ⊡. . . ⊡]T = 0.
+This equality holds since (Σ − eΣ)ji = 0. Thus, ∀i ≤
+n, (Q(Σ − e Σ)QT )ii = 0 which results in this lemma.
+                              2
+                             10
+                                                                              SVD
+                                                                              UL (Cholesky)
+                                                                              LU (Cholesky)
+                                                                              LU (Cholesky) − Always Star
+
+
+
+
+K L divergence (D(∆i ||I))
+                              1
+                             10
+
+
+
+
+                              0
+                             10
+
+
+
+
+                              −1
+                             10
+                                   0   1   2   3     4        5        6        7       8        9          10
+                                                   Number of cascade stages
+                              2
+                                           Quality of the approximated model after i stages of cascade trees
+                             10
+
+
+                                                                                       Cholesky (optimal tree)
+                              1
+                             10
+
+                                                                                       Cholesky (optimal star tree)
+                              0
+                             10
+
+
+
+
+KL divergence (D(Σ||ΣMi ))
+                              −1
+                             10
+
+
+                              −2
+                             10
+
+
+                              −3
+                             10
+
+
+                              −4
+                             10
+
+
+                              −5
+                             10
+
+
+                                                        KL divergence at i = 18 is exactly 0
+                              −6
+                             10                         for the always star approximation.
+
+                              −7
+                             10
+                                   0   2        4          6         8         10         12        14         16     18
+                                                          Number of cascade stages (i)
+                    Sparsity pattern of inverse covariance matrix with 40 nodes
+     The normalized covariance matrix (Σ)                       The model after two tree stages (ΣM )
+                                                                                                   2
+                                              1                                                         1
+ 5                                                          5
+                                              0.8                                                       0.8
+10                                                         10
+
+15                                                         15
+                                              0.6                                                       0.6
+20                                                         20
+
+25                                            0.4          25                                           0.4
+
+30                                                         30
+                                              0.2                                                       0.2
+35                                                         35
+
+40                                            0            40                                           0
+            10        20        30       40                            10       20       30        40
+
+
+           The first stage tree (ΣT )                               The second stage tree (ΣT )
+                                     1                                                        2
+                                              1                                                         1
+ 5                                                          5
+                                              0.8                                                       0.8
+10                                                         10
+
+15                                                         15
+                                              0.6                                                       0.6
+20                                                         20
+
+25                                            0.4          25                                           0.4
+
+30                                                         30
+                                              0.2                                                       0.2
+35                                                         35
+
+40                                            0            40                                           0
+            10        20        30       40                            10       20       30        40
+                             140
+                                                                Cholesky (Tree)
+                             120                                Cholesky (Always Star)
+
+
+
+                             100
+
+
+
+
+KL divergence (D(Σ||ΣMi ))
+                              80
+
+
+                              60
+
+
+                              40
+
+
+                              20
+
+
+                               0
+                                   0   2        4             6            8             10
+                                           Number of cascade stages (i)
+                 2
+                10
+
+
+
+
+                                 Chowliu tree
+
+
+
+
+KL divergence
+                                 Second Stage Independent
+                 1
+                10
+
+                                 Second Stage tree
+
+
+
+
+                 0
+                10
+                     0   2   4         6         8        10   12   14
+                                  number of cascade trees
+           Sparsity pattern of inverse covariance matrix with 100 nodes
+                                                                               The model after two tree stage
+(Σ)
+                      1
+
+                      0.9                                       10
+
+                      0.8                                       20
+
+                      0.7                                       30
+
+                      0.6                                       40
+
+                      0.5                                       50
+
+                      0.4                                       60
+
+                      0.3                                       70
+
+                      0.2                                       80
+
+                      0.1                                       90
+
+                      0                                        100
+      80   90   100                                                  10   20      30    40     50     60
+
+
+
+
+                                                                                   The second stage tree (ΣT
+
+                      1
+
+                      0.9                                       10
+
+                      0.8                                       20
+
+                      0.7                                       30
+
+                      0.6                                       40
+
+                      0.5                                       50
+
+                      0.4                                       60
+
+                      0.3                                       70
+
+                      0.2                                       80
+
+                      0.1                                       90
+
+                      0                                        100
+      80   90   100                                                  10   20      30    40     50     60
+                                      Quality of the approximated model after i stages of cascade trees
+                              3
+                             10
+                                                                               Cholesky (tree)
+                                                                               Cholesky (Always Star)
+
+
+
+
+KL divergence (D(Σ||ΣMi ))
+                                             X: 1
+                                             Y: 109.7
+                              2
+                             10
+
+
+
+
+                              1
+                             10
+                                  0               2          4             6              8             10
+                                                        Number of cascade stages (i)
+
+FULL matching CHARS 29446
+                                                  A NOTE ON MATCHINGS IN ABELIAN GROUPS
+
+                                                        MOHSEN ALIABADI AND SHIVA SOLEIMANY DIZICHEH
+
+
+                                                   Abstract. The question of finding sets of monomials which are remov-
+                                                   able from a generic homogeneous polynomial through a linear change in
+
+
+
+
+arXiv:1808.04975v3 [math.CO] 20 Feb 2020
+                                                   its variables was raised by E. K. Wakeford in 1916. This linear algebra
+                                                   question motivated J. Losonczy to define the concept of acyclic matchings
+                                                   in Zn , and later in abelian groups. In this paper, we give a constructive
+                                                   approach to study the acyclic matchings in cyclic groups. We also intro-
+                                                   duce the notion of weakly matched subsets and investigate its relation
+                                                   with matchings in abelian groups.
+
+
+
+
+                                                                            1. Introduction
+                                             Let B be a finite subset of the abelian group G which does not contain the
+                                           neutral element. For any subset A in G with the same cardinality as B, a
+                                           matching from A to B is defined to be a bijection f : A → B such that for
+                                           any a ∈ A we have a + f (a) 6∈ A. For any matching f as above, the associated
+                                           multiplicity function mf : G → Z≥0 is defined via the rule:
+                                                            ∀x ∈ G,      mf (x) = #{a ∈ A : a + f (a) = x}.                     (1)
+                                           A matching f : A → B is called acyclic if for any matching g : A → B, mf = mg
+                                           implies f = g. The notion of matchings in abelian groups was introduced by
+                                           Fan and Losonczy in [5] in order to generalize a geometric property of lattices in
+                                           Euclidean space. The motivation to study acyclic matchings is their relations
+                                           with an old problem of Wakeford concerning canonical forms for symmetric
+                                           tensors [7]. This notion has been investigated in literature in different aspects
+                                           (e.g., the existence of acyclic matchings in subsets of abelian torsion-free groups
+                                           and acyclic groups of prime order.) In this paper, we will investigate acyclic
+                                           matchings in certain subsets of abelian groups. We will introduce the concept
+                                           of strongly acylically matched subsets of abelian groups and will provide a
+                                           family of such subsets. Finally, we introduce the notion of weakly matchable
+                                           subsets and prove that it implies the existence of matchings in usual sense.
+
+                                                                             2. Preliminary
+                                               Throughout this paper, we assume that G is an abelian group and A, B
+                                           are two non-empty finite subsets of G with the same cardinality and 0 6∈ B.
+                                           Following Losonczy in [6], we say that G possesses the acyclic matching property
+                                           if for every pair A and B of finite subsets of G with #A = #B and 0 6∈ B
+                                           there is at least one matching from A to B. We say that G has the weak
+                                           acyclic matching property if for every pair A and B of G with #A = #B and
+                                           A ∩ (A + B) = ∅, there is at least one acyclic matching from A to B. It was
+
+                                              Keywords and phrases. acyclic matching, acyclicity sequence, weak acyclic matching
+                                           property.
+                                              2010 Mathematics Subject Classification. Primary: 05D15; Secondary: 11B75, 20D60.
+                                                                                       1
+2                     M. ALIABADI AND S. SOLEIMANY DIZICHEH
+
+
+proven in [4] that Zn has the acyclic matching property. Later, this result was
+generalized by Losonczy to abelian torsion-free groups [6]. Also, it was shown
+in [1] that there are infinitely many primes p for which Z/pZ does not have the
+acyclic matching property. We conjecture that all abelian groups possess the
+weak acyclic matching property:
+Conjecture 2.1. Let G be an abelian group. Then G possesses the weak acyclic
+matching property.
+   In the next section, we will provide a constructive approach to investigate
+the weak acyclic matching property in G. However, Conjecture 2.1 will still
+remain unsolved.
+
+             3. A constructive approach to Conjecture 2.1
+   For any matching f : A → B, define support of f as supp(f ) = {x ∈ G :
+                                                       (f ) (f )         (f )
+mf (x) > 0}. We associate the finite ordered sequence x1 , x2 , . . . , xnf to f
+such that:
+      (i) xi = mf (x), for some x ∈ supp(f ),
+                                                (f ) (f )         (f )
+     (ii) the sequence is non-increasing, i.e. x1 ≥ x2 ≥ · · · ≥ xnf ,
+    (iii) nf = #supp(f ).
+We call the above sequence the acyclicity sequence of f .
+  Denote the set of all matchings from A to B by M(A, B). Define
+                               n                     o
+                   (A,B)          (f )
+                 C1      = max x1 : f ∈ M(A, B) ,
+                           n                               o
+                   (1)                        (f )   (A,B)
+                 F(A,B) = f ∈ M(A, B) : x1 = C1              .
+       (1)               (1)
+If #F(A,B) = 1 and F(A,B) = {f }, then f is an acyclic matching as for any
+                                                     (1)
+g ∈ M(A, B) with f 6= g we have mf 6= mg . If #F(A,B) > 1, define
+                               n                   o
+                   (A,B)         (f )          (1)
+                 C2      = max x2 : f ∈ F(A,B) ,
+                           n                             o
+                   (2)           (1)      (f )     (A,B)
+                 F(A,B) = f ∈ F(A,B) : x2 = C2             .
+                                   (2)             (2)
+Similar to the previous case, if #F(A,B) = 1 and F(A,B) = {f }, then f is acyclic.
+                (2)
+Otherwise, #F(A,B) > 1 and we define
+                                  n                   o
+                     (A,B)          (f )        (2)
+                   C3      = max x3 : f ∈ F(A,B) ,
+                             n                              o
+                     (3)            (2)    (f )       (A,B)
+                    F(A,B) = f ∈ F(A,B) : x3 = C3             .
+                                                  n         o     n      o
+                                                      (A,B)         (i)
+Continuing in this manner, we obtain sequences Ci              and F(A,B) with
+the following recurrence relations:
+                                  n                   o
+                     (A,B)          (f )        (i−1)
+                   Ci      = max xi : f ∈ F(A,B) ,
+                             n                              o
+                     (i)            (i−1)  (f )       (A,B)
+                    F(A,B) = f ∈ F(A,B) : xi = Ci             ,
+
+where i > 1.
+                    A NOTE ON MATCHINGS IN ABELIAN GROUPS                                                  3
+
+
+   Since M(A, B) < ∞, the process described above will terminate after finitely
+                          (t)             (t+1)
+many steps. Assume that F(A,B) 6= ∅ and F(A,B) = ∅. We call t the acyclicity
+index of M(A, B).
+                                  (t)
+Conjecture 3.1. Let F(A,B) be as above, that is, t is the acyclicity index of
+                                                                 (t)
+M(A, B). If A ∩ (A + B) = ∅, then every f ∈ F(A,B) is acyclic.
+Remark 3.2. Conjecture 3.1 implies Conjecture 2.1.
+Example 3.3. Consider the following subsets of Z/14Z:
+                         A = {1, 3, 5, 7} and B = {1, 3, 7, 9}
+One can check that A ∩ (A + B) = ∅. Therefore every bijection from A to
+B is a matching. The followings are all 24 matchings from A to B and their
+acyclicity sequences:
+
+                        Table 1. Acyclicity table of M(A, B)
+
+Matching   Rule    Support        Acyclicity sequence Matching   Rule     Support        Acyclicity sequence
+           1→1                                                   1→7
+   f1      3→3     {2, 6, 12}            2, 1, 1        f13      3→1      {2, 4, 8}            2, 1, 1
+           5→7                                                   5→3
+           7→9                                                   7→9
+           1→1                                                   1→7
+           3→3                                                   3→1
+   f2      5→9     {0, 2, 6}             2, 1, 1        f14      5→9    {0, 4, 8, 10}         1, 1, 1, 1
+           7→7                                                   7→3
+           1→1                                                   1→7
+   f3      3→9    {0, 2, 8, 12}         1, 1, 1, 1      f15      3→3      {2, 6, 8}            2, 1, 1
+           5→3                                                   5→1
+           7→7                                                   7→9
+           1→1                                                   1→7
+   f4      3→9    {2, 10, 12}            2, 1, 1        f16      3→3      {0, 6, 8}            2, 1, 1
+           5→7                                                   5→9
+           7→3                                                   7→1
+           1→1                                                   1→7
+   f5      3→7     {2, 8, 10}            2, 1, 1        f17      3→9    {6, 8, 10, 12}        1, 1, 1, 1
+           5→3                                                   5→1
+           7→9                                                   7→3
+           1→1                                                   1→7
+   f6      3→7     {0, 2, 10}            2, 1, 1        f18      3→9       {8, 12}              3, 1
+           5→9                                                   5→3
+           7→3                                                   7→1
+           1→3                                                   1→9
+   f7      3→1     {2, 4, 12}            2, 1, 1        f19      3→1    {0, 4, 8, 10}         1, 1, 1, 1
+           5→7                                                   5→3
+           7→9                                                   7→7
+           1→3                                                   1→9
+   f8      3→1       {0, 4}               2, 2          f20      3→1     {4, 10, 12}           2, 1, 1
+           5→9                                                   5→7
+           7→7                                                   7→3
+           1→3                                                   1→9
+           3→7                                                   3→3
+   f9      5→9    {0, 4, 8, 10}         1, 1, 1, 1      f21      5→1     {0, 6, 10}            2, 1, 1
+           7→1                                                   7→7
+           1→3                                                   1→9
+           3→7                                                   3→3
+   f10     5→1    {2, 4, 6, 10}         1, 1, 1, 1      f22      5→7    {6, 8, 10, 12}        1, 1, 1, 1
+           7→9                                                   7→1
+           1→3                                                   1→9
+   f11     3→9    {0, 4, 6, 12}         1, 1, 1, 1      f23      3→7       {8, 10}              2, 2
+           5→1                                                   5→3
+           7→7                                                   7→1
+           1→3                                                   1→9
+   f12     3→9     {4, 8, 12}            2, 1, 1        f24      3→7       {6, 10}              3, 1
+           5→7                                                   5→1
+           7→1                                                   7→3
+
+                                                          (A,B)       (A,B)
+  Using the acyclicity table of M(A, B), we get C1              = 3, C2      = 1,
+ (1)                    (2)                       (3)
+F(A,B) = {f18 , f24 }, F(A,B) = {f18 , f24 } and F(A,B) = ∅. As we expected, both
+f18 and f24 are acyclic matchings.
+4                    M. ALIABADI AND S. SOLEIMANY DIZICHEH
+
+
+Example 3.4. Running two Python codes (see Algorithm 1 and Algorithm 3
+                                                                              (A,B)
+in Section 4) for the existence of acyclic matchings by computing Ci                and
+  (i)
+F(A,B) , we get the following results for subsets A = {0, 1, 2, 3, 12, 13, 14, 15}
+and B = {4, 5, 6, 7, 8, 16, 17, 18} of Z/23Z (Note that there are 40320 matchings
+from A to B.)
+  (A,B)            (A,B)
+C1      = 7 and F1        = {f1 , f2 , f3 }, where fi ’s are given as follows:
+
+                               f1              f2          f3
+                            0→7             0→8          0→8
+                            1→6             1→7          1 → 18
+                            2→5             2→6          2 → 17
+                            3→4             3→5          3 → 16
+                            12 → 18         12 → 4       12 → 7
+                            13 → 17         13 → 18      13 → 6
+                            14 → 16         14 → 17      14 → 5
+                            15 → 8          15 → 16      15 → 4
+
+
+   In the following table, supports and acyclicity sequences of the above match-
+ings are shown.
+                                               f1       f2        f3
+                           Support           {0, 7}   {8, 16}   {8, 19}
+                      Acyclicity Sequence     7, 1     7, 1       7, 1
+
+                   (A,B)              (A,B)                               (A,B)   (A,B)
+   We also have C2      = 1 and F2       = {f1 , f2 , f3 }. Since C1 + C2    =
+                 (A,B)
+8 = #A, then F3        = ∅ and so the acyclicity index of M(A, B) = 2. Our
+simulation results indicate that f1 , f2 and f3 are acyclic matchings as we ex-
+pected.
+Theorem 3.5. If #A = #B = n > 1, A ∩ (A + B) = ∅ and B ∪ {0} is a
+subgroup of G, then
+    (i) The acyclicity sequence of any f ∈ M(A, B) is 1, 1, . . . , 1.
+                                                      | {z }
+                                                                     n−times
+    (ii) Every f ∈ M(A, B) is acyclic.
+Proof. Assume to the contrary, mf (x) > 1, for some x ∈ G. Then, there
+exist distinct a, a′ ∈ A for which x = a + f (a) = a′ + f (a′ ). We have a =
+a′ + f (a′ )− f (a) ∈ A+ B as f (a′ )− f (a) ∈ B. This contradicts A∩(A+ B) = ∅.
+This gives (i).
+   Now, choose two matchings f, g ∈ M(A, B). Choose a ∈ A such that
+f (a) 6= g(a). From the previous part, we have mf (a+ f (a)) = 1. We claim that
+mg (a+f (a)) = 0. If not, then there exists a′ ∈ A such that a+f (a) = a′ +g(a′ ).
+This implies a = a′ + g(a′ )− f (a) ∈ A+ B as g(a′ )− f (a) ∈ B. This contradicts
+A ∩ (A + B) = ∅. Therefore, mg (a + f (a)) = 0 and so mf 6= mg . This implies
+that f is acyclic. The proof is complete.                                      
+Remark 3.6. If f is a matching whose acyclicity sequence only includes 1, then
+f is not necessarily acyclic. Our simulation results in Example 3.4 show that
+there exist 2436 matchings whose acyclicity sequences only include 1. However,
+only 8 of them are acyclic. The acyclicity sequences of f, g ∈ M(A, B) given
+as follows only include 1.
+   Note that we have mf = mg and this implies that f and g are not acyclic.
+   Our simulation results show that for A and B with #A = #B and A ∩ (A +
+B) = ∅ there exists at least one acyclic matching from A to B. So we have the
+following conjecture:
+                 A NOTE ON MATCHINGS IN ABELIAN GROUPS                        5
+
+                                  f         g
+                               0 → 18    0 → 18
+                               1 → 16    1 → 16
+                               2 → 17    2 → 17
+                               3→5       3→5
+                               12 → 4    12 → 4
+                               13 → 7    13 → 8
+                               14 → 8    14 → 6
+                               15 → 6    15 → 7
+
+
+
+Conjecture 3.7. Let G be an abelian group. If A and B are two finite subsets
+of G with A∩(A+ B) = ∅, then there exists f ∈ M(A, B) such that f is acyclic
+and its acyclicity sequence only includes 1.
+  Note that Conjecture 3.7 provides a constructive approach to investigate
+Conjecture 2.1 and indeed it implies Conjecture 2.1.
+Definition 3.8. We say that A is acylically matched to B if there exists an
+acyclic matching from A to B. We also say that A is strongly acylically matched
+to B if A is acylically matched to B and every matching from A to B is acyclic.
+Remark 3.9. If A and B satisfy the conditions of Theorem 3.5, then A is
+strongly acylically matched to B.
+Example 3.10. Let A and B be as Example 3.3. Then A is not strongly
+acylically matched to B as f9 is not acyclic (mf9 = mf19 ).
+Remark 3.11. That A is acylically matched to B does not imply that A
+is strongly acylically matched to B. For example our simulation results in
+Example 3.4 show that even though A is acylically matched to B, A is not
+strongly acylically matched to B as the matching f given below is not acyclic
+
+                                       f
+                                    0 → 18
+                                    1 → 16
+                                    2 → 17
+                                    3→5
+                                    12 → 4
+                                    13 → 7
+                                    14 → 8
+                                    15 → 6
+
+
+
+Remark 3.12. As we mentioned, Theorem 3.5 provides a family of sets that
+are strongly acylically matched. Further investigations of other such families
+could turn out to be worthwhile.
+Remark 3.13. If A is strongly acylically matched to B and f ∈ M(A, B),
+the acyclicity sequence of f does not only include 1 necessarily. For example,
+consider the subsets A = {2, 4} and B = {3, 1} of Z. Then A is strongly
+acylically matched to B but the acyclic matching f ∈ M(A, B) given via the
+rule 2 → 3 and 4 → 1 has 2 in its acyclicity sequence.
+Conjecture 3.14. If A is acylically matched to B and the acyclicity sequence
+of every f ∈ M(A, B) only includes 1, then A is strongly acylically matched to
+B.
+
+                            4. Weak Matchings
+   This section aims to investigate substructures of matchings. We start with
+the following definition.
+6                 M. ALIABADI AND S. SOLEIMANY DIZICHEH
+
+
+Definition 4.1. Let G be an abelian group and A and B be two non-empty
+finite subsets of G with the same cardinality n and B does not contain the
+neutral element. We say A is weakly matched to B of order m (1 ≤ m < n)
+if for every subset A′ of A with #A′ = m, there exists a subset B ′ of B such
+that A′ is matched to B ′ , in usual sense.
+Remark 4.2. If A is matched to B, then one can verify easily that A is weakly
+matched to B of order m, for any 1 ≤ m < n. Consider an arbitrary non-empty
+subset A′ of A with #A′ = m and set B ′ := f (A′ ), where f is a matching from
+A to B. Then the mapping g = f A′ is a matching from A′ to B ′ and so A is
+weakly matched to B ′ of order m.
+   As we verified above, having two matchable subsets at hand, it is straight-
+forward to show that the given sets are weakly matchable of any order. The
+converse is not so obvious though. In what follows we prove a special case;
+weakly matchable subsets of order n − 1 are matchable. We start with the
+following lemma.
+Lemma 4.3. Let A and B be non-empty finite subsets of an arbitrary group
+G, and assume that #A ≤ #B and that A + B = A. Then B is a subgroup of
+G and A is a left coset of B.
+                                       ϕ:A →A+b
+Proof. If b is in B then the mapping                  is injective and thus
+                                           a 7→ a + b
+#(A + b) = #A. Since A + b ⊆ A + B = A and A is finite, it follows that
+A + b = A. Now let X = {x ∈ G | A + x = A}. Then B ⊆ X and X is a
+subgroup of G. Also A + X = A. If a ∈ A, then a + X is a left coset of the
+subgroup X, and thus #(a+ X) = #X and we have a+ X ⊆ A+ X = A. Then
+#B ≥ #A ≥ #(a + X) = #X ≥ #B, so #X = #B and #A = #(a + X).
+Since B finite and is contained in X, and #B = #X, it follows that B = X,
+so B is a subgroup as wanted.
+   Since A is finite and contains a + X, and #A = #(a + X), it follows that
+A = a + X. We know that X = B, so A = a + X = a + B, and thus A is the
+left coset a + B of B. The proof is complete.                            
+Corollary 4.4. Let A, B and G be as Lemma 4.3. Then 0 ∈
+                                                      / B.
+Proof. It is immediate from B being a subgroup of G.                        
+  Now we are ready to prove that the weakly matching property of order n − 1
+implies the matching property. We formulate this statement as follows.
+Theorem 4.5. Let G be an abelian group and A and B be nonempty subsets
+of G with #A = #B = n and 0 ∈     / B. Then if A is weakly matched to B of
+order n − 1, then A is matched to B.
+Proof. We break down the proof to two cases:
+   Case 1: If A + B 6= A, choose y ∈ A + B \ A. Then y = a + b, for some
+a ∈ A and b ∈ B. Consider the subsets A′ = A \ {a} and B ′ = B \ {b} of A
+and B, respectively. Since A is weakly matched to B of order n − 1, then A′ is
+matched to B ′ . Let f ′ : A′ → B ′ is a matching and define f : A → B via
+                                    (
+                                       f ′ (x), if x ∈ A′
+                            f (x) =
+                                       b,       if x = a
+                 A NOTE ON MATCHINGS IN ABELIAN GROUPS                          7
+
+
+Then f is a matching from A to B.
+  Case 2: If A+B = A, from Corollary 4.4 we conclude 0 ∈ B. This contradicts
+our assumption that B does not contain the neutral element.               
+   Combining Remark 4.2 and Theorem 4.5 we can conclude that “having a
+matching from A to B” is equivalent to have that “A is weakly matched to B of
+order n − 1”. It is worth pointing out that there is another concept in matching
+theory called local matching [3]. Given two finite subsets A, B ⊂ G satisfying
+#A = #B and 0 ∈     / B, A is locally matched to B if for every subgroup H 6= G
+such that
+    (a) A contains a coset of H and
+    (b) H ∩ B 6= ∅,
+there exists A′ ⊂ A such that #A′ = #(H ∩ B) and a bijection f : A′ → H ∩ B
+such that for every a ∈ A′ , we have a + f (a) ∈ / A. It turns out that “having
+matching from A to B” is equivalent to “having local matching from A to
+B” [3, Theorem 3.1]. So for two finite nonempty subsets A and B of a given
+abelian group G with #A = #B = n and 0 ∈       / B, the following statements are
+equivalent:
+     a) A is matched to B,
+     b) A is locally matched to B,
+     c) A is weakly matched to B of order n − 1.
+
+                     5. Possible Research Problems
+   First problem is whether weakly matchable subsets of lower orders are
+matchable. Another problem is formulating and proving linear analogue of
+weakly matchable subsets. More rigorously, given a field extension K ⊂ L, one
+may introduce analogue notion of weakly matchable K-subspaces A, B of L
+of certain orders and obtain the linear version of Theorem 4.5. See also [2] for
+some possibly helpful results in this direction.
+
+                           6. Computer Program
+   In this section, we employ three algorithms to investigate acyclic matchings.
+In the first algorithm, we input n and find all pairs A and B of subsets of Z/nZ
+for which A ∩ (A + B) = ∅. In the second algorithm, we find all matchings
+whose acyclicity sequences only include 1. It also checks whether matchings
+obtained in this manner are acyclic or not. The third algorithm, we inputs
+                                                                            (A,B)
+subsets A and B obtained by implementing Algorithm 1 and provides Ci
+       (i)                                         (t)
+and F(A,B) . It also checks whether elements of F(A,B) are acyclic or not. (Here,
+t signifies the acyclicity index of M(A, B))
+8                   M. ALIABADI AND S. SOLEIMANY DIZICHEH
+
+
+Algorithm 1 Generating A and B
+1: function GenerateAandB(n)
+2:    for i in range(0,n − 1) do
+3:       ZnZ.add(i)
+4:    for i in range(2,n/2) do
+5:       Subset(i)= GiveSubsets(ZnZ i)
+6:       P airof Subsets.add(Combinations(Subset(i),2))
+ 7:    for A,B in P airof Subsets do
+ 8:       if HasWeakAcyclicity(A,B,n) then
+ 9:           AB.add(A,B)
+10:    return AB
+11: function GiveSubsets(ZnZ,i)
+12:    subset=Combinations(ZnZ,i)
+13:    return subset
+14: function HasWeakAcyclicity(A,B,n)
+15:    i=length(A)
+16:    for k in range(0,i) do
+17:        for j in range(0,i) do
+18:           temp=A(k)+B(j)
+19:           if temp mod n is in A then
+20:               return False
+21:    return True
+22: function main
+23:    get n
+24:    AB=GenerateAandB(n)
+25:    A, B←a row of AB
+26:    support=GiveSupport(A,B,n)
+27:    sequence= GiveSequence(A,B,n)
+
+Algorithm 2 Calculate matchings whose acyclicity sequence only includes 1
+1: function onesequences(A,B,n)
+2:    temp=GiveSequence(A,B,n)
+3:    if sum(temp)=length(temp) then
+4:        oneseq.add(temp)
+ 5: function GiveSequence(A,B,n)
+ 6:    supportwithrepeat=GiveSupportwithrepeat(A,B,n)
+ 7:    for i in range 0,n-1 do
+ 8:       for j in range 0,length(supportwithrepeat) do
+ 9:            if supportwithrepeat(j)=i then
+10:                sequences(i)+=1
+11:    remove 0s from sequences
+12:    sort sequences descending
+13:    return sequences
+14: function GiveSupport(A,B,n)
+15:    support=set(GiveSupportwithrepeat(A,B,n))
+16:    return support
+17: function GiveSupportwithrepeat(A,B,n)
+18:    supportwithrepeat=Givematchings(A,B)
+19:    for match in supportwithrepeat do
+20:        for item in match do
+21:           item=sum(item) mod n
+22:    return supportwithrepeat
+23: function Givematchings(A,B)
+24:    matching=permutations(A,B)
+25:    return matching
+                    A NOTE ON MATCHINGS IN ABELIAN GROUPS                                  9
+
+
+                               (A,B)         (i)
+Algorithm 3 Calculate C(i)             and F(A,B)
+ 1: function CalculateF(sequences,supportwithrepeat,i,end)
+ 2:    if i less than end then
+ 3:        C(i)=max(sequence(i) for sequence in sequences)
+ 4:        for sequence in sequences do
+ 5:            if sequence(i)==C(i) then
+ 6:                F (i).add(sequence(i))
+ 7:                sup(i).add(supportwithrepeat(i))
+ 8:       end=min(lengh F (i) members)
+ 9:       CalculateF(F (i),sup,i+1,end)
+10:    else if i=end then
+11:        for f in supportwithrepeat(i) do
+12:            isacyclic(f )
+13: function isacyclic(f )
+14:    acyclic=True
+15:    temp=supportwithrepeat
+16:    remove f from temp
+17:    for item in temp do
+18:        if AssociatedMultiplicity(item)=AssociatedMultiplicity(f ) then
+19:            acyclic=False
+20:    return acyclic
+21: function AssociatedMultiplicity(matching)
+22:    for i in range 0,n-1 do
+23:        for j in range 0,length(matching) do
+24:            if matching(j)=i then
+25:                m(i)+=1
+26:    return m
+
+
+
+                                       References
+ [1] M. Aliabadi, M. Hadian, A. Jafari, On matching property for groups and field extensions,
+     J. Algebra Appl. 15, no. 1 (2016). 1650011. 13 pp.
+ [2] M. Aliabadi, M. J. Janardhanan, On matchable subsets in abelian groups and their
+     linear analogues, Linear Algebra Appl. 582 (2019), 138-155.
+ [3] M. Aliabadi, M. J. Janardhanan, On local matching property in groups and vector
+     spaces, Australas. J. Combin. 70 (2018), 75-85.
+ [4] N. Alon, C. K. Fan, D. Kleitman, J. Losonczy, Acyclic Matchings, Adv. Math. 122
+     (1996), 234-236.
+ [5] C. K. Fan, J. Losonczy, Matching and canonical forms for symmetric tensors, , Adv.
+     Math. 117 (1996), 228-238.
+ [6] J. Losonczy, On matching in groups, Adv. In Appl, Math. 20 (1998), 385-391.
+ [7] E. K. Wakeford, On canonical forms, Proc. London Math, Soc. 18 (1918-1919), 403-410.
+
+   Mohsen Aliabadi, Department of Mathematics, Statistics, and Computer Sci-
+ence, University of Illinois, 851 S. Morgan St, Chicago, IL 60607, USA
+   E-mail address: maliab2@uic.edu
+
+   Shiva Soleimany Dizicheh, Department of Computing Science, University of Al-
+gebra, Edmonton, Canada
+   E-mail address: soleiman@ualberta.ca
+
+FULL parity CHARS 37860
+                                                  Statistics on integer partitions arising from seaweed
+                                                                         algebras
+                                                    Vincent E. Coll, Jr.*, Andrew W. Mayers , and Nick W. Mayers*
+
+
+
+
+arXiv:1809.09271v2 [math.CO] 9 Oct 2018
+                                              *
+                                                  Department of Mathematics, Lehigh University, Bethlehem, PA, 18015
+                                                                                   October 10, 2018
+
+
+                                                                                         Abstract
+                                                   Using the index theory of seaweed algebras, we explore various new integer partition
+                                                   statistics. We find relations to some well-known varieties of integer partitions as well
+                                                   as a surprising periodicity result.
+
+
+                                          1        Introduction
+                                          Partition statistics are often defined with an eye toward proving a congruence property. An
+                                          application of this principal can be found in the proofs of the famous congruence results
+                                          of Ramanujan [23], which were eventually established using the rank and crank statistics
+                                          [2, 4]. On the other hand, a partition statistic may present itself without prior appeal to an
+                                          anticipated congruence property. The recent index theory of seaweed algebras [8, 9, 11, 13]
+                                          provides just such an instance. Indeed, seaweed subalgebras of sl(n) – or simply, seaweeds
+                                          – which are naturally defined in terms of two compositions of a single integer n, provide a
+                                          sort of partition statistic generator. One begins with a pair (λ, µ) of partitions of n. Since
+                                          partitions are compositions, we can use (λ, µ) to define a seaweed subalgebra of sl(n), whose
+                                          index will be taken to be the definition of the index of the partition pair (λ, µ).
+                                               If we let w(λ) denote the weight of λ, then there are two choices of µ naturally associated
+                                          with a given λ, namely, the trivial partition where µ = w(λ), and it’s conjugate µC = 1w(λ) .
+                                          Since the values of the index of (λ, w(λ)) and (λ, 1w(λ) ) are reliant only on λ, the index
+                                          of these partition pairs may be regarded as partition statistics on λ alone. Of course, the
+                                          efficacy of such statistics must be adjudged according to their utility. However, we find that
+                                          in each of these extremal cases, the index statistic connects to well-established investigations.
+                                               In the first case, (λ, 1w(λ) ), we find a connection to classical partition theory by estab-
+                                          lishing that the sequence {cin }∞  n=1 defined by
+
+
+                                                                        cin = |{λ ∈ P(n) : ind1w(λ) (λ) = n − i}|,
+for each fixed i is eventually constant – converging to the number of partitions of i − 1 into
+parts of two kinds. See Theorem 12.
+    In the second case, we consider seaweeds defined by a pair of compositions (λ, w(λ)).
+The enumeration of these composition pairs, when the index is zero, is of concern to Lie
+theorists.1 Recent efforts to enumerate pairs of compositions that define a Frobenius (index
+zero) seaweed have concentrated on limiting the number of parts in the compositions. For
+example, Duflo (after the fashion of Coll et al [12]), uses certain index-preserving operators
+on the set of compositions corresponding to a Frobenius seaweed subalgebra of sl(n) to
+show that if t is the number of parts in the defining   t  compositions, then the number of
+such compositions is a rational polynomial of degree 2 evaluated at n. See [15], Theorem
+1.1 (b). Dufflo’s result is existential in nature. However, if compositions are restricted to
+partitions and a modest limit is placed on the size of the parts – rather than the number of
+parts – the number of such compositions corresponding to a Frobenius seaweed subalgebra
+of sl(n) becomes a periodic function of n. See Theorem 15.
+
+    The organization of the paper is as follows. In Section 2 we develop the definitions and
+notation for integer partitions and seaweeds. In Section 3 we use the index theory of seaweeds
+to define the index of a partition and use this new definition to connect to some well-known
+classical investigations. We conclude with some open questions.
+
+
+2     Preliminaries
+In Section 2.1 we review standard combinatorial notation. In Section 2.2 we detail the recent
+index theory of seaweed algebras. Throughout this article, we tacitly assume that all Lie
+algebras are over the complex numbers.
+
+2.1     Integer partitions
+We follow the notation of Andrews [1] and adopt the following conventions.
+
+Definition 1. A partition λ of a positive integer   P n is a finite non-increasing sequence of
+positive integers λ1 , λ2 , . . . , λm such that n = m
+                                                     i=1 λi . The λi are called the parts of the
+partition and w(λ) = n is the weight of the partition.
+
+   We will often employ the vector notation for the partition λ = (λ1 , λ2 , . . . , λm ). It will
+sometimes be useful to use a frequency notation that makes explicit the number of times a
+particular integer occurs as a part of a partition. So, if λ = (λ1 , λ2 , . . . , λm ), we alternatively
+write
+
+                                          λ = (1f1 2f2 3f3 · · · ),
+    1
+      Frobenius algebras form a distinguished class and have been extensively studied from the point of view
+of invariant theory [21] and are of special interest in deformation and quantum group theory resulting from
+their connection with the classical Yang-Baxter equation (see [16] and [17]).
+
+
+                                                     2
+where exactly fi of the λj are equal to i.
+   A graphical representation of a partition, called a Ferrers diagram, is helpful to develop
+the notion of the conjugate of a partition. More formally, the Ferrers diagram of a partition
+λ = (λ1 , . . . , λn ) is a coordinatized set of unit squares in the plane such that the lower left
+corner of each square will have integer coordinates (i, j) such that
+
+                                   0 ≥ i ≥ −n + 1, 0 ≤ j ≤ λ|i|+1 − 1.
+
+The Ferrers diagram of the partition (4, 2, 1) is illustrated in the left-hand side of Figure 1.
+The conjugate of a partition µ is the partition µC resulting from exchanging the rows and
+columns in the Ferrers diagram associated to µ.
+
+Example 2. The Ferrers diagram of the partition λ = (4, 2, 1) and it’s conjugate λC =
+(3, 2, 1, 1).
+
+
+
+
+                        Figure 1: Ferrers Diagram of (4, 2, 1) and (3, 2, 1, 1)
+
+
+2.2     Seaweed Algebras
+In this section, we introduce seaweed algebras in type-A.2 These are seaweed subalgebras of
+sl(n) – the set of all n × n matrices of trace zero. As we will see, such seaweed algebras are
+naturally defined in terms of two compositions of the positive integer n. Recall that a com-
+position of n is an unordered partition, which we will denote by λ1 |λ2 | · · · |λn to distinguish
+it from the ordered case in Definition 1, where there is an order relation on the λ′i s.
+
+Definition 3. If V is an n-dimensional vector space with a basis {e1 , . . . , en }, let a1 | . . . |am
+and b1 | . . . |bl be two compositions of n and consider the flags
+
+          {0} ⊂ V1 ⊂ · · · ⊂ Vm−1 ⊂ Vm = V            and V = W0 ⊃ W1 ⊃ · · · ⊃ Wt = {0},
+where Vi = span{e1 , . . . , ea1 +···+ai } and Wj = span{eb1 +···+bj +1 , . . . , en }.
+   2
+    In [22], Panyushev extended the Lie theoretic definition of seaweed algebras to the reductive case. If
+p and p are parabolic subalgebras of a reductive Lie algebra g such that p + p′ = g, then p ∩ p′ is called
+a seaweed subalgebra of g or simply seaweed when g is understood. For this reason, Joseph has elsewhere
+[19] called seaweed algebras, biparabolic. One can show that type-C and type-B seaweeds, in their standard
+representations, can be parametrized by a pair of partial compositions of n. See [10].
+
+
+
+
+                                                       3
+   The subalgebra of sl(n) preserving these flags is called a seaweed Lie algebra, or simply
+                                          a1 | · · · |am
+seaweed, and is denoted by the symbol                     , which we refer to as the type of the
+                                           b1 | · · · |bt
+seaweed. If b1 = n, the seaweed is called maximal parabolic.
+
+Remark: The preservation of flags in Definition 2 insures that seaweeds are closed under
+matrix multiplication, and therefore define an associative algebra, hence also a Lie algebra
+under the commutator bracket.
+
+   The evocative “seaweed” is descriptive of the shape of the algebra when exhibited in
+                                                  2|4
+matrix form. For example, the seaweed algebra 1|2|3   consists of traceless matrices of the
+form depicted on the left side of Figure 2, where * indicates the possible non-zero entries
+from the ground field, which we assume is the complex numbers.
+
+             1
+
+        2
+            * 2
+            * * *
+                *   3                                v1   v2      v3      v4      v5      v6
+
+              4
+                * * * *
+                * * * *
+                * * * *
+                                              2|4
+                 Figure 2: A seaweed of type 1|2|3 and its associated meander
+
+   The index of a Lie algebra was introduced by Dixmier [14]. Formally, the index of a Lie
+algebra g is defined by
+
+                                    ind(g) = min∗ dim(ker(Bf )),
+                                              f ∈g
+
+where f is a linear form on g and Bf is the associated skew-symmetric Kirillov form defined
+by Bf (x, y) = f ([x, y]) for all x, y ∈ g. The index is an important algebraic invariant of the
+Lie algebra – though notoriously difficult to compute. However, in [13], Dergachev and A.
+Kirillov developed a combinatorial algorithm to compute the index of a seaweed subalgebra
+of sl(n) by counting the number of connected components of a certain planar graph, called a
+meander, associated to the seaweed. To construct a meander, let ab11|···|a         m
+                                                                             |···|bt
+                                                                                     be a seaweed. Now
+label the n vertices of our meander as v1 , v2 , . . . , vn from left to right along a horizontal line.
+We then place edges above the horizontal line, called top edges, according to a1 + . . . + am
+as follows. Partition the set of vertices into a set partition by grouping together the first a1
+vertices, then the next a2 vertices, and so on, lastly grouping together the final am vertices.
+
+
+                                                     4
+We call each set within a set partition a block. For each block in the set partition determined
+by a1 + . . . + am , add an edge from the first vertex of the block to the last vertex of the block,
+then add an edge between the second vertex of the block and the second to last vertex of
+the block, and so on within each block. More explicitly, given vertices vj , vk in a block of
+size ai , there is an edge between them if and only if j + k = 2(a1 + a2 + · · · + ai−1 ) + ai + 1.
+In the same way, place bottom edges below the horizontal line of vertices according to the
+blocks in the partition determined by b1 + . . . + bt . See the right side of Figure 2.
+    Every meander consists of a disjoint union of cycles and paths. The main result of [13]
+is that the index of a seaweed can be computed by counting the number and type of these
+components in it’s associated meander.
+
+Theorem 4. (Dergachev and A. Kirillov, [13]) If p is a seaweed subalgebra of sl(n), then
+
+                                           ind(p) = 2C + P − 1,
+
+where C is the number of cycles and P is the number of paths in the associated meander.
+
+                                                                               2|4
+Example 5. In the example of Figure 1, the meander associated to the seaweed 1|2|3 has no
+cycles and consists of a single path – so, has index zero, hence is Frobenius.
+
+
+    While Theorem 4 is an elegant combinatorial result it is difficult to apply in practice.
+However, Coll et al in [12] show that any meander can be contracted or “wound-down” to
+the empty meander through a sequence of graph-theoretic moves, each of which is uniquely
+determined by the structure of the meander at the time of move application. There are
+five such moves, only one of which affects the component structure of the meander graph
+and is therefore the only move capable of modifying the index of the meander. Using these
+winding-down moves the authors in [12] established the following index formulas which allow
+us to ascertain the index directly from the block sizes of the flags that define the seaweed.3
+                                                                a|b
+Theorem 6 (Theorem 7, [11]). A seaweed of type                      has index gcd(a, b) − 1.
+                                                                 n
+                                                               a|b|c                a|b
+Theorem 7 (Theorem 8, [11]). A seaweed of type                       , or of type         , has index given
+                                                                 n                c|n − c
+by gcd(a + b, b + c) − 1.
+
+   Since we will need the explicit winding-down moves in the proof of Theorem 15 we review
+the winding-down process.
+   3
+     A recent result by Karnauhova and Liebscher [20] has established, in particular, that the formu-
+las in Theorems 6 and 7 are the only nontrivial linear ones that are available in the maximal parabolic
+                                                                  a1 |a2 | · · · |am
+case. More specifically, If m ≥ 4 and p is a seaweed of type                         , then there do not exist ho-
+                                                                          n
+mogeneous polynomials f1 , f2 ∈ Z[x1 , ..., xm ], of arbitrary degree, such that the index of p is given by
+gcd(f1 (a1 , ..., am ), f2 (a1 , ..., am )).
+
+
+                                                        5
+                                                       a1 |a2 |...|am
+Lemma 8 (Winding-down). Given a meander M of type                      , create a meander M ′
+                                                        b1 |b2 |...|bt
+by exactly one of the following moves. For all moves except the Component Elimination
+move, M and M ′ have the same index.
+                                                                 b1 |b2 |...|bt
+     1. Vertical Flip (Fv ): If a1 < b1 , then M ′ has type                     .
+                                                                a1 |a2 |...|am
+                                                                                            a2 |a3 |...|am
+     2. Component Elimination (C(c)): If a1 = b1 = c, then M ′ has type                                     .
+                                                                                             b2 |b3 |...|bt
+                                                                                          b1 |a2 |a3 |...|am
+     3. Rotation Contraction (R): If b1 < a1 < 2b1 , then M ′ has type                                         .
+                                                                                        (2b1 − a1 )|b2 |...|bt
+                                                                         b1 |a2 |..|am
+     4. Block Elimination (B): If a1 = 2b1 , then M ′ has type                          .
+                                                                         b2 |b3 |...|bt
+                                                                        (a1 − 2b1 )|b1 |a2 |a3 |...|am
+     5. Pure Contraction (P ): If a1 > 2b1 , then M ′ has type                                         .
+                                                                               b2 |b3 |...|bt
+
+                                         17|3
+Example 9. In this example, the seaweed 10|4|6 is wound-down to the empty meander using
+the moves detailed in Lemma 8.
+
+
+
+                                                           R
+                                                          7→
+                             17|3                                                   10|3
+                            10|4|6                                                  3|4|6
+
+
+ P                                   C(4)                 F                             B
+7→                                   7→                   7→v                          7→                C(3)
+                                                                                                          7→       ∅
+                  4|3|3                       3|3                      6                        3
+                   4|6                         6                      3|3                       3                  ∅
+
+                                                                         17|3
+                          Figure 3: Winding down the meander
+                                                                        10|4|6
+
+In what follows, it is helpful to add a sixth index preserving transformation, Fh , called a
+                                  am |...|a2 |a1
+horizontal flip which takes M to                  .
+                                   bm |...|b2 |b1
+
+3       The index of a partition
+Let P(n) be the set of integer partitions of a positive integer n and let λ, µ ∈ P(n) with
+λ = (λ1 , λ2 , . . . , λm ) and µ = (µ1 , µ2 , . . . , µt ). These compositions can be used to define the
+
+                                                    6
+seaweed
+                                                           λ1 |λ2 | . . . |λm
+                                            p(λ, µ) =                         .
+                                                           µ1 |µ2 | . . . |µt
+We can then define the index of the pair (λ, µ) to be the index of p(λ, µ), and we write
+indµ (λ). Given λ as above, there are two choices for µ naturally associated with λ, namely,
+w(λ) and its conjugate 1w(λ) . These yield, respectively, two partition statistics on λ defined
+as follows:
+
+                                                                                                            
+                                  λ1 | . . . |λm                                              λ1 | . . . |λm
+          indw(λ) (λ) = ind                            and ind1w(λ) (λ) = ind                                      .   (1)
+                                     w(λ)                                                      1| . . . |1
+      In the first seaweed, the bottom composition is defined by the trivial partition, yielding
+a maximal parabolic seaweed. In the second case, the bottom composition consists of w(λ)
+1′ s.
+Example 10. Let λ = (3, 2, 1) in (1). An application of Theorem 3 now yields
+                                                                      
+                         3|2|1                                  3|2|1
+        ind6 (λ) = ind           = 0 and ind16 (λ) = ind                   = 3.
+                           6                                 1|1|1|1|1|1
+
+3.1    All 1’s
+In this section we investigate, for fixed i and varying n, the sequence of values defined by
+the number of partitions λ ∈ P(n) such that ind1w(λ) (λ) = n − i. We find that for each i,
+if cin = |{λ ∈ P(n)|ind1w(λ) (λ) = n − i}|, then {cin }∞
+                                                       n=i is eventually constant, converging to
+a well-known classical value c (see Theorem 12). The following Table 1, illustrates cin for
+                                i
+
+small values of n and i.
+
+                          n\i         0    1       2   3    4      5      6       7   8       9
+                           1          1    0       0   0     0     0       0      0   0       0
+                           2          1    1       0   0     0     0       0      0   0       0
+                           3          0    2       1   0     0     0       0      0   0       0
+                           4          0    2       2   1     0     0       0      0   0       0
+                           5          0    0       4   2     1     0       0      0   0       0
+                           6          0    0       3   5     2     1       0      0   0       0
+                           7          0    0       0   7     5     2       1      0   0       0
+                           8          0    0       0   5     9     5       2      1   0       0
+                           9          0    0       0   0    12     10      5      2   1       0
+                          10          0    0       0   0     7     17     10      5   2       1
+
+                      Table 1: Number of λ ∈ P(n) with ind1w(λ) (λ) = i.
+
+   By coloring partitions, we can better understand the ci ’s. We will use two colors (red
+and blue), to color the parts of a given partition. When enumerating colored partitions, we
+
+                                                            7
+will assume that two partitions which are identical, save for their coloring, will be considered
+different partitions. So, for example the partition of the integer 2 given by (1, 1) is different
+from the partition of the integer 2 given by (1, 1). We also tacitly assume that in a given
+colored partition all blue parts of a given size precede all red parts of the same size. See
+Example 9.
+
+Remark: In the classical literature such (two)-colored partitions are called partitions into
+parts of two kinds. Partitions into two kinds can be found in Guptas’ ([18],1958) and have
+recently been connected to other objects as diverse as quandles [5, 6].
+
+Example 11. The (two)-colored partitions of 2 are: (2), (2), (1,1), (1,1), and (1,1).
+
+The generating function for the number of (two)-colored partitions of n is well-known and
+is equal to
+                                           Y      1
+                                                    m )2
+                                                         .
+                                          m≥1
+                                              (1 − x
+
+   The following theorem connects the current exposition to classical partition theory.
+
+Theorem 12.                       X                 Y       1
+                                        ci xi−1 =                  .
+                                  i≥1               m≥1
+                                                        (1 − xm )2
+
+Proof. The case i = 1 is clear since, by Theorem 4, the only λ ∈ P(n) with ind1w(λ) (λ) = n−1
+is λ = 1n . We show that for i > 1 and n ≥ 3i−3, there is a bijective correspondence between
+M(i, n) = {λ ∈ P(n) : ind1w(λ) (λ) = n − i} and P 2 (i − 1) = {colored partitions of i − 1}.
+We do this in two steps.
+    First, let M(i − 1) be the set of partitions µ = (µ1 , . . . , µm ) such that µm > 1 and
+the meander corresponding to p(µ, 1w(µ) ) has i − 1 arcs. Consider the map ϕ which takes
+λ = (λ1 , . . . , λm ) ∈ P 2 (i − 1) to the partition ϕ(λ) = (µ1 , . . . , µm ) defined by
+                                             (
+                                               2λi + 1, λi is blue;
+                                        µi =
+                                               2λi ,     λi is red.
+By construction, ϕ(λ) ∈ M(i − 1). Furthermore, ϕ is invertible so ϕ is a bijection between
+P 2 (i − 1) and M(i − 1). Via this correspondence, it is easy to see that the largest partition
+of M(i − 1) has weight 3i − 3.
+     By Theorem 4, ind1w(λ) (λ) corresponds to n minus the number of arcs in the meander
+minus 1. Thus, M(i, n) consists of partitions λ ∈ P(n) such that the meander corresponding
+to p(λ, 1w(λ)) has exactly i − 1 arcs. Therefore, if n ≥ 3i − 3, then elements of λ ∈ M(i, n)
+can be mapped bijectively to elements of M(i − 1) by the map ψ which removes all parts
+equal to 1. The required bijection is given by ψ ◦ ϕ.
+
+
+
+
+                                                    8
+3.2    The maximal parabolic case
+As above, let λ = (λ1 , . . . , λm ) be an element of P(n). In this section, we consider the seaweed
+defined by the pair of compositions (λ, w(λ)). In contrast to the previous section, here we
+investigate the number of partitions λ such that indw(λ) (λ) = 0. We naturally call such
+partitions, Frobenius partitions. The main theorem of this section, Theorem 15, remarkably
+establishes that if λi ≤ 7, for i = 1, . . . , m, then the number of Frobenius partitions is a
+periodic function of n.
+    We begin with two Lemmas which will be helpful in the proof of Theorem 15.
+
+Lemma 13. Let g = aP1 |...|a
+                           m
+                               m
+                                  be a seaweed algebra. If there exists i < j − 1 such that
+                           i=1 ai
+Pi         Pm
+  l=1 al =  l=j al , then g is not Frobenius.
+
+Proof. Applying the winding moves (F ) followed by i applications of (P ) to the meander
+corresponding to g results       in the meander corresponding to the seaweed algebra of type
+   b1 |ai |...|a1              Pj−1
+ai+1 |...|aj |...|am
+                     where b1 = l=i+1 al > 0; but this meander consists of at least two components,
+                                                        |...|a1
+                           b1
+one corresponding to ai+1 |...|aj−1
+                                    , and the other aaji|...|am
+                                                                . Thus, by Theorem 4, ind(g) > 0.
+
+Lemma 14. Let g = aP1 |...|a
+                         m
+                             m
+                                be a seaweed algebra. If there exists more than two odd ai ’s,
+                         i=1 ai
+then g is not Frobenius.
+
+Proof. Each odd ai contributes a vertex of degree 1 to the meander corresponding to g.
+Recall that each open path consists of exactly two vertices of degree 1 and no closed paths
+contains a vertex of degree 1. So, if there are more than two odd ai ’s, then the corresponding
+meander must contain more than one open path and thus, by Theorem 4, ind(g) > 0.
+    Let P(n, d) be the set of Frobenius partitions λ = (λ1 , . . . , λm ) ∈ P(n) such that λi ≤ d
+for 1 ≤ i ≤ m.
+
+Theorem 15. If d ∈ {1, 2, 3, 4}, then the values of |P(n, d)| are eventually periodic. More
+precisely,
+
+   • If n ≥ 3, |P(n, 1)| = 0
+
+   • If n ≥ 5,                                      (
+                                                     1,    n odd
+                                        |P(n, 2)| =
+                                                     0,    n even
+
+   • If n ≥ 13,                                     (
+                                                     2,    n odd
+                                        |P(n, 3)| =
+                                                     0,    n even
+
+
+
+
+                                                  9
+   • If n ≥ 17,                                
+                                               
+                                                4,    n ≡ 1(mod 4)
+                                               
+                                               2,     n ≡ 2(mod 4)
+                                   |P(n, 4)| =
+                                               
+                                               
+                                                3,    n ≡ 3(mod 4)
+                                                 0,    n ≡ 0(mod 4)
+                                               
+
+Proof. The proof heuristic is described as follows. We consider the possible partitions for
+each d ≤ 4 – except for those cases considered in Lemma 13 and Lemma 14 – in reverse
+lexicographic ordering and determine which partitions are Frobenius.
+    d = 1: ind( 1|...|1
+                  n
+                        ) = ⌊ n2 ⌋ > 0 for n ≥ 3. Thus, for n ≥ 3 we have |P(n, 1)| = 0.
+    d = 2, n ≥ 5: Using the results determined for the case d = 1, we consider only partitions
+with λ1 = 2. After applying Lemma 13 and Lemma 14, the only partitions remaining are
+those of the form (11 2f2 ), which are Frobenius by Theorem 10 of [11]. Thus, there is exactly
+one such Frobenius partition if and only if the weight is odd.
+    d = 3, n ≥ 13: As before, using the results for the cases d = 1 and d = 2, we can restrict
+our attention to partitions with λ1 = 3. After applying Lemma 13 and Lemma 14, the
+only partitions remaining are those of the form (2f2 31 ), which are Frobenius, once again, by
+Theorem 10 of [11]. Thus, as in the case d = 2, there is exactly one such Frobenius partition
+if and only if the weight is odd.
+    d = 4, n ≥ 17: Finally, using the results for d = 1, 2, 3, we consider only partitions with
+λ1 = 4. After applying Lemma 13 and Lemma 14, we are left with seven cases to consider.
+  1. (31 4f4 ): Partitions of this form are Frobenius by Theorem 10 of [11].
+  2. (32 4f4 ): Applying the sequence of moves (Fv ), (P ), (Fh ), (R), (R), (B), (Fv ), (P ), (Fh) to
+     the corresponding meander results in the meander for a partition of the form (11 f f4 ),
+     which is found to be Frobenius in case 5 below.
+  3. (21 4f4 ): Applying the sequence of moves (Fh ), (Fv ), (P ), (Fv ), (Fh ), (B) inductively to
+     the corresponding meander results in the meander for the seaweed algebra of type 22 ,
+     which has index 1.
+  4. (21 31 4f4 ): Applying the sequence of moves (Fv ), (P ), (Fh), (B), (Fv ), (R), (B), (Fh ) to
+     the corresponding meander results in the meander for a partition of the form (11 4f4 ),
+     which is found to be Frobenius in case 5 below.
+  5. (11 4f4 ): Partitions of this form are Frobenius by Theorem 10 of [11].
+  6. (11 2f2 4f4 ), f2 ≥ 1: Applying the sequence of moves (Fv ), (P ), (Fh ), (P ) to the corre-
+                                                                2|1|n−8
+     sponding meander results in a seaweed algebra of type 2|...|2|4|...|4 , which splits into at
+                                     1|n−8
+     least two components, 22 and 2|...|2|4|...|4 , and is therefore not Frobenius by Theorem 4.
+
+  7. (12 4f4 ): Applying the sequence of moves (Fh )(Fv )(P )(P )(Fv )(Fh )(P )(B)(Fh ) to the
+     corresponding meander results in the meander for a partition of the form (11 4f4 ),
+     which was found to be Frobenius in case 5 above.
+
+                                                 10
+Thus, there are two Frobenius partitions with weight congruent to 1(mod 4); two with weight
+congruent to 2(mod 4); and one with weight congruent to 3(mod 4).
+Remark: Similar methods to those used in the proof of Theorem 15 can be used to establish
+periodic behavior for d ∈ {5, 6, 7}. In the case of d = 5, the period is of length 4 – with
+values 7,3,5,3 – while in the cases of d ∈ {6, 7}, the period jumps to 14. See Example 16.
+Example 16. The sequence of values of |P(n, d)| for d ∈ {5, 6, 7}, along with the value of
+n at which |P(n, d)| becomes periodic.
+                                      d = 5, n ≥ 21 : 7, 3, 5, 3
+                        d = 6, n ≥ 37 : 14, 5, 9, 3, 11, 5, 11, 3, 12, 5, 8, 3
+                       d = 7, n ≥ 41 : 19, 9, 18, 7, 19, 9, 17, 7, 20, 9, 17, 7
+Remark: At d = 8 the periodicity stops, which can be seen by considering |P(n, 8)| for
+n ≡ 1(mod 8) where for n = 8m + 1 we have that indw(λ) (11 42(m−k) 8k ) = 0.
+
+
+
+4     Conclusion
+Using the index theory of seaweed algebras we advance the notion of the index of a partition
+pair, by simply defining the index of the latter to be the index of the former. This rather
+pedestrian definition allows us to describe various statistics on integer partitions. We consider
+the two extremal cases defined by (λ, 1w(λ) ) and (λ, w(λ)). But what about other λ-based
+choices for the second composition? For example one could pair a partition λ = (λ1 , . . . , λm )
+with its reverse Rev(λ) = (λm , . . . , λ1 ). It follows from a result of [7] that
+                         |{λ ∈ P(n) : indRev(λ) (λ) = n − 1}| = d(n).
+Alternatively, a partition can be paired with its conjugate. In this case, via the same result
+of [7], we find that |{λ ∈ P(n) : indλC (λ) = n − 1}| is equal to twice the number of
+self-conjugate partitions of n.
+    We might also consider incorporating weighted sums, such as those that appear in Euler’s
+Pentagonal Number Theorem and other Legendre type theorems [3]. In such results, parti-
+tions λ contribute a term of the form (−1)l(λ) q w(λ) to the weighted sum. One could instead
+insist that each partition contributes a term of the form (−1)indw(λ) (λ) q w(λ) . For example, by
+restricting to partitions with only odd parts (denoted P(n, Sodd )) and considering the sets
+en = |{λ ∈ P(n, Sodd ) : indw(λ) (λ) is even}| on = |{λ ∈ P(n, Sodd ) : indw(λ) (λ) is odd}|,
+numerical data suggests the following interesting conjecture.
+Conjecture 17.
+                           X                       Y           1
+                                 |en − on |q n =                          .                   (2)
+                           n≥0
+                                                         1 + (−1)k q 2k−1
+                                                   k≥1
+
+
+                                                    11
+The sequence of coefficients of the product in (2) can be found on the Online Encyclopedia
+of Integer Sequences (“OEIS”) as A300574, where this sequence is further conjectured to be
+nonnegative. If true, Conjecture 17 would not only establish that the sequence A300574 is
+nonnegative but (2) would also provide a combinatorial interpretation.
+
+
+References
+ [1] G. E. Andrews. The theory of partitions. Number 2. Cambridge university press, 1998.
+
+ [2] G. E. Andrews and F. G. Garvan. Dysons crank of a partition. Bulletin of the American
+     Mathematical Society, 18(2):167–171, 1988.
+
+ [3] G. E. Andrews and A. J. Yee. Legendre theorems for subclasses of overpartitions.
+     Journal of Combinatorial Theory, Series A, 144:16–36, 2016.
+
+ [4] A. Atkin and P. Swinnerton-Dyer. Some properties of partitions. Proceedings of the
+     London Mathematical Society, 3(1):84–106, 1954.
+
+ [5] E. Clark, M. Elhamdadi, X.-d. Hou, M. Saito, and T. Yeatman. Connected quandles
+     associated with pointed abelian groups. Pacific Journal of Mathematics, 264(1):31–60,
+     2013.
+
+ [6] W. E. Clark and X.-d. Hou. Galkin quandles, pointed abelian groups, and sequence
+     a000712. The Electronic Journal of Combinatorics, 20(1):P45, 2013.
+
+ [7] V. Coll, A. Dougherty, M. Hyatt, A. W. Mayers, and N. W. Mayers. On compositions
+     associated to seaweed subalgebras of sl (n). arXiv preprint arXiv:1808.01008, 2018.
+
+ [8] V. Coll, A. Dougherty, M. Hyatt, and N. Mayers. Meander Graphs and Frobenius
+     Seaweed Lie Algebras III. Journal of Generalized Lie Theory and Applications, 11(2),
+     2017.
+
+ [9] V. Coll, A. Giaquinto, C. Magnant, et al. Meanders and Frobenius Seaweed Lie Alge-
+     bras. Journal of Generalized Lie Theory and Applications, 5, 2011.
+
+[10] V. Coll, M. Hyatt, and C. Magnant. Symplectic Meanders. Comm. Algebra, pages 1–13,
+     2017.
+
+[11] V. Coll, M. Hyatt, C. Magnant, and H. Wang. Meander Graphs and Frobenius Seaweed
+     Lie Algebras II. Journal of Generalized Lie Theory and Applications, 9(1), 2015.
+
+[12] V. Coll, C. Magnant, and H. Wang. The Signature of a Meander. arXiv:1206.2705,
+     2012.
+
+[13] V. Dergachev and A. Kirillov. Index of Lie Algebras of Seaweed Type. J. Lie Theory,
+     10(2):331–343, 2000.
+
+                                           12
+[14] J. Dixmier. Enveloping algebras, volume 14. Newnes, 1977.
+
+[15] M. Duflo and R. Yu. On Compositions Associated to Frobenius Parabolic and Seaweed
+     Subalgebras of sln (k). J. Lie Theory, 25:1191–1213, 2015.
+
+[16] M. Gerstenhaber and A. Giaquinto. Boundary Solutions of the Classical Yang–Baxter
+     Equation. Letters in Mathematical Physics, 40(4):337–353, 1997.
+
+[17] M. Gerstenhaber and A. Giaquinto. Graphs, Frobenius Functionals, and the Classical
+     Yang-Baxter Equation. arXiv:0808.2423, 2008.
+
+[18] H. Gupta. Tables of partitions, volume 4. Published for the Royal Society at the
+     University Press, 1958.
+
+[19] A. Joseph. On Semi-invariants and Index for Biparabolic (Seaweed) Algebras, I. J.
+     Algebra, 305(1):487–515, 2006.
+
+[20] A. Karnauhova and S. Liebscher. Connected Components of Meanders: I. Bi-rainbow
+     Meanders. arXiv:1504.03099, 2015.
+
+[21] A. I. Ooms. On Lie Algebras having a Primitive Universal Enveloping Algebra. J.
+     Algebra, 32(3):488–500, 1974.
+
+[22] D. Panyushev. Inductive Formulas for the Index of Seaweed Lie Algebras. Moscow
+     Mathematical Journal, 1(2):221–241, 2001.
+
+[23] S. Ramanujan. Some properties of p (n), the number of partitions of n. In Proc.
+     Cambridge Philos. Soc, volume 19, pages 207–210, 1919.
+
+
+
+
+                                          13
+

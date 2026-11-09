@@ -1,0 +1,2 @@
+import json,pathlib
+O=pathlib.Path(__file__).resolve().parent;p=O/'failures.json';d=json.loads(p.read_text());d['deviations'].append('Initial bind.py displayed intake queue metadata including titles after binding the nine intake controls but before full original/copy and all-chunk checks. No literal statement review, source consultation or novelty disposition was performed until prepare.py completed those checks. This metadata timing limitation is preserved, not retroactively erased.');p.write_text(json.dumps(d,indent=2)+'\n')

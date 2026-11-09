@@ -1,0 +1,7 @@
+# Root r723 reconciliation
+
+Reconciled Sol r720: fifty disjoint literal record reviews; zero proposals or credit. Cumulative 8,983 record reviews. Reported classifications: 15 complete, 16 definition-dependent, 9 scope-ambiguous, 10 incomplete. No replacements; incomplete statements require restoration. Worker baseline-relative totals are superseded by root reconciliation including r718.
+
+379396 has a reported exact public-proof bridge from Guo–Jouhet–Zeng v4 Conjecture 5.1 to Cao–Pan Conjecture 1.2 and Section 3. Relevant proof passages were read; cited q-divisibility dependencies and journal bodies remain unread. The initial v1 lacked the question; v4 restores source-version alignment. For 378414, period counts do not supply the flag-intersection vector, and the thin-complex successor lacks a product-polytope bridge. For 380408, finite computations through n=12 do not supply an all-n construction. No whole-body or full-dependency clearance, no registry clearance, and no new investment. Root checks files, corpus identity and reservations only; no mathematical replay. Source limits and recorded deviations persist.
+
+Counts 9 additional / 39 total / next 40 unchanged. Sol r722 continues; fresh Sol r724 receives queue-r724.json and reserved-ids-r724.json. Claude r628 remains rate-limit held with its exact reservation untouched. Three disjoint reserved sets; no focused hypothesis. All prior adjudications and access/privacy stops persist. Routing 10,000 metadata rows is carried byte-identically and uncredited. No user input needed.

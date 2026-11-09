@@ -1,0 +1,1 @@
+No qualifying surviving new candidate. Full ordinary339691 proof is in ORDINARY-339691.md, excluded by the complete2024 prior-to-target bridge.339276 is a source-level sign correction.339333/339334 remain incomplete. No acceptance or formal dispatch.

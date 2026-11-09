@@ -1,0 +1,7 @@
+# Root r517 reconciliation
+
+Reconcile r514: fifty disjoint literal reviews, forty-seven HOLDs, two wording-only exclusions and one selected-primary public-theorem exclusion. Zero proposals/credit. Latest coverage is 3,983 reported literal reviews, not complete technical corpus coverage. Child used its assigned older 3,883 baseline; cumulative root reconciliation supersedes its prospective total.
+
+358439 reported subsumed by arXiv2305.10828v3 Theorem1 with maximum modulus, strengthened by 2310.07926v6; selected assembly proof and successor passages only, no full dependency audit. 357943 omits minimum-arc hypothesis; 358938 conflates balance and counting conventions. These repairs earn no discovery credit. 359377 positive-edge extremal question remains held. Preserve failed bs4 extraction, repaired truncated statement displays and pre-binding administrative/provenance inspection deviation. Six HTML bodies across four targets were read selectively; no whole-body or registry clearance.
+
+Carry verified 6,000-row r515 routing pool unchanged as metadata only. Claude r504 rate-limited/unreviewed reservation remains. Sol r516 continues; new Sol r518 receives next disjoint fifty. Existing adjudications/counts unchanged at 9 additional /39 total /next40. Root performs administrative/hash/corpus reconciliation only; no upstream verifier or mathematical checker execution. Integrity is not mathematics/novelty acceptance.

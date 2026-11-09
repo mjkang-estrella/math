@@ -1,0 +1,1 @@
+for k in 5 7 9 11 13; do for n in 20 30; do python3 scripts/unicyclic_local.py $k $n 3000 $k$n 2 | python3 -c "import json,sys;d=json.load(sys.stdin);print(d['k'],d['n'],round(d['best_signed_margin'],6))"; done; done

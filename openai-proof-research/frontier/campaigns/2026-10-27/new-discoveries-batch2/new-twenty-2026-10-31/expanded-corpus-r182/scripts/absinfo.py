@@ -1,0 +1,16 @@
+import re,sys,html,pathlib
+for p in sys.argv[1:]:
+    t=pathlib.Path(p).read_text(errors='replace')
+    title=re.search(r'<meta name="citation_title" content="([^"]*)"',t)
+    auth=re.findall(r'<meta name="citation_author" content="([^"]*)"',t)
+    abst=re.search(r'<blockquote class="abstract[^"]*">(.*?)</blockquote>',t,re.S)
+    vers=re.findall(r'<strong>\[(v\d+)\]</strong>\s*([^<]*)<',t)
+    jref=re.search(r'<td class="tablecell jref">(.*?)</td>',t,re.S)
+    com=re.search(r'<td class="tablecell comments[^"]*">(.*?)</td>',t,re.S)
+    clean=lambda s: re.sub(r'\s+',' ',html.unescape(re.sub(r'<[^>]+>','',s))).strip()
+    print('=====',pathlib.Path(p).name, '|', html.unescape(title.group(1)) if title else None)
+    print('AUTHORS:', '; '.join(auth))
+    print('VERSIONS:', [(v,d.strip()[:40]) for v,d in vers])
+    if jref: print('JREF:',clean(jref.group(1)))
+    if com: print('COMMENTS:',clean(com.group(1)))
+    if abst: print('ABSTRACT:',clean(abst.group(1))[:1500])

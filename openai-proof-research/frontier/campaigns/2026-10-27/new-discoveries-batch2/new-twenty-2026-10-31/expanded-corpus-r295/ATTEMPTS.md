@@ -1,0 +1,45 @@
+# Ordinary mechanisms and exact stopping points
+
+Zero credit. No numerical, solver, enumeration or Lean searches were run. All computations below are ordinary symbolic deductions. None of the incomplete routes is an implementation task.
+
+## 364196 — suited Wordle
+
+Endpoint: for every n, suit count s and round r, under the uniform law on n! s^n secrets, the actual CircularShift strategy has success probability at least every feedback-adapted strategy. Randomized strategies reduce to deterministic ones by fixing coins. Source2408.00903v1 Conjecture4.2, v2 Conjecture4.3 and v3 Conjecture4.5 retain the assertion; v2/v3 additionally discuss unequal rank-specific color counts. Do not enlarge the literal fixed-s target or silently equate the old and new color-update rules. The source v3 Lemma4.4 proves the finish count 1+exc(sigma)+sum colors, and Theorem4.9 gives the generating function. Definitions4.1/4.3 and Figure6 text were read; old versions were read only in targeted excerpts. Their full proof and diagram comparison remains a gate.
+
+First attempt: condition on the first feedback and induct on unsolved ranks, applying ordinary Wordle optimality. Failed: a wrong card can be in the correct rank but wrong suit; the posterior has rank/suit exclusions and is not uniform on a smaller full suited-permutation space. The ordinary theorem cannot be applied to that posterior. Retaining correct cards does not prove all optimum strategies have the assumed form.
+
+Second attempt: adapt the actual September2026 successor2609.01874 Section5 history-polynomial argument. Encode colored card (rank a,color c) as z= a*zeta^c over C, where zeta is a primitive s-th root. Distinct cards have distinct codes. Let X be the n!s^n points with one card per rank. A history U of d rounds has polynomial
+ P_U(x)=product over rounds j and positions i outside U_j of (x_i - guessed_card_code(j,i)).
+It has degree <=d in each variable and is nonzero at a representative producing U. If it is nonzero at a representative of U prime and the first differing round is j, then U prime_j is strictly contained in U_j: the guesses agree up to that round, and any new correct position outside U_j would zero a factor. Lexicographic order on feedback sizes makes the evaluation matrix triangular with nonzero diagonal. Thus the number of histories, hence secrets solved by d+1, is <=dim V_d(X). This part works for colored cards, including arbitrary-card guesses, without assuming a consistent strategy.
+
+To finish one needs dim V_d(X) <= sum_{k<=d} W_s(n,k). Bagno-Biagioli math/0503238 Theorem4.3 gives a colored-descent basis of the HOMOGENEOUS coinvariant quotient. Its Equation12 straightens by dominance; Theorem11.2 specializes to
+ sum_g t^fdes(g) = (1-t)(1-t^s)^n sum_{j>=0}(j+1)^n t^j,
+which agrees with the source Wordle numerator. It does not by itself identify the coordinatewise-degree filtration of the INHOMOGENEOUS orbit X, where e_j(x_1^s,...,x_n^s) is a nonzero constant. It is not legitimate simply to set these constants to zero on X.
+
+Precise missing lemma: restrictions to X of monomials of maximum exponent <=d are spanned by the colored-descent monomials with maximum exponent/fdes <=d. A proof must handle remainders divisible by the top invariant (x_1...x_n)^s, preserve the maximum-exponent bound after evaluating every invariant, and show termination under the combined degree/dominance order. Equation12 in the paper is formulated after quotienting by that top invariant. A deformation argument is plausible, but it was not completed or independently checked here. No full ordinary endpoint asserted. No novelty/significance exclusion merely because the route uses a familiar basis: a COMPLETE filtered bridge would be needed to classify it as routine. Both the 2007 journal comparison and full successor/citing search remain open. No Pi plan is activated.
+
+## 329383 — random-walk probability converse
+
+Definitions actually read: p ranks the partial sums 0,x1,x1+x2,...; it is undefined on ties. The source works with continuous laws. D_pi = L(pi) R_{>0}^{n-1}, with L the integer unimodular adjacent-rank interval matrix. Source Lemma2.3 characterizes a SINGLE coordinate-permutation equivalence by row/column permutation of L; Theorem2.1 gives valid flips. The DMTCS2015 version retains Conjecture6.1. Missing proofs in the extended abstracts are acknowledged, not silently supplied.
+
+First mechanism: polarization with localized continuous mixtures. Put m=n-1. At a generic vector a=(a1,...,am) avoiding all partial-sum equality hyperplanes of all coordinate permutations, take disjoint tiny intervals around its coordinates so every permuted box has a constant pattern. Give these interval laws independent mixture weights t1,...,tm. The pattern probability is a homogeneous degree-m polynomial in the weights. Equality for every continuous mixture makes every coefficient equal (normalize the positive weights; homogeneity removes normalization). The coefficient of t1...tm counts exactly the coordinate permutations sending a into D_pi, respectively D_tau. Thus universal i.i.d. equality implies
+ sum_rho 1_{D_pi}(rho*a) = sum_rho 1_{D_tau}(rho*a)
+throughout every generic chamber, hence almost everywhere. Conversely this identity integrates against every continuous i.i.d. product law to give the desired probability equality. This is a substantive finite geometric characterization, but only a helper.
+
+Failed deduction: equal sums of orbit indicators do not generally imply that one orbit member is the other cone. Coordinate-permutation unions overlap, so neither unique multiplicity nor disjointness is available. An a-dependent matching of orbit points is not one fixed rho valid for all a. The exact missing rigidity lemma is: for these particular Hamiltonian-path unimodular cones, equality of symmetrized indicator functions forces D_tau=rho D_pi for one rho. Lemma2.3 applies after this equality, not before it. No cone rigidity proof here.
+
+Second mechanism: separate facet jumps. On a generic point of a single arrangement wall sum_{i in S}x_i=0, the jump of the symmetrized indicator records how many permuted cones meet that wall with each orientation. Try to recover the signed interval-edge diagram from all such jumps, then use the source row/column criterion. Failed: different chambers on the wall can have cancellations among incident cones; the aggregate multiplicities do not presently determine how the facets belong to one common cone. Matching one facet or the multiset of subset sizes is weaker than a common row/column permutation. Needed: a reconstruction theorem recovering the signed interval matrix from its chamber-dependent symmetrized wall jumps. No finite certificate or global reconstruction theorem has been proved. Atomic ties are a source-domain issue, not an acceptable discovery.
+
+## 367412 — complete literal counterexample, excluded
+
+Read2503.05218 Section2 Theorem2.1/Conjecture2.1 and the actual predecessor0910.1237 definitions, Lemma4.6 proof and Section5. Original Conjecture5.1 requires gamma<=alpha,beta; later source and MathDB omit it. The predecessor already derives the minimum of all three cyclic square-root formulas in Theorem5.3 proof, so the omission is mathematically decisive.
+
+Here is a rational, genuinely finite object, without any search. Use three vertex parts of common size n=360. Split A into sizes160,200 (weights4/9,5/9); B into216,144 (weights3/5,2/5); C into90,135,135 (weights1/4,3/8,3/8). Put all AB edges except A2-B1. Put AC edges exactly on A1-C1 and A2-C. Put BC edges exactly on B1-C and B2-C3. This is the source printed H7 blown up, with its parts named to fit the literal density convention.
+
+Then d_AB=1-(5/9)(3/5)=2/3; d_AC=(4/9)(1/4)+5/9=2/3; d_BC=3/5+(2/5)(3/8)=3/4. Every triangle lies either in A1-B1-C1 or in A2-B2-C3, so t=(4/9)(3/5)(1/4)+(5/9)(2/5)(3/8)=1/15+1/12=3/20. The three defining R inequalities are 43/36>1,7/6>1,7/6>1. Delta=-5/48<0, so the triple lies in R2. The asserted value is 2sqrt((2/3)(2/3)(1/4))+2(3/4)-2=1/6. Since3/20<1/6, this finite graph refutes the unordered literal claim.
+
+This earns ZERO: it is exactly a domain correction of the primary ordered claim, realized by the printed source construction. It does not solve the ordered BJT conjecture. The journal request returned403 and was not retried or routed around; arXiv predecessor has two versions listed (latest v2), only latest body read. Journal/correction coverage is incomplete. There is no qualified significant endpoint for a dormant Pi certificate and no CANDIDATE.md.
+
+## Additional immediate domain issue336023
+
+For epsilon=1, any singleton is affine-almost-invariant under every a: each set difference has size<=1. For any proposed c_epsilon>0 choose a prime large enough for k=1<=c_epsilon log log p. The claimed lower bound exp(exp(c_epsilon))>1 fails for every A of size1. This is solely the missing small-epsilon premise; no claimed result on the intended0<epsilon<1 problem. No source-body clearance is inferred from the references field saying refuted.

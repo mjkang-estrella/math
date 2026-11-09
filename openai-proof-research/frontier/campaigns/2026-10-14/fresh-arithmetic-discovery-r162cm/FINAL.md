@@ -1,0 +1,13 @@
+# Arithmetic discovery r162cm — author handoff
+
+**PREFREEZE / no nominee.** No additional full theorem or diagnostic was selected or frozen. No mathematical correctness/contribution gate, acceptance or campaign increment is assigned. Parent alone handles those decisions; older scopes and dispositions remain unchanged.
+
+Both complete Source174 operative manuscripts were read and authenticated. Their universal thin-tree existence, deterministic binary-input construction, stronger metric-cone geometry, hierarchy/extraction, faithful-frame sparsification, signing and fractional thin-and-cheap rounding are credited as paid. The actual primary comparisons also pay prescribed-marginal determinantal laws before selection, strongly Rayleigh support selection, laminar rounding and the Lagrangian cost conversion at their stated hypotheses.
+
+The sustained exploration concerned exact prescribed marginals for a law supported entirely on uniformly thin trees of the same original labelled graph. This possibility remains unproved and UNFROZEN; neither it nor its negation is claimed. The retained calculations identify exact rank-slack conditions for feasible tree subtraction and the common weighted lower-output condition in the actual cost-one Lagrangian proof. A source-compatible exact complementary-base repair would also need uniform bounds on transfers across EVERY original cut. No such joint repair or rounding has been established.
+
+The triangle example rejects only an attempted support/thinness-to-feasible-subtraction inference and itself admits an exact-marginal thin law. Source two-sided discrepancy and approximate retained packing are credited; they are not silently replaced by exact complementary base partitions. Source/primary/classical consequences and unproved bridges are not nominated as findings.
+
+Private author derivation: [DERIVATION.md](private/DERIVATION.md). Exact reading, recovery, access, version and scope limits: [READING-LIMITS.md](private/READING-LIMITS.md). Both source wrappers and all36 text objects were read completely; the two compiled source PDFs were authentication-only. Primary reading comprises143 distinct pages across seven PDFs, including four full texts; transitive ancestry remains incomplete. No optional original-history traversal was used. Only the five exact completed exceptions were accessed.
+
+All task artifacts are local to this exclusive root. The detached manifest/report and read-only verifier cover artifact integrity only. No publication, upload, contact, browser UI, nested agent, git or downstream work was performed. Seal anchors and the verification outcome accompany the final handoff.

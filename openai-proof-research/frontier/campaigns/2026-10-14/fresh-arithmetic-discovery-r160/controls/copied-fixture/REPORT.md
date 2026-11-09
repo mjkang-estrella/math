@@ -1,0 +1,11 @@
+# Outside report — arithmetic discovery r160
+
+PREFREEZE/no nominee. No theorem was frozen, no author proof submitted, and no self-grade, acceptance, or count assigned. The exact exploratory scope, paid portions, full derivations, and unresolved interfaces are in packet/FINAL.md and packet/notes/00–03.
+
+The retained reduction concerns projectivity removal for rationally connected compact class-C contact manifolds with b2=1. It constructs the proper dominating family available from a projective modification; proves that an arbitrary higher-degree replacement cannot extend the source tensor by a fixed-end degree-four P3 control; calculates scalar/vector pole differences and additive thickness for degree-zero boundary chains; and develops normalized trace with its exact all-sheet jet obligation. It does not close the uniform global tensor construction. Source062's classification, standard contact marking, contact-Fano deformation rigidity, normalized twistor metric recovery, the projective subcase, and the threefold subcase remain paid inputs.
+
+All writes and computations are confined to this root. Protected canonical/primary/history/navigation bodies and named metadata are in packet/private. All fourteen canonical blobs match the immutable complete tree. The seventeen descendants plus root count distinction is disclosed. Thirteen textual blobs are completely read; the compiled PDF is authenticated only. Primary and original-history extents, false admissions, coarse omissions, partial/read limits, and access/truncation recovery are disclosed without claiming perfect isolation or literature exhaustion.
+
+MANIFEST.json is generated once over the completed packet, including its read-only explicit-anchor verifier. ANCHORS.json records detached SHA256 for packet/FINAL.md, MANIFEST.json, and this outside REPORT.md. Artifact verification and the finite calculations are not mathematical gates. The tiny copied fixture and its control observations are outside the packet, under this same unique root. No inherited packet manifest is used, and the selected packet is not changed during controls.
+
+Authorized provenance: Codex / GPT-6 Astra / high / default service tier. Parent alone adopts integration, review decisions, grades, and count.

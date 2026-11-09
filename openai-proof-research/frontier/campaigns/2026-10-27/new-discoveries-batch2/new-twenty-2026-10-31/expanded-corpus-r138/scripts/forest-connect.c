@@ -1,0 +1,11 @@
+extern int printf(const char*,...);extern int atoi(const char*);extern double exp(double);extern int fflush(void*);
+typedef unsigned long long U; U a[64],rng=138;int n;long evals;
+U randx(){rng^=rng<<13;rng^=rng>>7;rng^=rng<<17;return rng;}
+int root(int*p,int v){while(p[v]!=v)v=p[v];return v;}
+int cycle(U s){int p[64];for(int i=0;i<n;i++)p[i]=i;for(U q=s;q;q&=q-1){int v=__builtin_ctzll(q);U t=a[v]&s&(~0ULL<<(v+1));for(;t;t&=t-1){int w=__builtin_ctzll(t),x=root(p,v),y=root(p,w);if(x==y)return 1;p[x]=y;}}return 0;}
+int conn(U s);int score(){evals++;int bad=0;U full=(1ULL<<n)-1;for(int i=0;i<n;i++){int d=__builtin_popcountll(a[i]);if(d<4)bad+=(4-d)*5;if((a[i]|(1ULL<<i))!=full&&!cycle(a[i]))bad++;for(int j=0;j<i;j++){U s=(1ULL<<i)|(1ULL<<j),b=(a[i]|a[j])&~s;if((b|s)!=full&&!cycle(b))bad++;}}if(bad<=2){for(int i=0;i<n;i++)for(int j=0;j<i;j++)for(int k=0;k<j;k++)if(!conn(full&~((1ULL<<i)|(1ULL<<j)|(1ULL<<k))))bad++;}return bad;}
+int conn(U s){if(!s)return 1;U seen=s&-s,prev=0;while(seen!=prev){prev=seen;for(U q=seen;q;q&=q-1)seen|=a[__builtin_ctzll(q)]&s;}return seen==s;}
+int four(){U full=(1ULL<<n)-1;for(int i=0;i<n;i++)for(int j=0;j<i;j++)for(int k=0;k<j;k++)if(!conn(full&~((1ULL<<i)|(1ULL<<j)|(1ULL<<k))))return 0;return 1;}
+void flip(int i,int j){a[i]^=1ULL<<j;a[j]^=1ULL<<i;}
+int main(int argc,char**argv){n=atoi(argv[1]);int rounds=atoi(argv[2]),m=(7*n+2)/3-1,best=1000,hits=0,pi[2016],pj[2016],np=0;for(int i=0;i<n;i++)for(int j=0;j<i;j++){pi[np]=i;pj[np++]=j;}
+for(int run=0;run<rounds;run++){for(int i=0;i<n;i++)a[i]=0;for(int t=0;t<np;t++){int v=randx()%np,z=pi[t];pi[t]=pi[v];pi[v]=z;z=pj[t];pj[t]=pj[v];pj[v]=z;}for(int t=0;t<m;t++)flip(pi[t],pj[t]);int s=score();for(int it=0;it<20000;it++){int x=randx()%m,y=m+randx()%(np-m);flip(pi[x],pj[x]);flip(pi[y],pj[y]);int z=score();double temp=.08+1.5*(1.-(it%5000)/5000.);if(z<=s||(randx()%1000000)/1000000.<exp((s-z)/temp)){s=z;int t=pi[x];pi[x]=pi[y];pi[y]=t;t=pj[x];pj[x]=pj[y];pj[y]=t;}else{flip(pi[x],pj[x]);flip(pi[y],pj[y]);}if(s<best){best=s;printf("n %d m %d run %d iter %d best %d evals %ld\n",n,m,run,it,best,evals);fflush(0);}if(s==0){hits++;if(four()){printf("COUNTEREXAMPLE\n");for(int i=0;i<n;i++)for(int j=0;j<i;j++)if(a[i]>>j&1)printf("%d,%d ",i,j);printf("\n");return 0;}}}}printf("END n %d rounds %d evals %ld cyclic_hits %d best %d\n",n,rounds,evals,hits,best);}

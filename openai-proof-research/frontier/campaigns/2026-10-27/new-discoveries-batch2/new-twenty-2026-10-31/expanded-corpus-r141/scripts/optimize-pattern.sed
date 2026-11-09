@@ -1,0 +1,1 @@
+/if any(rank((q\[i\],q\[j\],q\[k\]))/c\    m=pat.index(2); lo=[i for i in range(3) if i!=m]; inc=pat[lo[0]]<pat[lo[1]]\n    pairs=itertools.combinations(range(pos+1,n),2) if m==0 else itertools.product(range(pos),range(pos+1,n)) if m==1 else itertools.combinations(range(pos),2)\n    if any((q[i]<q[j])==inc for i,j in pairs):continue

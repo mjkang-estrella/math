@@ -1,0 +1,16 @@
+# Source scope and provenance
+
+Exact fetch URLs, UTC times, byte hashes and sizes: source-bindings.json. HTML, not PDF. Every original was bound before extraction; derivative-bindings.json was written before textual search/reading. No PDF extraction or visual work. Sources are mutable arXiv HTML endpoints; the exact retrieved bytes, rather than a guessed historical version, are authoritative for this screening. Version identifiers below are extracted from the fetched HTML text by metadata.py.
+
+Selected reading (line numbers of retained TXT derivatives):
+
+- 2502.00134 / MathDB 366907: definitions of integer {2}-domination, algorithm description and Theorem 3.6/Conjecture 3.7, lines 1188–1320. Source already has fixed-width linear-time dynamic programming and finite values. Whole algorithm correctness proof not audited. Web result at https://mathdb.com/p/366907/the-integer-2-domination-formula-for-four-row-grids advertised V78=V68+19; search snippet only, no body fetched, HOLD. No claimed independent recurrence calculation.
+- 2604.02404 / 382481: greedy definition 1.2, current introduction, Theorem 9.3 and its complete local proof/Corollary 9.4, lines 4880–5038. Shifted self-describing run-length induction already proves full boundary identity. Lemma 2.1 and Theorem 2.3 dependency chain not fully replayed; whole body not read.
+- 2609.02334 / 405202: Conjecture 1.2, Theorem 1.3 and equality discussion, opening proof Lemma 2.1, lines 198–270 and 360–435. Stronger even-distance bound subsumes literal record via 4 floor(Delta/2)ceil(Delta/2)<=Delta^2. Complete random-walk proof and dependencies not replayed.
+- 2609.11719 / 405421: distance-even definitions, Conjecture A, Theorem B and its four conditions, lines 194–282; selected concluding/block discussion was searched, not audited. Record's factor 1/2 is absent from primary conjecture. No complete subsumption proof claimed.
+- 2609.18539 / 405498: coordinate-point reduction and monomial ideal definitions, Theorem 3.1 with complete local bounded-composition proof, lines 160–245 and 360–450. Formula directly covers all n>=2,m>=1. Lemma 2.1 membership bridge not fully replayed; later resurgence material not audited.
+- 2609.20071 / 405543: selected definitions, conclusions and open problem 1, lines 1680–1712. Public text explicitly withdraws (15,6) as a counterexample and leaves general equality open. No full tensor proofs read.
+- 1612.05818 / 334876: sign-pattern definitions/Conjecture 1/minimal-subpattern bridge, Theorem 11 and proof, selected Observations 8–10, lines 134–154 and 360–464. Theorem 11(1) is an explicit public refutation; upstream observation proofs not fully replayed.
+- 2308.05868 / 359457: stack-map/consecutive-avoidance definitions and Conjecture 4.1/Counterexample 4.2 with displayed trajectory, lines 420–490. Published length-11 witness already negates 18-step bound. No independent simulation or full dependency replay.
+
+Every other row: literal statement only, no primary body clearance. No whole-body clearance for any of these eight; no full dependency or live registry clearance anywhere. Search results about successors were not treated as proofs. No source was fetched from MathDB, ResearchGate, GitHub, AIProofWatch or other parked routes. Eight permitted arXiv HTML fetches returned HTTP 200; no access failure retried.

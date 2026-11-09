@@ -1,0 +1,8 @@
+# Dormant only — 373611
+No Lean/compiler/formal API executed. No dispatch authorized by this packet.
+
+If root scientific gates ever pass, encode a finite field F, finite-dimensional E1,E2, finite indexed presentations A and B (allowing empty indices and arbitrary submodules). Define IsPartialQTransversal using EVERY finite linear basis and an injective avoiding assignment; define presentationRank as maximum dimension of such subspaces contained in X. Define the source direct-sum rank as min over Y<=X of component ranks of projections plus finrank X-finrank Y. The theorem must assert for every X that presentationRank of the exact padded combined family equals directSumRank, and conclude equality of q-matroids/presentations with all definitions connected.
+
+Required bridges: source Hall independence proof; induced rank formula(1) for these definitions; integer/nonnegative coercions; attained finite minima; intersection formula(2) including empty families; projection kernel and quotient map rank-nullity; equality of ranks implies same independent subspaces. Prove the theorem uniformly over the finite base field, including characteristic2 and dimensions0, not through a coordinate representation.
+
+Preferred route is the nested-minimizer proof in FULLCANDIDATE.md. It uses only monotonic f, finite minima and a codimension inequality. Formal proof must supply, rather than assume, source rank-envelope bridges. Only propext, Classical.choice, Quot.sound may remain in the final transitive axiom audit. No sorry/admit/added axioms/unsafe/native_decide. Independent statement-fidelity and deep-body review, source-only fresh strict replay and root acceptance would still be needed. None is represented as completed.

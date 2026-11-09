@@ -1,0 +1,1 @@
+Read SUMMARY.md for dispositions and limitations; ATTEMPTS.md contains the three sustained mathematical routes and precise gaps. results.json has exactly 20 ID-keyed entries. All credit is zero; all qualification holds remain holds. There is no Pi handoff because no complete eligible qualified endpoint survives. Protected crown-vnumber and crim-conway work was untouched.

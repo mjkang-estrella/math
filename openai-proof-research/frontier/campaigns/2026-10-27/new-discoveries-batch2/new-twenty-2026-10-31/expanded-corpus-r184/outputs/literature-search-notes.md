@@ -1,0 +1,16 @@
+Searches were performed with the web search tool on 2026-11-05 UTC before numerical searches. Search results are leads unless the actual downloaded primary body is cited below. No search-engine snippets alone establish full-scope resolution.
+
+Queries included every reserved source arXiv identifier, paired with topic, conjecture or citing-work terms, in batches: 2011.02685 alternating gamma; 2011.12822 finite components and citing work; 1901.10238 plane trees; 2103.05417 distinguishing index; 2011.04410 sphere progressions; 2012.13164 signed vectors; 1903.07375 block counts; 1903.00419 Hecke observations; 2011.10791 cycles; 2012.03230 group coloring; 1901.01959 prism toughness; 2012.06507 grid Ramsey; 1902.01301 Gallai Ramsey; 1902.08007 abelian expansive networks; 2009.10676 almost stable Kneser; 2011.02800 eigenvalues; 2401.06029 rainbow matchings. Additional title/author queries sought 2026 resolutions and citing work.
+
+Primary leads fetched for body review:
+
+- Wagner, arXiv:1901.10238, Theorem 1.3 and Lemma 2.1: universality already proved in the source. The explicit four-run word has k+1 valid matchings.
+- Kennedy et al., arXiv:2409.18195: stronger distinguishing-index result, a prior resolution of 350045.
+- Choi et al., https://cs.du.edu/~paulhorn/pap/flex.pdf, Discrete Applied Mathematics 306 (2022), Theorem 4: every diamond-free planar graph is weighted epsilon-flexible with lists of size five. Prior resolution of 342022.
+- Gerhard and Petrich, Free bands and free *-bands, https://www.cambridge.org/core/services/aop-cambridge-core/content/view/D5EC200A0B634C26FC4617B3B4FACECE/S0017089500006480a.pdf/free_bands_and_free_bands.pdf; Brown, https://pi.math.cornell.edu/~kbrown/papers/toronto.pdf, Appendix A: finiteness of finitely generated free bands. Components of the source square-reduction graph are precisely congruence classes for XX=X. This is a classical bridge, not new credit.
+- Gessel and Zhuang, arXiv:2306.15785, a relevant later paper on two-sided statistics; not asserted to settle 348576.
+- Ding and Tang published source https://cse.hkust.edu.hk/faculty/cding/JOURNALS/amc211.pdf retains the o-polynomial questions. Xiang, Ling and Wang arXiv:1907.06235 settles Conjecture 3 of the original preprint, which concerns a different polynomial over odd fields; it does not by that label alone settle reserved Conjectures 1 and 4.
+
+Other useful primary search leads, not full-body resolution claims: https://ajc.maths.uq.edu.au/pdf/95/ajc_v95_p060.pdf (2026 toughness/prisms), https://ajc.maths.uq.edu.au/pdf/88/ajc_v88_p194.pdf (bipartite special case), https://people.math.ethz.ch/~sudakovb/rainbow-matchings-short-proofs.pdf (asymptotic rainbow bounds), https://archive.intlpress.com/site/pub/files/_fulltext/journals/joc/2022/0013/0003/JOC-2022-0013-0003-a005.pdf (published Kneser source).
+
+Limits: neither all citing work nor all arXiv 2026 postings were exhaustively enumerated. Older theses and institutional tables are not universally covered. Current arXiv landing pages and latest PDFs were fetched, but no assertion that every historic version was inspected. Download receipts retain exact URLs, dates, statuses and actual SHA256 values. None of these bounded non-findings clears worldwide novelty.

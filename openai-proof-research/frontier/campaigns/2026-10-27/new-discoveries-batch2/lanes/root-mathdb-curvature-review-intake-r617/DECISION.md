@@ -1,0 +1,7 @@
+# Root r617 intake and triage
+
+Reconciled Claude r602: fifty literal record reviews, two conditional briefs, zero discovery credit. Cumulative coverage 6,383, not the worker's obsolete 6,083 projection. Twenty-six self-contained, fourteen definition-dependent, six scope-ambiguous and four incomplete entries retain separate flags. Forty-two abstract-level assessments remain abstract-level; partial connected-case resolution is not a full retirement.
+
+338366: allocate a single focused independent source/prior review to Claude r618. Candidate claims a 20-vertex Cayley witness; likely decisive objection is the published Bai-Lu-Yau graph. Reviewer must independently bridge curvature conventions, literal hypotheses and radius-two spheres before exclusion or investment. Root performs no mathematical proof work. 338408 is parked on the worker's endpoint-correction objection, not independently certified or accepted; no nonboundary route justifies investment. Preserve all failures, including derivative-freeze lapse and temporary-file deviations.
+
+Root integrity checks exact assignments, corpus identities, originals and payload membership; no upstream scientific checkers executed. Counts unchanged: 9 additional / 39 total / next 40. Registry and novelty remain HOLD. Sol r614 and r616 are the remaining breadth reservations; r614's completion arriving during intake will be reconciled next. Fresh focused task uses focused-assignment.json. No breadth reservation assigned here. Privacy, generic headers, existing access stops remain unchanged. No input needed.

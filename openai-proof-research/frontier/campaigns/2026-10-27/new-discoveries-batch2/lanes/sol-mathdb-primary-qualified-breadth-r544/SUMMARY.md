@@ -1,0 +1,25 @@
+# r544 breadth screening: fifty literal reviews, zero proposals
+
+Read all 50 assigned full literal statements, including their quantifiers. Each disposition retains the exact UTF-8 statement, SHA256 of those bytes, canonical JSON record SHA256 (ensure_ascii=False, sort_keys=True, separators=(',', ':')), original corpus chunk and one-based line. The fifty IDs equal r543 queue/reservation exactly. This is statement-level technical screening, not complete technical corpus coverage or novelty certification.
+
+The 4,533 reconciled baseline plus this disjoint fifty is arithmetically 4,583; root must reconcile other active lanes before integrating a cumulative total. Claude r504 and Sol r542 remain reserved. No shared files, coverage, ledgers, Lean, manuscripts or credits changed. Counts remain 9 additional / 39 total / next 40.
+
+Three selected primary passages were read from independently hash-checked immutable PDF/text snapshots, reused by flat original references. No whole report, successor proof body, local complete proof or full dependency audit was completed. Three successful EMS metadata-page fetches are bound with exact URLs, UTC, byte size and hashes. No PDF was fetched, extracted or visually inspected in this lane.
+
+- **395938: EXCLUDE_PRIMARY_STATED_THEOREM.** Benzi's OWR37/2009 contribution, printed p2065, explicitly states the uniform banded spectral-projector approximation under the same fixed-bandwidth and two-fixed-interval spectral-gap assumptions. The preceding paragraph says this follows from general sparse matrix-function results. A short polynomial functional-calculus proof would reproduce a stated public theorem. This suffices to stop eligibility; it is not an independently checked proof-body/dependency replay or global-priority claim.
+- **398787: HOLD_PRIMARY_DEEP_PRIOR.** Heinig's OWR01/2014 pp57-60 separates Hamilton-supported integral generation (D.3) from a rank-sized integral basis (D.4). Theorem1 is over F2; conjecture C.1 seeks the integral-basis upgrade and says proofs are being written. Integral generation does not mean the given generators contain a basis. No bounded full-scope mechanism or asymptotic counterfamily was established. Closest successor bodies and current registry remain unread/unavailable; no stronger claim made.
+- **400959: HOLD_PRIMARY_ROUTINE_ADAPTATION.** Yoshida–Zhang–Zhang's OWR20/2017 pp1245-1246 defines ultrametrics modulo constants, states Problem1 and supplies Proposition2's min/max optimization formulation. Generic active-branch enumeration suggests finite linear programming on rational input, but this alone supplies no substantive new full-scope outcome. No algorithm was implemented and no successor body cleared. Stop the route without a hypothesis brief.
+
+The remaining rows have individual technical reasons in dispositions.json. Several already describe source results, but that is only reported resolution until a primary body is read. Others require deep asymptotic, analytic, categorical or complexity results. Apparent threshold/domain/dilation defects are recorded as transcription HOLD and earn no credit. No finite parameter sweep, helper or method analogy is promoted.
+
+proposals.json is exactly []. Current proof registry is unavailable: all novelty and registry gates remain HOLD. Zero MathDB requests; no Google/GitHub/ScienceDirect/browser routes, bypasses, accounts, uploads or messages used. Parked routes stayed parked. Current r543 adjudications and the r304/r363 exclusions were bound and consulted; no retired/protected target reopened.
+
+Integrity checks independently validate the exact intake payload, all direct original/copy pairs, r540's flat original references, the r301 manifest against intake, all 20 original corpus chunks and all eight separately listed frozen inputs in place. The three fifty-ID sets are pairwise disjoint and disjoint from baseline/protected IDs. Negative controls reject same-size hash corruption, size corruption and unexpected extra files with nonzero exit. See failures.md for the initial local checker failure and corrected duplicate-self reservation logic, failed guessed pathname and metadata reuse-order deviation. Integrity PASS never means mathematical or novelty PASS.
+
+Run the independent read-only verifier from the workspace with the fixed guard:
+
+```sh
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python3 -B openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python3 -B openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-mathdb-primary-qualified-breadth-r544/verify.py
+```
+
+manifest.json covers every lane file including verifier and all scripts/payloads, excluding only itself and final-verification-receipt.json. That separate final receipt records manifest SHA256/size and the actual final verifier result. Resource limits remain AS/group RSS512MiB, CPU210s, wall230s; all helper Python ran through the fixed guard.

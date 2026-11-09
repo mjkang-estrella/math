@@ -1,0 +1,8 @@
+# Failures and limitations
+
+- Protocol ordering exception: initial administrative inspection displayed r393 DECISION.md and portions of bound historical dispositions before the lane freeze existed. Those included historical scientific summaries. No assigned corpus body/schema was read until all twenty chunks were verified and the flat freeze was written. This cannot retroactively satisfy the strict pre-scientific-content freeze ordering; report it separately from successful byte verification.
+- An overbroad administrative cat produced truncated output. It was not used as a substitute for the bounded full fifty-statement display. No recursive history copy was made.
+- Live https://aimpl.org/graphstructureapp/1/ failed TLS hostname validation at 2026-10-31T08:26:34.719839+00:00. Exact exception retained in primary/graph1.meta.json. No retry, certificate bypass or alternate protocol request was made. The later primary evidence is a separately bound pre-existing cached file, not a fresh access or current-status check.
+- No successor proof body, complete proof dependency audit, or current registry clearance obtained. No mathematical experiment or expensive sweep run. No Lean/manuscript produced. Empty solution arrays and open tags were not novelty evidence.
+- Native rg searches with no matches returned exit 1 (no matching local graph primary HTML; no exact r304 assigned-ID match). These were negative bounded text-search results, not source or live-prior clearance.
+- Prior upstream failure receipts were bound and never rewritten or executed. Guarded helper runs completed within fixed caps; no resource limits were raised. Zero MathDB requests.

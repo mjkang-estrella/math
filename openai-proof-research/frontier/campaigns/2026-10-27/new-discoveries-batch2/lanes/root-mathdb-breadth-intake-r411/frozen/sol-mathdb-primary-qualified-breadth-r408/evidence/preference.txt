@@ -1,0 +1,11497 @@
+Extending Stable and Popular Matching Algorithms from Bipartite to Arbitrary Instances
+// Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+/* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+     the marker's display to know which way to toggle. The marker draws no box. */
+  .arxiv-html-header { display: contents; }
+  html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+  /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+     icon by making its span a block). */
+  .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+  /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+     arXiv's own render as they are (the logo on the bar, the funder logos on their white
+     chips). Important: ar5iv's dark rules are unlayered, as specific as
+     :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+  :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+  .ds-site-header img { background-color: transparent !important; }
+
+  /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+     were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+     header, the paper's bar (no site navigation, the paper's controls), takes the second and
+     stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+     The controls show their names. */
+  @media (min-width: 1280px) {
+    html { scroll-padding-top: 80px; }
+    .arxiv-html-site-chrome { display: contents; }
+    .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+    .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+    .arxiv-html-site-chrome .tool-icon { display: none; }
+  }
+  /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+     readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+     bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+     over the header and the paper: it shows only while open, under the chrome, in its place in
+     the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+     inset; the theme gives it none, so it met the screen edges. */
+  @media (max-width: 1279px) {
+    .arxiv-html-site-chrome .tool-wide { display: none; }
+    .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+    .ltx_page_navbar { position: absolute; top: auto; }
+    .arxiv-html-footer { padding-inline: 1rem; }
+  }
+Skip to main content
+Report GitHub Issue
+×
+Title:
+Content selection saved. Describe the issue below:
+Description:
+Submit without GitHub
+Submit in GitHub
+Why HTML?
+Report Issue
+Back to Abstract
+Download PDF
+Contents
+Reading mode
+Colour theme
+Abstract
+1
+Introduction
+1.1
+Related Work
+1.2
+Our Contributions
+1.3
+Paper Structure
+2
+Preliminaries
+2.1
+Weakly Stable and
+γ
+\gamma
+-stable Matchings
+2.2
+Popular Matchings
+2.3
+Popular Mixed-Matchings and a Common Generalization
+2.4
+Popular Maximum Weight Matchings and Popular Critical Matchings
+3
+The Meta-Algorithm
+3.1
+Maximum Size
+γ
+\gamma
+-Stable Fractional-Matching
+The fine-tuned first step.
+3.1.1
+Maximum Size Weakly Stable Fractional-Matching
+3.2
+Maximum Size Popular Fractional-Matching
+The fine-tuned first step.
+3.3
+Popular Maximum Weight Fractional-Matching
+The fine-tuned first step.
+4
+Conclusions
+References
+License: CC BY 4.0
+arXiv:2409.16173v3 [cs.DS] 04 Oct 2025
+Extending Stable and Popular Matching Algorithms from Bipartite to Arbitrary Instances
+Gergely Csáji
+Affiliation:
+Institute of Economics, Centre for Economic and Regional Studies (ELTE KRTK KTI), Hungary
+Affiliation:
+Department of Operations Research, Eötvös Loránd University (ELTE), Hungary
+We consider stable and popular matching problems in arbitrary graphs, which are referred to as stable roommates instances.
+We extend the
+3
+/
+2
+3/2
+-approximation algorithm for the maximum size weakly stable matching problem to the roommates case, which solves a more than 20 year old open question of Irving and Manlove about the approximability of maximum size weakly stable matchings in roommates instances with ties
+[
+30
+]
+and has nice applications for the problem of matching residents to hospitals in the presence of couples.
+We also extend the algorithm that finds a maximum size popular matching in bipartite graphs in the case of strict preferences and the algorithm to find a popular matching among maximum weight matchings.
+While previous attempts to extend the idea of promoting the agents or duplicating the edges from bipartite instances to arbitrary ones failed, these results show that with the help of a simple observation, we can indeed bridge the gap and extend these algorithms.
+1
+Introduction
+Preference-based matching markets are a well-studied area in computer science, mathematics, and economics, with many practical applications. Research in this field began in 1962
+with the influential work of Gale and Shapley, who introduced the stable marriage problem and showed that a stable matching always exists and can be found in linear time
+[
+15
+]
+. This discovery led to a large body of research on matching problems and their applications. For an overview, see Manlove
+[
+29
+]
+. Today, matching theory is used in many areas, including resident allocation, university admissions, kidney exchanges, job markets, and more, making it important for various decision-making tasks
+A central question related to stable matchings is about finding a maximum size stable matching in a given instance with weak preferences (meaning ties are allowed). For bipartite instances, the problem is called
+Max-SMTI
+, which has been show to admit a 3/2-approximation algorithm by McDermid in 2009
+[
+31
+]
+. However, the question of approximability remained open for arbitrary instances ever since Irving and Manlove asked it in their seminal paper more than 20 years ago
+[
+21
+]
+. The approximablity of maximum size stable matchings in arbitrary (also called roommmates) instances was also posed as an open question at
+[
+1
+]
+. As our main result, we resolve this long-standing open question and show that the problem admits a 3/2-approximation algorithm just as in the bipartite special case. Somewhat surprisingly, this result has a nice application for the allocation of residents to hospitals in the presence of couples, which is also a central problem in the field, with applications in many country’s national resident matching programs, such as the NRMP in the US
+[
+2
+]
+.
+Apart from stability, another central notion getting more and more attention recently is popularity, which was introduced by Gardenfors
+[
+16
+]
+. Intuitively, a popular matching is one that does not lose in a head-to-head election against any other matching. The advantages of popularity are that (i) it allows larger matchings than stable ones, while still preserving a nice global form of stability and (ii) it can naturally be made compatible with maximum size or maximum weight matchings, by restricting the candidate matchings.
+Using our central observation, we extend some previous algorithms for popular matchings to roommates instances. We give an algorithm to find a maximum size popular fractional-matching and also an algorithm that finds a popular solution among the maximum weight fractional-matchings.
+1.1
+Related Work
+The stable marriage model - where the goal is to match two classes of agents in a way such that there
+are no blocking edges, i.e. pairs of agents who mutually prefer each other to their partners - was introduced by Gale and Shapley
+[
+15
+]
+. However, this work only considered complete and strict preferences.
+The problem was first extended for the case where ties and incomplete preferences are allowed by Iwama et al.
+[
+22
+]
+, who showed the NP-hardness of
+Max-SMTI
+, which is the problem of finding a maximum size weakly stable matching in such an instance, where weakly stable refers to the fact that both agents need a strict improvement for a pair to block. Since then, several papers made progress to improve the approximability of the problem, e.g. Iwama et al.
+[
+23
+,
+24
+]
+and Király
+[
+26
+]
+. Currently, the best ratio is
+3
+2
+\frac{3}{2}
+by a polynomial time algorithm of McDermid
+[
+31
+]
+, where the same ratio is attained by linear-time algorithms of Pauluch
+[
+33
+,
+34
+]
+and Király
+[
+27
+,
+28
+]
+.
+This
+3
+2
+\frac{3}{2}
+-approximation has been extended even to very general cases, including two-sided matroid constraints
+[
+10
+]
+,
+γ
+\gamma
+-stability
+[
+8
+]
+, where we are given
+γ
+v
+e
+\gamma_{v}^{e}
+numbers for each edge
+e
+e
+and vertex
+v
+v
+such that these numbers describe how much improvement
+v
+v
+needs to consider
+e
+e
+a blocking edge, and critical relaxed stability
+[
+32
+]
+, which is a generalization of
+Max-SMTI
+, where there is a set of critical agents, among whom we must match as much as possible and stability is relaxed in an appropriate way.
+As for the inapproximability of
+Max-SMTI
+, Halldórssson et al.
+[
+18
+]
+showed that it is NP-hard to approximate it within some constant factor. Yanagisawa
+[
+36
+]
+and Halldórsson et al.
+[
+19
+]
+showed that assuming the Unique Games Conjecture, there is no
+4
+3
+−
+ε
+\frac{4}{3}-\varepsilon
+-approximation for any
+ε
+>
+0
+\varepsilon>0
+. In a recent work, Dudycz et al.
+[
+13
+]
+proved that assuming the strong Unique Games Conjecture or the Small Set Expansion Hypothesis, there cannot even be a
+3
+2
+−
+ε
+\frac{3}{2}-\varepsilon
+-approximation algorithm for
+Max-SMTI
+.
+The Stable Roommates problem with ties and incomplete preferences was studied by Irving and Manlove
+[
+21
+]
+. They showed that finding super stable matchings (where even a weak improvement is enough for a pair to block) can be done in polynomial time. They posed as an open question whether the maximum size of a weakly stable matching can be approximated better than 2 or not. Of course, as deciding if a stable roommates instance with ties admits a weakly stable matching is NP-hard
+[
+21
+]
+, the question can be interpreted in the following sense. By a result of Tan
+[
+35
+]
+, we know that half-integral weakly stable matchings (also called weakly stable partitions) always exist and can be found in polynomial time, even in the case of multigraphs
+[
+7
+]
+. Therefore, the question of whether we can approximate the maximum size of a weakly stable half-matching (or a weakly stable fractional-matching) better than 2 is still a very relevant open question. We show that both these problems admit a
+3
+2
+\frac{3}{2}
+-approximation algorithm, which is best possible under the strong Unique Games Conjecture, given the inapproximabilty results for the bipartite case.
+Popular matchings have been studied by many papers recently. Intuitively, a matching is popular, if for any other matching, the number of agents who improve is at most the number of agents who get worse. It has been known since Gardenfors’ seminal paper in 1975
+[
+16
+]
+that stable matchings are popular, and hence popular matchings always exist in bipartite instances. Kavitha
+[
+25
+]
+gave algorithms to find a maximum size popular matching, and a matching that is popular among the maximum size matchings. The ideas of her algorithms were similar to Király’s, that is, they used Gale-Shapley type proposal-rejection algorithms, where agents could have multiple levels.
+Finding a popular matching among the maximum weight matchings has also a similar algorithm as shown in Csáji et al.
+[
+9
+]
+.
+Sadly, if the preferences of the agents may contain ties, a popular matching may not exist and finding a popular matching or reporting that none exist is NP-hard
+[
+12
+]
+.
+In the case of arbitrary graphs, i.e. stable roommates instances, finding a popular matching was shown to be NP-hard even with strict preferences by Gupta et al.
+[
+17
+]
+and Faenza at al.
+[
+14
+]
+independently.
+To cope with this computational obstacle, Huang and Kavitha
+[
+20
+]
+studied popular mixed-matchings in the marriage and roommmates settings. They showed that a popular mixed-matching always exists and gave an algorithm to find a maximum weight popular mixed-matching in polynomial-time by using an LP-formulation for the problem. This notion of popular mixed-matchings were also studied by Brandt and Bullinger
+[
+6
+]
+. We introduce a new version of popularity for fractional-matchings, which we call popular fractional-matchings. We show that popular mixed-matchings may not be popular fractional-matchings, but our algorithm can find a popular fractional-matching that has maximum size among both the popular fractional- and popular mixed-matchings.
+1.2
+Our Contributions
+In this paper we extend the
+3
+2
+\frac{3}{2}
+-approximation algorithm for
+Max-SMTI
+for roommates instances. A nice application for this result (somewhat surprisingly) arises from the problem of assigning residents to hospitals in the presence of couples. This is a notoriously difficult problem algorithmically, which is NP-hard even in extremely restricted cases
+[
+4
+]
+. However, it was shown very recently by Csáji et al.
+[
+11
+]
+, that if we pose some natural restrictions on the couple’s preferences, then we can have polynomial time algorithms that find stable matchings by modifying the capacities by at most 1 in the process (which leads to a so-called near-feasible stable matching). The novel idea of the algorithm is to reduce the problem to the stable roommates problem with appropriate gadgets and round off a weakly stable half-matching in the obtained instance. Therefore, given that the hospitals and the residents may have ties in their rankings, using algorithms that find larger weakly stable half-matchings in stable roommates instances can be utilized to find near-feasible stable solutions that match more residents, which is a very desirable feature.
+We also extend the algorithms for finding maximum size popular matchings and popular matchings among the maximum weight matchings (in the case of strict preferences). Since popular matchings may not exist in the roommates model, and even deciding their existence is NP-hard, we propose a natural definition of popularity among fractional-matchings. This is somewhat similar to a previous notion of popular mixed-matchings
+[
+20
+]
+, however, we show that a mixed-matching may not be popular with respect to our notion. We show that there always exists a maximum size popular fractional-matching that is half-integral. We also give an algorithm that finds such a matching. This happens to be also a popular mixed-matching which has maximum size among the popular mixed-matchings. Finally, we give an algorithm that finds a half-integral matching that is popular among the maximum weight fractional-matchings.
+Our results are based on a simple, but crucial observation. If one translates the algorithms of Király
+[
+27
+]
+and Kavitha
+[
+25
+]
+that have multiple possible levels for each agent such that they make parallel copies of different types of each edge instead that the two sides rank in an (almost) opposite order, then it seems essential that we can have a partition
+U
+∪
+W
+U\cup W
+of the vertices such that each edge has one vertex from both. However, it turns out that we only need that for each edge, its parallel copies are ranked in an (almost) opposite order by its two vertices, we do not need to have copy types that are globally ranked in an (almost) opposite way by the two sides. This crucial observation helps us to overcome the difficulties of extending these algorithms for roommates instances.
+1.3
+Paper Structure
+We start by defining the problems we study in more detail in Section
+2
+. Then, we describe the meta-algorithm in Section
+3
+, which serves as a basis for all three of our algorithms. The approximation algorithm for
+Max-fSRTI
+is described in Section
+3.1
+, the algorithm for finding a maximum size popular fractional-matching in Section
+3.2
+and the algorithm for finding a popular half-integral matching among the maximum weight fractional-matchings in Section
+3.3
+.
+Finally, we conclude in Section
+4
+.
+2
+Preliminaries
+We investigate matching markets, where the set of agents with the possible set of contracts is given by an arbitrary graph
+G
+=
+(
+V
+,
+E
+)
+G=(V;E)
+, where vertices correspond to agents and edges correspond to possible, mutually acceptable contracts. We allow the graph
+G
+G
+to have parallel edges, i.e. multiple contracts between the same two agents. For each agent
+v
+∈
+V
+v\in V
+, let
+E
+⁡
+(
+v
+)
+E(v)
+denote the edges that are incident to
+v
+v
+.
+We say that a function
+M
+:
+E
+→
+ℝ
+≥
+0
+M:E\to\mathbb{R}_{\geq 0}
+is a
+fractional-matching
+, if
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+≤
+1
+\sum_{e\in E(v)}M(e)\leq 1
+for each
+v
+∈
+V
+v\in V
+. We say that
+M
+M
+is a
+half-matching
+, if additionally
+M
+⁡
+(
+e
+)
+∈
+{
+0
+,
+1
+2
+,
+1
+}
+M(e)\in\{0,\frac{1}{2},1\}
+for each
+e
+∈
+E
+e\in E
+. We say that
+v
+v
+is
+saturated
+by
+M
+M
+, if it holds that
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+=
+1
+\sum_{e\in E(v)}M(e)=1
+, otherwise
+v
+v
+is
+unsaturated
+. Similarly, an edge
+e
+e
+is
+saturated
+by
+M
+M
+, if
+M
+⁡
+(
+e
+)
+=
+1
+M(e)=1
+, otherwise it is unsaturated. For a vertex
+v
+v
+, let
+E
+M
+​
+(
+v
+)
+E_{M}(v)
+denote the edges with positive
+M
+M
+-value incident to
+v
+v
+, that is
+E
+M
+​
+(
+v
+)
+=
+{
+e
+∈
+E
+⁡
+(
+v
+)
+∣
+M
+⁡
+(
+e
+)
+>
+0
+}
+E_{M}(v)=\{e\in E(v)\mid M(e)>0\}
+.
+For a number
+x
+x
+, let
+x
++
+=
+max
+⁡
+{
+0
+,
+x
+}
+x^{+}=\max\{0,x\}
+.
+2.1
+Weakly Stable and
+γ
+\gamma
+-stable Matchings
+We assume that for each agent
+v
+v
+, there is a
+preference function
+p
+v
+:
+E
+⁡
+(
+v
+)
+→
+ℝ
+≥
+0
+p_{v}:E(v)\to\mathbb{R}_{\geq 0}
+, which defines a weak ranking
+⪰
+v
+\succeq_{v}
+over the incident edges of
+v
+v
+. We emphasize that we assume that the agents (vertices) rank their incident edges instead of the other agents, because we allow parallel edges in our model, representing multiple types of contracts between two given agents. We also assume that
+p
+v
+​
+(
+∅
+)
+≤
+0
+p_{v}(\emptyset)\leq 0
+, which denotes that an agent always weakly prefers to be matched to any acceptable partners rather than being unmatched. Such an instance is called a
+stable roommates instance with ties and incomplete preferences
+. If the
+⪰
+v
+\succeq_{v}
+induced preferences are strict, then we refer to it as a
+stable roommates instance.
+For a vertex
+v
+v
+and a fractional-matching
+M
+M
+, we define
+p
+v
+​
+(
+M
+)
+:=
+min
+e
+∈
+E
+M
+​
+(
+v
+)
+⁡
+p
+v
+​
+(
+e
+)
+p_{v}(M):=\min_{e\in E_{M}(v)}p_{v}(e)
+, if
+v
+v
+is saturated, otherwise
+p
+v
+​
+(
+M
+)
+:=
+p
+v
+​
+(
+∅
+)
+p_{v}(M):=p_{v}(\emptyset)
+.
+We say that an edge
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+blocks
+a fractional-matching
+M
+M
+, if
+M
+⁡
+(
+e
+)
+<
+1
+M(e)<1
+and (i)
+p
+u
+​
+(
+e
+)
+>
+p
+u
+​
+(
+M
+)
+p_{u}(e)>p_{u}(M)
+and (ii)
+p
+v
+​
+(
+e
+)
+>
+p
+v
+​
+(
+M
+)
+p_{v}(e)>p_{v}(M)
+, that is, both are either unsaturated or have a worse partner with positive weight in
+M
+M
+.
+A fractional-matching
+M
+M
+is called
+weakly stable
+or just
+stable
+, if there is no blocking edge to
+M
+M
+. The problem of finding a maximum size weakly stable matching in a bipartite graph with weak preferences, called
+Max-SMTI
+is a well studied problem that is NP-hard even to approximate within some constant, but admits a linear time
+3
+2
+\frac{3}{2}
+-approximation
+[
+28
+]
+. Here, we consider the problem of finding a maximum-size weakly stable fractional-matching in arbitrary graphs, which we call
+maximum size stable roommates problem with ties and incomplete preferences
+, or
+Max-fSRTI
+for short.
+Instead of weak stability, we define a more general notion, mirroring
+γ
+\gamma
+-stability for bipartite graphs
+[
+8
+]
+. Suppose that for each edge
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+, there are two numbers
+γ
+e
+u
+>
+0
+\gamma_{e}^{u}>0
+and
+γ
+e
+v
+>
+0
+\gamma_{e}^{v}>0
+given. We say that a fractional-matching
+M
+M
+is
+γ
+\gamma
+-min stable
+, if there is no blocking edge
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+such that
+p
+u
+​
+(
+e
+)
+−
+p
+u
+​
+(
+M
+)
+≥
+γ
+e
+u
+p_{u}(e)-p_{u}(M)\geq\gamma_{e}^{u}
+and
+p
+v
+​
+(
+e
+)
+−
+p
+v
+​
+(
+M
+)
+≥
+γ
+e
+v
+p_{v}(e)-p_{v}(M)\geq\gamma_{e}^{v}
+holds. Similarly, a fractional-matching is
+γ
+\gamma
+-max stable
+, if there is no blocking edge
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+such that
+p
+u
+​
+(
+e
+)
+−
+p
+u
+​
+(
+M
+)
+≥
+γ
+e
+u
+p_{u}(e)-p_{u}(M)\geq\gamma_{e}^{u}
+or
+p
+v
+​
+(
+e
+)
+−
+p
+v
+​
+(
+M
+)
+≥
+γ
+e
+v
+p_{v}(e)-p_{v}(M)\geq\gamma_{e}^{v}
+holds.
+In order to be able to solve both problems with the same algorithm, we go one step further and consider a common generalization of the above two problems. Instead of one
+γ
+e
+u
+\gamma_{e}^{u}
+value, we have values
+0
+<
+γ
+e
+u
+<
+δ
+e
+u
+0<\gamma_{e}^{u}<\delta_{e}^{u}
+for each vertex-edge pair. We say that an edge
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+γ
+\gamma
+-blocks
+a fractional-matching
+M
+M
+, if either
+min
+⁡
+{
+p
+u
+​
+(
+e
+)
+−
+p
+u
+​
+(
+M
+)
+−
+γ
+e
+u
+,
+p
+v
+​
+(
+e
+)
+−
+p
+v
+​
+(
+M
+)
+−
+δ
+e
+v
+}
+≥
+0
+\min\{p_{u}(e)-p_{u}(M)-\gamma_{e}^{u},p_{v}(e)-p_{v}(M)-\delta_{e}^{v}\}\geq 0
+or
+min
+⁡
+{
+p
+u
+​
+(
+e
+)
+−
+p
+u
+​
+(
+M
+)
+−
+δ
+e
+u
+,
+p
+v
+​
+(
+e
+)
+−
+p
+v
+​
+(
+M
+)
+−
+γ
+e
+v
+}
+≥
+0
+\min\{p_{u}(e)-p_{u}(M)-\delta_{e}^{u},p_{v}(e)-p_{v}(M)-\gamma_{e}^{v}\}\geq 0
+holds. We say that a matching
+M
+M
+is
+γ
+\gamma
+-stable
+, if no edge
+γ
+\gamma
+-blocks
+M
+M
+.
+If the
+γ
+e
+v
+\gamma_{e}^{v}
+values are sufficiently small, then this corresponds to
+γ
+\gamma
+-max stability, and when the
+γ
+e
+v
+\gamma_{e}^{v}
+and
+δ
+e
+v
+\delta_{e}^{v}
+values are sufficiently close, then it corresponds to
+γ
+\gamma
+-min stability. Furthermore, if both the
+γ
+e
+v
+\gamma_{e}^{v}
+and
+δ
+e
+v
+\delta_{e}^{v}
+are sufficiently small, then we get back weak stability.
+Now we define the optimization problem we investigate, called
+Maximum
+γ
+\gamma
+-stable fractional-matching with ties and incomplete preferences
+abbreviated as
+Max-
+γ
+\gamma
+-fSRTI
+for short.
+Max-
+γ
+\gamma
+-fSRTI
+In:
+A graph
+G
+=
+(
+V
+,
+E
+)
+G=(V;E)
+,
+p
+v
+:
+E
+⁡
+(
+v
+)
+→
+ℝ
+≥
+0
+p_{v}:E(v)\to\mathbb{R}_{\geq 0}
+preference valuations for each
+v
+∈
+V
+v\in V
+, numbers
+0
+<
+γ
+e
+v
+<
+δ
+e
+v
+0<\gamma_{e}^{v}<\delta_{e}^{v}
+for each pair
+(
+e
+,
+v
+)
+∈
+E
+×
+V
+(e,v)\in E\times V
+such that
+v
+∈
+e
+v\in e
+.
+Out:
+A maximum size
+γ
+\gamma
+-stable fractional-matching
+M
+M
+The special case of finding a maximum size weakly stable fractional-matching is called
+Max-fSRTI
+.
+2.2
+Popular Matchings
+For our popular matching related problems, we assume that the
+p
+v
+​
+(
+e
+)
+p_{v}(e)
+values are different for each vertex
+v
+∈
+V
+v\in V
+, so they induce a strict preference order
+≻
+v
+\succ_{v}
+over its adjacent edges. Also, we assume
+e
+≻
+v
+∅
+e\succ_{v}\emptyset
+for any adjacent edge
+e
+e
+to
+v
+v
+.
+Let
+e
+,
+f
+e,f
+be two elements of
+E
+∪
+{
+∅
+}
+E\cup\{\emptyset\}
+. An agent
+v
+v
+can compare these two elements and cast a vote, based on which one he prefers more according to
+≻
+v
+\succ_{v}
+. Hence, we define
+vote
+v
+​
+(
+e
+,
+f
+)
+=
++
+1
+\mathrm{vote}_{v}(e,f)=+1
+, if
+e
+≻
+v
+f
+e\succ_{v}f
+,
+vote
+v
+​
+(
+e
+,
+f
+)
+=
+0
+\mathrm{vote}_{v}(e,f)=0
+, if
+e
+=
+f
+e=f
+and
+vote
+v
+​
+(
+e
+,
+f
+)
+=
+−
+1
+\mathrm{vote}_{v}(e,f)=-1
+, if
+f
+≻
+v
+e
+f\succ_{v}e
+.
+For integral matchings, popularity is defined as follows.
+M
+M
+is
+popular
+, if
+Δ
+⁡
+(
+M
+,
+N
+)
+=
+∑
+v
+∈
+V
+vote
+v
+​
+(
+M
+⁡
+(
+v
+)
+,
+N
+⁡
+(
+v
+)
+)
+≥
+0
+\Delta(M,N)=\sum_{v\in V}\mathrm{vote}_{v}(M(v),N(v))\geq 0
+for any matching
+N
+N
+, where
+M
+⁡
+(
+v
+)
+M(v)
+and
+N
+⁡
+(
+v
+)
+N(v)
+denote the edge
+v
+v
+receives in
+M
+M
+or
+N
+N
+respectively, if there is any, otherwise they are defined to be
+∅
+\emptyset
+. Hence, a matching
+M
+M
+is popular, if it does not lose in a head-to-head comparison to any other matching.
+We extend this definition in a natural way to fractional-matchings, which mirrors the definition of popularity for the case of many-to-many matching instances
+[
+5
+]
+.
+Let
+M
+,
+N
+M,N
+be two fractional-matchings. We denote the fractional-matching defined by
+max
+⁡
+{
+M
+⁡
+(
+e
+)
+−
+N
+⁡
+(
+e
+)
+,
+0
+}
+\max\{M(e)-N(e),0\}
+for
+e
+∈
+E
+e\in E
+as
+(
+M
+−
+N
+)
++
+(M-N)^{+}
+.
+Agent
+v
+∈
+V
+v\in V
+now compares the differences
+(
+M
+−
+N
+)
++
+(M-N)^{+}
+and
+(
+N
+−
+M
+)
++
+(N-M)^{+}
+by pairing the edges of
+E
+(
+M
+−
+N
+)
++
+​
+(
+v
+)
+E_{(M-N)^{+}}(v)
+with
+E
+(
+N
+−
+M
+)
++
+​
+(
+v
+)
+E_{(N-M)^{+}}(v)
+with some appropriate weights. This is done with the help of a function
+ϕ
+v
+:
+(
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+)
+×
+(
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+)
+→
+ℝ
+≥
+0
+\phi_{v}\colon\big(E(v)\cup\{\emptyset\}\big)\times\big(E(v)\cup\{\emptyset\}\big)\to\mathbb{R}_{\geq 0}
+, such that
+1.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+e
+,
+f
+)
+=
+(
+M
+−
+N
+)
++
+​
+(
+e
+)
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(e,f)=(M-N)^{+}(e)
+for each
+e
+∈
+E
+⁡
+(
+v
+)
+e\in E(v)
+,
+2.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+f
+,
+e
+)
+=
+(
+N
+−
+M
+)
++
+​
+(
+e
+)
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(f,e)=(N-M)^{+}(e)
+for each
+e
+∈
+E
+⁡
+(
+v
+)
+e\in E(v)
+,
+3.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+f
+,
+∅
+)
+=
+(
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+−
+N
+⁡
+(
+e
+)
+)
++
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(f,\emptyset)=(\sum_{e\in E(v)}M(e)-N(e))^{+}
+,
+4.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+∅
+,
+f
+)
+=
+(
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+N
+⁡
+(
+e
+)
+−
+M
+⁡
+(
+e
+)
+)
++
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(\emptyset,f)=(\sum_{e\in E(v)}N(e)-M(e))^{+}
+.
+The function
+ϕ
+v
+\phi_{v}
+is called a
+feasible pairing for
+v
+v
+if it satisfies these condition.
+It follows also that
+ϕ
+v
+​
+(
+e
+,
+e
+)
+=
+0
+\phi_{v}(e,e)=0
+for any
+e
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+e\in E(v)\cup\{\emptyset\}
+, as either
+(
+M
+−
+N
+)
++
+​
+(
+e
+)
+=
+0
+(M-N)^{+}(e)=0
+or
+(
+N
+−
+M
+)
++
+​
+(
+e
+)
+=
+0
+(N-M)^{+}(e)=0
+and also either
+(
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+−
+N
+⁡
+(
+e
+)
+)
++
+=
+0
+(\sum_{e\in E(v)}M(e)-N(e))^{+}=0
+or
+(
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+N
+⁡
+(
+e
+)
+−
+M
+⁡
+(
+e
+)
+)
++
+=
+0
+(\sum_{e\in E(v)}N(e)-M(e))^{+}=0
+.
+We say that
+ϕ
+=
+{
+ϕ
+v
+∣
+v
+∈
+V
+}
+\phi=\{\phi_{v}\mid v\in V\}
+is a
+feasible pairing
+, if
+ϕ
+v
+\phi_{v}
+is a feasible pairing for
+v
+v
+, for each
+v
+∈
+V
+v\in V
+.
+For a feasible pairing
+ϕ
+\phi
+, we define
+vote
+v
+​
+(
+M
+,
+N
+,
+ϕ
+v
+)
+=
+∑
+(
+e
+,
+f
+)
+∈
+(
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+)
+2
+ϕ
+v
+​
+(
+e
+,
+f
+)
+⋅
+vote
+v
+​
+(
+e
+,
+f
+)
+.
+\mathrm{vote}_{v}(M,N,\phi_{v})=\sum_{(e,f)\in(E(v)\cup\{\emptyset\})^{2}}\phi_{v}(e,f)\cdot\mathrm{vote}_{v}(e,f).
+Finally, we let
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+=
+∑
+v
+∈
+V
+vote
+v
+​
+(
+M
+,
+N
+,
+ϕ
+v
+)
+\Delta(M,N,\phi)=\sum_{v\in V}\mathrm{vote}_{v}(M,N,\phi_{v})
+and
+Δ
+⁡
+(
+M
+,
+N
+)
+=
+min
+⁡
+{
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+|
+ϕ
+is a feasible pairing
+}
+\Delta(M,N)=\min\big\{\Delta(M,N,\phi)\bigm|\text{$\phi$ is a feasible pairing}\big\}
+.
+We say that an fractional-matching
+M
+M
+is
+popular
+, if
+Δ
+⁡
+(
+M
+,
+N
+)
+≥
+0
+\Delta(M,N)\geq 0
+for any fractional-matching
+N
+N
+, i.e. if no other fractional-matching can beat
+M
+M
+in a head-to-head election with respect to any feasible pairing.
+We study the following optimization problem of finding a maximum size popular fractional-matching.
+Max-fPRI
+In:
+A graph
+G
+=
+(
+V
+,
+E
+)
+G=(V;E)
+with strict preference orders
+≻
+v
+\succ_{v}
+for each
+v
+∈
+V
+v\in V
+.
+Out:
+A maximum size popular fractional-matching
+M
+M
+2.3
+Popular Mixed-Matchings and a Common Generalization
+Let
+M
+M
+be a fractional-matching. Then, by a result of Balinski
+[
+3
+]
+about the half-integrality of the matching polytope, we have that
+M
+=
+∑
+i
+=
+1
+k
+λ
+i
+​
+M
+i
+M=\sum_{i=1}^{k}\lambda_{i}M_{i}
+, where
+0
+<
+λ
+i
+≤
+1
+0<\lambda_{i}\leq 1
+,
+∑
+i
+=
+1
+k
+λ
+i
+=
+1
+\sum_{i=1}^{k}\lambda_{i}=1
+and each
+M
+i
+M_{i}
+is half-integral.
+We say that the fractional-matching
+M
+M
+is a
+popular mixed-matching
+[
+20
+]
+, if it holds that for any
+fractional-matching
+N
+N
+, we have that
+∑
+v
+∈
+V
+[
+∑
+e
+,
+f
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+​
+N
+​
+(
+f
+)
+​
+vote
+v
+​
+(
+e
+,
+f
+)
++
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+​
+(
+1
+−
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+N
+⁡
+(
+f
+)
+)
+​
+vote
+v
+​
+(
+e
+,
+∅
+)
++
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+N
+⁡
+(
+f
+)
+​
+(
+1
+−
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+)
+​
+vote
+v
+​
+(
+∅
+,
+f
+)
+]
+≥
+0
+.
+\sum\limits_{v\in V}[\sum\limits_{e,f\in E(v)}M(e)N(f)\mathrm{vote}_{v}(e,f)+\sum\limits_{e\in E(v)}M(e)(1-\sum\limits_{f\in E(v)}N(f))\mathrm{vote}_{v}(e,\emptyset)+\sum\limits_{f\in E(v)}N(f)(1-\sum\limits_{e\in E(v)}M(e))\mathrm{vote}_{v}(\emptyset,f)]\geq 0.
+It is shown by Huang and Kavitha
+[
+20
+]
+using the half-integrality of the matching polytope that this is equivalent to only requiring it for half-integral matchings
+N
+N
+, and if the instance is bipartite, only for integral matchings
+N
+N
+.
+Example 1
+.
+We give an example to show that a popular mixed-matching may not be a popular fractional matching. We have a bipartite instance with agents
+u
+1
+,
+u
+2
+,
+u
+3
+u_{1},u_{2},u_{3}
+on one side and
+w
+1
+,
+w
+2
+w_{1},w_{2}
+on the other. The preferences are
+w
+1
+≻
+u
+i
+w
+2
+w_{1}\succ_{u_{i}}w_{2}
+for
+i
+=
+1
+,
+2
+i=1,2
+, only
+w
+2
+w_{2}
+for
+u
+3
+u_{3}
+, and
+u
+1
+≻
+w
+1
+u
+2
+u_{1}\succ_{w_{1}}u_{2}
+,
+u
+1
+≻
+w
+2
+u
+2
+≻
+w
+2
+u
+3
+u_{1}\succ_{w_{2}}u_{2}\succ_{w_{2}}u_{3}
+. Take the half-matching
+M
+M
+with
+M
+⁡
+(
+u
+1
+,
+w
+1
+)
+=
+M
+⁡
+(
+u
+1
+,
+w
+2
+)
+=
+M
+⁡
+(
+u
+2
+,
+w
+1
+)
+=
+M
+⁡
+(
+u
+2
+,
+w
+2
+)
+=
+1
+2
+M(u_{1},w_{1})=M(u_{1},w_{2})=M(u_{2},w_{1})=M(u_{2},w_{2})=\frac{1}{2}
+and
+M
+⁡
+(
+e
+)
+=
+0
+M(e)=0
+otherwise. It is straightforward to verify that
+M
+M
+is a popular mixed-matching, by comparing it to every integral matching
+N
+N
+.
+However, it is not a popular fractional-matching. Take
+N
+N
+with
+N
+⁡
+(
+u
+1
+,
+w
+1
+)
+=
+1
+,
+N
+⁡
+(
+u
+2
+,
+w
+2
+)
+=
+N
+⁡
+(
+u
+3
+,
+w
+2
+)
+=
+1
+2
+N(u_{1},w_{1})=1,N(u_{2},w_{2})=N(u_{3},w_{2})=\frac{1}{2}
+and
+N
+⁡
+(
+e
+)
+=
+0
+N(e)=0
+otherwise. Then, the feasible pairings are unique for each agent and we have that
+u
+1
+,
+w
+1
+u_{1},w_{1}
+both have votes
+−
+1
+2
+-\frac{1}{2}
+,
+u
+2
+,
+w
+2
+u_{2},w_{2}
+both have votes
++
+1
+2
++\frac{1}{2}
+and
+u
+3
+u_{3}
+has vote
+−
+1
+2
+-\frac{1}{2}
+so
+Δ
+(
+M
+.
+N
+)
+<
+0
+\Delta(M.N)<0
+.
+We relax the axioms of feasible pairings to allow comparisons that arise from the definition of popular mixed-matchings
+−
+-
+note that here an edge
+e
+e
+with
+M
+⁡
+(
+e
+)
+=
+N
+⁡
+(
+e
+)
+=
+1
+2
+M(e)=N(e)=\frac{1}{2}
+may be paired with different edges, which is not allowed in a feasible pairing.
+We say that
+ϕ
+:
+(
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+)
+×
+(
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+)
+→
+ℝ
+≥
+0
+\phi\colon\big(E(v)\cup\{\emptyset\}\big)\times\big(E(v)\cup\{\emptyset\}\big)\to\mathbb{R}_{\geq 0}
+is a
+sensible-pairing
+between fractional-matchings
+M
+M
+and
+N
+N
+, if
+1.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+e
+,
+f
+)
+=
+M
+⁡
+(
+e
+)
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(e,f)=M(e)
+for each
+e
+∈
+E
+⁡
+(
+v
+)
+e\in E(v)
+,
+2.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+f
+,
+e
+)
+=
+N
+⁡
+(
+e
+)
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(f,e)=N(e)
+for each
+e
+∈
+E
+⁡
+(
+v
+)
+e\in E(v)
+,
+3.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+∅
+,
+f
+)
+>
+0
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(\emptyset,f)>0
+⟹
+\Longrightarrow
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+<
+1
+\sum_{e\in E(v)}M(e)<1
+,
+4.
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+f
+,
+∅
+)
+>
+0
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(f,\emptyset)>0
+⟹
+\Longrightarrow
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+N
+⁡
+(
+e
+)
+<
+1
+\sum_{e\in E(v)}N(e)<1
+,
+5.
+ϕ
+u
+​
+(
+e
+,
+e
+)
+=
+ϕ
+v
+​
+(
+e
+,
+e
+)
+\phi_{u}(e,e)=\phi_{v}(e,e)
+for each
+e
+=
+(
+u
+,
+v
+)
+∈
+E
+e=(u,v)\in E
+.
+Note that by changing the last axiom to
+ϕ
+u
+(
+e
+,
+e
+,
+)
+=
+ϕ
+v
+(
+e
+,
+e
+)
+=
+min
+{
+M
+(
+e
+)
+,
+N
+(
+e
+)
+}
+\phi_{u}(e,e,)=\phi_{v}(e,e)=\min\{M(e),N(e)\}
+, changing 3. back to the stronger requirement
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+∅
+,
+f
+)
+=
+(
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+N
+⁡
+(
+e
+)
+−
+M
+⁡
+(
+e
+)
+)
++
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(\emptyset,f)=(\sum_{e\in E(v)}N(e)-M(e))^{+}
+, and changing 4. to
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+​
+(
+f
+,
+∅
+)
+=
+(
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+−
+N
+⁡
+(
+e
+)
+)
++
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}(f,\emptyset)=(\sum_{e\in E(v)}M(e)-N(e))^{+}
+, we get back the definition for a feasible pairing. Hence, any feasible pairing is sensible. For a pairing
+ϕ
+v
+\phi_{v}
+defined by
+ϕ
+v
+​
+(
+e
+,
+f
+)
+=
+M
+⁡
+(
+e
+)
+​
+N
+​
+(
+f
+)
+\phi_{v}(e,f)=M(e)N(f)
+,
+ϕ
+v
+​
+(
+e
+,
+∅
+)
+=
+M
+⁡
+(
+e
+)
+​
+(
+1
+−
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+N
+⁡
+(
+f
+)
+)
+\phi_{v}(e,\emptyset)=M(e)(1-\sum_{f\in E(v)}N(f))
+,
+ϕ
+v
+​
+(
+∅
+,
+f
+)
+=
+(
+1
+−
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+)
+​
+N
+​
+(
+f
+)
+\phi_{v}(\emptyset,f)=(1-\sum_{e\in E(v)}M(e))N(f)
+for
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+, which is the pairing in the definition of popular mixed-matchings, we have that all axioms are clearly satisfied.
+We say that a fractional-matching
+M
+M
+is
+extra-popular
+, if
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+≥
+0
+\Delta(M,N,\phi)\geq 0
+for any fractional matching
+N
+N
+and any sensible-pairing
+ϕ
+\phi
+between
+M
+M
+and
+N
+N
+.
+Remark 1
+.
+It immediately follows that an extra-popular fractional-matching is both a popular fractional-matching and a popular mixed-matching.
+We say that a fractional-matching
+M
+M
+is
+barely-defendable
+, if for any other fractional-matching
+N
+N
+, there exists some sensible pairing
+ϕ
+\phi
+such that
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+≥
+0
+\Delta(M,N,\phi)\geq 0
+.
+Remark 2
+.
+We also have that both popular mixed-matchings and popular fractional-matchings are barely-defendable.
+2.4
+Popular Maximum Weight Matchings and Popular Critical Matchings
+Let us suppose that we have some weight function
+ω
+:
+E
+→
+ℝ
+\omega:E\to\mathbb{R}
+on the edges.
+By restricting the candidate fractional-matchings to only the maximum weight fractional-matchings, we can define a new version of popularity. We say that a maximum weight fractional-matching
+M
+M
+is a
+popular maximum weight fractional-matching
+, if we have
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+≥
+0
+\Delta(M,N,\phi)\geq 0
+for any other maximum weight fractional-matching
+N
+N
+and feasible pairing
+ϕ
+\phi
+. We call the problem of finding such a matching
+MaxW-fPRI
+.
+MaxW-fPRI
+In:
+A graph
+G
+=
+(
+V
+,
+E
+)
+G=(V;E)
+with strict preference orders
+≻
+v
+\succ_{v}
+for each
+v
+∈
+V
+v\in V
+and a weight function
+ω
+:
+E
+→
+ℝ
+\omega:E\to\mathbb{R}
+.
+Out:
+A popular maximum weight fractional-matching
+M
+M
+.
+In our algorithm, we reduce this problem to a slightly easier problem, where we consider critical fractional-matchings. To define these, let us suppose we are given a set
+𝒞
+⊆
+V
+\mathcal{C}\subseteq V
+of critical vertices. We say that a fractional-matching is
+critical
+, if it saturates every critical vertex, i.e. if
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+M
+⁡
+(
+e
+)
+=
+1
+\sum_{e\in E(v)}M(e)=1
+for all
+v
+∈
+𝒞
+v\in\mathcal{C}
+.
+Finally, we say that a critical fractional-matching is a
+popular critical fractional-matching
+, if
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+≥
+0
+\Delta(M,N,\phi)\geq 0
+for any critical fractional-matching
+N
+N
+and feasible pairing
+ϕ
+\phi
+.
+Crit-fPRI
+In:
+A graph
+G
+=
+(
+V
+,
+E
+)
+G=(V;E)
+with strict preference orders
+≻
+v
+\succ_{v}
+for each
+v
+∈
+V
+v\in V
+and a set of critical vertices
+𝒞
+⊆
+V
+\mathcal{C}\subseteq V
+.
+Out:
+A popular critical fractional-matching
+M
+M
+.
+3
+The Meta-Algorithm
+As it turns out, similarly to the bipartite case, all these problems can be solved with very similar algorithms, that have the same outline. We call this the
+meta-algorithm
+, which we describe now.
+1. Create a stable roommates instance
+I
+′
+=
+(
+G
+′
+,
+≻
+′
+)
+I^{\prime}=(G^{\prime},\succ^{\prime})
+with strict preferences (and parallel edges - note that this is also called Stable Multiple Activities in the literature
+[
+7
+]
+) by making parallel copies
+(
+e
+i
+)
+i
+∈
+k
+(e_{i})_{i\in k}
+of each edge
+e
+e
+and creating strict preferences over the created edges.
+2. Run the extension of Tan’s algorithm by Cechlárová et al.
+[
+7
+]
+to obtain a stable half-matching
+M
+′
+M^{\prime}
+in the new instance
+I
+′
+I^{\prime}
+.
+3. Take the projection
+M
+M
+of
+M
+′
+M^{\prime}
+to
+I
+I
+, which is defined as
+M
+⁡
+(
+e
+)
+:=
+∑
+i
+M
+′
+​
+(
+e
+i
+)
+M(e):=\sum_{i}M^{\prime}(e_{i})
+.
+The second and third steps will be the same for all three algorithms. The only difference between them is in the first step, that is, how do we create parallel edges and how do we create strict preference orders over them.
+3.1
+Maximum Size
+γ
+\gamma
+-Stable Fractional-Matching
+We start with our
+3
+2
+\frac{3}{2}
+-approximation algorithm for
+Max-
+γ
+\gamma
+-fSRTI
+.
+Let
+V
+=
+{
+v
+1
+,
+…
+,
+v
+n
+}
+V=\{v_{1},\dots,v_{n}\}
+be an indexing of the vertices.
+The fine-tuned first step.
+For each edge
+e
+=
+(
+v
+i
+,
+v
+j
+)
+∈
+E
+e=(v_{i},v_{j})\in E
+,
+i
+<
+j
+i<j
+we create four parallel edges
+e
+1
+,
+e
+2
+,
+e
+3
+,
+e
+4
+e^{1},e^{2},e^{3},e^{4}
+.
+For
+v
+i
+v_{i}
+,
+e
+1
+e^{1}
+is considered the best copy of
+e
+e
+, while
+e
+2
+e^{2}
+is second best,
+e
+3
+e^{3}
+is third and
+e
+4
+e^{4}
+is last. For
+v
+j
+v_{j}
+,
+e
+4
+e^{4}
+is the best copy of
+e
+e
+,
+e
+3
+e^{3}
+is second,
+e
+2
+e^{2}
+is third and
+e
+1
+e^{1}
+is last.
+We create the strict preferences of a vertex
+v
+v
+as follows. For any edges
+e
+,
+f
+e,f
+, the worst copy of
+f
+f
+(which may be either
+f
+1
+f^{1}
+or
+f
+4
+f^{4}
+) is always ranked worse than any best, second or third copy of
+e
+e
+. Furthermore, the second best copy of
+f
+f
+is better than the best copy of
+e
+e
+if and only if
+p
+v
+​
+(
+f
+)
+≥
+p
+v
+​
+(
+e
+)
++
+γ
+f
+v
+p_{v}(f)\geq p_{v}(e)+\gamma_{f}^{v}
+and the third copy of
+f
+f
+is better than the best copy of
+e
+e
+if and only if
+p
+v
+​
+(
+f
+)
+≥
+p
+v
+​
+(
+e
+)
++
+δ
+f
+v
+p_{v}(f)\geq p_{v}(e)+\delta_{f}^{v}
+. Within the best and last copies, the edges are ranked according to a strict extension of
+v
+v
+’s original weak preferences.
+This can be obtained in the following way. For a vertex
+v
+∈
+V
+v\in V
+and
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+let
+a
+⁡
+(
+e
+)
+a(e)
+be the best,
+b
+⁡
+(
+e
+)
+b(e)
+be the second,
+c
+⁡
+(
+e
+)
+c(e)
+be the third and
+d
+⁡
+(
+e
+)
+d(e)
+be the last copy. Set
+p
+v
+​
+(
+a
+⁡
+(
+e
+)
+)
+=
+p
+v
+​
+(
+e
+)
+p_{v}(a(e))=p_{v}(e)
+,
+p
+v
+​
+(
+b
+⁡
+(
+e
+)
+)
+=
+p
+v
+​
+(
+e
+)
+−
+γ
+e
+v
+p_{v}(b(e))=p_{v}(e)-\gamma_{e}^{v}
+and
+p
+v
+​
+(
+c
+⁡
+(
+e
+)
+)
+=
+p
+v
+​
+(
+e
+)
+−
+δ
+e
+v
+p_{v}(c(e))=p_{v}(e)-\delta_{e}^{v}
+. Then, for each vertex, these new (possibly negative) preference numbers define a weak order, in which we break ties in a way such that among edges with the same value the
+c
+c
+copies are best, the
+b
+b
+copies are second and the
+a
+a
+copies are last. Finally, the worst copies are ranked strictly last in the order they are in
+p
+v
+​
+(
+)
+p_{v}()
+, breaking the ties arbitrarily.
+We start by showing that we can restrict ourselves to only consider half-matchings.
+Lemma 1
+.
+There always exists a half-integral optimal solution to
+Max-
+γ
+\gamma
+-fSRTI
+.
+Proof.
+Let
+M
+M
+be an arbitrary maximum size
+γ
+\gamma
+-stable fractional-matching. Using the fact that the convex hull of fractional-matchings form a half-integral polyhedron
+[
+3
+]
+, we get that
+M
+=
+∑
+i
+λ
+i
+​
+M
+i
+M=\sum_{i}\lambda_{i}M_{i}
+, where
+∑
+i
+λ
+i
+=
+1
+\sum_{i}\lambda_{i}=1
+,
+λ
+i
+>
+0
+\lambda_{i}>0
+and
+M
+i
+M_{i}
+is a half-matching for each
+i
+i
+. It follows that there exists at least one
+M
+i
+M_{i}
+such that
+∑
+e
+∈
+E
+M
+i
+​
+(
+e
+)
+≥
+∑
+e
+∈
+E
+M
+⁡
+(
+e
+)
+\sum_{e\in E}M_{i}(e)\geq\sum_{e\in E}M(e)
+. We show that
+M
+i
+M_{i}
+is
+γ
+\gamma
+-stable.
+Suppose that
+e
+=
+(
+u
+,
+v
+)
+e=(u,v)
+γ
+\gamma
+-blocks
+M
+i
+M_{i}
+. If
+u
+u
+(or
+v
+v
+) is unsaturated in
+M
+i
+M_{i}
+then it is also unsaturated in
+M
+M
+.
+Also, we have that
+E
+M
+i
+​
+(
+u
+)
+⊆
+E
+M
+​
+(
+u
+)
+E_{M_{i}}(u)\subseteq E_{M}(u)
+and
+E
+M
+i
+​
+(
+v
+)
+⊆
+E
+M
+​
+(
+v
+)
+E_{M_{i}}(v)\subseteq E_{M}(v)
+. Therefore, we get that
+p
+v
+​
+(
+M
+i
+)
+≥
+p
+v
+​
+(
+M
+)
+p_{v}(M_{i})\geq p_{v}(M)
+and
+p
+u
+​
+(
+M
+i
+)
+≥
+p
+u
+​
+(
+M
+)
+p_{u}(M_{i})\geq p_{u}(M)
+.
+This implies that
+e
+e
+γ
+\gamma
+-blocks
+M
+M
+, a contradiction.
+It follows that there exists an optimal half-matching to
+Max-
+γ
+\gamma
+-fSRTI
+.
+∎
+Finally, we show that our algorithm outputs a
+3
+2
+\frac{3}{2}
+-approximation.
+Theorem 1
+.
+Max-
+γ
+\gamma
+-fSRTI
+can be
+3
+2
+\frac{3}{2}
+-approximated in polynomial time.
+Proof.
+Let
+M
+M
+be the output of the algorithm and
+M
+′
+M^{\prime}
+be the pre-image of
+M
+M
+in
+I
+′
+I^{\prime}
+.
+Claim 1
+.
+The output half-matching
+M
+M
+is
+γ
+\gamma
+-stable.
+Proof:
+Suppose for contradiction that there is a
+γ
+\gamma
+-blocking edge
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+to
+M
+M
+. Suppose by symmetry that
+p
+v
+i
+​
+(
+e
+)
+≥
+p
+v
+i
+​
+(
+M
+)
++
+γ
+e
+v
+i
+p_{v_{i}}(e)\geq p_{v_{i}}(M)+\gamma_{e}^{v_{i}}
+and
+p
+v
+j
+​
+(
+e
+)
+≥
+p
+v
+j
+​
+(
+M
+)
++
+δ
+e
+v
+j
+p_{v_{j}}(e)\geq p_{v_{j}}(M)+\delta_{e}^{v_{j}}
+. Take the second best copy of
+e
+e
+for
+v
+i
+v_{i}
+, which is the third best copy of
+e
+e
+for
+v
+j
+v_{j}
+. This copy of
+e
+e
+blocks
+M
+′
+M^{\prime}
+by the definition of the rankings, contradiction.
+■
+\blacksquare
+Claim 2
+.
+For any
+γ
+\gamma
+-stable half-matching
+N
+N
+, it holds that
+∑
+e
+∈
+E
+N
+⁡
+(
+e
+)
+≤
+3
+2
+​
+∑
+e
+∈
+E
+M
+⁡
+(
+e
+)
+\sum_{e\in E}N(e)\leq\frac{3}{2}\sum_{e\in E}M(e)
+.
+Proof:
+Create a bipartite graph
+G
+′′
+=
+(
+V
+,
+V
+′
+,
+E
+′′
+)
+G^{\prime\prime}=(V,V^{\prime},E^{\prime\prime})
+, where
+V
+′
+=
+{
+v
+i
+′
+∣
+v
+i
+∈
+V
+}
+V^{\prime}=\{v_{i}^{\prime}\mid v_{i}\in V\}
+is a copy of
+V
+V
+and for each
+(
+v
+i
+,
+v
+j
+)
+∈
+E
+(v_{i},v_{j})\in E
+, we have edges
+(
+v
+i
+,
+v
+j
+′
+)
+∈
+E
+′′
+(v_{i},v_{j}^{\prime})\in E^{\prime\prime}
+and
+(
+v
+i
+′
+,
+v
+j
+)
+∈
+E
+′′
+(v_{i}^{\prime},v_{j})\in E^{\prime\prime}
+.
+Each half-matching
+N
+N
+defines a matching
+N
+′′
+N^{\prime\prime}
+in
+G
+′′
+G^{\prime\prime}
+as follows. If
+N
+⁡
+(
+e
+)
+=
+1
+N(e)=1
+for
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+, then we add
+(
+v
+i
+,
+v
+j
+′
+)
+(v_{i},v_{j}^{\prime})
+and
+(
+v
+i
+′
+,
+v
+j
+)
+(v_{i}^{\prime},v_{j})
+to
+N
+′′
+N^{\prime\prime}
+. If we have a cycle of value
+1
+2
+\frac{1}{2}
+edges on vertices
+{
+v
+i
+1
+,
+…
+,
+v
+i
+k
+}
+\{v_{i_{1}},\dots,v_{i_{k}}\}
+, then we add
+(
+v
+i
+1
+,
+v
+i
+2
+′
+)
+,
+(
+v
+i
+2
+,
+v
+i
+3
+′
+)
+,
+…
+,
+(
+v
+i
+k
+,
+v
+i
+1
+′
+)
+(v_{i_{1}},v_{i_{2}}^{\prime}),(v_{i_{2}},v_{i_{3}}^{\prime}),\dots,(v_{i_{k}},v_{i_{1}}^{\prime})
+. Finally, if we have a path of value
+1
+2
+\frac{1}{2}
+edges on vertices
+{
+v
+i
+1
+,
+…
+,
+v
+i
+k
+}
+\{v_{i_{1}},\dots,v_{i_{k}}\}
+, then we add
+(
+v
+i
+1
+,
+v
+i
+2
+′
+)
+,
+(
+v
+i
+2
+,
+v
+i
+3
+′
+)
+,
+…
+,
+(
+v
+i
+k
+−
+1
+,
+v
+i
+k
+′
+)
+(v_{i_{1}},v_{i_{2}}^{\prime}),(v_{i_{2}},v_{i_{3}}^{\prime}),\dots,(v_{i_{k-1}},v_{i_{k}}^{\prime})
+.
+Let
+N
+N
+be a maximum size
+γ
+\gamma
+-stable half-matching.
+Take the matchings
+N
+′′
+,
+M
+′′
+N^{\prime\prime},M^{\prime\prime}
+corresponding to
+N
+N
+and
+M
+M
+.
+Suppose for the contrary that
+∑
+e
+∈
+E
+N
+⁡
+(
+e
+)
+>
+3
+2
+​
+∑
+e
+∈
+E
+M
+⁡
+(
+e
+)
+\sum_{e\in E}N(e)>\frac{3}{2}\sum_{e\in E}M(e)
+. Then, we have that
+|
+N
+′′
+|
+>
+3
+2
+​
+|
+M
+′′
+|
+|N^{\prime\prime}|>\frac{3}{2}|M^{\prime\prime}|
+. This implies that either there is a component in
+N
+′′
+​
+△
+​
+M
+′′
+N^{\prime\prime}\triangle M^{\prime\prime}
+that has a single
+N
+′′
+N^{\prime\prime}
+-edge or a component with two
+N
+′′
+N^{\prime\prime}
+-edges and a single
+M
+′′
+M^{\prime\prime}
+-edge.
+In the first case, we get that there is an edge
+(
+v
+i
+,
+v
+j
+)
+(v_{i},v_{j})
+such that
+v
+i
+v_{i}
+and
+v
+j
+v_{j}
+are both unsaturated in
+M
+M
+, contradicting the
+γ
+\gamma
+-stability of
+M
+M
+. In the second case, let the component be
+{
+e
+′′
+=
+(
+v
+i
+1
+,
+v
+i
+2
+′
+)
+,
+f
+′′
+=
+(
+v
+i
+2
+′
+,
+v
+i
+3
+)
+,
+g
+′′
+=
+(
+v
+i
+3
+,
+v
+i
+4
+′
+)
+}
+\{e^{\prime\prime}=(v_{i_{1}},v_{i_{2}}^{\prime}),f^{\prime\prime}=(v_{i_{2}}^{\prime},v_{i_{3}}),g^{\prime\prime}=(v_{i_{3}},v_{i_{4}}^{\prime})\}
+, where
+f
+′′
+=
+(
+v
+i
+2
+′
+,
+v
+i
+3
+)
+f^{\prime\prime}=(v_{i_{2}}^{\prime},v_{i_{3}})
+is the edge of
+M
+′′
+M^{\prime\prime}
+. We have that
+i
+1
+,
+i
+2
+,
+i
+3
+i_{1},i_{2},i_{3}
+are distinct and so are
+i
+2
+,
+i
+3
+,
+i
+4
+i_{2},i_{3},i_{4}
+, but it may happen that
+i
+1
+=
+i
+4
+i_{1}=i_{4}
+.
+Since
+v
+i
+1
+v_{i_{1}}
+and
+v
+i
+4
+′
+v_{i_{4}}^{\prime}
+are unmatched by
+M
+′′
+M^{\prime\prime}
+,
+v
+i
+1
+v_{i_{1}}
+and
+v
+i
+4
+v_{i_{4}}
+are unsaturated in
+M
+′
+M^{\prime}
+. Since the best copy of
+e
+e
+for
+v
+i
+2
+v_{i_{2}}
+does not block
+M
+′
+M^{\prime}
+,
+v
+i
+2
+v_{i_{2}}
+is saturated with first, second or third copies. Since the best copy of
+g
+g
+for
+v
+i
+3
+v_{i_{3}}
+does not block
+M
+′
+M^{\prime}
+,
+v
+i
+3
+v_{i_{3}}
+is saturated with first, second or third copies. Hence, either the second or the third best copy of
+f
+=
+(
+v
+i
+2
+,
+v
+i
+3
+)
+f=(v_{i_{2}},v_{i_{3}})
+for
+v
+i
+2
+v_{i_{2}}
+has positive weight in
+M
+′
+M^{\prime}
+. Suppose by symmetry it is the second best copy. Then, for the same reason, we must have
+p
+v
+i
+2
+​
+(
+e
+)
+≥
+p
+v
+i
+2
+​
+(
+f
+)
++
+γ
+e
+v
+i
+2
+p_{v_{i_{2}}}(e)\geq p_{v_{i_{2}}}(f)+\gamma_{e}^{v_{i_{2}}}
+and
+p
+v
+i
+3
+​
+(
+e
+)
+≥
+p
+v
+i
+3
+​
+(
+g
+)
++
+δ
+e
+v
+i
+3
+p_{v_{i_{3}}}(e)\geq p_{v_{i_{3}}}(g)+\delta_{e}^{v_{i_{3}}}
+. This contradicts the
+γ
+\gamma
+-stability of
+N
+N
+.
+■
+\blacksquare
+∎
+3.1.1
+Maximum Size Weakly Stable Fractional-Matching
+For completeness, we describe an even simpler algorithm for the special case
+Max-fSRTI
+, i.e. the case, when there are no
+γ
+\gamma
+numbers, each agent
+v
+v
+just has a preference valuation
+p
+v
+​
+(
+)
+p_{v}()
+, inducing a weak preference order
+⪰
+v
+\succeq_{v}
+(
+e
+≻
+v
+f
+⇔
+p
+v
+(
+e
+)
+>
+p
+v
+(
+f
+)
+e\succ_{v}f\Leftrightarrow p_{v}(e)>p_{v}(f)
+and
+e
+⪰
+v
+f
+⇔
+p
+v
+(
+e
+)
+≥
+p
+v
+(
+f
+)
+e\succeq_{v}f\Leftrightarrow p_{v}(e)\geq p_{v}(f)
+) and our goal is to find a maximum size weakly stable half-matching.
+Then, in the first step of the algorithm, we do the following. For each
+e
+=
+(
+v
+i
+,
+v
+j
+)
+,
+i
+<
+j
+e=(v_{i},v_{j}),i<j
+, we create three parallel edges
+e
+i
+,
+e
+0
+,
+e
+j
+e^{i},e^{0},e^{j}
+. For
+v
+i
+v_{i}
+,
+e
+i
+e^{i}
+is best,
+e
+0
+e^{0}
+is middle and
+e
+j
+e^{j}
+is worst, and for
+v
+j
+v_{j}
+,
+e
+j
+e^{j}
+is best,
+e
+0
+e^{0}
+is middle and
+e
+i
+e^{i}
+is worst. Then, the preference orders for
+v
+i
+∈
+V
+v_{i}\in V
+are created from
+⪰
+v
+i
+\succeq_{v_{i}}
+such that for each
+e
+∈
+E
+⁡
+(
+v
+i
+)
+e\in E(v_{i})
+,
+e
+i
+≻
+e
+0
+e^{i}\succ e^{0}
+, and
+f
+0
+≻
+e
+i
+f^{0}\succ e^{i}
+if and only if
+f
+f
+is strictly preferred to
+e
+e
+. Within the same copy types, the edges are ranked according to an arbitrary strict extension of
+⪰
+v
+i
+\succeq_{v_{i}}
+. The copies
+e
+j
+e^{j}
+,
+j
+≠
+i
+j\neq i
+are ranked last in the order
+⪰
+v
+\succeq_{v}
+, breaking the ties in an arbitrary way. An easy way to create these preferences is to go through
+⪰
+v
+i
+\succeq_{v_{i}}
+, and in each tie
+[
+e
+1
+,
+.
+.
+,
+e
+k
+]
+[e_{1},..,e_{k}]
+just substitute it with
+e
+i
+1
+≻
+⋯
+e
+k
+i
+≻
+e
+1
+0
+≻
+⋯
+e
+k
+0
+e^{i}_{1}\succ\cdots e_{k}^{i}\succ e_{1}^{0}\succ\cdots e_{k}^{0}
+, then append to worst copies of the edges strictly after them by breaking the ties arbitrarily.
+To give an example, let
+⪰
+v
+i
+=
+e
+≻
+[
+f
+,
+g
+]
+≻
+h
+\succeq_{v_{i}}=e\succ[f,g]\succ h
+. Then, we get
+e
+i
+≻
+e
+0
+≻
+f
+i
+≻
+g
+i
+≻
+f
+0
+≻
+g
+0
+≻
+h
+i
+≻
+h
+0
+≻
+e
+j
+1
+≻
+f
+j
+2
+≻
+g
+j
+3
+≻
+h
+j
+4
+e^{i}\succ e^{0}\succ f^{i}\succ g^{i}\succ f^{0}\succ g^{0}\succ h^{i}\succ h^{0}\succ e^{j_{1}}\succ f^{j_{2}}\succ g^{j_{3}}\succ h^{j_{4}}
+, where
+e
+=
+(
+v
+i
+,
+v
+j
+1
+)
+,
+f
+=
+(
+v
+i
+,
+v
+j
+2
+)
+,
+g
+=
+(
+v
+i
+,
+v
+j
+3
+)
+,
+h
+=
+(
+v
+i
+,
+v
+j
+4
+)
+e=(v_{i},v_{j_{1}}),f=(v_{i},v_{j_{2}}),g=(v_{i},v_{j_{3}}),h=(v_{i},v_{j_{4}})
+.
+Theorem 2
+.
+Max-fSRTI
+can be
+3
+2
+\frac{3}{2}
+-approximated in polynomial time even with the simpler algorithm.
+Proof.
+Let
+M
+M
+be the output of the simpler algorithm and
+M
+′
+M^{\prime}
+be the pre-image of
+M
+M
+in
+I
+′
+I^{\prime}
+.
+Claim 3
+.
+The output half-matching
+M
+M
+is weakly stable.
+Proof:
+Suppose for contradiction that there is a blocking edge
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+to
+M
+M
+. Then, the copy
+e
+0
+e^{0}
+blocks
+M
+′
+M^{\prime}
+by the definition of the rankings, contradiction.
+■
+\blacksquare
+Claim 4
+.
+For any weakly stable half-matching
+N
+N
+it holds that
+∑
+e
+∈
+E
+N
+⁡
+(
+e
+)
+≤
+3
+2
+​
+∑
+e
+∈
+E
+M
+⁡
+(
+e
+)
+\sum_{e\in E}N(e)\leq\frac{3}{2}\sum_{e\in E}M(e)
+.
+Proof:
+Let
+N
+N
+be a maximum size weakly stable half-matching.
+Create a bipartite graph
+G
+′′
+=
+(
+V
+,
+V
+′
+,
+E
+′′
+)
+G^{\prime\prime}=(V,V^{\prime},E^{\prime\prime})
+, and matchings
+N
+′′
+,
+M
+′′
+N^{\prime\prime},M^{\prime\prime}
+as in Theorem
+1
+.
+Suppose for the contrary that
+∑
+e
+∈
+E
+N
+⁡
+(
+e
+)
+>
+3
+2
+​
+∑
+e
+∈
+E
+M
+⁡
+(
+e
+)
+\sum_{e\in E}N(e)>\frac{3}{2}\sum_{e\in E}M(e)
+. Then, we have that
+|
+N
+′′
+|
+>
+3
+2
+​
+|
+M
+′′
+|
+|N^{\prime\prime}|>\frac{3}{2}|M^{\prime\prime}|
+. This implies that either there is a component in
+N
+′′
+​
+△
+​
+M
+′′
+N^{\prime\prime}\triangle M^{\prime\prime}
+that has a single
+N
+′′
+N^{\prime\prime}
+-edge or a component with two
+N
+′′
+N^{\prime\prime}
+-edges and a single
+M
+′′
+M^{\prime\prime}
+-edge.
+In the first case, we get that there is an edge
+(
+v
+i
+,
+v
+j
+)
+(v_{i},v_{j})
+such that
+v
+i
+v_{i}
+and
+v
+j
+v_{j}
+are both unsaturated in
+M
+M
+, contradicting the weak stability of
+M
+M
+. In the second case, let the component be
+{
+e
+′′
+=
+(
+v
+i
+1
+,
+v
+i
+2
+′
+)
+,
+f
+′′
+=
+(
+v
+i
+2
+′
+,
+v
+i
+3
+)
+,
+g
+′′
+=
+(
+v
+i
+3
+,
+v
+i
+4
+′
+)
+}
+\{e^{\prime\prime}=(v_{i_{1}},v_{i_{2}}^{\prime}),f^{\prime\prime}=(v_{i_{2}}^{\prime},v_{i_{3}}),g^{\prime\prime}=(v_{i_{3}},v_{i_{4}}^{\prime})\}
+, where
+f
+′′
+=
+(
+v
+i
+2
+′
+,
+v
+i
+3
+)
+f^{\prime\prime}=(v_{i_{2}}^{\prime},v_{i_{3}})
+is the edge of
+M
+′′
+M^{\prime\prime}
+, i.e.
+M
+⁡
+(
+f
+)
+>
+0
+M(f)>0
+. We have that
+i
+1
+,
+i
+2
+,
+i
+3
+i_{1},i_{2},i_{3}
+are distinct and so are
+i
+2
+,
+i
+3
+,
+i
+4
+i_{2},i_{3},i_{4}
+, but it may happen that
+i
+1
+=
+i
+4
+i_{1}=i_{4}
+.
+Since
+v
+i
+1
+v_{i_{1}}
+and
+v
+i
+4
+′
+v_{i_{4}}^{\prime}
+are unmatched by
+M
+′′
+M^{\prime\prime}
+,
+v
+i
+1
+v_{i_{1}}
+and
+v
+i
+4
+v_{i_{4}}
+are unsaturated in
+M
+′
+M^{\prime}
+. Since
+e
+i
+2
+e^{i_{2}}
+does not block
+M
+′
+M^{\prime}
+, only
+f
+i
+2
+,
+f
+0
+f^{i_{2}},f^{0}
+can have positive value in
+M
+′
+M^{\prime}
+. Since
+g
+i
+3
+g^{i_{3}}
+does not block
+M
+′
+M^{\prime}
+, only
+f
+i
+3
+,
+f
+0
+f^{i_{3}},f^{0}
+can have positive value in
+M
+′
+M^{\prime}
+. Hence, we have that
+M
+′
+​
+(
+f
+0
+)
+>
+0
+M^{\prime}(f^{0})>0
+. Then, since
+e
+i
+2
+e^{i_{2}}
+and
+g
+i
+3
+g^{i_{3}}
+does not block
+M
+′
+M^{\prime}
+, we must have
+f
+≻
+v
+i
+2
+e
+f\succ_{v_{i_{2}}}e
+and
+f
+≻
+v
+i
+3
+g
+f\succ_{v_{i_{3}}}g
+, contradicting the stability of
+N
+N
+.
+■
+\blacksquare
+∎
+3.2
+Maximum Size Popular Fractional-Matching
+In this section we solve the maximum size popular fractional-matching problem,
+Max-fPRI
+for short. Recall that for this problem, we assumed that we have strict preference orders
+≻
+v
+\succ_{v}
+for each agent
+v
+∈
+V
+v\in V
+.
+The fine-tuned first step.
+We describe the fine-tuned first step of the meta-algorithm.
+For each edge
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+,
+i
+<
+j
+i<j
+, we create two parallel edges
+e
+a
+,
+e
+b
+e_{a},e_{b}
+. Agent
+v
+i
+v_{i}
+considers
+e
+a
+e_{a}
+the good copy and
+e
+b
+e_{b}
+the bad one, while
+v
+j
+v_{j}
+considers
+e
+b
+e_{b}
+the good and
+e
+a
+e_{a}
+the bad one.
+The new strict preferences are created such that for any vertex
+v
+i
+v_{i}
+, it first ranks the good copies in their original order and strictly after then the bad copies in their original order.
+Theorem 3
+.
+Max-fPRI
+is solvable in polynomial time. Furthermore, the output of the algorithm is half-integral, extra-popular and has maximum size even among the barely-defendable fractional-matchings.
+Proof.
+Take the output half-matching
+M
+M
+of the algorithm. Take any fractional-matching
+N
+N
+and also an arbitrary sensible-pairing
+ϕ
+\phi
+between
+M
+M
+and
+N
+N
+.
+We decompose
+ϕ
+\phi
+as follows.
+First, we define
+ϕ
+0
+\phi^{0}
+by setting
+ϕ
+v
+0
+​
+(
+e
+,
+e
+)
+=
+0
+\phi_{v}^{0}(e,e)=0
+and
+ϕ
+v
+0
+​
+(
+e
+,
+f
+)
+=
+ϕ
+v
+​
+(
+e
+,
+f
+)
+\phi_{v}^{0}(e,f)=\phi_{v}(e,f)
+for
+e
+≠
+f
+e\neq f
+. We also set
+M
+0
+​
+(
+e
+)
+=
+M
+⁡
+(
+e
+)
+−
+ϕ
+v
+​
+(
+e
+,
+e
+)
+=
+M
+⁡
+(
+e
+)
+−
+ϕ
+u
+​
+(
+e
+,
+e
+)
+M^{0}(e)=M(e)-\phi_{v}(e,e)=M(e)-\phi_{u}(e,e)
+and
+N
+0
+​
+(
+e
+)
+=
+N
+⁡
+(
+e
+)
+−
+ϕ
+v
+​
+(
+e
+,
+e
+)
+N^{0}(e)=N(e)-\phi_{v}(e,e)
+for all
+e
+∈
+E
+e\in E
+. We can do this, as
+vote
+v
+​
+(
+e
+,
+e
+)
+\mathrm{vote}_{v}(e,e)
+is always 0, so this does not change
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+\Delta(M,N,\phi)
+, i.e.
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+=
+Δ
+⁡
+(
+M
+0
+,
+N
+0
+,
+ϕ
+0
+)
+\Delta(M,N,\phi)=\Delta(M^{0},N^{0},\phi^{0})
+. We also must still have that for each
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+,
+1.
+∑
+f
+∈
+E
+⁡
+(
+v
+i
+)
+∪
+{
+∅
+}
+ϕ
+v
+i
+0
+​
+(
+e
+,
+f
+)
+=
+∑
+f
+∈
+E
+⁡
+(
+v
+j
+)
+∪
+{
+∅
+}
+ϕ
+v
+j
+0
+​
+(
+e
+,
+f
+)
+=
+M
+0
+​
+(
+e
+)
+\sum\limits_{f\in E(v_{i})\cup\{\emptyset\}}\phi^{0}_{v_{i}}(e,f)=\sum\limits_{f\in E(v_{j})\cup\{\emptyset\}}\phi^{0}_{v_{j}}(e,f)=M^{0}(e)
+and
+2.
+∑
+f
+∈
+E
+⁡
+(
+v
+i
+)
+∪
+{
+∅
+}
+ϕ
+v
+i
+0
+​
+(
+f
+,
+e
+)
+=
+∑
+f
+∈
+E
+⁡
+(
+v
+j
+)
+∪
+{
+∅
+}
+ϕ
+v
+j
+0
+​
+(
+f
+,
+e
+)
+=
+N
+0
+​
+(
+e
+)
+\sum\limits_{f\in E(v_{i})\cup\{\emptyset\}}\phi^{0}_{v_{i}}(f,e)=\sum\limits_{f\in E(v_{j})\cup\{\emptyset\}}\phi^{0}_{v_{j}}(f,e)=N^{0}(e)
+,
+because of the axiom
+ϕ
+v
+i
+​
+(
+e
+,
+e
+)
+=
+ϕ
+v
+j
+​
+(
+e
+,
+e
+)
+\phi_{v_{i}}(e,e)=\phi_{v_{j}}(e,e)
+on sensible-pairings.
+Let
+k
+=
+0
+k=0
+.
+Create a graph
+H
+k
+=
+(
+W
+k
+,
+E
+k
+)
+H^{k}=(W^{k},E^{k})
+, where each
+e
+=
+(
+v
+i
+,
+v
+j
+)
+∈
+E
+e=(v_{i},v_{j})\in E
+with
+N
+k
+​
+(
+e
+)
+>
+0
+N^{k}(e)>0
+receives two vertices
+e
+N
+i
+,
+e
+N
+j
+e_{N}^{i},e_{N}^{j}
+and each with
+M
+k
+​
+(
+e
+)
+>
+0
+M^{k}(e)>0
+receives vertices
+e
+M
+i
+,
+e
+M
+j
+e_{M}^{i},e_{M}^{j}
+. We also add a vertex
+v
+∅
+v^{\emptyset}
+corresponding to
+∅
+\emptyset
+. Then, we define the edges of
+H
+k
+H^{k}
+such that
+(
+e
+M
+i
+,
+f
+N
+j
+)
+(e_{M}^{i},f_{N}^{j})
+is an edge if and only if
+i
+=
+j
+i=j
+and
+ϕ
+v
+i
+k
+​
+(
+e
+,
+f
+)
+>
+0
+\phi^{k}_{v_{i}}(e,f)>0
+. We also add edges
+(
+e
+M
+i
+,
+e
+M
+j
+)
+(e_{M}^{i},e_{M}^{j})
+and
+(
+e
+N
+i
+,
+e
+N
+j
+)
+(e_{N}^{i},e_{N}^{j})
+for each
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+. Finally, we add an edge
+(
+e
+M
+i
+,
+v
+∅
+)
+(e_{M}^{i},v^{\emptyset})
+if and only if
+ϕ
+v
+i
+k
+​
+(
+e
+,
+∅
+)
+>
+0
+\phi^{k}_{v_{i}}(e,\emptyset)>0
+and an edge
+(
+e
+N
+i
+,
+v
+∅
+)
+(e_{N}^{i},v^{\emptyset})
+if
+ϕ
+v
+i
+​
+(
+∅
+,
+e
+)
+>
+0
+\phi_{v_{i}}(\emptyset,e)>0
+. Let
+F
+k
+=
+{
+(
+e
+M
+i
+,
+e
+M
+j
+)
+∣
+e
+∈
+E
+,
+M
+k
+(
+e
+)
+>
+0
+}
+∪
+{
+(
+e
+N
+i
+,
+e
+N
+j
+)
+∣
+e
+∈
+E
+,
+N
+k
+(
+e
+)
+>
+0
+F^{k}=\{(e_{M}^{i},e_{M}^{j})\mid e\in E,\;M^{k}(e)>0\}\cup\{(e_{N}^{i},e_{N}^{j})\mid e\in E,\;N^{k}(e)>0
+}.
+To proceed with the proof, we need the following claim.
+Claim 5
+.
+Let
+H
+=
+(
+W
+,
+E
+∪
+F
+)
+H=(W,E\cup F)
+(
+E
+∩
+F
+=
+∅
+E\cap F=\emptyset
+) be a multigraph with
+|
+E
+∪
+F
+|
+≥
+1
+|E\cup F|\geq 1
+, where
+F
+F
+is an almost perfect matching that covers all but one vertex
+v
+0
+∈
+W
+v_{0}\in W
+and every vertex
+v
+∈
+W
+∖
+{
+v
+0
+}
+v\in W\setminus\{v_{0}\}
+has degree at least one in
+E
+E
+. Then, it holds that either there is an
+E
+−
+F
+E-F
+-alternating closed walk in
+H
+H
+, or an almost
+E
+−
+F
+E-F
+-alternating closed walk, which alternates at every vertex except
+v
+0
+v_{0}
+.
+Proof:
+We prove this by induction on
+|
+W
+|
+|W|
+. Clearly, as
+F
+F
+forms an almost perfect matching in
+H
+H
+, where only
+v
+0
+v_{0}
+is unmatched, we have that
+|
+W
+|
+=
+2
+​
+m
++
+1
+|W|=2m+1
+for some
+m
+∈
+ℤ
+m\in\mathbb{Z}
+. If
+|
+W
+|
+=
+1
+|W|=1
+, then
+W
+=
+{
+v
+0
+}
+W=\{v_{0}\}
+, so by
+|
+E
+∪
+F
+|
+≥
+1
+|E\cup F|\geq 1
+, there is a loop edge
+v
+0
+​
+v
+0
+v_{0}v_{0}
+and the statement follows.
+Suppose we know the statement for
+|
+W
+|
+=
+2
+​
+m
++
+1
+|W|=2m+1
+and take the case, where
+|
+W
+|
+=
+2
+​
+m
++
+3
+≥
+3
+|W|=2m+3\geq 3
+. Then,
+F
+≠
+∅
+F\neq\emptyset
+. Let
+(
+u
+,
+v
+)
+∈
+F
+(u,v)\in F
+. If there is an edge
+(
+u
+,
+v
+)
+∈
+E
+(u,v)\in E
+too, then we are done, since we found a closed
+E
+−
+F
+E-F
+-alternating cycle. Otherwise, as
+u
+u
+and
+v
+v
+have degree at least one in
+E
+E
+, we can create nonempty sets
+U
+⊆
+W
+U\subseteq W
+and
+V
+⊆
+W
+V\subseteq W
+, such that each vertex in
+U
+U
+is connected to
+u
+u
+in
+E
+E
+and each vertex in
+V
+V
+is connected to
+v
+v
+in
+E
+E
+.
+Take the graph
+H
+′
+H^{\prime}
+, which is the restriction of
+H
+H
+to
+W
+∖
+{
+u
+,
+v
+}
+W\setminus\{u,v\}
+, but for each
+u
+′
+∈
+U
+′
+u^{\prime}\in U^{\prime}
+and
+v
+′
+∈
+V
+′
+v^{\prime}\in V^{\prime}
+, we add an edge
+(
+u
+′
+,
+v
+′
+)
+(u^{\prime},v^{\prime})
+. We call these edges virtual edges. Let
+F
+′
+F^{\prime}
+be the restriction of
+F
+F
+to
+H
+′
+H^{\prime}
+and
+E
+′
+E^{\prime}
+be the other edges. For this graph, we have that
+|
+W
+′
+|
+=
+2
+​
+m
++
+1
+|W^{\prime}|=2m+1
+,
+F
+′
+F^{\prime}
+forms an almost perfect matching, and every
+v
+∈
+W
+′
+∖
+{
+v
+0
+}
+v\in W^{\prime}\setminus\{v_{0}\}
+has degree at least one in
+E
+′
+E^{\prime}
+(if a vertex
+w
+w
+was only adjacent to
+u
+u
+or
+v
+v
+, then we created at least one new edge incident to
+w
+w
+). Since
+E
+′
+≠
+∅
+E^{\prime}\neq\emptyset
+, as
+|
+V
+′
+|
+≥
+1
+,
+|
+U
+′
+|
+≥
+1
+|V^{\prime}|\geq 1,|U^{\prime}|\geq 1
+, we have by induction that there is an
+E
+′
+−
+F
+′
+E^{\prime}-F^{\prime}
+-alternating closed walk in
+H
+′
+H^{\prime}
+or an almost
+E
+′
+−
+F
+′
+E^{\prime}-F^{\prime}
+-alternating closed walks, which alternates except from
+v
+0
+v_{0}
+. From this, we can create an
+E
+−
+F
+E-F
+-alternating closed walk or an almost
+E
+−
+F
+E-F
+-alternating closed walk in
+H
+′
+H^{\prime}
+by substituting each virtual edge
+(
+u
+′
+,
+v
+′
+)
+(u^{\prime},v^{\prime})
+with
+(
+u
+′
+,
+u
+)
+,
+(
+u
+,
+v
+)
+,
+(
+v
+,
+v
+′
+​
+(
+CLOSE
+CLOSE
+(u^{\prime},u),(u,v),(v,v^{\prime}(
+.
+■
+\blacksquare
+Observe that
+F
+k
+F^{k}
+is an almost perfect matching in
+H
+k
+H^{k}
+covering all vertices but
+v
+∅
+v^{\emptyset}
+and each vertex apart from
+v
+∅
+v^{\emptyset}
+is adjacent to at least one edge from
+E
+k
+∖
+F
+k
+E^{k}\setminus F^{k}
+. The latter holds as we have (and will maintain) properties
+1
+and
+2
+, meaning that for each
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+that
+∑
+f
+∈
+E
+⁡
+(
+v
+i
+)
+∪
+{
+∅
+}
+ϕ
+v
+i
+k
+​
+(
+e
+,
+f
+)
+=
+∑
+f
+∈
+E
+⁡
+(
+v
+j
+)
+∪
+{
+∅
+}
+ϕ
+v
+j
+k
+​
+(
+e
+,
+f
+)
+=
+M
+k
+​
+(
+e
+)
+\sum\limits_{f\in E(v_{i})\cup\{\emptyset\}}\phi^{k}_{v_{i}}(e,f)=\sum\limits_{f\in E(v_{j})\cup\{\emptyset\}}\phi^{k}_{v_{j}}(e,f)=M^{k}(e)
+and
+∑
+f
+∈
+E
+⁡
+(
+v
+i
+)
+∪
+{
+∅
+}
+ϕ
+v
+i
+k
+​
+(
+f
+,
+e
+)
+=
+∑
+f
+∈
+E
+⁡
+(
+v
+j
+)
+∪
+{
+∅
+}
+ϕ
+v
+j
+k
+​
+(
+f
+,
+e
+)
+=
+N
+k
+​
+(
+e
+)
+\sum\limits_{f\in E(v_{i})\cup\{\emptyset\}}\phi^{k}_{v_{i}}(f,e)=\sum\limits_{f\in E(v_{j})\cup\{\emptyset\}}\phi^{k}_{v_{j}}(f,e)=N^{k}(e)
+.
+Hence, using Claim
+5
+for
+H
+k
+=
+(
+W
+k
+,
+E
+k
+∖
+F
+k
+∪
+F
+k
+)
+H^{k}=(W^{k},E^{k}\setminus F^{k}\cup F^{k})
+and
+v
+0
+=
+v
+∅
+v_{0}=v^{\emptyset}
+we get that, if
+ϕ
+k
+\phi^{k}
+is not the all zero function yet (so
+E
+k
+≠
+∅
+E^{k}\neq\emptyset
+by properties
+1
+,
+2
+and the construction of
+H
+k
+H^{k}
+), then either there is an
+F
+k
+−
+E
+k
+∖
+F
+k
+F^{k}-E^{k}\setminus F^{k}
+alternating closed walk in
+H
+k
+H^{k}
+or an almost
+F
+k
+−
+E
+k
+∖
+F
+k
+F^{k}-E^{k}\setminus F^{k}
+alternating closed walk, which alternates at every vertex except
+v
+∅
+v^{\emptyset}
+.
+Let this closed walk be
+C
+k
+C^{k}
+. Also observe that by the construction of
+H
+k
+H^{k}
+, the edges
+C
+k
+∩
+F
+k
+C^{k}\cap F^{k}
+alternate between
+(
+e
+M
+i
+,
+e
+M
+j
+)
+(e_{M}^{i},e_{M}^{j})
+type and
+(
+e
+N
+i
+,
+e
+N
+j
+)
+(e_{N}^{i},e_{N}^{j})
+type edges. Hence,
+C
+k
+∩
+F
+k
+C^{k}\cap F^{k}
+gives a walk
+P
+k
+P^{k}
+in
+G
+G
+, where
+P
+k
+=
+(
+e
+0
+,
+f
+1
+,
+e
+1
+,
+…
+,
+f
+j
+k
+,
+e
+j
+k
+)
+P^{k}=(e_{0},f_{1},e_{1},\dots,f_{j_{k}},e_{j_{k}})
+, with
+M
+k
+​
+(
+e
+i
+)
+>
+0
+M^{k}(e_{i})>0
+,
+N
+k
+​
+(
+f
+i
+)
+>
+0
+N^{k}(f_{i})>0
+and
+ϕ
+v
+i
+−
+1
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+>
+0
+,
+ϕ
+u
+i
+​
+(
+e
+i
+,
+f
+i
+)
+>
+0
+\phi_{v_{i-1}}(e_{i-1},f_{i})>0,\phi_{u_{i}}(e_{i},f_{i})>0
+and it may happen that
+e
+0
+=
+∅
+e_{0}=\emptyset
+,
+e
+j
+k
+=
+∅
+e_{j_{k}}=\emptyset
+or
+e
+0
+=
+e
+j
+k
+e_{0}=e_{j_{k}}
+(note that an edge can have
+N
+k
+​
+(
+e
+)
+>
+0
+N^{k}(e)>0
+and
+M
+k
+​
+(
+e
+)
+>
+0
+M^{k}(e)>0
+simultaneously).
+Intuitively, what we do in the following paragraphs is decreasing the
+M
+k
+,
+N
+k
+M^{k},N^{k}
+and
+ϕ
+k
+\phi^{k}
+values according to the
+e
+i
+,
+f
+i
+e_{i},f_{i}
+edges and
+(
+e
+i
+−
+1
+,
+f
+i
+)
+,
+(
+e
+i
+,
+f
+i
+)
+(e_{i-1},f_{i}),(e_{i},f_{i})
+comparisons that are given by the closed walk
+C
+k
+C^{k}
+, until one new
+ϕ
+k
+​
+(
+e
+,
+f
+)
+\phi^{k}(e,f)
+becomes 0 (while also being careful about the possibly different multiplicities of these in
+C
+k
+C^{k}
+).
+Let
+e
+i
+=
+(
+u
+i
+,
+v
+i
+)
+e_{i}=(u_{i},v_{i})
+and
+f
+i
+=
+(
+v
+i
+−
+1
+,
+u
+i
+)
+f_{i}=(v_{i-1},u_{i})
+. Let
+α
+i
+−
+1
+,
+i
+\alpha_{i-1,i}
+be the multiplicity of the edge of
+E
+k
+E^{k}
+corresponding to the comparison
+(
+e
+i
+−
+1
+,
+f
+i
+)
+(e_{i-1},f_{i})
+in
+C
+k
+C^{k}
+(the edge corresponding to a comparison
+(
+e
+,
+f
+)
+(e,f)
+is
+(
+e
+M
+i
+,
+f
+N
+i
+)
+(e_{M}^{i},f_{N}^{i})
+),
+α
+i
+,
+i
+\alpha_{i,i}
+be the multiplicity of the edge of
+E
+k
+E^{k}
+corresponding to the comparison
+(
+e
+i
+,
+f
+i
+)
+(e_{i},f_{i})
+in
+C
+k
+C^{k}
+,
+α
+i
+\alpha_{i}
+be the multiplicity of the edge of
+F
+k
+F^{k}
+corresponding to the
+M
+M
+-version of
+e
+i
+e_{i}
+(the
+M
+M
+-version of an edge
+e
+e
+is
+(
+e
+M
+i
+,
+e
+M
+j
+)
+(e_{M}^{i},e_{M}^{j})
+) in
+C
+k
+C^{k}
+and finally
+β
+i
+\beta_{i}
+be the multiplicity of the edge of
+F
+k
+F^{k}
+corresponding to the
+N
+N
+-version of
+f
+i
+f_{i}
+in
+C
+k
+C^{k}
+. Similarly, let
+α
+0
+,
+0
+\alpha_{0,0}
+be the multiplicity of the edge of
+E
+k
+E^{k}
+corresponding to the comparison
+(
+e
+0
+,
+∅
+)
+(e_{0},\emptyset)
+in
+C
+k
+C^{k}
+, if
+v
+∅
+∈
+C
+k
+v^{\emptyset}\in C^{k}
+, but
+e
+0
+≠
+∅
+e_{0}\neq\emptyset
+and
+α
+j
+k
+,
+0
+\alpha_{j_{k},0}
+be the multiplicity of the edge of
+E
+k
+E^{k}
+corresponding to the comparison
+(
+e
+j
+k
+,
+∅
+)
+(e_{j_{k}},\emptyset)
+in
+C
+k
+C^{k}
+, if
+v
+∅
+∈
+C
+k
+v^{\emptyset}\in C^{k}
+, but
+e
+j
+k
+≠
+∅
+e_{j_{k}}\neq\emptyset
+.
+Set the weight of
+P
+k
+P^{k}
+to be
+–
+w
+k
+=
+min
+i
+∈
+[
+j
+k
+]
+⁡
+{
+ϕ
+v
+i
+−
+1
+k
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+/
+α
+i
+−
+1
+,
+i
+,
+ϕ
+u
+i
+k
+​
+(
+e
+i
+,
+f
+i
+)
+/
+α
+i
+,
+i
+}
+w_{k}=\min_{i\in[j_{k}]}\{\phi_{v_{i-1}}^{k}(e_{i-1},f_{i})/\alpha_{i-1,i},\phi_{u_{i}}^{k}(e_{i},f_{i})/\alpha_{i,i}\}
+, if
+e
+0
+=
+e
+j
+k
+e_{0}=e_{j_{k}}
+,
+–
+w
+k
+=
+min
+i
+∈
+[
+j
+k
+]
+⁡
+{
+ϕ
+v
+i
+−
+1
+k
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+/
+α
+i
+−
+1
+,
+i
+,
+ϕ
+u
+i
+k
+​
+(
+e
+i
+,
+f
+i
+)
+/
+α
+i
+,
+i
+,
+ϕ
+u
+0
+​
+(
+e
+0
+,
+∅
+)
+/
+α
+0
+,
+0
+}
+w_{k}=\min_{i\in[j_{k}]}\{\phi_{v_{i-1}}^{k}(e_{i-1},f_{i})/\alpha_{i-1,i},\phi_{u_{i}}^{k}(e_{i},f_{i})/\alpha_{i,i},\phi_{u_{0}}(e_{0},\emptyset)/\alpha_{0,0}\}
+if
+e
+0
+≠
+∅
+,
+e
+j
+k
+=
+∅
+e_{0}\neq\emptyset,e_{j_{k}}=\emptyset
+,
+–
+w
+k
+=
+min
+i
+∈
+[
+j
+k
+]
+⁡
+{
+ϕ
+v
+i
+−
+1
+k
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+/
+α
+i
+−
+1
+,
+i
+,
+ϕ
+u
+i
+k
+​
+(
+e
+i
+,
+f
+i
+)
+/
+α
+i
+,
+i
+,
+ϕ
+v
+j
+k
+​
+(
+e
+j
+k
+,
+∅
+)
+/
+α
+j
+k
+,
+0
+}
+w_{k}=\min_{i\in[j_{k}]}\{\phi_{v_{i-1}}^{k}(e_{i-1},f_{i})/\alpha_{i-1,i},\phi_{u_{i}}^{k}(e_{i},f_{i})/\alpha_{i,i},\phi_{v_{j_{k}}}(e_{j_{k}},\emptyset)/\alpha_{j_{k},0}\}
+, if
+e
+0
+=
+∅
+,
+e
+j
+k
+≠
+∅
+e_{0}=\emptyset,e_{j_{k}}\neq\emptyset
+and finally
+–
+w
+k
+=
+min
+i
+∈
+[
+j
+k
+]
+⁡
+{
+ϕ
+v
+i
+−
+1
+k
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+/
+α
+i
+−
+1
+,
+i
+,
+ϕ
+u
+i
+k
+​
+(
+e
+i
+,
+f
+i
+)
+​
+α
+i
+,
+i
+,
+ϕ
+u
+0
+​
+(
+e
+0
+,
+∅
+)
+/
+α
+0
+,
+0
+,
+ϕ
+v
+j
+k
+​
+(
+e
+j
+k
+,
+∅
+)
+/
+α
+j
+k
+,
+0
+}
+w_{k}=\min_{i\in[j_{k}]}\{\phi_{v_{i-1}}^{k}(e_{i-1},f_{i})/\alpha_{i-1,i},\phi_{u_{i}}^{k}(e_{i},f_{i})\alpha_{i,i},\phi_{u_{0}}(e_{0},\emptyset)/\alpha_{0,0},\phi_{v_{j_{k}}}(e_{j_{k}},\emptyset)/\alpha_{j_{k},0}\}
+, if
+∅
+≠
+e
+0
+≠
+e
+j
+k
+≠
+∅
+\emptyset\neq e_{0}\neq e_{j_{k}}\neq\emptyset
+.
+Then, we let
+k
+:=
+k
++
+1
+k:=k+1
+,
+ϕ
+v
+i
+−
+1
+k
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+=
+ϕ
+v
+i
+−
+1
+k
+−
+1
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+−
+α
+i
+−
+1
+,
+i
+​
+w
+k
+−
+1
+\phi_{v_{i-1}}^{k}(e_{i-1},f_{i})=\phi_{v_{i-1}}^{k-1}(e_{i-1},f_{i})-\alpha_{i-1,i}w_{k-1}
+,
+ϕ
+u
+i
+k
+​
+(
+e
+i
+,
+f
+i
+)
+=
+ϕ
+u
+i
+k
+−
+1
+​
+(
+e
+i
+,
+f
+i
+)
+−
+α
+i
+,
+i
+​
+w
+k
+−
+1
+\phi^{k}_{u_{i}}(e_{i},f_{i})=\phi_{u_{i}}^{k-1}(e_{i},f_{i})-\alpha_{i,i}w_{k-1}
+(
+i
+=
+1
+,
+…
+,
+j
+k
+−
+1
+i=1,\dots,j_{k-1}
+) and
+ϕ
+v
+k
+​
+(
+e
+,
+f
+)
+=
+ϕ
+v
+k
+−
+1
+​
+(
+e
+,
+f
+)
+\phi_{v}^{k}(e,f)=\phi_{v}^{k-1}(e,f)
+otherwise. If
+v
+∅
+∈
+C
+k
+−
+1
+v^{\emptyset}\in C^{k-1}
+but
+e
+0
+≠
+∅
+e_{0}\neq\emptyset
+, then we let
+ϕ
+u
+0
+k
+​
+(
+e
+0
+,
+∅
+)
+=
+ϕ
+u
+0
+k
+−
+1
+​
+(
+e
+0
+,
+∅
+)
+−
+α
+0
+,
+0
+​
+w
+k
+−
+1
+\phi^{k}_{u_{0}}(e_{0},\emptyset)=\phi^{k-1}_{u_{0}}(e_{0},\emptyset)-\alpha_{0,0}w_{k-1}
+,
+ϕ
+v
+j
+k
+−
+1
+k
+​
+(
+e
+j
+k
+,
+∅
+)
+=
+ϕ
+v
+j
+k
+−
+1
+k
+−
+1
+​
+(
+e
+j
+k
+,
+∅
+)
+−
+α
+j
+k
+−
+1
+,
+0
+​
+w
+k
+−
+1
+\phi^{k}_{v_{j_{k-1}}}(e_{j_{k}},\emptyset)=\phi_{v_{j_{k-1}}}^{k-1}(e_{j_{k}},\emptyset)-\alpha_{j_{k-1},0}w_{k-1}
+and
+ϕ
+v
+k
+​
+(
+e
+,
+∅
+)
+=
+ϕ
+v
+k
+−
+1
+​
+(
+e
+,
+∅
+)
+\phi^{k}_{v}(e,\emptyset)=\phi^{k-1}_{v}(e,\emptyset)
+otherwise.
+We let
+M
+k
+​
+(
+e
+i
+)
+=
+M
+k
+−
+1
+​
+(
+e
+i
+)
+−
+α
+i
+​
+w
+k
+−
+1
+M^{k}(e_{i})=M^{k-1}(e_{i})-\alpha_{i}w_{k-1}
+(
+i
+=
+0
+,
+1
+,
+…
+,
+j
+k
+−
+1
+i=0,1,\dots,j_{k-1}
+) and
+M
+k
+​
+(
+e
+)
+=
+M
+k
+−
+1
+​
+(
+e
+)
+M^{k}(e)=M^{k-1}(e)
+otherwise. We let
+N
+k
+​
+(
+f
+i
+)
+=
+N
+k
+−
+1
+​
+(
+f
+i
+)
+−
+β
+i
+​
+w
+k
+−
+1
+N^{k}(f_{i})=N^{k-1}(f_{i})-\beta_{i}w_{k-1}
+(
+i
+=
+1
+,
+…
+,
+j
+k
+−
+1
+i=1,\dots,j_{k-1}
+) and
+N
+k
+​
+(
+f
+)
+=
+N
+k
+−
+1
+​
+(
+f
+)
+N^{k}(f)=N^{k-1}(f)
+otherwise. By the choice of
+w
+k
+−
+1
+w_{k-1}
+, every value remains nonnegative.
+Finally, we define
+H
+k
+H^{k}
+from
+M
+k
+,
+N
+k
+M^{k},N^{k}
+and
+ϕ
+k
+\phi^{k}
+the same way and iterate this procedure until
+ϕ
+k
+≡
+0
+\phi^{k}\equiv 0
+. We can iterate it, since each vertex we keep in
+H
+k
+H^{k}
+apart from
+v
+∅
+v^{\emptyset}
+remains incident to at least one edge from both
+F
+k
+F^{k}
+and
+E
+k
+∖
+F
+k
+E^{k}\setminus F^{k}
+as the value updates maintain
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+k
+​
+(
+e
+,
+f
+)
+=
+∑
+f
+∈
+E
+⁡
+(
+u
+)
+∪
+{
+∅
+}
+ϕ
+u
+k
+​
+(
+e
+,
+f
+)
+=
+M
+k
+​
+(
+e
+)
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}^{k}(e,f)=\sum_{f\in E(u)\cup\{\emptyset\}}\phi_{u}^{k}(e,f)=M^{k}(e)
+and
+∑
+f
+∈
+E
+⁡
+(
+v
+)
+∪
+{
+∅
+}
+ϕ
+v
+k
+​
+(
+f
+,
+e
+)
+=
+∑
+f
+∈
+E
+⁡
+(
+u
+)
+∪
+{
+∅
+}
+ϕ
+u
+k
+​
+(
+f
+,
+e
+)
+=
+N
+k
+​
+(
+e
+)
+\sum_{f\in E(v)\cup\{\emptyset\}}\phi_{v}^{k}(f,e)=\sum_{f\in E(u)\cup\{\emptyset\}}\phi_{u}^{k}(f,e)=N^{k}(e)
+. This procedure terminates in finitely many steps, as in each step at least one new
+ϕ
+v
+k
+​
+(
+e
+,
+f
+)
+\phi^{k}_{v}(e,f)
+value becomes
+0
+0
+.
+For each walk
+P
+l
+P^{l}
+, let
+P
+l
+=
+(
+e
+0
+,
+f
+1
+,
+e
+1
+,
+f
+2
+,
+e
+2
+​
+…
+,
+e
+j
+l
+)
+P^{l}=(e_{0},f_{1},e_{1},f_{2},e_{2}\dots,e_{j_{l}})
+, where
+M
+⁡
+(
+e
+i
+)
+>
+0
+M(e_{i})>0
+and
+N
+⁡
+(
+f
+i
+)
+>
+0
+N(f_{i})>0
+for each
+i
+i
+and
+e
+0
+=
+e
+j
+l
+e_{0}=e_{j_{l}}
+, if
+P
+l
+P^{l}
+is a closed walk. Note that
+e
+0
+,
+e
+j
+l
+e_{0},e_{j_{l}}
+can be
+∅
+\emptyset
+.
+Recall that
+e
+i
+=
+(
+u
+i
+,
+v
+i
+)
+e_{i}=(u_{i},v_{i})
+and
+f
+i
+=
+(
+v
+i
+−
+1
+,
+u
+i
+)
+f_{i}=(v_{i-1},u_{i})
+. Of course, it may happen that
+v
+i
+=
+v
+j
+v_{i}=v_{j}
+or
+u
+i
+=
+v
+j
+u_{i}=v_{j}
+for some
+i
+,
+j
+i,j
+, however, this does not matter for the proof. Note that depending on the above cases, we can have
+u
+0
+=
+∅
+u_{0}=\emptyset
+,
+v
+j
+l
+=
+∅
+v_{j_{l}}=\emptyset
+or
+u
+0
+=
+u
+j
+l
+,
+v
+0
+=
+v
+j
+l
+u_{0}=u_{j_{l}},v_{0}=v_{j_{l}}
+.
+What is important however is that we have that no two adjacent edges are the same in any of the walks
+P
+l
+P^{l}
+by the fact that
+ϕ
+v
+k
+​
+(
+e
+,
+e
+)
+\phi_{v}^{k}(e,e)
+is always 0. This also means that
+OPEN
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
+)
+∈
+{
+−
+2
+,
+0
+,
++
+2
+}
+\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j}))\in\{-2,0,+2\}
+, as the preferences are strict.
+Then, we have that
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+=
+∑
+l
+=
+1
+k
+w
+l
+⋅
+∑
+j
+=
+1
+j
+l
+(
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
++
+x
+⁡
+(
+P
+l
+)
+)
+\Delta(M,N,\phi)=\sum\limits_{l=1}^{k}w_{l}\cdot\sum\limits_{j=1}^{j_{l}}(\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})+x(P^{l}))
+, where
+x
+⁡
+(
+P
+l
+)
+=
+vote
+u
+0
+​
+(
+e
+0
+,
+∅
+)
++
+vote
+v
+j
+l
+​
+(
+e
+j
+l
+,
+∅
+)
+x(P^{l})=\mathrm{vote}_{u_{0}}(e_{0},\emptyset)+\mathrm{vote}_{v_{j_{l}}}(e_{j_{l}},\emptyset)
+if
+e
+0
+≠
+e
+j
+l
+e_{0}\neq e_{j_{l}}
+and 0 otherwise. Therefore, it is enough to show that for each walk
+P
+l
+P^{l}
+,
+∑
+j
+=
+1
+j
+l
+(
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
++
+x
+⁡
+(
+P
+l
+)
+)
+≥
+0
+\sum\limits_{j=1}^{j_{l}}(\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})+x(P^{l}))\geq 0
+and it is strictly larger than
+0
+0
+, whenever we have
+e
+0
+=
+e
+j
+l
+=
+∅
+e_{0}=e_{j_{l}}=\emptyset
+.
+Claim 6
+.
+1.
+If
+e
+i
+e_{i}
+has a bad copy for
+v
+i
+v_{i}
+with positive value in
+M
+′
+M^{\prime}
+and
+e
+i
++
+1
+e_{i+1}
+has a good copy for
+v
+i
++
+1
+v_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+, then
+vote
+v
+i
+​
+(
+e
+i
+,
+f
+i
++
+1
+)
++
+vote
+u
+i
++
+1
+​
+(
+e
+i
++
+1
+,
+f
+i
++
+1
+)
+=
++
+2
+\mathrm{vote}_{v_{i}}(e_{i},f_{i+1})+\mathrm{vote}_{u_{i+1}}(e_{i+1},f_{i+1})=+2
+.
+2.
+If
+e
+i
+e_{i}
+has a bad copy for
+v
+i
+v_{i}
+with positive value in
+M
+′
+M^{\prime}
+or
+e
+i
++
+1
+e_{i+1}
+has a good copy for
+v
+i
++
+1
+v_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+, then
+vote
+v
+i
+​
+(
+e
+i
+,
+f
+i
++
+1
+)
++
+vote
+u
+i
++
+1
+​
+(
+e
+i
++
+1
+,
+f
+i
++
+1
+)
+≥
+0
+\mathrm{vote}_{v_{i}}(e_{i},f_{i+1})+\mathrm{vote}_{u_{i+1}}(e_{i+1},f_{i+1})\geq 0
+.
+3.
+If
+e
+i
+e_{i}
+has a good copy for
+v
+i
+v_{i}
+with positive value in
+M
+′
+M^{\prime}
+and
+e
+i
++
+1
+e_{i+1}
+has a bad copy for
+v
+i
++
+1
+v_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+, then
+vote
+v
+i
+​
+(
+e
+i
+,
+f
+i
++
+1
+)
++
+vote
+u
+i
++
+1
+​
+(
+e
+i
++
+1
+,
+f
+i
++
+1
+)
+≥
+−
+2
+\mathrm{vote}_{v_{i}}(e_{i},f_{i+1})+\mathrm{vote}_{u_{i+1}}(e_{i+1},f_{i+1})\geq-2
+.
+4.
+If
+e
+0
+=
+∅
+e_{0}=\emptyset
+, then
+e
+1
+e_{1}
+has only a bad copy for
+v
+1
+v_{1}
+with positive weight in
+M
+′
+M^{\prime}
+and
+vote
+u
+1
+​
+(
+e
+1
+,
+f
+1
+)
+=
++
+1
+\mathrm{vote}_{u_{1}}(e_{1},f_{1})=+1
+.
+5.
+If
+e
+j
+l
+=
+∅
+e_{j_{l}}=\emptyset
+, then
+e
+j
+l
+−
+1
+e_{j_{l}-1}
+has only a good copy for
+v
+j
+l
+−
+1
+v_{j_{l}-1}
+with positive weight in
+M
+′
+M^{\prime}
+and
+vote
+v
+j
+l
+−
+1
+​
+(
+e
+j
+l
+−
+1
+CLOSE
+,
+\mathrm{vote}_{v_{j_{l}-1}}(e_{j_{l}-1},
+OPEN
+f
+j
+l
+)
+=
++
+1
+f_{j_{l}})=+1
+.
+Proof:
+1. Suppose for the contrary that
+v
+i
+v_{i}
+or
+u
+i
++
+1
+u_{i+1}
+prefers
+f
+i
++
+1
+f_{i+1}
+to
+e
+i
+e_{i}
+or
+e
+i
++
+1
+e_{i+1}
+respectively. Note that both copies of
+f
+i
++
+1
+f_{i+1}
+are unsaturated in
+M
+′
+M^{\prime}
+, because we have
+M
+⁡
+(
+e
+i
+)
+>
+0
+M(e_{i})>0
+,
+M
+⁡
+(
+e
+i
++
+1
+)
+>
+0
+M(e_{i+1})>0
+and
+f
+i
++
+1
+∉
+{
+e
+i
+,
+e
+i
++
+1
+}
+f_{i+1}\notin\{e_{i},e_{i+1}\}
+.
+By the assumption, both are matched with a bad copy with positive weight in
+M
+′
+M^{\prime}
+. If
+u
+i
++
+1
+u_{i+1}
+prefers
+f
+i
++
+1
+f_{i+1}
+, then the (unsaturated) bad copy of
+f
+i
++
+1
+f_{i+1}
+for
+u
+i
++
+1
+u_{i+1}
+(which is a good copy for
+v
+i
+v_{i}
+) blocks
+M
+′
+M^{\prime}
+, otherwise the other copy blocks
+M
+′
+M^{\prime}
+by the definition of the extended rankings, contradiction.
+2. In this case, at least one of
+u
+i
++
+1
+,
+v
+i
+u_{i+1},v_{i}
+is matched with a bad copy with positive weight in
+M
+′
+M^{\prime}
+, say it is
+v
+i
+v_{i}
+(the other case is analogous). Hence, if both prefers
+f
+i
++
+1
+f_{i+1}
+, then the bad copy of
+f
+i
++
+1
+f_{i+1}
+for
+v
+i
+v_{i}
+(unsaturated in
+M
+′
+M^{\prime}
+for the same reasons) blocks
+M
+′
+M^{\prime}
+, contradiction.
+3. Trivial.
+4. If
+e
+0
+=
+∅
+e_{0}=\emptyset
+, then we must have by axiom
+3
+of sensible pairings that
+v
+0
+v_{0}
+is unsaturated in
+M
+′
+M^{\prime}
+, as
+ϕ
+v
+0
+​
+(
+∅
+,
+f
+1
+)
+>
+0
+\phi_{v_{0}}(\emptyset,f_{1})>0
+. Hence, by the fact that the bad copy of
+f
+1
+f_{1}
+for
+v
+0
+v_{0}
+does not block
+M
+′
+M^{\prime}
+, we get that
+u
+1
+u_{1}
+is saturated with good copies in
+M
+′
+M^{\prime}
+, so
+e
+1
+e_{1}
+must have a bad copy with positive weight in
+M
+′
+M^{\prime}
+for
+v
+1
+v_{1}
+. Also,
+u
+1
+u_{1}
+has to prefer each edge of
+M
+′
+M^{\prime}
+with positive weight even to the good copy of
+f
+1
+f_{1}
+, so
+vote
+u
+1
+​
+(
+e
+1
+,
+f
+1
+)
+=
++
+1
+\mathrm{vote}_{u_{1}}(e_{1},f_{1})=+1
+.
+5. This case is very similar to
+4
+. We have that
+u
+j
+l
+u_{j_{l}}
+is unsaturated, so
+v
+j
+l
+−
+1
+v_{j_{l}-1}
+can only have good copies with positive weight in
+M
+′
+M^{\prime}
+and it must prefer
+e
+j
+l
+−
+1
+e_{j_{l}-1}
+to
+f
+j
+l
+f_{j_{l}}
+, so
+vote
+v
+j
+l
+−
+1
+​
+(
+e
+j
+l
+−
+1
+,
+f
+j
+l
+)
+=
++
+1
+\mathrm{vote}_{v_{j_{l}-1}}(e_{j_{l}-1},f_{j_{l}})=+1
+.
+■
+\blacksquare
+We get by the above observations that for each
+P
+l
+P^{l}
+, case
+1
+happens at least as many times as case
+3
+, except when
+e
+0
+≠
+∅
+e_{0}\neq\emptyset
+,
+e
+j
+l
+≠
+∅
+e_{j_{l}}\neq\emptyset
+and
+e
+0
+≠
+e
+j
+l
+e_{0}\neq e_{j_{l}}
+, in which case it can happen once more. However, then the two endpoints
+u
+0
+u_{0}
+and
+v
+j
+l
+v_{j_{l}}
+vote with
++
+1
++1
+, i.e.
+x
+⁡
+(
+P
+l
+)
+=
++
+2
+x(P^{l})=+2
+, so
+∑
+j
+=
+1
+j
+l
+(
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
++
+x
+⁡
+(
+P
+l
+)
+)
+≥
+0
+\sum\limits_{j=1}^{j_{l}}(\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})+x(P^{l}))\geq 0
+holds regardless.
+Finally, if
+e
+0
+=
+e
+j
+l
+=
+∅
+e_{0}=e_{j_{l}}=\emptyset
+, then case
+1
+happens one more time than case
+3
+by
+4
+and
+5
+, so we have that
+∑
+j
+=
+1
+j
+l
+(
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
++
+x
+⁡
+(
+P
+l
+)
+)
+>
+0
+\sum\limits_{j=1}^{j_{l}}(\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})+x(P^{l}))>0
+. This proves that
+M
+M
+is extra-popular and that it has a maximum size even among the barely-defendable fractional-matchings.
+∎
+Remark 3
+.
+Observe that we did not use axiom
+4
+of sensible pairings anywhere in the proof of Theorem
+3
+. Hence, the half-matching we get is extra-popular even in a slightly stronger sense we get by eliminating axiom
+4
+from the definition of sensible pairings. Also, it is largest among barely-defendable fractional-matchings even with the weaker definition which does not require axiom
+4
+from sensible pairings.
+The reason for axiom
+4
+is that it is quite natural and symmetric to axiom
+3
+, and that we utilize it in the next section for the
+Crit-fPRI
+algorithm.
+3.3
+Popular Maximum Weight Fractional-Matching
+In this section, we consider the problem of finding a fractional-matching that is popular among the maximum weight fractional-matchings.
+Consider the LP for the maximum weight fractional-matching problem.
+maximize
+∑
+e
+∈
+E
+ω
+e
+​
+x
+e
+subject to
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+x
+e
+≤
+1
+,
+v
+∈
+V
+x
+e
+≥
+0
+e
+∈
+E
+\begin{array}[]{rr@{}ll}\text{maximize}&\displaystyle\sum\limits_{e\in E}\omega_{e}x_{e}&&\\
+\text{subject to}&\displaystyle\sum\limits_{e\in E(v)}x_{e}&\leq 1,&v\in V\\
+&x_{e}&\geq 0&e\in E\\
+\end{array}
+The Dual LP is
+minimize
+∑
+v
+∈
+V
+y
+v
+subject to
+y
+u
++
+y
+v
+≥
+ω
+e
+e
+∈
+E
+y
+v
+≥
+0
+v
+∈
+V
+\begin{array}[]{rr@{}ll}\text{minimize}&\displaystyle\sum\limits_{v\in V}y_{v}&&\\
+\text{subject to}&y_{u}+y_{v}&\geq\omega_{e}&e\in E\\
+&y_{v}&\geq 0&v\in V\\
+\end{array}
+Let
+y
+∗
+=
+(
+y
+v
+∗
+)
+v
+∈
+V
+y^{*}=(y^{*}_{v})_{v\in V}
+be an optimal dual solution.
+By duality, we know that a fractional-matching
+M
+M
+given by
+x
+=
+(
+x
+e
+)
+e
+∈
+E
+x=(x_{e})_{e\in E}
+is optimal, if and only if we have (i)
+y
+u
+∗
++
+y
+v
+∗
+=
+ω
+⁡
+(
+e
+)
+y_{u}^{*}+y_{v}^{*}=\omega(e)
+for each
+e
+=
+u
+​
+v
+e=uv
+with
+x
+e
+>
+0
+x_{e}>0
+and (ii) for each
+v
+v
+with
+y
+v
+∗
+>
+0
+y_{v}^{*}>0
+we have
+∑
+e
+∈
+E
+⁡
+(
+v
+)
+x
+⁡
+(
+e
+)
+=
+1
+\sum_{e\in E(v)}x(e)=1
+.
+Let
+E
+′
+:=
+{
+e
+∈
+E
+∣
+y
+u
+∗
++
+y
+v
+∗
+=
+ω
+⁡
+(
+e
+)
+}
+E^{\prime}:=\{e\in E\mid y_{u}^{*}+y_{v}^{*}=\omega(e)\}
+and
+𝒞
+:=
+{
+v
+∈
+V
+∣
+y
+v
+∗
+>
+0
+}
+\mathcal{C}:=\{v\in V\mid y_{v}^{*}>0\}
+. Then, we have that the maximum weight fractional-matchings (so each possible candidate for a popular maximum weight fractional-matching) are exactly the ones that have positive value only on edges from
+E
+′
+E^{\prime}
+and saturate every
+v
+∈
+𝒞
+v\in\mathcal{C}
+. Hence, we can restrict the set of edges of
+G
+G
+to
+E
+′
+E^{\prime}
+, so from now on let
+E
+:=
+E
+′
+E:=E^{\prime}
+.
+This way, we reduced the problem to finding a
+popular critical fractional-matching
+, which to recall is a fractional-matching
+M
+M
+that saturates every
+v
+∈
+𝒞
+v\in\mathcal{C}
+and
+Δ
+⁡
+(
+M
+,
+N
+)
+≥
+0
+\Delta(M,N)\geq 0
+for any fractional-matching
+N
+N
+that saturates every vertex
+v
+∈
+𝒞
+v\in\mathcal{C}
+.
+Therefore, now it is enough to solve
+Crit-fPRI
+.
+The fine-tuned first step.
+We describe the fine-tuned first step of the meta-algorithm. Let
+|
+𝒞
+|
+=
+s
+|\mathcal{C}|=s
+.
+We keep each edge of
+E
+E
+. These will be called the middle copies. If
+e
+=
+(
+v
+i
+,
+v
+j
+)
+e=(v_{i},v_{j})
+such that
+v
+i
+,
+v
+j
+∉
+𝒞
+v_{i},v_{j}\notin\mathcal{C}
+, we do not create additional parallel edges. If
+v
+i
+∈
+𝒞
+,
+v
+j
+∉
+𝒞
+v_{i}\in\mathcal{C},v_{j}\notin\mathcal{C}
+, we add copies
+e
+1
+,
+…
+,
+e
+s
+e^{1},\dots,e^{s}
+. These are considered worst copies for
+v
+i
+v_{i}
+in the opposite order (i.e.
+e
+s
+e^{s}
+is the absolute worst and
+e
+1
+e^{1}
+is best among them) and best copies for
+v
+j
+v_{j}
+in the opposite order (i.e.
+e
+s
+e^{s}
+is the absolute best and
+e
+1
+e^{1}
+is the worst among them). If
+v
+i
+∉
+𝒞
+,
+v
+j
+∈
+𝒞
+v_{i}\notin\mathcal{C},v_{j}\in\mathcal{C}
+, we add copies
+e
+−
+1
+,
+…
+,
+e
+−
+s
+e^{-1},\dots,e^{-s}
+. These are considered worst copies for
+v
+j
+v_{j}
+in the opposite order (i.e.
+e
+−
+s
+e^{-s}
+is the absolute worst and
+e
+−
+1
+e^{-1}
+is best among them) and best copies for
+v
+j
+v_{j}
+in the opposite order (i.e.
+e
+−
+s
+e^{-s}
+is the absolute best and
+e
+−
+1
+e^{-1}
+is the worst among them). If
+v
+i
+,
+v
+j
+∈
+𝒞
+v_{i},v_{j}\in\mathcal{C}
+, then we do both of the above.
+Then, the preferences are created such that the best copies are best, then the middle copies and then the worst copies are worst. With respect to that, each vertex ranks the edges of the same type according to their original order. For a vertex
+v
+v
+, we use the notation
+B
+j
+v
+​
+(
+e
+)
+B_{j}^{v}(e)
+to denote the
+j
+j
+-th best copy of
+e
+e
+among the best copies, and
+W
+j
+v
+​
+(
+e
+)
+W_{j}^{v}(e)
+to denote the
+j
+j
+-th worst copy of
+e
+e
+among the worst copies (both can be either
+e
+j
+e^{j}
+or
+e
+−
+j
+e^{-j}
+). We also use the notation
+lev
+v
+​
+(
+B
+j
+v
+​
+(
+e
+)
+)
+=
+j
+\mathrm{lev}_{v}(B_{j}^{v}(e))=j
+,
+lev
+v
+​
+(
+e
+)
+=
+0
+\mathrm{lev}_{v}(e)=0
+and
+lev
+v
+​
+(
+W
+j
+v
+​
+(
+e
+)
+)
+=
+−
+j
+\mathrm{lev}_{v}(W_{j}^{v}(e))=-j
+, which is called the level of the given copy of
+e
+e
+for
+v
+v
+.
+Theorem 4
+.
+Crit-fPRI
+is solvable in polynomial time. Furthermore, the algorithm outputs an extra-popular matching among the critical matchings.
+Proof.
+Take the output
+M
+M
+of the algorithm.
+Claim 7
+.
+M
+M
+saturates every vertex in
+𝒞
+\mathcal{C}
+.
+Proof:
+Suppose for the contrary that
+M
+M
+does not saturate some vertex
+v
+∈
+𝒞
+v\in\mathcal{C}
+. Take a half-matching
+N
+N
+that does.
+Construct a bipartite graph
+G
+′′
+=
+(
+V
+,
+V
+′
+,
+E
+′′
+)
+G^{\prime\prime}=(V,V^{\prime},E^{\prime\prime})
+as in the proof of Theorem
+1
+and add the edges according to the half-matchings
+N
+N
+and
+M
+M
+the same way, which leads to matchings
+N
+′′
+N^{\prime\prime}
+and
+M
+′′
+M^{\prime\prime}
+. By the assumption on
+N
+N
+, we know that there must be an
+M
+′′
+−
+N
+′′
+M^{\prime\prime}-N^{\prime\prime}
+alternating path that starts from some vertex
+v
+i
+1
+v_{i_{1}}
+or
+v
+i
+1
+′
+v_{i_{1}}^{\prime}
+with
+v
+i
+1
+∈
+𝒞
+v_{i_{1}}\in\mathcal{C}
+and contains more copies of vertices from
+𝒞
+\mathcal{C}
+. Suppose by symmetry it is
+v
+i
+1
+′
+v_{i_{1}}^{\prime}
+. Take the edge
+e
+1
+′′
+=
+(
+v
+i
+1
+′
+,
+v
+i
+2
+)
+∈
+N
+′′
+e_{1}^{\prime\prime}=(v_{i_{1}}^{\prime},v_{i_{2}})\in N^{\prime\prime}
+(corresponding to the edge
+e
+1
+∈
+E
+e_{1}\in E
+). Since not even the worst copy for
+v
+i
+1
+v_{i_{1}}
+of
+e
+1
+e_{1}
+blocks
+M
+′
+M^{\prime}
+, we get that
+v
+i
+2
+v_{i_{2}}
+is saturated in
+M
+′
+M^{\prime}
+with only
+B
+1
+v
+i
+2
+B_{1}^{v_{i_{2}}}
+-type edges. Hence, we have some edge
+f
+1
+′′
+=
+(
+v
+i
+2
+,
+v
+i
+3
+′
+)
+∈
+M
+′′
+f_{1}^{\prime\prime}=(v_{i_{2}},v_{i_{3}}^{\prime})\in M^{\prime\prime}
+such that
+v
+i
+3
+∈
+𝒞
+v_{i_{3}}\in\mathcal{C}
+, as
+B
+1
+v
+i
+2
+​
+(
+f
+1
+)
+B_{1}^{v_{i_{2}}}(f_{1})
+exist. By our assumption on the component, there is some edge
+e
+2
+′′
+=
+(
+v
+i
+3
+′
+,
+v
+i
+4
+)
+∈
+N
+′′
+e_{2}^{\prime\prime}=(v_{i_{3}}^{\prime},v_{i_{4}})\in N^{\prime\prime}
+. For
+v
+i
+3
+v_{i_{3}}
+, we have that
+M
+′
+​
+(
+W
+1
+v
+i
+3
+​
+(
+f
+1
+)
+)
+>
+0
+M^{\prime}(W_{1}^{v_{i_{3}}}(f_{1}))>0
+, so even
+W
+2
+v
+i
+3
+​
+(
+e
+2
+)
+W_{2}^{v_{i_{3}}}(e_{2})
+can only be dominated at
+v
+i
+4
+v_{i_{4}}
+in
+M
+′
+M^{\prime}
+. Hence,
+v
+i
+4
+v_{i_{4}}
+is saturated in
+M
+′
+M^{\prime}
+with
+B
+j
+v
+i
+4
+B_{j}^{v_{i_{4}}}
+copies with
+j
+≤
+2
+j\leq 2
+. Hence, we have an edge
+f
+2
+′′
+=
+(
+v
+i
+4
+,
+v
+i
+5
+′
+)
+∈
+M
+′′
+f_{2}^{\prime\prime}=(v_{i_{4}},v_{i_{5}}^{\prime})\in M^{\prime\prime}
+and that
+v
+i
+5
+∈
+𝒞
+v_{i_{5}}\in\mathcal{C}
+. By the assumption on the component, there exists an edge
+e
+3
+′′
+=
+(
+v
+i
+5
+′
+,
+v
+i
+6
+)
+∈
+N
+′′
+e_{3}^{\prime\prime}=(v_{i_{5}}^{\prime},v_{i_{6}})\in N^{\prime\prime}
+. By iterating this argument, we get edges
+f
+3
+′′
+,
+e
+4
+′′
+,
+…
+,
+e
+s
+′′
+,
+f
+s
+′′
+f_{3}^{\prime\prime},e_{4}^{\prime\prime},\dots,e_{s}^{\prime\prime},f_{s}^{\prime\prime}
+, such that each of them contains a vertex in
+V
+′
+V^{\prime}
+that corresponds to a critical vertex in
+𝒞
+\mathcal{C}
+. However, there are
+s
++
+1
+s+1
+such vertices in
+(
+e
+1
+∪
+f
+1
+∪
+⋯
+∪
+e
+s
+∪
+f
+s
+)
+∩
+V
+′
+(e_{1}\cup f_{1}\cup\cdots\cup e_{s}\cup f_{s})\cap V^{\prime}
+, a contradiction to
+|
+𝒞
+|
+=
+s
+|\mathcal{C}|=s
+.
+■
+\blacksquare
+Claim 8
+.
+M
+M
+is an extra-popular critical fractional-matching.
+Proof:
+Let
+N
+N
+be an arbitrary critical fractional-matching and let
+ϕ
+\phi
+be a sensible pairing between
+M
+M
+and
+N
+N
+.
+We decompose
+ϕ
+\phi
+to get walks
+P
+1
+,
+…
+,
+P
+k
+P^{1},\dots,P^{k}
+the same way as in Theorem
+3
+. Let
+P
+l
+=
+(
+e
+0
+,
+f
+1
+,
+e
+1
+CLOSE
+,
+P^{l}=(e_{0},f_{1},e_{1},
+OPEN
+f
+2
+,
+e
+2
+​
+…
+,
+e
+j
+l
+)
+f_{2},e_{2}\dots,e_{j_{l}})
+, where
+M
+⁡
+(
+e
+i
+)
+>
+0
+M(e_{i})>0
+,
+N
+⁡
+(
+f
+i
+)
+>
+0
+N(f_{i})>0
+and
+ϕ
+v
+i
+−
+1
+​
+(
+e
+i
+−
+1
+,
+f
+i
+)
+>
+0
+,
+ϕ
+u
+i
+​
+(
+e
+i
+,
+f
+i
+)
+>
+0
+\phi_{v_{i-1}}(e_{i-1},f_{i})>0,\phi_{u_{i}}(e_{i},f_{i})>0
+for each
+i
+i
+and
+e
+0
+=
+e
+j
+l
+e_{0}=e_{j_{l}}
+, if
+P
+l
+P^{l}
+is a closed alternating walk (i.e. if it is a union of alternating cycles), and otherwise
+e
+0
+=
+∅
+e_{0}=\emptyset
+or
+e
+j
+l
+=
+∅
+e_{j_{l}}=\emptyset
+is possible. Here,
+e
+i
+=
+(
+u
+i
+,
+v
+i
+)
+e_{i}=(u_{i},v_{i})
+and
+f
+i
+=
+(
+v
+i
+−
+1
+,
+u
+i
+)
+f_{i}=(v_{i-1},u_{i})
+.
+Then, we have that
+Δ
+⁡
+(
+M
+,
+N
+,
+ϕ
+)
+=
+∑
+l
+=
+1
+k
+w
+l
+⋅
+∑
+j
+=
+1
+j
+l
+(
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
++
+x
+⁡
+(
+P
+l
+)
+)
+\Delta(M,N,\phi)=\sum\limits_{l=1}^{k}w_{l}\cdot\sum\limits_{j=1}^{j_{l}}(\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})+x(P^{l}))
+, where
+x
+⁡
+(
+P
+l
+)
+=
+vote
+u
+0
+​
+(
+e
+0
+,
+∅
+)
++
+vote
+v
+j
+l
+​
+(
+e
+j
+l
+,
+∅
+)
+x(P^{l})=\mathrm{vote}_{u_{0}}(e_{0},\emptyset)+\mathrm{vote}_{v_{j_{l}}}(e_{j_{l}},\emptyset)
+if
+e
+0
+≠
+e
+j
+l
+e_{0}\neq e_{j_{l}}
+and 0 otherwise.. Therefore, it is enough to show that for each walk
+P
+l
+P^{l}
+,
+∑
+j
+=
+1
+j
+l
+(
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
++
+x
+⁡
+(
+P
+l
+)
+)
+≥
+0
+\sum\limits_{j=1}^{j_{l}}(\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})+x(P^{l}))\geq 0
+.
+It may happen that
+v
+i
+=
+v
+j
+v_{i}=v_{j}
+or
+u
+i
+=
+v
+j
+u_{i}=v_{j}
+for some
+i
+,
+j
+i,j
+, however, this does not matter for the proof. Similarly as in Theorem
+3
+, we have that for any
+i
+i
+,
+f
+i
+∉
+{
+e
+i
+−
+1
+,
+e
+i
+}
+f_{i}\notin\{e_{i-1},e_{i}\}
+.
+Claim 9
+.
+1.
+If
+e
+i
+e_{i}
+has a level
+p
+p
+copy for
+v
+i
+v_{i}
+in
+M
+′
+M^{\prime}
+with positive value and
+e
+i
++
+1
+e_{i+1}
+has a level
+q
+q
+copy for
+v
+i
++
+1
+v_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+, then
+q
+≤
+p
++
+1
+q\leq p+1
+.
+2.
+If
+e
+i
+e_{i}
+has a level
+p
+p
+copy for
+v
+i
+v_{i}
+in
+M
+′
+M^{\prime}
+with positive value and
+e
+i
++
+1
+e_{i+1}
+has a level
+q
+q
+copy for
+v
+i
++
+1
+v_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+such that
+q
+=
+p
++
+1
+q=p+1
+, then
+vote
+v
+i
+​
+(
+e
+i
+,
+f
+i
++
+1
+)
++
+vote
+u
+i
++
+1
+​
+(
+e
+i
++
+1
+,
+f
+i
++
+1
+)
+=
++
+2
+\mathrm{vote}_{v_{i}}(e_{i},f_{i+1})+\mathrm{vote}_{u_{i+1}}(e_{i+1},f_{i+1})=+2
+.
+3.
+If
+e
+i
+e_{i}
+has a level
+p
+p
+copy for
+v
+i
+v_{i}
+in
+M
+′
+M^{\prime}
+with positive value and
+e
+i
++
+1
+e_{i+1}
+has a level
+q
+q
+copy for
+v
+i
++
+1
+v_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+such that
+p
+=
+q
+p=q
+, then
+vote
+v
+i
+​
+(
+e
+i
+,
+f
+i
++
+1
+)
++
+vote
+u
+i
++
+1
+​
+(
+e
+i
++
+1
+,
+f
+i
++
+1
+)
+≥
+0
+\mathrm{vote}_{v_{i}}(e_{i},f_{i+1})+\mathrm{vote}_{u_{i+1}}(e_{i+1},f_{i+1})\geq 0
+.
+4.
+If
+e
+0
+=
+∅
+e_{0}=\emptyset
+, then each copy of
+e
+1
+e_{1}
+with positive value in
+M
+′
+M^{\prime}
+has level at most
+0
+0
+for
+v
+1
+v_{1}
+and if there is one with level exactly
+0
+0
+, then
+vote
+u
+1
+​
+(
+e
+1
+,
+f
+1
+)
+=
++
+1
+\mathrm{vote}_{u_{1}}(e_{1},f_{1})=+1
+.
+5.
+If
+e
+0
+≠
+∅
+e_{0}\neq\emptyset
+and
+e
+0
+≠
+e
+j
+l
+e_{0}\neq e_{j_{l}}
+, then each copy of
+e
+0
+e_{0}
+with positive value in
+M
+′
+M^{\prime}
+has level at least
+0
+0
+for
+v
+0
+v_{0}
+.
+6.
+If
+e
+j
+l
+=
+∅
+e_{j_{l}}=\emptyset
+, then each copy of
+e
+j
+l
+−
+1
+e_{j_{l}-1}
+with positive value in
+M
+′
+M^{\prime}
+has level at least
+0
+0
+for
+v
+j
+l
+−
+1
+v_{j_{l}-1}
+and if there is one with level exactly
+0
+0
+, then
+vote
+v
+j
+l
+−
+1
+​
+(
+e
+j
+l
+−
+1
+,
+f
+j
+l
+)
+=
++
+1
+\mathrm{vote}_{v_{j_{l}-1}}(e_{j_{l}-1},f_{j_{l}})=+1
+.
+7.
+If
+e
+j
+l
+≠
+∅
+e_{j_{l}}\neq\emptyset
+and
+e
+j
+l
+≠
+e
+0
+e_{j_{l}}\neq e_{0}
+, then each copy of
+e
+j
+l
+e_{j_{l}}
+with positive value in
+M
+′
+M^{\prime}
+has level at least
+0
+0
+for
+v
+j
+l
+v_{j_{l}}
+.
+Proof:
+First of all, observe that for any edge
+f
+i
+f_{i}
+, it is not saturated in
+M
+M
+, because at least one of its endpoints have a different incident edge with positive value (and it cannot happen that
+P
+l
+=
+(
+e
+0
+,
+f
+1
+,
+e
+1
+)
+P_{l}=(e_{0},f_{1},e_{1})
+with
+e
+0
+=
+e
+1
+=
+∅
+e_{0}=e_{1}=\emptyset
+by the stability of
+M
+′
+M^{\prime}
+). Hence, none of
+f
+i
+f_{i}
+’s copies are saturated in
+M
+′
+M^{\prime}
+.
+1. Suppose that
+q
+>
+p
++
+1
+q>p+1
+. Then, the copy of
+f
+i
++
+1
+f_{i+1}
+that has level
+p
++
+1
+p+1
+for
+v
+i
+v_{i}
+blocks
+M
+′
+M^{\prime}
+, because this copy is level
+−
+(
+p
++
+1
+)
+>
+−
+q
+-(p+1)>-q
+for
+u
+i
++
+1
+u_{i+1}
+, so both of them strictly prefer it to some copies of
+e
+i
+e_{i}
+and
+e
+i
++
+1
+e_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+, contradiction.
+2. In this case,
+u
+i
++
+1
+u_{i+1}
+has a level
+−
+(
+p
++
+1
+)
+-(p+1)
+copy of
+f
+i
++
+1
+f_{i+1}
+with positive value in
+M
+′
+M^{\prime}
+. Hence, if either
+v
+i
+v_{i}
+or
+u
+i
++
+1
+u_{i+1}
+prefer
+f
+i
++
+1
+f_{i+1}
+to
+e
+i
+e_{i}
+or
+e
+i
++
+1
+e_{i+1}
+respectively, then either the level
+p
+p
+or the level
+p
++
+1
+p+1
+copy of
+f
+i
++
+1
+f_{i+1}
+for
+v
+i
+v_{i}
+blocks
+M
+′
+M^{\prime}
+, contradiction.
+3. Suppose both
+v
+i
+v_{i}
+and
+u
+i
++
+1
+u_{i+1}
+prefer
+f
+i
++
+1
+f_{i+1}
+to
+e
+i
+e_{i}
+and
+e
+i
++
+1
+e_{i+1}
+respectively. Then, by the assumption, the level
+p
+p
+copy of
+f
+i
++
+1
+f_{i+1}
+for
+v
+i
+v_{i}
+blocks
+M
+′
+M^{\prime}
+, contradiction.
+4. Suppose
+e
+0
+=
+∅
+e_{0}=\emptyset
+. Then,
+ϕ
+⁡
+(
+f
+1
+,
+∅
+)
+>
+0
+\phi(f_{1},\emptyset)>0
+, so
+v
+0
+v_{0}
+is unsaturated in
+M
+′
+M^{\prime}
+by axiom
+3
+on sensible pairings. By the fact that the level
+0
+0
+copy (which must exist) of
+f
+1
+f_{1}
+for
+v
+0
+v_{0}
+does not block
+M
+′
+M^{\prime}
+, we get that
+u
+1
+u_{1}
+is saturated in
+M
+′
+M^{\prime}
+with copies that have level at least
+0
+0
+. Hence,
+e
+1
+e_{1}
+has level at most
+0
+0
+for
+v
+1
+v_{1}
+in any copy that has positive value in
+M
+′
+M^{\prime}
+. Also, if the level
+0
+0
+copy of
+e
+1
+e_{1}
+has positive value in
+M
+′
+M^{\prime}
+, then we must have that
+e
+1
+≻
+u
+1
+f
+1
+e_{1}\succ_{u_{1}}f_{1}
+, so
+vote
+u
+1
+​
+(
+e
+1
+,
+f
+1
+)
+=
++
+1
+\mathrm{vote}_{u_{1}}(e_{1},f_{1})=+1
+.
+5. Suppose
+e
+0
+≠
+∅
+e_{0}\neq\emptyset
+and
+e
+0
+≠
+e
+j
+l
+e_{0}\neq e_{j_{l}}
+. This implies that
+ϕ
+u
+0
+​
+(
+e
+0
+,
+∅
+)
+>
+0
+\phi_{u_{0}}(e_{0},\emptyset)>0
+. By axiom
+4
+on sensible pairings, this implies that
+∑
+e
+∈
+E
+⁡
+(
+u
+0
+)
+N
+⁡
+(
+e
+)
+<
+1
+\sum_{e\in E(u_{0})}N(e)<1
+, so
+u
+0
+∉
+𝒞
+u_{0}\notin\mathcal{C}
+, as both
+M
+M
+and
+N
+N
+saturate critical vertices. Hence,
+u
+0
+u_{0}
+has only copies with level at least
+0
+0
+in
+G
+′
+G^{\prime}
+, so
+e
+0
+e_{0}
+has only copies with level at most
+0
+0
+for
+v
+0
+v_{0}
+in
+G
+′
+G^{\prime}
+and thus also in
+M
+′
+M^{\prime}
+.
+6. Suppose that
+e
+j
+l
+=
+∅
+e_{j_{l}}=\emptyset
+. Then,
+u
+j
+l
+u_{j_{l}}
+is unsaturated by
+M
+′
+M^{\prime}
+by axiom
+3
+of feasible pairings. By the fact that the level
+0
+0
+copy (which must exist) of
+f
+j
+l
+f_{j_{l}}
+for
+u
+j
+l
+u_{j_{l}}
+does not block
+M
+′
+M^{\prime}
+, we get that
+v
+j
+l
+−
+1
+v_{j_{l}-1}
+is saturated in
+M
+′
+M^{\prime}
+with copies that have level at least
+0
+0
+. Hence,
+e
+j
+l
+−
+1
+e_{j_{l}-1}
+has level at least
+0
+0
+for
+v
+j
+l
+−
+1
+v_{j_{l}-1}
+in any copy that has positive value in
+M
+′
+M^{\prime}
+. Also, if the level
+0
+0
+copy of
+e
+j
+l
+−
+1
+e_{j_{l}-1}
+has positive value in
+M
+′
+M^{\prime}
+, then we must have that
+e
+j
+l
+−
+1
+≻
+v
+j
+l
+−
+1
+f
+j
+l
+e_{j_{l}-1}\succ_{v_{j_{l}-1}}f_{j_{l}}
+, so
+vote
+v
+j
+l
+−
+1
+​
+(
+e
+j
+l
+−
+1
+,
+f
+j
+l
+)
+=
++
+1
+\mathrm{vote}_{v_{j_{l}-1}}(e_{j_{l}-1},f_{j_{l}})=+1
+.
+7. Similarly as in case
+5
+, we get that
+v
+j
+l
+∉
+𝒞
+v_{j_{l}}\notin\mathcal{C}
+. Therefore, any copy of
+e
+j
+l
+e_{j_{l}}
+in
+G
+′
+G^{\prime}
+have level at least
+0
+0
+for
+v
+j
+l
+v_{j_{l}}
+, thus this is also true for the ones with positive value in
+M
+′
+M^{\prime}
+.
+■
+\blacksquare
+From Claim
+9
+cases
+4
+-
+7
+it follows that the occurrences of case
+2
+with
+q
+=
+p
++
+1
+q=p+1
+are at least as many as the occurrences with
+q
+<
+p
+q<p
+. Furthermore, we also have that
+vote
+v
+0
+​
+(
+e
+0
+,
+f
+1
+)
++
+vote
+u
+1
+​
+(
+e
+1
+,
+f
+1
+)
+≥
+0
+\mathrm{vote}_{v_{0}}(e_{0},f_{1})+\mathrm{vote}_{u_{1}}(e_{1},f_{1})\geq 0
+and
+vote
+u
+j
+l
+​
+(
+e
+j
+l
+,
+f
+j
+l
+)
++
+vote
+v
+j
+l
+−
+1
+​
+(
+e
+j
+l
+−
+1
+,
+f
+j
+l
+)
+≥
+0
+\mathrm{vote}_{u_{j_{l}}}(e_{j_{l}},f_{j_{l}})+\mathrm{vote}_{v_{j_{l}-1}}(e_{j_{l}-1},f_{j_{l}})\geq 0
+, if
+e
+0
+=
+∅
+e_{0}=\emptyset
+or
+e
+j
+l
+=
+∅
+e_{j_{l}}=\emptyset
+by cases
+4
+and
+6
+, so we can conclude that
+∑
+j
+=
+1
+j
+l
+(
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
++
+x
+⁡
+(
+P
+l
+)
+)
+≥
+0
+\sum\limits_{j=1}^{j_{l}}(\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})+x(P^{l}))\geq 0
+(by case
+2
+and
+vote
+v
+j
+−
+1
+​
+(
+e
+j
+−
+1
+,
+f
+j
+)
++
+vote
+u
+j
+​
+(
+e
+j
+,
+f
+j
+)
+≥
+−
+2
+\mathrm{vote}_{v_{j-1}}(e_{j-1},f_{j})+\mathrm{vote}_{u_{j}}(e_{j},f_{j})\geq-2
+even if
+q
+<
+p
+q<p
+).
+■
+\blacksquare
+Therefore, we have that
+M
+M
+is a popular maximum weight fractional-matching.
+∎
+As we observed before, we get the following corollary from Theorem
+4
+Corollary 1
+.
+MaxW-fPRI
+is solvable in polynomial time.
+4
+Conclusions
+In this paper we have shown that many algorithms that rely on leveling the agents, or duplicating the edges can be extended even to roommates instances.
+We extended the
+3
+/
+2
+3/2
+-approximation algorithm for maximum-size weakly stable matchings from bipartite graphs to arbitrary instances. This resolved a long-standing open question and has important applications, particularly in allocating junior doctors to hospitals in the presence of couples among the doctors.
+Our central observation may open even more possibilities to utilize this technique even further, so it would be interesting to see other frameworks, where it helps to provide desirable solutions.
+References
+[1]
+http://lemon.cs.elte.hu/egres/open/Maximum_weakly_stable_matchings_in_graphs_without_odd_preference_cycles
+.
+[2]
+https://www.nrmp.org/
+.
+[3]
+M. L. Balinski.
+Integer programming: methods, uses, computations.
+Management science
+, 12(3):253–313, 1965.
+[4]
+P. Biró, D. F. Manlove, and I. McBride.
+The hospitals/residents problem with couples: Complexity and integer programming models.
+In
+Experimental Algorithms: 13th International Symposium, SEA 2014, Copenhagen, Denmark, June 29–July 1, 2014. Proceedings 13
+, pages 10–21. Springer, 2014.
+[5]
+F. Brandl and T. Kavitha.
+Popular matchings with multiple partners.
+arXiv preprint arXiv:1609.07531
+, 2016.
+[6]
+F. Brandt and M. Bullinger.
+Finding and recognizing popular coalition structures.
+Journal of Artificial Intelligence Research
+, 74:569–626, 2022.
+[7]
+K. Cechlárová and V. Val’ová.
+The stable multiple activities problem.
+IM Preprint, series A
+, (1):2005, 2005.
+[8]
+G. Csáji.
+A simple 1.5-approximation algorithm for a wide range of max-smti problems.
+arXiv e-prints
+, pages arXiv–2304, 2023.
+[9]
+G. Csáji, T. Király, K. Takazawa, and Y. Yokoi.
+Popular maximum-utility matchings with matroid constraints.
+arXiv preprint arXiv:2407.09798
+, 2024.
+[10]
+G. Csáji, T. Király, and Y. Yokoi.
+Approximation algorithms for matroidal and cardinal generalizations of stable matching.
+In
+Symposium on Simplicity in Algorithms (SOSA)
+, pages 103–113. SIAM, 2023.
+[11]
+G. Csáji, D. Manlove, I. McBride, and J. Trimble.
+Couples can be tractable: New algorithms and hardness results for the hospitals/residents problem with couples.
+arXiv preprint arXiv:2311.00405
+, 2023.
+[12]
+Á. Cseh, C.-C. Huang, and T. Kavitha.
+Popular matchings with two-sided preferences and one-sided ties.
+SIAM Journal on Discrete Mathematics
+, 31(4):2348–2377, 2017.
+[13]
+S. Dudycz, P. Manurangsi, and J. Marcinkowski.
+Tight inapproximability of minimum maximal matching on bipartite graphs and related problems.
+In
+Approximation and Online Algorithms: 19th International Workshop, WAOA 2021, Lisbon, Portugal, September 6–10, 2021, Revised Selected Papers
+, pages 48–64. Springer, 2022.
+[14]
+Y. Faenza, T. Kavitha, V. Powers, and X. Zhang.
+Popular matchings and limits to tractability.
+In
+Proceedings of the Thirtieth Annual ACM-SIAM Symposium on Discrete Algorithms
+, pages 2790–2809. SIAM, 2019.
+[15]
+D. Gale and L. S. Shapley.
+College admissions and the stability of marriage.
+The American Mathematical Monthly
+, 69(1):9–15, 1962.
+[16]
+P. Gärdenfors.
+Match making: assignments based on bilateral preferences.
+Behavioral Science
+, 20(3):166–173, 1975.
+[17]
+S. Gupta, P. Misra, S. Saurabh, and M. Zehavi.
+Popular matching in roommates setting is np-hard.
+ACM Transactions on Computation Theory (TOCT)
+, 13(2):1–20, 2021.
+[18]
+M. Halldórsson, K. Iwama, S. Miyazaki, and Y. Morita.
+Inapproximability results on stable marriage problems.
+In
+LATIN 2002: Theoretical Informatics: 5th Latin American Symposium Cancun, Mexico, April 3–6, 2002 Proceedings 5
+, pages 554–568. Springer, 2002.
+[19]
+M. M. Halldórsson, K. Iwama, S. Miyazaki, and H. Yanagisawa.
+Improved approximation of the stable marriage problem.
+In
+Algorithms-ESA 2003: 11th Annual European Symposium, Budapest, Hungary, September 16-19, 2003. Proceedings 11
+, pages 266–277. Springer, 2003.
+[20]
+C.-C. Huang and T. Kavitha.
+Popularity, mixed matchings, and self-duality.
+In
+Proceedings of the Twenty-Eighth Annual ACM-SIAM Symposium on Discrete Algorithms
+, pages 2294–2310. SIAM, 2017.
+[21]
+R. W. Irving and D. F. Manlove.
+The stable roommates problem with ties.
+Journal of Algorithms
+, 43(1):85–105, 2002.
+[22]
+K. Iwama, D. Manlove, S. Miyazaki, and Y. Morita.
+Stable marriage with incomplete lists and ties.
+In
+Proc. 26th International Colloquium on Automata, Languages, and Programming (ICALP 1999)
+, pages 443–452. Springer, 1999.
+[23]
+K. Iwama, S. Miyazaki, and N. Yamauchi.
+A 1.875-approximation algorithm for the stable marriage problem.
+In
+Proc. Eighteenth annual ACM-SIAM symposium on Discrete algorithms (SODA 2007)
+, pages 288–297. SIAM, Philadelphia, 2007.
+[24]
+K. Iwama, S. Miyazaki, and N. Yamauchi.
+A (
+2
+−
+c
+​
+1
+n
+2-c\frac{1}{\sqrt{n}}
+)-approximation algorithm for the stable marriage problem.
+Algorithmica
+, 51(3):342–356, 2008.
+[25]
+T. Kavitha.
+A size-popularity tradeoff in the stable marriage problem.
+SIAM Journal on Computing
+, 43(1):52–71, 2014.
+[26]
+Z. Király.
+Better and simpler approximation algorithms for the stable marriage problem.
+Algorithmica
+, 60(1):3–20, 2011.
+[27]
+Z. Király.
+Linear time local approximation algorithm for maximum stable marriage.
+In
+Proc. Second International Workshop on Matching Under Preferences (MATCH-UP 2012)
+, page 99, 2012.
+[28]
+Z. Király.
+Linear time local approximation algorithm for maximum stable marriage.
+Algorithms
+, 6(3):471–484, 2013.
+[29]
+D. Manlove.
+Algorithmics of matching under preferences
+, volume 2.
+World Scientific, 2013.
+[30]
+D. F. Manlove, R. W. Irving, K. Iwama, S. Miyazaki, and Y. Morita.
+Hard variants of stable marriage.
+Theoretical Computer Science
+, 276(1-2):261–279, 2002.
+[31]
+E. McDermid.
+A 3/2-approximation algorithm for general stable marriage.
+In
+Proc. 36th International Colloquium on Automata, Languages, and Programming (ICALP 2009)
+, pages 689–700. Springer, 2009.
+[32]
+M. Nasre, P. Nimbhorkar, and K. Ranjan.
+Critical relaxed stable matchings with two-sided ties.
+arXiv preprint arXiv:2303.12325
+, 2023.
+[33]
+K. Paluch.
+Faster and simpler approximation of stable matchings.
+In
+Proc. 9th International Workshop on Approximation and Online Algorithms (WAOA 2011)
+, pages 176–187, 2011.
+[34]
+K. Paluch.
+Faster and simpler approximation of stable matchings.
+Algorithms
+, 7(2):189–202, 2014.
+[35]
+J. J. Tan.
+A necessary and sufficient condition for the existence of a complete stable matching.
+Journal of Algorithms
+, 12(1):154–178, 1991.
+[36]
+H. Yanagisawa.
+Approximation algorithms for stable marriage problems.
+PhD thesis, Kyoto University, Graduate School of Informatics
+, 2007.
+Experimental support, please
+view the build logs
+for errors. Generated by
+L
+A
+T
+E
+xml
+.
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue"
+(
+)
+button, located in the page header.
+Tip:
+You can select the relevant text first, to include it in your report.
+Our team has already identified
+the following issues
+. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a
+list of packages that need conversion
+, and welcome
+developer contributions
+.
+We gratefully acknowledge support from our
+major funders
+,
+member institutions
+,
+,
+        and all contributors.
+About
+·
+Help
+·
+Contact
+·
+Subscribe
+·
+Copyright
+·
+Privacy
+·
+Accessibility
+·
+Operational Status
+(opens in new tab)

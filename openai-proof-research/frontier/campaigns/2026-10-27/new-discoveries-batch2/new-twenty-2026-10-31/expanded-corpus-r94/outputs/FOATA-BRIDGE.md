@@ -1,0 +1,11 @@
+# MathDB 369221: ordinary bridge and formal gap
+
+The live Omega file UnitIntervalParkingFoata.lean was read. It explicitly says Conjecture 6.3 is NOT proved, and proves only distinct-letter and nondecreasing-word fragments. A matching filename is not a resolution.
+
+The source's Proposition 2.10 identifies the inversion set of a unit interval parking function a with that of its spot permutation. Equal preferences are assigned spots in arrival order. Consequently spots(a)=std(a), where std gives distinct ranks in increasing preference order and resolves ties by arrival order. Theorem 3.1 proves that F(a) is again unit interval.
+
+Foata's algorithm commutes with stable standardization. Here is the algorithmic proof, including the repeated-letter point. Label each occurrence by (letter, occurrence number), ordered lexicographically. At an insertion of final occurrence (x,k), every previous occurrence of x has smaller occurrence number. Therefore a previous labeled letter is <=(x,k) exactly when its underlying letter is <=x. The complementary strict comparison matches as well. The cuts and rotations in the two algorithms agree. Rotations preserve relative order of equal underlying letters: if their value is a cut value they lie in different blocks; otherwise none is the last letter rotated to the front of its block. Induction on the prefix length therefore gives F(std(a))=std(F(a)), with the rank changes between a prefix and the full word handled by increasing relabeling. Foata commutes with increasing relabeling directly from its comparisons.
+
+Combining these facts gives spots(F(a))=std(F(a))=F(std(a))=F(spots(a)). This is an ordinary proof route from the source's own results plus a generic algorithmic compatibility, and is recommended for routine-consequence screening rather than claimed as significant credit. No Lean standardization/parking bridge was completed here, and no formal endpoint is claimed. Root has not accepted this deduction.
+
+Computational checks: all 7,087,261 unit interval parking functions of length 9 were generated directly by legal displacement-0-or-1 choices, partitioned by first preference. Additionally 10,000 seeded samples at each length 2 through 40 were tested. Every check agreed. The sampling is biased and is not an exhaustive check at those larger lengths.

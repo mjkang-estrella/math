@@ -1,0 +1,7 @@
+# Root r679 reconciliation
+
+Reconciled Sol r676 and r678:100 disjoint literal record reviews; zero proposals/credit. Cumulative7,933 record reviews. r676 classifications14 complete,12 definition-dependent,12 scope-ambiguous,12 incomplete; r678 classifications11 complete,24 definition-dependent,9 scope-ambiguous,6 incomplete retained. Incomplete records require restoration; formulation completeness is not proof/novelty clearance.
+
+r676 reports four selected primary passages; source-reported resolved ranges/counts retain evidence limits. Latin-array exponents are distinct; incidence counts are only necessary conditions. r678 reports nine selected primary passages; source-theorem/report exclusions are not independent proof audits. Wiman arithmetic is conditional diagnostic,not universal-bound proof. Neither lane clears whole-body,successor-body,dependency or registry gates. Guard-discovery,binding timing,excerpt/diagnostic deviations,selector and serialization failures retained. Root verifies actual bytes/corpus identity and reservations only,no mathematical replay.
+
+Counts9additional/39total/next40 unchanged. Fresh Sol r680 and r682 receive disjoint fifty-ID assignments. Claude r628 rate-limit reservation remains held untouched. Three disjoint reserved sets; no focused hypothesis. Adjudications and access/privacy stops unchanged. Routing expanded from8,000to10,000 metadata rows with exact old prefix preserved; no review credit. Exhaustion failure retained. No input needed.

@@ -1,0 +1,24 @@
+# r263 research handback
+
+No qualified new endpoint and no Pi execution handoff. Zero accepted credit; campaign remains 52/60. All twenty fixed literal records were read and have exactly one keyed entry in results.json. Reservation unchanged: ac753319914b63908c4f7d835ec6c65c1d5bca73f3062f4f08ec508115cb2d67, verified before extraction and after work.
+
+ATTEMPTS.md contains the sustained ordinary routes for the universal 0-Hecke word (320285 and duplicate 322077), binary incidence-code dimensions (319817), and three-coloured tournament domination (318450), including failed shortcuts and exact missing lemmas. None has a complete ordinary proof, concrete finite witness, or sufficiently justified certificate size. A generic solver encoding is not promoted to a candidate. No CANDIDATE.md is warranted.
+
+The following already printed outcomes prevent discovery credit:
+
+- 376081: the very cited 2607.15522 states the exact growth bound as Corollary 1.2 after Theorem 1.1. Target statement is stale relative to its own source.
+- 320611: Dejean is known. The period/exponent calculation in ATTEMPTS.md connects its actual literal separated-block wording to the theorem; no credit for renaming it.
+- 318731: 2105.01104 Theorem 1.2(b) gives arbitrarily many arbitrarily large-degree vertices with c fixed at 13, refuting the literal bound. Its explicit simple-graph convention was checked.
+- 319313: Gruslys, JoCG5(1)2014, Theorem 3, refutes the exact monochromatic-line assertion with k=3 and ell=4. Actual journal proof and its final contradiction read.
+- 317659: 2209.14198 §4.1 already prints the n=3 obstruction and corrects the original conjecture to n>=4. This is a known endpoint correction, zero credit.
+- 317851: Cavenagh–Wanless, DAM158(2010), Theorem 3 proves exactly the assigned existence statement after s=km. Actual Lemma 6 construction and final even-even proof read. Do not substitute their different primary-bitrade conjecture.
+
+Important fidelity cautions: 320903's title and references do not match its inequality; its 'refuted' metadata was NOT accepted as a refutation of the auxiliary inequality. Source Conjecture 2 is stronger and establishes k=3,4, not the literal all-k endpoint. 320951's literal definition is contradictory for X empty; vacuous truth is an excluded wording correction, not a new solution of intended Mader Conjecture 3.10. The two universal-word IDs cannot earn separate credits. The q=3 omission in the code record is outside the q>=4 source convention and gives no credit.
+
+Review depth is explicitly bounded. All latest assigned source abs/PDF bodies and all earlier versions listed on their abs pages were acquired, hashed and text-extracted. Every literal statement was read; target passages and selected nearby arguments were inspected. This was NOT a complete proof audit of all twenty papers, all versions, all diagrams, journal revisions, corrections or all citing papers. Some version comparisons used only extracted target passages. Results retain these gaps. The AMS Dejean URL returned HTML despite HTTP200; it is not journal-body evidence. Crossing publisher HTTP403 was not retried or bypassed. An initial Gruslys URL was 404; the correct publicly listed journal URL subsequently supplied its actual PDF. No novelty or current-open certification is asserted for parked entries.
+
+Local history was searched by exact selected IDs, source identifiers and named families; history-matches.txt and family-history.txt retain the hits. Historical source families do not establish novelty by absence. Current public raw OpenAI catalogue, Omega README and LeanPool projects.yml were read as routing; dated cached complete relevant subtrees were also screened with hashes. No GitHub API requests were made. Immutable current live head SHAs and complete current trees were not established, so registry clearance is incomplete. No new candidate is proposed under that limitation.
+
+Deliverables: results.json (exact twenty keys and per-record statement/raw/chunk hashes), literal-records.json (full parsed records and chunk/line provenance), raw-<ID>.jsonl (byte-preserved line including newline), ATTEMPTS.md, version-inventory.json, version-passages.txt, source-read-inventory.json, receipts.jsonl, registry-screen.json, reservation-hashchecks.json, process-final.json, resource-and-process-log.json and hashmanifest.json. Primary artifacts are in sources/. Fetches and text/hash work were bounded; detailed measurement limits are stated candidly in the resource log.
+
+No Lean, numerical search, heavy solver, child, git, publication, account/browser action, contact, shared/author edit or reservation edit occurred. All owned fetch sessions completed; final process inspection found zero active fetch jobs. Formalization, if a later qualified candidate emerges, remains for root-authorized Pi execution and all original acceptance gates.

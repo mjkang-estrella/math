@@ -1,0 +1,3501 @@
+
+
+
+Moments of Uniform Random Multigraphs with Fixed Degree Sequences
+
+
+
+
+
+
+
+
+
+
+
+
+
+Skip to main content
+
+  
+    
+      Report GitHub Issue
+      ×
+    
+
+    
+
+      Title:
+      
+
+      
+Content selection saved. Describe the issue below:
+
+      Description:
+      
+    
+
+    
+      Submit without GitHub
+      Submit in GitHub
+    
+  
+
+
+
+
+
+
+
+  
+  
+    
+  
+  
+    
+      
+    
+  
+
+    Why HTML?
+    
+      Report Issue
+        
+      Back to Abstract
+    
+    
+      Download PDF
+        
+      Contents
+    
+    
+      Reading mode
+    
+    
+      Colour theme
+    
+
+
+
+
+Abstract
+Funding
+1 Introduction
+
+1.1 Outline
+
+2 Random Graphs with Fixed Degree Sequences
+
+2.1 Markov Chain Monte Carlo
+
+3 A Dynamical Approach to Model Moments
+
+3.1 Illustration: The Configuration Model
+3.2 Moments of the Uniform Model
+3.3 First Moments of 𝐖\mathbf{W}
+3.4 Second Moments
+
+4 Estimation of 𝜷\boldsymbol{\beta}
+
+4.1 Properties of 𝜷^\hat{\boldsymbol{\beta}}
+4.2 Algorithms
+
+5 Experiments
+
+5.1 Synthetic Data
+5.2 Evaluation on an Empirical Contact Network
+5.3 Application: Modularity Maximization in Dense Contact Networks
+
+6 Discussion
+References
+A Proof of 
+B Proof of 
+C Proof of 
+
+
+
+
+
+
+  
+    License: arXiv.org perpetual non-exclusive license
+  
+  
+
+arXiv:1909.09037v2 [cs.SI] 06 Feb 2020
+
+
+
+
+Moments of Uniform Random Multigraphs with Fixed Degree SequencesThanks: Submitted August 24, 2026
+
+
+
+Philip S. Chodrow
+††thanks: Operations Research Center and Laboratory for Information and Decision Systems, Massachusetts Institute of Technology
+().
+Email: pchodrow@mit.edu
+
+
+
+Abstract
+    
+
+We study the expected adjacency matrix of a uniformly random multigraph with fixed degree sequence 𝐝∈ℤ+n\mathbf{d}\in\mathbb{Z}_{+}^{n}.
+This matrix arises in a variety of analyses of networked data sets, including modularity-maximization and mean-field theories of spreading processes.
+Its structure is well-understood for large, sparse, simple graphs: the expected number of edges between nodes ii and jj is roughly di​dj∑ℓdℓ\frac{d_{i}d_{j}}{\sum_{\ell}{d_{\ell}}}.
+Many network data sets are neither large, sparse, nor simple, and in these cases the standard approximation no longer applies.
+We derive a novel estimator using a dynamical approach: the estimator emerges from the stationarity conditions of a class of Markov Chain Monte Carlo algorithms for graph sampling.
+We derive error bounds for this estimator, and provide an efficient scheme with which to compute it.
+We test the estimator on synthetic and empirical degree sequences, finding that it enjoys relative error against ground truth a full order of magnitude smaller than the standard approximation.
+We then compare modularity maximization techniques using both the standard and novel estimator, finding that the qualitative structure of the optimization landscape depends significantly on the estimator choice.
+Our results emphasize the importance of using carefully specified random graph models in data scientific applications.
+  
+
+
+keywords
+Random graphs, social networks, Markov Chain Monte Carlo, community structure, estimation
+
+
+
+
+Funding.PSC acknowledges support from the National Science Foundation under Graduate Research Fellowship grant 1122374.
+††runningheads: Moments of Random Multigraphs / Philip S. Chodrow
+
+AMS
+05C80, 05C82, 91D30, 62-07, 65C05 
+
+
+
+
+1 Introduction
+
+
+
+
+The language of graphs offers a standard formalism for representing systems of interrelated objects or agents.
+Simple graphs model agents connected by a single, usually static, relation, such as acquaintanceship, proximity, or similarity.
+In many data sets, however, agents are linked by multiple, discrete interactions.
+Two agents in a contact network may be in spatial proximity multiple times in the study period.
+Two agents in a communication network may exchange many emails over the course of a week.
+In an academic collaboration network, the same two authors may be jointly involved in tens or even hundreds of papers.
+In such cases, it is natural to draw a distinct edge between agents for each interaction event.
+Doing so results in a multigraph, in which any two nodes may be linked by an arbitrary, nonnegative, integer-valued number of edges.
+
+
+
+
+A fundamental tool in network data science is null model comparison, which allows the analyst to evaluate whether a feature observed in a given network is surprising when compared to benchmark expectations.
+We therefore often compare observed networks against random graph null models – probability distributions over graphs.
+An especially common class of null models is obtained by fixing the degree
+sequence 𝐝\mathbf{d} of the observed network, which encodes the number of interactions for each node.
+The degree sequence is known to constrain many of a network’s macroscopic properties [36].
+The least informative (or entropy-maximizing) distribution so obtained is the uniform distribution on the space of graphs with the specified degree sequence.
+The same construction goes through for multigraphs.
+When studying interaction networks, the corresponding random graph is the uniform distribution η𝐝\eta_{\mathbf{d}} on the set 𝒢𝐝\mathcal{G}_{\mathbf{d}} of multigraphs with degree sequence 𝐝\mathbf{d}.
+
+
+
+
+In many applications, a set of complete samples from η𝐝\eta_{\mathbf{d}} is not required – only some selected moments.
+An especially important set of moments is summarized by the expected adjacency matrix.
+We therefore consider the following question: if 𝐖\mathbf{W} is the (random) adjacency matrix of multigraph G∼η𝐝G\sim\eta_{\mathbf{d}}, what is the value of the expected adjacency matrix 𝛀≜𝔼⁡[𝐖]\boldsymbol{\Omega}\triangleq\mathbb{E}[\mathbf{W}]?
+The entry ωi​j\omega_{ij} of 𝛀\boldsymbol{\Omega} gives the expected number of edges between nodes ii and jj.
+These moments have several important applications in network science.
+Among these is community-detection via modularity-maximization [33], which in many formulations includes a term for the expected number of edges between nodes under a suitably specified null model.
+Despite its simplicity and relevance for applications, this problem has received relatively little mathematical attention.
+
+
+
+
+Before surveying existing approaches to the estimation of 𝛀\boldsymbol{\Omega}, we fix some notation.
+Let 𝒢𝐝\mathcal{G}_{\mathbf{d}} refer to the set of multigraphs without self-loops with degree sequence 𝐝∈ℤ+n\mathbf{d}\in\mathbb{Z}_{+}^{n}.
+From a modeling perspective, the exclusion of self-loops reflects an assumption that agents do not meaningfully interact with themselves.
+An element G∈𝒢𝐝G\in\mathcal{G}_{\mathbf{d}} has a fixed number nn of nodes and m=12​∑idim=\frac{1}{2}\sum_{i}d_{i} of edges.
+We use bold uppercase symbols to denote matrices, bold lowercase symbols to denote vectors, and standard symbols to denote scalars.
+We do not notationally distinguish deterministic and random objects, instead relying on their associated definitions.
+We use Greek letters to denote expectations of random objects.
+An estimator of a quantity, either deterministic or stochastic, is distinguished by a hat.
+For example, 𝛀=𝔼⁡[𝐖]\boldsymbol{\Omega}=\mathbb{E}[\mathbf{W}] is the expectation of 𝐖\mathbf{W}.
+An estimator of 𝛀\boldsymbol{\Omega}, either deterministic or stochastic, may be written 𝛀^\hat{\boldsymbol{\Omega}}.
+
+
+
+
+One approach to estimating 𝛀\boldsymbol{\Omega} is Monte Carlo sampling.
+We sample ss independent and identically distributed samples 𝐖(1),…,𝐖(s)∼η𝐝\mathbf{W}^{(1)},\ldots,\mathbf{W}^{(s)}\sim\eta_{\mathbf{d}}, and construct the estimator
+
+
+
+
+
+𝛀^mc​(𝐝)≜1s​∑ℓ=1s𝐖(ℓ).\displaystyle\hat{\boldsymbol{\Omega}}^{\mathrm{mc}}(\mathbf{d})\triangleq\frac{1}{s}\sum_{\ell=1}^{s}\mathbf{W}^{(\ell)}\;.
+
+(1)
+
+
+The estimator 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} is a random function of 𝐝\mathbf{d}, parameterized by the sample size ss.
+The Strong Law of Large Numbers (SLLN) ensures that 𝛀^mc→𝛀\hat{\boldsymbol{\Omega}}^{\mathrm{mc}}\rightarrow\boldsymbol{\Omega} almost surely as the number of samples ss grows large.
+Stronger results are possible: since each entry ω^i​jmc\hat{\omega}^{\mathrm{mc}}_{ij} is bounded, the variance of ω^i​jmc\hat{\omega}^{\mathrm{mc}}_{ij} is finite and we can apply the Central Limit Theorem to provide quantitative bounds on the convergence rate.
+This attractive picture is marred by a severe computational inconvenience: the size and complex combinatorial structure of 𝒢d\mathcal{G}_{d} makes exact sampling intractable.
+Markov Chain Monte Carlo (MCMC) methods [22] are therefore required.
+MCMC introduces a new complication: for any finite number of iterations, the samples produced will always be statistically dependent, and may therefore over-represent some regions of 𝒢𝐝\mathcal{G}_{\mathbf{d}} and under represent others.
+This dependence breaks the guarantees provided by the SLLN or Central Limit Theorem.
+Control over the mixing time of the sampler is in principle sufficient to ameliorate this issue; however, there are few known mixing time bounds on MCMC samplers of distributions on 𝒢𝐝\mathcal{G}_{\mathbf{d}}.
+Available upper bounds on the mixing times [24, 25, 19] are too large for guarantees in many practical computations, and there are heuristic reasons to believe that there are limits on our ability to improve these bounds.
+
+
+
+
+An alternative estimator 𝛀^0\hat{\boldsymbol{\Omega}}^{0}, extremely common in the network science literature, is defined entrywise by a simple formula:
+
+
+
+
+
+ω^i​j0​(𝐝)=fi​j​(𝐝)≜{di​dj2​mi≠j0i=j.\displaystyle\hat{\omega}^{0}_{ij}(\mathbf{d})=f_{ij}(\mathbf{d})\triangleq\begin{cases}\frac{d_{i}d_{j}}{2m}&\quad i\neq j\\
+0&\quad i=j\;.\end{cases}
+
+(2)
+
+
+The function fi​jf_{ij} plays an important role throughout this article.
+Unlike 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}}, 𝛀^0\hat{\boldsymbol{\Omega}}^{0} is a deterministic function of 𝐝\mathbf{d} that is essentially free to compute.
+The functional form of fi​j​(𝐝)f_{ij}(\mathbf{d}) can be derived in multiple ways.
+For example, it is the expected edge density between distinct nodes ii and jj in the model of Chung and Lu [15, 16], which preserves 𝐝\mathbf{d} in expectation rather than deterministically.
+We will therefore refer to (2) as the “CL estimate” after Chung and Lu, though we emphasize that these authors did not use this expression as an estimator for any of the models we consider here, and indeed restricted their attention to graphs without parallel edges.
+The estimator 𝛀^0\hat{\boldsymbol{\Omega}}^{0} was also derived heuristically by Newman and Girvan when they introduced modularity maximization as a method for community detection in networks [35, 33].
+In their derivation, we approximate the number of edges between ii and jj as follows.
+Node ii has did_{i} edges.
+Each of these edges must connect to one of the n−1n-1 other nodes.
+A “random edge” is attached to node jj with probability roughly dj2​m−di\frac{d_{j}}{2m-d_{i}}.
+Assuming that di≪2​md_{i}\ll 2m yields ω^i​j0\hat{\omega}^{0}_{ij} as an approximation.
+It is important to note that this heuristic argument does not formalize any probability measure over a set of graphs.
+Thus, although 𝛀^0\hat{\boldsymbol{\Omega}}^{0} is sometimes described as the expectation of a “random graph with fixed degree sequence,” this is not exactly true for any common models except that of Chung and Lu, in which degrees are fixed only in expectation.
+In particular, 𝛀^0\hat{\boldsymbol{\Omega}}^{0} possesses no guarantees related to its performance as an estimator for the uniform model η𝐝\eta_{\mathbf{d}}, the most literal mathematical operationalization of the phrase “random graph with fixed degree sequence.”
+As we will see this performance can indeed be quite poor on data sets with high edge densities.
+
+
+
+
+In this article, we construct an estimator of 𝛀\boldsymbol{\Omega} for dense multigraphs that is both scalable and accurate.
+By treating an MCMC sampler for η𝐝\eta_{\mathbf{d}} as a stochastic dynamical system whose state space is 𝒢𝐝\mathcal{G}_{\mathbf{d}}, we derive stationarity conditions describing the desired moments.
+As we will show, there exists a vector 𝜷∈ℝ+n\boldsymbol{\beta}\in\mathbb{R}_{+}^{n} such that χi​j\chi_{ij}, the probability that wi​j≥1w_{ij}\geq 1, is given by
+
+
+
+
+
+χi​j\displaystyle\chi_{ij}
+≜η𝐝​(wi​j≥1)≈βi​βj∑iβi=fi​j​(𝜷)\displaystyle\triangleq\eta_{\mathbf{d}}(w_{ij}\geq 1)\approx\frac{\beta_{i}\beta_{j}}{\sum_{i}\beta_{i}}=f_{ij}(\boldsymbol{\beta})
+
+
+
+for all i≠ji\neq j.
+The function fi​jf_{ij} in this approximation is the same as that which appears in the definition of the CL estimator in (2).
+Furthermore, the entries of 𝛀\boldsymbol{\Omega} are given approximately by
+
+
+
+
+
+ωi​j≈χi​j1−χi​j.\displaystyle\omega_{ij}\approx\frac{\chi_{ij}}{1-\chi_{ij}}\;.
+
+
+
+Taken to together, these two formulae provide a method for computing an estimate of 𝛀\boldsymbol{\Omega} given knowledge of the vector 𝜷\boldsymbol{\beta}.
+We construct an estimator 𝜷^\hat{\boldsymbol{\beta}} of this vector by solving the system of nn nonlinear equations
+
+
+
+
+
+∑jfi​j​(𝜷)1−fi​j​(𝜷)=di,i=1,…,n.\displaystyle\sum_{j}\frac{f_{ij}(\boldsymbol{\beta})}{1-f_{ij}(\boldsymbol{\beta})}=d_{i}\;,\quad i=1,\ldots,n\;.
+
+
+
+We show that the solution to this equation, provided it exists, is unique within the realm of interpretable sequences 𝜷\boldsymbol{\beta} subject to mild regularity conditions, and that this solution can be found efficiently by a simple, iterative algorithm.
+From 𝜷^\hat{\boldsymbol{\beta}} we construct an estimator 𝛀^1\hat{\boldsymbol{\Omega}}^{1} of 𝛀\boldsymbol{\Omega}.
+As we show, this estimator is both easier to compute than 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} and much more accurate than 𝛀^0\hat{\boldsymbol{\Omega}}^{0}.
+Furthermore, we can view the Chung-Lu estimator 𝛀^0\hat{\boldsymbol{\Omega}}^{0} as an approximation of 𝛀^1\hat{\boldsymbol{\Omega}}^{1}, obtained from the latter via a sequence of two linear approximations.
+
+
+
+
+1.1 Outline
+
+
+
+
+In Section 2, we review two important null multigraph models – the configuration model and the uniform model – as well as a unified MCMC algorithm for sampling from each.
+The analysis of this algorithm forms the heart of our derivation of the estimate 𝛀^1\hat{\boldsymbol{\Omega}}^{1} in Section 3.
+This estimator depends on the unknown vector 𝜷\boldsymbol{\beta}, which must be learned from 𝐝\mathbf{d}.
+We offer a simple scheme for doing so in Section 4, including a qualified uniqueness guarantee on the resulting estimator 𝜷^\hat{\boldsymbol{\beta}} of 𝜷\boldsymbol{\beta}; a description of its structure; and a numerical scheme for computing it efficiently.
+In Section 5 we turn to experiments.
+We first study the behavior of our methods on two synthetic data sets, including a bootstrap-style test of the conjecture underlying our error-bounds.
+We then check the accuracy of 𝛀^1\hat{\boldsymbol{\Omega}}^{1} on a subset of a high school contact network.
+Whereas 𝛀^0\hat{\boldsymbol{\Omega}}^{0} is significantly biased on this data set, 𝛀^1\hat{\boldsymbol{\Omega}}^{1} is nearly unbiased and decreases the mean relative error of the estimate by an order of magnitude.
+In our final experiment, we study the behavior of modularity maximization when the standard null expectation 𝛀^0\hat{\boldsymbol{\Omega}}^{0} is replaced by 𝛀^1\hat{\boldsymbol{\Omega}}^{1}.
+We find that the behavior of a multiway spectral algorithm [45] depends strongly on both the choice of null expectation and the data set under study.
+We close in Section 6 with a discussion and suggestions for future work.
+
+
+
+
+
+
+2 Random Graphs with Fixed Degree Sequences
+
+
+
+
+Our interest will focus on the uniform model η𝐝\eta_{\mathbf{d}}, but it will be useful draw comparisons to the somewhat more commonly-used configuration model [10].
+
+
+
+Definition 1 (Configurations).
+
+
+
+For a fixed node set NN and degree sequence 𝐝∈ℤ+n\mathbf{d}\in\mathbb{Z}_{+}^{n}, let
+
+
+
+
+
+Σ𝐝=⨄i=1n{i1,…,idi},\displaystyle\Sigma_{\mathbf{d}}=\biguplus_{i=1}^{n}\left\{i_{1},\ldots,i_{d_{i}}\right\}\;,
+
+
+
+where ⊎\uplus denotes multiset union.
+Thus, Σ𝐝\Sigma_{\mathbf{d}} contains did_{i} labeled copies of each node ii.
+The copies i1,…,idii_{1},\ldots,i_{d_{i}} are called stubs of node ii.
+A configuration C=(N,E)C=(N,E) consists of the node set NN and an edge set EE which partitions Σ𝐝\Sigma_{\mathbf{d}} into unordered pairs.
+An edge in EE of the form {ik,iℓ}\{i_{k},i_{\ell}\} is called a self-loop.
+The process of forming CC from Σ𝐝\Sigma_{\mathbf{d}} is often called stub-matching.
+
+
+
+
+
+
+Let 𝒞𝐝⊂Σ𝐝\mathcal{C}_{\mathbf{d}}\subset\Sigma_{\mathbf{d}} be the set of all configurations with degree sequence 𝐝\mathbf{d} that do not include any self-loops.
+There is a natural surjection g:𝒞𝐝→𝒢𝐝g:\mathcal{C}_{\mathbf{d}}\rightarrow\mathcal{G}_{\mathbf{d}}.
+The image of C∈𝒞𝐝C\in\mathcal{C}_{\mathbf{d}} under gg is obtained by replacing all stubs with their corresponding nodes and consolidating the result as a multiset.
+The uniform distribution on 𝒞𝐝\mathcal{C}_{\mathbf{d}} induces a distribution on 𝒢𝐝\mathcal{G}_{\mathbf{d}} via gg.
+Denote by g−1:𝒢𝐝→2𝒞𝐝g^{-1}:\mathcal{G}_{\mathbf{d}}\rightarrow 2^{\mathcal{C}_{\mathbf{d}}} the function that assigns to each element of 𝒢𝐝\mathcal{G}_{\mathbf{d}} its preimage in 𝒞𝐝\mathcal{C}_{\mathbf{d}} under gg.
+
+
+
+Definition 2 (Configuration Model).
+
+
+
+Let λ𝐝\lambda_{\mathbf{d}} be the uniform distribution on 𝒞𝐝\mathcal{C}_{\mathbf{d}}.
+The configuration model on 𝒢𝐝\mathcal{G}_{\mathbf{d}} is the distribution μ𝐝=λ𝐝∘g−1\mu_{\mathbf{d}}=\lambda_{\mathbf{d}}\circ g^{-1}.
+
+
+
+
+
+
+The distinction between η𝐝\eta_{\mathbf{d}} and μ𝐝\mu_{\mathbf{d}} – and its implications for data analysis – was recently highlighted by Fosdick et al. [22].
+We have diverged from the terminology of the authors: our “uniform model” is their “configuration model on non-loopy, vertex-labeled multigraphs” and our “configuration model” is their “configuration model on non-loopy, stub-labeled multigraphs.”
+
+
+
+
+The distinction between uniform and configuration models lies in how they weight graphs with parallel edges.
+Let C1C_{1} and C2C_{2} be two configurations.
+Suppose that C1C_{1} contains the matchings (i1,j1),(i2,j2)(i_{1},j_{1}),(i_{2},j_{2}) and C2C_{2} contains the matchings (i1,j2),(i2,j1)(i_{1},j_{2}),(i_{2},j_{1}), and that they otherwise agree on all other stubs.
+Let G=g⁡(C1)=g⁡(C2)G=g(C_{1})=g(C_{2}).
+Under the uniform model, GG is considered to be a single state, weighted equally with all other states.
+Under the configuration model, on the other hand, the probability mass placed on GG is proportional to |g−1​(G)|\left|g^{-1}(G)\right|, reflecting both C1C_{1} and C2C_{2} as distinct states.
+In particular, the configuration model μ𝐝\mu_{\mathbf{d}} will tend to place higher probabilistic weight on elements of 𝒢𝐝\mathcal{G}_{\mathbf{d}} with large numbers of parallel edges than will the uniform model η𝐝\eta_{\mathbf{d}}.
+
+
+
+
+In the absence of parallel edges, the uniform and configuration models are closely related.
+Let AA be the event that GG is simple, without self-loops or parallel edges.
+Then, it is direct to show (e.g. [10]) that, for all GG, η𝐝​(G|A)=μ𝐝​(G|A)\eta_{\mathbf{d}}(G|A)=\mu_{\mathbf{d}}(G|A).
+The reason is that, when GG is simple, the sizes of the preimages g−1​(G)g^{-1}(G) depend only on the degree sequence 𝐝\mathbf{d}.
+Since 𝐝\mathbf{d} is fixed in 𝒢𝐝\mathcal{G}_{\mathbf{d}}, these preimages all have the same size.
+Thus, when a simple random graph is required, the uniform model η𝐝\eta_{\mathbf{d}} and configuration model μ𝐝\mu_{\mathbf{d}} are in principle interchangeable, in the sense that we can sample from η𝐝(⋅|A)\eta_{\mathbf{d}}(\cdot|A) by repeatedly sampling from μ𝐝\mu_{\mathbf{d}} until a simple graph is produced.
+Furthermore, when the degree sequence 𝐝\mathbf{d} grows slowly relative to nn, μ𝐝​(A)\mu_{\mathbf{d}}(A) is bounded away from zero by a function that depends on moments of 𝐝\mathbf{d} when nn grows large [10, 31, 3].
+This in turn provides an upper bound on the expected number of samples from μ𝐝\mu_{\mathbf{d}} required to produce a single sample from η𝐝(⋅|A)\eta_{\mathbf{d}}(\cdot|A).
+The computational importance of this relationship is that stub-matching for sampling from μ𝐝\mu_{\mathbf{d}} is well-understood and often fast.
+
+
+
+
+For dense graphs, μ𝐝​(A)\mu_{\mathbf{d}}(A) may be extremely small, and the number of samples required to produce a simple graph may be prohibitive.
+While it is possible to make post-hoc edits to the graph to remove self-loops and multiple edges [32, 38], such methods can generate substantial and uncontrolled bias in finite graphs.
+Second and more importantly for our context, there is no equivalence between the unconditional distributions η𝐝\eta_{\mathbf{d}} and μ𝐝\mu_{\mathbf{d}} on spaces of multigraphs.
+Stub-matching cannot therefore be used to sample from η𝐝\eta_{\mathbf{d}} when modeling considerations allow the presence of multiple edges.
+
+
+
+
+2.1 Markov Chain Monte Carlo
+
+
+
+
+An alternative approach to sampling uses Markov chains to explore structured sets of graphs.
+There exists a large constellation of related algorithms for this class of task, including the sampling of marginal-constrained binary matrices [42, 4]; degree-regular [43, 30, 28] and degree-heterogeneous [13, 41, 8, 17] simple graphs; and graphs with degree-correlation constraints [1].
+Most of these algorithms operate by repeatedly swapping edges in such a way as to preserve the required graph structure.
+
+
+
+
+A fairly general variant, formulated by Fosdick et al. [22], can sample from either the uniform model η𝐝\eta_{\mathbf{d}} or the configuration model μ𝐝\mu_{\mathbf{d}} on 𝒢𝐝\mathcal{G}_{\mathbf{d}}.
+We define an edge swap to be a random function of two edges that share no nodes.11
+              1
+              
+              
+              
+              
+              
+              
+              
+            Swaps involving edges that intersect are used when sampling from spaces that include self-loops [22].
+It interchanges a node on the first edge with a node on the second:
+
+
+
+
+
+EdgeSwap⁡((i,j),(k,ℓ))={(i,k),(j,ℓ)with probability 1/2(i,ℓ),(j,k)with probability 1/2.\displaystyle\mathrm{EdgeSwap}((i,j),(k,\ell))=\begin{cases}(i,k),(j,\ell)&\quad\text{with probability $1/2$}\\
+(i,\ell),(j,k)&\quad\text{with probability $1/2$}\;.\end{cases}
+
+
+
+An edge swap does not change the total number of edges incident to nodes ii, jj, kk, or ℓ\ell, and therefore preserves 𝐝\mathbf{d}.
+Starting from a graph G0∈𝒢𝐝G_{0}\in\mathcal{G}_{\mathbf{d}}, repeated edge-swaps can therefore be used to obtain a random sequence of elements of 𝒢𝐝\mathcal{G}_{\mathbf{d}}.
+Since each element of this sequence depends stochastically only on its predecessor, this sequence is a Markov chain.
+We perform Markov Chain Monte Carlo as follows.
+At each time step, we select two random edges (i,j)(i,j) and (k,ℓ)(k,\ell), uniformly selected from the set of pairs of edges with four distinct node indices.
+We then perform a pairwise edge-swap of these edges with acceptance probability
+
+
+
+
+
+a⁡((i,j),(k,ℓ))≜{1configuration model ​μ𝐝(wi​j​wk​ℓ)−1uniform model ​η𝐝.\displaystyle a((i,j),(k,\ell))\triangleq\begin{cases}1&\quad\text{configuration model }\mu_{\mathbf{d}}\\
+(w_{ij}w_{k\ell})^{-1}&\quad\text{uniform model }\eta_{\mathbf{d}}\;.\end{cases}
+
+(3)
+
+
+In the case that the edge-swap is not accepted, we record the current state again and resample.
+Formally,
+
+
+Algorithm 1  MCMC Sampling for η𝐝\eta_{\mathbf{d}} and μ𝐝\mu_{\mathbf{d}}
+
+
+
+
+Input: degree sequence 𝐝\mathbf{d}, initial graph G0∈𝒢𝐝G_{0}\in\mathcal{G}_{\mathbf{d}}, target distribution ρ∈{η𝐝,μ𝐝}\rho\in\{\eta_{\mathbf{d}},\mu_{\mathbf{d}}\}, sample interval δ​t∈ℤ+\delta t\in\mathbb{Z}_{+}, sample size s∈ℤ+s\in\mathbb{Z}_{+}.
+
+
+
+              1
+            Initialization: t←0t\leftarrow 0, G←G0G\leftarrow G_{0}
+
+
+
+              2
+            for t=1,2,…,s⁡(δ​t)t=1,2,\ldots,s(\delta t) do
+
+
+   
+              3
+            sample (i,j)(i,j) and (k,ℓ)(k,\ell) uniformly at random from (Et2)\binom{E_{t}}{2} 
+
+
+   
+              4
+            if Uniform⁡([0,1])≤a⁡((i,j),(k,ℓ))\mathrm{Uniform}([0,1])\leq a((i,j),(k,\ell)) then
+
+
+      
+              5
+            Gt←EdgeSwap⁡((i,j),(k,ℓ))G_{t}\leftarrow\mathrm{EdgeSwap}((i,j),(k,\ell))
+
+
+   
+              6
+            else
+
+
+      
+              7
+            Gt←Gt−1G_{t}\leftarrow G_{t-1}
+
+
+
+Output: {Gt​ such that ​t|δ​t}\{G_{t}\text{ such that }t|\delta t\}
+
+
+
+
+
+
+
+
+
+For sufficiently large sample intervals δ​t\delta t, the output of Algorithm 1 will be approximately i.i.d. according to the target distribution ρ\rho, as guaranteed by the following result.
+
+
+
+Theorem 3 (Fosdick et al. [22]).
+
+
+
+The Markov chain {Gt}\{G_{t}\} defined by Algorithm 1 is ergodic and reversible with respect to the input distribution ρ\rho.
+As consequence, samples {Gt}\{G_{t}\} generated by Algorithm 1 are asymptotically independent and identically distributed according to ρ\rho as δ​t→∞\delta t\rightarrow\infty.
+
+
+
+
+
+
+These results provide a principled solution to the problem of asymptotically exact sampling from η𝐝\eta_{\mathbf{d}}, and can therefore be used to construct an estimator 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} of 𝛀\boldsymbol{\Omega}, given by (1), with arbitrary levels of accuracy.
+It suffices to let the sample size ss and sample interval δ​t\delta t grow large.
+There are two performance-related issues when using Algorithm 1 in practice, both of which are connected to the number of edges mm.
+First is the question of how large δ​t\delta t should be to ensure that the samples are sufficiently close to independence.
+Heuristically, δ​t\delta t should scale with the mixing time of the chain, but very few bounds on mixing times for chains of this type appear to be available.
+In several recent papers, Greenhill [25, 24] and collaborators [19] have derived the only bounds known to this author for edge-swap Markov chains.
+In the space of simple graphs, under certain regularity conditions on the degree sequence, they provide a mixing time bound with scaling O⁡(d∗14​m10​log⁡m)O({d_{*}}^{14}m^{10}\log m), where d∗=maxi⁡did_{*}=\max_{i}d_{i}.
+The scaling of this upper bound very poor, especially with regard to mm, and is therefore not reassuring for practical applications.
+The second issue relates to the acceptance probabilities themselves.
+In a dense multigraph the number Wi​jW_{ij} of edges between ii and jj will typically be large, resulting in low acceptance rates.
+Indeed, supposing that a typical entry Wi​jW_{ij} scales approximately linearly with mm, a typical acceptance probability would scale roughly as m−2m^{-2}.
+A standard coupon-collector argument shows that it takes roughly O⁡(m​log⁡m)O(m\log m) accepted transitions to ensure that each edge has been swapped at least once, which would appear a reasonable requirement for a well-mixed chain.
+We therefore conjecture that the overall mixing time of Algorithm 1 for the uniform model on dense multigraphs is no smaller than O⁡(m3​log⁡m)O(m^{3}\log m), though a more precise statement and proof would be welcome.
+While much better than the best known proven results, such a scaling could likely be prohibitive for graphs of even modest size.
+
+
+
+
+These considerations suggest that forming the MCMC estimate 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} may not be a computationally practical way to estimate 𝛀\boldsymbol{\Omega} when mm is large.
+Despite these limitations, Algorithm 1 lies at the heart of our main results in the next section.
+
+
+
+
+
+
+3 A Dynamical Approach to Model Moments
+
+
+
+
+We introduce some additional notation to facilitate calculations.
+The transpose of vector 𝐮\mathbf{u} is denoted 𝐮T\mathbf{u}^{T}, and the inner product of 𝐮\mathbf{u} and 𝐯\mathbf{v} by 𝐮T​𝐯\mathbf{u}^{T}\mathbf{v}.
+We denote the iith row or column of matrix 𝐖\mathbf{W} by 𝐰i\mathbf{w}_{i}; all matrices we encounter will be symmetric and so no ambiguity will arise.
+Let 𝐞\mathbf{e} be the vector of ones; the dimension of 𝐞\mathbf{e} will be clear in context.
+Similarly, let 𝐞i\mathbf{e}_{i} be the iith standard basis vector.
+All sums over node indices i,j,k,ℓi,j,k,\ell have implicit limits from 11 to nn.
+Finally, a∧ba\wedge b and a∨ba\vee b denote the pairwise minimum and maximum of scalars aa and bb, respectively.
+
+
+
+
+Algorithm 1 describes a stochastic dynamical update on the space 𝒢𝐝\mathcal{G}_{\mathbf{d}} of multigraphs, which we identify with the space of symmetric matrices with nonnegative integer entries and zero diagonals.
+Let 𝚫⁡(t)=𝐖⁡(t+1)−𝐖⁡(t)\boldsymbol{\Delta}(t)=\mathbf{W}(t+1)-\mathbf{W}(t) be the (random) increment in 𝐖\mathbf{W} in timestep t+1t+1.
+We implicitly regard 𝐖\mathbf{W} and 𝚫\boldsymbol{\Delta} as functions of tt, suppressing the argument for notational sanity when there is no possibility of confusion.
+We can separate 𝚫=𝚫+−𝚫−\boldsymbol{\Delta}=\boldsymbol{\Delta}^{+}-\boldsymbol{\Delta}^{-}, where Δi​j+=(Δi​j∨0)\Delta^{+}_{ij}=(\Delta_{ij}\vee 0) and Δi​j−=(−Δi​j∨0)\Delta^{-}_{ij}=(-\Delta_{ij}\vee 0).
+The first term Δi​j+\Delta_{ij}^{+} describes the (random) number of edges flowing into the pair (i,j)(i,j) and the second term Δi​j−\Delta_{ij}^{-} the random number of edges flowing out.
+Conservation of edges implies that ∑i​jΔi​j+=∑i​jΔi​j−\sum_{ij}\Delta_{ij}^{+}=\sum_{ij}\Delta_{ij}^{-}.
+Since a pair of nodes can only gain or lose one edge at a time under the dynamics, the entries Δi​j+\Delta_{ij}^{+} and Δi​j−\Delta_{ij}^{-} are Bernoulli random variables.
+These Bernoulli variables are not independent, since at most two entries of each matrix are nonzero in a given timestep.
+Let 𝜹+=𝔼⁡[𝚫+]\boldsymbol{\delta}^{+}=\mathbb{E}[\boldsymbol{\Delta}^{+}] and 𝜹−=𝔼⁡[𝚫−]\boldsymbol{\delta}^{-}=\mathbb{E}[\boldsymbol{\Delta}^{-}].
+
+
+
+
+Two things must hold at stationarity of Algorithm 1.
+First, all moments of 𝐖\mathbf{W} must be constant in time.
+Second, since the stationary distribution of Algorithm 1 is the target distribution ρ\rho by construction, these moments of 𝐖\mathbf{W} are the desired moments of ρ\rho.
+We can therefore approximately compute moments of ρ\rho by approximately solving conveniently chosen stationarity conditions.
+A useful set is given by
+
+
+
+
+
+𝔼⁡[wi​j​(t+1)p−wi​j​(t)p]=𝔼⁡[(wi​j​(t)+Δi​j​(t))p−wi​j​(t)p]=0,\displaystyle\mathbb{E}[w_{ij}(t+1)^{p}-w_{ij}(t)^{p}]=\mathbb{E}\left[\left(w_{ij}(t)+\Delta_{ij}(t)\right)^{p}-w_{ij}(t)^{p}\right]=0\;,
+
+(4)
+
+
+for positive integers pp.
+These equations express directly the time-invariance of the moments 𝔼⁡[wi​j​(t)p]\mathbb{E}[w_{ij}(t)^{p}] at stationarity.
+
+
+
+
+3.1 Illustration: The Configuration Model
+
+
+
+
+We will derive a version of the Chung-Lu estimator 𝛀^0\hat{\boldsymbol{\Omega}}^{0} for the configuration model by studying (4) when p=1p=1.
+
+
+
+Theorem 4.
+
+
+
+Under the configuration model μ𝐝\mu_{\mathbf{d}}, for all i≠ji\neq j,
+
+
+
+
+
+ωi​j=di​dj−𝔼⁡[𝐰iT​𝐰j]−𝔼⁡[wi​j2]2​m−di−dj\displaystyle\omega_{ij}=\frac{d_{i}d_{j}-\mathbb{E}[\mathbf{w}_{i}^{T}\mathbf{w}_{j}]-\mathbb{E}[w_{ij}^{2}]}{2m-d_{i}-d_{j}}
+
+(5)
+
+
+
+
+
+
+
+Proof.
+
+
+
+We first derive expressions for 𝚫−\boldsymbol{\Delta}^{-} and 𝚫+\boldsymbol{\Delta}^{+} by stepping through the stages of Algorithm 1.
+For the former, note that Δi​j−=1\Delta^{-}_{ij}=1 only if edge (i,j)(i,j) is sampled in the first stage of the iteration.
+The probability that edges (i,j)(i,j) and (k,ℓ)(k,\ell) are sampled, assuming that all four indices are distinct, is z​(𝐖)−1​Wi​j​Wk​ℓz(\mathbf{W})^{-1}W_{ij}W_{k\ell}, where
+
+
+
+
+
+z⁡(𝐖)=∑i,jk,ℓ∉{i,j}Wi​j​Wk​ℓ\displaystyle z(\mathbf{W})=\sum_{\begin{subarray}{c}i,j\\
+k,\ell\notin\{i,j\}\end{subarray}}W_{ij}W_{k\ell}
+
+
+
+gives the total number of ways to pick two edges with four distinct indices.
+Under the configuration model, a⁡((i,j),(k,ℓ))=1a((i,j),(k,\ell))=1.
+Summing across kk and ℓ\ell and taking expectations, we obtain
+
+
+
+
+
+δi​j−\displaystyle\delta^{-}_{ij}
+=1z⁡(𝐖)​𝔼​[∑k,ℓ∉{i,j}wi​j​wk​ℓ]\displaystyle=\frac{1}{z(\mathbf{W})}\mathbb{E}\left[\sum_{\begin{subarray}{c}k,\ell\notin\{i,j\}\end{subarray}}w_{ij}w_{k\ell}\right]
+
+
+
+
+
+=1z⁡(𝐖)​𝔼​[wi​j​(∑k,ℓwk​ℓ−∑k(wk​i+wk​j)−∑ℓ(wi​ℓ+wj​ℓ)+3​wi​j)].\displaystyle=\frac{1}{z(\mathbf{W})}\mathbb{E}\left[w_{ij}\left(\sum_{k,\ell}w_{k\ell}-\sum_{k}\left(w_{ki}+w_{kj}\right)-\sum_{\ell}\left(w_{i\ell}+w_{j\ell}\right)+3w_{ij}\right)\right]\;.
+
+
+
+Recalling constraints such as ∑k,ℓWk​ℓ=2​m\sum_{k,\ell}W_{k\ell}=2m and ∑kWk​i=di\sum_{k}W_{ki}=d_{i}, this expression simplifies to
+
+
+
+
+
+δi​j−\displaystyle\delta^{-}_{ij}
+=1z⁡(𝐖)​(2​ωi​j​(m−di−dj)+3​𝔼​[wi​j2])\displaystyle=\frac{1}{z(\mathbf{W})}\left(2\omega_{ij}(m-d_{i}-d_{j})+3\mathbb{E}[w_{ij}^{2}]\right)
+
+
+
+We can derive a similar expression for δi​j+\delta_{ij}^{+}.
+Fix two additional indices kk and ℓ\ell, such that all four indices i,j,k,ℓi,j,k,\ell are distinct.
+A new edge (i,j)(i,j) can be generated from selecting for swap either of the pairs {(i,k),(ℓ,j)}\{(i,k),(\ell,j)\} or {(i,ℓ),(k,j)}\{(i,\ell),(k,j)\}.
+These events occur with probabilities z​(𝐖)−1​wi​k​wℓ​jz(\mathbf{W})^{-1}w_{ik}w_{\ell j} and z​(𝐖)−1​wi​ℓ​wk​jz(\mathbf{W})^{-1}w_{i\ell}w_{kj}, respectively.
+Having selected edges {(i,k),(ℓ,j)}\{(i,k),(\ell,j)\}, edges {(i,j),(k,ℓ)}\{(i,j),(k,\ell)\} are formed by the swap with probability 12\frac{1}{2}; otherwise {(i,ℓ),(k,j)}\{(i,\ell),(k,j)\} are formed.
+Summing across kk and ℓ\ell and computing expectations, we have
+
+
+
+
+
+δi​j+\displaystyle\delta^{+}_{ij}
+=12​z​(𝐖)​𝔼​[∑k,ℓ∉{i,j}k≠ℓwi​k​wℓ​j+∑k,ℓ∉{i,j}k≠ℓwi​ℓ​wk​j]\displaystyle=\frac{1}{2z(\mathbf{W})}\mathbb{E}\left[\sum_{\begin{subarray}{c}k,\ell\notin\{i,j\}\\
+k\neq\ell\end{subarray}}w_{ik}w_{\ell j}+\sum_{\begin{subarray}{c}k,\ell\notin\{i,j\}\\
+k\neq\ell\end{subarray}}w_{i\ell}w_{kj}\right]
+
+
+
+
+
+=1z⁡(𝐖)​𝔼​[∑k,ℓ∉{i,j}k≠ℓwi​k​wℓ​j]\displaystyle=\frac{1}{z(\mathbf{W})}\mathbb{E}\left[\sum_{\begin{subarray}{c}k,\ell\notin\{i,j\}\\
+k\neq\ell\end{subarray}}w_{ik}w_{\ell j}\right]
+
+
+
+
+
+=1z⁡(𝐖)​𝔼​[(∑kwi​k)​(∑ℓwℓ​j)−wi​j​∑k(wi​k+wj​k)−∑kwi​k​wk​j+wi​j2]\displaystyle=\frac{1}{z(\mathbf{W})}\mathbb{E}\left[\left(\sum_{k}w_{ik}\right)\left(\sum_{\ell}w_{\ell j}\right)-w_{ij}\sum_{k}\left(w_{ik}+w_{jk}\right)-\sum_{k}w_{ik}w_{kj}+w_{ij}^{2}\right]
+
+
+
+
+
+=1z⁡(𝐖)​(di​dj−ωi​j​(di+dj)−𝔼⁡[𝐰iT​𝐰j]+𝔼⁡[wi​j2]).\displaystyle=\frac{1}{z(\mathbf{W})}\left(d_{i}d_{j}\ -\omega_{ij}(d_{i}+d_{j})-\mathbb{E}[\mathbf{w}_{i}^{T}\mathbf{w}_{j}]+\mathbb{E}[w_{ij}^{2}]\right)\;.
+
+
+
+Choosing p=1p=1 in (4), we must have δi​j+=δi​j−\delta_{ij}^{+}=\delta_{ij}^{-} at stationarity.
+Inserting our derived expressions and solving for ωi​j\omega_{ij} yields the result.
+
+
+
+
+
+
+Theorem 4 does not give an explicit operational solution for ωi​j\omega_{ij}, since the righthand side contains higher moments of 𝐖\mathbf{W}.
+Progress can be made in the “large, sparse regime,” in which we assume that nn is large and the entries of 𝐖\mathbf{W} and 𝐝\mathbf{d} small relative to mm.
+Recalling that ω^i​j0=di​dj2​m\hat{\omega}^{0}_{ij}=\frac{d_{i}d_{j}}{2m}, we can rewrite (5) as
+
+
+
+
+
+ωi​j\displaystyle\omega_{ij}
+=(1−di+dj2​m)−1​(1−𝔼⁡[𝐰iT​𝐰j]−𝔼⁡[wi​j2]di​dj)​ω^i​j0.\displaystyle=\left(1-\frac{d_{i}+d_{j}}{2m}\right)^{-1}\left(1-\frac{\mathbb{E}[\mathbf{w}_{i}^{T}\mathbf{w}_{j}]-\mathbb{E}[w_{ij}^{2}]}{d_{i}d_{j}}\right)\hat{\omega}^{0}_{ij}.
+
+
+
+In the large, sparse heuristic, each entry of 𝐝\mathbf{d} is small in comparison to mm, and the first error factor is near unity.
+Similarly, the expression 𝔼⁡[𝐰iT​𝐰j]−𝔼⁡[wi​j2]\mathbb{E}[\mathbf{w}_{i}^{T}\mathbf{w}_{j}]-\mathbb{E}[w_{ij}^{2}] implicitly contains up to n−1n-1 nonzero products of entries of 𝐖\mathbf{W}.
+On the other hand, the denominator contains (n−1)2(n-1)^{2} such terms, and we therefore expect the second error factor to also lie near unity.
+We therefore expect that ωi​j→ω^i​j0\omega_{ij}\rightarrow\hat{\omega}^{0}_{ij} “in the large, sparse regime.”.
+This statement can be made precise by specifying the asymptotic behavior of 𝐖\mathbf{W} with respect to nn, which is beyond our present scope.
+Through analysis of Algorithm 1, we have derived both 𝛀^0\hat{\boldsymbol{\Omega}}^{0} and explicit error terms that are often elided in the network science literature.
+
+
+
+
+
+3.2 Moments of the Uniform Model
+
+
+
+
+The analysis of the uniform model is somewhat more subtle.
+As seen in the configuration model above, many of the sums that appear in the calculations of 𝜹+\boldsymbol{\delta}^{+} and 𝜹−\boldsymbol{\delta}^{-} reduced to fixed constants due to the degree constraints.
+Unfortunately, there is no analogous simplification in the uniform model η𝐝\eta_{\mathbf{d}}.
+Because of this, we require some additional technology in order to make progress.
+
+
+
+
+Define the binary matrix 𝐗∈{0,1}n×n\mathbf{X}\in\{0,1\}^{n\times n} entrywise by xi​j=𝟙​(wi​j=0)x_{ij}=\mathbbm{1}(w_{ij}=0).
+For convenience, we adopt the convention 0/0=00/0=0 under which the identity wi​j/wi​j=xi​jw_{ij}/w_{ij}=x_{ij} holds even when wi​j=0w_{ij}=0.
+We can interpret 𝐗\mathbf{X} as the adjacency matrix of the simple graph obtained by collapsing all sets of parallel edges in a multigraph into single edges.
+Let 𝐛=𝐗𝐞\mathbf{b}=\mathbf{X}\mathbf{e}, the vector of row sums of 𝐗\mathbf{X}.
+The vector 𝐛\mathbf{b} is interpretable as the collapsed degree sequence, whose iith entry gives the number of distinct neighbors of node ii.
+Let y=12​𝐞T​𝐛y=\frac{1}{2}\mathbf{e}^{T}\mathbf{b} give the total number of collapsed edges.
+The expectations of 𝐗\mathbf{X}, 𝐛\mathbf{b}, and yy play important roles in our analysis.
+We denote them
+
+
+
+
+
+𝝌=𝔼[𝐗],𝜷=𝔼[𝐛], andψ=𝔼[y].\displaystyle\boldsymbol{\chi}=\mathbb{E}[\mathbf{X}]\;,\quad\boldsymbol{\beta}=\mathbb{E}[\mathbf{b}]\;,\text{ and}\quad\psi=\mathbb{E}[y]\;.
+
+
+
+The objects 𝝌\boldsymbol{\chi}, 𝜷\boldsymbol{\beta}, and ψ\psi are all implicitly deterministic functions of 𝐝\mathbf{d}.
+Throughout this section, we let I=(i1,…,ip)I=(i_{1},\ldots,i_{p}) be a set of pp not-necessarily-distinct indices, and let K=((k1,ℓ1),…,(kq,ℓq))K=((k_{1},\ell_{1}),\ldots,(k_{q},\ell_{q})) be a set of qq not-necessarily-distinct dyadic indices.
+If 𝐯\mathbf{v} is a vector, we let 𝐯I\mathbf{v}_{I} denote the vector with entries (vi1,…,vip)(v_{i_{1}},\ldots,v_{i_{p}}).
+Similarly, if 𝐀\mathbf{A} is a matrix, we let 𝐀K\mathbf{A}_{K} denote the vector with entries (ak1,ℓ1,…,akq,ℓq)(a_{k_{1},\ell_{1}},\ldots,a_{k_{q},\ell_{q}}).
+
+
+
+
+We first require control over the behavior of 𝜷\boldsymbol{\beta} with respect to 𝐝\mathbf{d}.
+
+
+
+Definition 5 (Regularity Constant for β\boldsymbol{\beta}).
+
+
+
+Let u⁡(𝐝)u(\mathbf{d}) be the smallest real number such that, for any degree sequence 𝐝′\mathbf{d}^{\prime} such that 𝐝′≥𝐝\mathbf{d}^{\prime}\geq\mathbf{d} entrywise, and for all distinct indices ii and jj,
+
+
+
+
+
+‖𝜷⁡(𝐝′+𝐞i+𝐞j)−𝜷⁡(𝐝′)‖∞≤u⁡(𝐝).\displaystyle\left\lVert\boldsymbol{\beta}(\mathbf{d}^{\prime}+\mathbf{e}_{i}+\mathbf{e}_{j})-\boldsymbol{\beta}(\mathbf{d}^{\prime})\right\rVert_{\infty}\leq u(\mathbf{d})\;.
+
+
+
+
+
+
+
+
+
+Intuitively, u⁡(𝐝)u(\mathbf{d}) provides a bound on the sensitivity of 𝜷\boldsymbol{\beta} to increments in entries of the degree sequence.
+Indeed, u⁡(𝐝)/2u(\mathbf{d})/\sqrt{2} is by definition the Lipschitz constant (with respect to the ℓ2\ell^{2} and ℓ∞\ell^{\infty} norms) for the restriction of 𝜷\boldsymbol{\beta} to the set {𝐝′:𝐝′≥𝐝}\{\mathbf{d}^{\prime}:\mathbf{d}^{\prime}\geq\mathbf{d}\}.
+Since 0≤βℓ​(𝐝)≤n−10\leq\beta_{\ell}(\mathbf{d})\leq n-1, we have trivially that u⁡(𝐝)≤n−1u(\mathbf{d})\leq n-1.
+To produce a lower bound, we can also produce degree sequences 𝐝\mathbf{d} such that u⁡(𝐝)≥1u(\mathbf{d})\geq 1.
+To see this, note that, if di=dj=0d_{i}=d_{j}=0, then βi​(𝐝)=βj​(𝐝)=0\beta_{i}(\mathbf{d})=\beta_{j}(\mathbf{d})=0.
+On the other hand, βi​(𝐝+𝐞i+𝐞j)=βj​(𝐝+𝐞i+𝐞j)=1\beta_{i}(\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j})=\beta_{j}(\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j})=1.
+
+
+
+
+We also define vv as the smallest real number such that, for all ii and jj,
+
+
+
+
+
+|ψ⁡(𝐝+𝐞i+𝐞j)−ψ⁡(𝐝)|≤v⁡(𝐝).\displaystyle\left|\psi(\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j})-\psi(\mathbf{d})\right|\leq v(\mathbf{d})\;.
+
+
+
+Similarly to the above, we have the trivial bounds 1≤v⁡(𝐝)≤n⁡(n−1)1\leq v(\mathbf{d})\leq n(n-1), since
+n⁡(n−1)n(n-1) is the largest possible number of nonzero entries of 𝐗\mathbf{X}.
+
+
+
+Conjecture 6.
+
+
+
+For all 𝐝\mathbf{d}, we have u⁡(𝐝)≤1u(\mathbf{d})\leq 1 and v⁡(𝐝)≤1v(\mathbf{d})\leq 1.
+
+
+
+
+
+
+The intuition behind this conjecture is as follows.
+If G∈𝒢𝐝G\in\mathcal{G}_{\mathbf{d}}, the sequence 𝐝+𝐞i+𝐞j\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j} can be instantiated by a graph G′∈𝒢𝐝+𝐞i+𝐞jG^{\prime}\in\mathcal{G}_{\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j}} in which a single edge has been added between nodes ii and jj.
+Trivially, this operation does not decrease the degrees of any nodes, does not increase the degrees of any nodes by more than one, and does not increase the total number of edges by more than one.
+Conjecture 6 states that the same is true of the expected collapsed degrees 𝜷\boldsymbol{\beta} and expected number of collapsed edges ψ\psi.
+The bounds we present below do not formally depend on the truth of Conjecture 6, but they are not guaranteed to be meaningful unless uu and vv are indeed small in comparison to nn.
+Unfortunately, the complex combinatorial structure of 𝒢𝐝\mathcal{G}_{\mathbf{d}} renders a proof of our conjecture obscure, and we leave such a proof to future work.
+In Section 5.1, we will show anecdotal numerical experiments consistent with this conjecture.
+For now, we define
+
+
+
+
+
+u∗​(𝐝)=max⁡{u⁡(𝐝),1}andv∗​(𝐝)=max⁡{v⁡(𝐝),1}.\displaystyle u_{*}(\mathbf{d})=\max\{u(\mathbf{d}),1\}\quad\text{and}\quad v_{*}(\mathbf{d})=\max\{v(\mathbf{d}),1\}\;.
+
+
+
+Conjecture 6 then states that u∗​(𝐝)=v∗​(𝐝)=1u_{*}(\mathbf{d})=v_{*}(\mathbf{d})=1 for all 𝐝\mathbf{d}.
+
+
+
+Theorem 7.
+
+
+
+Suppose that η𝐝​(𝐗K=𝐞)>0\eta_{\mathbf{d}}(\mathbf{X}_{K}=\mathbf{e})>0.
+Then, for any i∈[n]i\in[n],
+
+
+
+
+
+|𝔼⁡[bi|𝐗K=𝐞]−βi​(𝐝)|≤2​q​u∗​(𝐝).\displaystyle\left|\mathbb{E}[b_{i}|\mathbf{X}_{K}=\mathbf{e}]-\beta_{i}(\mathbf{d})\right|\leq 2qu_{*}(\mathbf{d})\;.
+
+(6)
+
+
+Additionally,
+
+
+
+
+
+|𝔼⁡[y|𝐗K=𝐞]−ψ⁡(𝐝)|≤2​q​v∗​(𝐝).\displaystyle\left|\mathbb{E}[y|\mathbf{X}_{K}=\mathbf{e}]-\psi(\mathbf{d})\right|\leq 2qv_{*}(\mathbf{d})\;.
+
+(7)
+
+
+
+
+
+
+
+Proof.
+
+
+
+We will prove (6); the proof of (7) is parallel.
+Fix k,ℓ∈[n]k,\ell\in[n].
+The distribution η𝐝+𝐞k+𝐞ℓ\eta_{\mathbf{d}+\mathbf{e}_{k}+\mathbf{e}_{\ell}} is supported on graphs with nn nodes and m+1m+1 edges.
+Let us condition η𝐝+𝐞k+𝐞ℓ\eta_{\mathbf{d}+\mathbf{e}_{k}+\mathbf{e}_{\ell}} on the event wk​ℓ≥1w_{k\ell}\geq 1.
+Then, there exists at least one edge (k,ℓ)(k,\ell).
+Since η𝐝+𝐞k+ℓ\eta_{\mathbf{d}+\mathbf{e}_{k}+\ell} is itself uniform, the conditioned distribution, in which the remaining mm edges, is also uniform.
+Indeed, since we have already assigned an edge incident to nodes kk and ℓ\ell, the conditional distribution is uniform over configurations of the remaining mm edges in which the degrees sum to 𝐝\mathbf{d}.
+This is exactly η𝐝\eta_{\mathbf{d}}, and we therefore obtain the identity
+
+
+
+
+
+η𝐝​(G)=η𝐝+𝐞k+𝐞ℓ​(G⊎{(k,ℓ)}|wk​ℓ≥1),\displaystyle\eta_{\mathbf{d}}(G)=\eta_{\mathbf{d}+\mathbf{e}_{k}+\mathbf{e}_{\ell}}(G\uplus\{(k,\ell)\}|w_{k\ell}\geq 1)\;,
+
+(8)
+
+
+where ⊎\uplus denotes multiset union.
+This identity relates the operations of conditioning and degree sequence modification.
+Now, let 𝐯⁡(K)=∑s=1q(𝐞ks+𝐞ℓs)\mathbf{v}(K)=\sum_{s=1}^{q}(\mathbf{e}_{k_{s}}+\mathbf{e}_{\ell_{s}}).
+By iterating (8), we obtain
+
+
+
+
+
+η𝐝​(G)=η𝐝+𝐯⁡(K)​(G⊎⨄s=1q{ks,ℓs}|𝐖K≥𝐞).\displaystyle\eta_{\mathbf{d}}(G)=\eta_{\mathbf{d}+\mathbf{v}(K)}\left(G\uplus\biguplus_{s=1}^{q}\{k_{s},\ell_{s}\}\Big|\mathbf{W}_{K}\geq\mathbf{e}\right)\;.
+
+
+
+Note that the conditioning event can be equivalently written 𝐗K=𝐞\mathbf{X}_{K}=\mathbf{e}.
+
+
+
+
+For the remainder of this proof, let the symbol 𝔼𝐳\mathbb{E}_{\mathbf{z}} denote expectations with respect to η𝐳\eta_{\mathbf{z}}.
+We use (8) to estimate 𝔼𝐝+𝐯⁡(K)​[bi|𝐗K=𝐞]\mathbb{E}_{\mathbf{d}+\mathbf{v}(K)}[b_{i}|\mathbf{X}_{K}=\mathbf{e}] via a two-step experiment.
+We first sample G∼η𝐝G\sim\eta_{\mathbf{d}} and compute bib_{i}.
+We then add the qq edges {(ks,ℓs)}\{(k_{s},\ell_{s})\} sequentially.
+Doing so does not decrease bib_{i}, and can increase bib_{i} by no more than q≤q​u∗q\leq qu_{*}.
+Taking expectations, we obtain the bound
+
+
+
+
+
+βi​(𝐝)≤𝔼𝐝+𝐯⁡(K)​[bi|𝐗K=𝐞]≤βi​(𝐝)+q​u∗.\displaystyle\beta_{i}(\mathbf{d})\leq\mathbb{E}_{\mathbf{d}+\mathbf{v}(K)}[b_{i}|\mathbf{X}_{K}=\mathbf{e}]\leq\beta_{i}(\mathbf{d})+qu_{*}\;.
+
+
+
+Applying (6) inductively, we also have
+
+
+
+
+
+βi​(𝐝)−q​u∗≤βi​(𝐝+𝐯⁡(K))≤βi​(𝐝)+q​u∗.\displaystyle\beta_{i}(\mathbf{d})-qu_{*}\leq\beta_{i}(\mathbf{d}+\mathbf{v}(K))\leq\beta_{i}(\mathbf{d})+qu_{*}\;.
+
+
+
+We infer that
+
+
+
+
+
+|𝔼𝐝+𝐯⁡(K)​[bi|𝐗K=𝐞]−βi​(𝐝+𝐯⁡(K))|≤2​q​u∗.\displaystyle\left|\mathbb{E}_{\mathbf{d}+\mathbf{v}(K)}[b_{i}|\mathbf{X}_{K}=\mathbf{e}]-\beta_{i}(\mathbf{d}+\mathbf{v}(K))\right|\leq 2qu_{*}\;.
+
+
+
+Since 𝐝\mathbf{d} and KK were arbitrary, we can absorb 𝐯⁡(K)\mathbf{v}(K) into 𝐝\mathbf{d}, obtaining the required statement
+
+
+
+
+
+|𝔼𝐝​[bi|𝐗K=𝐞]−βi​(𝐝)|≤2​q​u∗,\displaystyle\left|\mathbb{E}_{\mathbf{d}}[b_{i}|\mathbf{X}_{K}=\mathbf{e}]-\beta_{i}(\mathbf{d})\right|\leq 2qu_{*}\;,
+
+
+
+The only subtlety in this case is that the expectation must exist.
+For this it is sufficient that η𝐝​(𝐗K=𝐞)>0\eta_{\mathbf{d}}(\mathbf{X}_{K}=\mathbf{e})>0, as assumed by hypothesis.
+
+
+
+
+
+
+Theorem 7 is our primary tool for proving second-moment bounds on the entries of 𝐛\mathbf{b}.
+From this point forward, we will assume that 𝐝\mathbf{d} is fixed.
+The symbols η\eta, 𝔼\mathbb{E} will refer to the uniform model with degree sequence 𝐝\mathbf{d} and expectations with respect to that model, respectively.
+
+
+
+Lemma 8.
+
+
+
+Let i≠j≠ki\neq j\neq k.
+The following bounds hold.
+
+
+
+
+
+|𝔼⁡[bi​xj​k]−βi​χj​k|\displaystyle\left|\mathbb{E}[b_{i}x_{jk}]-\beta_{i}\chi_{jk}\right|
+≤2​u∗​χj​k\displaystyle\leq 2u_{*}\chi_{jk}
+
+(9)
+
+
+
+|𝔼⁡[y​xj​k]−ψ​χj​k|\displaystyle\left|\mathbb{E}[yx_{jk}]-\psi\chi_{jk}\right|
+≤2​v∗​χj​k\displaystyle\leq 2v_{*}\chi_{jk}
+
+(10)
+
+
+
+|𝔼⁡[bi​bj]−βi​βj|\displaystyle\left|\mathbb{E}[b_{i}b_{j}]-\beta_{i}\beta_{j}\right|
+≤2​u∗​(βi∧βj)\displaystyle\leq 2u_{*}(\beta_{i}\wedge\beta_{j})
+
+(11)
+
+
+
+𝔼⁡[bi2​bj2]\displaystyle\mathbb{E}[b_{i}^{2}b_{j}^{2}]
+≤(βi+6​u∗)2​(βj+6​u∗)2\displaystyle\leq(\beta_{i}+6u_{*})^{2}(\beta_{j}+6u_{*})^{2}
+
+(12)
+
+
+
+var​(y)\displaystyle\textnormal{var}\left(y\right)
+≤2​v∗​ψ.\displaystyle\leq 2v_{*}\psi\;.
+
+(13)
+
+
+
+
+
+
+
+Proof.
+
+
+
+To prove (9), write
+
+
+
+
+
+𝔼⁡[bi​xj​k]=η⁡(xj​k=1)​𝔼​[bi|xj​k=1]=χj​k​𝔼​[bi|xj​k=1]\displaystyle\mathbb{E}[b_{i}x_{jk}]=\eta(x_{jk}=1)\mathbb{E}[b_{i}|x_{jk}=1]=\chi_{jk}\mathbb{E}[b_{i}|x_{jk}=1]
+
+
+
+and apply Theorem 7.
+To prove (10), we similarly write
+
+
+
+
+
+𝔼⁡[y​xj​k]=η⁡(xj​k=1)​𝔼​[y|xj​k=1]=χj​k​𝔼​[y|xj​k=1]\displaystyle\mathbb{E}[yx_{jk}]=\eta(x_{jk}=1)\mathbb{E}[y|x_{jk}=1]=\chi_{jk}\mathbb{E}[y|x_{jk}=1]
+
+
+
+and apply Theorem 7.
+To prove (11), write
+
+
+
+
+
+𝔼⁡[bi​bj]\displaystyle\mathbb{E}[b_{i}b_{j}]
+=∑ℓ𝔼⁡[bi​xj​ℓ]\displaystyle=\sum_{\ell}\mathbb{E}[b_{i}x_{j\ell}]
+
+
+
+Now applying (9), we obtain
+
+
+
+
+
+|𝔼⁡[bi​bj]−βi​βj|\displaystyle\left|\mathbb{E}[b_{i}b_{j}]-\beta_{i}\beta_{j}\right|
+≤2​u∗​∑ℓχj​ℓ=2​u∗​βj.\displaystyle\leq 2u_{*}\sum_{\ell}\chi_{j\ell}=2u_{*}\beta_{j}\;.
+
+
+
+Since we could have expanded bjb_{j} instead of bib_{i}, we can choose the smaller of these, and the result follows.
+The proof of (12) is similar.
+We expand the sums and apply Theorem 7.
+The first step is
+
+
+
+
+
+𝔼⁡[bi2​bj2]\displaystyle\mathbb{E}[b_{i}^{2}b_{j}^{2}]
+=∑k,ℓ,h𝔼⁡[xi​k​xi​ℓ​xj​h]​𝔼​[bj|xi​k​xi​ℓ​xj​h=1]\displaystyle=\sum_{k,\ell,h}\mathbb{E}[x_{ik}x_{i\ell}x_{jh}]\mathbb{E}[b_{j}|x_{ik}x_{i\ell}x_{jh}=1]
+
+
+
+
+
+≤∑k,ℓ,h𝔼⁡[xi​k​xi​ℓ​xj​h]​(βj+6​u∗)\displaystyle\leq\sum_{k,\ell,h}\mathbb{E}[x_{ik}x_{i\ell}x_{jh}](\beta_{j}+6u_{*})
+
+
+
+
+
+=(βj+6​u∗)​𝔼​[bi2​bj].\displaystyle=(\beta_{j}+6u_{*})\mathbb{E}[b_{i}^{2}b_{j}]\;.
+
+
+
+Repeating this procedure three more times proves the result.
+Finally, to prove (13), write
+
+
+
+
+
+var​(y)\displaystyle\textnormal{var}\left(y\right)
+=𝔼⁡[y2]−ψ2=12​∑i​jχi​j​𝔼​[y|xi​j=1]−ψ2≤12​∑i​jχi​j​(ψ+2​v∗)−ψ2=2​v∗​ψ.\displaystyle=\mathbb{E}[y^{2}]-\psi^{2}=\frac{1}{2}\sum_{ij}\chi_{ij}\mathbb{E}[y|x_{ij}=1]-\psi^{2}\leq\frac{1}{2}\sum_{ij}\chi_{ij}(\psi+2v_{*})-\psi^{2}=2v_{*}\psi\;.
+
+
+
+We have used (10) in the inequality.
+
+
+
+
+
+Lemma 9.
+
+
+
+We have
+
+
+
+
+
+|δi​j−−2​ψ​χi​jz⁡(𝐖)|≤ϵi​j−z⁡(𝐖)and|δi​j+−βi​βjz⁡(𝐖)|≤ϵi​j+z⁡(𝐖),\displaystyle\left|\delta_{ij}^{-}-\frac{2\psi\chi_{ij}}{z(\mathbf{W})}\right|\leq\frac{\epsilon_{ij}^{-}}{z(\mathbf{W})}\quad\text{and}\quad\left|\delta_{ij}^{+}-\frac{\beta_{i}\beta_{j}}{z(\mathbf{W})}\right|\leq\frac{\epsilon_{ij}^{+}}{z(\mathbf{W})}\;,
+
+
+
+where
+
+
+
+
+
+ϵi​j−\displaystyle\epsilon_{ij}^{-}
+≜χi​j​(βi+βj+3+4​v∗+2​u∗)\displaystyle\triangleq\chi_{ij}(\beta_{i}+\beta_{j}+3+4v_{*}+2u_{*})
+
+
+
+
+ϵi​j+\displaystyle\epsilon_{ij}^{+}
+≜χi​j​(βi+βj+4​u∗−1)+(2​u∗+1)​(βi∧βj).\displaystyle\triangleq\chi_{ij}(\beta_{i}+\beta_{j}+4u_{*}-1)+(2u_{*}+1)(\beta_{i}\wedge\beta_{j})\;.
+
+
+
+
+
+
+
+
+Proof.
+
+
+
+We require expressions for 𝚫−\boldsymbol{\Delta}^{-} and 𝚫+\boldsymbol{\Delta}^{+}.
+These are as in the calculation for the configuration model in Section 3.1, except that there now appears an acceptance probability a⁡((i,j),(k,ℓ))=1wi​j,wk​ℓa((i,j),(k,\ell))=\frac{1}{w_{ij},w_{k\ell}} that modifies the swap probabilities.
+The acceptance probability has the effect of replacing instances of wi​jw_{ij} with xi​jx_{ij}.
+Performing the algebra and simplifying, we find that
+
+
+
+
+
+δi​j−\displaystyle\delta_{ij}^{-}
+=1z⁡(𝐖)​𝔼​[2​xi​j​(y−bi−bj)+3​xi​j]\displaystyle=\frac{1}{z(\mathbf{W})}\mathbb{E}\left[2x_{ij}(y-b_{i}-b_{j})+3x_{ij}\right]
+
+(14)
+
+
+
+δi​j+\displaystyle\delta^{+}_{ij}
+=1z⁡(𝐖)​𝔼​[bi​bj−xi​j​(bi+bj)−𝐱iT​𝐱j+xi​j].\displaystyle=\frac{1}{z(\mathbf{W})}\mathbb{E}\left[b_{i}b_{j}-x_{ij}(b_{i}+b_{j})-\mathbf{x}_{i}^{T}\mathbf{x}_{j}+x_{ij}\right]\;.
+
+(15)
+
+
+These are indeed the same expressions as in the configuration model in Section 3.1, with 𝐖\mathbf{W} replaced by 𝐗\mathbf{X}.
+We have used the identity xi​j2=xi​jx_{ij}^{2}=x_{ij}.
+Computing the expectation of the first line yields
+
+
+
+
+
+δi​j−=1z⁡(𝐖)​(2​𝔼​[y​xi​j]−2​𝔼​[bi​xi​j]−2​𝔼​[bj​xi​j]+3​χi​j).\displaystyle\delta_{ij}^{-}=\frac{1}{z(\mathbf{W})}\left(2\mathbb{E}[yx_{ij}]-2\mathbb{E}[b_{i}x_{ij}]-2\mathbb{E}[b_{j}x_{ij}]+3\chi_{ij}\right)\;.
+
+
+
+Applying (9) and (10), we obtain the bound
+
+
+
+
+
+|δi​j−−1z⁡(𝐖)(χi​j(2(ψ−βi−βj)+3)|≤4z⁡(𝐖)χi​j(v∗+2u∗).\displaystyle\left|\delta_{ij}^{-}-\frac{1}{z(\mathbf{W})}\left(\chi_{ij}(2(\psi-\beta_{i}-\beta_{j})+3\right)\right|\leq\frac{4}{z(\mathbf{W})}\chi_{ij}(v_{*}+2u_{*})\;.
+
+
+
+We similarly compute
+
+
+
+
+
+δi​j+=1z⁡(𝐖)​(𝔼⁡[bi​bj]−𝔼⁡[bi​xi​j]−𝔼⁡[bj​xi​j]−𝔼⁡[𝐱iT​𝐱j]+χi​j).\displaystyle\delta_{ij}^{+}=\frac{1}{z(\mathbf{W})}\left(\mathbb{E}[b_{i}b_{j}]-\mathbb{E}[b_{i}x_{ij}]-\mathbb{E}[b_{j}x_{ij}]-\mathbb{E}[\mathbf{x}_{i}^{T}\mathbf{x}_{j}]+\chi_{ij}\right)\;.
+
+
+
+We note that, since 𝐗\mathbf{X} is binary, 0≤𝐱iT​𝐱j≤bi∧bj0\leq\mathbf{x}_{i}^{T}\mathbf{x}_{j}\leq b_{i}\wedge b_{j}, and therefore 0≤𝔼⁡[𝐱iT​𝐱j]≤βi∧βj0\leq\mathbb{E}[\mathbf{x}_{i}^{T}\mathbf{x}_{j}]\leq\beta_{i}\wedge\beta_{j}.
+Applying this observation in concert with (11) and (9), we find
+
+
+
+
+
+|δi​j+−1z⁡(𝐖)​(βi​βj−χi​j​βi−χi​j​βj+χi​j)|≤1z⁡(𝐖)​((2​u∗+1)​(βi∧βj)+4​u∗​χi​j).\displaystyle\left|\delta_{ij}^{+}-\frac{1}{z(\mathbf{W})}\left(\beta_{i}\beta_{j}-\chi_{ij}\beta_{i}-\chi_{ij}\beta_{j}+\chi_{ij}\right)\right|\leq\frac{1}{z(\mathbf{W})}\left((2u_{*}+1)(\beta_{i}\wedge\beta_{j})+4u_{*}\chi_{ij}\right)\;.
+
+
+
+Moving the unwanted terms to the righthand side in both bounds proves the lemma.
+
+
+
+
+
+Theorem 10 (Expectations of 𝐗\mathbf{X}).
+
+
+
+We have
+
+
+
+
+
+|χi​j−βi​βj2​ψ|\displaystyle\left|\chi_{ij}-\frac{\beta_{i}\beta_{j}}{2\psi}\right|
+≤ϵi​j​(𝜷)≜ϵi​j+​(𝜷)+ϵi​j−​(𝜷)2​ψ.\displaystyle\leq\epsilon_{ij}(\boldsymbol{\beta})\triangleq\frac{\epsilon_{ij}^{+}(\boldsymbol{\beta})+\epsilon_{ij}^{-}(\boldsymbol{\beta})}{2\psi}\;.
+
+
+
+Furthermore,
+
+
+
+
+
+ϵi​j​(𝜷)=2​χi​j​(βi+βj+3​u∗+2​v∗+2)+(2​u∗+1)​(βi∧βj)2​ψ.\displaystyle\epsilon_{ij}(\boldsymbol{\beta})=\frac{2\chi_{ij}(\beta_{i}+\beta_{j}+3u_{*}+2v_{*}+2)+(2u_{*}+1)(\beta_{i}\wedge\beta_{j})}{2\psi}\;.
+
+
+
+
+
+
+
+
+Proof.
+
+
+
+Setting p=1p=1 in (4) again yields δi​j+−δi​j−=0\delta_{ij}^{+}-\delta_{ij}^{-}=0.
+Applying Lemma 9 and the triangle inequality, we obtain
+
+
+
+
+
+|βi​βjz⁡(𝐖)−2​ψ​χi​jz⁡(𝐖)|≤ϵi​j−+ϵi​j+z⁡(𝐖)\displaystyle\left|\frac{\beta_{i}\beta_{j}}{z(\mathbf{W})}-\frac{2\psi\chi_{ij}}{z(\mathbf{W})}\right|\leq\frac{\epsilon_{ij}^{-}+\epsilon_{ij}^{+}}{z(\mathbf{W})}
+
+
+
+Multiplying through by z⁡(𝐖)2​ψ\frac{z(\mathbf{W})}{2\psi} proves the first claim.
+The expression for ϵi​j\epsilon_{ij} is obtained inserting the expressions for ϵi​j−\epsilon_{ij}^{-} and ϵi​j+\epsilon_{ij}^{+} from Lemma 9 and simplifying.
+
+
+
+
+
+
+Theorem 10 provides an asymptotic error bound of the form
+
+
+
+
+
+χi​j=βi​βj2​ψ​(1+O⁡(χi​j​v∗βi​βj+χi​j​βi+βjβi​βj+u∗βi∨βj))\displaystyle\chi_{ij}=\frac{\beta_{i}\beta_{j}}{2\psi}\left(1+O\left(\frac{\chi_{ij}v_{*}}{\beta_{i}\beta_{j}}+\chi_{ij}\frac{\beta_{i}+\beta_{j}}{\beta_{i}\beta_{j}}+\frac{u_{*}}{\beta_{i}\vee\beta_{j}}\right)\right)
+
+(16)
+
+
+as βi\beta_{i} and βj\beta_{j} grow large.
+This bound is admittedly relatively loose, even assuming that u∗u_{*} and v∗v_{*} are indeed small.
+In light of the numerical results presented below, we conjecture that much better bounds may be possible.
+This appears to be a promising direction for future work.
+
+
+
+
+We can recognize the leading term in (16):
+
+
+
+
+
+fi​j​(𝜷)=βi​βj2​ψ,\displaystyle f_{ij}(\boldsymbol{\beta})=\frac{\beta_{i}\beta_{j}}{2\psi}\;,
+
+
+
+the same functional form fi​jf_{ij} as in the CL estimator defined in (2).
+Speaking somewhat figuratively, we can interpret Theorem 10 as indicating that 𝐗\mathbf{X}, the matrix of the projected simple graph, approximately agrees in expectation with the Chung-Lu model (on off-diagonal entries) with parameter vector 𝜷\boldsymbol{\beta}.
+However, tt would be incorrect to state that 𝐗\mathbf{X} is distributed according to any model that deterministically preserves a collapsed degree sequence.
+First, 𝜷\boldsymbol{\beta} does not in general possess integer entries.
+Second the collapsed degrees bib_{i} are still stochastic, preserved only approximately in expectation.
+
+
+
+
+
+3.3 First Moments of 𝐖\mathbf{W}
+
+
+
+
+In the case of the configuration model, approximately solving the p=1p=1 stationarity condition yielded an approximation for 𝛀\boldsymbol{\Omega} in terms of the known vector 𝐝\mathbf{d}.
+However, in the uniform model we derived an approximation only for 𝝌\boldsymbol{\chi} in terms of the unknown vector 𝜷\boldsymbol{\beta}.
+Computing another equilibrium condition will allow us to both estimate 𝛀\boldsymbol{\Omega} from 𝝌\boldsymbol{\chi} and estimate 𝜷\boldsymbol{\beta} from 𝐝\mathbf{d}.
+Take p=2p=2 in (4), obtaining
+
+
+
+
+
+2​𝔼​[wi​j​Δi​j]+𝔼⁡[Δi​j2]=0.\displaystyle 2\mathbb{E}[w_{ij}\Delta_{ij}]+\mathbb{E}[\Delta_{ij}^{2}]=0\;.
+
+(17)
+
+
+Study of this condition yields the following result.
+
+
+
+Theorem 11.
+
+
+
+Assume that fi​j​(𝛃)<1f_{ij}(\boldsymbol{\beta})<1.
+Then,
+
+
+
+
+
+|ωi​j−fi​j​(𝜷)1−fi​j​(𝜷)|≤11−fi​j​(𝜷)​(2​ϵi​j′​(𝜷)+ϵi​j​(𝜷)2​ψ+ϵi​j​(𝜷)2),\displaystyle\left|\omega_{ij}-\frac{f_{ij}(\boldsymbol{\beta})}{1-f_{ij}(\boldsymbol{\beta})}\right|\leq\frac{1}{1-f_{ij}(\boldsymbol{\beta})}\left(\frac{2\epsilon^{\prime}_{ij}(\boldsymbol{\beta})+\epsilon_{ij}(\boldsymbol{\beta})}{2\psi}+\frac{\epsilon_{ij}(\boldsymbol{\beta})}{2}\right)\;,
+
+
+
+where ϵi​j​(𝛃)\epsilon_{ij}(\boldsymbol{\beta}) is as in Theorem 10 and
+
+
+
+
+
+ϵi​j′​(𝜷)\displaystyle\epsilon^{\prime}_{ij}(\boldsymbol{\beta})
+≜2​u∗βi∨βj+σi​jωi​j​(βi+6​u∗)2​(βj+6​u∗)2−(βi​βj−2​u∗​(βi∧βj))2βi​βj\displaystyle\triangleq\frac{2u_{*}}{\beta_{i}\vee\beta_{j}}+\frac{\sigma_{ij}}{\omega_{ij}}\frac{\sqrt{(\beta_{i}+6u_{*})^{2}(\beta_{j}+6u_{*})^{2}-(\beta_{i}\beta_{j}-2u_{*}(\beta_{i}\wedge\beta_{j}))^{2}}}{\beta_{i}\beta_{j}}
+
+
+
+
+
++σi​j2​v∗​ψi+ωi​j(βi+βj)+σi​j2​u∗(βi+βj)].\displaystyle\quad+\sigma_{ij}\sqrt{2v_{*}\psi_{i}}+\omega_{ij}(\beta_{i}+\beta_{j})+\sigma_{ij}\sqrt{2u_{*}}(\sqrt{\beta_{i}}+\sqrt{\beta_{j}})]\;.
+
+
+
+
+
+
+
+
+
+The proof of Theorem 11 proceeds similarly to that of Theorem 10, albeit with more involved algebra.
+It is provided in the Supplementary Information. We note that, while it is notationally convenient to leave the final (inside the square root) term unexpanded, the term βi2​βj2\beta_{i}^{2}\beta_{j}^{2} cancels.
+The entire expression is therefore of polynomial order −12-\frac{1}{2} in the entries of 𝜷\boldsymbol{\beta}, and again goes to zero as these entries grow large.
+
+
+
+
+Informally, Theorem 11 states that
+
+
+
+
+
+ωi​j≈fi​j​(𝜷)1−fi​j​(𝜷).\displaystyle\omega_{ij}\approx\frac{f_{ij}(\boldsymbol{\beta})}{1-f_{ij}(\boldsymbol{\beta})}\;.
+
+(18)
+
+
+Recall that fi​j​(𝜷)≈χi​jf_{ij}(\boldsymbol{\beta})\approx\chi_{ij} by Theorem 10, and that χi​j=η⁡(wi​j≥1)\chi_{ij}=\eta(w_{ij}\geq 1) by definition.
+Then, (11) states that ωi​j\omega_{ij} is approximately equal to the odds that there is at least one edge present between nodes ii and jj.
+As we will see, this approximation gives us a method to compute the vector 𝜷\boldsymbol{\beta} in terms of the vector 𝐝\mathbf{d}, thereby obtaining an approximation for the moments of 𝐖\mathbf{W}.
+As in Theorem 10, the derived bounds are relatively loose, and substantially better ones may perhaps be obtained from further analysis.
+
+
+
+
+
+3.4 Second Moments
+
+
+
+
+Before proceeding, we briefly comment on the p=3p=3 stationarity condition.
+From this case on, it becomes quite tedious to control the error terms associated with factoring expectations.
+Omitting them, we obtain the approximation
+
+
+
+
+
+𝔼⁡[wi​j2]≈ωi​j​(ωi​j+11−χi​j).\displaystyle\mathbb{E}[w_{ij}^{2}]\approx\omega_{ij}\left(\omega_{ij}+\frac{1}{1-\chi_{ij}}\right)\;.
+
+
+
+It follows that
+
+
+
+
+
+σi​j2=var​(wi​j)≈χi​j(1−χi​j)2≈ωi​j​(ωi​j+1).\displaystyle\sigma_{ij}^{2}=\textnormal{var}\left(w_{ij}\right)\approx\frac{\chi_{ij}}{(1-\chi_{ij})^{2}}\approx\omega_{ij}(\omega_{ij}+1)\;.
+
+(19)
+
+
+Note that, under this approximation, σi​j2>ωi​j\sigma_{ij}^{2}>\omega_{ij} whenever χi​j>0\chi_{ij}>0.
+It is common to model the entries of the adjacency matrix as Poisson random variables, for which the mean and variance are equal.
+The formula (19) suggests that this approach will be approximately correct for the uniform model when ωi​j≪1\omega_{ij}\ll 1, but systematically underestimate the variance for larger values.
+
+
+
+
+
+
+4 Estimation of 𝜷\boldsymbol{\beta}
+
+
+
+
+We now possess approximate formulae for the low-order moments of 𝐖\mathbf{W} in terms of the vector 𝜷\boldsymbol{\beta}.
+In practice, we do not observe 𝜷\boldsymbol{\beta} and must therefore estimate it from 𝐝\mathbf{d}.
+To do so, we impose the degree constraint ∑jωi​j=di\sum_{j}\omega_{ij}=d_{i} and insert the approximation given by Theorem 11.
+Eliding the error terms, we obtain
+
+
+
+
+
+di≈∑jfi​j​(𝜷)1−fi​j​(𝜷).\displaystyle d_{i}\approx\sum_{j}\frac{f_{ij}(\boldsymbol{\beta})}{1-f_{ij}(\boldsymbol{\beta})}\;.
+
+
+
+We therefore define the function 𝐡:ℝ+n→ℝn\mathbf{h}:\mathbb{R}^{n}_{+}\rightarrow\mathbb{R}^{n} componentwise as
+
+
+
+
+
+hi​(𝜷)≜∑jfi​j​(𝜷)1−fi​j​(𝜷)\displaystyle h_{i}(\boldsymbol{\beta})\triangleq\sum_{j}\frac{f_{ij}(\boldsymbol{\beta})}{1-f_{ij}(\boldsymbol{\beta})}
+
+(20)
+
+
+and aim to solve the equation
+
+
+
+
+
+𝐡⁡(𝜷)=𝐝\displaystyle\mathbf{h}(\boldsymbol{\beta})=\mathbf{d}
+
+(21)
+
+
+for 𝜷\boldsymbol{\beta}.
+We define the estimator 𝜷^\hat{\boldsymbol{\beta}} as the solution of (21).
+We then use the estimators χ^i​j≜fi​j​(𝜷^)\hat{\chi}_{ij}\triangleq f_{ij}(\hat{\boldsymbol{\beta}}) and ω^i​j1≜fi​j​(𝜷^)1−fi​j​(𝜷^)\hat{\omega}^{1}_{ij}\triangleq\frac{f_{ij}(\hat{\boldsymbol{\beta}})}{1-f_{ij}(\hat{\boldsymbol{\beta}})} supplied by 10 and 11 as estimates of the moments of 𝐖\mathbf{W}.
+In general, 𝜷^≠𝜷\hat{\boldsymbol{\beta}}\neq\boldsymbol{\beta}, since we have discarded the error terms derived in the previous section.
+We should therefore expect that 𝜷^\hat{\boldsymbol{\beta}} is a biased estimator of 𝜷\boldsymbol{\beta}, and that 𝛀^1\hat{\boldsymbol{\Omega}}^{1} is a biased estimator of 𝛀\boldsymbol{\Omega}.
+Experiments, however, will show that these biases are substantially smaller than those of 𝛀^0\hat{\boldsymbol{\Omega}}^{0}.
+
+
+
+
+To get some intuition on the behavior of (21), it is useful to consider two contrasting cases.
+First, consider the degree sequence 𝐝=d​𝐞\mathbf{d}=d\mathbf{e}.
+In this case, 𝒢𝐝\mathcal{G}_{\mathbf{d}} is the set of regular graphs in which all nodes have the same degree dd.
+We can find a solution of (21) analytically.
+We assume that 𝜷=β​𝐞\boldsymbol{\beta}=\beta\mathbf{e} for some scalar β\beta.
+Then, (21) reads
+
+
+
+
+
+(n−1)​β2n​β−β2=d.\displaystyle\frac{(n-1)\beta^{2}}{n\beta-\beta^{2}}=d\;.
+
+
+
+Solving for β\beta yields the estimator β^\hat{\beta}:
+
+
+
+
+
+β^=d1+n−1​(d−1).\displaystyle\hat{\beta}=\frac{d}{1+n^{-1}(d-1)}\;.
+
+
+
+We see that, in a sparse limit in which we let n→∞n\rightarrow\infty while d=o⁡(n)d=o(n), β^→d\hat{\beta}\rightarrow d.
+This reflects the asymptotic equivalence of uniform and configuration models under large, sparse limits.
+
+
+
+
+Our second example illustrates a case in which no interpretable solution to (21) exists.
+Consider the star graph, which possess k≥2k\geq 2 leaves (labeled 1 through kk) and a central node (labeled k+1k+1).
+A single edge connects each leaf to node k+1k+1.
+Node k+1k+1 has degree kk, while each leaf has degree 11.
+There are no valid edge-swaps, and the corresponding null space 𝒢𝐝\mathcal{G}_{\mathbf{d}} therefore contains only one element.
+We can thus read off the correct expected collapsed degree sequence:
+βk+1=k\beta_{k+1}=k and βj=1\beta_{j}=1 for 1≤j≤k1\leq j\leq k.
+However, this sequence does not solve (21).
+Indeed, letting βL\beta_{L} denote the unknown shared collapsed degree for each leaf and βC\beta_{C} the collapsed degree of node k+1k+1, we can write (21) as
+
+
+
+
+
+k\displaystyle k
+=k​βC​βL2​ψ−βC​βL\displaystyle=k\frac{\beta_{C}\beta_{L}}{2\psi-\beta_{C}\beta_{L}}
+
+
+
+
+1\displaystyle 1
+=βC​βL2​ψ−βC​βL+(k−1)​βL22​ψ−βL2.\displaystyle=\frac{\beta_{C}\beta_{L}}{2\psi-\beta_{C}\beta_{L}}+(k-1)\frac{\beta_{L}^{2}}{2\psi-\beta_{L}^{2}}\;.
+
+
+
+The first line requires that βC​βL2​ψ−βC​βL=1\frac{\beta_{C}\beta_{L}}{2\psi-\beta_{C}\beta_{L}}=1.
+In conjunction with the second line, this implies that βL=0\beta_{L}=0, which in turn contradicts the first line unless βC=0\beta_{C}=0 as well.
+We conclude that no solution to (21) exists which respects the symmetries of the star graph.
+On the other hand, simply adding a second copy of the star graph is sufficient introduce a solution.
+For example, in the union of two 5-stars, the algorithm we develop below to solve (21) finds that βC≈3.40\beta_{C}\approx 3.40 and βL≈0.93\beta_{L}\approx 0.93, with mean-square error below machine precision.
+In light of these examples, the conditions such that 𝜷^\hat{\boldsymbol{\beta}} exists constitutes an interesting direction for future research.
+
+
+
+
+4.1 Properties of 𝜷^\hat{\boldsymbol{\beta}}
+
+
+
+
+While existence remains an open question, it is possible to provide a qualified uniqueness guarantee for (21).
+We will also prove several simple results about the “shape” of the entries of 𝜷^\hat{\boldsymbol{\beta}} as functions of the entries of 𝐝\mathbf{d}.
+Throughout this section, we assume that 𝜷^\hat{\boldsymbol{\beta}} is sorted, so that β^1≤β^2⋯≤β^n\hat{\beta}_{1}\leq\hat{\beta}_{2}\cdots\leq\hat{\beta}_{n}.
+
+
+
+Definition 12.
+
+
+
+A vector 𝛃\boldsymbol{\beta} is physical if 𝐞≤𝛃≤(n−1)​𝐞\mathbf{e}\leq\boldsymbol{\beta}\leq(n-1)\mathbf{e} entrywise.
+A vector 𝛃\boldsymbol{\beta} is well-behaved with parameter δ>0\delta>0 if, in addition, βn2≤𝐞T​𝛃−δ\beta_{n}^{2}\leq\mathbf{e}^{T}\boldsymbol{\beta}-\delta.
+
+
+
+
+
+
+The bounds imposed by the physicality condition are in fact obeyed by the true expected collapsed degree vector 𝔼η​[𝐛]\mathbb{E}_{\eta}[\mathbf{b}], provided that 𝐝≥𝐞\mathbf{d}\geq\mathbf{e} entrywise.
+Well-behavedness with parameter δ>0\delta>0 is sufficient, but not necessary, to ensure that ω^i​j=fi​j​(𝜷^)​(1−fi​j​(𝜷^))−1>0\hat{\omega}_{ij}=f_{ij}(\hat{\boldsymbol{\beta}})(1-f_{ij}(\hat{\boldsymbol{\beta}}))^{-1}>0 for all ii and jj.
+Let ℬδ\mathcal{B}_{\delta} denote the set of all physical, well-behaved vectors of (implied) fixed size nn with a fixed parameter δ>0\delta>0.
+Throughout, we will assume that δ\delta is “sufficiently small;” this will not pose problems due to the inclusion ℬδ′⊂ℬδ\mathcal{B}_{\delta^{\prime}}\subset\mathcal{B}_{\delta} whenever δ′<δ\delta^{\prime}<\delta.
+By construction, the function 𝐡\mathbf{h} defined by (20) is continuous, and indeed smooth, on ℬδ\mathcal{B}_{\delta}.
+
+
+
+
+We will show that (21) possesses at most one solution on ℬδ\mathcal{B}_{\delta}.
+Let
+
+
+
+
+
+ℒ⁡(𝜷)=‖𝐡⁡(𝜷)−𝐝‖22\displaystyle\mathcal{L}(\boldsymbol{\beta})=\left\lVert\mathbf{h}(\boldsymbol{\beta})-\mathbf{d}\right\rVert^{2}_{2}
+
+(22)
+
+
+be the square error associated with approximating 𝐝\mathbf{d} by 𝐡⁡(𝜷)\mathbf{h}(\boldsymbol{\beta}).
+Then, the problem
+
+
+
+
+
+min𝜷∈ℬδ⁡ℒ⁡(𝜷)\displaystyle\min_{\boldsymbol{\beta}\in\mathcal{B}_{\delta}}\mathcal{L}(\boldsymbol{\beta})
+
+(23)
+
+
+achieves its minimum value of 00 at the solutions of (21) in ℬδ\mathcal{B}_{\delta}, provided there are any.
+We will show that (23) possesses at most one such minimum.
+
+
+
+
+Our proof relies on an elementary form of the Mountain Pass Theorem [2], given as Lemma 6.1 in [7].
+A closely related statement is given as Theorem 5.2 in [27].
+
+
+
+Definition 13 (Palais-Smale Condition, [7]).
+
+
+
+Let q:ℝn→ℝq:\mathbb{R}^{n}\rightarrow\mathbb{R} be a continuously differentiable function.
+Let {𝐚n}\{\mathbf{a}_{n}\} be a sequence of points in ℝn\mathbb{R}^{n} such that q⁡(𝐚n)q(\mathbf{a}_{n}) is bounded and ‖∇q​(𝐚n)‖→0\left\lVert\nabla q(\mathbf{a}_{n})\right\rVert\rightarrow 0.
+The function qq satisfies the Palais-Smale condition if any such {𝐚n}\{\mathbf{a}_{n}\} possesses a convergent subsequence.
+
+
+
+
+
+Theorem 14 (Mountain Pass Lemma in ℝn\mathbb{R}^{n}, [7, 2]).
+
+
+
+Suppose that function q:ℝn→ℝq:\mathbb{R}^{n}\rightarrow\mathbb{R} satisfies the Palais-Smale condition.
+Suppose further that:
+
+1. 
+
+
+
+q⁡(𝐚0)=0q(\mathbf{a}_{0})=0.
+
+2. 
+
+
+
+There exists an r>0r>0 and α>0\alpha>0 such that q⁡(𝐚)≥αq(\mathbf{a})\geq\alpha for all 𝐚\mathbf{a} with ‖𝐚−𝐚𝟎‖=r\left\lVert\mathbf{a-a_{0}}\right\rVert=r.
+
+3. 
+
+
+
+There exists 𝐚′\mathbf{a}^{\prime} such that ‖𝐚′−𝐚0‖>r\left\lVert\mathbf{a}^{\prime}-\mathbf{a}_{0}\right\rVert>r and q⁡(𝐚′)≤0q(\mathbf{a}^{\prime})\leq 0.
+
+
+
+Then, qq possesses a critical point 𝐚~\tilde{\mathbf{a}} with q⁡(𝐚~)≥αq(\tilde{\mathbf{a}})\geq\alpha.
+
+
+
+
+
+
+Our strategy is as follows.
+We will first show that all critical points of ℒ\mathcal{L} are solutions of (21).
+We will then show that all such critical points are, furthermore, isolated local minima of (23).
+The existence of two such isolated local minima would trigger Theorem 14, implying the existence of an additional critical point with ℒ⁡(𝜷)>0\mathcal{L}(\boldsymbol{\beta})>0.
+Since this is a contradiction, we will conclude that only one such minimum exists.
+
+
+
+
+Our first step is to lower-bound the eigenvalues of the Jacobian 𝐉\mathbf{J} matrix of 𝐡\mathbf{h} at an arbitrary point 𝜷\boldsymbol{\beta}.
+This Jacobian may be written
+
+
+
+
+
+𝐉=(𝐒+𝐃)​(𝐁−1−14​ψ​𝐄).\displaystyle\mathbf{J}=(\mathbf{S}+\mathbf{D})\left(\mathbf{B}^{-1}-\frac{1}{4\psi}\mathbf{E}\right)\;.
+
+(24)
+
+
+In this expression, 𝐒\mathbf{S} is the matrix with entries
+
+
+
+
+
+si​j={fi​j​(𝜷)(1−fi​j​(𝜷))2i≠j0i=j.\displaystyle s_{ij}=\begin{cases}\frac{f_{ij}(\boldsymbol{\beta})}{\left(1-f_{ij}(\boldsymbol{\beta})\right)^{2}}&\quad i\neq j\\
+0&\quad i=j\;.\end{cases}
+
+
+
+We have also defined 𝐃=diag⁡𝐒𝐞\mathbf{D}=\diag\mathbf{S}\mathbf{e}, and 𝐁=diag⁡(𝜷)\mathbf{B}=\diag(\boldsymbol{\beta}).
+We note as a point of curiosity that si​j≈var​(wi​j)s_{ij}\approx\textnormal{var}\left(w_{ij}\right) by (19), although our results here do not depend on this relationship.
+A derivation of (24) is supplied in the Supplementary Information.
+Let λi​(𝐌)\lambda_{i}(\mathbf{M}) denote the iith eigenvalue of the matrix 𝐌\mathbf{M}, sorted in ascending order.
+Thus, λ1​(𝐌)\lambda_{1}(\mathbf{M}) is the smallest eigenvalue of 𝐌\mathbf{M}, and λn​(𝐌)\lambda_{n}(\mathbf{M}) the largest.
+
+
+
+Lemma 15.
+
+
+
+Assume n≥5n\geq 5.
+Then,
+
+
+
+
+
+λ1​(𝐉)≥1n⁡(n−1)​(1−25)>0.\displaystyle\lambda_{1}(\mathbf{J})\geq\frac{1}{n(n-1)}\left(1-\frac{2}{\sqrt{5}}\right)>0\;.
+
+(25)
+
+
+In particular, 𝐉\mathbf{J} is positive-definite and its eigenvalues are bounded away from zero on ℬδ\mathcal{B}_{\delta}.
+
+
+
+
+
+
+A proof is given in the Supplementary Information.
+
+
+
+Lemma 16.
+
+
+
+If n≥5n\geq 5 and 𝛃\boldsymbol{\beta} is a critical point of ℒ\mathcal{L}, then
+
+(a) 
+
+
+
+𝜷\boldsymbol{\beta} solves (21).
+
+(b) 
+
+
+
+The Hessian 𝐇\mathbf{H} of ℒ\mathcal{L} at 𝜷\boldsymbol{\beta} is positive-definite.
+
+
+
+
+
+
+
+
+Proof.
+
+
+
+To prove (a), we compute the gradient of ℒ\mathcal{L}:
+
+
+
+
+
+∇ℒ​(𝜷)=2​(𝐡⁡(𝜷)−𝐝)T​𝐉​(𝜷).\displaystyle\nabla\mathcal{L}(\boldsymbol{\beta})=2(\mathbf{h}(\boldsymbol{\beta})-\mathbf{d})^{T}\mathbf{J}(\boldsymbol{\beta})\;.
+
+(26)
+
+
+By Lemma 15, 𝐉⁡(𝜷)\mathbf{J}(\boldsymbol{\beta}) is positive-definite and therefore full-rank on ℬδ\mathcal{B}_{\delta}.
+It follows that ∇ℒ​(𝜷)=0\nabla\mathcal{L}(\boldsymbol{\beta})=0 iff 𝐡⁡(𝜷)=𝐝\mathbf{h}(\boldsymbol{\beta})=\mathbf{d}, or, equivalently, iff ℒ⁡(𝜷)=0\mathcal{L}(\boldsymbol{\beta})=0.
+
+
+
+
+To prove (b), we calculate the entries of the Hessian. These are
+
+
+
+
+
+𝐇​(𝜷)i​j=2​∑ℓ=1n[(hℓ​(𝜷)−dℓ)​∂2hℓ∂βi​∂βj+∂hℓ∂βi​∂hℓ∂βj].\displaystyle\mathbf{H}(\boldsymbol{\beta})_{ij}=2\sum_{\ell=1}^{n}\left[(h_{\ell}(\boldsymbol{\beta})-d_{\ell})\frac{\partial^{2}h_{\ell}}{\partial\beta_{i}\partial\beta_{j}}+\frac{\partial h_{\ell}}{\partial\beta_{i}}\frac{\partial h_{\ell}}{\partial\beta_{j}}\right]\;.
+
+
+
+The first term vanishes at critical points.
+Recognizing the second as an outer product of the rows of 𝐉\mathbf{J}, we can write the Hessian at critical points as
+
+
+
+
+
+𝐇⁡(𝜷)=2​∑ℓ=1n𝐉ℓ​(𝜷)​𝐉ℓ​(𝜷)T.\displaystyle\mathbf{H}(\boldsymbol{\beta})=2\sum_{\ell=1}^{n}\mathbf{J}_{\ell}(\boldsymbol{\beta})\mathbf{J}_{\ell}(\boldsymbol{\beta})^{T}.
+
+
+
+Since 𝐉\mathbf{J} is full rank by Lemma 15, the sum is full rank and therefore positive-definite.
+This completes the proof.
+
+
+
+
+
+
+We immediately obtain:
+
+
+
+Corollary 1.
+
+
+
+If n≥5n\geq 5, then each critical point of ℒ\mathcal{L} is an isolated local minimum, and there are finitely many of them.
+
+
+
+
+
+
+For the second clause, we rely on the fact that
+ℬδ\mathcal{B}_{\delta} is closed and bounded.
+
+
+
+Lemma 17.
+
+
+
+If n≥5n\geq 5, the restriction of 𝐡\mathbf{h} to ℬδ\mathcal{B}_{\delta} satisfies the Palais-Smale condition.
+
+
+
+
+
+Proof.
+
+
+
+Taking norms in (26) and lower-bounding the righthand side, we obtain
+
+
+
+
+
+‖∇ℒ​(𝜷)‖2≥λ1​(𝐉⁡(𝜷))​‖h⁡(𝜷)−𝐝‖2.\displaystyle\left\lVert\nabla\mathcal{L}(\boldsymbol{\beta})\right\rVert_{2}\geq\lambda_{1}\left(\mathbf{J}(\boldsymbol{\beta})\right)\left\lVert h(\boldsymbol{\beta})-\mathbf{d}\right\rVert_{2}\;.
+
+
+
+Since λ1​(𝐉​(𝜷))\lambda_{1}(\mathbf{J}(\boldsymbol{\beta})) is bounded away from zero on ℬδ\mathcal{B}_{\delta} by Lemma 15, the only sequences {𝜷t}\{\boldsymbol{\beta}_{t}\} in ℬδ\mathcal{B}_{\delta} that satisfy ‖∇ℒ​(𝜷t)‖2→0\left\lVert\nabla\mathcal{L}(\boldsymbol{\beta}_{t})\right\rVert_{2}\rightarrow 0 must also satisfy 𝐡⁡(𝜷t)→𝐝\mathbf{h}(\boldsymbol{\beta}_{t})\rightarrow\mathbf{d}.
+By Lemma 16, there are finitely many solutions to (21), and therefore any such sequence has a finite number of limit points.
+The sequence {𝜷t}\{\boldsymbol{\beta}_{t}\} then possesses a subsequence that converge to each of these limit points, which completes the proof.
+
+
+
+
+
+Theorem 18.
+
+
+
+If n≥5n\geq 5, there exists at most one 𝛃^\hat{\boldsymbol{\beta}} in the set ℬδ\mathcal{B}_{\delta} such that 𝐡⁡(𝛃^)=𝐝\mathbf{h}(\hat{\boldsymbol{\beta}})=\mathbf{d}.
+
+
+
+
+
+Proof.
+
+
+
+Suppose that there were two solutions 𝜷0\boldsymbol{\beta}_{0} and 𝜷1\boldsymbol{\beta}_{1} in ℬδ\mathcal{B}_{\delta}.
+Since ℒ\mathcal{L} satisfies the Palais-Smale condition (Lemma 17), we check conditions (1)-(3) of Theorem 14 are satisfied.
+Condition (1) requires that ℒ⁡(𝜷0)=0\mathcal{L}(\boldsymbol{\beta}_{0})=0, which is true by hypothesis.
+Condition (2) requires that there exists r>0r>0 and α>0\alpha>0 such that h⁡(𝜷)≥αh(\mathbf{\boldsymbol{\beta}})\geq\alpha for all 𝜷\mathbf{\boldsymbol{\beta}} with ‖𝜷−𝜷0‖=r\left\lVert\boldsymbol{\beta}-\boldsymbol{\beta}_{0}\right\rVert=r.
+This follows from Taylor-expanding ℒ\mathcal{L} around 𝜷0\boldsymbol{\beta}_{0} and using the positive-definiteness of 𝐇\mathbf{H}.
+Applying Lemma 16 yields the existence of such an rr and α\alpha, and further implies that rr may be taken to be arbitrarily small.
+In particular, rr may be taken to be smaller than ‖𝜷0−𝜷1‖\left\lVert\boldsymbol{\beta}_{0}-\boldsymbol{\beta}_{1}\right\rVert, which in turn supplies condition (3).
+Applying Theorem 14, we conclude that there exists a critical point 𝜷~\tilde{\boldsymbol{\beta}} of ℒ\mathcal{L} such that ℒ⁡(𝜷~)≥α>0\mathcal{L}(\tilde{\boldsymbol{\beta}})\geq\alpha>0.
+But this contradicts Lemma 16.
+We conclude that at most one solution to (21) exists in ℬδ\mathcal{B}_{\delta}, as was to be shown.
+
+
+
+
+
+
+Numerical experiments suggest that the solution to (21), if it exists, may be unique in the positive orthant ℝ+n\mathbb{R}^{n}_{+}.
+If true, this would be a stronger result than that provided by Theorem 18, which requires physicality and well-behavedness.
+Extending Theorem 18 to cover the full nonnegative orthant would be an interesting direction of future work.
+
+
+
+
+The following theorem specifies several properties of 𝜷^\hat{\boldsymbol{\beta}}, provided that it exists.
+
+
+
+Theorem 19.
+
+
+
+Let n≥5n\geq 5.
+Suppose that 𝛃^∈ℬδ\hat{\boldsymbol{\beta}}\in\mathcal{B}_{\delta} solves (21).
+Then,
+
+(a) 
+
+
+
+The map di↦β^id_{i}\mapsto\hat{\beta}_{i} is nondecreasing.
+
+(b) 
+
+
+
+Furthermore, β^i−β^j≤di−dj\hat{\beta}_{i}-\hat{\beta}_{j}\leq d_{i}-d_{j} .
+
+(c) 
+
+
+
+Finally, 𝜷^≤𝐝\hat{\boldsymbol{\beta}}\leq\mathbf{d} entrywise.
+
+
+
+
+
+
+
+
+
+A proof of this result is given in the Supplementary Information.
+
+
+
+
+
+4.2 Algorithms
+
+
+
+
+Having proven some properties of the solutions of (21), it remains to develop an algorithm to find these solutions.
+While it is possible to use standard gradient-based methods, this task is complicated by the ill-conditioned Jacobian of 𝐡\mathbf{h}.
+Ill-conditioning arises from dramatic heterogeneity in the entries of 𝐒\mathbf{S}.
+For example, in the experiments shown in Figure 2 in the next section, the observed and estimated values of σi​j\sigma_{ij} span four orders of magnitude, implying that entries of si​j≈σi​j2s_{ij}\approx\sigma_{ij}^{2} span roughly eight.
+Because of this, methods based on the full Jacobian, such as standard implementations of gradient descent or Newton’s method, may require impractically small step-sizes in order to avoid pathological behavior.
+
+
+
+
+We instead adopt a coordinate-wise approach.
+Suppose we have a current estimate 𝜷^(t−1)\hat{\boldsymbol{\beta}}^{(t-1)}.
+We obtain an estimate of 𝐝\mathbf{d} given by 𝐝^(t−1)=𝐡⁡(𝜷^(t−1))\hat{\mathbf{d}}^{(t-1)}=\mathbf{h}(\hat{\boldsymbol{\beta}}^{(t-1)}).
+To update the iith coordinate of 𝜷^(t−1)\hat{\boldsymbol{\beta}}^{(t-1)}, we hold all other n−1n-1 coordinates fixed, and define β^i(t)\hat{\beta}_{i}^{(t)} to be the value of bb that solves the equation
+
+
+
+
+
+hi​(β^1(t−1),…,β^i−1(t−1),b,β^i+1(t−1),…,β^n(t−1))=di.\displaystyle h_{i}\left(\hat{\beta}_{1}^{(t-1)},\ldots,\hat{\beta}_{i-1}^{(t-1)},b,\hat{\beta}_{i+1}^{(t-1)},\ldots,\hat{\beta}_{n}^{(t-1)}\right)=d_{i}\;.
+
+(27)
+
+
+We repeat this process for each of the nn coordinates, obtaining a fully updated new estimate 𝜷^(t)\hat{\boldsymbol{\beta}}^{(t)}.
+We iterate this sweep over the coordinates until a desired error function drops below a user-specified tolerance.
+A standard choice for the error function is the mean-square error n−1​ℒ​(𝜷)n^{-1}\mathcal{L}(\boldsymbol{\beta}), with ℒ\mathcal{L} as in (22).
+Algorithm 2 formalizes the solution method.
+The call Solveb\text{Solve}_{b} solves a single-variable equation for bb.
+In the accompanying code (see “Software”), we implement Solveb\text{Solve}_{b} with options to use either the root_scalar() function supplied by python’s scipy package or a bespoke Newton-type method.
+
+
+Algorithm 2  Computation of β^\hat{\beta}
+
+
+
+
+Input: degree sequence 𝐝∈ℤ+n\mathbf{d}\in\mathbb{Z}_{+}^{n}, initial guess 𝜷^(0)∈ℝ+n\hat{\boldsymbol{\beta}}^{(0)}\in\mathbb{R}_{+}^{n}, tolerance ϵ\epsilon
+
+
+
+              1
+            Initialization: t←0t\leftarrow 0, γ←∞\gamma\leftarrow\infty
+
+
+
+              2
+            while γ(t)>ϵ\gamma^{(t)}>\epsilon do
+
+
+   
+              3
+            for i=1,…,ni=1,\ldots,n do
+
+
+      
+              4
+            β^i(t)←Solveb{hi(β^1(t−1),…,β^i−1(t−1),b,β^i+1(t−1)…,β^n(t−1))=di}\hat{\beta}^{(t)}_{i}\leftarrow\text{Solve}_{b}\{h_{i}(\hat{\beta}_{1}^{(t-1)},\ldots,\hat{\beta}_{i-1}^{(t-1)},b,\hat{\beta}_{i+1}^{(t-1)}\ldots,\hat{\beta}_{n}^{(t-1)})=d_{i}\}
+
+
+
+   
+              5
+            γ(t)←n−1​ℒ​(𝜷^(t))\gamma^{(t)}\leftarrow n^{-1}\mathcal{L}(\hat{\boldsymbol{\beta}}^{(t)})
+
+
+   
+              6
+            t←t+1t\leftarrow t+1
+
+
+
+Output: 𝜷^(t)\hat{\boldsymbol{\beta}}^{(t)}
+
+
+
+
+
+
+
+
+
+In order to ensure that this algorithm is well-defined, we will show that the update given by (27) possesses a unique solution under mild conditions.
+
+
+
+Lemma 20.
+
+
+
+Assume that 𝐝>𝟎\mathbf{d}>\mathbf{0} and 𝛃(t−1)>𝟎\boldsymbol{\beta}^{(t-1)}>\mathbf{0} entrywise.
+Then, for each ii, (27) possesses a unique solution in bb on the open interval (0,2​ψ(t−1)maxℓ≠i⁡βℓ(t−1))\left(0,\frac{2\psi^{(t-1)}}{\max_{\ell\neq i}\beta^{(t-1)}_{\ell}}\right).
+
+
+
+
+
+Remark 21.
+
+
+
+The hypotheses of Lemma 20 can be ensured by removing degree-zero nodes from 𝐝\mathbf{d} and initializing 𝛃(0)>𝟎\boldsymbol{\beta}^{(0)}>\mathbf{0}.
+
+
+
+
+
+Proof.
+
+
+
+To prove existence, we note that hih_{i} is a continuous function of βi\beta_{i}.
+We have hi​(β1,…,0,…​βn)=0h_{i}(\beta_{1},\ldots,0,\ldots\beta_{n})=0 and
+
+
+
+
+
+limβ→2​ψ(t−1)maxℓ≠i⁡βℓhi​(β1,…,β,…,βn)=∞.\displaystyle\lim_{\beta\rightarrow\frac{2\psi^{(t-1)}}{\max_{\ell\neq i}\beta_{\ell}}}h_{i}(\beta_{1},\ldots,\beta,\ldots,\beta_{n})=\infty\;.
+
+
+
+The Intermediate Value Theorem then provides existence.
+
+
+
+
+To show uniqueness, it suffices to check the derivative (cf. (24))
+
+
+
+
+
+∂hi​(𝜷)∂βi=(1βi−12​ψ)​∑ℓ≠ifi​ℓ​(𝜷)(1−fi​ℓ​(𝜷))2.\displaystyle\frac{\partial h_{i}(\boldsymbol{\beta})}{\partial\beta_{i}}=\left(\frac{1}{\beta_{i}}-\frac{1}{2\psi}\right)\sum_{\ell\neq i}\frac{f_{i\ell}(\boldsymbol{\beta})}{(1-f_{i\ell}(\boldsymbol{\beta}))^{2}}\;.
+
+
+
+When 𝜷>0\boldsymbol{\beta}>0, this expression is strictly positive.
+The function hih_{i} is therefore strictly increasing on II, proving uniqueness.
+
+
+
+
+
+
+While we have existence, uniqueness, and convergence guarantees for each coordinate update, we possess no such guarantees for Algorithm 2 as a whole.
+Additionally, it may be the case that some elements of the sequence {𝜷^(t)}\{\hat{\boldsymbol{\beta}}^{(t)}\} produce estimates ω^(t)\hat{\omega}^{(t)} of the adjacency matrix in which some entries are negative.
+However, we have never observed Algorithm 2 to fail to converge to a solution in which all entries of ω^(t)\hat{\omega}^{(t)} are positive.
+Additionally, when a solution to (21) exists in ℬδ\mathcal{B}_{\delta} for some δ\delta, we have never observed Algorithm 2 to fail to find this solution.
+In practice, an analyst can assess the success of the algorithm by checking that (a) the mean-square error is near zero and that (b) the corresponding estimate 𝛀^\hat{\boldsymbol{\Omega}} has nonnegative entries.
+Both such checks are implemented in the accompanying software.
+
+
+
+
+
+
+5 Experiments
+
+
+
+
+In this section, we describe a sequence of experiments exploring the behavior of Algorithm 2; the accuracy of the estimator 𝜷^\hat{\boldsymbol{\beta}}; the disparity between 𝛀^0\hat{\boldsymbol{\Omega}}^{0} and 𝛀^1\hat{\boldsymbol{\Omega}}^{1} on empirical networks; and implications for downstream tasks such as modularity maximization.
+
+
+
+
+5.1 Synthetic Data
+
+
+
+
+To study the convergence behavior of Algorithm 2, we test it on two synthetic degree sequences.
+The “uniform” sequence consists of 200200 independent copies of 2​(u+1)2(u+1), where uu is a discrete uniform random variable on the interval [0,50][0,50].
+We contrast this with a “Zipf” sequence 𝐝2\mathbf{d}_{2}, generated by sampling 200200 copies of 2​z2z, where zz is distributed as a Zipf random variable with parameter α=2\alpha=2.
+These degree sequences are shown in Figure 1(a).
+By design, the uniform sequence is relatively homogeneous in its degrees, while the Zipf sequence possesses a small number of extremely high-degree nodes.
+
+
+
+
+We then estimated 𝜷^\hat{\boldsymbol{\beta}} for each of these degree sequences using Algorithm 2, initialized with 𝜷(0)=𝐞\boldsymbol{\beta}^{(0)}=\mathbf{e}.
+The estimates for the uniform sequence 𝐝1\mathbf{d}_{1} converge rapidly, as shown in panel (b), and after two rounds the iterates cannot be distinguished by eye from the final estimate.
+The final estimate 𝜷^\hat{\boldsymbol{\beta}} is both physical and well-behaved.
+By Theorem 18, it is the only such solution to (21).
+In contrast, the estimates for the Zipf-distributed sequence 𝐝2\mathbf{d}_{2}, shown in panel (c), require many rounds to converge.
+Figure 1(d) compares the differing convergence rates.
+The vertical axis gives the mean-square error (MSE) 1n​‖𝐡⁡(𝜷)−𝐝‖2\frac{1}{n}\left\lVert\mathbf{h}(\boldsymbol{\beta})-\mathbf{d}\right\rVert_{2}.
+While the MSE for the uniform degree sequence converges to within machine precision after 14 rounds, the Zipf iterates require over 200 iterations to reach an MSE below 10−610^{-6}.
+The resulting estimate 𝜷^\hat{\boldsymbol{\beta}} is physical but not well-behaved, and Theorem 18 is therefore insufficient to provide a uniqueness guarantee.
+
+
+
+
+
+
+
+
+Figure 1: 
+(a): The uniform and Zipf degree sequences described in the text.
+(b): Iterates of Algorithm 2 for the uniform degree sequence.
+The final iterate is highlighted.
+(c): Iterates of Algorithm 2 for the Zipf degree sequence.
+The final iterate is highlighted.
+(d): Mean-square error (MSE) in Algorithm 2 for the uniform (red) and Zipf (gray) degree distributions as a function of the iteration number.
+(e): Bootstrap estimates of ‖𝜷⁡(𝐝+𝐞i+𝐞j)−𝜷‖∞\left\lVert\boldsymbol{\beta}(\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j})-\boldsymbol{\beta}\right\rVert_{\infty} (filled points) and n−1​‖𝜷⁡(𝐝+𝐞i+𝐞j)−𝜷‖1n^{-1}\left\lVert\boldsymbol{\beta}(\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j})-\boldsymbol{\beta}\right\rVert_{1} (empty circles)for the uniform degree sequence.
+Each point corresponds to a uniformly random choice of distinct indices ii and jj.
+(f): As in (e), for the Zipf degree sequence.
+
+
+
+
+
+Algorithm 2 also allows us to perform some bootstrap-style tests of Conjecture 6.
+Recall that this conjecture asserts that the constant u⁡(𝐝)u(\mathbf{d}), which bounds the effect of perturbations of 𝐝\mathbf{d} on β\beta, is no larger than 11.
+The size of u⁡(𝐝)u(\mathbf{d}) in turn influences the tightness of the error bounds derived in Section 3.
+Figure 1(e-f) shows the results of a simple experiment in which we use our estimator 𝜷^\hat{\boldsymbol{\beta}} as a surrogate for 𝜷\boldsymbol{\beta}.
+For each degree sequence, we repeatedly sample ii and jj from ([n]2)\binom{[n]}{2}.
+We then compute 𝜷^′=𝜷^​(𝐝+𝐞i+𝐞j)\hat{\boldsymbol{\beta}}^{\prime}=\hat{\boldsymbol{\beta}}(\mathbf{d}+\mathbf{e}_{i}+\mathbf{e}_{j}) and compare it to 𝜷^\hat{\boldsymbol{\beta}}.
+Filled dots show the maximum absolute change, ‖𝜷^′−𝜷^‖∞\left\lVert\hat{\boldsymbol{\beta}}^{\prime}-\hat{\boldsymbol{\beta}}\right\rVert_{\infty}, while empty dots give the mean absolute change 1n​‖𝜷^′−𝜷^‖1\frac{1}{n}\left\lVert\hat{\boldsymbol{\beta}}^{\prime}-\hat{\boldsymbol{\beta}}\right\rVert_{1}.
+Under Conjecture 6, we would expect that ‖𝜷^′−𝜷^‖∞≤1\left\lVert\hat{\boldsymbol{\beta}}^{\prime}-\hat{\boldsymbol{\beta}}\right\rVert_{\infty}\leq 1, which is indeed the case for both degree sequences.
+These results may be viewed as heuristic supports of Conjecture 6.
+Additionally, 1n​‖𝜷^′−𝜷^‖1≪1\frac{1}{n}\left\lVert\hat{\boldsymbol{\beta}}^{\prime}-\hat{\boldsymbol{\beta}}\right\rVert_{1}\ll 1.
+This observation suggests the possibility of substantially tightening the error bounds given in Section 3 by controlling the ℓ1\ell^{1}-norm rather than the ℓ∞\ell^{\infty} norm, an interesting problem which we leave to future work.
+
+
+
+
+
+5.2 Evaluation on an Empirical Contact Network
+
+
+
+
+Our evaluation data set is a contact network among students in a French secondary school, called contact-high-school [29, 5].
+During data collection, each student wore a proximity sensor.
+An interaction between two students was logged by their respective sensors when the students were face-to-face and within approximately 1.5m of each other.
+Edges are time-stamped, although we do not use any temporal information the present experiments.
+The original data set contains n=327n=327 nodes and m=189,928m=189,928 distinct interactions.
+
+
+
+
+We first test the accuracy of the estimator 𝛀^1\hat{\boldsymbol{\Omega}}^{1}, using 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} as a reliable estimate of the true mean 𝛀\boldsymbol{\Omega}.
+Because of the scaling issues associated with estimating 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} on m≈2×105m\approx 2\times 10^{5} edges, we constructed a data subset based on a temporal threshold τ\tau, chosen to incorporate approximately the last 5%5\% of the original interaction volume.
+The resulting subnetwork has 268268 nodes and 10,02610,026 edges.
+To estimate the ground-truth moments η𝐝\eta_{\mathbf{d}}, we estimated 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} on the subnetwork from 10710^{7} samples at intervals of 10310^{3} steps.
+This computation required approximately one week on a single thread of a modern server.
+
+
+
+
+
+
+
+
+Figure 2: 
+(a): Degree distribution of the contact-high-school subnetwork.
+The mean degree ⟨d⟩\langle d\rangle and standard deviation of the degree σ⁡(d)\sigma(d) are shown.
+(b): Distribution of the entries of 𝐰\mathbf{w}.
+Note the logarithmic horizontal axis.
+(c): Collapsed degree sequence 𝜷^\hat{\boldsymbol{\beta}} learned from 𝐝\mathbf{d} via Algorithm 2.
+Dashes give the line of equality.
+(d): Approximation of 𝝌\boldsymbol{\chi} via (16).
+(e): Approximation of 𝛀\boldsymbol{\Omega} via (18).
+Note the logarithmic vertical axis.
+Dashes give the line of equality.
+(f): Approximation of σi​j=σ⁡(Wi​j)\sigma_{ij}=\sigma(W_{ij}) via (19).
+Note the log-log axis.
+In (c)-(f), simulated moments (gray dots) are obtained via the Monte Carlo estimator using Algorithm 1; see main text for details.
+
+
+
+
+
+In Figure 2(a)-(b), we show the distributions of degrees and entries of 𝐰\mathbf{w} for this subnetwork.
+Figure 2(a) depicts the heterogoenous degree distribution, with standard deviation larger than the average degree.
+While most nodes have small degrees, there are twelve whose degree exceeds nn.
+Figure 2(b) shows the clumping of edges between pairs of nodes.
+On average, two students who interact at all interact nearly ten times, but there is substantial deviation around this average.
+Almost half of all pairs interact just once.
+In contrast, a small number of pairs interact over 100 times, and one over 1,000.
+
+
+
+
+In Figure 2(c)-(f), we show the construction of estimators for the moments of 𝛀\boldsymbol{\Omega} under the uniform random graph model with the observed degree sequence 𝐝\mathbf{d}.
+In Figure 2(c), the solid line shows the estimate 𝜷^\hat{\boldsymbol{\beta}} output by Algorithm 2, plotted against the degree sequence.
+Points give the MCMC estimate for 𝜷\boldsymbol{\beta}.
+The agreement is almost exact.
+The estimate 𝜷^\hat{\boldsymbol{\beta}} is physical and well-behaved.
+Theorem 18 implies that it is the only physical, well-behaved solution to (21).
+
+
+
+
+In Figure 2(d), we estimate χ^i​j≈fi​j​(𝜷^)=β^i​β^j2​ψ^\hat{\chi}_{ij}\approx f_{ij}(\hat{\boldsymbol{\beta}})=\frac{\hat{\beta}_{i}\hat{\beta}_{j}}{2\hat{\psi}}, again finding the agreement to be near exact.
+In (e), we estimate ω^i​j≈(1−χ^i​j)−1​χ^i​j\hat{\omega}_{ij}\approx\left(1-\hat{\chi}_{ij}\right)^{-1}\hat{\chi}_{ij}.
+The agreement with data is again excellent, although there is a small amount of visible overestimation of ωi​j\omega_{ij} when χi​j\chi_{ij} is large.
+Finally, (f) uses (19) to compute an estimator σ^i​j=ω^i​j​(ω^i​j+1)\hat{\sigma}_{ij}=\sqrt{\hat{\omega}_{ij}(\hat{\omega}_{ij}+1)} of σi​j\sigma_{ij} the standard deviation of Wi​jW_{ij}.
+The agreement is strong through roughly ωi​j≈10\omega_{ij}\approx 10, and begins to overestimate σi​j\sigma_{ij} for larger values.
+
+
+
+
+Figure 2(c) and (e) also highlight the relationship of 𝛀^1\hat{\boldsymbol{\Omega}}^{1} and 𝛀^0\hat{\boldsymbol{\Omega}}^{0}.
+The dashed lines in these figures represent two linear approximations that can be made to yield the latter from the former.
+First, we approximate 𝜷=𝐝\boldsymbol{\beta}=\mathbf{d} (dashed line, Figure 2(c)).
+This approximation holds good when did_{i} is small, since then the number of parallel edges incident to node ii should be small – i.e. Wi​j≈Xi​jW_{ij}\approx X_{ij}.
+Then, we approximate 𝛀=𝝌\boldsymbol{\Omega}=\boldsymbol{\chi} (dashed line, Figure 2(e)).
+This approximation should hold for small entries of 𝛀\boldsymbol{\Omega}, since in this case χi​j\chi_{ij} is small and (1−χi​j)−1≈1(1-\chi_{ij})^{-1}\approx 1.
+As the plots indicate, these approximations are indeed accurate when did_{i} and ωi​j\omega_{ij} are small.
+These conditions correspond roughly to the “large, sparse” heuristics used frequently in the literature.
+We can therefore view 𝛀^0\hat{\boldsymbol{\Omega}}^{0} as a first-order approximation to 𝛀^1\hat{\boldsymbol{\Omega}}^{1} near the large, sparse regime.
+Conversely, we can view 𝛀^1\hat{\boldsymbol{\Omega}}^{1} as a nonlinear correction to 𝛀^0\hat{\boldsymbol{\Omega}}^{0} as we depart from that regime.
+
+
+
+
+Figure 3 compares the overall performance of the estimators 𝛀^0\hat{\boldsymbol{\Omega}}^{0} and 𝛀^1\hat{\boldsymbol{\Omega}}^{1}.
+We compute the entrywise relative error ℰi​j​(𝛀^)=(ω^i​jmc)−1​(ω^i​j−ω^i​jmc)\mathcal{E}_{ij}(\hat{\boldsymbol{\Omega}})=(\hat{\omega}^{\mathrm{mc}}_{ij})^{-1}(\hat{\omega}_{ij}-\hat{\omega}^{\mathrm{mc}}_{ij}) when approximating 𝛀^mc≈𝛀\hat{\boldsymbol{\Omega}}^{\mathrm{mc}}\approx\boldsymbol{\Omega} with both methods.
+Cells are shaded according to the magnitude and sign of the error.
+The CL estimator in (a) displays systematic bias, underestimating the density of edges between nodes of similar degrees and overestimating the density of edges between nodes with highly disparate degrees.
+The mean absolute relative error of the Chung-Lu estimate is ℰ⁡(𝛀^0)=(n2)−1​∑i​j|ℰi​j​(𝛀^0)|≈.255\mathcal{E}(\hat{\boldsymbol{\Omega}}^{0})=\binom{n}{2}^{-1}\sum_{ij}\left|\mathcal{E}_{ij}(\hat{\boldsymbol{\Omega}}^{0})\right|\approx.255, indicating that a typical entry of 𝛀^0\hat{\boldsymbol{\Omega}}^{0} is off by over 25%25\%.
+In contrast, 𝛀^1\hat{\boldsymbol{\Omega}}^{1} evaluated in (b) has almost no visible bias.
+Some large residuals are visible for entries ωi​j\omega_{ij} in which both did_{i} and djd_{j} are small (top left corner), although it is difficult to evaluate to what extent these residuals reflect error in 𝛀^1\hat{\boldsymbol{\Omega}}^{1} or in the challenge to 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} to estimate these edge densities in finite runtime.
+The mean absolute relative error ℰ⁡(𝛀^1)\mathcal{E}(\hat{\boldsymbol{\Omega}}^{1}) is roughly 0.5%0.5\%, an improvement over 𝛀^0\hat{\boldsymbol{\Omega}}^{0} of a full order and a half of magnitude.
+
+
+Figure 3: 
+Shading gives the relative error for approximating 𝛀\boldsymbol{\Omega} under the uniform model for the contact-high-school subnetwork.
+(a): Using the CL estimator 𝛀^0\hat{\boldsymbol{\Omega}}^{0}.
+(b): Using the present estimator 𝛀^1\hat{\boldsymbol{\Omega}}^{1}.
+Node degrees in each matrix increase left to right and top to bottom.
+The “ground truth” is provided by 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}}, computed
+as in Figure 2.
+
+
+
+
+
+
+5.3 Application: Modularity Maximization in Dense Contact Networks
+
+
+
+
+Let ℓ:N→ℒ\ell:N\rightarrow\mathcal{L} be a function that assigns to node ii a label ℓi∈ℒ\ell_{i}\in\mathcal{L}.
+The modularity of the partition ℓ\ell with respect to matrix 𝐰\mathbf{w} and null model ρ\rho is given by
+
+
+
+
+
+Q⁡(ℓ,ρ)=12​m​∑i​j[wi​j−𝔼ρ​[Wi​j]]​𝟙​(ℓi,ℓj).\displaystyle Q(\ell;\rho)=\frac{1}{2m}\sum_{ij}\left[w_{ij}-\mathbb{E}_{\rho}[W_{ij}]\right]\mathbbm{1}(\ell_{i},\ell_{j})\;.
+
+(28)
+
+
+The normalization by 2​m2m ensures that −1≤Q⁡(ℓ,ρ)≤1-1\leq Q(\ell;\rho)\leq 1.
+Intuitively, Q⁡(ℓ,ρ)Q(\ell;\rho) is high when nodes that are more densely connected than expected by chance (under the specified null) are grouped together.
+Maximizing this quantity with respect to ℓ\ell may therefore be reasonably expected to identify modular (“community”) structure in the network [33, 35].
+Exact modularity maximization is NP-hard [11] and subject to theoretical limitations in networks with modules of heterogeneous sizes [21].
+Despite this, it remains one of the most popular methods for practical community detection at scale [9].
+
+
+
+
+In most implementations, ρ\rho is not explicitly specified – rather, the expectation 𝔼ρ​[Wi​j]\mathbb{E}_{\rho}[W_{ij}] is “hard-coded” as equal to ω^i​j0\hat{\omega}^{0}_{ij}.
+From a statistical perspective, this reflects an implicit choice of ρ\rho as the Chung-Lu model [16], which preserves expected degrees and indeed possesses the given first moment.22
+              2
+              
+              
+              
+              
+              
+              
+              
+            We note that alternative justifications of the use of 𝛀^0\hat{\boldsymbol{\Omega}}^{0} exist, including connections to the stability of Markov chains [18] and to stochastic block models [34].
+Modifications are possible; the best known is perhaps the resolution adjustment that replaces 𝛀^0\hat{\boldsymbol{\Omega}}^{0} with γ​𝛀^0\gamma\hat{\boldsymbol{\Omega}}^{0} for some γ>0\gamma>0 [37].
+Other adjustments may incorporate spatial structure [20] or adjust for the inclusion of self-loops in the null space [12].
+When we wish to perform modularity maximization against a null that deterministically preserves degree sequences, however, 𝛀^0\hat{\boldsymbol{\Omega}}^{0} is at best an approximation.
+We expect this approximation to perform adequately for the configuration model (cf. Theorem 4), and very poorly for the uniform model (previous subsection).
+The Monte Carlo estimate 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} can be used for very small data sets, but rapidly becomes computationally infeasible for larger ones.
+In these cases, we can use the present estimator 𝛀^1\hat{\boldsymbol{\Omega}}^{1} instead.
+
+
+
+
+Recent work has highlighted the importance of studying the modularity landscape, especially the set of local maxima of QQ, rather than restricting attention to a single partition.
+One reason for this is the phenomenon of degeneracy – in many practical contexts, a given network will possess many distinct local maxima with modularity comparable to the global maximum [23].
+A second reason is model-specification.
+As shown in [34], maximization of QQ is related to maximum-likelihood inference in a planted-partition stochastic blockmodel.
+When the planted-partition model is unrealistic as a generative model for the data, modularity-maximization amounts to inference in a mis-specified model.
+Degeneracy is a common symptom of this problem, but observing it requires locally optimizing QQ multiple times.
+For these reasons among others, ensemble-based methods that implicitly average over local optima, such as those of [44], may be preferable.
+With these considerations in mind, our aim in this section is not to show that the use of 𝛀^1\hat{\boldsymbol{\Omega}}^{1} is strictly superior for this task when compared to 𝛀^0\hat{\boldsymbol{\Omega}}^{0} for either one-shot or ensemble-based modularity maximization.
+Rather, we will argue that the corresponding modularity landscapes are significantly different on data sets of practical interest, and that it is therefore methodologically unsafe to interchange these estimators without carefully scrutinizing the results.
+
+
+
+
+Our first data set for this experiment is the full contact-high-school network, consisting of n=327n=327 nodes and m=189,928m=189,928 edges as described in the previous subsection.
+The computation of 𝛀^mc\hat{\boldsymbol{\Omega}}^{\mathrm{mc}} is indeed infeasible for a graph this dense, and we therefore use 𝛀^1\hat{\boldsymbol{\Omega}}^{1} as an estimate.
+This setting highlights the utility of 𝛀^1\hat{\boldsymbol{\Omega}}^{1}, since otherwise we would have no practical way to compute the uniform expectation.
+
+
+Figure 4: (a): Performance of MSP on the full contact-high-school network using the CL modularity matrix 𝐌0\mathbf{M}^{0} and the approximate uniform modularity matrix 𝐌1\mathbf{M}^{1}, over 100 batches of 50 repetitions each.
+Solid lines give the average modularity, and error bars give two standard deviations from the mean.
+(b): Example partition using 𝐌0\mathbf{M}^{0}.
+(c): Example partition using 𝐌1\mathbf{M}^{1}.
+To generate (b) and (c), the best partition of 500 runs was chosen for each algorithm variant.
+Each run was initialized with k=8k=8; in the best partition, however, only 77 labels are actually used.
+Colors are shown on a log scale.
+
+
+
+
+
+To approximately maximize (28), we employ the multiway spectral partitioning (MSP) algorithm of [45], which generalizes the spectral bipartitioning algorithm of [33].
+While greedy methods often enjoy superior performance [9], spectral methods have the advantage of depending strongly on the structure of the observed graph and the null model employed, and are relatively insensitive to choices made during the runtime of the algorithm.
+Spectral methods are therefore ideal for highlighting differences in the modularity landscapes induced by alternative null models.
+The algorithm requires the analyst to specify a null model and a desired number of communities kk.
+The core of the approach is to use a low-rank approximation of the modularity matrix, 𝐌=𝐰−𝔼ρ​[𝐖]\mathbf{M}=\mathbf{w}-\mathbb{E}_{\rho}[\mathbf{W}].
+This approximation induces a map from the vertices of GG to a low-dimensional vector space.
+Vectors in this space are clustered according to their relative angles using a procedure reminiscent of kk-means to produce the community assignment.
+Because the clustering algorithm involves a stochastic starting condition, it is useful to run the algorithm multiple times and choose the highest modularity partition from among the repetitions.
+We refer the reader to [45] for details, and to the code accompanying this paper for an implementation of MSP for arbitrary modularity matrices (see “Software”).
+
+
+
+
+We ran this algorithm using both the CL modularity matrix 𝐌0=𝐰−𝛀^0\mathbf{M}^{0}=\mathbf{w}-\hat{\boldsymbol{\Omega}}^{0} and the approximate uniform modularity matrix 𝐌1=𝐰−𝛀^1\mathbf{M}^{1}=\mathbf{w}-\hat{\boldsymbol{\Omega}}^{1}.
+We refer to these two algorithmic variants as MSP0\mathrm{MSP}^{0} and MSP1\mathrm{MSP}^{1}, respectively.
+Since 𝛀^0\hat{\boldsymbol{\Omega}}^{0} and 𝛀^1\hat{\boldsymbol{\Omega}}^{1} produce very different null matrices, the modularity matrices 𝐌0\mathbf{M}^{0} and 𝐌1\mathbf{M}^{1} are themselves very different – the mean absolute relative error of using the latter to estimate the former is approximately 32%32\%.
+We would therefore expect MSP0\mathrm{MSP}^{0} and MSP1\mathrm{MSP}^{1} to behave very differently in this task.
+We allowed the number of communities kk to vary between 22 and 1010.
+For each value of kk, we ran MSP0\mathrm{MSP}^{0} and MSP1\mathrm{MSP}^{1} in 100 batches of 50 repetitions.
+From each batch of 50, the highest-modularity partition was chosen, resulting in 100 partitions per value of kk.
+Figure 4(a) shows that MSP1\mathrm{MSP}^{1} tends to find higher modularity partitions than MSP0\mathrm{MSP}^{0} on this data set.
+The difference is especially large when kk is small, but a substantial difference between the means is noticeable even for larger values.
+While partitions under 𝐌0\mathbf{M}^{0} exist that are comparable to those under 𝐌1\mathbf{M}^{1}, it appears to be more difficult for MSP0\mathrm{MSP}^{0} to find them.
+Panels (b) and (c) shed some light on the differing behavior of the two algorithms.
+Partitions under MSP0\mathrm{MSP}^{0} tends to display a larger, less cohesive community ((b), top left) alongside smaller, more tightly interconnected ones.
+Partitions under MSP1\mathrm{MSP}^{1} (c) tend to display communities that are slightly more uniform in size.
+
+
+
+
+It is reasonable to object that modularity values under MSP1\mathrm{MSP}^{1} and MSP0\mathrm{MSP}^{0} should not be compared, since these objectives are defined with respect to differing null matrices.
+In this specific case, the objection is not borne out numerically, however – “cross-evaluating” the partitions on the opposite matrices changes the modularities only minimally.
+Evaluating the MSP0\mathrm{MSP}^{0} partition in Figure 4(b) on the modularity matrix 𝐌1\mathbf{M}^{1} gives Q=0.699Q=0.699, while evaluating the MSP1\mathrm{MSP}^{1} partition on 𝐌0\mathbf{M}^{0} yields Q=0.731Q=0.731.
+On this data set, MSP1\mathrm{MSP}^{1} searches the energy landscape of MSP0\mathrm{MSP}^{0} more efficiently than does MSP0\mathrm{MSP}^{0} itself.
+
+
+
+
+It should be noted that this behavior is data-set dependent.
+The opposite case occurs in the contact-primary-school network [39, 5], which used similar sensors to construct an interaction network among students in a French primary school.
+On this data, MSP0\mathrm{MSP}^{0} and MSP1\mathrm{MSP}^{1} perform similarly for k≤6k\leq 6 communities (Figure 5), with the former consistently outperforming the latter for k≥7k\geq 7.
+The illustrative partitions in panels (b) and (c) suggest MSP1\mathrm{MSP}^{1} tends to prefer partitions with fewer communities.
+Whereas MSP0\mathrm{MSP}^{0} chooses a partition with 77 communities, MSP1\mathrm{MSP}^{1} chooses one with just 55 (both having been initialized at k=8k=8).
+These illustrations emphasize that MSP1\mathrm{MSP}^{1} and MSP0\mathrm{MSP}^{0} explore different modularity landscapes; that the relative advantages of each algorithm depend on the data; and that the landscape for MSP1\mathrm{MSP}^{1} can be tractably computed under the methodology we have introduced here.
+
+
+Figure 5: This figure is in all methodological details identical to Figure 4, using the study data set contact-primary-school [40, 5].
+In (b)-(c), both algorithms were initialized with k=8k=8.
+
+
+
+
+
+
+
+6 Discussion
+
+
+
+
+Much existing network theory is explicitly designed for large, sparse data.
+However, many networks of interest are sufficiently dense to diverge significantly from the predictions of large, sparse theory.
+We have highlighted this phenomenon in the context of dense multigraphs, with a focus on estimating the expected adjacency matrix 𝛀\boldsymbol{\Omega} of a random multigraph with specified degree sequence.
+We have shown that, rather than falling back to computationally expensive MCMC, we can construct an accurate estimator 𝛀^1\hat{\boldsymbol{\Omega}}^{1} using an indirect, dynamical approach.
+Use of this estimator can in turn have significant impact on the results of downstream data analyses.
+
+
+
+
+There are several directions for future work on the moments of uniform random graphs with fixed degree sequences.
+As previously noted, the error bounds on 𝝌^\hat{\boldsymbol{\chi}} and 𝛀^1\hat{\boldsymbol{\Omega}}^{1} derived in Section 3 appear quite loose when when compared against the empirical results in Figures 1 and 2.
+The derivation of tighter error bounds would be helpful for researchers seeking practical accuracy guarantees.
+Progress on this front appears to be hindered by the complex combinatorial structure of the space 𝒢𝐝\mathcal{G}_{\mathbf{d}};
+however, carefully chosen assumptions or approximations may allow headway.
+An additional avenue of exploration concerns the impact of the choice between 𝛀^1\hat{\boldsymbol{\Omega}}^{1} and 𝛀^0\hat{\boldsymbol{\Omega}}^{0} on downstream analyses.
+We have seen that the choice of null expectation can substantially change the performance of MSP\mathrm{MSP}, and that the direction of this effect depends on the data set.
+A better understanding of the properties of the data or algorithm that make certain estimators highlight better solutions would be most welcome.
+
+
+
+
+We focused our attention on the derivation of an estimator for 𝛀\boldsymbol{\Omega}.
+It may also be possible to derive expressions for higher moments using the same methodology.
+Such moments would approximate expected densities of various motifs under the uniform model.
+Examples of interest may include wedge densities 𝔼⁡[wi​j​wj​k]\mathbb{E}[w_{ij}w_{jk}] and triangle densities 𝔼⁡[wi​j​wj​k​wi​k]\mathbb{E}[w_{ij}w_{jk}w_{ik}].
+Parsing the stationarity conditions for these more complicated moments may be correspondingly more difficult.
+An alternative would be to construct mean-field estimates by computing the relevant statistics on 𝛀^1\hat{\boldsymbol{\Omega}}^{1} itself.
+An evaluation of the accuracy of this approach would potentially replace the need for computationally intensive MCMC sampling to estimate these quantities.
+
+
+
+
+Finally, it may also be of interest to develop similar theory for uniform distributions over related spaces of graphs.
+For example, it would be possible to consider a uniform model including self-loops.
+The associated analysis would be nontrivial due to required modifications in the MCMC sampling procedure (see [22]), but one might reasonably hope to obtain parallel results.
+Directed graphs offer another important direction of generalization.
+It would be natural to define a uniform distribution over spaces of directed multigraphs with fixed in-degree and out-degree sequences.
+In this case, one might expect analysis to produce expressions for the moments of this distribution in terms of two collapsed degree sequences, corresponding to in- and out-degrees.
+These and other generalizations offer promising avenues of future work.
+
+
+
+
+
+Software and Data
+
+
+
+
+We used the implementation of MCMC in [14] to conduct simulation experiments.
+All additional code used in this study may be freely accessed at https://github.com/PhilChodrow/multigraph_moments.
+The data used in this study is freely available courtesy of the authors of [5] at https://www.cs.cornell.edu/~arb/data/index.html.
+
+
+
+
+
+References
+
+
+      
+[1]
+
+G. Amanatidis, B. Green, and M. Mihail, Graphic realizations of
+joint-degree matrices, arXiv preprint arXiv:1509.07076, (2015), pp. 1–18.
+
+
+      
+[2]
+
+A. Ambrosetti and P. H. Rabinowitz, Dual variational methods in
+critical point theory and applications, Journal of Functional Analysis, 14
+(1973), pp. 349–381.
+
+
+      
+[3]
+
+O. Angel, R. van der Hofstad, and C. Holmgren, Limit laws for
+self-loops and multiple edges in the configuration model, arXiv:1603.07172,
+(2016), pp. 1–19.
+
+
+      
+[4]
+
+Y. Artzy-Randrup and L. Stone, Generating uniformly distributed
+random networks, Phys. Rev. E, 72 (2005), p. 056708,
+https://doi.org/10.1103/PhysRevE.72.056708.
+
+
+      
+[5]
+
+A. R. Benson, R. Abebe, M. T. Schaub, A. Jadbabaie, and J. Kleinberg,
+Simplicial closure and higher-order link prediction, Proceedings of
+the National Academy of Sciences, 115 (2018), pp. 11221–11230.
+
+
+      
+[6]
+
+R. Bhatia, Matrix Analysis, vol. 169, Springer Science & Business
+Media, 2013.
+
+
+      
+[7]
+
+J. Bisgard, Mountain passes and saddle points, SIAM Review, 57
+(2015), pp. 275–292.
+
+
+      
+[8]
+
+J. Blitzstein and P. Diaconis, A sequential importance sampling
+algorithm for generating random graphs with prescribed degrees, Internet
+Mathematics, 6 (2011), pp. 489–522.
+
+
+      
+[9]
+
+V. D. Blondel, J.-L. Guillaume, R. Lambiotte, and E. Lefebvre, Fast
+unfolding of communities in large networks, Journal Of Statistical
+Mechanics-Theory And Experiment, 10 (2008), pp. 1–12.
+
+
+      
+[10]
+
+B. Bollobás, A probabilistic proof of an asymptotic formula
+for the number of labelled regular graphs, European Journal of
+Combinatorics, 1 (1980), pp. 311–316.
+
+
+      
+[11]
+
+U. Brandes, D. Delling, M. Gaertler, R. Görke, M. Hoefer,
+Z. Nikoloski, and D. Wagner, On finding graph clusterings with maximum
+modularity, in International Workshop on Graph-Theoretic Concepts in
+Computer Science, Springer, 2007, pp. 121–132.
+
+
+      
+[12]
+
+S. Cafieri, P. Hansen, and L. Liberti, Loops and multiple edges in
+modularity maximization of networks, Physical Review E, 81 (2010),
+p. 046102.
+
+
+      
+[13]
+
+C. J. Carstens, Proof of uniform sampling of binary matrices with
+fixed row sums and column sums for the fast curveball algorithm, Physical
+Review E, 91 (2015), p. 042812.
+
+
+      
+[14]
+
+P. S. Chodrow, Configuration models of random hypergraphs, arXiv:
+1902.09302v2, (2019), pp. 1–20, https://arxiv.org/abs/1902.09302v1.
+
+
+      
+[15]
+
+F. Chung and L. Lu, Connected components in random graphs with given
+expected degree sequences, Annals of Combinatorics, 6 (2002), pp. 125–145.
+
+
+      
+[16]
+
+F. Chung and L. Lu, The average distances in random graphs with
+given expected degrees, Proceedings of the National Academy of Sciences, 99
+(2002), pp. 15879–15882.
+
+
+      
+[17]
+
+C. I. Del Genio, H. Kim, Z. Toroczkai, and K. E. Bassler, Efficient
+and exact sampling of simple graphs with given arbitrary degree sequence,
+PloS one, 5 (2010), p. e10012.
+
+
+      
+[18]
+
+J. C. Delvenne, S. N. Yaliraki, and M. Barahona, Stability of graph
+communities across time scales, Proceedings of the National Academy of
+Sciences, (2010), https://doi.org/10.1073/pnas.0903215107.
+
+
+      
+[19]
+
+P. L. Erdős, C. Greenhill, T. R. Mezei, I. Miklós,
+D. Soltész, and L. Soukup, The mixing time of the swap (switch)
+markov chains: a unified approach, arXiv:1903.06600, (2019).
+
+
+      
+[20]
+
+P. Expert, T. S. Evans, V. D. Blondel, and R. Lambiotte, Uncovering
+space-independent communities in spatial networks, Proceedings of the
+National Academy of Sciences, 108 (2011), pp. 7663–7668.
+
+
+      
+[21]
+
+S. Fortunato and M. Barthélemy, Resolution limit in community
+detection, Proceedings of the National Academy of Sciences, 104 (2006),
+pp. 36–41.
+
+
+      
+[22]
+
+B. K. Fosdick, D. B. Larremore, J. Nishimura, and J. Ugander, Configuring random graph models with fixed degree sequences, SIAM Review, 60
+(2018), pp. 315–355.
+
+
+      
+[23]
+
+B. H. Good, Y.-A. De Montjoye, and A. Clauset, Performance of
+modularity maximization in practical contexts, Physical Review E, 81 (2010),
+p. 046106.
+
+
+      
+[24]
+
+C. Greenhill, A polynomial bound on the mixing time of a markov
+chain for sampling regular directed graphs, The Electronic Journal of
+Combinatorics, 18 (2011), p. 234.
+
+
+      
+[25]
+
+C. Greenhill, The switch markov chain for sampling irregular
+graphs, in Proceedings of the Twenty-Sixth Annual ACM-SIAM Symposium on
+Discrete Algorithms, SIAM, 2014, pp. 1564–1572.
+
+
+      
+[26]
+
+R. A. Horn and C. R. Johnson, Matrix Analysis, Cambridge University
+Press, 2012.
+
+
+      
+[27]
+
+Y. Jabri, The Mountain Pass Theorem: Variants, Generalizations and
+Some Applications, vol. 95, Cambridge University Press, 2003.
+
+
+      
+[28]
+
+M. Jerrum and A. Sinclair, Fast uniform generation of regular
+graphs, Theoretical Computer Science, 73 (1990), pp. 91–100.
+
+
+      
+[29]
+
+R. Mastrandrea, J. Fournet, and A. Barrat, Contact patterns in a
+high school: A comparison between data collected using wearable sensors,
+contact diaries and friendship surveys, PLOS ONE, 10 (2015),
+https://doi.org/10.1371/journal.pone.0136497.
+
+
+      
+[30]
+
+B. D. McKay and N. C. Wormald, Uniform generation of random regular
+graphs of moderate degree, Journal of Algorithms, 11 (1990), pp. 52–67.
+
+
+      
+[31]
+
+M. Molloy and B. Reed, A critical point for random graphs with a
+given degree sequence, Random Structures & Algorithms, 6 (1995),
+pp. 161–180.
+
+
+      
+[32]
+
+M. Molloy and B. Reed, The size of the giant component of a random
+graph with a given degree sequence, Combinatorics, Probability, and
+Computing, 7 (1998), pp. 295–305.
+
+
+      
+[33]
+
+M. E. J. Newman, Modularity and community structure in networks,
+Proceedings of the National Academy of Sciences, 103 (2006), pp. 8577–8582.
+
+
+      
+[34]
+
+M. E. J. Newman, Equivalence between modularity optimization and
+maximum likelihood methods for community detection, Phys. Rev. E, 94 (2016),
+p. 052315, https://doi.org/10.1103/PhysRevE.94.052315.
+
+
+      
+[35]
+
+M. E. J. Newman and M. Girvan, Finding and evaluating community
+structure in networks, Phys. Rev. E, 69 (2004), p. 026113,
+https://doi.org/10.1103/PhysRevE.69.026113.
+
+
+      
+[36]
+
+M. E. J. Newman, S. H. Strogatz, and D. J. Watts, Random graphs
+with arbitrary degree distributions and their applications, Physical Review
+E, 64 (2001), p. 17.
+
+
+      
+[37]
+
+J. Reichardt and S. Bornholdt, Statistical mechanics of community
+detection, Physical Review E, 74 (2006), p. 016110.
+
+
+      
+[38]
+
+J. Sjöstrand, Making multigraphs simple by a sequence of
+double edge swaps, arXiv:1904.06999, (2019), pp. 1–11,
+http://arxiv.org/abs/1904.06999.
+
+
+      
+[39]
+
+J. Stehlé, N. Voirin, A. Barrat, C. Cattuto, L. Isella, J.-F.
+Pinton, M. Quaggiotto, W. V. den Broeck, C. Régis, B. Lina, and
+P. Vanhems, High-resolution measurements of face-to-face contact
+patterns in a primary school, PLoS ONE, 6 (2011), p. e23176,
+https://doi.org/10.1371/journal.pone.0023176,
+https://doi.org/10.1371/journal.pone.0023176.
+
+
+      
+[40]
+
+J. Stehlé, N. Voirin, A. Barrat, C. Cattuto, L. Isella, J. F.
+Pinton, M. Quaggiotto, W. van den Broeck, C. Régis, B. Lina, and
+P. Vanhems, High-resolution measurements of face-to-face contact
+patterns in a primary school, PLoS ONE, 6 (2011), pp. 1–13.
+
+
+      
+[41]
+
+G. Strona, D. Nappo, F. Boccacci, S. Fattorini, and J. San-Miguel-Ayanz,
+A fast and unbiased procedure to randomize ecological binary matrices
+with fixed row and column totals, Nature communications, 5 (2014), p. 4114.
+
+
+      
+[42]
+
+N. D. Verhelst, An efficient mcmc algorithm to sample binary
+matrices with fixed marginals, Psychometrika, 73 (2008), p. 705.
+
+
+      
+[43]
+
+F. Viger and M. Latapy, Efficient and simple generation of random
+simple connected graphs with prescribed degree sequence, in International
+Computing and Combinatorics Conference, Springer, 2005, pp. 440–449.
+
+
+      
+[44]
+
+P. Zhang and C. Moore, Scalable detection of statistically
+significant communities and hierarchies, using message passing for
+modularity, Proceedings of the National Academy of Sciences, 111 (2014),
+pp. 18144–18149.
+
+
+      
+[45]
+
+X. Zhang and M. E. J. Newman, Multiway spectral community detection
+in networks, Phys. Rev. E, 92 (2015), p. 052808,
+https://doi.org/10.1103/PhysRevE.92.052808.
+
+
+    
+
+
+
+
+
+Appendix A Proof of Theorem 11
+
+
+
+
+Write
+
+
+
+
+
+𝔼⁡[wi​j​Δi​j]\displaystyle\mathbb{E}[w_{ij}\Delta_{ij}]
+=𝔼⁡[wi​j​(Δi​j+−Δi​j−)]\displaystyle=\mathbb{E}[w_{ij}(\Delta_{ij}^{+}-\Delta_{ij}^{-})]
+
+(29)
+
+
+
+
+=1z⁡(𝐖)​𝔼​[wi​j​(bi​bj−2​y+bi+bj−𝐱iT​𝐱j−2)].\displaystyle=\frac{1}{z(\mathbf{W})}\mathbb{E}\left[w_{ij}\left(b_{i}b_{j}-2y+b_{i}+b_{j}-\mathbf{x}_{i}^{T}\mathbf{x}_{j}-2\right)\right]\;.
+
+(30)
+
+
+We have used the identity wi​j​xi​j=wi​jw_{ij}x_{ij}=w_{ij} to eliminate instances of xi​jx_{ij} from this expression.
+
+
+
+
+Starting with the first term, write
+
+
+
+
+
+𝔼⁡[wi​j​bi​bj]\displaystyle\mathbb{E}[w_{ij}b_{i}b_{j}]
+=ωi​j​𝔼​[bi​bj]​(1+cov​(wi​j,bi​bj)ωi​j​𝔼​[bi​bj])\displaystyle=\omega_{ij}\mathbb{E}[b_{i}b_{j}]\left(1+\frac{\textnormal{cov}\left(w_{ij},b_{i}b_{j}\right)}{\omega_{ij}\mathbb{E}[b_{i}b_{j}]}\right)
+
+
+
+
+
+=ωi​j​βi​βj​(𝔼⁡[bi​bj]βi​βj+cov​(wi​j,bi​bj)ωi​j​βi​βj).\displaystyle=\omega_{ij}\beta_{i}\beta_{j}\left(\frac{\mathbb{E}[b_{i}b_{j}]}{\beta_{i}\beta_{j}}+\frac{\textnormal{cov}\left(w_{ij},b_{i}b_{j}\right)}{\omega_{ij}\beta_{i}\beta_{j}}\right)\;.
+
+
+
+Applying (11), the first term inside the parentheses satisfies
+
+
+
+
+
+|𝔼⁡[bi​bj]βi​βj−1|≤2​u∗βi∨βj.\displaystyle\left|\frac{\mathbb{E}[b_{i}b_{j}]}{\beta_{i}\beta_{j}}-1\right|\leq\frac{2u_{*}}{\beta_{i}\vee\beta_{j}}\;.
+
+
+
+To bound the second term, we apply Cauchy-Schwartz along with (11) and (12).
+
+
+
+
+
+|cov​(wi​j,bi​bj)|\displaystyle\left|\textnormal{cov}\left(w_{ij},b_{i}b_{j}\right)\right|
+≤σi​j​var​(bi​bj)\displaystyle\leq\sigma_{ij}\sqrt{\textnormal{var}\left(b_{i}b_{j}\right)}
+
+
+
+
+
+≤(βi+6​u∗)2​(βj+6​u∗)2−(βi​βj−2​u∗​(βi∧βj))2.\displaystyle\leq\sqrt{(\beta_{i}+6u_{*})^{2}(\beta_{j}+6u_{*})^{2}-(\beta_{i}\beta_{j}-2u_{*}(\beta_{i}\wedge\beta_{j}))^{2}}\;.
+
+
+
+We therefore obtain
+
+
+
+
+
+|𝔼⁡[wi​j​bi​bj]−ωi​j​βi​βj|≤2​u∗βi∨βj+σi​jωi​j​(βi+6​u∗)2​(βj+6​u∗)2−(βi​βj−2​u∗​(βi∧βj))2βi​βj.\displaystyle\left|\mathbb{E}[w_{ij}b_{i}b_{j}]-\omega_{ij}\beta_{i}\beta_{j}\right|\leq\frac{2u_{*}}{\beta_{i}\vee\beta_{j}}+\frac{\sigma_{ij}}{\omega_{ij}}\frac{\sqrt{(\beta_{i}+6u_{*})^{2}(\beta_{j}+6u_{*})^{2}-(\beta_{i}\beta_{j}-2u_{*}(\beta_{i}\wedge\beta_{j}))^{2}}}{\beta_{i}\beta_{j}}\;.
+
+
+
+
+
+
+The remaining terms are simpler.
+We have
+
+
+
+
+
+|𝔼⁡[wi​j​y]−ωi​j​ψ|\displaystyle\left|\mathbb{E}[w_{ij}y]-\omega_{ij}\psi\right|
+=|cov​(wi​j,y)|≤σi​j​var​(y)≤σi​j​2​v∗​ψ,\displaystyle=\left|\textnormal{cov}\left(w_{ij},y\right)\right|\leq\sigma_{ij}\sqrt{\textnormal{var}\left(y\right)}\leq\sigma_{ij}\sqrt{2v_{*}\psi}\;,
+
+
+
+where in the first inequality we have used Cauchy-Schwartz and in the second we have used (13).
+
+
+
+
+To control the remaining terms, start by using the same argument to yield
+
+
+
+
+
+|𝔼⁡[wi​j​bi]−ωi​j​βi|≤σi​j​2​u∗​βi.\displaystyle\left|\mathbb{E}[w_{ij}b_{i}]-\omega_{ij}\beta_{i}\right|\leq\sigma_{ij}\sqrt{2u_{*}\beta_{i}}\;.
+
+
+
+Then, we obtain the upper bound
+
+
+
+
+
+𝔼⁡[wi​j​(bi+bj)−𝐱iT​𝐱j−2]\displaystyle\mathbb{E}[w_{ij}(b_{i}+b_{j})-\mathbf{x}_{i}^{T}\mathbf{x}_{j}-2]
+≤𝔼⁡[wi​j​(bi+bj)]\displaystyle\leq\mathbb{E}[w_{ij}(b_{i}+b_{j})]
+
+
+
+
+
+≤ωi​j​(βi+βj)+σi​j​2​u∗​(βi+βj).\displaystyle\leq\omega_{ij}(\beta_{i}+\beta_{j})+\sigma_{ij}\sqrt{2u_{*}}(\sqrt{\beta_{i}}+\sqrt{\beta_{j}})\;.
+
+
+
+Inserting our results into (30), we are able to write
+
+
+
+
+
+|𝔼⁡[wi​j​Δi​j]−ωi​j​(βi​βj−2​ψ)z⁡(𝐖)|\displaystyle\left|\mathbb{E}[w_{ij}\Delta_{ij}]-\frac{\omega_{ij}(\beta_{i}\beta_{j}-2\psi)}{z(\mathbf{W})}\right|
+≤ϵi​j′​(𝜷)z⁡(𝐖),\displaystyle\leq\frac{\epsilon^{\prime}_{ij}(\boldsymbol{\beta})}{z(\mathbf{W})}\;,
+
+(31)
+
+
+where
+
+
+
+
+
+ϵi​j′​(𝜷)\displaystyle\epsilon^{\prime}_{ij}(\boldsymbol{\beta})
+≜2​u∗βi∨βj+σi​jωi​j​(βi+6​u∗)2​(βj+6​u∗)2−(βi​βj−2​u∗​(βi∧βj))2βi​βj\displaystyle\triangleq\frac{2u_{*}}{\beta_{i}\vee\beta_{j}}+\frac{\sigma_{ij}}{\omega_{ij}}\frac{\sqrt{(\beta_{i}+6u_{*})^{2}(\beta_{j}+6u_{*})^{2}-(\beta_{i}\beta_{j}-2u_{*}(\beta_{i}\wedge\beta_{j}))^{2}}}{\beta_{i}\beta_{j}}
+
+
+
+
+
++σi​j2​v∗​ψi+ωi​j(βi+βj)+σi​j2​u∗(βi+βj)].\displaystyle\quad+\sigma_{ij}\sqrt{2v_{*}\psi_{i}}+\omega_{ij}(\beta_{i}+\beta_{j})+\sigma_{ij}\sqrt{2u_{*}}(\sqrt{\beta_{i}}+\sqrt{\beta_{j}})]\;.
+
+
+
+From Lemma 9, we also have
+
+
+
+
+
+|δi​j++δi​j−−βi​βj+2​ψ​χi​jz⁡(𝐖)|≤ϵi​j−​(𝜷)+ϵi​j+​(𝜷)z⁡(𝐖).\displaystyle\left|\delta_{ij}^{+}+\delta_{ij}^{-}-\frac{\beta_{i}\beta_{j}+2\psi\chi_{ij}}{z(\mathbf{W})}\right|\leq\frac{\epsilon_{ij}^{-}(\boldsymbol{\beta})+\epsilon_{ij}^{+}(\boldsymbol{\beta})}{z(\mathbf{W})}\;.
+
+
+
+By definition, the righthand side is ϵi​j𝜷/z⁡(𝐖)\epsilon_{ij}^{\boldsymbol{\beta}}/z(\mathbf{W}).
+Inserting these results into the stationarity condition (17) and combining with (31), we obtain
+
+
+
+
+
+|2​ωi​j​(βi​βj−2​ψ)−βi​βj−2​ψ​χi​jz⁡(𝐖)|≤2​ϵi​j′​(𝜷)+ϵi​j​(𝜷)z⁡(𝐖).\displaystyle\left|\frac{2\omega_{ij}(\beta_{i}\beta_{j}-2\psi)-\beta_{i}\beta_{j}-2\psi\chi_{ij}}{z(\mathbf{W})}\right|\leq\frac{2\epsilon_{ij}^{\prime}(\boldsymbol{\beta})+\epsilon_{ij}(\boldsymbol{\beta})}{z(\mathbf{W})}\;.
+
+
+
+Dividing through by 2​z​(𝐖)−1​|βi​βj−2​ψ|2z(\mathbf{W})^{-1}\left|\beta_{i}\beta_{j}-2\psi\right| and rearranging yields
+
+
+
+
+
+|ωi​j−12​fi​j​(𝜷)+χi​j1−fi​j​(𝜷)|≤2​ϵi​j′​(𝜷)+ϵi​j​(𝜷)2​ψ​(1−fi​j​(𝜷)).\displaystyle\left|\omega_{ij}-\frac{1}{2}\frac{f_{ij}(\boldsymbol{\beta})+\chi_{ij}}{1-f_{ij}(\boldsymbol{\beta})}\right|\leq\frac{2\epsilon^{\prime}_{ij}(\boldsymbol{\beta})+\epsilon_{ij}(\boldsymbol{\beta})}{2\psi(1-f_{ij}(\boldsymbol{\beta}))}\;.
+
+
+
+Finally, we apply Theorem 10 to approximate χi​j\chi_{ij},
+obtaining
+
+
+
+
+
+|ωi​j−fi​j​(𝜷)1−fi​j​(𝜷)|\displaystyle\left|\omega_{ij}-\frac{f_{ij}(\boldsymbol{\beta})}{1-f_{ij}(\boldsymbol{\beta})}\right|
+≤2​ϵi​j′​(𝜷)+ϵi​j​(𝜷)2​ψ​(1−fi​j​(𝜷))+12​ϵi​j​(𝜷)1−fi​j​(𝜷)\displaystyle\leq\frac{2\epsilon^{\prime}_{ij}(\boldsymbol{\beta})+\epsilon_{ij}(\boldsymbol{\beta})}{2\psi(1-f_{ij}(\boldsymbol{\beta}))}+\frac{1}{2}\frac{\epsilon_{ij}(\boldsymbol{\beta})}{1-f_{ij}(\boldsymbol{\beta})}
+
+
+
+
+
+=11−fi​j​(𝜷)​(2​ϵi​j′​(𝜷)+ϵi​j​(𝜷)2​ψ+ϵi​j​(𝜷)2),\displaystyle=\frac{1}{1-f_{ij}(\boldsymbol{\beta})}\left(\frac{2\epsilon^{\prime}_{ij}(\boldsymbol{\beta})+\epsilon_{ij}(\boldsymbol{\beta})}{2\psi}+\frac{\epsilon_{ij}(\boldsymbol{\beta})}{2}\right)\;,
+
+
+
+completing the proof.
+
+
+
+
+
+Appendix B Proof of Lemma 15
+
+
+
+
+We will first derive the expression for the Jacobian of 𝐡\mathbf{h} given in the text as (24).
+For notational compactness, let xi​j=fi​j​(𝜷)x_{ij}=f_{ij}(\boldsymbol{\beta}).
+We first calculate
+
+
+
+
+
+∂xi​j∂βk={−xi​j2​ψk≠i,jxi​j​(1βi−12​ψ)k=ixi​j​(1βj−12​ψ)k=j.\displaystyle\frac{\partial x_{ij}}{\partial\beta_{k}}=\begin{cases}-\frac{x_{ij}}{2\psi}&\quad k\neq i,j\\
+x_{ij}(\frac{1}{\beta_{i}}-\frac{1}{2\psi})&\quad k=i\\
+x_{ij}(\frac{1}{\beta_{j}}-\frac{1}{2\psi})&\quad k=j\;.\end{cases}
+
+
+
+Next,
+
+
+
+
+
+∂∂βk​[xi​j1−xi​j]=1(1−xi​j)2​∂xi​j∂βk.\displaystyle\frac{\partial}{\partial\beta_{k}}\left[\frac{x_{ij}}{1-x_{ij}}\right]=\frac{1}{(1-x_{ij})^{2}}\frac{\partial x_{ij}}{\partial\beta_{k}}\;.
+
+
+
+We can therefore write the components of the Jacobian as
+
+
+
+
+
+∂hi​(𝜷)∂βk={(1βi−12​ψ)​∑j≠ixi​j(1−xi​j)2k=i1βk​fi​k(1−fi​k)2−12​ψ​∑j≠ixi​j(1−xi​j)2k≠i.\displaystyle\frac{\partial h_{i}(\boldsymbol{\beta})}{\partial\beta_{k}}=\begin{cases}\left(\frac{1}{\beta_{i}}-\frac{1}{2\psi}\right)\sum_{j\neq i}\frac{x_{ij}}{(1-x_{ij})^{2}}&\quad k=i\\
+\frac{1}{\beta_{k}}\frac{f_{ik}}{(1-f_{ik})^{2}}-\frac{1}{2\psi}\sum_{j\neq i}\frac{x_{ij}}{(1-x_{ij})^{2}}&\quad k\neq i\;.\end{cases}
+
+
+
+It is convenient to define the matrix 𝐒∈ℝn×n\mathbf{S}\in\mathbb{R}^{n\times n} with entries si​j=xi​j(1−xi​j)2s_{ij}=\frac{x_{ij}}{(1-x_{ij})^{2}}, in which case we can write
+
+
+
+
+
+∂hi​(𝜷)∂βk={(1βi−12​ψ)​∑j≠isi​jk=i1βk​ai​k−12​ψ​∑j≠isi​jk≠i.\displaystyle\frac{\partial h_{i}(\boldsymbol{\beta})}{\partial\beta_{k}}=\begin{cases}\left(\frac{1}{\beta_{i}}-\frac{1}{2\psi}\right)\sum_{j\neq i}s_{ij}&\quad k=i\\
+\frac{1}{\beta_{k}}a_{ik}-\frac{1}{2\psi}\sum_{j\neq i}s_{ij}&\quad k\neq i\;.\end{cases}
+
+
+
+Let 𝐁=diag⁡𝜷\mathbf{B}=\diag\boldsymbol{\beta} and 𝐃=diag⁡𝐀𝐞\mathbf{D}=\diag\mathbf{A}\mathbf{e}.
+We can then write the Jacobian in matrix form as
+
+
+
+
+
+𝐉=(𝐒+𝐃)​𝐁−1−12​ψ​𝐒𝐄.\displaystyle\mathbf{J}=(\mathbf{S}+\mathbf{D})\mathbf{B}^{-1}-\frac{1}{2\psi}\mathbf{S}\mathbf{E}\;.
+
+
+
+We next note that 𝐒𝐄=𝐃𝐄\mathbf{S}\mathbf{E}=\mathbf{D}\mathbf{E}, and therefore substitute 𝐒𝐄=12​(𝐒𝐄+𝐃𝐄)\mathbf{S}\mathbf{E}=\frac{1}{2}(\mathbf{S}\mathbf{E}+\mathbf{D}\mathbf{E}).
+The result is
+
+
+
+
+
+𝐉=(𝐒+𝐃)​(𝐁−1−14​ψ​𝐄),\displaystyle\mathbf{J}=(\mathbf{S}+\mathbf{D})\left(\mathbf{B}^{-1}-\frac{1}{4\psi}\mathbf{E}\right)\;,
+
+
+
+as was to be shown.
+
+
+
+
+We now proceed with the proof of Lemma 15.
+We will employ the crude lower bound (see [6]):
+
+
+
+
+
+λ1​(𝐉)≥λ1​(𝐀+𝐃)​λ1​(𝐁−1−14​ψ​𝐄).\displaystyle\lambda_{1}(\mathbf{J})\geq\lambda_{1}\left(\mathbf{A}+\mathbf{D}\right)\lambda_{1}\left(\mathbf{B}^{-1}-\frac{1}{4\psi}\mathbf{E}\right)\;.
+
+
+
+Starting with the second factor, we can obtain an analytical inverse (using, for example, the Sherman-Morrison formula):
+
+
+
+
+
+(𝐁−1−14​ψ​𝐄)−1=𝐁+𝐛𝐛T2​ψ.\displaystyle\left(\mathbf{B}^{-1}-\frac{1}{4\psi}\mathbf{E}\right)^{-1}=\mathbf{B}+\frac{\mathbf{b}\mathbf{b}^{T}}{2\psi}\;.
+
+
+
+We can separately upper bound the eigenvalues of each term on the righthand side, obtaining the bound
+
+
+
+
+
+λn​(𝐁+𝐛𝐛T2​ψ)≤maxℓ⁡βℓ+12​ψ​∑ℓβℓ2≤n⁡(n−1).\displaystyle\lambda_{n}\left(\mathbf{B}+\frac{\mathbf{b}\mathbf{b}^{T}}{2\psi}\right)\leq\max_{\ell}\beta_{\ell}+\frac{1}{2\psi}\sum_{\ell}\beta_{\ell}^{2}\leq n(n-1).
+
+
+
+In the final inequality we have used that βn≤n−1\beta_{n}\leq n-1 and 𝜷≥𝐞\boldsymbol{\beta}\geq\mathbf{e}.
+Inverting this expression gives the first factor in the statement of the lemma.
+
+
+
+
+Entrywise Taylor expansion, valid in ℬδ\mathcal{B}_{\delta}, yields
+
+
+
+
+
+𝐀+𝐃=(𝐅+𝐆1)+2​(𝐅∘2+𝐆2)+3​(𝐅∘3+𝐆3)+⋯\displaystyle\mathbf{A}+\mathbf{D}=(\mathbf{F}+\mathbf{G}_{1})+2(\mathbf{F}^{\circ 2}+\mathbf{G}_{2})+3(\mathbf{F}^{\circ 3}+\mathbf{G}_{3})+\cdots
+
+(32)
+
+
+where 𝐅=𝜷​𝜷T2​ψ\mathbf{F}=\frac{\boldsymbol{\beta}\boldsymbol{\beta}^{T}}{2\psi}, 𝐅∘p\mathbf{F}^{\circ p} denotes Hadamard (entrywise) exponentiatian, and 𝐆p\mathbf{G}_{p} is the diagonal matrix with entries
+
+
+
+
+
+[𝐆p]i​i=∑j=1nxi​jp−2​xi​ip.\displaystyle{[\mathbf{G}_{p}]}_{ii}=\sum_{j=1}^{n}x_{ij}^{p}-2x_{ii}^{p}\;.
+
+
+
+Each term in the series (32) is weakly diagonally dominant, and therefore positive semi-definite by the Gers̆gorin disc theorem [26].
+It will therefore suffice to bound below the eigenvalues of the first term.
+Since 𝐅\mathbf{F} is positive-semidefinite, we can obtain lower bounds in the eigenvalues by checking the eigenvalues of 𝐆1\mathbf{G}_{1}.
+Each entry is
+
+
+
+
+
+[𝐆1]i​i=∑j=1nβi​βj2​ψ−2​βi22​ψ=βi−2​βi22​ψ=βi​(1−βiψ)>0.\displaystyle[\mathbf{G}_{1}]_{ii}=\sum_{j=1}^{n}\frac{\beta_{i}\beta_{j}}{2\psi}-2\frac{\beta_{i}^{2}}{2\psi}=\beta_{i}-2\frac{\beta_{i}^{2}}{2\psi}=\beta_{i}\left(1-\frac{\beta_{i}}{\psi}\right)>0\;.
+
+
+
+We can bound this expression away from 00 by noting that
+
+
+
+
+
+βi​(1−βiψ)≥min⁡{1−ψ−1,βn​(1−βnψ)}.\displaystyle\beta_{i}\left(1-\frac{\beta_{i}}{\psi}\right)\geq\min\left\{1-\psi^{-1},\beta_{n}\left(1-\frac{\beta_{n}}{\psi}\right)\right\}\;.
+
+(33)
+
+
+By hypothesis, 2​ψ≥n≥52\psi\geq n\geq 5, and therefore ψ≥5/2\psi\geq 5/2.
+The first argument of the minimum is thus no smaller than 35\frac{3}{5}.
+On the other hand, inserting the bound βn≤2​ψ−δ<2​ψ\beta_{n}\leq\sqrt{2\psi-\delta}<\sqrt{2\psi}, we can bound the second argument as
+
+
+
+
+
+βn​(1−βnψ)≥1−25>0,\displaystyle\beta_{n}\left(1-\frac{\beta_{n}}{\psi}\right)\geq 1-\frac{2}{\sqrt{5}}>0\;,
+
+
+
+Inserting this lower bound into (33) yields the result.
+
+
+
+
+
+Appendix C Proof of Theorem 19
+
+
+
+
+It is convenient to define the function c:[β1,βn]→ℝc:[\beta_{1},\beta_{n}]\rightarrow\mathbb{R} by
+
+
+
+
+
+c𝜷​(z)=∑ℓz​βℓ2​ψ−βℓ​z−z22​ψ−z2.\displaystyle c_{\boldsymbol{\beta}}(z)=\sum_{\ell}\frac{z\beta_{\ell}}{2\psi-\beta_{\ell}z}-\frac{z^{2}}{2\psi-z^{2}}\;.
+
+
+
+Note that c𝜷​(βi)=hi​(𝜷)c_{\boldsymbol{\beta}}(\beta_{i})=h_{i}(\boldsymbol{\beta}).
+Then, supposing that 𝜷\boldsymbol{\beta} is a solution to (21), c𝜷​(βi)=dic_{\boldsymbol{\beta}}(\beta_{i})=d_{i}.
+Additionally, if 𝜷∈ℬδ\boldsymbol{\beta}\in\mathcal{B}_{\delta}, then cc is continuously differentiable on the interval [β1,βn][\beta_{1},\beta_{n}].
+We will therefore show that c𝜷′​(z)>0c^{\prime}_{\boldsymbol{\beta}}(z)>0 for all zz on this interval.
+The derivative is
+
+
+
+
+
+c𝜷′​(z)=2​ψ​(∑ℓβℓ(2​ψ−βℓ​z)2−z(2​ψ−z2)2).\displaystyle c^{\prime}_{\boldsymbol{\beta}}(z)=2\psi\left(\sum_{\ell}\frac{\beta_{\ell}}{(2\psi-\beta_{\ell}z)^{2}}-\frac{z}{(2\psi-z^{2})^{2}}\right)\;.
+
+
+
+We will compute Taylor series of the terms inside the parentheses.
+Convergence of these series is guaranteed by the hypothesis that 𝜷∈ℬδ\boldsymbol{\beta}\in\mathcal{B}_{\delta}.
+It is convenient to introduce the notation ψp=12​∑ℓβℓp\psi_{p}=\frac{1}{2}\sum_{\ell}\beta_{\ell}^{p}.
+Note that ψ=ψ1\psi=\psi_{1}.
+
+
+
+
+First,
+
+
+
+
+
+∑ℓβℓ(2​ψ−βℓ​z)2=14​ψ2​∑ℓ=1nβℓ​∑p=1∞p​(βℓ​z2​ψ)p−1=14​ψ2​∑p=1∞p​(z2​ψ)p−1​(2​ψp).\displaystyle\sum_{\ell}\frac{\beta_{\ell}}{(2\psi-\beta_{\ell}z)^{2}}=\frac{1}{4\psi^{2}}\sum_{\ell=1}^{n}\beta_{\ell}\sum_{p=1}^{\infty}p\left(\frac{\beta_{\ell}z}{2\psi}\right)^{p-1}=\frac{1}{4\psi^{2}}\sum_{p=1}^{\infty}p\left(\frac{z}{2\psi}\right)^{p-1}\left(2\psi_{p}\right)\;.
+
+
+
+Next,
+
+
+
+
+
+z(2​ψ−z2)2=14​ψ2​∑p=1∞p​(z22​ψ)p−1=14​ψ2​∑p=1∞p​(z2​ψ)p−1​zp−1.\displaystyle\frac{z}{(2\psi-z^{2})^{2}}=\frac{1}{4\psi^{2}}\sum_{p=1}^{\infty}p\left(\frac{z^{2}}{2\psi}\right)^{p-1}=\frac{1}{4\psi^{2}}\sum_{p=1}^{\infty}p\left(\frac{z}{2\psi}\right)^{p-1}z^{p-1}\;.
+
+
+
+We thus write
+
+
+
+
+
+c𝜷′​(z)=12​ψ​∑p=1∞p​(z2​ψ)p−1​(2​ψp−zp−1).\displaystyle c^{\prime}_{\boldsymbol{\beta}}(z)=\frac{1}{2\psi}\sum_{p=1}^{\infty}p\left(\frac{z}{2\psi}\right)^{p-1}\left(2\psi_{p}-z^{p-1}\right)\;.
+
+
+
+Since z≤βnz\leq\beta_{n} by hypothesis, zp−1≤2​ψpz^{p-1}\leq 2\psi_{p}.
+Each term in the ezpansion is therefore strictly positive and we conclude that c𝜷′​(z)>0c^{\prime}_{\boldsymbol{\beta}}(z)>0.
+This proves (a).
+
+
+
+
+To prove (b), we truncate to second order, obtaining
+
+
+
+
+
+c𝜷′​(z)>12​ψ​(2​ψ−1+zψ​(2​ψ2−z)).\displaystyle c^{\prime}_{\boldsymbol{\beta}}(z)>\frac{1}{2\psi}\left(2\psi-1+\frac{z}{\psi}\left(2\psi_{2}-z\right)\right)\;.
+
+(34)
+
+
+A small amount of algebra in combination with the hypotheses that n≥5n\geq 5 and 𝐞≤𝜷≤(n−1)​𝐞\mathbf{e}\leq\boldsymbol{\beta}\leq(n-1)\mathbf{e} shows that zψ​(2​ψ2−z)≥1\frac{z}{\psi}\left(2\psi_{2}-z\right)\geq 1 for z∈[β1,βn]z\in[\beta_{1},\beta_{n}].
+Inserting this lower bound into (34), we obtain
+
+
+
+
+
+c𝜷′​(z)>1.\displaystyle c^{\prime}_{\boldsymbol{\beta}}(z)>1\;.
+
+
+
+In particular, c𝜷−1c_{\boldsymbol{\beta}}^{-1} is a nonexpansive map.
+Since c𝜷−1:di↦βic_{\boldsymbol{\beta}}^{-1}:d_{i}\mapsto\beta_{i}, claim (b) follows.
+
+
+
+
+To prove (c), it suffices to show that β1≤d1\beta_{1}\leq d_{1} and apply (b).
+Since 𝜷∈ℬδ\boldsymbol{\beta}\in\mathcal{B}_{\delta}, β1≥1\beta_{1}\geq 1.
+We compute
+
+
+
+
+
+d1=β1​∑ℓ≠1βℓ2​ψ−β1​βℓ≥β1​∑ℓ≠1βℓ2​ψ−β1=β1.\displaystyle d_{1}=\beta_{1}\sum_{\ell\neq 1}\frac{\beta_{\ell}}{2\psi-\beta_{1}\beta_{\ell}}\geq\beta_{1}\sum_{\ell\neq 1}\frac{\beta_{\ell}}{2\psi-\beta_{1}}=\beta_{1}\;.
+
+
+
+The first inequality uses βℓ≥β1\beta_{\ell}\geq\beta_{1} and the hypothesis β1≥1\beta_{1}\geq 1.
+
+
+
+
+6, 26
+
+
+
+
+
+
+  
+
+    Experimental support, please
+    view the build logs
+    for errors. Generated by
+    
+      
+        L
+        A
+        T
+        E
+      
+      xml
+      
+    .
+  
+  
+
+    
+Instructions for reporting errors
+    
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+    
+      Click the "Report Issue" (
+            
+          ) button, located in the page header.
+    
+    
+Tip: You can select the relevant text first, to include it in your report.
+    
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+    
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+  
+
+  
+
+    
+
+      
+
+        We gratefully acknowledge support from our major funders,
+        member institutions, ,
+        and all contributors.
+      
+      
+        About ·
+        Help ·
+        Contact ·
+        Subscribe ·
+        Copyright ·
+        Privacy ·
+        Accessibility ·
+        Operational Status (opens in new tab)
+      
+    
+  
+
+
+  
+    
+      
+    
+  
+
+

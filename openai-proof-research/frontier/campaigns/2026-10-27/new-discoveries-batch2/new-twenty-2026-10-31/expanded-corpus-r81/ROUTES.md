@@ -1,0 +1,33 @@
+# Research checkpoint: three sustained routes, no endpoint
+
+## 366516: vertex multiplications of T
+
+The literal matrix is extracted from the displayed matrix preceding Theorem 4.6, not guessed from a graph picture. `outputs/T.json` records all 121 entries. The eleventh vertex is isolated. For multiplicities x_i, let B have entries T_ij sqrt(x_i x_j) on nonempty blocks. The subspace of vectors constant on each block, with orthonormal block indicators, has compression B. Its orthogonal complement is killed by the blowup adjacency matrix. Thus the blowup eigenvalues consist of B's eigenvalues and zeros. This gives a small-matrix search without expanding all the vertices. Increasing the multiplicity of the isolated vertex changes only the denominator and adds zero eigenvalues, so it cannot introduce a ratio below -1/3 if one was absent without those isolated vertices.
+
+The exhaustive search checks every x in {0,1,2}^10 with sum x >=2, a total of 59,038 vectors. Its best numerical ratio is -0.33333333333333337 at (0,2,0,0,1,0,0,0,2,1). This is rounding at the conjectured boundary, not a refutation. Forty independent seeded simplex optimizations approach the same boundary; they are not exhaustive and supply no mathematical certificate. The source itself exhibits equality constructions, so finding equality does not qualify.
+
+A proof route would show that B+(sum x)/3 I has at most one negative eigenvalue for all nonnegative weights. This is equivalent to the desired lower bound for the second-smallest eigenvalue whenever negative eigenvalues are relevant. A Schur-complement/inertia proof might exploit the K_(4,4) block and two exceptional vertices. No such all-weight inequality has been proved. Classical third-eigenvalue bounds in the source are weaker or cover special classes, and no full subsumption bridge was established. Later journal and author-source review is incomplete. There is no Lean endpoint.
+
+## 368344: infinite log-convexity of Baxter numbers
+
+The exact source formula is B_n=sum_(k=1)^n 2 binom(n+1,k-1) binom(n+1,k) binom(n+1,k+1)/(n(n+1)^2). The convention begins at n=1. The operator is L(a)_n=a_n a_(n+2)-a_(n+1)^2, so an r-fold check at n depends on B_n through B_(n+2r).
+
+The first sweep uses B_1 through B_100 and eight iterations. The extended sweep uses B_1 through B_200 and twelve iterations: all 200-2r valid output entries at each r are nonnegative, using exact Python integers. This checks 2,244 inequalities in the extended sweep, but no infinite statement follows. No floating-point signs are involved.
+
+A promising sufficient condition is a Stieltjes moment representation. If B_n=integral t^n dmu(t) with positive support measure, then the first transform has an integral expression involving (s-t)^2, and moment methods can propagate positivity. It is essential first to locate or prove such a representation for the literal Baxter numbers. The finite binomial sum alone is not such a representation, and real-rootedness of the descent polynomials does not supply it automatically. The source proves eventual fixed-order log-convexity and low-order global cases. A later JMAA version was found, but its full body and the classical moment-sequence literature remain unread. Thus no novelty clearance or proof is claimed.
+
+## 357344: partition parity and quadratic forms
+
+Fix Q exactly as in the source: odd primes p such that 8x^2+27y^2=jp has a primitive integral solution for j in {1,4,8}. By sign symmetry, checking nonnegative x,y is exhaustive for these equations. Source concluding remarks identify the desired parity with the number of positive solutions to 8x^2+3y^2=11p^2 with 3 not dividing y; they give total integral representation count 12 and four imprimitive representations. Their proposed remaining condition is absence of any integral solution to 8x^2+27y^2=11p^2.
+
+The script checks every odd prime from 3 through 2,000. It finds 45 members of Q, recording their primitive certificates, then checks every y from 0 through floor(sqrt(11p^2/27)) and the unique possible nonnegative x. None solves the obstruction equation. A second independent diagnostic computes every restricted-partition parity b_21(n) for 0<=n<=20,000 via the ordinary generating product over positive parts not divisible by 21. Each geometric factor is expanded in GF(2) using the factors (1+q^(2^j k)); bit shifts and XOR implement multiplication with exact truncation. All four eligible prime indices in this range, p=29,59,79,103, have parity one.
+
+The natural proof route is separation of representation classes for binary quadratic forms of discriminant -864 (or equivalent norm forms), relating primitive representations of jp and representations of 11p^2. No class-group calculation or universal separation proof has been completed. The 2023 Acta Arithmetica journal version and the author's later thesis must be read before substantial Lean investment. Even a short final form-class argument may be a routine application of classical theory; no significance claim is made.
+
+## Additional route obstructions
+
+The exact principal-minor expansion in `matrix_symbolic.py` verifies that all principal minors of T of orders 7 through 10 vanish. It expands the nonzero rank-six characteristic factor p6(z)=det(z I+T_x)/z^4 after z=(sum x)/3+t. In 3^6 times this polynomial, coefficients of t^3 through t^6 have nonnegative monomial coefficients, but the t^2, t^1, and constant coefficients have 143, 1,100, and 2,814 negative monomials respectively. Thus a naive coefficientwise shifted-polynomial monotonicity proof fails. These signs are exact integer calculations, not eigenvalue rounding. They do not refute the conjecture.
+
+The straightforward Stieltjes-moment route for the unshifted B_1,B_2,... sequence is obstructed: the shifted size-6 Hankel determinant det(B_(i+j+2))_(0<=i,j<6) is negative. Its exact value is -115894592. Any positive measure on [0,infinity) representing B_(n+1) would make this matrix positive semidefinite, by integrating t times a square. Therefore such a representation cannot exist. This is an auxiliary route obstruction, not a solution of infinite log-convexity and not discovery credit. More sophisticated representations, shifts, or different positivity frameworks remain possible.
+
+The high-order extension uses GMP exact integers for B_1 through B_60, all valid windows through iteration 22. Every checked entry remains nonnegative; at iteration 22 the valid starting indices are 1 through 16 and the largest output has 368,751,451 bits. This is still bounded evidence only. Python and GMP agree on their overlapping iteration ranges. The plain-Python 18-iteration run completed within its CPU/wall cap; see the separate resource receipts.

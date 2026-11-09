@@ -1,0 +1,56 @@
+# r188 research handback
+
+No eligible new solution is nominated. `results.json` contains exactly the 20 reserved ID-keyed dispositions, with literal statements, raw/chunk/statement hashes, source receipts, actual review depth, mathematical attempts, remaining obligations and Lean cost. Root acceptance remains separate. No shared file or accepted count was changed.
+
+The complete ordinary proof obtained for 355321 is excluded as a classical bridge: the source explicitly identifies its covariance matrix as a positive multiple of a symmetric Cauchy matrix. The Cauchy determinant identity makes every minor positive, and the classical Gantmacher–Krein theorem gives simple positive eigenvalues. The source contributes all special-purpose ingredients. See `outputs/covariance-bridge.md`. Formalizing that bridge would earn zero discovery credit under this brief, so no Lean packet was created. `CANDIDATE.md` records the no-nomination verdict and risk.
+
+## Dispositions
+
+| ID | Verdict | Evidence or remaining gap |
+|---|---|---|
+| 336612 | Parked after sustained search | All binary X-rays through order 12 match tournament-score counts. Exact covers realize all admissible diagonal sets at orders 13, 14 and 15. No uniform construction or counterexample. |
+| 336735 | Exclude: prior proof | Lo–Fu–Zhang–Wong, arXiv:1808.09256, Theorem 2 proves the stronger strict upper bound for trees of order at least 2. |
+| 336751 | Parked | All-but-finitely-many quotient claim; finite/spherical endpoint failures would be corrections, not discoveries. |
+| 336863 | Parked: deep | Source Conjecture 18 is the unresolved reverse bounded-expansion implication for graph classes. |
+| 337070 | Literal shortcut excluded; intended extension parked | Source itself computes small-m connectivity stronger than its cited general lower bound. Exploiting the omitted range is a correction. |
+| 337175 | Parked: deep | Source reduces to bounded-rank Lie-type families; finitely many small exceptions cannot refute the conjecture. |
+| 337428 | Parked | Prime-power eventual packing is distinct from the source's non-prime-power obstruction. |
+| 337667 | Parked: deep | Arbitrary-partition wall-crossing symmetry; later trivial-representation results are partial. |
+| 337675 | Parked; historical overlap | Mixed-signature inequalities pass the recorded exact tests. Right-hand inequality overlaps r147/330692. |
+| 337704 | Parked after sustained search | Every incidence hypertree through 11 vertices has a k-cordial labeling for each tested k=2..8. |
+| 337871 | Exclude: prior refutation | Current source addendum acknowledges Groenland–Johnston's refutation; their Theorem 2 supplies the missing small values. |
+| 337877 | Parked | Later connectivity theorem allows digons; digon-free connectivity is a different requirement. |
+| 337900 | Parked after small search | All 25 partition-size cases at r=3,k=2,n=6..8 fail to admit fewer colors than predicted. |
+| 337903 | Exclude: prior proof | Mori–Ohsugi–Tsuchiya, arXiv:2010.02854, Theorem 1.3 proves q>=4; source proves q=3. |
+| 337952 | Parked: deep | General Monov/NIEP moment condition beyond known special spectral families. |
+| 339273 | Parked: serious prior-art objection | Follow-up proof was withdrawn with attribution to Brandt's 1987 dissertation. Full Brandt theorem/formula correspondence remains unread. No full-scope novelty claim. |
+| 355321 | Exclude: classical bridge | Complete ordinary proof in `outputs/covariance-bridge.md`; zero credit risk verdict. |
+| 381361 | Parked: same prior family | Same finiteness conjecture as r177/359132; not separately pursued. |
+| 381367 | Parked: uniform valuation gap | Fourteen-step persistence is not nonconfinement. Need one genuine irreducible factor persisting at all sufficiently late times. |
+| 332492 | Parked: analytic | Matrix orthogonalization monotonicity needs analytic semantics; citing inner-faithfulness results settle another claim. |
+
+## Exact computational coverage
+
+All computations below took place after literature searches and the relevant registry screens. The computations are diagnostics, not kernel-certified theorems.
+
+For 336612, the first method enumerates permutations by assigning distinct columns and distinct diagonals, collecting the diagonal masks. It computes tournament score-vector counts independently using Landau inequalities. Orders 1..12 agree. At order 12 there are 14,805 X-rays and score vectors, represented by 4,698,655 distinct-diagonal permutations. The attempt to continue the permutation method through order 13 hit the CPU limit; its partial order-13 work is not complete coverage and was not restarted. A different method generates the increasing diagonal sets a_i=b_i+i from every Landau-admissible score sequence b and solves a row/column/diagonal exact cover, selecting a diagonal with few available placements. Every candidate is realizable at n=13,14,15; at n=14 there are 158,808 candidates and 2,746,227 cover nodes; at n=15 there are 531,469 candidates and 10,155,415 cover nodes. The new algorithm supplied additional bounded coverage, not a general theorem. See `outputs/xray-search.json`, `outputs/xray-search-extended.json`, and `outputs/xray-cover-*.json`.
+
+For 337675, `scripts/signed.py` implements Definition 3.1 including all corner conditions and Definition 3.5's repeated-prefix invalidity test. It tests all permutations at k=3,n=6..9 and k=4,n=7,8, for every signature. No violation. At n=9,k=3, all 362,880 permutations were considered. `scripts/affine_check.py` independently partitions each full-branch signed affine map's cylinder intervals by exact rational orbit-comparison roots. At n=6,k=3 its eight counts exactly match the segmentation method. The right-hand inequality already had stronger alphabet coverage in r147, discovered in the title-based historical check; those repeated cases earn no new coverage credit. Mixed-signature results are also only finite evidence.
+
+For 337704, a rooted incidence hypertree is a multiset of incident hyperedges, each of which is a nonempty multiset of rooted child hypertrees. Generation by vertex weight covers all such rooted objects. Canonical rerooting deduplicates unrooted objects. Counts by n=2..11 are 1,2,4,9,22,59,165,496,1540,4960, totaling 7,258. Every one was checked at k=2..8 by label DFS, enforcing both vertex and edge balance. No failure. IMPORTANT: the first implementation fixed the root label to zero, which is invalid for nonuniform hyperedge sizes. It produced false failures at n=10,k=2, contradicting the source's known theorem. The fixed implementation permits every root label and passes all cases. `scripts/hypertrees-initial.py`, initial logs and outputs remain as rejected diagnostics; use only `outputs/hypertrees-corrected-10.json` and `outputs/hypertrees-corrected-11.json` for final coverage. The n=12 generator hit the CPU cap before any n=12 labeling coverage; it was not restarted. Its output is not evidence through 12 vertices.
+
+For 337900, vertex sets are transversal 2-subsets of the partition, and hyperedges are disjoint triples. All partition-size multisets with parts at most 3 at n=6,7,8 were covered; permutations of ground-set labels are isomorphic. The exact coloring DFS tests one fewer color than ceil((n−3)/2). None of the 25 cases is colorable with that number. This checks the conjectured lower bound only in this small regime, with source-known cases included as controls; it is not a full chromatic-number theorem.
+
+## Sources, registries and limits
+
+The whole TASK.txt, three AGENTS files, inherited family warnings, both ledgers and prior-campaign context were ingested. Context snapshots remain in `outputs/context-*.json`. Exact ID historical search found no substantive prior hit; title search found the signed-shift overlap. The mandated reservation is absence from assignment indexes only, not evidence of novelty.
+
+All 44 arXiv versions listed on the 20 current source abstract pages were fetched with individual immutable receipts. The older source papers 1712.06035 and 1709.09011 were also fetched in every listed version. Relevant definitions/conjecture paragraphs across versions were extracted, and the strongest routes received actual primary-body reading. This is not an independent audit of all proof bodies in all 44 versions. Publisher DOI pages and author versions were checked where found; DMTCS full text is byte-identical to the current arXiv source. Some publisher routes return metadata or HTML forwarders rather than proof bodies. No blanket version-of-record or correction-history clearance is asserted. The withdrawn univalence follow-up's old PDFs were read and its withdrawal/Brandt attribution retained; unread Brandt material remains an explicit gap.
+
+Live `/commits/HEAD` receipts bind Lean Pool 01db1d7049cf9668bda1e9e106875ee1278b43e6, Omega 6b972f3b824c23892b937029cb4271b17ad99d07, and OpenAI/math 4eaee87548250b2682affda7d05d947c05554bae. Lean Pool's actual `LeanPool/projects.yml` and candidate files were screened; the initially tried root projects.yml path returned 404 and that receipt is retained. Six GitHub repository queries, spaced eight seconds apart, all returned zero hits. Complete current Omega D5 and Problems path lists were screened, and the unchanged OpenAI HEAD permits reuse of its cached complete preprints listing. The closest cordiality metadata hit is a different two-player game conjecture, not existential hypertree labeling. `outputs/registry-screen.json` distinguishes metadata/path screens from proof-body clearance. No universal semantic registry clearance is claimed.
+
+TLS verification stayed enabled. No denied route was retried, no browser tab opened, no author contacted, no message/upload/account action performed, no git operation used, and no shared index edited. HTTP bodies and dated status/hash receipts are under `sources/`; web-search tool responses are retained as JSON. Publisher HTML forwarders into inherited-denied ScienceDirect were not followed. An accidental hypercube PDF-ID typo fetched an unrelated paper; `hypercube-proof` is NOT cited as evidence, and the corrected `hypercube-correct` fetch is the one used.
+
+The compiled-language executable was unavailable, so the initial C++ diagnostic did not launch. Final numerical work uses Python's standard library with `python3 -I`. Every expensive process uses `scripts/limited.py`: two-CPU affinity, CPU 120 seconds, wall watchdog 140 seconds, sampled process-group RSS watchdog 6 GiB, MALLOC_ARENA_MAX=2, lane-local TMPDIR and 12 GiB address space. Only one heavy process ran at a time, and completion was confirmed before the next. Both killed runs remain in the logs, with completed bounds separated from partial work. The watchdog is sampled rather than a cgroup/transient-peak guarantee. No Lean/leanchecker invocation or upstream rebuild was attempted, and no background process remains.
+
+This is a bounded source/search pass with sustained finite routes, not the several-hour exhaustive investigation envisioned by the brief, and not comprehensive primary-body or citing-literature coverage for every parked target. Those limits are recorded rather than converted into novelty or resolution claims. No candidate reached a justified literal Lean endpoint.

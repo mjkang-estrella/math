@@ -1,0 +1,896 @@
+
+Impartial Chess on Integer Partitions
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+  /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+     the marker's display to know which way to toggle. The marker draws no box. */
+  .arxiv-html-header { display: contents; }
+  html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+  /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+     icon by making its span a block). */
+  .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+  /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+     arXiv's own render as they are (the logo on the bar, the funder logos on their white
+     chips). Important: ar5iv's dark rules are unlayered, as specific as
+     :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+  :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+  .ds-site-header img { background-color: transparent !important; }
+  /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+     were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+     header, the paper's bar (no site navigation, the paper's controls), takes the second and
+     stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+     The controls show their names. */
+  @media (min-width: 1280px) {
+    html { scroll-padding-top: 80px; }
+    .arxiv-html-site-chrome { display: contents; }
+    .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+    .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+    .arxiv-html-site-chrome .tool-icon { display: none; }
+  }
+  /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+     readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+     bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+     over the header and the paper: it shows only while open, under the chrome, in its place in
+     the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+     inset; the theme gives it none, so it met the screen edges. */
+  @media (max-width: 1279px) {
+    .arxiv-html-site-chrome .tool-wide { display: none; }
+    .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+    .ltx_page_navbar { position: absolute; top: auto; }
+    .arxiv-html-footer { padding-inline: 1rem; }
+  }
+Skip to main content
+      Report GitHub Issue
+      ×
+      Title:
+Content selection saved. Describe the issue below:
+      Description:
+      Submit without GitHub
+      Submit in GitHub
+    Why HTML?
+      Report Issue
+      Back to Abstract
+      Download PDF
+      Contents
+      Reading mode
+      Colour theme
+Abstract
+1 Introduction
+2 Preliminaries
+2.1 Young diagrams and integer partitions
+2.2 Impartial games and Sprague-Grundy values
+3 Impartial chess
+3.1 Impartial chess games
+3.2 Directed acyclic graphs, partition-equivalence, and game-equivalence
+3.3 Pawn, Knight, and Downright
+3.4 King
+3.5 Rook
+3.6 Queen
+4 Misère aspects of impartial chess
+4.1 The truncation operation
+4.2 Conway-Gurvich-Ho classification
+4.2.1 Pet games
+4.2.2 Miserable but not pet games
+4.2.3 Tame but not miserable games
+4.2.4 Domestic but not tame games
+4.2.5 Non-domestic games
+5 Open questions in impartial chess
+Acknowledgements
+References
+    License: CC BY 4.0
+arXiv:2501.14640v1 [math.CO] 24 Jan 2025
+Impartial Chess on Integer Partitions
+Eric Gottlieb
+Email: gottlieb@rhodes.edu
+Affiliation: Rhodes College, Memphis, Tennessee,  U.S.A.
+Matjaž Krnc
+Email: matjaz.krnc@upr.si
+Affiliation: University of Primorska, Koper, Slovenia
+Peter Muršič
+Email: peter.mursic@famnit.upr.si
+Affiliation: University of Primorska, Koper, Slovenia
+Abstract
+Berlekamp proposed a class of impartial combinatorial games based on the moves of chess pieces on rectangular boards.
+We generalize impartial chess games by playing them on Young diagrams and obtain results about winning and losing positions and Sprague-Grundy values for all chess pieces.
+We classify these games, and their restrictions to sets of partitions known as rectangles, staircases, and general staircases, according to the approach of Conway, later extended by Gurvich and Ho.
+The games Rook and Queen restricted to rectangles are known to have the same game tree as  $2$ -pile Nim and Wythoff, respectively, so our work generalizes these well-known games.
+Keywords: 
+impartial game , chess , Young diagram , integer partition , combinatorial game
+2020 MSC
+91A46 , 05A17 
+In appreciation of Elwyn Berlekamp.
+1 Introduction
+In a series of YouTube videos, Berlekamp [1, 2] introduced Impartial chess, a family of impartial combinatorial games based on the moves of various chess pieces that are played on rectangular boards. In this paper, we formalize and extend the study of these games by playing them on Young diagrams of integer partitions. The extension to non-rectangular boards is inspired by previous work on LCTR [3], the misère form of which, known as Downright, is similar in spirit to Berlekamp’s impartial chess.
+Conway [4] classified impartial games using certain properties that depend on the interaction of normal and misere play. Gurvich and Ho [5] subsequently undertook a similar effort and showed some of their categories to be equivalent to those of Conway. We refer to the unification of these schemes as the Conway-Gurvich-Ho (CGH) classification.
+The CGH classification of Nim, Subtraction, Wythoff, Mark, LCTR, and Downright are established in [3, 4, 5].
+We determine Sprague-Grundy values or winning and losing positions for impartial chess games of all chess pieces on the sets of partitions known as rectangles, staircases, and general staircases.
+Some of the games we study occupy the same region of the CGH classification scheme as one of the above games.
+Played on a particular set of partitions, we show that Rook occupies a region that was not previously known to contain any game, while Queen occupies a region that was only known to contain a single small artificial game.
+This paper is structured as follows. In Section 2, we provide background on partitions, Young diagrams, impartial games, and Sprague-Grundy theory. In Section 3.1, we describe the impartial chess games Downright, Pawn, Knight, Bishop, King, Queen, and Rook. In Section 3.2, we use directed acyclic graphs associated to games to define partition-equivalence and game-equivalence of impartial chess games. In Section 3.3, we discuss partition- and game-equivalence of Pawn, Knight, and Downright. In Section 3.4, we establish Sprague-Grundy values for King on certain classes of partitions. We characterize losing positions for Rook in Section 3.5 and explain why such characterization for Queen is likely to be difficult in Section 3.6. In Section 4 we take two different approaches to the study of the misère forms of impartial chess games. The first involves an operation on directed acyclic graphs known as truncation. The second concerns a classification scheme, which we refer to as CGH classification, based on the interaction between normal and misère forms of a given game. In Section 5 we offer some directions for further investigation.
+2 Preliminaries
+In this section, we provide background information on partitions, Young diagrams, impartial games, Sprague-Grundy theory, and complexity theory. To simplify expressions throughout the paper we denote the set of integers, nonnegative integers, and positive integers by  $\mathbb{Z},\mathbb{Z}^{\geq 0}$ , and  $\mathbb{Z}^{>0}$ , respectively. For integers  $a$  and  $b$  with  $a\leq b$ , we denote the set  $\{a,a+1,\ldots,b\}$  by  $[a,b]$  and denote  $[1,b]$  by  $[b]$ . We define  $[a,b]=\emptyset$  if  $a>b$ .
+A directed acyclic graph (DAG) is a directed graph  $G=(V,E)$  which does not contain a directed cycle as a subgraph (for standard graph-theoretic definitions see e.g. [6]).
+The length of the longest directed path in  $G$  is denoted by  $\mathrm{lp}(G)$ .
+2.1 Young diagrams and integer partitions
+Let  $n$  be a nonnegative integer. If  $n=\lambda_{1}+\cdots+\lambda_{r}$ , where  $r$  is a nonnegative integer, each  $\lambda_{j}$  is an integer,
+and  $\lambda_{1}\geq\cdots\geq\lambda_{r}>0$ , then we say that  $\lambda=\llbracket\lambda_{1},\dots,\lambda_{r}\rrbracket$  is a partition of  $n$ .
+The unique partition of 0 is  $\llbracket\rrbracket$ .
+The  $\lambda_{j}$ ’s are called the parts of  $\lambda$ .
+When some of the parts of a partition are equal, we may abbreviate  $\llbracket\lambda_{1}^{m_{1}},\dots,\lambda_{k}^{m_{k}}\rrbracket$ , where  $\lambda_{j}$  appears  $m_{j}\geq 0$  times.
+Let  $\mathbb{Y}$  denote the set of all partitions of nonnegative integers and let  $\mathbb{Y}^{+}=\mathbb{Y}\setminus\{\llbracket\rrbracket\}$ . Let  $\lambda=\llbracket\lambda_{1},\lambda_{2},\ldots,\lambda_{r}\rrbracket$  and  $\beta=\llbracket\beta_{1},\ldots,\beta_{m}\rrbracket$  be partitions.
+We define a partial order  $\leq$  on  $\mathbb{Y}$  by
+ $\lambda\leq\beta\,\iff r\leq m\text{ and }\lambda_{i}\leq\beta_{i}$ 
+for all  $i\in[r]$ 
+The relation  $\leq$  defines the Young lattice; see [7, 8].
+The Young diagram of  $\lambda$  is a left-justified array of square cells in which the  $i$ th row from the top contains  $\lambda_{i}$  cells. No distinction is made between a partition and its Young diagram.
+The conjugate partition  $\lambda^{\prime}$  of  $\lambda\in\mathbb{Y}^{+}$  is defined to be  $\lambda^{\prime}=\llbracket\lambda^{\prime}_{1},\ldots,\lambda^{\prime}_{\lambda_{1}}\rrbracket$ 
+where  $\lambda^{\prime}_{j}$  is the largest integer such that  $\lambda_{\lambda^{\prime}_{j}}\geq j$ ; see Figure 1.
+Thus, the  $j$ th column of  $\lambda$  contains  $\lambda^{\prime}_{j}$  cells.
+The Young diagram of  $\llbracket\rrbracket$  has no cells and  $\llbracket\rrbracket^{\prime}=\llbracket\rrbracket$ .
+Figure 1: The Young diagrams of  $\lambda=\llbracket 5,4^{2},2,1^{2}\rrbracket$  (left), its conjugate  $\lambda^{\prime}=\llbracket 6,4,3^{2},1\rrbracket$  (middle), and the subpartition  $\lambda[0,2]=\lambda^{\prime}[1,1]=\llbracket 3,2,2\rrbracket$  (right).
+Let  $\lambda\in\mathbb{Y}^{+}$ , and  $i,j\in\mathbb{Z}^{\geq 0}$ .
+The subpartition  $\lambda[i,j]$  of  $\lambda$  is defined as  $\lambda[i,j]=\llbracket\lambda_{i+1}-j,\lambda_{i+2}-j,\dots\rrbracket$ , where trailing nonpositive entries are removed.
+Thus  $\lambda[0,0]=\lambda$  for any  $\lambda\in\mathbb{Y}^{+}$ . If  $\lambda[i,j]\neq\llbracket\rrbracket$ , we say that such subpartition is well-defined. We define a corner of a nonempty partition  $\lambda$  to be any pair of integers  $(i,j)$  such that  $\lambda[i,j]=\llbracket 1\rrbracket$ .
+Now let  $\lambda=\llbracket\lambda_{1},\dots,\lambda_{r}\rrbracket>\llbracket 1\rrbracket$ . Define a partition  $\lambda^{-}$  to be the partition obtained from  $\lambda$  by removing all of its corners.
+More formally,
+ $\displaystyle\lambda^{-}=\begin{cases}\llbracket\lambda_{1}^{-},\dots,\lambda_{r}^{-}\rrbracket&\text{if }\lambda_{r}^{-}\neq 0,\\
+\llbracket\lambda_{1}^{-},\dots,\lambda_{r-1}^{-}\rrbracket&\text{otherwise}\end{cases}$ 
+where
+ $\lambda_{i}^{-}=\begin{cases}\lambda_{i}-1&\text{if }i=r\text{ or }\lambda_{i}>\lambda_{i+1},\\
+\lambda_{i}&\text{otherwise}\end{cases}$ 
+for any  $i\in[r]$ .
+For any  $i,j$  such that  $\lambda[i,j]>\llbracket 1\rrbracket$ , we have  $\lambda[i,j]^{-}=\lambda^{-}[i,j]$ .
+For a nonempty partition  $\lambda=\llbracket\lambda_{1},\ldots,\lambda_{r}\rrbracket$  and a positive integer  $j\leq\lambda_{1}$  we define the  $j$ th column of  $\lambda$  to be the set of pairs  $(i,j)$  for which the subpartitions
+ $\{\lambda[i-1,j-1]\mid i\in\mathbb{Z}^{>0}\}$  are well-defined. These pairs graphically match the cells in the the  $j$ th column of the Young diagram of  $\lambda$ .
+Similarly, for a positive integer  $i\leq r$  we define the  $i$ th row of  $\lambda$  to be the set
+of pairs  $(i,j)$  for which the subpartitions
+ $\{\lambda[i-1,j-1]\mid j\in\mathbb{Z}^{>0}\}$  are well-defined.
+For all non-negative integers  $i_{1},i_{2},j_{1},j_{2}$  such that  $\lambda[i_{1}+i_{2},j_{1}+j_{2}]$  is well-defined, we have the identity
+ $\displaystyle(\lambda[i_{1},j_{1}])[i_{2},j_{2}]=\lambda[i_{1}+i_{2},j_{1}+j_{2}].$ 
+(1)
+For a partition  $\lambda=\llbracket\lambda_{1},\dots,\lambda_{r}\rrbracket$  the Durfee length is defined to be
+ $d(\lambda)=\max\{\ell\mid\lambda_{\ell}\geq\ell\}.$ 
+The (Dyson’s) rank of  $\lambda$  is defined to be  $|\lambda_{1}-r|$ , see [9].
+Definition 2.1 (Partition Families).
+Given positive integers  $r,c$ , and  $k$ , the rectangle, staircase, hook, and generalized staircase partitions are defined respectively as
+  [diagram-symbol]  
+ $\displaystyle=\llbracket c^{r}\rrbracket,$ 
+  [diagram-symbol]  
+ $\displaystyle=\llbracket k,k-1,k-2,\ldots,1\rrbracket,$ 
+  [diagram-symbol]  
+ $\displaystyle=\llbracket c,1^{r-1}\rrbracket,$ 
+  [diagram-symbol]  
+ $\displaystyle=\llbracket(kc)^{r},((k-1)c)^{r},\ldots,c^{r}\rrbracket.$ 
+See Figure 2 for examples. These definitions imply   [diagram-symbol]  
+and
+  [diagram-symbol]  .
+Figure 2: Partitions corresponding to   [diagram-symbol]  ,   [diagram-symbol]  ,   [diagram-symbol]   and
+  [diagram-symbol]  .
+The parts of generalized staircases are easily computed from  $r,c$ , and  $k$ .
+Observation 2.2.
+Let   [diagram-symbol]   be any generalized staircase and let  $i\in\{1,\ldots,rk\}$ .
+Then
+ $\lambda_{i}=c\left(k-\left\lfloor\frac{i-1}{r}\right\rfloor\right).$ 
+2.2 Impartial games and Sprague-Grundy values
+In this paper, our focus will be exclusively on finite impartial combinatorial games, which we will refer to simply as games. A game consists of a set of rules and a (starting) position. If the rules are clear from context we shall not differentiate between the terms position and game. The positions in the games we study are partitions or Young diagrams, which we describe in the following subsection. A subposition of a game is a position that can be reached after a nonnegative number of
+moves. A combinatorial game is short if no position can be repeated, and if there exist finitely many subpositions.
+A terminal position of a game is a position from which no further moves are possible.
+Under normal play, the player who moves to a terminal position is the winner. Under misère play, the player who moves to a terminal position is the loser. In this paper, we assume normal play unless otherwise indicated.
+Let  $G$  be a game under normal (resp. misère) play.
+We define the set of its winning positions  $\mathcal{N}_{G}$ ,
+and the set of its losing positions  $\mathcal{P}_{G}$ , as follows:
+1. 
+Terminal positions are in  $\mathcal{P}_{G}$  (resp.  $\mathcal{N}_{G}$ ).
+2. 
+A position is in  $\mathcal{P}_{G}$  if none of its moves leads to a position in  $\mathcal{P}_{G}$ .
+3. 
+A position is in  $\mathcal{N}_{G}$  if there is a move to a position in  $\mathcal{P}_{G}$ .
+We denote  $\mathcal{P}_{G}$  by  $\mathcal{P}$  and  $\mathcal{N}_{G}$  by  $\mathcal{N}$  when the game is clear from context.
+A short two player combinatorial game is impartial if both players have the same possible moves in each position.
+Let  $p$  be a position of such a game  $G$ .
+If there is a move from  $p$  to position  $p^{\prime}$ , we write  $p\to p^{\prime}$ .
+For a finite set  $S$  of nonnegative integers the minimum excluded value of  $S$ 
+is defined as the smallest nonnegative integer that is not in  $S$  and
+is denoted by  $\Mex(S)$ .
+The Sprague-Grundy value ( $\mathbb{SG}$ -value) of a position  $A$  within the game  $G$  is defined recursively by  $\mathbb{SG}_{G}(p)=\Mex(\{\mathbb{SG}_{G}(p^{\prime})\mid p\to p^{\prime}\}).$ 
+When  $G$  is clear from context we denote  $\mathbb{SG}_{G}(p)$  by  $\mathbb{SG}(p)$ .
+If  $\mathbb{SG}(p)=t$  then  $p$  is called a  $t$ -position.
+If  $p$  is terminal then  $\mathbb{SG}(p)=\Mex(\emptyset)=0$ .
+As introduced in Conway [4], the Misère Grundy value ( $\mathcal{G}^{-}$ -value) of a position  $A$  within the game  $G$  is defined recursively the same way as the  $\mathbb{SG}$ -value of  $A$ , with distinction of terminal positions having  $\mathcal{G}^{-}$ -value  $1$ .
+A position with  $\mathbb{SG}$ -value  $t$  and  $\mathcal{G}^{-}$ -value  $\ell$  is called a  $(t,\ell)$ -position. The pairs  $(t,\ell)$  are used to classify combinatorial games as described in [4] and [5].
+ $\mathbb{SG}$ -values provide a useful mechanism for determining winning and losing positions for short impartial games under normal play.
+In particular, the  $\mathcal{P}$ -positions are precisely those that have  $\mathbb{SG}$ -value  $0$  while the  $\mathcal{N}$ -positions are those with nonzero  $\mathbb{SG}$ -values. The Sprague-Grundy theorem [10] shows that the  $\mathbb{SG}$ -value of the (disjunctive) sum of impartial games under normal play can be obtained by replacing every game-summand with a Nim-pile, with the size corresponding to the  $\mathbb{SG}$ -value of the game. For detailed coverage of combinatorial game theory we refer the reader to [10].
+3 Impartial chess
+We now describe the family of games played on Young diagrams and inspired by the moves of chess pieces.
+We begin by defining movesets that describe the allowable moves for each chess piece.
+3.1 Impartial chess games
+In [3], we studied the misère version of LCTR and showed that it is equivalent to a normal-form game played on partitions which we refer to as Downright. Downright is closely related to a family of games played on rectangles introduced by Berlekamp [11]. All of these games can be played on partitions and expressed in the language of movesets, which we now explain.
+An impartial chess game is a pair  $(M,\lambda)$ , where  $M\subseteq\mathbb{Z}^{\geq 0}\times\mathbb{Z}^{\geq 0}\setminus\{(0,0)\}$  and  $\lambda\in\mathbb{Y}^{+}$ . We refer to  $M$  as a moveset and an element of  $M$  as a move.
+On their turn, the players choose a move  $(i,j)\in M$ , such that  $\lambda[i,j]\in Y^{+}$  and move to  $\lambda[i,j]$ , passing the turn.
+The above implies that impartial chess games are finite and short11
+              1
+            For a definition of finite and short impartial game we refer the reader to [4]..
+In addition, we define  $(i,j)^{+}$  as the set
+ $\{(ki,kj)\}_{k\in\mathbb{Z}^{>0}}$ .
+The impartial chess games presented below, which we study in sections Sections 3.4, 3.3, 3.5 and 3.6, differ in the choice of moveset.
+Definition 3.1.
+We study the following impartial chess games.
+• 
+Downright is played on the moveset  $\mathcal{D}=\{(0,1),(1,0)\}$ .
+• 
+Pawn is played on the moveset  $\sympawn=\{(0,1),(1,1)\}$ .
+• 
+Knight is played on the moveset  $\symknight=\{(1,2),(2,1)\}$ .
+• 
+Bishop is played on the moveset  $\symbishop=(1,1)^{+}$ .
+• 
+King is played on the moveset  $\symking=\{(0,1),(1,0),(1,1)\}$ .
+• 
+Rook is played on the moveset  $\symrook=(1,0)^{+}\cup(0,1)^{+}$ .
+• 
+Queen is played on the moveset  $\symqueen=(1,1)^{+}\cup(1,0)^{+}\cup(1,1)^{+}$ .
+Let  $(M,\lambda)$  be an impartial chess game and let  $(i,j)\in M$  be such that  $\lambda[i,j]$  is well-defined. To simplify notation we write  $(M,\lambda)[i,j]=(M,\lambda[i,j])$  and  $\mathbb{SG}_{(M,\lambda)}(\lambda[i,j])=\mathbb{SG}_{M}(\lambda[i,j])$ .
+Furthermore, define  $M^{-1}=\{(a,b)\mid(b,a)\in M\}$ , and let  $(M,P)=\{(M,\lambda)\mid\lambda\in P\}$ , for any  $P\in\mathbb{Y}^{+}$ .
+Impartial chess games conveniently allow for easy visualization of  $\mathcal{P}/\mathcal{N}$ -values and Sprague-Grundy values of subpartitions of a given partition. Specifically, we can write the  $\mathcal{P}/\mathcal{N}$ -value, or the Sprague-Grundy value, of  $\lambda[i,j]$  in the
+cell corresponding to  $(i+1)$ th row and  $(j+1)$ th column of  $\lambda$ , as in Figure 3.
+We will say, e.g., the  $i$ th row of  $\lambda$  contains  $\mathcal{P}$  when  $\lambda[i-1,j]\in\mathcal{P}$  for some  $j$ .
+ $2$  $1$  $0$  $2$  $1$  $0$  $3$  $2$  $1$  $0$  $2$  $1$  $0$  $1$  $0$  $0$  $\mathcal{N}$  $\mathcal{N}$  $\mathcal{P}$  $\mathcal{N}$  $\mathcal{N}$  $\mathcal{P}$  $\mathcal{N}$  $\mathcal{N}$  $\mathcal{N}$  $\mathcal{P}$  $\mathcal{N}$  $\mathcal{N}$  $\mathcal{P}$  $\mathcal{N}$  $\mathcal{P}$  $\mathcal{P}$ 
+Figure 3: Visual representation of Sprague-Grundy values (left), and  $\mathcal{P}$ / $\mathcal{N}$  value (right) for  $(\symking,\lambda)$  with  $\lambda\leq\llbracket 5,5,3,2,1\rrbracket$ .
+3.2 Directed acyclic graphs, partition-equivalence, and game-equivalence
+Given an impartial chess game  $(M,\lambda)$  we define a directed acyclic graph  $\textnormal{DAG}_{M}(\lambda)$  recursively as follows.
+ $(0,0)$  is a node of  $\textnormal{DAG}_{M}(\lambda)$ , and if  $(i,j)$  is a node of  $\textnormal{DAG}_{M}(\lambda)$  and  $(y,x)\in M$  and  $\lambda[i+y,j+x]$  is well defined, then  $(i+y,j+x)$  is a node of  $\textnormal{DAG}_{M}(\lambda)$  and  $(i,j)\to(i+y,j+x)$  is an edge of  $\textnormal{DAG}_{M}(\lambda)$  with label  $(y,x)$ .
+ $(0,0)$  $(2,1)$ (2,1) $(0,0)$  $(1,2)$ (1,2)
+(a)  $\llbracket 2,2,2\rrbracket$  and  $\llbracket 3,3\rrbracket$  are game-equivalent but not partition-equivalent in  $\symknight$ .
+ $(0,0)$  $(1,2)$  $(2,1)$ (1,2)(2,1) $(0,0)$  $(1,2)$  $(2,1)$ (1,2)(2,1)
+(b)  $\llbracket 3,3,2\rrbracket$  and  $\llbracket 4,3,3\rrbracket$  are game-equivalent and partition-equivalent in  $\symknight$ .
+Figure 4: Partition equivalence depends on equality, not isomorphism, of DAGs.
+For a fixed moveset  $M$ , we define an equivalence relation on  $\mathbb{Y}^{+}$  in which two partitions  $\lambda$  and  $\mu$  are equivalent when  $\textnormal{DAG}_{M}(\lambda)=\textnormal{DAG}_{M}(\mu)$ . In this case, we say that  $\lambda$  and  $\mu$  are partition-equivalent in  $M$ . For example,  $\llbracket 3,3,2\rrbracket$  and  $\llbracket 4,3,3\rrbracket$  are partition-equivalent in  $\symknight$  because  $\textnormal{DAG}_{\knight}(\llbracket 3,3,2\rrbracket)=\textnormal{DAG}_{\knight}(\llbracket 4,3,3\rrbracket)$ ; see Figure 4(a). On the other hand,  $\llbracket 3,3\rrbracket$  and  $\llbracket 2,2,2\rrbracket$  are not partition-equivalent in  $\symknight$ , even though the underlying DAGs are isomorphic, since  $\textnormal{DAG}_{\knight}(\llbracket 3,3\rrbracket)\neq\textnormal{DAG}_{\knight}(\llbracket 2,2,2\rrbracket)$  because their vertex sets and edge labels are different; see Figure 4(b).
+Observation 3.2.
+Let  $M$  be a moveset and  $\lambda,\beta\in\mathbb{Y}$ .
+Then  $\lambda\leq\beta$  implies  $\textnormal{DAG}_{M}(\lambda)$  is an induced subgraph of  $\textnormal{DAG}_{M}(\beta)$ .
+The set of partitions that are partition-equivalent to  $\lambda$  in  $M$  has a minimum element (in the sense of Young’s lattice). For example,  $\llbracket 3,3,2\rrbracket$  is the minimum element for its equivalence class in  $\symknight$ , which is
+ $\{\lambda\in\mathbb{Y}^{+}:\lambda[1,2]\neq\llbracket\rrbracket\mbox{ and }\lambda[2,1]\neq\llbracket\rrbracket\mbox{ and }\lambda[2,4]=\lambda[3,3]=\lambda[4,2]=\llbracket\rrbracket\}.$ 
+For a moveset  $M$  and  $\lambda\in\mathbb{Y}^{+}$  it may happen that there is  $m=(y,x)\in M$  such that  $\lambda[y,x]$  is not well-defined and therefore  $m$  can never be used as a move in  $(M,\lambda)$ . It follows that  $m$  does not appear as an edge label in  $\textnormal{DAG}_{M}(\lambda)$ . Let  $M|_{\lambda}$  be the set of edge labels in  $\textnormal{DAG}_{M}(\lambda)$ .
+We now define an equivalence relation on the set of impartial chess games. We say that  $(M_{1},\lambda)$  and  $(M_{2},\mu)$  are game-equivalent if there exists a bijection  $f:M_{1}|_{\lambda}\to M_{2}|_{\mu}$  such that the following recursive procedure transforms  $\textnormal{DAG}_{M_{1}}(\lambda)$  into  $\textnormal{DAG}_{M_{2}}(\mu)$ .
+1. 
+Mark  $(0,0)$ .
+2. 
+For any edge from a marked vertex  $(i,j)$  to an unmarked vertex  $(i^{\prime},j^{\prime})$  with edge label  $m$ , replace  $(i^{\prime},j^{\prime})$  with  $(i,j)+f(m)$  and mark it.
+3. 
+Repeat Item 2 until all nodes are marked.
+4. 
+Replace each edge label  $m$  with  $f(m)$ .
+Observation 3.3.
+If  $(M_{1},\lambda)$  is game-equivalent to  $(M_{2},\mu)$ , then move  $m$  is winning in  $(M_{1},\lambda)$  if and only if move  $f(m)$  is winning in  $(M_{2},\mu)$ . Also,
+ $\mathbb{SG}_{M_{1}}(\lambda)=\mathbb{SG}_{M_{2}}(\mu).$ 
+Observation 3.4 (Conjugate invariance).
+An impartial chess game  $(\lambda,M)$  is game-equivalent to  $(\lambda^{\prime},M^{-1})$ .
+The following observation follows directly from Observation 3.2.
+Observation 3.5.
+For any moveset  $M$  and  $\lambda,\beta\in\mathbb{Y}^{+}$  such that  $\lambda\leq\beta$ , we have
+ $\mathrm{lp}(\textnormal{DAG}_{M}(\lambda))\leq\mathrm{lp}(\textnormal{DAG}_{M}(\beta))$ .
+Proposition 3.6.
+For any  $(M,\lambda)$  we have  $\mathbb{SG}_{M}(\lambda)\leq\mathrm{lp}(\textnormal{DAG}_{M}(\lambda))$ .
+Proof.
+We proceed by induction on  $k=\mathrm{lp}(\textnormal{DAG}_{M}(\lambda))$ .
+If  $k=0$  then the claim follows since  $\mathbb{SG}_{M}(\lambda)=0$ , so assume  $k>0$ . Define  $S=\left\{\bar{\lambda}\mid(M,\lambda)\to\left(M,\bar{\lambda}\right)\right\}$ , and notice that for any  $\bar{\lambda}\in S$  we have  $\mathrm{lp}\left(\textnormal{DAG}_{M}(\bar{\lambda})\right)<k$ .
+By induction,
+ $\mathbb{SG}_{M}(\lambda)=\Mex\left\{\mathbb{SG}_{M}\left(\bar{\lambda}\right):\bar{\lambda}\in S\right\}\leq\Mex\{0,\ldots,k-1\}=k.\qed$ 
+3.3 Pawn, Knight, and Downright
+In this section, we show that Pawn (with moveset  $\sympawn=\{(0,1),(1,1)\}$ , see Definition 3.1) and Knight (with moveset  $\symknight=\{(1,2),(2,1)\}$ ) can both be reduced to Downright (with moveset  $\mathcal{D}=\{(0,1),(1,0)\}$ ), which was studied in [3].
+For all three games, a particular mirroring strategy may be used to obtain the following observation.
+Proposition 3.7.
+For any  $\lambda\in\mathbb{Y}$ , the following are true, provided the respective subpartitions are well-defined:
+ $\displaystyle\mathbb{SG}_{\mathcal{D}}(\lambda)$ 
+ $\displaystyle=\mathbb{SG}_{\mathcal{D}}(\lambda[1,1]),$ 
+ $\displaystyle\mathbb{SG}_{\sympawn}(\lambda)$ 
+ $\displaystyle=\mathbb{SG}_{\sympawn}(\lambda[2,1]),$ 
+ $\displaystyle\mathbb{SG}_{\symknight}(\lambda)$ 
+ $\displaystyle=\mathbb{SG}_{\symknight}(\lambda[3,3])$ 
+Proof.
+The nim-sum of two identical games is always in  $\mathcal{P}$ .
+Now notice that  $(\mathcal{D},\lambda)\oplus(\mathcal{D},\lambda[1,1])$  and  $(\sympawn,\lambda)\oplus(\sympawn,\lambda[2,1])$  and  $(\symknight,\lambda)\oplus(\symknight,\lambda[3,3])$  are in  $\mathcal{P}$ , from which the result follows.
+∎
+In the remainder of Section 3.3 we provide a fuller treatment of  $\mathcal{D},\sympawn$  and  $\symknight$ .
+Pawn is solved by Downright
+For  $\lambda=\llbracket\lambda_{1},\dots,\lambda_{r}\rrbracket\in\mathbb{Y}^{+}$  define transformation  $\varphi_{\sympawn}(\lambda)=\llbracket\lambda_{1},\lambda_{2}-1,\dots,\lambda_{r}-r+1\rrbracket,$ 
+omitting nonpositive entries.
+Notice that  $(\sympawn,\lambda)$  is game-equivalent to  $(\mathcal{D},\varphi_{\sympawn}(\lambda))$  for every  $\lambda$ . In particular,
+ $\mathbb{SG}_{\sympawn}(\lambda)=\mathbb{SG}_{\mathcal{D}}(\varphi_{\sympawn}(\lambda))$ . See Figure 5.
+Not every game of Downright is game-equivalent to some game of Pawn.
+For example, there is no partition  $\mu$  such that  $(\mathcal{D},\llbracket 2,2\rrbracket)$  is game-equivalent to  $(\sympawn,\mu)$ .
+It is easy to verify that
+ $(\mathcal{D},\lambda)$  is game-equivalent to some game of  $\sympawn$  if and only if  $\llbracket 2\rrbracket$  and  $\llbracket 1,1\rrbracket$  are not subpartitions of  $\lambda$ .
+Knight is solved by Downright
+For  $\lambda=\llbracket\lambda_{1},\dots,\lambda_{r}\rrbracket\in\mathbb{Y}$  define transformation  $\varphi_{\symknight}(\lambda)=\bar{\lambda}$  such that  $\bar{\lambda}[i,j]$  is well-defined if and only if  $\lambda[2i+j,2j+i]$  is. In other words,  $\varphi_{\symknight}(\lambda)=(\bar{\lambda}_{1},\bar{\lambda}_{2},\ldots)\text{ where }\bar{\lambda}_{j}=\max\left(\{t\in[r]\,:\,2t+j-2\leq\lambda_{t+2j-2}\}\cup\{0\}\right).$  Verify that  $(\symknight,\lambda)$  is game-equivalent to  $(\mathcal{D},\varphi_{\symknight}(\lambda))$  for every  $\lambda\in\mathbb{Y}$  and that
+ $\mathbb{SG}_{\symknight}(\lambda)=\mathbb{SG}_{\mathcal{D}}(\varphi_{\symknight}(\lambda)).$  See Figure 5.
+Not every game of Downright is game-equivalent to a game of Knight.
+For example, there is no partition  $\mu$  such that  $(\mathcal{D},\llbracket 3\rrbracket)$  is game-equivalent to  $(\symknight,\mu)$ .
+It is easy to verify that
+ $(\mathcal{D},\lambda)$  is game-equivalent to some game of  $\symknight$  if and only if  $\llbracket 3\rrbracket$  is not a subpartition of  $\lambda$  and  $\llbracket 1,1,1\rrbracket$  is not a subpartition of  $\lambda$ .
+Figure 5: Knight and Pawn on  $\lambda=\llbracket 14^{2},13,12^{4},9,5,3\rrbracket$ , shaded as ​​
+and ​​
+​​, are game-equivalent to Downright on
+ $\varphi_{\symknight}(\lambda)=\llbracket 6,5,4,2,1\rrbracket$  and  $\varphi_{\sympawn}(\lambda)=\llbracket 14,13,11,9,8,7,6,2\rrbracket$ , resp.
+3.4 King
+In the video [12], Berlekamp establishes the following result. We give a written proof here for completeness.
+Theorem 3.8 (Berlekamp).
+Let  $r,c$  be positive integers. Then
+  [diagram-symbol] c$ and $r$ are odd}\\
+2&\text{if $c$ and $r$ are even}\\
+1&\text{if $c+r$ is odd and $\min(c,r)$ is odd}\\
+3&\text{if $c+r$ is odd and $\min(c,r)$ is even}\end{cases}$ 
+Proof of Theorem 3.8.
+We proceed by induction on  $r+c$ .
+For the base case, suppose  $r=1$  or  $c=1$ .
+The case  $r=1=c$  is trivial.
+If  $r=1$  and  $c>1$ , then there is only one permissible move, i.e.  $(0,1)$ . Thus the  $\mathbb{SG}_{\symking}$  values must alternate between  $0$ , when  $c$  is odd, and  $1$ , when  $c$  is even, as stated.
+The case when  $r>1$  and  $c=1$  is similar.
+Consider a position   [diagram-symbol]   where  $r>1$  and  $c>1$ . Such a position has three available moves   [diagram-symbol]   and   [diagram-symbol]   and   [diagram-symbol]  .
+We consider the cases as in the statement of the claim.
+If  $c$  and  $r$  are odd:
+By induction  $\mathbb{SG}_{\symking}(\lambda[1,1])=2$  so
+ $\left\{\mathbb{SG}_{\symking}(\lambda[1,0]),\mathbb{SG}_{\symking}(\lambda[0,1])\right\}\subseteq\{1,3\}$ .
+Thus
+ $\mathbb{SG}_{\symking}(\lambda)=\Mex\left(\mathbb{SG}_{\symking}(\lambda[0,1]),\mathbb{SG}_{\symking}(\lambda[1,1]),\mathbb{SG}_{\symking}(\lambda[1,0])\right)=0.$ 
+If  $c$  and  $r$  are even:
+By induction  $\mathbb{SG}_{\symking}(\lambda[1,1])=0$ . Then  $\min(c-1,r)$  is odd or
+ $\min(c,r-1)$  is odd so  $1\in\left\{\mathbb{SG}_{\symking}(\lambda[1,0]),\mathbb{SG}_{\symking}(\lambda[0,1])\right\}\subseteq\{1,3\}.$ 
+Thus
+ $\mathbb{SG}_{\symking}(\lambda)=\Mex\left(\mathbb{SG}_{\symking}(\lambda[0,1]),\mathbb{SG}_{\symking}(\lambda[1,1]),\mathbb{SG}_{\symking}(\lambda[1,0])\right)=2.$ 
+If  $c+r$  is odd and  $\min(c,r)$  is odd:
+We have  $\mathbb{SG}_{\symking}(\lambda[1,1])=3$  and
+ $\{\mathbb{SG}_{\symking}(\lambda[1,0]),\mathbb{SG}_{\symking}(\lambda[0,1])\}=\{0,2\}$ .
+Thus
+ $\mathbb{SG}_{\symking}(\lambda)=\Mex(\mathbb{SG}_{\symking}(\lambda[0,1]),\mathbb{SG}_{\symking}(\lambda[1,1]),\mathbb{SG}_{\symking}(\lambda[1,0]))=1.$ 
+If  $c+r$  is odd and  $\min(c,r)$  is even:
+We have  $\mathbb{SG}_{\symking}(\lambda[1,1])=1$  and
+ $\{\mathbb{SG}_{\symking}(\lambda[1,0]),\mathbb{SG}_{\symking}(\lambda[0,1])\}=\{0,2\}$ .
+So
+ $\mathbb{SG}_{\symking}(\lambda)=\Mex(\mathbb{SG}_{\symking}(\lambda[0,1]),\mathbb{SG}_{\symking}(\lambda[1,1]),\mathbb{SG}_{\symking}(\lambda[1,0]))=3.\qed$ 
+We continue with sufficient criteria for certain partitions to be winning.
+Proposition 3.9.
+Let  $\lambda$  be a nonempty partition with all parts
+1. 
+appearing an even number of times. Then  $\lambda[i,j]\in\mathcal{N}_{\symking}$  for all even  $i$ .
+2. 
+being even. Then  $\lambda[i,j]\in\mathcal{N}_{\symking}$  for even  $j$ .
+Proof.
+We prove only the first case, as the second follows by the conjugate invariance (see Observation 3.4) of  $\symking$ . In this case we write  $\lambda=\llbracket\lambda_{1}^{m_{1}},\ldots,\lambda_{k}^{m_{k}}\rrbracket$  where  $m_{t}$  is even for all  $t\in[k]$ .
+We proceed by induction on the number of parts  $m_{1}+\cdots+m_{k}$ . The base case  $\lambda=\llbracket\lambda_{1}^{2}\rrbracket$  is a special case of Theorem 3.8.
+Assume the statement holds for all such partitions with fewer parts. For  $(\symking,\lambda[i,j])$  where  $i$  is even and at least two, the statement holds from the induction hypothesis.
+Thus no  $P_{\symking}$ -position is reachable from  $(\symking,\lambda[1,j])$  via  $(1,1)$ - or  $(1,0)$ -move.
+It follows that   [diagram-symbol]   for all  $i\in[0,1]$  and  $j\in[0,\lambda_{1}-1]$ . Thus, the result follows from Theorem 3.8.
+∎
+Corollary 3.10.
+Let  $\lambda=\llbracket\lambda_{1},\ldots,\lambda_{r}\rrbracket$  where all parts appear an even number of times. Then  $\lambda[i,j]\in\mathcal{P}_{\symking}$  if and only if both  $i$  and  $\lambda_{i+1}-j$  are odd.
+Proof.
+By Proposition 3.9 we know  $\lambda[2k,j]\in\mathcal{N}_{\symking}$ . For  $i$  odd, there is neither a  $(1,0)$ -move nor a  $(1,1)$ -move from  $\lambda[i,j]$  to a  $P_{\symking}$ -position. Therefore  $\lambda[i,j]$  alternates between  $\mathcal{P}_{\symking}$  and  $\mathcal{N}_{\symking}$  positions, starting with  $j=\lambda_{i+1}-1$  as  $\mathcal{P}_{\symking}$ .
+∎
+We use Proposition 3.9 to derive  $\mathcal{P}_{\symking}/\mathcal{N}_{\symking}$ -positions of generalized staircases.
+Corollary 3.11.
+If  $rc$  is even then   [diagram-symbol]   for any  $k$ .
+Combining Observation 2.2 and Corollary 3.10 yields the following.
+Corollary 3.12.
+Let  $r$  be even and  $c,k$  be arbitrary. Then
+  [diagram-symbol]   if and only if  $i\left(c\left(k-\left\lfloor\frac{i}{r}\right\rfloor\right)-j\right)$  is odd.
+We now turn our attention to the Sprague-Grundy values of King.
+Lemma 3.13.
+Let  $k\in\mathbb{Z}^{\geq 0}$ . Then   [diagram-symbol]  
+Proof.
+We proceed by induction on  $k$ , with base cases for  $k=1$  and  $k=2$ .
+  [diagram-symbol]   is terminal so   [diagram-symbol]  . The positions reachable from   [diagram-symbol]   both have  $\mathbb{SG}$ -value 0, so   [diagram-symbol]  . If  $k>2$ , then the reachable positions from   [diagram-symbol]   are   [diagram-symbol]   and   [diagram-symbol]  . By induction hypothesis, those positions have  $\mathbb{SG}$ -values  $(k-2)\bmod 3$  and  $(k-3)\bmod 3$ . Thus   [diagram-symbol]   as desired.
+∎
+Lemma 3.14.
+Let  $r$  be even. Then   [diagram-symbol] k=1$,}\\
+1&\text{otherwise.}\end{cases}$ 
+Proof.
+Let   [diagram-symbol]  .
+We use induction on  $k$  to prove something stronger.
+In addition the the statement of the lemma we also prove that the sequence  $\mathbb{SG}_{\symking}(\lambda[0,j])$ , for  $0\leq j\leq r-1$ , alternates between  $1$  and some value in  $\{2,3\}$ .
+By conjugate invariance, the same holds for  $\mathbb{SG}_{\symking}(\lambda[j,0])$ .
+If  $k=1$ , then by Theorem 3.8, we know that   [diagram-symbol]   and that  $\mathbb{SG}$ -values along the top row and left column alternate between 2 and 1.
+Now consider the case  $k>1$ . We proceed by iteration.
+ $(S_{1})$  
+By induction hypothesis we have that  $\lambda[r,j]$  alternates between  $1$  and  $\{2,3\}$  for  $0\leq j\leq r-1$  and so does  $\lambda[i,r]$  for  $0\leq i\leq r-1$ .
+ $(S_{2})$  
+For odd  $i$  with  $0\leq i\leq r-1$ , we have that  $\lambda[i,r-1]$  and  $\lambda[r-1,i]$  are 0-positions. Corollary 3.12 implies that  $\lambda[i,j]\in\mathcal{P}_{\symking}$  precisely when  $i$  and  $j$  are both odd, so  $\mathbb{SG}_{\symking}(\lambda[i,j])=0$  precisely when  $i$  and  $j$  are odd.
+ $(S_{3})$  
+For even  $i$  with  $0\leq i\leq r-1$ , we have that  $\lambda[i,r-1]$  and  $\lambda[r-1,i]$  are  $\{2,3\}$ -positions, because each of them can move to
+a  $1$ -position, a  $\{2,3\}$ -position, and a  $0$ -position, due to 
+                          (
+                            S
+                            1
+                          )
+                   and 
+                          (
+                            S
+                            2
+                          )
+                  , respectively.
+Repeating these three steps  $r/2$  times on consecutive rows and columns
+we get
+ $\mathbb{SG}_{\symking}(\lambda[i,j])=\begin{cases}0&\text{ if $i$ and $j$ are both odd,}\\
+1&\text{ if $i$ and $j$ are both even,}\\
+2\mbox{ or }3&\text{ otherwise.}\end{cases}$ 
+(2)
+In particular, (2) implies  $\mathbb{SG}_{\symking}(\lambda)=1$  while  $\mathbb{SG}_{\symking}(\lambda[0,j])$  alternates between  $1$  and some value in  $\{2,3\}$  for  $0\leq j\leq r-1$ .
+∎
+3.5 Rook
+In this section, we characterize  $\mathcal{P}$ -positions of Rook and give  $\mathbb{SG}_{\symrook}$ -values for certain generalized staircases. Recall that
+ $\symrook=(1,0)^{+}\cup(0,1)^{+}$ .
+Observation 3.15.
+Rook on a rectangular partition is game-equivalent to two-pile Nim.
+In particular, if  $r$  and  $c$  are positive integers, then   [diagram-symbol]  .
+Thus, the results we obtain for non-rectangular boards can be viewed as generalizations of this game. The main result of this section is the characterization of the structure of all  $\mathcal{P}$ -positions with respect to Rook.
+Theorem 3.16.
+Let  $\lambda=\llbracket\lambda_{1},\ldots,\lambda_{r}\rrbracket$  be partition distinct from  $\llbracket 1\rrbracket$ .
+Then  $(\symrook,\lambda)$  is a losing position if and only if  $\lambda$  has rank 0 and   [diagram-symbol]  .
+We proceed with an important definition specific to this section.
+A partition  $\lambda\neq\llbracket\rrbracket$  is said to be ample if for every  $i\in[0,r-1]$  there exists  $j$  such that  $\lambda[i,j]\in\mathcal{P}_{\symrook}$ , and for every  $j\in[0,\lambda_{1}-1]$  there exists  $i$  such that  $\lambda[i,j]\in\mathcal{P}_{\symrook}$ .
+Note that if  $\lambda[i,j]\in\mathcal{P}_{\symrook}$ , then  $\lambda[i,k]$  and  $\lambda[m,j]$  are in  $\mathcal{N}_{\symrook}$  for  $k\neq j$  and  $m\neq i$ , provided they are well-defined.
+In other words, each row and column of  $\lambda$  contains at most one  $\mathcal{P}_{\symrook}$ -position. Understanding the structure of ample partitions is essential to our theorem, due to the following lemma.
+Lemma 3.17.
+Let  $\lambda=\llbracket\lambda_{1},\ldots,\lambda_{r}\rrbracket$  be a partition distinct from  $\llbracket 1\rrbracket$ . Then  $\lambda\in\mathcal{P}_{\symrook}$  if and only if  $\lambda$  has rank  $0$ ,
+ $\lambda_{1}=\lambda_{2}$ ,
+ $\lambda_{r}\geq 2$  and
+ $\lambda[1,1]$  is ample.
+Proof.
+Let  $\lambda\in\mathcal{P}_{\symrook}$ .
+By  $\mathcal{P}/\mathcal{N}$ -recursion it follows that
+ $\displaystyle\lambda[0,1],\ ...,\ \lambda[0,\lambda_{1}-1],\ \lambda[1,0],\ ...,\ \lambda[r-1,0]$ 
+(3)
+are in  $\mathcal{N}_{\symrook}$ . By  $\mathcal{P}/\mathcal{N}$ -recursion  $\lambda[0,j]$  has a move to a  $\mathcal{P}_{\symrook}$ -position for each  $j=1,...,\lambda_{1}-1$ . Since  $\lambda[0,j+1],\ ...,\ \lambda[0,\lambda_{1}-1]$  are  $\mathcal{N}_{\symrook}$ -positions, there is a  $\mathcal{P}_{\symrook}$ -position among  $\lambda[1,j],\ ...,\ \lambda[\lambda_{j}^{\prime}-1,j]$ , where  $\lambda^{\prime}=\llbracket\lambda^{\prime}_{1},\ldots,\lambda^{\prime}_{r^{\prime}}\rrbracket$  is the conjugate of  $\lambda$ . In particular,  $\lambda[1,j]$  is well-defined, so there is a  $\mathcal{P}_{\symrook}$ -position in column  $j$ .
+Similarly, there is a move from  $\lambda[i,0]$  to a  $\mathcal{P}_{\symrook}$ -position for each  $i=1,...,r-1$  so there is a  $\mathcal{P}_{\symrook}$ -position in row  $i$ , implying  $\lambda[1,1]$  is ample.  $\lambda[1,j]$  and  $\lambda[i,1]$  are well-defined for  $j=1,...,\lambda_{1}-1$  and  $i=1,...,r-1$ , so  $\lambda_{1}=\lambda_{2}$  and  $\lambda_{r}\geq 2$ .
+For the converse, assume  $\lambda$  has rank 0,
+ $\lambda_{1}=\lambda_{2}$ ,
+ $\lambda_{r}\geq 2$  and  $\lambda[1,1]$  is ample. Consider the subpositions (3) reachable from  $\lambda$  in one move.
+Since  $\lambda[1,1]$  is ample, all the subpositions from (3) can reach a  $\mathcal{P}_{\symrook}$ -position in a single move, so are in  $\mathcal{N}_{\symrook}$ .
+Thus any move from  $\lambda$  is to an  $\mathcal{N}_{\symrook}$ -position, so  $\lambda$  is a  $\mathcal{P}_{\symrook}$ -position.
+∎
+Lemma 3.18.
+A partition  $\lambda=\llbracket\lambda_{1},\ldots,\lambda_{r}\rrbracket$  is ample if and only if
+ $\lambda$  has rank  $0$  and   [diagram-symbol]  .
+Proof.
+Let  $\lambda^{\prime}=\llbracket\lambda^{\prime}_{1},\ldots,\lambda^{\prime}_{r^{\prime}}\rrbracket$  be the conjugate of  $\lambda$ .
+ $\Leftarrow$  
+Assume that  $\lambda$  has rank  $0$  and   [diagram-symbol]  . We show that for each  $i=1,...,r$  we have exactly one  $\mathcal{P}_{\symrook}$ -position among
+ $\displaystyle\lambda[i-1,0],\ \lambda[i-1,1],\ \ldots,\ \lambda[i-1,\lambda_{i}-1].$ 
+(4)
+The proof is by backwards induction on the rows.
+The statement is true for the last row as moving right as far as possible gives position  $\llbracket 1\rrbracket\in\mathcal{P}_{\symrook}$ .
+We assume the statement holds for the rows  $i+1,\ldots,r$  and show the statement is true for row  $i$ . Among rows  $i+1,\ldots,r$  the number of  $\mathcal{P}_{\symrook}$ -positions is exactly  $r-i$  by induction hypothesis. Since   [diagram-symbol]   the sequence (4) is of length  $\lambda_{i}\geq r-i+1$ , implying at least one position in the sequence will not be able to move to a  $\mathcal{P}_{\symrook}$ -position, by pigeon-hole principle. Such a position is in  $\mathcal{P}_{\symrook}$ . Since  $\lambda$  has rank  $0$  and   [diagram-symbol]   if and only if  $\lambda^{\prime}$  has rank  $0$  and   [diagram-symbol]  , it holds that  $\lambda^{\prime}$  has exactly one  $\mathcal{P}_{\symrook}$ -position in every row, thus  $\lambda$  has a  $\mathcal{P}_{\symrook}$ -position in every column. Thus  $\lambda$  is ample.
+ $\Rightarrow$  
+Assume that  $\lambda$  is ample, and let  $n_{0}$  be the number of subpositions of  $(\symrook,\lambda)$  which are in  $\mathcal{P}_{\symrook}$ . As  $\lambda$  is ample, this implies that  $n_{0}=r$ , as well as  $n_{0}=\lambda_{1}$ , which in turn implies that  $\lambda$  has rank  $0$ . It remains to show that   [diagram-symbol]  .
+Suppose not, and let  $i$  be the largest integer such that  $\lambda_{i}\leq r-i$ .
+Because  $\lambda$  is ample, for each  $k=i+1,\ldots,r$  there is an  $\ell$  such that  $\lambda[k,\ell]\in\mathcal{P}_{\symrook}$ . Since the sequence in (4) has length  $\lambda_{i}\leq r-i$  and there are no  $\ell,k_{1},k_{2}$  with  $k_{1}\neq k_{2}$  such that  $\lambda[k_{1},\ell]\in\mathcal{P}_{\symrook}$  and  $\lambda[k_{2},\ell]\in\mathcal{P}_{\symrook}$ , it follows that each position in (4) can move to one of those  $\mathcal{P}_{\symrook}$ -positions, implying that all of them are  $\mathcal{N}_{\symrook}$ .
+Thus row  $i$  has no  $\mathcal{P}_{\symrook}$ -positions, contradicting the assumption that  $\lambda$  does not contain a   [diagram-symbol]  . ∎
+We conclude this subsection with a result concerning the Sprague-Grundy values of Rook on subpositions of   [diagram-symbol]  .
+Proposition 3.19.
+For any positive integers  $\ell,k$ , and any  $i,j$  such that  $0\leq\left\lfloor\frac{i}{2^{\ell}}\right\rfloor+\left\lfloor\frac{j}{2^{\ell}}\right\rfloor\leq k-1$ ,
+let  $f(i,j)=k-1-\left\lfloor\frac{i}{2^{\ell}}\right\rfloor-\left\lfloor\frac{j}{2^{\ell}}\right\rfloor$ .
+We have
+  [diagram-symbol]  
+(5)
+Furthermore, let   [diagram-symbol]   for any integers  $\tau\in[0,k-1]$  and  $i\in[0,(k-\tau)2^{\ell}-1]$ .
+We have
+ $\displaystyle S_{\tau}=\left[\tau 2^{\ell},(\tau+1)2^{\ell}-1\right]\qquad\text{and}\qquad\bigcup_{i=0}^{\tau}S_{i}=\left[0,(\tau+1)2^{\ell}-1\right].$ 
+Proof.
+Observe that   [diagram-symbol]  
+is well-defined if and only if  $0\leq\left\lfloor\frac{i}{2^{\ell}}\right\rfloor+\left\lfloor\frac{j}{2^{\ell}}\right\rfloor\leq k-1$ .We proceed by induction on  $\tau$ .
+If  $\tau=0$ , i.e. for  $i,j$  with  $f(i,j)=0$ , we have
+  [diagram-symbol]   so
+  [diagram-symbol]  
+ $\displaystyle=\left((2^{l}-(i\bmod 2^{\ell})-1)\oplus(2^{l}-(j\bmod 2^{\ell})-1\right)$ 
+ $\displaystyle=\left((-i-1)\bmod 2^{\ell}\right)\oplus\left((-j-1)\bmod 2^{\ell}\right)$ 
+ $\displaystyle=\left((-i-1)\oplus(-j-1)\right)\bmod 2^{\ell}\leq 2^{\ell}-1,$ 
+where the first equality is due to Observation 3.15. Thus
+we have that
+  [diagram-symbol]  
+Assume now  $\tau>0$ .
+To show the first part of the claim, i.e. (5), fix arbitrary  $i,j$  such that  $f(i,j)=\tau$ .
+By induction hypothesis all  $\mathbb{SG}$ -values of positions  $(i_{1},j_{1})$  with  $f(i_{1},j_{1})\neq\tau$  exactly correspond to values from  $\bigcup_{i=0}^{\tau-1}S_{i}$ .
+This implies that the  $\mathbb{SG}$ -value of   [diagram-symbol]   is the same as
+  [diagram-symbol]   incremented by  $\tau 2^{\ell}$ , where  $i^{\prime},j^{\prime}$  are the remainders of  $i,j$ , divided by  $2^{\ell}$ , respectively.
+Observe that this is exactly what we want to show in Equation 5.
+To verify the remainder of the claim it is enough to recall that the  $\mathbb{SG}$ -values of a square   [diagram-symbol]   form a latin square, i.e. use all values from  $[0,r-1]$  in every row as well as in every column.
+∎
+Corollary 3.20.
+Let  $k,\ell,i,j$  be such that   [diagram-symbol]   is well-defined. Then   [diagram-symbol]  , and more generally,
+  [diagram-symbol]  
+3.6 Queen
+Queen is played with moveset  $\symqueen=(1,0)^{+}\cup(0,1)^{+}\cup(1,1)^{+}.$ 
+When played on rectangular partitions, Queen is closely related to Wythoff.
+Recall that Wythoff [13], denoted by  $W(a,b)$ , is played with two piles of tokens of size  $a$  and  $b$ ,
+where a move consists of removing an arbitrary positive number of tokens from a pile, or removing the same number of tokens from both piles.
+For  $c,r\in\mathbb{Z}^{>0}$ , the game  $(\symqueen,c^{r})$  is the same as  $W(c-1,r-1)$ ; see Nivasch [14].
+Let  $\lambda=\llbracket\lambda_{1},\ldots,\lambda_{r}\rrbracket$  be a partition and let  $k$  be a positive integer. The next result concerns a “stair” of  $\lambda$ -steps. We denote such a partition by  $S_{\lambda}^{k}$ ; for example,  $S_{\llbracket 3,1\rrbracket}^{3}$  is shown in Figure 6. More formally, let  $S_{\lambda}^{k}$  be the partition
+ $\begin{array}[]{c}\llbracket(k-1)\lambda_{1}+\lambda_{1},\ (k-1)\lambda_{1}+\lambda_{2},\ \ldots,\ (k-1)\lambda_{1}+\lambda_{r},\\
+\phantom{(}(k-2)\lambda_{1}+\lambda_{1},\ (k-2)\lambda_{1}+\lambda_{2},\ \ldots,\ (k-2)\lambda_{1}+\lambda_{r},\\
+\vdots\\
+\phantom{(}(k-k)\lambda_{1}+\lambda_{1},\ (k-k)\lambda_{1}+\lambda_{2},\ \ldots,\ (k-k)\lambda_{1}+\lambda_{r}\rrbracket.\end{array}$ 
+Figure 6: The partition  $S_{\llbracket 3,1\rrbracket}^{3}$ .
+Lemma 3.21.
+Let  $\lambda$  be a partition of rank  $0$  and let  $k>1$  be an odd integer.
+Then  $\left(\symqueen,S_{\lambda}^{k}\right)\in\mathcal{N}_{\symqueen}$ .
+Proof.
+First suppose that  $\lambda$  is a  $\mathcal{P}_{\symqueen}$ -position. Then the first player can move to  $S_{\lambda}^{k}[(k-1)\lambda_{1},0]\in\mathcal{P}_{\symqueen}$ . Thus,  $S_{\lambda}^{k}$  is an  $\mathcal{N}_{\symqueen}$ -position.
+Next, suppose that  $\lambda$  is an  $\mathcal{N}_{\symqueen}$ -position. Then there is a move from  $\lambda$  to a  $\mathcal{P}$ -position, either along the first row, the first column, or the main diagonal of  $\lambda$ . The first player can win on  $S_{\lambda}^{k}$  by moving to that  $\mathcal{P}$ -position of the first, middle, or last  $\lambda$ -step respectively by moving on the first row, first column, or main diagonal of  $S_{\lambda}^{k}$  respectively (the upper left corner of the middle  $\lambda$ -step lies on the main diagonal of  $S_{\lambda}^{k}$  since  $\lambda$  has rank  $0$ ). Thus  $S_{\lambda}^{k}$  is an  $\mathcal{N}$ -position.
+∎
+Lemma 3.22.
+Let  $\lambda=\llbracket\lambda_{1},\dots,\lambda_{r}\rrbracket$  be a partition.
+If  $\lambda_{1}-1>2(r-1)$  or  $r-1>2(\lambda_{1}-1)$  then  $\lambda\in\mathcal{N}_{\symqueen}$ -position.
+Proof.
+Suppose  $\lambda_{1}-1>2(r-1)$ ; the case  $r-1>2(\lambda_{1}-1)$  is similar. If a row contains a  $\mathcal{P}_{\symqueen}$ -position, then every cell in the same row and to the left of it is an  $\mathcal{N}_{\symqueen}$ -position since it is possible to reach the  $\mathcal{P}_{\symqueen}$ -position from such a cell in a single move. Thus, each row contains at most one  $\mathcal{P}_{\symqueen}$ -position. We will show that there is a  $\mathcal{P}_{\symqueen}$ -position in the first row to the right of the first column, making  $\lambda$  an  $\mathcal{N}_{\symqueen}$ -position.
+If the last cell in the first row is a  $\mathcal{P}_{\symqueen}$ -position, we’re done, so suppose not. The  $\mathcal{N}_{\symqueen}$ -positions in the first row are precisely those cells from which it is possible to reach a  $\mathcal{P}_{\symqueen}$ -position in a lower row. Any cell in a row below the first that is a  $\mathcal{P}_{\symqueen}$ -position can be reached in a single move from one or two cells in the first row (certainly by a vertical move and possibly a diagonal move). Thus the number of  $\mathcal{N}_{\symqueen}$ -positions in the first row and not the first column is at most  $2(r-1)$ . But the number of cells in the first row and not the first column is  $\lambda_{1}-1>2(r-1)$ , so at least one of them must be a  $\mathcal{P}_{\symqueen}$ -position, making  $\lambda$  an  $\mathcal{N}_{\symqueen}$ -position.
+∎
+We conclude this section with a lemma that allows us to determine the Sprague-Grundy value of a partition in the games of Rook and Queen for partitions contained in a certain staircase.
+Lemma 3.23.
+Let  $M\in\{\symrook,\symqueen\}$ ,
+let  $\lambda=\llbracket\lambda_{1},\dots,\lambda_{r}\rrbracket$  be a partition, and let  $k=\max(\lambda_{1},r)$ .
+If   [diagram-symbol]  , then  $\mathbb{SG}_{M}(\lambda)=k-1$ .
+Proof.
+Suppose without loss of generality that  $\lambda_{1}\leq r$  so that  $k=r$ .
+We claim that  $\mathrm{lp}(\textnormal{DAG}_{M}(\lambda))=k-1$ .
+Indeed,   [diagram-symbol]   and Observation 3.5 imply that
+  [diagram-symbol]  
+Hence, Proposition 3.6 implies that  $\mathbb{SG}_{M}(\lambda)\leq\mathrm{lp}(\textnormal{DAG}_{M}(\lambda))\leq k-1$ .
+To establish the claim it suffices to show  $\mathbb{SG}_{M}(\lambda)\geq k-1$ . We proceed by induction on  $k$ .
+For the base case, we have  $\mathbb{SG}_{M}(\llbracket 1\rrbracket)=0$ .
+For the induction step, we have
+ $\displaystyle\mathbb{SG}_{M}(\lambda)$ 
+ $\displaystyle\geq\Mex\left(\{\mathbb{SG}_{M}(\lambda[i,0])\}_{1\leq i\leq k-1}\right)=\Mex\{0,\ldots,k-2\}=k-1.\qed$ 
+4 Misère aspects of impartial chess
+In this section we discuss two aspects of misère play for impartial chess games. In Section 4.1, we show how misère play is equivalent to normal play on a “truncated” partition using the same moveset. In Section 4.2, we use a classification scheme initiated by Conway [4] and further developed by Gurvich and Ho [5, 15] to study the interaction of normal play and misère play on impartial chess games.
+4.1 The truncation operation
+In this section we describe the behavior of misère variants of games studied in Section 3.1.
+To this end, we make use of truncation, introduced in [3]. This notion, reformulated in the setting of impartial chess games, has an important property – the resulting game remains an impartial chess game played on modified partition, where the same moveset remains the same.
+Definition 4.1 (truncation).
+Let  $(M,\lambda)$  be a non-terminal impartial chess game. Its truncation  $\textnormal{trunc}_{M}(\lambda)$  is an impartial chess game  $(M,\llbracket\bar{\lambda}_{1},\ldots\rrbracket)$  where  $\bar{\lambda}_{i}$  is the largest integer such that  $(M,\lambda[i-1,\bar{\lambda}_{i}-1])$  is defined but not terminal.
+The truncation of a game need not be the smallest partition with the same game tree, as illustrated below.
+Example 4.2.
+ $\textnormal{trunc}_{\symknight}(\llbracket 5,5,5,3,3,2,1\rrbracket)=(\symknight,\llbracket 4,3,2,1\rrbracket)$  which is partition-equivalent to  $(\symknight,\llbracket 3,3,2\rrbracket)$ .
+The following proposition is easily verified.
+Proposition 4.3.
+Let  $(M,\lambda)$  be a non-terminal impartial chess game. Then  $\textnormal{trunc}_{M}(\lambda[i,j])=\textnormal{trunc}_{M}(\lambda)[i,j]$ .
+Using our terminology,
+[3, Theorem 9] can be reformulated as follows.
+Theorem 4.4.
+The  $\mathcal{P}_{M}$ -positions of any misère impartial chess game  $(M,\lambda)$  exactly correspond to those of  $\textnormal{trunc}_{M}(\lambda)$ .
+Theorem 4.4 can also be obtained by using “misère Grundy numbers”  $\mathscr{G}^{-}$  as described in Conway [4]. We denote the misère Grundy number of an impartial chess game  $(M,\lambda)$  by  $\mathscr{G}^{-}_{M}(\lambda)$ .
+The above theorem directly implies that
+ $\mathcal{N}_{M}$ -positions also coincide except on the deleted terminal positions of  $(M,\lambda)$ , as they do not exist in  $\textnormal{trunc}_{M}(\lambda)$ .
+While the functions  $\mathbb{SG}(\textnormal{trunc}(\cdot))$  and  $\mathscr{G}^{-}(\cdot)$  have the same support (with the exception of terminal positions), they may have different values within the support.
+The truncation operation is particularly simple for the game of Downright, King, Rook, and Queen.
+The next corollary follows easily from Definition 4.1.
+Corollary 4.5.
+Let  $(M,\lambda)$  be an impartial chess game with  $\{(1,0),(0,1)\}\subseteq M$ .
+Then  $\textnormal{trunc}_{M}(\lambda)=(M,\lambda^{-})$ .
+In particular, this holds for  $\symqueen,\symking,\symrook$  and  $\mathcal{D}$ .
+The situation for Knight and Pawn is different because these games do not allow all of the moves of Downright.
+In fact, if  $\lambda=\llbracket\lambda_{1},\ldots,\lambda_{r}\rrbracket$ , then  $(\symknight,\lambda)$  is terminal precisely when  $\lambda_{2}\leq 2$  and  $\lambda_{3}\leq 1$ .
+Let  $\textnormal{trunc}_{\symknight}(\lambda)=(\symknight,\mu)$ .
+If  $\lambda_{2}>2$  or  $\lambda_{3}>1$ , then
+ $\mu<\lambda^{-}$  since more terminal positions are removed.
+Let  $\textnormal{trunc}_{\sympawn}(\lambda)=(\sympawn,\bar{\mu})$ . Then  $(\sympawn,\lambda)$  is terminal precisely when  $r=1$ . Thus, if  $r>1$ , then  $\bar{\mu}\leq\lambda^{-}$  and if  $\lambda$  has a repeated entry then the previous inequality is strict.
+4.2 Conway-Gurvich-Ho classification
+Conway [4] introduced the notion of a tame game. Gurvich and Ho [5] extended this idea to a more general classification of games. Their definitions, included below for convenience, involve pairs  $\mathscr{G}^{\pm}_{M}(\lambda)=(\mathbb{SG}_{M}(\lambda),\mathscr{G}_{M}^{-}(\lambda))$ , which we refer to as Conway pairs. We sometimes omit the subscript when the game is clear from context. If  $\mathscr{G}^{\pm}_{M}(\lambda)\in\{(0,1),(1,0)\}$  then  $(M,\lambda)$  is called swap. If  $k\geq 0$  and  $\mathscr{G}^{\pm}_{M}(\lambda)=(k,k)$ , then  $(M,\lambda)$  is called symmetric.
+Definition 4.6.
+A impartial game is called
+1. 
+returnable if for any move from a  $(0,1)$ -position (resp., a  $(1,0)$ -position) to a non-terminal position  $y$ , there is a move from  $y$  to a  $(0,1)$ -position (resp., to a  $(1,0)$ -position).
+2. 
+forced if each move from a  $(0,1)$ -position results in a  $(1,0)$ -position and vice versa;
+3. 
+domestic if it has neither  $(0,k)$ -positions nor  $(k,0)$ -positions with  $k\geq 2$ ;
+4. 
+tame if it has only  $(0,1)$ -positions,  $(1,0)$ -positions, and  $(k,k)$ -positions with  $k\geq 0$ ;
+5. 
+miserable if for every position  $x$ , one of the following holds: (i)  $x$  is a  $(0,1)$ -position or  $(1,0)$ -position, or (ii) there is no move from  $x$  to a  $(0,1)$ -position or  $(1,0)$ -position, or (iii) there are moves from  $x$  to both a  $(0,1)$ -position and a  $(1,0)$ -position.
+6. 
+pet if it has only  $(0,1)$ -positions,  $(1,0)$ -positions, and  $(k,k)$ -positions with  $k\geq 2$ .
+The relationships between these properties were explored in in [5] and are illustrated in Figure 7. The Conway-Gurvich-Ho (CGH) classification of an impartial game is determined by which of these properties the game has.
+The CGH classification of Nim, Subtraction, Wythoff, Mark, LCTR, and  $\mathcal{D}$  are known. Nim was shown to be forced and miserable but not pet in [4]. Subtraction was shown to be pet and returnable but not forced, and Wythoff was shown to be miserable and returnable, but neither pet nor forced, in [5]. LCTR and  $\mathcal{D}$  were shown to be domestic but not tame and returnable but not forced in [3]. Mark was shown not to be domestic in [5] and is easily shown to be not returnable. Other games are classified in [5].
+Some of the families of games we study occupy the same region as one of the above games. One family occupies a region not previously known to contain any game; another occupies a region that was only known to contain a single small game.
+In determining the CGH classification for a family of impartial chess games, in most cases we state that the family has one or more properties, and also that it does not have one or more properties. In making the former statement, we assert that the property holds for all members of the family. In the making the latter statement, we assert that there exist family members for which the given property does not hold.
+Let  $P\subseteq\mathbb{Y}^{+}$  and  $M$  be an impartial chess moveset. When we state that  $(M,P)$  is returnable, we mean that each  $(M,\lambda)$  is returnable, where  $\lambda\in P$ . When we say  $(M,P)$  is not returnable, we mean that there exists  $\lambda\in P$  such that  $(M,\lambda)$  is not returnable.
+The same applies to pet, miserable, tame, domestic, and forced.
+Let  $G_{1}$  be a set of impartial games and let  $G_{2}\subseteq G_{1}$ . If every game in  $G_{1}$  is pet, then so is every game in  $G_{2}$ . The same applies to miserable, tame, domestic, forced, and returnable. The following observation is a special case.
+Observation 4.7.
+Let  $P_{1}\subseteq\mathbb{Y}^{+}$  and let  $P_{2}\subseteq P_{1}$  and let  $M$  be an impartial chess moveset. If  $\left(M,P_{1}\right)$  is pet, then so is  $(M,P_{2})$ . The same applies to miserable, tame, domestic, forced, and returnable.
+Movesets in which no set of partitions are specified are played on  $\mathbb{Y}^{+}$ , e.g.,  $\sympawn=\left(\sympawn,\mathbb{Y}^{+}\right)$ .
+In this paper we will mostly be using sets  $P$  which are closed under taking subpartitions22
+              2
+            The only exceptions are the families mentioned in Theorem 4.13 and Theorem 4.12..
+In particular, let
+  [diagram-symbol]  
+  [diagram-symbol]  
+  [diagram-symbol]  
+Several games are omitted from Figure 7. For example, by Theorem 4.9,  $\sympawn$  and   [diagram-symbol]   are pet and returnable, but not forced. Together with Observation 4.7 and
+  [diagram-symbol]  , we see that   [diagram-symbol]   is also pet and returnable, but not forced. For this reason,   [diagram-symbol]   is omitted.
+We also omit the results for hooks   [diagram-symbol]   and  $\lambda$ -staircases  $S^{k}_{\lambda}$ , as the former are pet and forced for every moveset studied in this paper, and the latter set is same as  $\mathbb{Y}^{+}$ , whose results are listed.
+Throughout the next five subsections, we classify impartial chess games into respective regions in the same order of appearance as on Figure 7, where all our results are summarized.
+  [diagram-symbol]  
+Table 1: 
+We partition the set of impartial chess games in two ways. The first is into sets  $\mathsf{P,M,T,D,N}$  as follows:  $\mathsf{P}$  are games which are pet;  $\mathsf{M}$  are games which are miserable but not pet;  $\mathsf{T}$  are games which are tame but not miserable;  $\mathsf{D}$  are games which are domestic but not tame;  $\mathsf{N}$  are games which are not domestic.
+The second is into sets
+ $\mathsf{F,R,N^{\prime}}$ , as follows:  $\mathsf{F}$  are games which are forced;  $\mathsf{R}$  are games which are returnable but not forced;  $\mathsf{N^{\prime}}$  are games which are not returnable.
+domestictamemiserablepetforcedreturnable $\symbishop$ ,   [diagram-symbol]  ,   [diagram-symbol]  ,  [diagram-symbol]  ,   [diagram-symbol]  ,  [diagram-symbol]  ,   [diagram-symbol]  Nim,   [diagram-symbol]  ,  [diagram-symbol]  ,   [diagram-symbol]   $(\symrook,S_{1})$ unknownunknownSub,   [diagram-symbol]  ,   [diagram-symbol]  , $\sympawn$ ,   [diagram-symbol]  ,   [diagram-symbol]    [diagram-symbol]    [diagram-symbol]   $(\symqueen,S_{2})$  $\mathcal{D}$ , LCTR,   [diagram-symbol]  ,  $\symknight$ unknownunknownunknownunknown $\symrook$ , Mark, $\symqueen$ ,   [diagram-symbol]  
+Figure 7: 
+The regions of the CGH classification, together with some
+other already classified games.
+Regions not known by us to be occupied by any game are labeled “unknown”.
+To our knowledge, our examples of tame but not miserable games are the first infinite families of games of this type,
+although a single such a game was identified in [5, Figure 7].
+We omit games such as
+  [diagram-symbol]  ,   [diagram-symbol]  ,   [diagram-symbol]  ,   [diagram-symbol]   and  $\symking$ 
+as their classifications can be easily derived from Observation 4.7.
+4.2.1 Pet games
+Recall that pet games allow only for swap positions and  $(k,k)$ -positions with  $k\geq 2$ .
+Theorem 4.8.
+  [diagram-symbol]  , and   [diagram-symbol]  
+are pet and forced.
+Proof.
+We prove the result for   [diagram-symbol]  ; the others are similar.
+By Lemma 3.23 we have   [diagram-symbol]  . There is a similar formula for   [diagram-symbol]   from which it follows that
+  [diagram-symbol]  
+Since every subpartition of a staircase is a smaller staircase, it follows that   [diagram-symbol]   is pet. The only non-terminal swap position is   [diagram-symbol]   and it can only move to   [diagram-symbol]  , so   [diagram-symbol]   is forced.
+∎
+Theorem 4.9.
+  [diagram-symbol]  ,   [diagram-symbol]  ,   [diagram-symbol]  , and   [diagram-symbol]  
+are pet and returnable but not forced.
+Proof.
+The games  $(\sympawn,\llbracket 2,2,2,1\rrbracket)$ ,   [diagram-symbol]  ,   [diagram-symbol]  ,   [diagram-symbol]   and  [diagram-symbol]   show that the respective sets of games to which they belong are not forced. We show that   [diagram-symbol]   is returnable and pet; the others are similar.
+For any subpartition  $\lambda$  of , we have  $\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda)\in A$  where  $A=\{(0,1),(1,0),(2,2)\}$ . If  $(x_{1},x_{2}),(y_{1},y_{2})\in A$  then  $(\Mex(x_{1},y_{1}),\Mex(x_{2},y_{2}))\in A\cup\{(0,0)\}$ .
+Thus, it is enough to show that there exists no  $(0,0)$ -position reachable from  $\lambda$ .
+Suppose not, and let  $\lambda[i,j]$  be a  $(0,0)$ -position. Then  $\lambda[i+1,j]$  and  $\lambda[i,j+1]$  are both  $(2,2)$ -positions.
+This implies that  $\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+2,j])=\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i,j+2])$ , while  $\{\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+2,j]),\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+1,j+1])\}=\{(1,0),(0,1)\}$ . We treat the case when  $\lambda[i+1,j+1]$  is a  $(0,1)$ -position. The case when it is a  $(1,0)$ -position is similar to, and simpler than, the  $(0,1)$ -case and is left to the reader.
+Observe that  $\lambda[i+1,j+1]$  is not a terminal position. If it were, then   [diagram-symbol]  . Also,  $\lambda[i,j+3]$  would be well defined unlike  $\lambda[i+1,j+2]$ , a contradiction.
+Since  $\lambda[i+1,j+1]$  is not a terminal position assume without loss of generality that  $\lambda[i+1,j+2]$  is well-defined, which implies, due to  $\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i,j+2])=(1,0)$ , that  $\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+1,j+2])=(2,2)$ .
+This in turn implies that both  $\lambda[i+2,j+2]$  and  $\lambda[i+3,j+1]$  are well-defined. Due to  $\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+2,j])=(1,0)$ , we again obtain  $\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+2,j+1])=(2,2)$ .
+Then  $\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+1,j+1])=(0,1)$  contradicts
+ $\displaystyle\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+1,j+1])$ 
+ $\displaystyle=\Mex(\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+2,j+1]),\mathscr{G}^{\pm}_{\mathcal{D}}(\lambda[i+1,j+2]))$ 
+ $\displaystyle=\Mex((2,2),(2,2))=(0,0).$ 
+Since the only Conway pairs possible are  $(0,1),(1,0),$  and  $(2,2)$ ,   [diagram-symbol]   is pet by definition. Furthermore, there must be a move from any non-terminal  $(0,1)$ -position to a  $(1,0)$ -position and vice versa. This implies returnability.
+∎
+4.2.2 Miserable but not pet games
+Recall that miserable games require any non-swap position to have moves to both or neither of the swap positions.
+Theorem 4.10.
+  [diagram-symbol]  ,   [diagram-symbol]  , and   [diagram-symbol]  
+are forced and miserable but not pet.
+Proof.
+  [diagram-symbol]  , so   [diagram-symbol]  ,   [diagram-symbol]  , and   [diagram-symbol]   are not pet.
+We will first show that   [diagram-symbol]   is forced and miserable.
+Let   [diagram-symbol]  .
+First, we show that the only Conway pairs possible are swap and  $(k,k)$  for  $k\geq 0$ .
+To this end, notice that
+ $(\symrook,\lambda[r-1,c-1]),(\symrook,\lambda[r-2,c-1]),(\symrook,\lambda[r-1,c-2]),\text{ and }(\symrook,\lambda[r-2,c-2])$ 
+are swap positions. In particular,
+ $\displaystyle\mathscr{G}^{\pm}_{\symrook}(\lambda[r-1,c-1])=\mathscr{G}^{\pm}_{\symrook}(\lambda[r-2,c-2])$ 
+ $\displaystyle=(0,1)$ 
+(6)
+ $\displaystyle\mathscr{G}^{\pm}_{\symrook}(\lambda[r-1,c-2])=\mathscr{G}^{\pm}_{\symrook}(\lambda[r-2,c-1])$ 
+ $\displaystyle=(1,0)$ 
+(7)
+whenever the corresponding positions are well-defined.
+Note that any other position can move to both a  $(0,1)$  and  $(1,0)$  position from (6) and (7), respectively, or neither.
+We now argue that all other positions are symmetric, which implies that   [diagram-symbol]   is both forced and miserable.
+Suppose not, and let  $i<r-2$  and  $j<c-2$  be maximal with respect to  $i+j$  such that
+ $(\symrook,\lambda[i,j]))$  is not symmetric. By the choice of  $i,j$ , the positions reachable from  $\lambda[i,j]$  are all symmetric or swap. Furthermore, if either swap position is reachable, both are.
+It follows that  $(\symrook,\lambda[i,j]))$  is symmetric, a contradiction.
+In particular, there are no swap positions other than those described in (6) and (7).
+We can extend the above proof to show that   [diagram-symbol]   is both forced and miserable.
+Indeed, we only need to consider the subpositions of   [diagram-symbol]   which are not of rectangular shape, and show that they are all symmetric.
+Again, let  $\lambda[i,j]$  be such a subposition, where we chose  $i,j$  such that  $i+j$  is maximized. By the choice of  $i,j$ , observe that all reachable positions consist of symmetric ones, and in addition they may they include both swap positions  $(0,1)$  and  $(1,0)$ . By the same reasoning it follows that  $(\symrook,\lambda[i,j]))$  is symmetric, a contradiction.
+∎
+As noted in Section 3.6,   [diagram-symbol]   is equivalent to the well-known game Wythoff. It was shown in [5, Propositions 10 and 11] that Wythoff is miserable but not pet and returnable but not forced. It is more involved to show that   [diagram-symbol]   is in the same region; the cases when  $r=c=2$ , when  $r=2$  and  $c=3$ , and when  $r\geq 3$  and  $c\geq 3$  require separate treatment. We summarize these facts in the following theorem, the proof of which we omit in the interest of brevity.
+Theorem 4.11.
+  [diagram-symbol]   and   [diagram-symbol]  
+are miserable but not pet and returnable but not forced.
+4.2.3 Tame but not miserable games
+Recall that tame games allow only for swap and symmetric positions. Gurvich and Ho found a small game that is forced and tame but not miserable; see Figure 7 of [5].
+Let  $S_{1}=\{\llbracket\ell+1,\ell^{k}\rrbracket[i,j]:\ell\geq 3,k>\ell,i,j\in\mathbb{Z}^{\geq 0}\}$ . We show next that the games  $(\symrook,S_{1})$  belong to the same region.
+Theorem 4.12.
+ $(\symrook,S_{1})$  is forced and tame but not miserable.
+Proof.
+By Theorem 4.10,   [diagram-symbol]   is forced and miserable. In particular, it contains only swap and  $(t,t)$ -positions.
+Fix any  $\llbracket\ell+1,\ell^{k}\rrbracket\in S_{1}$  with  $k>\ell\geq 3$ . The subposition   [diagram-symbol]   is well-defined in all cases.
+This subposition contains both swap positions in each of the last two columns. All other columns contain a  $(0,0)$ - and a  $(1,1)$ -position but neither swap position. Also,  $(\symrook,\llbracket\ell+1,\ell^{k}\rrbracket)[0,\ell]$  is a  $(0,1)$ -position. Thus  $(\symrook,\llbracket\ell+1,\ell^{k}\rrbracket)[i,j])$  is a  $(t,t)$ -position for some  $t\geq 2$  and for all  $i\in[0,k-l]$  and  $j\in[0,\ell]$ .
+This implies  $(\symrook,S_{1})$  is tame. However, since  $\ell\geq 3$ , there is a move from the starting position, to a  $(0,1)$ -position, but not to a  $(1,0)$ -position, hence it is not miserable.
+The only nonterminal swap positions are in the subposition  $(\symrook,\llbracket\ell+1,\ell^{k}\rrbracket)[k-1,\ell-2])=(\symrook,\llbracket 2^{2}\rrbracket)$ . This subposition is forced.
+∎
+The region that is tame but not miserable and returnable but not forced was not known by us to contain any game.
+We show that it is occupied by  $(\symqueen,S_{2})$ , where  $S_{2}=\{\llbracket 5,4^{k}\rrbracket[i,j]:k\geq 7,i,j\in\mathbb{Z}^{\geq 0}\}$ .
+Theorem 4.13.
+ $(\symqueen,S_{2})$  is tame but not miserable and returnable but not forced.
+Proof.
+Any fixed  $\llbracket 5,4^{k}\rrbracket\in S_{2}$  with  $k\geq 7$  contains the subpartition  $\llbracket 5,4^{k}\rrbracket[k-6,0]=\llbracket 4^{7}\rrbracket$ .
+Also,  $(\symqueen,\llbracket 4^{7}\rrbracket)$  contains only swap and  $(t,t)$ -positions, where the first column contains both  $(0,0)$ - and  $(1,1)$ -positions. The first column does not admit any swap position while the other columns contain both swap positions.
+Further,  $(\symqueen,\llbracket 5,4^{k}\rrbracket[0,4])$  is a  $(0,1)$ -position.
+Thus  $(\symqueen,\llbracket 5,4^{k}\rrbracket[i,j])$  is a  $(t,t)$ -position for some  $t\geq 2$  and for all  $i\in[0,k-7]$  and  $j\in[0,3]$ .
+This implies  $(\symqueen,S_{2})$  is tame. However, there is a move from the starting position to a  $(0,1)$ -position, but not to a  $(1,0)$ -position, hence it is not miserable.
+The only nonterminal swap positions are in the subposition  $(\symqueen,\llbracket 5,4^{k}\rrbracket[k-4,1])=(\symqueen,\llbracket 3^{3}\rrbracket)$ . This subposition is returnable but not forced.
+∎
+4.2.4 Domestic but not tame games
+Recall that in a domestic game, a value  $0$  can appear in a Conway pair only if the position is either swap or symmetric.
+Theorem 4.14.
+  [diagram-symbol]   and  $\symknight$ 
+are domestic but not tame and returnable but not forced.
+Proof.
+To see that  $\symknight$  and   [diagram-symbol]   are not tame, note that   [diagram-symbol]  . Theorem 4.9 shows that  $\symknight$  and   [diagram-symbol]   are not forced.
+To see that  $\symknight$  and   [diagram-symbol]   are domestic, note that there are at most two moves from any position, so neither coordinate of the Conway pair can be greater than two. Thus it suffices to show that  $(2,0)$  and  $(0,2)$  cannot occur.
+The proof is by contradiction. Let  $\lambda$  be a minimal partition (with respect to the Young lattice) so that  $\mathscr{G}^{\pm}_{\symknight}(\lambda)=(0,2)$  or  $\mathscr{G}^{\pm}_{\symknight}(\lambda)=(2,0)$ . We treat the case  $\mathscr{G}^{\pm}_{\symknight}(\lambda)=(0,2)$ ; the case  $\mathscr{G}^{\pm}_{\symknight}(\lambda)=(2,0)$  is similar and is left to the reader.
+If  $\mathscr{G}^{\pm}_{\symknight}(\lambda)=(0,2)$  then, without loss of generality, it must be true that  $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,1])=(x,1)$  and  $\mathscr{G}^{\pm}_{\symknight}(\lambda[1,2])=(y,0)$  for some  $x,y\in\{1,2\}$ . Due to minimality,  $y$  cannot be 2, so  $y=1$ .
+If  $x=2$ , then  $\mathscr{G}^{\pm}_{\symknight}(\lambda[3,3])=(0,2)$ , contradicting minimality, so  $x=1$ .
+If  $\lambda[3,3]$  is not well-defined, then  $\lambda[4,2]$  must be well-defined since  $\lambda[2,1]$  cannot be terminal, so  $\lambda[4,2]$  must be terminal and  $\mathscr{G}^{\pm}_{\symknight}(\lambda[4,2])=(0,1)$ , contradicting  $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,1])=(1,1)$ .
+Thus  $\lambda[3,3]$  is well-defined and
+ $\mathscr{G}^{\pm}_{\symknight}(\lambda[3,3])=(z,2)$  for some  $z\in\{0,2\}$ . Due to minimality  $z$  cannot be  $0$ , so  $z=2$ . It follows that  $\mathscr{G}^{\pm}_{\symknight}(\lambda[4,2])=(0,0)$ , which implies
+ $\mathscr{G}^{\pm}_{\symknight}(\lambda[5,4])=(1,1)$ , from which it follows that  $\mathscr{G}^{\pm}_{\symknight}(\lambda[4,5])=(0,0)$ . This implies
+ $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,4])=(1,1)$ , a contradiction with  $\mathscr{G}^{\pm}_{\symknight}(\lambda[1,2])=(1,0)$ . This concludes the proof for domesticity.
+To see that  $\symknight$  is returnable (which implies that   [diagram-symbol]   is returnable), consider a non-terminal partition  $\lambda$  with  $\mathscr{G}^{\pm}_{\symknight}(\lambda)=(0,1)$ . Since there are no  $(k,0)$ -positions with  $k\geq 2$ , it must be possible to move to a  $(1,0)$ -position. Similarly a  $(1,0)$  position can always move to a  $(0,1)$ -position. Without loss of generality, suppose that  $\mathscr{G}^{\pm}_{\symknight}(\lambda[1,2])=(1,0)$ . Then  $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,1])\in\{(1,2),(1,0),(2,2)\}$ . If  $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,1])=(1,0)$  then  $\symknight(\lambda)$  is returnable. Also, if  $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,1])=(2,2)$  then  $\mathscr{G}^{\pm}_{\symknight}(\lambda[3,3])=(0,1)$ , so  $\symknight(\lambda)$  is again returnable.
+Finally, suppose  $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,1])=(1,2)$ . If  $\mathscr{G}^{\pm}_{\symknight}(\lambda[3,3])=(0,1)$ , then  $\symknight(\lambda)$  is returnable. The only alternative is that  $\mathscr{G}^{\pm}_{\symknight}(\lambda[3,3])=(2,1)$ . In this case, we must have  $\mathscr{G}^{\pm}_{\symknight}(\lambda[4,2])=(0,0)$ . It follows that  $\mathscr{G}^{\pm}_{\symknight}(\lambda[5,4])=(1,2)$ . From this, we obtain  $\mathscr{G}^{\pm}_{\symknight}(\lambda[4,5)=(0,0)$ .
+Since non-terminal swap positions must move to at least another swap it follows that  $\mathscr{G}^{\pm}_{\symknight}(\lambda[2,4])=(0,1)$  which is a contradiction with  $\mathscr{G}^{\pm}_{\symknight}(\lambda[4,5])=(0,0)$ .
+∎
+4.2.5 Non-domestic games
+Theorem 4.15.
+ $\symrook,\symqueen$ , and   [diagram-symbol]  
+are neither domestic nor returnable.
+Proof.
+ $\symrook$ ,  $\symqueen$ , and   [diagram-symbol]   are not domestic because  $\mathscr{G}^{\pm}_{\symrook}(\llbracket 5,4^{3}\rrbracket)=(4,0)$  and  $\mathscr{G}^{\pm}_{\symqueen}(\llbracket 9,8^{4}\rrbracket)=(0,10)$  and   [diagram-symbol]  , respectively.
+ $\symrook$  is not returnable since  $\mathscr{G}^{\pm}_{\symrook}(\llbracket 6,5^{4}\rrbracket)=(0,1)$  and there is no move from  $(\symrook,\llbracket 6,5^{4}\rrbracket[1,0])$  to a  $(0,1)$ -position.  $\symqueen$  is not returnable since  $\mathscr{G}^{\pm}_{\symqueen}(\llbracket 11^{13},10^{4}\rrbracket)=(0,1)$  and there is no move from  $(\symqueen,\llbracket 11^{13},10^{4}\rrbracket[12,0])$  to a  $(0,1)$ -position.   [diagram-symbol]   is not returnable since   [diagram-symbol]   and there is no move from   [diagram-symbol]   to a  $(1,0)$ -position.
+∎
+5 Open questions in impartial chess
+Hooks (see Definition 2.1)
+are a parametrized class of partitions studied in [16, 17, 18].
+The restriction of impartial chess games to hooks is not very interesting from the point of view of CGH classification since they are forced and pet for every chess piece.
+A more interesting family to consider are thick hooks [16, 17] of the form  $\llbracket c^{a},b^{r-a}\rrbracket$ , which are simultaneously subpartitions of generalized staircases and generalizations of both rectangles and hooks. Computing the Sprague-Grundy values of generalized staircases might be out of reach for King and Rook, but we believe it could be possible for thick hooks.
+For rectangles, the coefficient 2 in Lemma 3.22 can be replaced with the golden ratio [13]. It would be interesting to know if the coefficient 2 can be reduced for arbitrary partitions. Showing that it cannot be reduced would require finding an infinite family of partitions such that the inequality in Lemma 3.22 holds. Two such partitions are  $\llbracket 3^{2}\rrbracket$  and  $\llbracket 9^{2},7^{3}\rrbracket$ .
+Conjecture 5.1.
+Let  $r$  be odd and  $k\geq 1$ . Then
+  [diagram-symbol] k\bmod(r+2)$ is odd}\\
+1&\text{$k\bmod(r+2)$ is even and not 0}\\
+2&\text{$k\bmod(r+2)$ is 0}.\end{cases}$ 
+Conjecture 5.2.
+Let  $r\neq c$  and both  $r,c$  be even and  $k\geq 1$ .
+Then
+  [diagram-symbol] k$ is odd}\\
+3&\text{ if $k$ is even}.\end{cases}$ 
+The Sprague-Grundy values of   [diagram-symbol]   and   [diagram-symbol]   are given to us by two-pile Nim and Corollary 3.20, respectively. The  $\mathbb{SG}$ -values of Rook on general partitions are unknown.
+ $\mathcal{P}/\mathcal{N}$ -positions for Queen remain open. Given the complicated resolution of these positions on rectangles, significant progress on more complicated partitions seems unlikely.
+Acknowledgements
+This work is inspired by the recent legacy of the late Elwyn Berlekamp and his pioneering work on impartial chess.
+This work was supported in part by the Slovenian Research and Innovation Agency (research projects J1-4008, J1-3002, research program P1-0383, and bilateral project BI-US-24-26-018).
+The first author was supported by an internal grant from Rhodes College.
+References
+[1]
+E. R. Berlekamp, Impartial Chess,
+https://math.berkeley.edu/˜berlek/
+(2017).
+[2]
+E. R. Berlekamp, Impartial Chess (2017).
+URL https://youtu.be/ndvoTQE92TQ
+[3]
+E. Gottlieb, M. Krnc, P. Muršič, Sprague–Grundy values and complexity for
+LCTR, Discrete Applied Mathematics 346 (2024) 154–169.
+doi:10.1016/j.dam.2023.11.036.
+[4]
+J. H. Conway, On numbers and games, 2nd Edition, A K Peters, Ltd., Natick, MA,
+2001.
+[5]
+V. A. Gurvich, N. B. Ho, On tame, pet, domestic, and miserable impartial games,
+Discrete Applied Mathematics 243 (2018) 54–72.
+doi:10.1016/j.dam.2017.12.006.
+[6]
+R. Diestel, Graph theory, Springer (print edition); Reinhard Diestel (eBooks),
+2024.
+[7]
+G. Kreweras, Sur une classe de problèmes de
+dénombrement liés au treillis des partitions des entiers, Cahiers du
+Bureau universitaire de recherche opérationnelle Série Recherche 6 (1965)
+9–107.
+URL http://eudml.org/doc/272631
+[8]
+R. P. Stanley, Enumerative
+Combinatorics, Vol. 2, Cambridge University Press, 1999.
+URL http://math.mit.edu/~rstan/ec/
+[9]
+F. J. Dyson, Some guesses in the theory of partitions, Eureka (Cambridge)
+8 (10) (1944) 10–15.
+[10]
+A. N. Siegel, Combinatorial game theory, Vol. 146 of Graduate Studies in
+Mathematics, American Mathematical Society, Providence, RI, 2013.
+doi:10.1090/gsm/146.
+[11]
+E. R. Berlekamp, J. H. Conway, R. K. Guy, Winning ways for your mathematical
+plays. Vol. 1, 2nd Edition, A K Peters, Ltd., Natick, MA, 2001.
+[12]
+E. R. Berlekamp, Impartial Chess (2017).
+URL https://youtu.be/kvsbpZvm29I
+[13]
+W. A. Wythoff, A modification of the game of Nim, Nieuw Archiefvoor Wiskunde
+(1907-1908) 199–202.
+[14]
+G. Nivasch, More on the
+Sprague-Grundy function for Wythoff’s game, in: Games of No Chance
+III, Proc. BIRS Workshop on Combinatorial Games, Citeseer, 2005, pp.
+377–410.
+URL https://library.slmath.org/books/Book56/
+[15]
+V. A. Gurvich,
+Miserable and
+strongly miserable impartial games, RUTCOR Research Report (RRR-18) (2012).
+URL https://api.semanticscholar.org/CorpusID:9185403
+[16]
+I. Bašić, E. Gottlieb, M. Krnc, Some observations on the Column-Row
+game, in: Proceedings of the 9th Student Computing Research Symposium
+(SCORES’23), 2022.
+doi:10.26493/scores23.
+[17]
+I. Bašić,
+Column-Row
+game, Master’s thesis (2023).
+URL https://repozitorij.upr.si/IzpisGradiva.php?id=19707
+[18]
+E. Gottlieb, J. Ilić, M. Krnc, Some results on LCTR, an impartial game on
+partitions, Involve, a Journal of Mathematics 16 (3) (2023) 529–546.
+doi:10.2140/involve.2023.16.529.
+    Experimental support, please
+    view the build logs
+    for errors. Generated by
+        L
+        A
+        T
+        E
+      xml
+    .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue" (
+          ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+        We gratefully acknowledge support from our major funders,
+        member institutions, ,
+        and all contributors.
+        About ·
+        Help ·
+        Contact ·
+        Subscribe ·
+        Copyright ·
+        Privacy ·
+        Accessibility ·
+        Operational Status (opens in new tab)

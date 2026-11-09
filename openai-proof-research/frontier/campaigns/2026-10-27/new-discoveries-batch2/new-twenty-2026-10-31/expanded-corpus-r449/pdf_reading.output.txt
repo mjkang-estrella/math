@@ -1,0 +1,1384 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+SOURCE pebbling
+                                           Pebbling on Graph Products and other Binary Graph
+                                                                                Constructions
+
+
+
+
+arXiv:1801.07808v1 [math.CO] 23 Jan 2018
+                                                                                   John Asplund
+                                                                      Department of Technology and Mathematics,
+
+                                                                              Dalton State College,
+                                                                                Dalton, GA 30720, USA
+
+                                                                                jasplund@daltonstate.edu
+
+
+
+                                                                                  Glenn Hurlbert ∗
+                                                                Department of Mathematics and Applied Mathematics,
+
+                                                                     Virginia Commonwealth University,
+                                                                            Richmond, VA 23284-2014, USA
+
+                                                                                   ghurlbert@vcu.edu
+
+
+
+                                                                                  Franklin Kenter
+                                                                              Department of Mathematics,
+
+                                                                         United States Naval Academy,
+                                                                              Annapolis, MD 21402, USA
+
+                                                                                    kenter@usna.edu
+
+
+
+                                           ∗
+                                               Research partially supported by Simons Foundation Grant #246436.
+
+                                                                                            1
+                                           Abstract
+
+
+          Pebbling on graphs is a two-player game which involves repeatedly moving a peb-
+       ble from one vertex to another by removing another pebble from the first vertex.
+       The pebbling number π(G) is the least number of pebbles required so that, regard-
+       less of the initial configuration of pebbles, a pebble can reach any vertex. Graham
+       conjectured that the pebbling number for the cartesian product, G  H, is bounded
+       above by π(G)π(H). We show that π(G  H) ≤ 2π(G)π(H) and, more sharply, that
+       π(G  H) ≤ (π(G)+|G|)π(H). Furthermore, we provide similar results for other graph
+       products and graph operations.
+
+
+
+
+1      Introduction
+
+Pebbling on graphs is a two-player game on a connected graph, first mentioned by Lagarias
+and Saks and made popular in the literature by Chung [5]. The game starts when Player
+1 chooses a root vertex r and places pebbles on the vertices. Then Player 2 may make a
+pebbling move by choosing two pebbles at the same vertex, moving one of them to an adjacent
+vertex, and removing the other. Player 2 wins if he or she can get a pebble to r after any
+non-negative number of pebbling moves. The pebbling number of the graph, denoted π(G),
+is the fewest number of pebbles such that, regardless of the initial configuration and root,
+Player 2 can win. A good reference for pebbling results, variations, and applications can be
+found in [10].
+
+    This study focuses on providing upper bounds for the pebbling numbers of various graph
+products and other graph constructions. For two graphs, G and H, define the “box” (or
+cartesian) product G  H to be the graph with V (G  H) = V (G)×V (H) and E(G  H) =
+{{(g, h), (g ′, h′ )} : g = g ′ and hh′ ∈ E(H) or h = h′ and gg ′ ∈ E(G)}. Graham conjectured
+that the box product of two connected graphs obeys the following:
+
+
+                                               2
+Conjecture 1.1 (Graham’s Conjecture [5]).
+
+                                   π(G  H) ≤ π(G)π(H).
+
+
+    The conjecture would be tight if true [5]. It is still open and has only been solved in a
+handful of cases, including products of paths [5], products of cycles [8, 15], products of trees
+[13], products of fan graphs and products of wheel graphs [7] and products between graphs
+from certain families and graphs with the so-called 2-pebbling property [5, 15, 17]. It has
+also been verified for graphs of high minimum degree [6].
+
+    We make progress toward this conjecture from a different perspective. Instead of focusing
+on select families of graphs for which we can verify the conjecture, we aim to find the best
+constant β for which we can prove that π(G  H) ≤ βπ(G)π(H) is universally true. In fact,
+in Section 3, we prove that for any connected graphs G and H,
+
+                                  π(G  H) ≤ 2π(G)π(H).
+
+
+    Later, we extend this technique to derive similar bounds for other graph products and
+graph constructions which we will carefully define in the next sections. Our results include
+bounds for the pebbling number on the strong graph product (Section 4), the cross (or
+“categorical”) product (Section 5), and coronas (Section 6). Beyond the work on Graham’s
+conjecture on the box product for graphs, there are few published results for graph pebbling
+on other products. A variant of Graham’s conjecture using the strong graph product instead
+of the box product was mentioned as a “problem” in [16] but no further progress on this
+variation is known to the authors. Note that there are upper bounds provided by Kim and
+Kim [12] for the lexicographic product of G and H.
+
+
+
+2      Preliminaries
+
+Throughout, we will assume that all graphs are simple. We use the following notation. For a
+graph G = (V, E), V = V (G) and E = E(G) are the vertex and edge sets of G, respectively,
+
+
+                                               3
+and |G| = |V (G)|. We write g ∈ G to say g ∈ V (G). We use a ∼G b to denote that vertices
+a, b are adjacent in the graph G; when the context for G is clear, we will simply write a ∼ b.
+
+  We will call the specific distribution of pebbles distributed on the vertices of G a config-
+uration. The number of pebbles in a configuration C is its size, denoted |C|. At times, we
+will consider a variant called k-fold pebbling. In this variant, Player 2 wins only if he or
+she can move k pebbles to the root. The k-fold pebbling number of G, denoted πk (G), is
+the smallest number of pebbles such that Player 2 can win the k-fold variant regardless of
+the initial distribution. For a graph G with a given root r, we say a configuration is k-fold
+r-solvable (or just r-solvable when k = 1) if there is a sequence of pebbling moves such that
+k pebbles can eventually reach r, and we will let π(G, r) denote the minimum number of
+pebbles to guarantee that G is r-solvable. Therefore π(G) = maxr π(G, r).
+
+Definition 2.1 (Graphs with specific pebbling properties). Let G be a connected graph. We
+define the following based on the specific properties with regard to pebbling.
+
+Class 0 graphs. If π(G) = |G|, then G is Class 0.
+
+Frugal graphs. If G has diameter diam(G) and, for all k ≥ 1, πk (G) ≤ π(G) + (k −
+1)2diam(G) then G is frugal.
+
+
+  For most graphs, it is unknown whether or not they are frugal. However, complete graphs
+and graphs with diameter 2 are frugal [9], as are 2-paths [2], and semi-2-trees [3]. Some of
+our results can be slightly improved in the case of frugal graphs.
+
+  Throughout we will make use of the following pebbling number facts.
+
+Fact 2.2. For any connected graph G, the following hold.
+
+
+ (i) π(G) ≥ |G|.
+
+ (ii) π(G) ≥ 2diam(G) where diam(G) is the diameter of the graph G.
+
+(iii) π(G) ≤ 2|G|−1.
+
+
+Furthermore, these bounds are sharp.
+
+                                               4
+Proof. The lower bound (i) follows from constructing an r-unsolvable configuration by plac-
+ing one pebble at each vertex except r. The lower bound (ii) follows from construct-
+ing an r-unsolvable configuration by placing 2diam(G) − 1 pebbles at a vertex of maxi-
+mum distance from an appropriately chosen r. The upper bound (iii) follows from us-
+ing Lemma 2.3 (from Fact 3 of [5]) along with the formula for the pebbling number of a
+tree (Fact 11 of [5]). Indeed, for T some breadth-first search spanning tree of G, we have
+        P                                                               P
+π(T ) = ti=1 2ai − t + 1 for some a1 ≥ · · · ≥ at and some t ≥ 0, where ti=1 ai = |G| − 1.
+                       P                   Pt
+Then π(G) ≤ π(T ) = ti=1 2ai − t + 1 ≤ 2 i=1 ai = 2|G|−1 .
+
+  Complete graphs are sharp for (i), and paths are sharp for (ii) and (iii).
+
+
+  Additionally, the following lemma is helpful for comparing the pebbling number of a graph
+against a subgraph.
+
+Lemma 2.3. [5] If G′ is a spanning subgraph of a connected graph G then π(G′ ) ≥ π(G).
+
+
+  For two graphs, G and H, g ∈ V (G), and h ∈ V (H) we will use the simplistic notation
+g × H to denote the set {g} × V (H); likewise for G × h : V (G) × {h}.
+
+Definition 2.4 (Graph Products and Constructions). For graphs G and H, we define the
+following:
+
+Box (or Cartesian) Product. G  H is the graph with V (G  H) = V (G) × V (H) and
+(g, h) ∼G  H (g ′, h′ ) whenever (g = g ′ and h ∼H h′ ) or (h = h′ and g ∼G g ′ ). For example,
+K2  K2 = C 4 .
+
+Strong Product. G ⊠ H is the graph with V (G ⊠ H) = V (G) × V (H) and (g, h) ∼G⊠H
+(g ′ , h′ ) whenever one of the following holds
+
+
+   • (g = g ′ and h ∼H h′ ),
+
+   • (h = h′ and g ∼G g ′ ), or
+
+   • (g ∼G g ′ and h ∼H h′ ).
+
+
+                                                  5
+For example, K2 ⊠ K2 = K4 .
+
+Cross (or Categorical) Product. G × H is the graph with V (G × H) = V (G) × V (H)
+and (g, h) ∼G×H (g ′ , h′ ) whenever (g ∼G g ′ and h ∼H h′ ). For example, K2 × K2 = 2K2 .
+
+Corona. G ⊲⊳ H is the graph constructed by taking one copy of G and |G| disjoint copies
+of H and then, for each vertex in G, adding all possible edges to one distinct copy of H.
+Specifically, it has vertex set V (G ⊲⊳ H) = V (G) ∪ (V (G) × V (H)) and
+
+
+     • g ∼G⊲⊳H g ′ whenever g ∼G g ′ ,
+
+     • g ∼G⊲⊳H (g, h′) for all h′ ∈ H, and
+
+     • (g, h) ∼G⊲⊳H (g, h′) whenever h ∼H h′ .
+
+
+For example, K2 ⊲⊳ K2 = 2K3 plus an edge (See Figure 1).
+
+
+
+
+                                         Figure 1: K2 ⊲⊳ K2
+
+
+
+
+3      Pebbling on Box Products
+
+In this section we prove the following.
+
+Theorem 3.1. Let G and H be connected graphs. Then
+
+                                    π(G  H) ≤ 2π(G)π(H).
+
+
+    The main idea behind the proof of this bound on the pebbling number for G  H can be
+seen in Figure 2. Given a configuration of pebbles, we first move all of those pebbles over to
+the copy of G that contains the target vertex (that is the top right vertex in Figure 2). Now
+
+                                                 6
+that all pebbles are in the copy of G containing the target vertex, it remains to move all of
+the pebbles in this copy of G to the target vertex. The goal is to have π(G) pebbles in this
+copy of G which will guarantee a pebbling solution.
+
+                                   G    G        G      G
+
+                               H
+
+
+                               H
+
+
+                               H
+
+
+                               H
+
+
+
+
+            Figure 2: G  H with pebble movements related to Proposition 3.2
+
+  The following result is a proof of the idea above and is a stronger result than Theorem 3.1
+that follows.
+
+Proposition 3.2. Let G and H both be connected graphs. Then,
+
+                              π(G  H) ≤ (π(G) + |G|)π(H).
+
+
+Proof. Let C be the initial configuration of (π(G)+|G|)π(H) pebbles. For each vertex g ∈ G
+let pg denote the total number of pebbles on the vertices in g ×H. Notice that if pg ≥ kπ(H),
+                                                                         P        pi
+then k pebbles can be moved to any single vertex in g × H. Hence, if i∈G ⌊ π(H)      ⌋ ≥ π(G)
+then a total of π(G) pebbles can be moved to G × h for any vertex h ∈ H. From there,
+pebbles can be moved within G × h to any desired vertex. Therefore, since C is arbitrary, it
+                     P j pi k
+suffices to show that i∈G π(H) > π(G).
+
+
+
+
+                                             7
+  We have:
+                                       X
+               (π(G) + |G|)π(H) =             pi
+                                        i∈G
+                                            X pi
+                                     = π(H)
+                                            i∈G
+                                                π(H)
+                                                                    !
+                                              X  pi  X  pi 
+                                     = π(H)            +
+                                              i∈G
+                                                  π(H)   i∈G
+                                                               π(H)
+                                                             !
+                                              X  pi 
+                                     < π(H)            + |G|
+                                              i∈G
+                                                  π(H)
+
+where {x} denotes the fractional part of x, and the strict inequality follows from the fact
+          pi
+that each π(H)  < 1. Therefore
+
+                            (π(G) + |G|)π(H)         X  pi 
+                     π(G) =                  − |G| <          ,
+                                  π(H)               i∈G
+                                                         π(H)
+
+which completes the proof.
+
+
+Proof of Theorem 3.1. The result follows from applying Fact 2.2(i) that |G| ≤ π(G) to
+Proposition 3.2.
+
+
+  By the same method, we can improve the previous bound for π(G  H) in the case for
+which one of the graphs is frugal.
+
+Proposition 3.3. Let G and H both be connected graphs. If H is frugal, then
+
+                             π(G  H) ≤ 2diam(H) π(G) + |G|π(H).
+
+
+Proof. Suppose H is frugal with diameter d. Then for all k, πk (H) ≤ π(H) + (k − 1)2d . Let
+C be the initial configuration with |G|π(H) + 2d π(G) pebbles. As in Proposition 3.2, for
+each vertex g ∈ G let pg denote the total number of pebbles on the vertices in g × H. Notice
+that if pg ≥ πk (H) ≤ π(H) + (k − 1)2d then k pebbles can be moved to any single vertex in
+                  P j              k
+g × H. Hence, if i∈G pi −π(H)
+                           2d
+                               + 1   ≥ π(G), then a total of π(G) pebbles can be moved to
+G × h for any vertex h ∈ H, finally allowing Player 2 to move within G × h to any desired
+                                                                 P j               k
+vertex. Therefore, since C is arbitrary, it suffices to show that i∈G pi −π(H)
+                                                                          2d
+                                                                               + 1   ≥ π(G).
+
+                                                   8
+  We have:
+                                  X
+     |C| − |G|(π(H) − 2d ) =            (pi − π(H) + 2d )
+                                  i∈G
+                                        X  pi − π(H) + 2d 
+                                    d
+                              = 2
+                                        i∈G
+                                                     2d
+                                                                                           !
+                                         X  pi − π(H) + 2d        X  pi − π(H) + 2d 
+                              = 2d                              +
+                                         i∈G
+                                                      2d            i∈G
+                                                                              2d
+                                                                      !
+                                         X  pi − π(H) + 2d 
+                                    d
+                              < 2                               + |G| .
+                                         i∈G
+                                                      2d
+
+Therefore
+                         |C| − |G|(π(H) − 2d )         X  pi − π(H) + 2d 
+                  π(G) =                       − |G| <                      ,
+                                  2d                   i∈G
+                                                                 2 d
+
+
+and the result follows.
+
+
+  Since 2d ≤ π(H), we have 2d π(G)+|G|π(H) ≤ π(H)π(G)+|G|π(H). Thus Proposition 3.3
+is at least as strong as the bound in Proposition 3.2 as long as min({(π(G)+|G|)π(H), (π(H)+
+|H|)π(G)}) = (π(G) + |G|)π(H).
+
+  One consequence of Graham’s conjecture concerns the pebbling number of the product
+Gk =G     . .  G}. If the conjecture holds, then π(G  k ) ≤ π(G)k . As shown in [5] this
+     |  .{z
+             k factors
+would be sharp, as the pebbling number of the hypercube Qk = K2 k is 2k . In fact, using
+Proposition 3.2, we show the following.
+
+Corollary 3.4. For any connected graph G and any positive integer k,
+
+                                   π(G  k )1/k < π(G) + |G|.
+
+
+Proof. The result is true for k = 1, and for k > 1 we use induction and Proposition 3.2,
+which yields π(G  k ) < π(G  (k−1) )(π(G) + |G|) ≤ (π(G) + |G|)k .
+
+
+  Since, for many graphs π(G) ≫ |G| (for example, paths and other high diameter graphs
+with Fact 2.2(ii)), the exponential bound for the growth of π(G  k ) in Corollary 3.4 is close
+to best possible.
+
+                                                 9
+4      Pebbling on Strong Products
+
+In this section, we use similar techniques to prove the following.
+
+Theorem 4.1. Let G and H be connected graphs. Then,
+                                      3
+                            π(G ⊠ H) ≤ (π(G) + 1)(π(H) + 1).
+                                      2
+
+    The key difference in our approach between the box product and the strong product is
+the fact that, occasionally, a pebble can move in both G and H. Specifically, in the proof
+of Proposition 3.2, all of the pebbles were first moved through copies of H, then through a
+copy of G. However, in the strong product case, we will be able to “cut the corner” for one
+of the moves as illustrated in Figure 3.
+                                    G      G       G      G
+
+                                H
+
+
+                                H
+
+
+                                H
+
+
+                                H
+
+
+
+
+             Figure 3: G ⊠ H with pebble movements related to Proposition 4.3
+
+    To gain the most of this “cut the corner” move, we introduce the following function. Let
+φ(G) be the pebbling number of a connected graph G with the following additional rule:
+before any normal pebbling moves are made, each pebble may make a single pebbling move
+without any cost of losing a pebble. These moves must be done simultaneously, and a pebble
+is still considered to reach the root as a result of this move. We first show that this “cut the
+corner” move, indeed, saves nearly a factor of 2 of the pebbles.
+
+Lemma 4.2. Let φ(G) be defined as directly above. Then, for any connected graph G, we
+have                                               
+                                               π(G)
+                                        φ(G) ≤        .
+                                                 2
+
+                                               10
+                                                              l            m
+                                                                  π(G,r)
+Proof. Let r be the root. Let C be a configuration of size          2
+                                                                               on G. Copy each pebble
+in C to create another configuration D of size at least π(G, r); then D is r-solvable under
+standard pebbling. Now let D ′ be a non-trivial subconfiguration of D that is minimally r-
+solvable. That is, it solves r with the fewest number of steps and with no remaining pebbles.
+Let σ ′ be its corresponding r-solution.
+
+  We note that D ′ has an even number of pebbles at each vertex. Indeed, if some vertex
+v had an odd number of pebbles then one of its pebbles p would need to wait for another
+pebble to arrive to v in order to be involved in a pebbling step, which takes more steps than
+if p already had its partner at v, thus contradicting the minimality of D ′ .
+
+  Every pebble in D ′ has a first move in σ ′ (since otherwise D ′ would not include that
+pebble), so let S ′ be the set of all such first moves. Because the pebbles in D ′ come in pairs
+at each vertex, we can assume that each pebble in D ′ is paired with another pebble on its
+initial vertex for its first move, and we can start σ ′ by making all the S ′ moves. Let D ∗ be
+the resulting configuration, which of course is r-solvable.
+
+  Now back up to think about D ′ differently. Merge the pairs of pebbles in D ′ to create
+the sub-configuration C ′ of C. Make the first moves S with no cost that correspond to the
+costly moves S ′ , and let C ∗ be the resulting configuration. Notice that C ∗ = D ∗ , and hence
+is r-solvable.
+
+Proposition 4.3. Let G and H both be connected graphs. Then
+
+                                  1
+                        π(G ⊠ H) ≤ (π(G) + 2|G| + 1)(π(H) + 1).
+                                  2
+
+Proof. We will follow a similar proof to that posed in Proposition 3.2. Let (rG , rH ) be the
+root, C be a configuration of at least 21 (π(G) + 2|G| + 1)(π(H) + 1) pebbles, and for each
+vertex g ∈ G let pg denote the total number of pebbles on the vertices in g × H.
+
+  As with the proof of Proposition 3.2, we want to show that sufficiently many pebbles can
+reach some vertex in G × rH . The key to the proof is that the number of pebbles needed to
+move onto the subgraph G × rH is sufficiently less than before. Let N(g) denote the open
+neighborhood {g ′ ∈ G | g ′ ∼G g}, and define the closed neighborhood N[g] = N(g) ∪ {g}.
+
+                                              11
+  Claim. If pg ≥ k(π(H) + 1), then a total of k pebbles can be moved to any configuration
+on N[g] × H.
+
+  Proof of Claim. Partition the pg pebbles into k equitable parts (or as equitable as possible).
+We show that each part will allow for at least one pebble to reach any vertex (g ′, h) ∈
+N[g] × H. For each part, observe that using only those pebbles either (a) one pebble can
+be moved onto (g, h) using only those pebbles or (b) there are two pebbles at (g, h). In case
+(a), notice that, for the final step of the corresponding h-solution, the pebble may be moved
+to any (g ′ , h) (instead of (g, h)) In case (b), the two pebbles at (g, h) can be used to make a
+pebbling move to (g ′, h) for any g ∼G g ′ .                                                        ♦
+                                                                                P           j            k
+                                                                                                  pg
+  As a result of the claim together with Lemma 4.2, it follows that, whenever     g∈V (G)       π(H)+1
+
+> ⌈π(G)/2⌉, there is an (rG , rH )-solution.
+
+  We have:
+
+   (π(G) + 2|G| + 1)(π(H) + 1)   X
+                               ≤     pi
+                2                i∈G
+                                                    X   pi
+                                    = (π(H) + 1)
+                                                 i∈G
+                                                     π(H) + 1
+                                                   X            X              !
+                                                           pi               pi
+                                    = (π(H) + 1)                  +
+                                                   i∈G
+                                                       π(H) + 1     i∈G
+                                                                         π(H) + 1
+                                                                      !
+                                                   X      pi
+                                    < (π(H) + 1)                  + |G| .
+                                                   i∈G
+                                                       π(H) + 1
+
+Therefore,
+                                                            X            
+                 π(G)     (π(G) + 2|G| + 1)(π(H) + 1)                pi
+                        ≤                             − |G| <                 ,
+                   2             2(π(H) + 1)                  i∈G
+                                                                  π(H)  + 1
+
+where the first inequality follows from the properties of the ceiling function, and the second
+inequality follows directly from above. This completes the proof.
+
+
+Proof of Theorem 4.1. The proof follows from Proposition 4.3 and Fact 2.2(i).
+
+
+  Upon comparing the proof of Proposition 4.3 to the proof of Proposition 3.2, a “shortcut”
+is taken, saving one move, and up to a factor of 2 of the pebbles. As a result, it may seem
+
+                                               12
+reasonable to conjecture that π(G ⊠ H) ≤ 21 π(G)π(H). However, π(K2 ⊠ P3 ) = 6 whereas
+π(K2 ) = 2 and π(P3 ) = 4. The gains made by the shortcut are lost by the fact that there is
+now more room to place unused pebbles. As a result, we conjecture the following variation
+to Graham’s conjecture for strong products.
+
+Conjecture 4.4. For any connected graphs G and H,
+                                                        
+                                       1
+                    π(G ⊠ H) ≤ max       π(G)π(H), |G||H| + 2.
+                                       2
+
+    We note that π(K2 ⊠ Pn ) = 2n−1 + 2 if n ≥ 2 whereas π(K2 ) = 2, π(P4 ) = 8.
+
+
+
+5      Pebbling on Cross Products
+
+Previously, our main technique has been to push pebbles in a canonical manner. However, in
+the cross product G × H, G (or H) is not necessarily a subgraph. Hence, using the structure
+of G or H for pebbling within G × H appears to be daunting. As exemplified by K2 × K2 ,
+G × H is not connected when both G and H are bipartite and neither G nor H is K1 .
+
+    Our main method to overcome these obstacles is to consider connected spanning bipartite
+subgraphs of G and H. This can be seen in Figure 4.
+
+    Such subgraphs exist provided the graphs are connected; for instance, consider any span-
+ning tree. We will prove the following:
+
+Theorem 5.1. Let G (6= K1 ) and H be connected graphs with H nonbipartite. For G and
+H, choose any connected spanning bipartite subgraphs, G′ and H ′ , respectively. Then,
+
+                             π(G × H) ≤ 2(π(G′ ) + |G|)π(H ′)2 .
+
+
+    To prove this theorem, we will consider the special case K2 × H where H is nonbipartite.
+
+Lemma 5.2. Let H be a connected nonbipartite graph and let H ′ be a connected spanning
+bipartite subgraph. Then
+                                   π(K2 × H) ≤ 2π(H ′ )2 .
+
+                                              13
+                                   G       G    G        G0
+                                                              (rG ; rH )
+                               H
+
+
+                               H
+
+
+                               H
+
+
+                               H
+
+
+
+
+              Figure 4: G × H with pebble movements related to Theorem 5.1
+
+Proof. Since H is nonbipartite, we can choose an edge, {a, b}, that is in H ′ but not H, and
+a and b are in the same partite set. Since H ′ is a connected spanning bipartite subgraph of
+H, we can construct a connected bipartite spanning subgraph of K2 × H, using two copies
+(H0′ and H1′ ) of H ′ and adding a single edge {a′ , b′ } with a′ being the copy of a in V (H0′ )
+and b′ being the copy of b in V (H1′ ).
+
+  Choose a root r ∈ V (K2 × H) and, without loss of generality, let r ∈ V (H0′ ). For every 2
+pebbles that reach b′ , we can move one pebble to a′ . It follows that we can move one pebble
+to a′ for every 2π(H ′) pebbles in H1′ .
+
+  Let y and z denote the number of pebbles initially in H0′ and H1′ respectively. By pebbling
+                                                                                     z           ′
+in H1′ through {a′ , b′ } and then through H0′ in this manner, we see that, if y + 2π(H ′ ) ≥ π(H ),
+
+
+then one pebble can necessarily reach r. Therefore, since y, z ≥ 0 and y + z = 2π(H ′)2 , we
+            z        y+z          ′
+have y + 2π(H ′ ) ≥ 2π(H ′ ) = π(H ), which finishes the proof.
+
+
+
+
+  We are now ready to prove the main result of this section.
+
+
+Proof of Theorem 5.1. Let (rG , rH ) be the root and C be a configuration of 2(π(G′ ) +
+|G|)π(H ′)2 pebbles. For each vertex g ∈ G choose an edge eg ∈ E(G) such that g ∈ eg .
+Arbitrarily order the vertices of G, and let pg denote the number of pebbles on V (eg × H) \
+ S                                                               P
+   g ′ >g V (eg ′ × H) , so that each pebble is counted once, and   g pg is exactly the total
+
+number of pebbles.
+
+
+                                                14
+  Note that, since G′ is a connected spanning bipartite subgraph of G, we can find G′ as
+a subgraph of G × H containing (rG , rH ) among the vertices of G × {rH , x} for any edge
+{rH , x} in H (such an edge exists because H is connected). Further, for every g ∈ G, the
+vertices of this subgraph G′ will contain at least one vertex in eg × H.
+
+  By Lemma 5.2, every 2π(H ′)2 pebbles within eg × H can be used to move a single pebble
+onto any vertex in eg × H. In particular, if pg ≥ 2kπ(H ′)2 , then k pebbles can be moved
+to any single vertex in eg × H. Since eg × H intersects our chosen copy of G′ in at least
+              P         pi             ′                 ′
+one vertex, if i∈G ⌊ 2π(H  ′ )2 ⌋ ≥ π(G ), a total of π(G ) pebbles can be moved to our chosen
+
+
+subgraph G′ . From there, pebbles can be moved within G′ to the root. Therefore, since C
+                                      P j pi k
+is arbitrary, it suffices to show that i∈G 2π(H ′ )2 ≥ π(G′ ).
+
+  We have:
+                                       X
+            2(π(G′ ) + |G|)π(H ′)2 =         pi
+                                       i∈G
+                                                  X pi
+                                  = 2π(H ′)2
+                                             i∈G
+                                                 2π(H ′)2
+                                                                                !
+                                               X  pi  X  pi 
+                                  = 2π(H ′)2              ′ )2
+                                                               +
+                                               i∈G
+                                                    2π(H         i∈G
+                                                                      2π(H ′ )2
+                                                                    !
+                                               X  pi 
+                                         ′ 2
+                                  < 2π(H )                     + |G| .
+                                               i∈G
+                                                    2π(H ′)2
+
+Therefore
+
+           2(π(G′ ) + |G|)π(H ′)2         X  pi                     X  pi 
+       ′
+   π(G ) =                        − |G| <               + |G| − |G| =               .
+                 2π(H ′)2                 i∈G
+                                              2π(H ′ )2
+                                                                      i∈G
+                                                                          2π(H ′ )2
+
+
+
+This completes the proof.
+
+Corollary 5.3. Let G (6= K1 ) and H be connected graphs with H nonbipartite. For G and
+H, choose any connected spanning bipartite subgraphs, G′ and H ′ , respectively. Then,
+
+                                 π(G × H) ≤ 4π(G′ )π(H ′)2 .
+
+
+
+
+                                                  15
+    It is worth noting that, for these results, the choice of which graph is G and which graph
+is H is important. In fact, the condition that H is nonbipartite is applied subtly in Lemma
+5.2. Hence, with these methods, a nonbipartite graph must take the role of H.
+
+    The concept of using spanning bipartite subgraphs is undoubtedly unaesthetic. Indeed, we
+believe that a similar type of inequality should hold without the use of bipartite subgraphs.
+
+Conjecture 5.4. Let G and H be connected graphs with G 6= K1 and H nonbipartite. Then,
+                                               9
+                                  π(G × H) ≤      π(G)π(H)2 .
+                                               16
+
+    If this conjecture is true, it would be asymptotically tight. It is known that π(C2k ) = 2k
+and π(C2k+1 ) = 2⌊2k+1 /3⌋ + 1 [14]. Note that K2 × C2k+1 = C4k+2 , so π(K2 )π(C2k+1)2 =
+                2
+2 2⌊2k+1 /3⌋ + 1 ∼ 169
+                        22k+1 = 16
+                                 9
+                                   π(C4k+2 ) as k → ∞. Further, this example is persuasive
+for showing that the π(H)2 component, as opposed to just π(H), is likely necessary in a
+Graham-type bound for the cross product.
+
+
+
+6      Pebbling on Coronas
+
+For an idea of how the pebbles move in these graphs, see Figure 5. The following two results
+are straightforward from the structure of G ⊲⊳ H.
+
+                                     H
+                                                          H
+
+                                               G
+
+
+
+
+                                      H                  H
+
+
+
+                           Figure 5: G ⊲⊳ H with pebble movements
+
+Lemma 6.1. Let G be a connected graph and H be any graph. If there are 2π(G) pebbles
+on the vertices in G then there is an r-solution in G ⊲⊳ H for any r. Furthermore, if r is
+
+                                               16
+in a copy of H and π(G) + 1 pebbles are on the vertices in G with at least one pebble on the
+vertex in G adjacent to r, then a pebble can be moved to r.
+
+
+     For a vertex v ∈ V (G ⊲⊳ H) − V (G) denote by H v the copy of H in G ⊲⊳ H that contains
+v.
+
+Lemma 6.2. Let G be a connected graph and H be any graph. Suppose that r ∈ V (G ⊲⊳
+H) − V (G). If there are 4 pebbles at a vertex in H r or there are 2 pebbles at two distinct
+vertices in H r , then there is an r-solution in G ⊲⊳ H.
+
+
+     Lemma 6.2 implies an r-unsolvable configuration has at most |H| + 1 pebbles in H r .
+
+Lemma 6.3. Let G be a connected graph, H be any graph, and consider the graph G ⊲⊳ H.
+If there are |H| + 2k − 1 pebbles on the vertices in one copy of H in G ⊲⊳ H, say H ∗ , then
+k pebbles can be moved to the vertex in G that is adjacent to all vertices in H ∗ .
+
+
+Proof. Given a configuration C of |H| + 2k − 1 pebbles on H ∗ , at most |H| (“odd”) vertices
+have an odd number of pebbles on them. By removing a pebble from each odd vertex we
+obtain a configuration C ′ of at least 2k pebbles, for which each vertex is even. By pairing
+up pebbles on each vertex, at least k pebbling moves can be made.
+
+Theorem 6.4. Let G be a connected graph and H be any graph. Then π(G ⊲⊳ H) ≤
+|G||H| + 4π(G).
+
+
+Proof. Let r be the root and suppose that C is an r-unsolvable configuration of maximum
+size. Write g = |G|, h = |H|, and H1 , . . . , Hg for the copies of H in G ⊲⊳ H, corresponding
+to the vertices v1 , . . . , vg in V (G). For a subgraph F ⊆ G ⊲⊳ H let CF be the restriction of
+C to F .
+
+     Suppose that r ∈ V (G). In this case we know that |CG | = 0 because, otherwise, any
+pebble on a vertex vi ∈ V (G) can be moved back to two pebbles in Hi , preserving r-
+unsolvability but contradicting maximality. Similarly, each |CHi | ≥ h since, otherwise, we
+could add a pebble to some vertex in Hi that doesn’t yet have one. Let ki ≥ 0 be such
+
+
+                                              17
+that |CHi | = h + 2ki − 1 + ǫi , where ǫi ∈ {0, 1}. Then, by Lemma 6.3, the total number
+                                                                Pg
+of pebbles that all the copies of H contribute to G is at least   i=1 ki < π(G). Hence
+      Pg            Pg
+|C| = i=1 |CHi | ≤ i=1 (h + 2ki ) ≤ gh + 2(π(G) − 1).
+
+    Now suppose, without loss of generality, that r ∈ V (H1 ). As above, |CG | ≤ 1 (there could
+be a pebble on v1 ). Also, |CHi | ≥ h for i > 1, while Lemma 6.2 implies that |CH1 | ≤ h + 1.
+                                                                    Pg
+Defining ki as above for i > 1, Lemmas 6.1 and 6.3 show that           i=2 ki < π(G) when
+                     Pg
+|CG | = 1 and that i=2 ki < 2π(G) when |CG | = 0. Therefore, if |CG | = 0 then |C| =
+        P                         P
+|CH1 | + gi=2 |CHi | ≤ (h + 1) + gi=2 (h + 2ki ) ≤ gh + 1 + 2(2π(G) − 1) = gh + 4π(G) − 1,
+                                               P                           P
+and if |CG | = 1 then |C| = |CG | + |CH1 | + gi=2 |CHi | ≤ 1 + (h + 1) + gi=2 (h + 2ki ) ≤
+gh + 2 + 2(π(G) − 1 = gh + 2π(G).
+
+    Therefore, if |C| ≥ gh + 4π(G), C is r-solvable.
+
+
+    A well-known example of a corona is the sun Sn = Km ⊲⊳ K1 , where n = 2m. Since Sn
+is a split graph, an application of the main result of [1] yields π(Sn ) = 3m + 2 for m ≥ 2,
+while Theorem 6.4 only gives the upper bound 5m. This shows that the bound can be
+weak. However, the bound can also be fairly sharp. Indeed, one can see that for m ≥ 2,
+π(Km ⊲⊳ Kt ) = mt + 2m + 2, whereas this theorem gives the upper bound mt + 4m, which
+is asymptotically sharp in t. Also, for any non-complete connected graph H, K1 ⊲⊳ H has
+diameter two and so π(K1 ⊲⊳ H) = |H| + 1 (it is Class 0 by [4]), while this theorem gives
+the upper bound |H| + 4.
+
+
+
+7      Notes
+
+In Section 4, we introduced the new function φ that proved useful in deriving Proposition 4.3.
+It would therefore be of use to study φ for various graphs and graph classes in order to sharpen
+this bound and investigate its tightness. For instance, the bound is sharp for C5 , π(C5 ) = 5
+and φ(C5 ) = 3, but denser graphs have much looser inequalities, i.e., φ(Kn ) = 1. The case
+when the diameter is 2 also presents an interesting question; for while it may be tempting
+to say φ(G) = 2 when diam(G) = 2, a quick check has that the Petersen Graph, P has
+
+                                               18
+φ(P ) = 3.
+
+  On the subject of frugal graphs, and based on the results of [2, 3], it would be worth
+exploring whether or not all chordal graphs are frugal.
+
+  Finally, the truth of Graham’s conjecture would imply that the set of Class 0 graphs is
+closed under cartesian products. This should be a robust direction to pursue, especially if
+we also add the frugal property, although it has been suggested in [11] that the square of
+the Lemke graph might be a counterexample.
+
+
+
+References
+
+[1] L. Alcón, M. Gutierrez, and G. Hurlbert, Pebbling in split graphs, SIAM J. Discrete
+   Math. 28 (2014), no. 3, 1449–1466.
+
+[2] L. Alcón, M. Gutierrez, and G. Hurlbert, Pebbling in 2-paths, Elec. Notes Discrete Math.
+   50 (2015), 145–150.
+
+[3] L. Alcón, M. Gutierrez, and G. Hurlbert, Pebbling in semi-2-trees, Discrete Math. 340
+   (2017), 1467–1480.
+
+[4] T. Clarke, R. Hochberg, and G. Hurlbert, Pebbling in diameter two graphs and products
+   of paths, J. Graph Th. 25 (1997), no. 2, 119–128.
+
+[5] F. Chung, Pebbling in hypercubes, SIAM J. Discrete Math. 2 (1989), no. 4, 467–472.
+
+[6] A. Czygrinow and G. Hurlbert, Girth, pebbling, and grid thresholds, SIAM J. Discrete
+   Math. 20 (2006), no. 1, 1–10.
+
+[7] R. Feng and J.Y. Kim, Pebbling numbers of some graphs, Sci. China Ser. A 45 (2002),
+   no. 4, 470–478.
+
+[8] D. Herscovici, Graham’s pebbling conjecture on products of cycles, J. Graph Theory 42
+   (2003), no. 2, 141–154.
+
+
+
+                                             19
+[9] D. Herscovici, B. Hester, and G. Hurlbert, t-pebbling and extensions, Graphs Combin.
+   29 (2013), no. 4, 955–975.
+
+[10] G. Hurlbert, Graph Pebbling. Handbook of Graph Theory, (2nd ed.), Discrete Math-
+   ematics and its Applications, J. Gross, J. Yellen, and P. Zhang, eds., 1428–1454, CRC
+   Press, Boca Raton, 2014.
+
+[11] G. Hurlbert, The weight function lemma for graph pebbling, J. Combin. Opt. 34 (2017),
+   343–361.
+
+[12] J.Y. Kim and S.S. Kim, Pebbling Numbers of the Compositions of Two Graphs, J.
+   Korea Soc. Math. Educ. Ser. B: Pure Appl. Math. 9 (2002), no. 1, 57–61.
+
+[13] D. Moews, Pebbling graphs, J. Combin. Theory Ser. B 55 (1992), no. 2, 244–252.
+
+[14] L. Pachter, H. Snevily, and B. Voxman, On pebbling graphs, Congr. Numer. 107 (1995),
+   65–80.
+
+[15] H. Snevily and J. Foster, The 2-pebbling property and a conjecture of Graham’s, Graphs
+   Combin. 16 (2000), no. 2, 231–244.
+
+[16] S.S. Wang, Pebbling and Graham’s Conjecture, Discrete Math. 226 (2001), nos. 1-3,
+   431–438.
+
+[17] Z. Wang, Y. Zou, H. Liu, and Z. Wang, Graham’s pebbling conjecture on product of
+   thorn graphs of complete graphs, Discrete Math. 309 (2009), no. 10, 3431–3435.
+
+
+
+
+                                            20
+
+SOURCE majority
+                                                   REFLECTIONS ON THE ERDŐS DISCREPANCY PROBLEM
+
+                                                                    BARTLOMIEJ BOSEK AND JAROSLAW GRYTCZUK
+
+                                                  Abstract. We consider some coloring issues related to the famous Erdős Discrepancy Prob-
+
+
+
+
+arXiv:2005.14283v1 [math.CO] 28 May 2020
+                                                  lem. A set of the form As,k “ ts, 2s, . . . , ksu, with s, k P N, is called a homogeneous arithmetic
+                                                  progression. We prove that for every ﬁxed k there exists a 2-coloring of N such that every
+                                                  set As,k is perfectly balanced (the numbers of red and blue elements in the set As,k diﬀer by
+                                                  at most one). This prompts reﬂection on various restricted versions of Erdős’ problem, ob-
+                                                  tained by imposing diverse conﬁnements on parameters s, k. In a slightly diﬀerent direction,
+                                                  we discuss a majority variant of the problem, in which each set As,k should have an excess
+                                                  of elements colored diﬀerently than the ﬁrst element in the set. This problem leads, unex-
+                                                  pectedly, to some deep questions concerning completely multiplicative functions with values
+                                                  in t`1, ´1u. In particular, whether there is such a function with partial sums bounded from
+                                                  above.
+
+
+
+
+                                                                                       1. Introduction
+
+                                             For a number h P N, a red-blue coloring of a finite set A is said to be h-balanced if the
+                                           numbers of red and blue elements in A differ by at most h. If h “ 1, then we call it perfectly
+                                           balanced. For positive integers s, k P N, we denote by As,k “ ts, 2s, . . . , ksu the homogeneous
+                                           arithmetic progression of length k and step s.
+                                             In 1932 Erdős [6] asked if there exists a constant h and a red-blue coloring of N such
+                                           that every homogeneous arithmetic progression is h-balanced. The property in question
+                                           seems unbelievable, and in fact, he expressed a guess that there is no such constant. This
+                                           was confirmed only recently by Tao [13], with a support of collective efforts in a Polymath
+                                           Project [11].
+                                             We prove in this note that for every fixed k P N there is a red-blue coloring of N which is
+                                           perfectly balanced on all sets As,k .
+
+                                           Theorem 1. For every fixed k P N there exists a red-blue coloring of N such that every
+                                           homogeneous arithmetic progression As,k is perfectly balanced.
+
+                                             The proof uses completely multiplicative functions with values in the set t`1, ´1u and
+                                           some estimates for primes in arithmetic progressions. We give it in Section 2. In Section 3 we
+                                           present another approach that did not appear to be successful, but leads to an intriguing open
+
+                                             Research supported by the National Science Center of Poland, grant 2015/17/B/ST1/02660.
+                                                                                                   1
+2                         BARTLOMIEJ BOSEK AND JAROSLAW GRYTCZUK
+
+problem. In Section 4 we propose a new variant of the Erdős Discrepancy Problem, motivated
+by the majority coloring of graphs. This leads in turn to a question concerning completely
+multipliactive functions, resembling the famous conjecture of Pólya [10], concerning partial
+sums of the Liouville function λpnq. Finally, in Section 5, we briefly describe our initial
+motivation that led us to Theorem 1, and discuss the related problem concerning rainbow
+homogeneous arithmetic progressions of fixed length k.
+
+                                            2. The proof
+
+    Recall that an arithmetic function f is completely multiplicative if it satisfies f pabq “
+f paqf pbq for every pair of positive integers a, b P N. Notice that this implies that f p1q “ 1.
+Since we will consider only functions with two values t`1, ´1u (corresponding to colors red
+and blue), we will call them shortly multiplicative colorings.
+    We start with the following simple lemma.
+
+Lemma 1. Let k be a fixed positive integer. Suppose that c is a multiplicative coloring of
+the set t1, 2, . . . , ku which is perfectly balanced. Then c can be extended to a multiplicative
+coloring of N which is perfectly balanced on every set As,k .
+
+Proof. Let C “ pcp1q, cp2q, . . . , cpkqq be the initial color sequence satisfying the assumptions
+of the lemma. In particular, it satisfies
+
+(2.1)                          cp1q ` cp2q ` ¨ ¨ ¨ ` cpkq P t`1, ´1, 0u.
+
+    We extend the coloring c to the whole of N in a natural way. First, if p ě k ` 1 is a prime
+number, then we may chose for cppq any value from t`1, ´1u. If n “ p1 p2 ¨ ¨ ¨ pr is a product
+of primes pi , then we compute cpnq “ cpp1 qcpp2 q ¨ ¨ ¨ cppr q. So, the coloring c is multiplicative.
+Consequently, the color sequence of every set As,k satisfies
+
+(2.2)               pcpsq, cp2sq, . . . , cpksqq “ cpsqpcp1q, cp2q, . . . , cpkqq “ ˘C,
+
+and is therefore perfectly balanced.                                                                
+
+    The next lemma comes from the paper by Borwein, Choi, and Coons [2].
+
+Lemma 2 (Borwein, Choi, Coons, [2]). Let b be a multiplicative coloring of N defined by
+bp3q “ `1 and bppq ” ppmod 3q for all other primes p. Then for every k ě 1, the sum
+Σki“1 bpiq equals the number of 1’s in base 3 expansion of k. In consequence, for every k ě 1
+we have
+
+(2.3)                                0 ď Σki“1 bpiq ď rlog3 ks ` 1.
+                      REFLECTIONS ON THE ERDŐS DISCREPANCY PROBLEM                                   3
+
+  We will also need some estimates on the number of primes of the form 3m ` 1 in the
+interval pN, 2Nq. Recall that the Chebyshev function θpx; 3, 1q is defined by
+                                              ÿ
+(2.4)                           θpx; 3, 1q “          log p.
+                                                 p”1pmod 3q,pďx
+
+We will use the following result of McCurley [9].
+
+Lemma 3 (McCurley [9]). For x ě 17377 we have
+
+(2.5)                               0.49x ď θpx; 3, 1q ď 0.51x.
+
+  Using this lemma we get a useful lower bound for the number of primes of the form 3m ` 1
+between x and 2x.
+
+Lemma 4. Let f pxq denote the number of primes of the form 3m ` 1 in the interval px, 2xq.
+Then for every x ě 17377 we have
+                                                            x
+(2.6)                                   f pxq ě 0.47             .
+                                                         logp2xq
+Proof. Let f pxq “ r, and let q1 , q2 , . . . , qr be all the primes of the form 3m ` 1 in the interval
+px, 2xq. Then we may write
+                                                r
+                                                ÿ
+(2.7)              θp2x; 3, 1q ´ θpx; 3, 1q “         log qi ď logpp2xqr q “ r logp2xq.
+                                                i“1
+
+Using Lemma 3 we get
+
+(2.8)                    θp2x; 3, 1q ´ θpx; 3, 1q ě 0.98x ´ 0.51x “ 0.47x.
+                      0.47x
+Hence, we obtain r ě logp2xq for all x ě 17377.                                                     
+
+  Now we are ready to prove Theorem 1
+
+Proof of Theorem 1. Let k P N be fixed. By Lemma 1 it is sufficient to construct a multi-
+plicative perfectly balanced coloring of t1, 2, . . . , ku. For small values of k, say for k ď 106 ,
+this can be done by computer. So, assume that k ě 17377, and let b be a multiplicative
+coloring form Lemma 2.
+  We will switch the colors of prime numbers of the form p “ 3m ` 1 lying in the range
+p k2 , kq, from plus to minus, so that the resulting coloring will be balanced. This will not affect
+multiplicativity. Moreover, there are sufficiently many such primes since by Lemma 2 and
+Lemma 4, their number satisfies
+                       ˆ ˙                                     k
+                         k              k                     ÿ
+(2.9)                f        ě 0.47         ě rlog3 ks ` 1 ě     bpiq.
+                         2           2 log k                  i“1
+
+This completes the proof.                                                                           
+4                         BARTLOMIEJ BOSEK AND JAROSLAW GRYTCZUK
+
+                              3. Greedy muliplicative coloring
+
+    To prove Theorem 1 we firstly considered a different approach proposed by Rejmer (per-
+sonal communication). It is a simple algorithm producing a perfectly balanced multiplicative
+coloring of the set t1, 2, . . . , ku in a greedy way.
+    Let k be a fixed positive integer. We start with putting cp1q “ `1. In each consecutive step
+we color the next integer so that the new coloring is perfectly balanced and multiplicative. So,
+in the second step we put cp2q “ ´1. For a more precise description, suppose that after j ´ 1
+steps, j ě 2, we obtained a perfectly balanced multiplicative coloring pcp1q, cp2q, . . . , cpj ´1qq.
+In the next step we distinguish two cases.
+                                                         ř2m
+Case 1 (j ´ 1 “ 2m). In this case we must have            i“1 cpiq “ 0. Thus, any choice for cpjq will
+not destroy the perfect balance. If j is composite, then cpjq is determined by multiplicativity.
+If j is prime, then we may put cpjq “ ´1.
+
+Case 2 (j ´ 1 “ 2m ´ 1). Then j is even, so cpjq is determined by multiplicativity. Since
+ř2m´1                              ř2m              ř2m
+ i“1 cpiq “ ˘1, we may have either  i“1 cpiq “ 0 or   i“1 cpiq “ ˘2. In the former case we
+do nothing. In the later case, we find the largest prime p ą 2j such that cppq has “wrong”sign,
+and switch it. This makes the new coloring pcp1q, cp2q, . . . , cpjqq perfectly balanced.
+
+    Notice that by Bertrand’s Postulate, there is always a prime between 2j and j. However, it
+is not clear that there will always be a prime whose sign-switching would improve balance.
+For instance, in the 16th step of the algorithm we get the following coloring:
+                 1    2   3   4    5   6   7   8    9 10 11 12 13 14 15 16
+                 ` ´ ´ ` ´ ` ´ ´ ` `                           `   ´   ´   `   `   `
+with 9 pluses and 7 minuses. To fix this imbalance, we go back to the first prime to the left,
+which is p “ 13. However, cp13q “ ´1, so switching this color into cp13q “ `1 would only
+increase imbalance. Fortunately, for the next prime p “ 11 we have cp11q “ `1, so we may
+switch it to cp11q “ ´1 and get in this way a perfectly balanced multiplicative coloring.
+    We do not known if this algorithm ever stops.
+
+Conjecture 1. Rejmer’s algorithm runs ad infinitum.
+
+    Rejmer made some computational experiments with his algorithm. In particular, he run
+it up to 109 steps producing in this way perfectly balanced multiplicative colorings of A1,k
+for all k ď 109 . Notice that the first half terms of the last coloring will not be changed in the
+future. Thus, assuming validity of Conjecture 1, the algorithm defines an intriguing recursive
+binary sequence Rpnq over t´1, `1u. Up to n “ 40 Rejmer’s sequence coincides with the
+Liouville function λpnq (defined by λppq “ ´1 for all primes p), but Rp41q “ `1. The same
+                       REFLECTIONS ON THE ERDŐS DISCREPANCY PROBLEM                         5
+
+happens for many other primes, in particular Rp97q “ Rp101q “ `1. One may suspect that
+there will be infinitely many primes p with Rppq “ `1.
+
+Conjecture 2. There exist infinitely many primes p for which Rppq “ `1.
+
+              4. Majority version of the Erdős Discrepancy Problem
+
+  Let h be a positive integer and let c be a red-blue coloring of the set As,k . We say that c
+is a majority coloring if more than a half of the elements of As,k ´ tsu have color different
+than the element s. Notice that a perfectly balanced coloring of As,k satisfies the majority
+condition, while a majority coloring of As,k can have all elements, except one, in the same
+color.
+  Is it possible that there is a red-blue coloring of N which satisfies the majority condition
+on every homogeneous arithmetic progression As,k ? Interpreting colors as numbers t`1, ´1u,
+we may express the majority coloring of As,k via the inequality:
+                                              k
+                                              ÿ
+(4.1)                                  cpaq         cpjaq ď 0.
+                                              j“1
+
+So, the answer to the above question would be positive if we could find a completely multi-
+plicative function c satisfying the inequality
+                                          k
+                                          ÿ
+(4.2)                                           cpjq ď 0,
+                                          j“1
+
+for every k ě 2. A natural candidate for such negativity property is the Liouville function
+λpnq. Actually in 1919 Pólya [10] conjectured that ni“1 λpiq ď 0 for all n ě 2, and proved
+                                                   ř
+
+that this would imply the Riemann Hypothesis (see [3]). Unfortunately, this supposition
+occurred to be far from the truth, but the smallest counter-example is n “ 906150257.
+  As in the original Erdős Discrepancy Problem, one may consider a relaxed version of
+majority coloring with some parameter h. Let us call a coloring c of As,k an h-majority
+coloring if it satisfies:
+                                              k
+                                              ÿ
+(4.3)                                  cpsq         cpjsq ď h.
+                                              j“1
+
+This leads to the following conjecture.
+
+Conjecture 3. There exists a constant h and a red-blue coloring of N which is h-majority
+on every homogeneous arithmetic progression As,k .
+
+  A natural first attempt is to look for an appropriate multiplicative coloring, which leads
+to the following problem.
+6                         BARTLOMIEJ BOSEK AND JAROSLAW GRYTCZUK
+
+Conjecture 4. There exists a constant h and a completely multiplicative function c satisfying
+                                             k
+                                             ÿ
+(4.4)                                              cpjq ď h,
+                                             j“1
+
+for all k ě 1.
+
+    We made some computer experiments with functions that are close to the Liouville function
+λpnq in the sense that only a few small primes have sign `1. For instance, switching only the
+sign of one small prime gives usually a function with much smaller partial sums. However,
+a standard argument using the Riemann Zeta function shows that in order to get a function
+satisfying Conjecture 4 one has to switch signs of infinitely many primes.
+
+                                        5. Final remarks
+
+    Curiously, our initial impulse for Theorem 1 came from a different direction and was related
+to the following problem posed independently by Pach and Pálvölgyi (see [5]).
+
+Conjecture 5. For every k P N there is a k-coloring of N such that every set As,k is rainbow.
+
+    Notice that the above statement easily implies the assertion of Theorem 1. Indeed, a
+desired red-blue coloring can be obtained by splitting the set of k colors into two subsets of
+(almost) the same cardinality.
+    Another consequence of Conjecture 5 is a positive answer to the following question of
+Graham [7]: Is it true that among any n distinct positive integers a1 , a2 , . . . , an there is always
+a pair ai , aj satisfying gcdpaaii ,aj q ě n? The problem was solved in the affirmative for sufficiently
+large n by Szegedy [12] and independently by Zaharescu [14]. Then Balasubramanian and
+Soundararajan [1] gave a complete solution by using methods of Analytic Number Theory.
+    To see a connection between these two problems, consider a graph Gk on positive integers
+                                                                  r                s
+in which two numbers r, s are joined by an edge if and only if gcdpr,sq ď k and gcdpr,sq ď k.
+Let ωpGk q and χpGk q denote the clique number and the chromatic number of the graph Gk ,
+respectively. Then Graham’s problem is equivalent to ωpGk q “ k, while Conjecture 5 is
+equivalent to a much stronger statement that χpGk q “ k (see [4], [5]).
+    Going back to the Erdős Discrepancy Problem, it is natural to wonder to what extent the
+original question can have a positive answer. Let us call a pair of sets pS, Kq cute if there
+is a constant h and a red-blue coloring of N such that every set As,k is h-balanced, for all
+s P S and k P K. So, the result of Tao [13] says that the pair pN, Nq is not cute, while
+Theorem 1 asserts that pN, Kq is cute for every singleton K “ tku. It is not hard to prove
+that there are infinite sets K for which pN, Kq is still cute. For instance, one may use the
+multiplicative coloring b from Lemma 2 to infer that pN, Kq is cute if K is the set of positive
+                       REFLECTIONS ON THE ERDŐS DISCREPANCY PROBLEM                                          7
+
+integers avoiding 1’s in their base 3 expansion. Notice however, that this set K has density
+zero. Is there a cute pair pN, Kq with K of positive density?
+  On the other hand, there exist dense sets S for which the pair pS, Nq is cute. For instance,
+the alternating red-blue coloring of N is perfectly balanced on all sets As,k with s odd (see
+[8]). Is there a cute pair pS, Kq with both sets of density one?
+
+                                              References
+[1] R. Balasubramanian and K. Soundararajan, On a conjecture of R. L. Graham, Acta Arithmetica LXXV.1
+   (1996) 1–38. 5
+[2] P. Borwein, S. K. K. Choi, M. Coons, Completely multiplicative functions taking values in t´1, 1u, Trans.
+   Amer. Math. Soc. 362 (2010) 6279–6291. 2, 2
+[3] P. Borwein, S. Choi, B. Rooney, A. Weirathmueller, The Riemann Hypothesis. Springer-Verlag, New
+   York, 2007. 4
+[4] B. Bosek, M. Debski, J. Grytczuk, J. Sokól, M. Śleszyńska-Nowak, W. Żelazny, Graph coloring and
+   Graham’s greatest common divisor problem, Discrete Math. 341 (2018) 781–785. 5
+[5] A. E. Caicedo, T. A. C. Chartier, P. P. Pach, Coloring the n-smooth numbers with n colors, Arxiv. 5, 5
+[6] P. Erdős, Some unsolved problems, Michigan Math. J. 4 (1957), 299–300. 1
+[7] R. L. Graham, Unsolved problem 5749, American Math. Monthly 77 (1970) 775. 5
+[8] A. Leong, J. Shallit, Counting Sequences with Small Discrepancies, Experimental Mathematics, 22 (2013)
+   74–84. 5
+[9] K. S. McCurley, Explicit estimates for θpx; 3, lq and ψpx; 3, lq, Math. Comput. 42 (1984) 287–296. 2, 3
+[10] G. Pólya, Verschiedene Bemerkungen zur Zahlentheorie, Jahresbericht der deutschen Math.-Vereinigung
+   28 (1919) 31–40. 1, 4
+[11] Polymath Group. The Erdős discrepancy problem. 2010. 1
+[12] M. Szegedy, The solution of Graham’s greatest common divisor problem, Combinatorica 6 (1986) 67–71.
+   5
+[13] T. Tao, The Erdős discrepancy problem, Discrete Analysis, 2016, Paper No. 1, 29, DOI 10.19086/da.609.
+   1, 5
+[14] A. Zaharescu, On a conjecture of Graham, J. Number Theory 27 (1987) 33–40. 5
+
+  Theoretical Computer Science Department, Faculty of Mathematics and Computer Sci-
+ence, Jagiellonian University, 30-348 Kraków, Poland
+  E-mail address: bosek@tcs.uj.edu.pl
+
+  Faculty of Mathematics and Information Science, Warsaw University of Technology,
+00-662 Warsaw, Poland
+  E-mail address: j.grytczuk@mini.pw.edu.pl, b.pilat@mini.pw.edu.pl
+

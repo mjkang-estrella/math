@@ -1,0 +1,1 @@
+Status: PREFREEZE / no nominee. One Source085 family was developed. The full N-independent componentwise L1(l2) centered-disk gradient diagnostic remains unproved. All old scopes and dispositions remain unchanged; campaign context is19/20, latestR041, with no count assigned here.

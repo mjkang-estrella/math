@@ -1,0 +1,10 @@
+# Retained body reading and bridge limits
+
+## 336789
+Original 1708.01957v1 Conjecture3.2 and its preceding two set definitions (extracted lines354--365) read. Successor 2006.15287v2 pp1--4 definitions and Theorem3 read; section3.2 pp19--20 final proof read. The proof splits L>=3s+3 by k>=2s+2 versus k<=2s+1 using Theorems10 and11, and 3<=L<=3s+2 using Theorem12, all bounded by Gamma(s)=gamma(3s+2,s). Set the impermissible k=L+s-1 to match the target. Earlier injection case bodies not all read; this is a theorem-body and final-proof-section screen, not independent proof replay. Objection: normalized record says integers L,s without the positive-domain conditions used by the successor; do not transfer outside the source-intended domain.
+
+## 359852
+Original 2309.03772v1 p10 Conjecture3.1 and surrounding prime-family upper-bound discussion read. Successor 2502.15394v2 pp2--4 definitions and Theorem1.1 read, and p23 concluding proof read. Generic means every pair of columns independent, Delta-modular means maximum absolute determinant exactly Delta, not just at most Delta. The theorem has tail Delta>=10^8 and an additional finite385..1550 range. It uses a geometry-of-numbers structured maximizer, a type-m LP bound and z_m<=.999 for m>=4; small types give the residue formula. No full dependency audit claimed. Bounded-excess corollary needs only the tail and finite g at every smaller positive integer Delta; no computation of the intervening exact values is necessary. Formal burden of reproducing this published proof is large and unwarranted. No new claim.
+
+## 357242
+2301.05758v1 Definition2.1 (p3) fixes Q0=Q1=1, Q_n=2Q_{n-1}+Q_{n-2}; section6.2, Conjecture6.4 (p20) read. At p=3 first positive zero is n=2, while Q12=19601=1 mod3 and is also odd. Q12=1633*12+5, 12=2*5+2, 5=2*2+1. Thus rhs of the conjecture holds at12 and lhs fails. A companion-sequence zero set is not the entire multiples-of-entry-point set. This is an elementary source-formulation failure, not an accepted scientific discovery; no corrected general criterion or prior-art clearance is claimed. The exact calculation is retained for rejection only.

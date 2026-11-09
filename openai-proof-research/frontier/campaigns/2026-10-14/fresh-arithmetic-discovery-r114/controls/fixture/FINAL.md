@@ -1,0 +1,1 @@
+SYNTHETIC reduced control only

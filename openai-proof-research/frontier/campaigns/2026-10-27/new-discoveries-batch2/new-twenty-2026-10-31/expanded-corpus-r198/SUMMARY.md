@@ -1,0 +1,13 @@
+# Lane expanded-corpus-r198
+
+Twenty reserved records have ID-keyed dispositions in results.json. One strong lead survives: 341850, an exact obstruction to submodular separation at r=2,d=5. Its thirteen-row certificate gives the contradiction 0 <= -840 after symmetrization. See CANDIDATE.md and outputs/certificate-verification-compressed.json. It has a strict general Lean proof and is held for the journal-source gap, further prior-art review and independent source/statement review; zero accepted credit.
+
+A search also found a smaller Tenner iteration cycle at weight 8, but Keith's 2023 primary paper already refutes that exact conjecture. It is excluded with zero credit. The Kreweras evacuation counts agree for every word at n=1 through 5, including all 46,592 words at n=5; no resolution is claimed.
+
+Several records are already resolved in their cited or later papers: Nunge's three unimodality families, ballot/odd-order equality, Fuglede's general finite-group claim, Extended Courant, Bressoud identities, bipartite forest Ramsey numbers, Tenner's iteration, eventual rank-one stability, and descent–excedance synchronization. GLT's original conjecture section is absent in the later source version. Other records are parked with explicit quantifier and feasibility gaps; no finite testing is misrepresented as a refutation of existential asymptotic constants.
+
+Raw corpus lines and hashes: raw/, extracted.json. All enumerated arXiv versions: outputs/source-versions.json and sources/. Dated HTTP status/header/hash receipts: sources/*/receipt.json and outputs/http-receipts-index.json. Literature search snapshots: outputs/web-search-*.json. Public registry screens: outputs/registry-screen.json. Bounded history search: history-matches.txt (large-number substring noise is not a historical match).
+
+All numerical and Lean processes used scripts/limited.py: two CPUs, CPU 120 seconds, wall 140 seconds, sampled process-group RSS 6 GiB, MALLOC_ARENA_MAX=2. Only one heavy process ran at a time. A broad Mathlib import was stopped by the RSS watchdog; narrower imports were used thereafter. Logs retain failures as well as successes. No browser, account, upload, external message, git action, shared-ledger edit or child agent was used. This pass does not claim the requested several-hour exhaustive coverage of every finite record; exact search coverage and omissions are disclosed per ID.
+
+The final packet passed a fresh extracted strict rebuild, explicit-module leanchecker, and the audit of all 45 local declarations including generated ones. See logs/lean-final-verified.log and its receipt. The general theorem is Separation.source_existence_refuted. The source journal gap and independent novelty/credit review remain open; accepted credit is zero.

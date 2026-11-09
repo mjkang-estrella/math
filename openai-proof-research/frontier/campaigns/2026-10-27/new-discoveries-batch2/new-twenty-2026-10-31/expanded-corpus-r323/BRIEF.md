@@ -1,0 +1,17 @@
+# r323 standalone research handoff
+
+Campaign remains 52/60 accepted beyond 39 prior. This lane earns 0 credit. Exactly 20 immutable reserved IDs were read; before/after reservation SHA256 is 7c2759b7b88a1f1e63d7ab34c8a4bb2eefd3596aa1899447942dcd8bc03aa5e7. No eligible CANDIDATE or dormant Pi request survives.
+
+The strongest sustained routes were the two-block/three-block small-doubling family, perfect-group directed square clustering, and tree-complement billiard parity. ATTEMPTS.md gives exact symbolic calculations, alternate mechanisms, and precise failures.
+
+375976 and 375977 have complete short literal counterexamples in the Klein-bottle group, but current source v2/v3 adds block-size restrictions. The six-product object was already in completed r314; the five-product object is exactly source Example 6.2 with singleton partition. These are corrections/complete source reductions, not new significant current solutions. Do not formalize them for credit.
+
+376001 admits an explicit A5 generating triple with a positive directed square coefficient even with irredundant inverse-closed generators. The actual source leaves its required generator restrictions undefined; the triple is not minimum-cardinality. Source fidelity remains held, not solved. 367034 remains unresolved: the source proves stars via interchangeable vertices, whereas leaf deletion and general-tree pivots lack a winding-preserving orbit correspondence. Neither a helper nor a star instance resolves the full conjecture.
+
+366633 reduces, using known parameter cases, to the (1,5) defective-coloring case; that case is still unpaid. 366644 has an already proved st2 half but no st1 proof. 382477 source Conjecture 2 explicitly remains unsettled despite the corpus solved-reference metadata. No metadata status is treated as a proof.
+
+All 20 keyed findings are in results.json. Exact raw records including newline are <ID>.raw.jsonl; records/<ID>.json preserves full parsed records; literal-provenance.json records original chunk, one-based line, chunk/raw/statement UTF-8 hashes. read-inventory.json separates machine routing, literal reading and actual selected primary-proof reading. HTTP receipts preserve UTC/status/errors/bytes/hash; no inherited denied route was retried. Registry screens are routing only, not novelty clearance. Latest journal/corrections/companion and figure-image coverage remains incomplete throughout; no worldwide literature clearance is claimed.
+
+Only exact completed allowlisted historical result paths and narrowly linked completed r314 metadata/attempts were read. No protected active or crown-vnumber lane was read, hashed, scanned or polled. Shared ledger/STATUS were used only for scalar counts/status, with no writes or active links followed. No children, Lean, solver, CAS, mathematical enumeration, git, author/dependency edits, contacts, browser/account mutation, publication or upload occurred. Work products were written only in this lane.
+
+All local commands completed synchronously and were reaped. resource-log.json distinguishes actual self high-water/CPU observations from unavailable group/cgroup RSS and service telemetry. Every local Python command had isolation/bytecode flags, <=2 CPU affinity, CPU/AS limits before reading, and an outer timeout <=100 seconds (required bootstrap 20 seconds). No local jobs remain. Manifest hashes the delivered local artifacts without traversing other lanes.

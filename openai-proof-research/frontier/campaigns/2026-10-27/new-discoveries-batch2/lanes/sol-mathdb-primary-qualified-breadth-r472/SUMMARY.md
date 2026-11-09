@@ -1,0 +1,20 @@
+# r472 handback: fifty statement reviews, zero proposals
+
+Screened the exact fifty r471 reservations, without substitution. Fifty literal statements and quantifiers read; fifty distinct concrete full-scope mechanisms/obstacles are in dispositions.json and assessment.tsv. Four public-source investment exclusions (331391, 332055, 332280, 332933); forty-six HOLDs. No mathematical or novelty PASS. No root acceptance or shared coverage update. Counts unchanged: **9 additional / 39 total / next 40**. The 3,133 baseline consists of reported statement reviews, not proof audits. Root alone decides whether and how to reconcile these fifty.
+
+43 primary arXiv PDFs retained with URL, observed version header, UTC, exact hash and text hash in retained-sources.json. Selected passages were inspected, including source-internal results and cited updates where noted in assessment.tsv. No whole primary body or full dependency audit was completed. Retention and locator extraction are not reading claims. Definitions and closest successors remain incomplete, so no row is novelty-cleared. No absence-of-hits novelty inference. No live MathDB requests or public proof-registry clearance under inherited 429 HOLD.
+
+Concrete findings:
+
+- 331391: primary Conjecture 1.2's following paragraph already cites the t>=3 counterexample. No credit for adapting it.
+- 332055: primary Theorem 4 already gives the Jang–Kim refutation. Exact displayed arithmetic yields 977608342706 > 977393040249, gap 215302457. Structural hypotheses not independently replayed.
+- 332280: the record omits the minimum-degree hypothesis. Primary Figure 1 and following text already supply two counterexamples to the intended conjecture, then Theorem 1.2 repairs it. Neither a star exploiting the omission nor the public examples earns credit.
+- 332933: Theorem 3.10 is the exact proposed maximum after s=2k+1. Integer formula comparisons for k=0..100 executed. This is statement matching, not an independent partition-proof audit.
+- 333307: do **not** retire unrestricted orders from this source: it explicitly assumes sufficiently large n. No all-order resolution clearance here.
+- 332604: source Eq.15's degree conversion gives a log-derivative sign factor with exploratory signs +,-,+,- at alpha=0,0.2,0.5,5 for High-rise Urban. This suggests two local maxima, but binary64 signs are not a certificate. Eq.12 omits the conversion. Keep HOLD for angular convention, exact interval certification, source-internal comparison, successors and registry chronology. No proposal or discovery claim.
+
+Potential finite-certificate routes are recorded without briefs: all-turn-word transfer-matrix comparison (331692), exact hereditary domination witness (333146), cubic-coloring witness (332352), exact resonance witness (333131), and rational weighting on an order-six Latin square (333418). None has a completed full-scope certificate or prior clearance. Deep asymptotic/minor/decomposition/TFNP programs were parked promptly. Known cases, helpers, domain repairs and routine adaptations receive zero credit.
+
+Input integrity was independently checked, not delegated to upstream code: r471 exact payload and actual original/copy bindings; all twenty inventory chunks in place; eight separately listed frozen_inputs; r304 exclusion and historical tables; r363 Cayley exclusion packet; reservations versus prior coverage, active r470 reservations and fixed forbidden IDs; literal UTF-8 and canonical record hashes plus original chunk/line. bindings.json is a flat immutable reference table; no corpus or recursive history copy. Pre-read hashing precedes scientific/history content review. Two local freeze-schema failures are preserved and explained in failures.md.
+
+verify.py is independent data-checking code; run only through the mandated helper_guard.py with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 and python3 -B. It exits nonzero on mismatch. manifest.json lists the exact payload and excludes only itself and final-receipt.txt by exact relative paths. The separate final receipt records verification; **integrity PASS is not mathematical, source-scope or novelty PASS**.

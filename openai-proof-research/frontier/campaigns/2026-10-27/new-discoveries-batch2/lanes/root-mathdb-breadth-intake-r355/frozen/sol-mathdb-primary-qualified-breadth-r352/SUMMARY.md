@@ -1,0 +1,28 @@
+# r352: fifty reserved literal statements screened; zero qualifying survivors
+
+Completed the exact fifty reservations in root r350, with one disposition per ID in `dispositions.json`. All literal statements were read, including defects preserved verbatim in `records.json`. No reservations changed; 404067 and 364119 were not investigated. No result, candidate brief, formal certificate or discovery credit is proposed. Counts remain **9 additional / 39 total / next 40**.
+
+The authoritative r350 coverage contains 483 IDs; none of these fifty intersects it. Root may reconcile these fifty as a single further statement-review batch (533 unique IDs if adopted), never as proof-body or novelty-cleared coverage. r304 accepted-family and historical exact-ID joins return no matches. This is an administrative exact-ID check, not semantic literature clearance.
+
+## Source-qualified findings
+
+- **321852:** Source Conjecture 2 is already resolved. Gross, arXiv:1908.05220, Theorem 29, explicitly proves the unique all-ones maximum for every base at least three and every digit length. Read the actual Theorem 29 proof, its reduction through Lemma 24, and Theorem 28's shifted-support comparison. These are public proof bodies, not just the abstract. This pass checks applicability, not an independent audit of every dependency in Gross's paper.
+- **328387:** Original Example 5.8 and Conjecture 8.4 match the requested Q(12,6), generating Z4-cocycle and all classical knots. Clark–Saito–Vendramin's successor, *Algebraic properties of quandle extensions and values of cocycle knot invariants*, Corollary 3.6, removes both odd-power coefficients. Read Theorem 3.5 and its proof: reduction of cocycle values to Z2, constant projected invariant via an inner-representation extension, and nonnegative coefficients. This is a published resolution, not a fresh parity observation.
+- **318730:** The original Dvorak–Mohar paper disproves its own Conjecture 2. Read Theorem 6 and proof, with the Lemmas 3–5 construction/reduction. For each k>=171 the critical graphs have unbounded degree, whereas bandwidth B bounds degree by 2B. No new counterexample claim.
+- **405063:** Independently extracted the frozen r351 report PDF. Printed p59 states the literal local clique removal assertion as **Theorem 1**. The report does not provide its complete proof. This supports exclusion as a primary reported theorem; it is deliberately not labeled full-proof-body-confirmed.
+- **318969:** Read Theorem 4.13, its ten-column row-duplication construction, and Conjecture 4.14. The unproved task is the all-n lower bound, not the upper bound. Bounded searches found no specific successor; no global finite reduction or cheap full-scope proof emerged. Parked without a new computation.
+- **405092:** Read the actual report, printed p149, section 8. It asks for a combinatorial explanation and states that the equalities already have analytic proofs. Counting short walks would neither resolve the explanatory problem nor supply novelty. Parked; no claimed new identity or bijection.
+
+The other forty-four rows have compact, individual reasons. Missing primary scope is explicit, including the lost formulas in 319275 and 327582, the undefined recursion in 332626, and broad informal requests. Their primary bodies and current successors were **not** comprehensively reviewed. No status is inferred from an empty solution array.
+
+## Integrity and provenance
+
+`input-bindings.json` records SHA256 and byte size **before** scientific reading, using flat in-place references. All twenty r301 normalized chunks and all twenty-five r350 manifest entries were independently validated before corpus statement extraction. r304's SHA-only manifest validates; its lack of a byte-size key caused a preserved initial checker failure, not a source mismatch. The final verifier separately checks every original again.
+
+The cancelled r351 lane remains unchanged. Its five partial files were hashed before use. Its fifty-record extract independently equals the selected records streamed from all twenty verified corpus chunks. Its PDF was independently extracted; the pre-existing page extract was not trusted as proof. r351 supplies no completed dispositions. All fifty overlap that partial extract; this takeover must not be counted twice.
+
+`source-provenance.json` binds newly retained primary PDFs/HTML at acquisition before text extraction. `search-log.md` records bounded live successor queries and limitations. MathDB received zero direct requests; a search engine incidentally returned an indexed MathDB hit, which was neither opened nor used. No browser, account, GitHub, Google-specific endpoint, ScienceDirect, TLS bypass, public mutation or external message was used. All helpers ran under the specified 512 MiB AS/group RSS, 210 CPU-second and 230-second wall guard with the required thread environment; no caps were raised.
+
+## Exact remaining obligations
+
+This lane finishes **50 literal-statement dispositions**, with **6 source-body screens**, of which **3 include a matching published resolution proof body**. It delivers **0 promising briefs, 0 new mathematical resolutions, 0 Lean endpoints and 0 accepted credits**. No worldwide novelty clearance is claimed. The broad parked rows need primary source recovery and targeted successor searches before hypothesis investment. Any future survivor still requires a full-scope mechanism, decisive calculation/certificate, current registry and chronology checks, independent review, complete strict Lean endpoint, paper and extracted replay. Root alone reconciles coverage and acceptance.

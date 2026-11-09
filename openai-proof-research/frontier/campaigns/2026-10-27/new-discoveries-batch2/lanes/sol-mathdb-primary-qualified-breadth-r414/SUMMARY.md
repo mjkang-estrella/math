@@ -1,0 +1,15 @@
+# r414: fifty assigned statements, zero proposals
+
+Read all fifty literal assigned statements after freezing 367 flat SHA256/size references and verifying all twenty r301 corpus chunks in place. The intake manifest and actual referenced originals were checked read-only. No upstream verifier/receipt writer ran. Exactly fifty IDs are disjoint from the 1,733 reviewed IDs, r412’s fifty reservations and 372627/372628/368940. Reservations remain unchanged.
+
+No low-cost full-scope mechanism qualified. `dispositions.json` gives each literal scope, statement/canonical hashes, individual reason, body/text evidence, limitations and zero credit. `proposals.json` is empty. This is bounded triage, not an exhaustive corpus or literature review, a proof of hardness, or ineligibility adjudication. Source-access gaps remain HOLD; every current registry remains HOLD. No new proof, certificate, Lean or manuscript was produced; no numerical sweep ran.
+
+Primary contributor bodies distinguish quantum versus classical models, volume-uniform interacting condensation versus the printed free-gas example, and all-copy nondistillability versus one-copy tests. The arithmetic collection defines the Mahler-measure infimum and already reports nine angular cases. Dujella’s body supplies only bounds for extremal quintuple parameters and known degree-zero/one/two polynomial bounds, not the general coefficient-independent bridge.
+
+Workshop slides were recovered from the public schedule, including guarded PPT conversion. Their explicitness, complexity, distribution and security conditions prevent trivial substitutions: Picard-group existence is not fast composition, general LLL worst cases do not preserve ideals by isometry, hidden-order inversion is not disposed of by known-order exponentiation, and arbitrary related composites are not automatically valid RSA generator outputs. Howe’s principally-polarized threefold question is related context rather than the record’s isogeny-class question. Restricted known algorithms/examples are recorded without claiming a full published resolution. No closest-successor proof section or full dependency audit was completed; none was used to qualify a lead or infer novelty.
+
+Three Simon entries retain secondary-only evidence after a TLS hostname mismatch on the primary PDF. No bypass/retry occurred. Other operational limitations, provisional filename corrections, the unused binary-PPT text fallback and a bounded post-freeze exposure of unassigned schema-example IDs 1–3 are preserved in `failures.json`; those IDs were not investigated or counted. No r412 statement was read.
+
+The separate `verify.py` rechecks bound originals, the root manifest and its exact payload set, twenty chunks, literal/canonical statement identity, exact assignment/disjointness, remote body hashes and the lane’s exact manifest payload set. It exits nonzero on mismatch and prints its result only; it does not write upstream receipts. The manifest excludes only `manifest.json` and `final-receipt.json` by relative path.
+
+Accepted counts remain **9 additional / 39 total / next 40**. No shared/index/ledger/git/public changes.

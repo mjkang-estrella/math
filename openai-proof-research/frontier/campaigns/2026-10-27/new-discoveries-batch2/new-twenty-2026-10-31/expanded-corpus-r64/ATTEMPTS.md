@@ -1,0 +1,33 @@
+# Sustained mathematical attempts, 2026-11-01
+
+These are investigations with zero credit. There is no proved full-scope endpoint and no Lean packet. Numerical outputs are diagnostics, never substitutes for semantic bridges.
+
+## 368831: bounded Lüroth mixed sum
+
+The literal primary series gives the affine maps f_d(x)=1/d+x/(d(d-1)), digits 2 through k. Its compact attractor A_k has hull [(k-1)/(k(k-1)-1),1]. This follows because the minimum map fixed point is that of f_k, the maximum is f_2(1)=1, and every map is increasing with contraction at most 1/2. Thus A_3 has hull [2/5,1] and A_4 has hull [3/11,1]. A proof must establish A_3+A_4+Z=R, not merely a dense collection of finite expansions.
+
+Route 1: exact outer approximants. Start from these rational hulls and apply every allowed affine map h times. Sum every pair of cylinders, merge closed intervals exactly with Fraction arithmetic, then reduce the sum modulo 1. At every depth 1 through 6 the modulo-1 union is exactly [0,1]; at depth 6 there are 46,656 pairs and eight ordinary real components. This rules out a finite-depth rational gap at these depths, but proves no infinite-depth statement. If coverage were established at *every* depth, compactness and nested intersection would give membership in the actual attractor sum. Establishing that universal depth statement is the missing induction.
+
+Route 2: gap/thickness shortcut. The largest first-level A_3 gap is (1/2,7/10), length 1/5, while its smaller adjacent surviving interval has length 1/10. A_4 first-level gap (1/3,25/66) has length 1/22 and the small adjacent interval has length 2/33. The resulting small-bridge ratios are 1/2 and 4/3, whose product is 2/3, below the usual thickness-product sufficient threshold 1. The fetched source's displayed Lemma 5.2 numbers differ from direct substitution into its own preceding endpoints; this is a source reliability warning, not a conjecture resolution. Even taking the more favorable direct ratios does not supply the standard interval theorem. No credit is claimed for correcting arithmetic in that lemma.
+
+Route 3: simultaneous versus asynchronous digit selection. To preserve t=a+b after splitting the A cylinder by digit d, the remaining sum problem becomes A+rB with r multiplied by d(d-1); splitting B changes r by the reciprocal of e(e-1). Hence ratios generated from 1 involve unbounded exponents of 2 and 3. A finite list of equal-depth hull pictures is not a finite-state certificate. One needs a closed family of interval targets indexed by these ratios and a covering/strict-contraction argument for their refinements. Splitting both summands using digit 2 gives only the upper interval 1+(A+B)/2; mixed digits produce unequal scale problems. No invariant family covering the necessary middle interval was found. This is a concrete unresolved lemma, not an access barrier.
+
+## 369043 and 369044: bounded-length zero sums
+
+Read Section 6 conjectures together with the Section 3 proof of Theorem 1.11, not only the abstract. The source proves the D+2 upper bound by extracting a minimal zero-sum T of length D-1 and leaving three elements g1,g2,g3. Its Lemma 3.7 produces reflection identities indexed by all three pair sums. In one case, differences g1-g2, g2-g3, g3-g1 give a zero sum of length 3; in the other, two pair-sum reflections produce translations stabilizing T. Simply dropping one element to improve D+2 to D+1 eliminates this three-element mechanism.
+
+A second route uses coding theory for elementary binary groups. For G=F2^r, D=r+1. A sequence of length r+2 is an r by (r+2) binary matrix with nullity at least 2. Pick independent kernel vectors a,b. The three nonzero vectors a,b,a+b have total Hamming weight at most 2(r+2): each coordinate contributes 0 or 2. One therefore has weight at most floor(2(r+2)/3), which is <=r-1 for r>=5. It gives a nonempty zero-sum subsequence of length <=D-2, and consequently the upper bound D+1 in this restricted family. The source already supplies the matching general lower bound at D-1 under its hypotheses, so this is a known-family confirmation, not a qualifying discovery.
+
+The argument does not transfer to arbitrary finite abelian groups: coefficient relations over F_p may use coefficients other than 0 or 1, whereas a subsequence of a fixed sequence has only 0/1 multiplicities at each position. Even an average-weight relation bound over F_p would not fix that bridge. A D+1 structural lemma using only two leftover elements remains missing. For the all-k midpoint assertion, neither the binary special case nor the source p-group congruence theorems remove all extra hypotheses. No full-scope positive proof or counterexample was obtained.
+
+Do not pursue 369045 as a new refutation: the final source paragraph already supplies C2^(2m+1), odd m>=3, with s_(2m)=4m+5>4m+3=2D-1, even though the same paper labels it Conjecture 6.4 earlier.
+
+## 369259: monochromatic k-cliques in separately k-partite colors
+
+The primary definition is important: each color class has its own k-partition. Assuming one common partition would trivialize the intended structural difficulty. The source proves k=3 and k>=7, leaving k=4,5,6. A significant endpoint must cover all three unresolved uniformities and all n (or genuinely refute one).
+
+Route 1: use only edge budgets and the source Loomis-Whitney estimate t_c <= (e_c/binom(k,2))^(k/2). Convexity with sum e_c=binom(n,2) gives at best the asymptotic upper coefficient [k(k-1)]^(-k/2), whereas the iterated balanced blowup gives 1/(k^k-k). The relaxation/target ratios are about 1.75, 1.744, and 1.728 for k=4,5,6. Thus this relaxation has a constant multiplicative gap; it cannot establish the exact extremal target by rounding or changing a lower-order term.
+
+Route 2: follow the source Section 5 dominant-color recoloring proof. The asymptotic edge concentration estimate gives alpha=1-((k-1)/k)^(k/(k-2)). The crude loss coefficient for a recolored edge is alpha^((k-2)/2)*(k/(k-3))^(k-2), equal approximately to 7, 2.704, and 0.916 for k=4,5,6. For k=4,5 this already exceeds the normalized balanced gain 1. For k=6 the fact that 0.916<1 is insufficient: the guaranteed gain is reduced by imbalance, to exp(-2 gamma), with gamma constrained through the source beta estimate. The source's successful k>=7 argument cannot simply be rerun at 6.
+
+A third structural idea would exploit adjacency constraints on the *other* colors incident to the recolored endpoints, instead of bounding their entire global K_(k-2) count by the edge budget. This is the precise place where a sharper local lemma could close the gap. No such lemma was proved, and no common-partition shortcut or finite-order parameter variant is reported as a solution.

@@ -1,0 +1,5 @@
+Wiley https://onlinelibrary.wiley.com/doi/10.1002/jgt.23244 returned HTTP 403. Stopped; no retry or TLS workaround. Error retained in source-provenance.json; no response body was available for reading. The original OWR report independently says the clique conjecture was proved. No challenge detected in retained successful responses.
+
+No MathDB requests (429HOLD), browser/account work, Google requests, GitHub API/raw/codeload/diff, ScienceDirect fetch, public mutation, external message, Lean or manuscript work. Search service returned some forbidden-host search snippets; those hosts were never opened and those snippets are not used as evidence.
+
+No eligible proposal survived. The forty-one literal-only rows have no primary-body clearance. No claim of global novelty or current exact open status is made. Splines successor is unrefereed; its claim is a material collision, not independently validated acceptance. Scheduling successor assumes SPD Jacobian; arbitrary-T literal scope is not certified solved.

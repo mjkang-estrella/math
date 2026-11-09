@@ -1,0 +1,4 @@
+const fs=require('fs'),n=13,first=+process.argv[2];let a=Array.from({length:n},(_,i)=>i+1),p=new Int16Array(n+1),cnt=new Float64Array((1<<n)*(n+2)),total=0;[a[0],a[first-1]]=[a[first-1],a[0]];
+function visit(){// reversal symmetry: only count permutations whose first value is smaller than last
+if(a[0]>a[n-1])return;let s=0,d=1;for(let i=0;i<n;i++)p[a[i]]=i;for(let i=1;i<n-1;i++)if(a[i]>a[i-1]&&a[i]>a[i+1])s|=1<<(a[i]-1);for(let i=1;i<n;i++)if(p[i]>p[i+1])d++;cnt[s*(n+2)+d]++;cnt[s*(n+2)+n+1-d]++;total+=2;}
+function perm(k){if(k===n){visit();return;}for(let j=k;j<n;j++){let t=a[k];a[k]=a[j];a[j]=t;perm(k+1);t=a[k];a[k]=a[j];a[j]=t;}}perm(1);fs.writeFileSync(`outputs/pinnacle13-first${first}.json`,JSON.stringify({n,first,total,counts:Array.from(cnt)}));console.log(JSON.stringify({n,first,total}));

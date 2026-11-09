@@ -1,0 +1,6 @@
+import pathlib,json,itertools,numpy as np,sympy as sp
+from scipy.optimize import linprog
+D=pathlib.Path(__file__).resolve().parents[1];P=list(itertools.product(range(3),repeat=3));pairs=list(itertools.product(range(3),repeat=2));A=np.array([[int(all(p[i]==v for i,v in zip([j for j in range(3) if j!=ax],ab))) for p in P] for ax in range(3) for ab in pairs]);sym=list(itertools.combinations_with_replacement(range(3),2));B=np.array([[int(tuple(sorted(ab))==ij) for ax in range(3) for ab in pairs] for ij in sym]);h='001110111110011101110001011';H=np.array([z=='1' for z in h]);res=linprog(np.zeros(27),A_ub=np.vstack((-A[:,H].T,B)),b_ub=np.zeros(sum(H)+6),A_eq=B.sum(0,keepdims=True),b_eq=[-1],bounds=[(None,None)]*27,method='highs');out=dict(H=[P[i] for i in range(27) if H[i]],universal_nonpositive_coefficient_dual=res.message)
+if res.success:
+ y=[sp.Rational(float(x)).limit_denominator(100000) for x in res.x];den=sp.ilcm(*(x.q for x in y));y=[int(x*den) for x in y];out['y']=y;out['coefficients']=list(map(int,B@np.array(y)));out['column_values']=list(map(int,A[:,H].T@np.array(y)));assert min(out['column_values'])>=0 and max(out['coefficients'])<=0 and min(out['coefficients'])<0
+(D/'outputs/cover-dual.json').write_text(json.dumps(out,indent=2));print(out)

@@ -1,0 +1,4 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc,char**argv){int N=atoi(argv[1]),k=atoi(argv[2]);int E=0;vector<unsigned> lo(N);for(int j=0;j<N;j++)for(int i=0;i<j;i++)if((j-i)%k==1){lo[j]|=1u<<i;E++;}int W=E+1;size_t Z=(size_t(1)<<N)*W;vector<unsigned long long>d(Z);d[0]=1;for(unsigned s=1;s<(1u<<N);s++){for(unsigned t=s;t;t&=t-1){int j=__builtin_ctz(t);unsigned prev=s^(1u<<j);int shift=__builtin_popcount(lo[j]&prev); // put j at minimum value: earlier positions chosen have higher values
+for(int e=shift;e<=E;e++)d[size_t(s)*W+e]+=d[size_t(prev)*W+e-shift];}}auto a=&d[((size_t(1)<<N)-1)*W];unsigned long long sum=0;bool down=false,bad=false;for(int e=0;e<=E;e++){sum+=a[e];if(e){if(a[e]<a[e-1])down=true;if(down&&a[e]>a[e-1])bad=true;}}cout<<"N "<<N<<" type_A_n "<<N-1<<" k "<<k<<" degree "<<E<<" sum "<<sum<<" unimodal "<<!bad<<"\ncoefficients ";for(int e=0;e<=E;e++)cout<<a[e]<<",";cout<<endl;}

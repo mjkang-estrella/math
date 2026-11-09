@@ -1,0 +1,15 @@
+import sys,re,html,pathlib
+for f in sys.argv[1:]:
+    t=pathlib.Path(f).read_text(errors='replace')
+    ti=re.search(r'<meta name="citation_title" content="([^"]*)"',t)
+    au=re.findall(r'<meta name="citation_author" content="([^"]*)"',t)
+    ab=re.search(r'<meta name="citation_abstract" content="([^"]*)"',t,re.S)
+    vs=re.findall(r'<strong>\[(v\d+)\]</strong>\s*([^<]*)',t)
+    jr=re.search(r'<td class="tablecell jref">(.*?)</td>',t,re.S)
+    cm=re.search(r'<td class="tablecell comments[^"]*">(.*?)</td>',t,re.S)
+    print('=====',pathlib.Path(f).name, html.unescape(ti.group(1)) if ti else None)
+    print('AUTH',', '.join(au))
+    print('VERS',[(a,b.strip()) for a,b in vs])
+    if jr: print('JREF',re.sub('<[^>]+>','',jr.group(1)).strip())
+    if cm: print('COMM',re.sub('<[^>]+>','',cm.group(1)).strip())
+    if ab: print('ABS',html.unescape(ab.group(1))[:900].replace('\n',' '))

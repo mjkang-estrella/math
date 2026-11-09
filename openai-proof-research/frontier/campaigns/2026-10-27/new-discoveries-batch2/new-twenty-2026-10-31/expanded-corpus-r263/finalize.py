@@ -1,0 +1,49 @@
+from pathlib import Path
+import json,hashlib,re,subprocess,resource
+from datetime import datetime,timezone
+resource.setrlimit(resource.RLIMIT_CPU,(120,120));resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+p=Path(__file__).resolve().parent; sha=lambda b:hashlib.sha256(b).hexdigest(); r=json.loads((p/'reservation.json').read_text()); raw=json.loads((p/'literal-records.json').read_text()); vs=json.loads((p/'version-inventory.json').read_text())
+notes={
+320903:('HOLD_SOURCE_FIDELITY','Conjecture 2, Theorem 3, Lemmas 1–5','The record reference refutation claim is not verified for this auxiliary inequality; good-set covering for all k unpaid.'),
+320951:('EXCLUDE_LITERAL_CORRECTION_PARK_INTENDED','§3 Conjecture 3.10 and order bounds','Definition inconsistent at X empty. Intended k-|X| definition gives the genuine uniform bound, not solved.'),
+322077:('PARK_DUPLICATE_FAMILY','§2.6 Conjecture 2.6.1','Identical to 320285. Jordan block at 1 remains unpaid.'),
+323149:('PARK_NO_FIXED_R_ROUTE','Conjecture 1 and construction summary','Published infinite families vary r. No fixed-r unbounded family or order bound.'),
+376081:('EXCLUDE_PRINTED_SOURCE_THEOREM','Assumptions A–B, Conjecture 1, Theorem 1.1, Corollary 1.2','Exact endpoint is printed Corollary 1.2. Not new.'),
+319817:('PARK_SUSTAINED_RANK_ROUTE','§5 conic equations, §6–7 definition-level flag setup, Definition 8.1, Theorem 8.2, §8.3','Binary kernel ranks, not geometric-field ranks. Exceptional-row elimination and character decomposition do not determine residual ranks.'),
+320285:('PARK_SUSTAINED_ALGEBRA_ROUTE','Corollary 3.3, Proposition 3.4, branching, §6.1','Triangularity does not prove semisimplicity at 1; compression and parking-function quotient routes do not close it.'),
+320611:('EXCLUDE_KNOWN_THEOREM','Introduction; Currie–Rampersad 0905.1129v3 introduction and threshold reduction','Known Dejean theorem implies the literal block-gap condition by exponent 1+n/d. Morphism checks not rerun.'),
+318112:('PARK_UNIFORM_ANALYTIC_GAP','Conjecture 1.1 and edge-connectivity conclusions','No universal reduction for low connectivity and arbitrary edge lengths.'),
+318450:('PARK_SUSTAINED_TOURNAMENT_ROUTE','Conjecture 1.2, Theorem 1.1, Lemma 2.1 proof, §3 opening','All-three-colour minimal counterexample remains. No explicit tournament or justified search order.'),
+318731:('EXCLUDE_PRIOR_PRIMARY_REFUTATION','0907.1599 introduction/closing question; 2105.01104 Theorem 1.2(b), base-proof ending and simple-graph discussion','For c=13 choose q=14,d=D+1 in the published construction. No credit.'),
+318891:('PARK_FLAGSHIP_UNIFORM_GAP','§3.2 Conjecture 3.9 and lower-bound obstruction','Near-3^k lower bound gives no all-k upper bound.'),
+319313:('EXCLUDE_PRIOR_JOURNAL_REFUTATION','Final source conjecture; Gruslys JoCG2014 Theorem 3, Proposition 4, final proof','Arbitrarily large 3-coloured sets with no four collinear and no monochromatic line: k=3,ell=4. Already published.'),
+319362:('PARK_UNIFORM_MATROID_GAP','Conjecture 1.3, Theorem 1.4 and version acknowledgments','Coprime size/rank theorem insufficient. Earlier optimistic proof failure acknowledged by source.'),
+368347:('PARK_FLAGSHIP_INFINITE_GAP','Introduction conjecture and Theorem 1','Three-choosability not two-colourability. Infinite-degree inequalities obstruct naive compactness.'),
+317333:('PARK_LOW_INDEX_GAP','§5 definition, Conjectures 5.1–5.2; version comparison','Minimal obstruction descent does not prove upward persistence of non-RAAG. Low-index cases unpaid.'),
+317659:('EXCLUDE_PRIOR_ENDPOINT_CORRECTION','Definitions 1.1–1.2, Conjecture 4.1; 2209.14198 §4.1','Printed n=3 obstruction: K3 and independent triple cannot both occur on four vertices. Corrected n>=4 question not assigned credit.'),
+317851:('EXCLUDE_PRIOR_JOURNAL_THEOREM','Conjecture 1; Cavenagh–Wanless DAM2010 §5 Lemma 6 and proof of Theorem 3','Theorem 3 with s=km proves exactly m>=k>=3. Primary-bitrade conjecture different.'),
+318027:('PARK_UNIFORM_RAMSEY_GAP','Conjecture 3.1 and conclusion, v1/v2 comparison','Source k=3 and best-known-bound constructions insufficient for comparison with actual R(k,l) for all l.'),
+316272:('PARK_ANALYTIC_ALGEBRAIC_GAP','Conjecture 9, n=2 proof ending and Proposition 8 discussion','Truncation loses constant spectrum; exponential conjugation not polynomial of degree <=n.')}
+receipts=[json.loads(s) for s in (p/'receipts.jsonl').read_text().splitlines()];out={}
+for i in r['ids']:
+ k=str(i); o=raw[k];rec=o['record'];a=rec['source_url'].rsplit('/',1)[-1];status,sections,gap=notes[i]
+ out[k]={'mathdb_id':i,'title':rec['title'],'canonical_url':rec['canonical_url'],'literal_statement':rec['statement'],'statement_sha256_utf8':sha(rec['statement'].encode()),'raw_provenance':{x:y for x,y in o.items() if x!='record'},'raw_artifact':f'raw-{i}.jsonl','full_parsed_record_artifact':'literal-records.json','source_url':rec['source_url'],'source_versions':vs[a],'source_artifacts':[str(f.relative_to(p)) for f in sorted((p/'sources').glob(a+'*'))],'disposition':status,'review_depth':{'literal_record':'full statement and parsed record read','primary_body':'target passages and indicated neighboring arguments; NOT complete line-by-line proof audit','sections_read':sections,'versions':'all versions listed on assigned source abs page fetched; historical target passages selectively compared; no full-body every-version audit claimed','journal_citing_figures':'Incomplete except specifically named primary resolutions. Figures not systematically visually inspected. No new witness proposed.'},'ordinary_attempts':'ATTEMPTS.md','precise_gap_or_exclusion':gap,'historical_screen':'history-matches.txt and family-history.txt; bounded local screen, not novelty clearance','current_registry_screen':'registry-screen.json; no complete live-head/tree clearance','qualification_limits':['All-citing-primary and latest-journal/correction review incomplete for parked targets','No global priority or current-open certification','No literal Lean endpoint, independent review, paper or replay'],'accepted_credit':0,'pi_handoff':None}
+assert set(out)==set(map(str,r['ids'])) and len(out)==20
+(p/'results.json').write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n')
+pat='|'.join(re.escape(x['source_url'].rsplit('/',1)[-1]) for x in r['rows'])+'|demipotent|Kajitani|homogeneous Latin bitrade|geometric Hales.Jewett|Sands.Sauer.Woodrow|unfriendly partition|blown.up plane|regular Ramsey|3.critically'
+res=subprocess.run(['rg','-n','-i','--max-count','5',pat,str(p.parents[4]),'-g','*.md','-g','results.json','-g','dispositions.json','-g','!history*','-g','!family-history*','-g','!literal-records.json','-g','!reservation.json'],capture_output=True,text=True,timeout=60)
+(p/'family-history.txt').write_text(res.stdout)
+cache=[p.parent/'expanded-corpus-r254/openai-complete-preprints.body',p.parent/'expanded-corpus-r254/pool-tree.body',p.parent/'path-polynomial-source-qualification-r1/omega-current-D5.body',p.parent/'path-polynomial-source-qualification-r1/omega-current-Blueprint.body',p.parent/'expanded-corpus-r260/sources/leanpool-projects.yml'];registry=[]
+for f in cache+[p/'sources/openai-current',p/'sources/omega-current',p/'sources/pool-projects']:
+ if f.exists():
+  s=f.read_text(errors='replace'); lines=[l[:1000] for l in s.splitlines() if re.search('Denton|demipotent|Kajitani|bitrade|Sands|unfriendly|Bakry|Waring|tau.constant|blown.up|regular.Ramsey|r.primitive|nucle(us|i)|spectral.ball|universal.cycle',l,re.I)]
+  registry.append({'path':str(f),'sha256':sha(f.read_bytes()),'matches':lines,'role':'routing only; not theorem-body clearance'})
+(p/'registry-screen.json').write_text(json.dumps({'utc':datetime.now(timezone.utc).isoformat(),'access':'No GitHub API used; inherited 403 restriction respected. Current raw HEAD bodies obtained but immutable live commit SHA not established.','sources':registry,'conclusion':'Incomplete bounded screen. No candidate proposed; no negative-match novelty inference.'},indent=2))
+inv=[]
+for x in receipts:
+ f=p/'sources'/x['name']; inv.append({**x,'artifact':str(f.relative_to(p)) if f.exists() else None,'read_depth':'HTTP receipt only unless named in results/ATTEMPTS; fetch does not imply proof read','extracted_text':str(f.relative_to(p))+'.txt' if Path(str(f)+'.txt').exists() else None})
+(p/'source-read-inventory.json').write_text(json.dumps({'scope':'Named passages in results.json and ATTEMPTS.md. Latest assigned primary bodies fetched; selective reading, not all proofs or figures. All historical versions fetched for assigned source URLs; target passages selectively compared. Journal and citing coverage incomplete.','non_pdf_response':'dejean-journal returned HTML with HTTP200; not journal-body evidence.','receipts':inv},indent=2))
+now=sha((p/'reservation.json').read_bytes());expected=(p/'reservation.sha256').read_text().split()[0];before=json.loads((p/'reservation-before.json').read_text())['sha256'];assert now==expected==before
+(p/'reservation-hashchecks.json').write_text(json.dumps({'before_sha256':before,'after_sha256':now,'expected_sha256':expected,'unchanged':True,'utc_after':datetime.now(timezone.utc).isoformat()},indent=2))
+(p/'resource-and-process-log.json').write_text(json.dumps({'jobs':['fetch.py latest abs/PDF','fetch.py historical versions','fetch.py bounded followups','finalize.py inventories/hashes'],'limits':'Fetch/finalize scripts CPU120s AS6GiB; fetch concurrency2, HTTP timeout12s, extraction timeout12s, historical wrapper timeout135s. No solver/numerical search. No external caches written. Inline text/extraction commands did not measure peak RSS.','processes':'All fetch sessions reached exit_code0; no background job intentionally launched. Final process inspection separate.','limitation':'No measured per-job CPU/RSS ledger claimed. HTTP status/time/hash/error logged.'},indent=2))
+print('wrote exact',len(out),'keys; reservation',now)

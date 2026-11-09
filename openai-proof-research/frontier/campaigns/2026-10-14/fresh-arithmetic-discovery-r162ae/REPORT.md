@@ -1,0 +1,10 @@
+# Outside-selection report — r162ae
+PRIVATE/local. PREFREEZE/no nominee. No frozen theorem, full author proof, mathematical gate or campaign increment. Parent alone decides gates/counts; campaign context19/20 latestR041 is unchanged by this task.
+
+One full algorithmic diagnostic E remains unresolved: a near-linear finite-bit evaluator for a single rational l1 embedding of ALL capped words over EVERY finite alphabet, with one input-independent seed succeeding for EVERY pair at the paid matching-exponent distortion. Exact quantifiers and bit/output bounds are in FINAL.md and packet/private/prefreeze-scope.md.
+
+The mathematical notebook retains the strongest source/primary payments and supplies explicit common-map comparisons: rational compression with its actual dimension; full-alphabet common hashing with honest bit costs; source-compatible conditional histogram assembly; actual sliding-window linearity and near-metric graph restoration; explicit dataset-dependence and Cauchy-tail method examples; uniform final rounding and partition-law perturbation bounds. The fast full-domain common representation is not supplied. No method-to-counterexample, worldwide-priority or exhaustion conclusion.
+
+Complete canonical reading/authentication, exact primary versions/read extents and access/OCR limits, one prospectively guarded history traversal, five completed direct exceptions and recovered clipping are disclosed in the private packet. All prior scopes/dispositions are preserved. Source/primary/history bodies and named metadata remain local under original rights. No git/shared/public/browser/downstream activity or nested delegation.
+
+MANIFEST.json selects FINAL.md, verify.py and all packet files. This REPORT and MANIFEST/ANCHORS are outside the selected file list. ANCHORS.json contains the three detached SHA256 values; verify.py requires explicit caller-supplied FINAL/MANIFEST/REPORT hashes rather than trusting that file. Tiny controls were run only on copied own text and restored. Verification establishes artifact bytes/membership/bindings, not mathematical correctness, contribution, acceptance, directory identity or modes.

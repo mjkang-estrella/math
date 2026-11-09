@@ -1,0 +1,130 @@
+# FULLCANDIDATE: MathDB 362080, treewidth of token graphs of trees
+
+Status: author-complete ordinary proof by the lane author. Not independently reviewed. No Lean run in this lane. No self-credit: root alone adjudicates.
+
+## 1. Target
+
+MathDB 362080 (see corpus-bindings.json). Source: Fabila-Monroy, Gomez-Galicia, Hernandez-Cruz, Trujillo-Negrete, "On the Treewidth of Token and Johnson Graphs", arXiv 2402.17962v3, Conjecture 20: "If 2 <= k <= n-2 is a fixed integer and G is a tree on n vertices, then tw(F_k(G)) in Theta(n^(k-1))." The corpus literal widens the range to 1 <= k <= n-1.
+
+Reading used: k is fixed, n tends to infinity, and the implied constants depend only on k, uniformly over all n-vertex trees. The source proves this for stars (Theorem 1) and paths (Theorem 2) only.
+
+## 2. Theorem
+
+For every integer k >= 1, every n >= k and every tree T on n vertices,
+
+    tw(F_k(T)) <= (2k-1) n^(k-1).
+
+For every integer k >= 2, every n >= 8k^2 and every tree T on n vertices,
+
+    tw(F_k(T)) + 1 >= n^(k-1) / (32 k^(2k+3) 2^k).
+
+For k = 1, F_1(T) is T, so tw = 1 when n >= 2. Hence tw(F_k(T)) = Theta_k(n^(k-1)) uniformly over trees, which is the full literal. The boundary values k = n-1 and k = n-2 do not arise for fixed k and large n.
+
+Notation: F_k(T) has as vertices the k-subsets of V(T); A and B are adjacent when A symmetric-difference B is an edge of T. N = C(n,k).
+
+## 3. Upper bound
+
+Standard facts, each immediate from the definition of a tree decomposition:
+
+- (U1) tw(H) <= tw(H-S) + |S|: add S to every bag.
+- (U2) The treewidth of a disjoint union is the maximum over the components.
+- (U3) tw(A box B) <= |V(A)| (tw(B)+1) - 1: replace each bag W by V(A) x W.
+
+Let f_k(n) be the maximum of tw(F_k(T)) over trees T on n vertices (zero if n < k). We show f_k(n) <= C_k n^(k-1) with C_k = 2k-1, by induction on k and, for fixed k, strong induction on n.
+
+k = 1: F_1(T) = T has treewidth at most 1.
+
+k >= 2: let c be a centroid of T, so every component of T-c has at most floor(n/2) vertices. Call the components T_1,...,T_d. Let S be the set of k-sets containing c, so |S| = C(n-1,k-1) <= n^(k-1). A token move in F_k(T)-S never touches c, so it stays inside one T_i. Therefore the vector (|X cap V(T_1)|,...,|X cap V(T_d)|) is constant on components of F_k(T)-S, and for a fixed vector (k_1,...,k_d) with sum k the corresponding part is exactly the Cartesian product of the F_{k_i}(T_i) (with F_0 a single vertex). There are no edges between different vectors.
+
+- If some k_i = k, the part is F_k(T_i), with treewidth at most f_k(floor(n/2)).
+- Otherwise pick i with j = k_i >= 1, so j < k. The product of the other factors has at most the product of C(|T_l|, k_l) <= n^(k-j) vertices. By (U3) and the induction on k, the part has treewidth at most n^(k-j)(C_j n^(j-1) + 1) <= (C_j + 1) n^(k-1) <= (C_{k-1} + 1) n^(k-1).
+
+By (U1) and (U2), f_k(n) <= n^(k-1) + max( f_k(floor(n/2)), (C_{k-1}+1) n^(k-1) ). In the second case the bound is (C_{k-1}+2) n^(k-1) = C_k n^(k-1). In the first case, induction gives at most n^(k-1) + C_k (n/2)^(k-1) <= (1 + C_k/2) n^(k-1) <= C_k n^(k-1), using k >= 2 and C_k >= 2.
+
+## 4. Lower bound
+
+Fix k >= 2, n >= 8k^2, T a tree on n vertices, H = F_k(T), and a tree decomposition of H of width t.
+
+### 4.1 A balanced separator
+
+Claim: some bag S has the property that every component of H-S has at most N/2 vertices.
+
+Proof. If a bag V_s fails, there is a unique component C of H-V_s with more than N/2 vertices, and C lies in the union of the bags on the far side of a unique edge s s' of the decomposition tree; orient s toward s'. If every bag fails, every node has out-degree one, so in the finite tree some edge s s' is oriented both ways. Then C (on the s' side, avoiding V_s) and C' (on the s side, avoiding V_s') are disjoint, because a vertex on both sides lies in V_s cap V_s'. So |C| + |C'| <= N, a contradiction.
+
+So |S| <= t+1. If |S| > N/6 then t+1 > N/6 >= n^k/(6 k^k), which exceeds the claimed bound. Assume |S| <= N/6 and put M = N - |S| >= 5N/6.
+
+Group the components of H-S into two sides A, B with no edges between them. If a component has at least M/3 vertices, let A be that component; then |B| >= M - N/2 >= N/3. Otherwise take a shortest prefix of the components with at least M/3 vertices; it has fewer than 2M/3. In all cases |A|, |B| >= 5N/18 >= N/4.
+
+### 4.2 Pairs
+
+For X in A, at most k C(n-1,k-1) = k^2 N/n <= N/8 sets Y meet X. So at least N/4 - N/8 = N/8 members Y of B are disjoint from X. The set P of pairs (X,Y) in A x B with X, Y disjoint has |P| >= (N/4)(N/8) = N^2/32.
+
+### 4.3 Canonical routes with hand-off
+
+Fix a linear order on V(T). For (X,Y) in P write X = {x_1 < ... < x_k}, Y = {y_1 < ... < y_k}, and W_j = {y_1,...,y_j, x_{j+1},...,x_k}. Since X and Y are disjoint, each W_j is a k-set. Note x_j is in W_{j-1} and y_j is not.
+
+Stage j goes from W_{j-1} to W_j. Let p_0 = x_j, p_1, ..., p_L = y_j be the T-path. Let 0 = i_0 < i_1 < ... < i_r < L be the indices with p_i in W_{j-1}, and put i_{r+1} = L. For q = r, r-1, ..., 0 in turn, slide the token at p_{i_q} along the path to p_{i_{q+1}}.
+
+At the start of phase q the occupied path vertices are p_{i_0},...,p_{i_q} and p_{i_{q+2}},...,p_{i_{r+1}}. So the cells strictly after p_{i_q}, up to and including p_{i_{q+1}}, are empty and the slide is legal. After phase q the occupied path vertices are p_{i_0},...,p_{i_{q-1}} and p_{i_{q+1}},...,p_{i_{r+1}}, which is the start of phase q-1. After phase 0 the occupied set on the path is p_{i_1},...,p_{i_{r+1}}, and the configuration is W_j. Each step is an edge of H.
+
+The concatenation R(X,Y) is a walk in H from X in A to Y in B, so it meets S. Therefore |P| is at most the sum over Z in S of load(Z), where load(Z) is the number of pairs in P with Z on R(X,Y).
+
+### 4.4 Load bound: load(Z) <= k^3 2^k n^(k+1) for every Z
+
+Fix Z and j, and let W = W_{j-1}. A configuration in phase q at path position s satisfies:
+
+- if q < r: Z = (W minus {p_{i_q}, p_{i_{q+1}}}) plus {p_s, y_j};
+- if q = r: Z = (W minus {p_{i_r}}) plus {p_s}.
+
+So Z minus W is contained in {p_s, y_j}. There are two cases.
+
+Case A, y_j in Z. Then Z minus {y_j} has at most one element outside W, so some (k-2)-subset U of Z minus {y_j} lies in W. Choose y_j (at most k ways), U (at most k-1 ways) and the other two elements of W (at most n^2 ways).
+
+Case B, y_j not in Z. Then q = r and at most one element of Z is outside W, so some (k-1)-subset U of Z lies in W. Choose U (at most k ways), the last element of W (at most n ways) and y_j (at most n ways).
+
+In both cases there are at most (k(k-1) + k) n^2 = k^2 n^2 choices of (W, y_j). Given W, choose which j-1 of its elements are {y_1,...,y_{j-1}} (at most 2^k ways); the rest are {x_j,...,x_k}, and sortedness fixes the labels. The remaining unknowns are x_1,...,x_{j-1} and y_{j+1},...,y_k, at most n^(k-1) ways. Summing over j gives load(Z) <= k * k^2 2^k n^(k+1).
+
+### 4.5 Conclusion
+
+|S| k^3 2^k n^(k+1) >= N^2/32 and N >= (n/k)^k give
+
+    t + 1 >= |S| >= n^(2k) k^(-2k) / (32 k^3 2^k n^(k+1)) = n^(k-1) / (32 k^(2k+3) 2^k).
+
+The tree structure is used only for connectivity, so this lower bound holds for every connected n-vertex graph via a spanning tree. That generality is recorded because it bears on the significance objection in Section 6; it is not claimed as a separate result.
+
+## 5. Hypotheses and boundaries
+
+- All n-vertex trees are covered with constants depending only on k; no degree, diameter or shape hypothesis is used.
+- The lower bound is stated for n >= 8k^2, which is enough for a Theta statement at fixed k. The k = 1 case is separate and trivial.
+- The source's literal range 2 <= k <= n-2 and the corpus range 1 <= k <= n-1 agree for fixed k and large n, apart from the trivial k = 1 case.
+- If a reviewer reads the conjecture as allowing k to grow with n, this proof does not address that; the source says "fixed integer" and its own Theorems 1 and 2 are fixed-k.
+
+## 6. Required self-tests and strongest objections
+
+I tried to find the routes that have excluded earlier candidates. Outcomes follow.
+
+**Classical reduction by spectral theory.** Source Theorem 7 (Chandran-Subramanian) with the Aldous identity lambda_2(F_k(T)) = lambda_2(T) gives tw >= N lambda_2(T)/(12 k Delta(T)) - 1. On the path that is order n^(k-2), and on a spider with sqrt(n) legs of length sqrt(n) it is order n^(k-3/2). Reweighting the base tree does not obviously help: on the path, the known optimality of near-uniform weights for the fastest-mixing chain (recalled, not read in this lane) would keep the ratio at order 1/n^2. A spectral route loses a square, as in Cheeger's inequality, whereas the congestion argument is first order. No reduction found.
+
+**Source lemma plus an index change.** Source Lemma 9 (disjoint subgraphs give a Cartesian product) cannot reach the spider: k disjoint subgraphs of the sqrt(n)-leg spider give a product of treewidth at most about n^((k-1)/2), because at most one factor can contain the hub. So the literal is not a short consequence of Lemma 9, Theorem 7 or Theorem 10. The source's star bramble does not generalize directly either: for the path the sets {s,i} with s < i do not pairwise touch. The proof here shares no step with the source's lower bounds and uses a different upper bound from the source's star and path constructions.
+
+**Generic-law objection, which I regard as the serious one.** Both halves are short and use standard tools: vertex-congestion of canonical paths, and centroid recursion. The argument gives a general inequality for arbitrary G, namely c_k n^(k-1) <= tw(F_k(G)) <= C_k (tw(G)+1) n^(k-1), and trees are the case tw(G) = 1 where the bounds meet. The upper half is the same recursion with a balanced bag in place of the centroid. A reviewer following the 336276 precedent could treat the tree case as an instance of this general law and exclude it as routine, even though no published theorem supplies it. I found no published bridge, but the general law is mine and the proof is about one page, so this objection is real. The hand-off count in 4.4 is the only step that is not boilerplate, and it is a known device in exclusion-process path arguments in spirit, although I did not read a specific reference.
+
+**Case for the result.** It is a deliberately posed conjecture for a specific structured family, the conclusion was open in the paper that posed it, and the paper's tools demonstrably do not reach spiders. It is proved in full for every tree with explicit constants.
+
+**My recommendation: send to independent adversarial qualification; do not treat as qualified.** I am confident in the mathematics, and I have no basis for confidence that it clears the significance bar.
+
+## 7. Prior art, bounded
+
+- Two native searches (searches/search-1-response.txt, search-2-response.txt) surfaced no proof for general trees. Their excerpts are navigation only. The second excerpt says the paper's conjecture concerns K_n only, which is wrong against the body: Conjecture 20 is the tree conjecture.
+- Source v3 (17 Apr 2025) read in the relevant parts: the statement, Sections 1, 2 and 5, and Theorem and Proposition statements through Section 4. No journal final identified or read.
+- The four registry roots are inherited-denied (HTTP 504), so no current registry check was possible. No citing-work or index coverage. This is not a worldwide novelty claim.
+- Neighbors 362081 and 362082 (Johnson graph pathwidth, same source, excluded in r115) have a different scope and transfer nothing.
+- Unread leads: none specific. Fabila-Monroy, Leanos, Trujillo-Negrete on connectivity of token graphs of trees is a different parameter.
+
+## 8. Lean feasibility
+
+See DORMANT-SOL-FORMAL-PLAN.md. The endpoint is elementary and uses no analysis.
+
+## 9. Corpus status note
+
+The corpus reference line for 362080 reads "solved according to the source ... This conjecture was proved by Caputo, Liggett and Richthammer." In the source body that sentence is about Aldous' spectral gap conjecture (Section 1), not Conjecture 20. The source presents Conjecture 20 as open. The status field itself says open. The note is a corpus extraction artefact and is not evidence of a prior proof.

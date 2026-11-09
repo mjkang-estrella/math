@@ -1,0 +1,7 @@
+# Root r527 reconciliation and stack review assignment
+
+Reconcile r524:fifty disjoint literal reviews,zero proposals. Latest coverage4,233; child used assigned older4,133 baseline.368923 is reported source-theorem refutation from selected proof,not a complete dependency audit. Five target records selected across four arXivv1HTML bodies; no whole-body,successor,registry clearance. Finite information-state diagnostic at excluded threshold is not a counterexample. Preserve parser failure and pre-verification metadata/unassigned-row display deviation. Counts9additional/39total/next40 unchanged.
+
+Assign separate Sol r528 source-first independent review of365437/365439 as one stack-fiber family. Producer r522 reports n5second-largest5 rather than4 and n8tie64 defeating uniqueness. Exact stack reading/vincular adjacency, whole-source internal claims and actual published journal wording are critical. Journal DOI10.1016/j.disc.2025.114834 metadata alone does not authenticate conjecture survival. No Lean/manuscript or new-credit claim. Producer source/checkers retained as data; root does not run mathematical code.
+
+Sol r526 ordinal-ball review continues separately. Claude r504 remains rate-limited/reserved unreviewed. Both Sol slots now carry bounded candidate reviews; return the next freed useful slot to breadth unless an eligible small result justifies a distinct follow-up. Protected candidates and existing adjudications unchanged. Routing6000rows remains metadata only; integrity never proves mathematical/novelty acceptance.

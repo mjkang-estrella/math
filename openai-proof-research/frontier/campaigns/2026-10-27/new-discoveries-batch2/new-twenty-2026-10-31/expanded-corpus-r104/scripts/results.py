@@ -1,0 +1,71 @@
+import json,pathlib,hashlib
+D=pathlib.Path(__file__).resolve().parents[1]
+X=json.loads((D/'extracted.json').read_text())
+R={
+'358158':dict(outcome='CANDIDATE_REFUTATION_FULL_LEAN_ENDPOINT',review_depth='full source body read (Sections II-V, Table I, Conjecture 1); cited constructions checked; follow-up journal abstract read, journal body unread (IEEE 202 challenge, not retried)',
+  mechanism='Simulated-annealing search over generating sets in S_5 (one word from each of the 512 reverse-complement pairs) found S5 = TC-dominant set with 22 weight-3 words swapped for their reverse complements; spectral radius 3.2480375901 > 3.2443334586 (TC). Integer Collatz-Wielandt certificates (lambda=1299/400 lower on S5, mu=649/200 upper on TC) give |C_n(S5)| >= c1 lambda^n, |C_n(TC)| <= c2 mu^n.',
+  coverage='m=3: annealing reproduces source optimum (no improvement); m=5: 9 annealing runs, best 3.2480375901 reached by 3 seeds; m=7: 3 capped runs (random-start, TC-start, boundary-restricted), no improvement over TC 3.4099611800.',
+  lean='formal/SSA5 (7 modules); endpoints SSA.conjecture1_false_limsup, SSA.conjecture1_false_liminf, SSA.rate_limit_gap, SSA.conjecture1_false_m5; fresh extracted strict rebuild + leanchecker pass; 198 declarations audited, axioms only propext/Classical.choice/Quot.sound.',
+  limitations='Journal version (IEEE T-MBMC 2024, doc 10517954) body unread; small rate improvement (0.00167 bits/nt); significance for root to judge; only m=5 refuted (m=7 open).',
+  details='SSA5-REFUTATION.md'),
+'367930':dict(outcome='PARKED_NO_COUNTEREXAMPLE_IN_EXTENDED_RANGE',review_depth='source definitions (Definition 1, Theorems 4-5, Conjecture 1) read in full',
+  mechanism='Exhaustive enumeration of all surjective binary CA (one-sided radius r, local rule on r+1 cells; surjectivity by pair-graph diamond test) and check of prefix-sum domination against id.',
+  coverage='r=1: 6 surjective; r=2: 30; r=3: 582 (all 2^16 rules); r=4: all 601080390 balanced rules screened for prefix violation, every violator tested for surjectivity: 0 surjective violators. Structured sample radius 5-12: 20425120 permutive rules and compositions of surjective rules, 0 violations.',
+  limitations='Exhaustive only to r=4 (source search range not stated); no proof route identified.'),
+'368815':dict(outcome='PARKED_NOT_RUN',review_depth='source Section 4 definitions and Section 8.2 (Lemma 8.1, 8.2, Conjecture 8.3) read',
+  mechanism='Would require the maximum minimal-generating-set size over all transfer systems on Sub((C_p)^n); already for (C_2)^3 (16 subgroups) this is a large closure-system maximisation. Not attempted within caps.',
+  coverage='none', limitations='Computation infeasible without dedicated transfer-system enumeration tooling; no counterexample mechanism identified.'),
+'368968':dict(outcome='PARKED_NOT_RUN',review_depth='source Section 1 conjectures 1.13-1.22 and twist definition read',
+  mechanism='Requires computing Speyer g-polynomial coefficient N_2 for graphic matroids (author used Maple over >3 million graphs). No implementation within lane resources.',
+  coverage='none', limitations='Source reports extensive computational evidence; no structural route found. Omega Problems file zhang-zhao-2024-speyer-g-uniform-normality.md concerns a different Speyer g-polynomial question (uniform matroids), not this one.'),
+'353595':dict(outcome='PARKED_NOT_RUN',review_depth='source Conjecture 6.1 and surrounding Sections 6-7 read',
+  mechanism='Symmetric-function identity with Theta operators; checked by authors for |nu|<=7; requires symmetric function software (no Sage available).',
+  coverage='none', limitations='No CAS for Theta operators available in lane; no proof route.'),
+'355004':dict(outcome='PARKED_NOT_RUN',review_depth='source Section 4 (Conjectures 4.1-4.5, computational evidence types A_n n<=8) read',
+  mechanism='Would need Bruhat interval enumeration in types D and E and interval isomorphism tests; beyond lane budget.',
+  coverage='none', limitations='Delanoy conjecture, authors checked type A_n n<=8.'),
+'355626':dict(outcome='EXCLUDED_KNOWN_RESULT',review_depth='source Section 8.4 read: Proposition 8.17 and the following paragraph',
+  mechanism='The source itself states that Hameister, Rao and Simpson [HRS21, Conjecture 6.2] conjectured and Ferroni, Matherne, Stevens and Vecchi proved [FMSV24, Corollary 3.17] the Chow-polynomial formula for uniform matroids in terms of the h-polynomial of the Bergman complex.',
+  coverage='n/a', limitations='FMSV24 body not re-read here; the source attributes the proof explicitly.'),
+'343294':dict(outcome='PARKED_SOURCE_BACKED_DISPOSITION_ONLY',review_depth='statement and abstract-level source check',
+  mechanism='Asymptotic uniform-bound claim about the queens-in-exile sequence; famous/analytic per task rule; source-backed disposition only.',coverage='none',limitations='Not finitely refutable.'),
+'340290':dict(outcome='PARKED_NOT_RUN',review_depth='source Section 5 read (definitions (3)-(5), Examples 5.1-5.2, Conjectures 5.3-5.4)',
+  mechanism='Finite per composition: compute M_alpha via Moebius function of the core label order of Tam(alpha), then H and F triangles; test the iff for all compositions up to n~8. Not implemented within the pass (requires parabolic 231-avoiding permutations, core label order and Moebius inversion).',
+  coverage='none', limitations='Note: MathDB defines F from H via a substitution, whereas the source defines both from M; fidelity to be checked before any search. Omega D5 has ChapotonConjectureFiveFourRefutation.lean but it concerns Chapoton-Han arXiv:2001.01449 (Poupard/Kreweras), unrelated.'),
+'373174':dict(outcome='PARKED_SOURCE_BACKED_DISPOSITION_ONLY',review_depth='statement read; set-theoretic (ZF/AC) item',
+  mechanism='Set-theoretic equivalence with AC; per task rule receives source-backed disposition only.',coverage='none',limitations='Not a finite computation.'),
+'366890':dict(outcome='PARKED_NO_COUNTEREXAMPLE_IN_EXTENDED_RANGE',review_depth='source Theorem 1.5/1.7, Conjecture 1.6 with prime-binomial convention read in full; authors proved k<=4 by computer algebra',
+  mechanism='Exact integer polynomial evaluation of both sides of (1.8) with the source convention [a,0]\'=1 for a<0.',
+  coverage='k=5,6,7, all 1<=i<k, n=0..8 (135 cases) and k=5, n=9..15: all equal. Controls: proven k=2..4 equal; doubling-removed perturbation gives 12 mismatches; enumeration bound robust.',
+  limitations='Identity hierarchy, no proof route (authors suggest Bailey pairs).'),
+'353210':dict(outcome='EXCLUDED_SOURCE_PROVES',review_depth='source Sections 1-4 headings and theorem list read',
+  mechanism='Source (arXiv:2201.02376, "Proving some conjectures on Kekule numbers ...") states and proves Conjecture 1 (OEIS A187660) on the characteristic polynomial and eigenvalues of unit-primitive matrices (Section 4).',coverage='n/a',limitations='Proof body skimmed, not re-verified line by line.'),
+'356309':dict(outcome='PROOF_FOUND_LIKELY_ROUTINE_NOT_FORMALIZED',review_depth='statement and source context read',
+  mechanism='With N=l+2g the identity depends only on (N,j). Writing the terminating 2F1 explicitly gives LHS = 2^{N-1} j! [x^j](1+x)^{2j}(1-x)^{-(N-1)}; RHS = 4^j j! [y^j](1-y)^{-1/2}(1+(1-y)^{-1/2})^{N-1}. Lagrange inversion with x=t(1+x)^2, t=y/4, s=sqrt(1-y): 1+x=2/(1+s), 1-x=2s/(1+s), 1-t phi\'(x)=s, so both sides agree for all N>=2, j>=0.',
+  coverage='Exact check of literal identity and intermediate form: g<=12, l<=24, j<=24 (7200 cases), all equal.',
+  limitations='Classical one-step Lagrange inversion; likely judged routine; Lean formalization not attempted. Prior-art for an existing proof not searched beyond registry path screen.'),
+'372830':dict(outcome='PARKED_SOURCE_BACKED_DISPOSITION_ONLY',review_depth='statement read; probabilistic limit for random graphs',
+  mechanism='Expectation limits for random graph sequences; not finitely checkable.',coverage='none',limitations='Analytic/probabilistic.'),
+'372943':dict(outcome='PARKED_NO_COUNTEREXAMPLE_IN_SAMPLE',review_depth='Chen et al. conjecture via Wang arXiv:2505.20345 introduction read; same conjecture as 368570 (Ore degree = maximum edge weight)',
+  mechanism='Bound values arise from C5 blow-ups (13 at W=7, all edges in one strong clique). Random maximal graphs with W<=7 tested for 13-colourability of L(G)^2 exactly.',
+  coverage='70084 random maximal W<=7 graphs on 6-17 vertices; max strong chromatic index found 13 (129 graphs attain 13); none needs 14.',
+  limitations='Conjecture for W=4k contains Erdos-Nesetril for even Delta; random search only; W=7 open (best known 15; true for planar and mad<40/13).'),
+'368570':dict(outcome='PARKED_NO_COUNTEREXAMPLE_IN_SAMPLE',review_depth='source arXiv:2505.20345 Sections 1-2 read',
+  mechanism='Same conjecture as 372943; see that entry.',coverage='Shared with 372943 (70084 random maximal W<=7 graphs, max 13).',limitations='Duplicate MathDB family with 372943.'),
+'373663':dict(outcome='PARKED_SOURCE_BACKED_DISPOSITION_ONLY',review_depth='statement read; analytic PDE extremal problem',
+  mechanism='Peak heat flux for convex planar domains; analytic; source-backed disposition only per task rule.',coverage='none',limitations='Not finite.'),
+'376109':dict(outcome='EXCLUDED_KNOWN_RESULT',review_depth='source abstract and Section 1-2 read',
+  mechanism='The source (Kaul-Mudrock-Straub, arXiv:2607.16810) proves Conjecture 1.4 in full, with P_l^u(K_n-bar,k)=P^u(K_n-bar,k)=C(k+n-1,n) for all k,n.',coverage='n/a',limitations='Successor of 364725 family as noted by root.'),
+'382507':dict(outcome='EXCLUDED_KNOWN_RESULT',review_depth='source abstract and introduction read',
+  mechanism='The source (Berczi-Knauer-Montejano-Nador, arXiv:2606.19573) disproves the general conjecture and confirms graphic and Lawrence cases.',coverage='n/a',limitations='Known refutation in source.'),
+'361056':dict(outcome='PARKED_SOURCE_BACKED_DISPOSITION_ONLY',review_depth='statement read; asymptotic limit of proportion of free trees',
+  mechanism='Existence and positivity of a limiting proportion; finite computation cannot settle it.',coverage='none',limitations='Asymptotic.'),
+}
+assert set(R)==set(X) and len(R)==20
+out={}
+for i in sorted(R,key=int):
+    o=X[i]; e=dict(mathdb_id=int(i),title=o['title'],source_url=o['source_url'],provenance=o['provenance'],**R[i])
+    e['accepted_credit']=0; e['self_accept']=False
+    out[i]=e
+(D/'results.json').write_text(json.dumps(out,indent=2,ensure_ascii=False)+'\n')
+print(len(out),hashlib.sha256((D/'results.json').read_bytes()).hexdigest())

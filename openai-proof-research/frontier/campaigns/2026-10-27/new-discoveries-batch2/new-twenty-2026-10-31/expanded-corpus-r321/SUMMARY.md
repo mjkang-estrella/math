@@ -1,0 +1,15 @@
+# r321 standalone research brief
+
+Reservation: exactly 20 IDs; SHA256 3ed40dd04082ac4be27d4a3664ba6beb45a9c0e19dce48caaea9827907233654 verified before and after. Campaign context: 52/60 accepted beyond 39 prior. This lane claims zero accepted results and supplies no execution authorization.
+
+All twenty full literal corpus statements were read and preserved with raw terminal newlines, original chunk paths, one-based lines, full parsed records, and chunk/raw/statement SHA256 in provenance.json and literal/. results.json is an object with exactly the twenty reservation IDs as keys. Historical review used only exact completed allowlisted results paths, with protected paths explicitly excluded.
+
+Three ordinary mechanisms were sustained: co-chordal necessity via induced C4 and edge-essential cut witnesses (373447); odd-cycle absorption and loop-aware Tutte cuts for tensor matching (373703/373704); cover-count transport across lattice mutations (374646). ATTEMPTS.md supplies concrete deductions, failed mechanisms and the exact missing universal lemmas. No full new endpoint survived. The known co-chordal family direction was fully checked but is not the classification. The tensor records are one family, not two discoveries.
+
+Two public-source exclusions are decisive. 374092 is stated outright by the primary paper's Theorem 6.25. 374668's literal original recurrence already has an explicit public counterexample in the successor 2605.21718, whose Section 6 also proves the corrected recurrence by cyclotomic cancellation and a generating-function identity. Neither a public resolution nor the printed-formula repair earns discovery credit. 374157 has a material source-domain mismatch: latest conjecture restricts to four-dimensional coloring cone, omitted by the corpus. It is held, not refuted by changing domains.
+
+Other targets are parked or held with individual mathematical obstacles in results.json. These dispositions do not assert global open status, impossibility or novelty clearance. Latest-source selection, all versions/journals/corrections/companion/citing proofs and visual figures were not exhaustively audited. Registry indexes are routing only. Source access failures never serve as clearance.
+
+Artifacts: ATTEMPTS.md; results.json; provenance.json; literal/; source-read-inventory.json; breadth-read-inventory.json; historical-review.json; historical-family-hits.json; http-receipts.json; REGISTRY-AND-ACCESS.md; RESOURCE-EXCEPTIONS.md; reservation-before.json; reservation-after.json; MANIFEST.json. Raw primary HTML and parsed text are retained in sources/ for private review; retrieval does not imply full reading or redistribution permission.
+
+No CANDIDATE.md or dormant semantic Pi implementation plan is appropriate because no genuinely new source-qualified complete ordinary endpoint was obtained. No children, Lean, solver, CAS, mathematical search/enumeration, git, shared/author/dependency mutation, publication/upload/contact/account/browser action occurred. All launched local jobs have finished. Resource telemetry limitations are explicit in RESOURCE-EXCEPTIONS.md.

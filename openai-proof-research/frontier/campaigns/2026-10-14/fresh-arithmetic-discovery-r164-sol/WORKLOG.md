@@ -1,0 +1,13 @@
+# R164-Sol research log
+
+Provenance: T3 Code / Codex / GPT-6.1-Sol / high / ultrafast, as assigned. Research sub-agent; no nested agents; parent alone grades/counts. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb stipulated true. All old scopes/dispositions unchanged.
+
+READ-SCOPE BREACH: initial journal command read and displayed bytes [0,24000) of frontier/NEW-TEN-2026-10-14.md, although authorization was ONLY [4801,6347). This was an assistant error, disclosed immediately; no whole-journal hashing occurred. Extra administrative material was not followed or used as mathematical evidence. The authorized window was subsequently read separately. No claim of exact journal compliance is made. Catalogue [288176,290060) only.
+
+Complete tree loaded, SHA256 matched, 13223 entries, truncated=false. Both exact Source184 roots selected, 24 blobs/32 entries fetched and Git-authenticated. Five exact completed exceptions copied with full initial modes and semantically read; initial combined output truncation recovered for WORKLOG and READING-LIMITS, COMPARISON was visible in full. No linked namespace opened.
+
+Both Source184 proofs/includes were semantically completed before selecting the balanced-law direction. Actual primary reading then strengthened the baseline: full bipartite integral packing is already proved, and exact one-outside-neighbor block gluing is paid. No theorem was frozen. Full original-graph exact-marginal question was explored, with all lists/matchings and no algorithmic promise. Exact convex separation, larger-list averaging and full single-entry extension were integrated. A same-star boundary-law obstruction defeats arbitrary-boundary gluing, while a different law solves the same cover. No full counterexample or nonroutine closed operation was obtained.
+
+72 primary physical pages across8 PDF versions were read as recorded, zero full-paper claims. Two visual checks. A combined primary display truncated; recovered pages and denied reading credit recorded. Late first-page checking corrected Packing list-colorings from an assumedv3 label to actualv2 before sealing. Stronger primary permutation/Hall and fractionally-colorable-neighborhood/entropy operations are credited. No optional original-history traversal; no exhaustive overlap claim.
+
+Conclusion: PREFREEZE/no nominee. Full target and negation unproved, no diagnostic frozen, no review/grade/count or downstream work. The packet records exact source/primary/history limits, including the journal read-scope breach. Three rational star checks are finite controls only. Own-root artifact preflight, tiny controls and one seal will finish the handoff; subsequent operations read-only.

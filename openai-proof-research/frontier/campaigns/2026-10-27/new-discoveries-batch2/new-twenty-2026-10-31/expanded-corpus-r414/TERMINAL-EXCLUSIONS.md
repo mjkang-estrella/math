@@ -1,0 +1,7 @@
+# Named terminal exclusions
+
+Scientific exclusions: PUBLIC_FULL_SCOPE_PATH_COUNTERPART_347655 and PUBLISHED_EXACT_TESLER_COROLLARY_335221. Full mechanisms, bridges and contrary cases in SUSTAINED-DERIVATIONS.md. PRISM_LITERAL_SOURCE_PREDICATE_AND_GIRTH4_BRIDGE_335666 is a park, not a proof or novelty exclusion. Other17 exact gates name actual unpaid work; no generic worldwide unknowns used as exclusion proofs.
+
+Manifest self-exclusions, exact names: SHA256-MANIFEST.json (the digest container cannot contain its own final SHA without a circular fixed point); seal-manifest.receipt.json and seal-manifest.output.txt (emitted by the unchanged runner only AFTER the manifest writer exits, so not yet completed files when that manifest is sealed). These three names alone are omitted. This is a temporal/self-reference limitation, not a claim they are hashed elsewhere. Every other completed receipt JSON including bootstrap, initial/final frozen records, inventories receipt, source successes, failed-output/truncated-output receipts is included by exact file hash. No next job is planned after seal-manifest. The final frozen check occurs immediately before that final read/hash/seal job; it modifies no frozen binding.
+
+No FULLCANDIDATE.md or DORMANT-SOL-FORMAL-PLAN.md: no new full-scope candidate survived. A dormant plan for public results would invite forbidden duplicate discovery credit, and one for the prism route would misrepresent unpaid scope and mathematical bridges. No authorization or formal readiness follows from this lane.

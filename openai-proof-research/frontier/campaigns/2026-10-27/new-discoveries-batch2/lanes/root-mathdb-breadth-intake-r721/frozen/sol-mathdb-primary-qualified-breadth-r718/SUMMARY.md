@@ -1,0 +1,15 @@
+# r718 independent breadth handback
+
+Exactly 50/50 assigned literal records read and individually assessed; no replacements. Classification: {"definition-dependent": 18, "incomplete": 8, "complete": 15, "scope-ambiguous": 9}. Exact UTF8 statements, statement hashes, canonical record hashes and original corpus chunk/line are in dispositions.json and literal-records.json.
+
+Zero hypothesis briefs, zero new full-scope proofs, zero credit. Baseline 8,833 remains the intake's literal-review count; this lane contributes fifty disjoint reported statement assessments for root reconciliation (potential 8,883), not full technical corpus coverage. The 10,000 routing rows remain metadata only. Counts remain 9 additional /39 total /next40.
+
+Primary evidence: five versioned arXiv HTML sources retained and hashed before parsing; derivatives hashed before content reading. Three have selected theorem/proof passages: 373411 is exactly source Theorem1.10, with complete local wedge-independence proof read; 374014 is source Theorem1.2, with its concluding proof read but explicit-error dependency unaudited; 371158 is source Theorem5.1 for p>=5, with an explicitly incomplete hypergeometric proof sketch. The last does not clear p2/3 or the complete dependency chain. These give no new credit. 374105 and373763 only have literal reported known refutations, not independent proof-body clearance.
+
+For374345 the primary Conjecture2 and exact double-saturation definitions were read. One executed t17/n75 check gives zero triangles and common-neighbor witnesses for all58 nonneighbors of vertex0; translation proves edge-addition saturation for that instance only. Independence upper bound, edge-deletion saturation and all-odd-t route remain absent. The source's R(4,t) theorem is not a bridge. No expanded sweep or hypothesis promotion.
+
+Integrity checks: intake exact file set/hashes, all direct original/copy pairs, original r301 inventory manifest, all20 original corpus chunks and8 frozen inputs in place, flat original references, all three reservation sets versus8,833 covered and protected IDs, assignment exactness, and literal/canonical hashes. No upstream verifier executed. All helpers use the fixed512MiB AS/groupRSS,CPU210s,wall230s guard and single-thread environment. verify.sh runs the independent read-only verifier; final receipt records normal and bounded negative-test exits and exact manifest hash/size. Integrity PASS is not mathematics or novelty PASS.
+
+Current registry unavailable => HOLD. Latest versions, external closest-successor bodies and full dependencies remain uncleared; no absence-of-hits inference. All stopped routes, including exact r578/r684 failures, r642 TLS, OEIS403 and OUP403, are preserved in failures.json without retry. Zero MathDB requests. No browser, git, shared/index/ledger/NEXT, manuscript, Lean, credit, sibling or upstream writes. Solr716 and held Clauder628 reservations preserved. No child agents.
+
+Limits and display deviations are retained in failures.json. Final payload excludes only manifest.json and final-verification-receipt.json from its manifest.

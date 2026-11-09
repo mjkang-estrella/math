@@ -1,0 +1,1178 @@
+                                            A New Perspective on FO Model Checking of Dense Graph
+                                                                   Classes∗
+                                                Jakub Gajarský†         Petr Hliněný‡          Daniel Lokshtanov§            Jan Obdržálek‡
+                                                                                    M.S. Ramanujan¶
+
+                                                                                  September 14, 2018
+
+
+
+
+arXiv:1805.01823v1 [cs.LO] 4 May 2018
+                                                                                         Abstract
+                                                   We study the first-order (FO) model checking problem of dense graphs, namely those
+                                                which have FO interpretations in (or are FO transductions of) some sparse graph classes.
+                                                We give a structural characterization of the graph classes which are FO interpretable in
+                                                graphs of bounded degree. This characterization allows us to efficiently compute such an
+                                                FO interpretation for an input graph. As a consequence, we obtain an FPT algorithm for
+                                                successor-invariant FO model checking of any graph class which is FO interpretable in (or
+                                                an FO transduction of) a graph class of bounded degree. The approach we use to obtain
+                                                these results may also be of independent interest.
+
+
+                                        1       Introduction
+                                        Algorithmic metatheorems are theorems stating that all problems expressible in a certain logic
+                                        are eﬃciently solvable on certain classes of (relational) structures, e.g. on ﬁnite graphs. Note
+                                        that the model checking problem for first-order logic – given a graph G and an FO formula
+                                        φ we want to decide whether G satisﬁes φ (written as G |= φ) – is trivially solvable in time
+                                        |V (G)|O(|φ|) . “Eﬃcient solvability” hence in this context often means fixed-parameter tractability
+                                        (FPT); that is, solvability in time f (|φ|) · |V (G)|O(1) for some computable function f .
+                                            In the past two decades algorithmic metatheorems for FO logic on sparse graph classes
+                                        received considerable attention. After the result of Seese [22] establishing ﬁxed-parameter
+                                        tractability of FO model checking on graphs of bounded degree there followed a series of re-
+                                        sults [10, 5, 7] establishing the same result for increasingly rich sparse graph classes. This line
+                                        of research culminated in the result of Grohe, Kreutzer and Siebertz [16], who proved that FO
+                                        model checking is FPT on nowhere dense graph classes.
+                                            The result of Grohe, Kreutzer and Siebertz [16] is essentially the best possible of its kind,
+                                        in the following sense: If a graph class D is monotone (i.e., closed on taking subgraphs) and
+                                            ∗
+                                             Jakub Gajarský has been supported by the European Research Council (ERC) under the European Union’s
+                                        Horizon 2020 research and innovation programme (ERC Consolidator Grant DISTRUCT, grant agreement No
+                                        648527). J. Gajarský (till 2016), P. Hliněný and J. Obdržálek acknowledge support by the Czech Science Founda-
+                                        tion, project no. 14-03501S and currently no. 17-00837S. Daniel Lokshtanov is supported by Pareto-Optimal Pa-
+                                        rameterized Algorithms, ERC Starting Grant 715744. M. S. Ramanujan acknowledges support from the Bergen
+                                        Research Foundation, project BeHard – Beating Hardness by preprocessing and from Austrian Science Fund
+                                        (FWF), project P26696 X-TRACT.
+                                           †
+                                             Technical University Berlin. E-mail: jakub.gajarsky@tu-berlin.de.
+                                           ‡
+                                             Masaryk University. E-mail: hlineny@fi.muni.cz.
+                                           §
+                                             University of Bergen. E-mail: daniello@ii.uib.no.
+                                           ¶
+                                             University of Warwick. E-mail: R.Maadapuzhi-Sridharan@warwick.ac.uk.
+
+
+                                                                                              1
+not nowhere dense, then the FO model checking problem on D is as hard as that on all graphs.
+Possible ways to continue the research into algorithmic metatheorems for FO logic include the
+following two directions:
+    First, one can study relational structures other than graphs. This line of research has recently
+been initiated by Bova, Ganian and Szeider [2], who gave an FPT algorithm for existential FO
+model checking on partially ordered sets of bounded size of a maximum antichain. Their result
+was ﬁrst improved upon in [13] and shortly after that followed the result of Gajarský et al. [12],
+who extended [2] to full FO. Apart from these results, very little is known and it remains to be
+seen what other types of structures and their parameterizations admit fast FO model checking
+algorithms.
+    Second, one may consider metatheorems for FO logic on classes of graphs which are not
+sparse. Again, little is known along this line of research. One can mention the result of Ganian
+et al. [14] establishing that certain subclasses of interval graphs admit an FPT algorithm for FO
+model checking. Besides, the aforementioned result of [12] can also be seen as a result about
+dense (albeit directed) graphs, and [12] actually happens to imply the result of [14].
+    We would like to initiate a systematic study of dense graph classes for which the FO model
+checking problem is eﬃciently solvable. It appears that a natural way to arrive at new graph
+classes admitting FPT algorithms for FO model checking, is by means of interpretation, or
+transduction. In a simpliﬁed setting of interpretations – given a graph G and an FO formula
+ψ(x, y) with two free variables, we can deﬁne a graph H = Iψ (G) on the same vertex set as
+G and the edge set determined by ψ(x, y): a pair of distinct vertices u, v is an edge of H iﬀ
+G |= ψ(u, v) ∨ ψ(v, u). We then say that H is interpreted in G using ψ. A graph class D is FO
+interpretable in a graph class C if there exists an FO formula ψ(x, y) such that every member of
+D is interpreted in some member of C using ψ.
+    For now let us assume we have an eﬃcient FO model checking algorithm for the previous
+class C, and consider the FO model checking problem of the class D. If an input graph from D
+was given together with the corresponding FO interpretation in a graph from C, then one could
+easily solve the model checking problem using the existing algorithm for C. This is based on the
+following natural property of interpretations: if H ∈ D is interpreted in G ∈ C using formula
+ψ(x, y), and our question is to decide whether H |= φ, it is a standard routine to construct from
+φ and ψ a sentence φ′ such that H |= φ if and only if G |= φ′ . Then G |= φ′ is decided by the
+algorithm given for C.
+    However, if the assumed interpretation (or transduction) is not given, then the situation is
+markedly harder. In this context we ask the following question:
+
+Question 1.1. Let C be a graph class admitting an FPT algorithm for FO model checking, and
+D be a graph class FO interpretable in C. Does there exist an FPT algorithm for FO model
+checking on D?
+
+    As outlined above, the diﬃculty of this question lies in the fact that our inputs come from
+D, without any reference to the respective members of C in which they are interpreted. Even if
+the interpretation formula ψ(x, y) is ﬁxed and known beforehand, we have generally no eﬃcient
+way of obtaining the respective member G ∈ C for an input H ∈ D. Thus, Question 1.1 can be
+reduced to the following:
+
+Question 1.2. Let C, D be graph classes such that D is FO interpretable in C. Does there exist
+an integer s and a polynomial-time algorithm A such that; given H ∈ D as input, A outputs
+G ∈ C and an FO formula ψ(x, y) of size at most s such that H is interpreted in G using ψ ?
+
+    An answer to Question 1.2 is far from being obvious, and it can strongly depend on the choice
+of ψ. Take, for example, the following particular FO interpretation: A graph H is the square
+
+                                                 2
+of a graph G if the edges of H are those pairs of vertices which are at distance at most 2 in G.
+Then the problem; given H ﬁnd G such that H is the square of G, is NP-hard [19]. Another such
+negative example, speciﬁcally tailored to our setting, is discussed in Section 7. These examples
+show that it is important to choose a suitable interpretation formula ψ (avoiding the hard cases)
+in an attempt to answer Question 1.2.
+
+Our contribution We answer both Questions 1.1 and 1.2 in the positive for the case when
+C is a class of graphs of bounded degree. Our answers cover also the more general case of FO
+transductions of bounded-degree classes, and include checking successor-invariant FO properties
+in addition to ordinary FO ones.
+    We ﬁrst deﬁne near-uniform graph classes (Deﬁnition 4.2), based on a new notion of near-
+k-twin relation, which generalizes the folklore twin-vertex relation and is related also to the
+neighbourhood diversity parameter of [17]. The idea behind this approach is to classify pairs of
+vertices which have almost the same adjacency to the rest of the graph. The approach seems
+promising and may be of independent use in further investigation of well structured dense graph
+classes. While the deﬁnition of non-uniformity lends itself well to being used in proofs, it is
+sometimes unnecessarily technical to reason about. We therefore also introduce an equivalent
+notion of near-covered graph classes (Deﬁnition 4.3), which is more intuitive, easier to grasp and
+oﬀers a slightly diﬀerent perspective.
+    We then give an eﬃcient FO model checking algorithm (Theorem 5.1) for the near-uniform
+graph classes. This algorithm is based upon the above idea of interpretation; brieﬂy, given a
+graph H we use the near-k-twin relation for a suitable value of k to partition the vertex set of H
+and to ﬁnd a bounded degree graph G, such that H is interpreted in G using a universal formula
+ψ depending only on the class in question (Theorem 5.5). Then we employ the aforementioned
+algorithm of Seese [22]. Furthermore, we extend our algorithm to include also stronger successor-
+invariant FO properties (see Section 5.3 for more details), for which we can use the recent result
+of [23].
+    In the second half of the paper we argue that the concept of near-uniform graph classes is
+robust and suﬃciently rich in content. We prove that the near-covered (and therefore also near-
+uniform, since the two are equivalent) graph classes are exactly those which are FO interpretable
+in graphs of bounded degree (Theorem 6.3) and, more generally, that any FO transduction of
+a graph class of bounded degree is a near-covered graph class (Theorem 6.4). The key tool we
+use is Gaifman’s theorem [11]. At this place we remark that properties of graphs which are FO
+interpretable in graphs of bounded degree have already been studied, e.g., by Dong, Libkin and
+Wong in [6] in a diﬀerent context, but those previous results do not imply our conclusions.
+    We then complement the previous tractability results with a negative example of a particular
+FO interpretation which is NP-hard to “reverse” even on the class of graphs of degree at most 3
+(Theorem 7.1). We ﬁnish by sketching some interesting open directions for future research.
+
+
+2    Definitions and preliminaries
+We begin by clarifying the terminology and recalling some established concepts concerning logic
+on graphs. We assume that 0 is a natural number, i.e. 0 ∈ N. Let X △ Y denote the symmetric
+diﬀerence of two sets.
+
+Graph theory We work with finite simple undirected graphs and use standard graph theoretic
+notation. We refer to the vertex set of a graph G as to V (G) and to its edge set as to E(G).
+As it is common in the context of FO logic on graphs, vertices of our graphs can carry arbitrary
+labels.
+
+                                                3
+FO logic The first-order logic of graphs (abbreviated as FO) applies the standard language of
+ﬁrst-order logic to a graph G viewed as a relational structure with the domain V (G) and the
+single binary (symmetric) relation E(G). That is, in FO we have got the standard predicate
+x = y, a binary predicate edge(x, y) with the meaning {x, y} ∈ E(G), an arbitrary number
+of unary predicates L(x) with the meaning that x holds the label L, usual logical connectives
+∧, ∨, →, and quantiﬁers ∀x, ∃x over the vertex set V (G).     
+    For example, φ(x, y) ≡ ∃z edge(x, z) ∧ edge(y, z) ∧ red(z) states that the vertices x, y have
+a common neighbour in G which has got label ‘red’.
+
+Parameterized model checking The instances of a parameterized problem can be considered
+as pairs hI, ki where I is the main part of the instance and k is the parameter of the instance;
+the latter is usually a non-negative integer. A parameterized problem is fixed parameter tractable
+(FPT) if instances hI, ki of size n can be solved in time O(f (k) · nc ) where f is a computable
+function and c is a constant independent of k. In parameterized model checking, instances are
+considered in the form h(G, φ), |φ|i where G is a structure, φ a formula, the question is whether
+G |= φ and the parameter is the size of φ.
+    When speaking about the FO model checking problem in this paper, we implicitly consider
+the formula φ (its size) as a parameter.
+
+Interpretations In order to simplify our exposition and proofs we work with a simpliﬁed
+version of FO interpretations (note, however, this does not impact generality of our conclusions,
+as we will see later).
+    Let ψ(x, y) be an FO formula with two free variables over the language of (possibly labelled)
+graphs such that for any graph and any u, v it holds that G |= ψ(u, v) ⇔ G |= ψ(v, u) and
+G 6|= ψ(u, u), i.e. the relation on V (G) deﬁned by the formula is symmetric and irreﬂexive.
+From now on we will assume that formulas with two free variables are symmetric and irreﬂexive
+(which can easily be enforced). Given a graph G, the formula ψ(x, y) maps G to a graph
+H = Iψ (G) deﬁned by V (H) = V (G) and E(H) = {{u, v} | G |= ψ(u, v)}. We then say that the
+graph H is interpreted in G. Notice that even though the graph G can be labelled, our graph
+H is not. This is to simplify our notation – nevertheless, one may easily inherit labels from G
+to H if needed.
+    In the rest of the paper, whenever we consider graphs G and H in context of interpretations,
+graph G will be the graph in which we are interpreting, and graph H will be the “result” of the
+interpretation.
+    The notion of interpretation can be extended to graph classes – to a graph class C the formula
+ψ(x, y) assigns the graph class D = Iψ (C) = {H | H = Iψ (G), G ∈ C}. We say that a graph
+class D is interpretable in a graph class C if there exists formula ψ(x, y) such that D ⊆ Iψ (C).
+Note that we do not require D = Iψ (C), as we just want every graph from D to have a preimage
+in C.
+    Interpretations are useful for deﬁning new graphs from old using logic (again, we think of H
+as a result of application of ψ to G), but can also be used to evaluate formulas on H quickly,
+provided that we have a fast algorithm to evaluate formulas on G. Let H = Iψ (G), let θ be
+a sentence and let θ ′ be a sentence obtained from θ by replacing every occurrence of the atom
+edge(x, y) by ψ(x, y). Then, obviously, H |= θ ⇐⇒ G |= θ ′ .
+
+FO transductions While interpretations are restricted in a choice of the target domain (and,
+in our case, we even require V (H) = V (G) ), a more general view is provided by so called
+transductions, see Courcelle and Engelfriet [3]. Informally, in addition to an interpretation this
+allows to add to a graph arbitrary “parameters” (as labels) and to make several disjoint copies
+of the graph.
+                                                4
+    Here we provide a brief deﬁnition based on [1], simpliﬁed to target only the FO graph case.
+A basic FO-transduction τ0 is a triple (χ, ν, µ) of FO formulas with 0, 1 and 2 free variables,
+respectively, such that τ0 maps a graph G into a graph on the vertex set {v | G |= ν(v)} and the
+edge set {{u, v} | G |= µ(u, v)} (an induced subgraph of Iµ (G)), or τ0 (G) is undeﬁned if G 6|= χ.
+    The m-copy operation maps a graph G to the graph Gm such that V (Gm ) = V (G) ×
+{1, . . . , m}, the subset V (G) × {i} for each i = 1, 2 . . . , m induces a copy of G (there are
+no edges between distinct copies), and V (Gm ) is additionally equipped with a binary relation
+∼ and unary relations Q1 , . . . , Qm such that; (u, i) ∼ (v, j) for u, v ∈ V (G) iﬀ u = v, and
+Qi = {(v, i) : v ∈ V (G)}. The p-parameter expansion maps a graph G to the set of all graphs
+which result by expansion of V (G) by p unary predicates.
+    Altogether, a many-valued map τ is an FO transduction (of simple undirected graphs) if it
+is τ = τ0 ◦ γ ◦ ε where τ0 is a basic transduction, γ is a m-copy operation for some m, and ε is
+a p-parameter expansion for some p. Note that, in this formal setting, the formulas of τ0 may
+also refer to the relations ∼ and Qi established by the copy operation γ.
+    We remark, once again, that the result of a transduction τ of one graph is generally a
+set of graphs, due to the involved p-parameter expansion. For a graph class C, the result of
+a transduction
+            S      τ of the class C is the union of the particular transduction results, precisely,
+τ (C) := G∈C τ (G).
+
+
+3       Outline of our approach
+Before diving into technical details of our claims and proofs, we give a brief exposition of ideas
+leading to our results. We start by explaining the core ideas behind our approach to analysing
+dense graphs and then we sketch the how interpretations are combined with our approach to
+dense graphs to obtain the results presented in Sections 4 and 6.
+
+3.1     Locality, indistinguishability, and the new approach
+The existing FPT algorithms for FO model checking of sparse graph classes we mentioned at the
+beginning of Section 1 rely heavily on the use of locality of FO logic – i.e. the fact that evaluating
+FO formulas can be reduced to evaluating local FO formulas (cf. Gaifman’s theorem [11], also
+in Section 6). This, together with the fact that in sparse graphs it is possible to evaluate local
+formulas eﬃciently, made the locality-based approach suitable for studying FO logic on sparse
+graphs. The problem with using this approach for dense graphs is obvious – in a dense graph
+the whole graph can be in the 1-neighbourhood of a single vertex1 . This makes evaluating local
+formulas around such a vertex expensive (from the FPT perspective), because this amounts to
+evaluating them on the whole graph.
+    An alternative approach to FO model checking, as described in Section 4, is based on the
+concept of vertex indistinguishability. This approach can be used for dense graphs, but is a
+bit too limited in its scope. The key notion here is that of twin vertices – two vertices of
+a graph G are twins if they have the same neighbourhood. The fact that two vertices u, v
+are twins means that they behave in the same way with respect to any other vertex in a graph.
+Consequently, no FO formula can distinguish between u and v. It is not hard to see that the twin
+relation is an equivalence on the vertex set of a graph. One may also say that the set of vertex
+neighbourhoods occurring in G is “covered” by the set of neighbourhoods of representatives
+of each twin class of G. The number of equivalence classes of the twin relation is called the
+neighbourhood diversity [17] of a graph, and graph classes of bounded neighbourhood diversity
+admit a very simple FPT algorithm for FO model checking. However, as already mentioned, the
+    1
+    This is also true for some sparse graphs, say stars, but we hope that it is clear that for dense graphs this can
+cause substantial problems.
+
+                                                         5
+problem with this approach is that it is too restrictive – even such simple graph classes as paths
+have unbounded neighbourhood diversity.
+    Our approach is based on observing that the locality-based approach, when used on sparse
+graphs, exploits, in its essence, the indistinguishability of vertices. Take, for example, the
+graphs of bounded degree. Here any two vertices behave the same way with respect to the rest
+of the vertex set (they are non-adjacent to it), with only a few exceptions (the vertices in their
+neighbourhood). In other words, any two vertices have almost the same neighbourhood. This
+leads to a relaxation of the notion of twin vertices. We say that two vertices are near-k-twins if
+their neighbourhoods diﬀer in at most k vertices. To see how this notion works around the issues
+with locality and indistinguishability explained above, let us consider the near-k-twin relation
+on the class Dd of graphs of degree at most d and on the class Dd of its complements. On every
+graph from these graph classes, the near-2d-twin relation is an equivalence with just one class.
+Yet, graphs from Dd are dense and some of them contain universal vertices.
+    The above considerations lead us to studying graph classes such that for each graph from
+these classes there exists a small k such that the near-k-twin relation is an equivalence with a
+small number of classes – the near-uniform graph classes. Though, unlike the ordinary twin
+relation, the near-k-twin relation is not automatically guaranteed to be an equivalence (this
+depends heavily on the choice of G and k) and, consequently, dealing with near-uniformity is
+slightly cumbersome and requires a great care.
+    However, there is also another (and perhaps simpler to deal with) way to view and formally
+capture the above informal discussion of diversity of neighbourhoods in a graph – that one can
+“cover” all distinct neighbourhoods in the graph with only few representative neighbourhoods.
+This view leads to a new deﬁnition – a class of graphs is near-covered if there exists a small k such
+that every graph in this graph class contains a small (of a constant size) set S of vertices such that
+every vertex is a near-k-twin of at least one vertex from S. It is easily seen that near-uniformity
+implies near-coveredness – just pick any one representative from each equivalence class. As we
+shall see, the converse is also true and the two notions are (asymptotically) equivalent. Precisely,
+we shall prove that for any graph class C the following conditions are equivalent:
+
+   1. C is near-uniform (Deﬁnition 4.2);
+
+   2. C is near-covered (Deﬁnition 4.3);
+
+   3. C is interpretable in a class of graphs of bounded degree.
+
+    Since we can eﬃciently compute the interpretation claimed in (3), we can then solve FO model
+checking on near-uniform graph classes in FPT using established tools, such as the algorithm
+of [22] for FO model checking on graphs of bounded degree. Our proof is structured as follows;
+we ﬁrst prove the equivalence between (1) and (2) (Lemma 4.4), and then the implications (1)
+⇒ (3) (Theorem 5.5) and (3) ⇒ (2) (Theorem 6.3).
+    One may, with respect to technical diﬃculties related to the near-uniformity notion, question
+whether it is necessary to consider near-uniformity at all and not to go with just near-coveredness
+alone. However, the equivalence aspect of the near-k-twin relation is crucial in proving that
+graphs with certain properties are interpretable in graphs of bounded degree. We therefore
+believe that it deserves a separate deﬁnition.
+
+3.2   Interpretability in graphs of bounded degree
+Besides dealing with the FO model checking problem via interpretation of certain graph classes
+into classes of bounded degree, we are also interested in the other direction – to ﬁnd out which
+graph classes can be FO interpreted into classes of bounded degree (the direction (3) ⇒ (2)
+above).
+                                                  6
+    Our characterization of such classes relies on a simple corollary of Gaifman’s locality theorem:
+For a graph G and two vertices u, v ∈ V (G) which are far apart form each other, the truth value
+of the formula ψ(u, v) depends only on formulas with one free variable (up to the quantiﬁer rank
+q, which depends on ψ) valid on u and v (i.e. its logical q-types). This in turn means that when
+the formula ψ(u, v) is used for interpretation (to obtain the graph H from a graph G of degree at
+most d) and vertices u and u′ satisfy the same formulas with one free variable (again, up to the
+quantiﬁer rank q), u and u′ will be adjacent to the same vertices in the resulting graph, except
+for a small number of vertices which were in their respective r-neighbourhoods in graph G (here
+r also depends on ψ(x, y)). Any two vertices of the same q-type will therefore be near-k-twins
+for k = 2 · dr .
+    While the previous consideration is quite simple, note the following possible pitfall. Since
+the relation “being of the same q-type” is an equivalence with a bounded number of classes, it
+is tempting to believe that the near-k-twin relation (for a suitably chosen k) is an equivalence
+with a bounded number of classes (independent of G) for any graph from a graph class FO
+interpretable in a class of graphs of bounded degree. This, however, is not true – it can happen
+that some vertices u and v of diﬀerent q-types can be near-k-twins and a vertex w of yet diﬀerent
+q-type can be near-k-twin of v but not of u, thus failing the transitivity.
+    Instead, we ﬁnish as follows. Since for any q there are ﬁnitely many (say m) diﬀerent q-types,
+in H there exist at most m vertices such that every vertex is a near-k-twin of (at least) one of
+them. This in turn means that graph classes FO interpretable in graphs of bounded degree are
+near-covered, and hence also near-uniform by (1) ⇔ (2) above.
+
+
+4    Near-uniform and near-covered graph classes
+In this section we formally establish the key concepts. For a graph G and a vertex v ∈ V (G),
+we deﬁne the neighbourhood of v as N G (v) = {w ∈ V (G) | {v, w} ∈ E(G)}. If the graph G is
+clear from the context, we write just N (v). Note that, by deﬁnition, v 6∈ N (v).
+    A useful concept in graph theory is that of twin vertices. Two vertices u, v ∈ V (G) are called
+false twins if N (u) = N (v), and they are true twins if N (u) ∪ {u} = N (v) ∪ {v}. We actually
+follow the concept of false twins, which better suits our purposes, in the next deﬁnition.
+
+Definition 4.1 (near-k-twin relation). For a graph G and k ∈ N, the near-k-twin relation of G
+is the relation ρk on V (G) defined by (u, v) ∈ ρk ⇐⇒ |N (u) △ N (v)| ≤ k.
+
+    Considering, e.g., k a small parameter and G a large graph then, intuitively, two vertices
+of G are near-k-twins if they have “almost the same” neighbourhood. This relation, unlike the
+ordinary twin relations on graph vertices, does not always “behave nicely”; in particular, ρk may
+not be an equivalence relation (see e.g. the examples below). On the other hand, if the near-
+k-twin relation is an equivalence of bounded index, then we can use it to decompose the vertex
+set of the graph G into similarly behaving clusters. This leads to the following.
+
+Definition 4.2 (near-uniform). A graph G is (k0 , p)-near-uniform if there exists k ≤ k0 for
+which near-k-twin relation of G is an equivalence of index at most p.
+A graph class C is (k0 , p)-near-uniform if every member of C is (k0 , p)-near-uniform, and C is
+near-uniform if there exist integers k0 , p such that C is (k0 , p)-near-uniform.
+
+    To simplify the discussion, we use the following as a shorthand. If ρk of Deﬁnition 4.1 is
+an equivalence relation, then we call ρk the near-k-twin equivalence of G, and the equivalence
+classes of ρk the near-k-twin classes of G.
+    For example, take a class Dd of the graphs of maximum degree at most d, and let k = 2d.
+Then the near-k-twin relation ρk is a trivial equivalence of index one (i.e., with one class) for
+
+                                                 7
+                                     b            d            f
+
+
+
+                               a            c            e            g
+
+
+Figure 1: An example. The near-2-twin relation ρ2 of this path includes pairs (b, d) and (d, f )
+but not (b, f ), and so ρ2 is not an equivalence. On the other hand, ρ1 is an equivalence on this
+path and its near-1-twin classes are {a, c}, {e, g}, {b}, {d}, {f }.
+
+
+every graph from Dd . The same holds for the class D d of the complements of graphs of Dd .
+Another sort of examples comes, say, with a class B d of the graphs obtained from complete
+bipartite graphs by subtracting a subgraph of degrees at most d. For k = 2d and every graph
+of Bd , the near-k-twin relation ρk is an equivalence of index at most two. On the other hand,
+we can easily see that the near-2-twin relation of, e.g., a path of length 6 is not an equivalence;
+see Figure 1. Even more, examples such as that of Figure 1 show that, having a near-k-twin
+equivalence for some k, does not imply that the near-k′ -twin relation is an equivalence for k′ > k.
+That is why we cannot simply use one universal value of k in Deﬁnition 4.2.
+    The fact that the near-k-twin relation of a graph G is an equivalence on V (G) can used
+as follows: the neighbourhood of a vertex is represented by the neighbourhood of a selected
+representative of its class and the (small) diﬀerence of these two neighbourhoods. For such
+purpose of representation it is not always necessary to have a near-k-twin equivalence; just
+having at least one such representative for every vertex of G may be suﬃcient (we may not
+care that there are more than one “close” representatives). This simpliﬁed scenario leads to the
+following deﬁnition.
+Definition 4.3 (near-covered). A graph G is (ℓ, q)-near-covered if there exist vertices v1 , . . . , vq
+in V (G) such that each vertex u ∈ V (G) is a near-ℓ-twin of at least one of v1 , . . . , vq .
+A graph class C is (ℓ, q)-near-covered if every member of C on at least q vertices is (ℓ, q)-near-
+covered, and C is near-covered if there exist integers ℓ, q such that C is (ℓ, q)-near-covered.
+    The following lemma establishes that the two notions – being near-uniform and being near-
+covered – are in fact equivalent. While the deﬁnition of being near-covered is less technical
+and easier to grasp, the deﬁnition of near-uniformity is more convenient to work with in the
+algorithmic context of Section 5, which is the main reason for including both deﬁnitions.
+Lemma 4.4. A graph class C is near-uniform if and only if C is near-covered.
+Proof. It is easy to see that if C is (k0 , p)-near-uniform then it is (k0 , p)-near-covered: for every
+graph G ∈ C there is k ≤ k0 such that near k-twin relation is an equivalence with p′ classes
+C1 , . . . , Cp′ where p′ ≤ p. We pick an arbitrary vertex vi from from each class Ci to obtain
+vertices v1 , . . . , vp′ . Clearly, each vertex of G is a near-k-twin of one of these vertices.
+     To prove the opposite direction, consider ﬁrst the following construction: To any graph G
+and k, we deﬁne auxiliary graph Gk on the same vertex set by setting (u, v) ∈ E(Gk ) if and only
+if u and v are near-k-twins in G. Observe the following easy properties of this construction:
+   1. Graph G is (ℓ, q)-near-covered if and only if Gℓ has a dominating set of size at most q.
+
+   2. If for some k the graph Gk is a disjoint union of at most p cliques, then near-k-twin is an
+      equivalence with p classes on G (and so G is (k, p)-near-uniform).
+
+   3. If two vertices are at distance at most p in Gk then they are pk-near-twins in G.
+                                                  8
+  4. If Gk contains a component with radius greater than 1 then this component has to be
+     dominated by at least two vertices. Moreover, in any dominating set of such connected
+     component there are two vertices which are at distance at most 3 in Gk .
+
+    We now prove that any graph class C which is near-covered with parameters ℓ and q is
+also near-uniform. We proceed by induction on q. For the case when q = 1 the graph Gℓ
+has a dominating set of size 1. This means that every two vertices in Gℓ are at distance at
+most 2, it follows from (3) that any two vertices of G are near-2ℓ-twins. Graph G is therefore
+(2ℓ, 1)-near-uniform, which ﬁnishes the induction basis.
+    For the induction step, we ﬁx q > 1 and assume that every (m, q − 1)-near-covered graph
+class, for any m, is (a, b)-near-uniform for some values a, b depending only on m and q. Consider
+now a graph class C which is (ℓ, q)-near-covered. We will prove that every graph from C is
+(2ℓ, q)-near-uniform or (8ℓ, q − 1)-near-covered. The latter case, from the induction hypothesis,
+implies that C is (a, b)-near-uniform where a, b depend only on ℓ and q. As a result, every graph
+in C is (max(2ℓ, a), max(q, b))-near-uniform and so C is near-uniform.
+    We take a graph G ∈ C which is (ℓ, q)-near-covered, and consider the derived graph Gℓ . If
+Gℓ has dominating set of size smaller than q then it is actually (ℓ, q − 1)-near-covered, which
+means it is also (8ℓ, q − 1)-near-covered as desired. From now on we therefore assume that Gℓ
+has a smallest dominating set S = {v1 , . . . , vq }. We distinguish two cases:
+
+  I. Gℓ contains a connected component C with radius at least 2. By property (4) of the
+     construction, there are two vertices vi , vj from S which are at distance at most 3 in C.
+     Consider now the graph G4ℓ . We claim that G4ℓ has a dominating set of size at most q − 1,
+     which means that G is (4ℓ, q − 1)-near-covered and therefore also (8ℓ, q − 1)-near-covered
+     as desired.
+     First note that G4ℓ is supergraph of Gℓ , so S is a dominating set of G4ℓ . We claim that
+     S \ vj (of size q − 1) is also a dominating set of G4ℓ . To see this, consider any vertex u
+     dominated by vj in Gℓ . Since the distance between vi and vj in Gℓ is at most 3, the distance
+     between vi and u is at most 4 in Gℓ . This means, by (3), that vi and u are 4ℓ-near-twins in
+     G. This in turn means that there is an edge between vi and u in G4ℓ , and so u is dominated
+     by vi in G4ℓ . Since u was an arbitrary neighbour of vj (in Gℓ ), every vertex dominated by
+     vj in Gℓ is dominated by vi in G4ℓ . Therefore, S \ vj is a dominating set in G4ℓ of size
+     m − 1.
+
+ II. All connected components of Gℓ have radius at most 1. This means that Gℓ consists of
+     components C1 , . . . , Cq such that vi ∈ Ci for i = 1, . . . , q. In this case we consider the
+     graph G2ℓ . Since every two vertices in the same component Ci of Gℓ are at distance at
+     most 2, they are 2ℓ-near-twins in G and so there is an edge between them in G2ℓ , which
+     means that each component Ci forms a clique in G2ℓ . We distinguish two possibilities:
+
+      (a) There is no pair of distinct indices i, j such that there exists an edge in G2ℓ between
+          some vertices u ∈ Ci and w ∈ Cj . In this case the graph G2ℓ is a disjoint union of q
+          cliques, which means that G is (2ℓ, q)-near-uniform by property (2).
+      (b) There exists a pair of distinct indices i, j such G2ℓ contains an edge uw between some
+          vertices u ∈ Ci and w ∈ Cj . Recall that vi and vj are the vertices from S which
+          are contained in Ci and Cj , respectively. These vertices are in the same component
+          in G2ℓ and at distance at most 4. By the same argument as in the case I, the set
+          S \ vj is a dominating set of size q − 1 of the graph G8ℓ , which means that G is
+          (8ℓ, q − 1)-near-covered, as desired.
+
+
+                                                9
+5     FO model checking algorithm
+This section constitutes the main algorithmic contribution of the paper.
+    Our model checking algorithm for near-uniform graph classes can be shortly summarized as
+follows. Input is a graph H from a (k0 , p)-near-uniform graph class C and an FO sentence φ.
+Perform the following steps:
+    1. For each k := 0, 1, . . . , k0 ; compute the near-k-twin relation ρk of H, and check whether
+       ρk is an equivalence of index at most p. This test has to succeed for some value of k
+       (Deﬁnition 4.2).
+
+    2. Compute a universal formula ψ(x, y) depending on k0 and p, and the graph GH depending
+       on H and k found in step 1, such that H = Iψ (GH ) and the vertex degrees in GH are at
+       most 2k0 p (Theorem 5.5).
+
+    3. Run the algorithm of [22] for FO model checking on graphs of bounded degree on GH and
+       the sentence φ′ , where φ′ is obtained from φ by replacing every occurrence of edge(z, z ′ )
+       with ψ(z, z ′ ).
+Theorem 5.1. Let C be a (k0 , p)-near-uniform graph class for some k0 , p ∈ N. Then the FO
+model checking problem of C is fixed-parameter tractable when parameterized by the formula size,
+i.e., solvable in time f (|φ|) · |V (G)|O(1) for a computable function f and input G, φ.
+    The rest of this section is devoted to the proof of this statement.
+
+5.1    Properties of the near-k-twin relation
+To give details of the algorithm and to prove Theorem 5.1, we study some structural properties
+of graphs for which the near-k-twin relation is actually an equivalence.
+    As outlined above in the algorithm, our key step is to show that all near-uniform graph
+classes are FO interpretable in graph classes of bounded degree. For this we show that for any
+two large enough equivalence classes of a near-k-twin equivalence, it holds that every vertex from
+one class is connected to almost all or to almost none vertices of the other class and vice versa.
+More precisely:
+Lemma 5.2. Let k ≥ 1 and G be a graph such that the near-k-twin relation ρk of G is an
+equivalence on V (G). Let U and V be two near-k-twin classes of G with at least 4k + 2 vertices
+each (it may be U = V ). Then for every v ∈ V we have
+
+                                min{|U ∩ N (v)|, |U \ N (v)|} ≤ 2k.
+
+    Note that the claim of Lemma 5.2 universally holds only when both U and V are suﬃciently
+large. A counterexample with small U is a graph consisting of U = {u} and V inducing a large
+clique, such that u is connected to half of the vertices of V . For this graph the near-1-twin
+classes are exactly U and V , but both |V ∩ N (u)| and |V \ N (u)| are unbounded.
+
+Proof. For x ∈ V (G) and A ⊆ V (G), let αA (x) = min{|N (x) ∩ A|, |A \ N (x)|}. Thus to prove
+the lemma we need to show that αU (v) ≤ 2k for v ∈ V .
+    Towards a contradiction assume αU (v) ≥ 2k + 1 for some v ∈ V . Clearly, there is a subset
+                                          ′
+U ′ ⊆ U such that |U ′ | = 4k + 2 and αU (v) ≥ 2k + 1, too. Since |N (w) △ N (v)| ≤ k for any
+                                                ′          ′
+w ∈ V by the deﬁnition of ρk , we also get αU (w) ≥ αU (v) − k ≥ 2k + 1 − k = k + 1 for all
+w ∈V.
+    We are going to count the number D of pairs (w, {u, u′ }) such that w ∈ V , u, u′ ∈ U ′ are
+distinct vertices and exactly one of wu, wu′ is an edge of G. See Figure 2. On the one hand, for
+                                                10
+                                            u′
+                               U ′,                                      V,
+                                                               w
+                          |U ′ | = 4k + 2                          |V | ≥ 4k + 2
+                                                u
+
+
+
+Figure 2: An illustration; counting the pairs (w, {u, u′ }) such that w ∈ V , u, u′ ∈ U ′ in the proof
+of Lemma 5.2, in case U 6= V .
+
+any ﬁxed u, u′ ∈ U ′ , every w forming such a desired pair (w, {u, u′ }) belongs to N (u) △ N (u′ )
+and so we have got an upper bound
+                                  X
+                          D≤            |N (u) △ N (u′ )| ≤
+                                            ′
+                                 {u,u′ }∈(U2 )
+                                                                                                  (1)
+                                     |U ′ |
+                                                       
+                                                    4k + 2
+                             ≤               ·k =           · k < 3k2 (4k + 2) ,
+                                      2               2
+
+where |N (u) △ N (u′ )| ≤ k holds by the deﬁnition of ρk .
+      On the other hand, we may ﬁx w ∈ V and count the number of unordered pairs u, u′ ∈ U ′ \{w}
+such that exactly one of wu, wu′ is an edge of G; this number is equal
+                                                                     to U|N (w)∩U ′ |·|U ′ \N (w)| =
+    ′               ′                         ′                 ′          ′                    ′
+α (w)· |U |−α (w) if w 6∈ U , and to α (w)· |U |−1−α (w) or (α (w)−1)· |U ′ |−αU (w)
+  U          ′    U             ′           U          ′      U
+
+if w ∈ U ′ . Therefore,
+                                          ′                         ′
+                                X
+                                       αU (w) − 1 · |U ′ | − 1 − αU (w)
+                                                                       
+                            D≥
+                                   w∈V
+                                     X
+                               ≥         (k + 1 − 1)(4k + 2 − 1 − k − 1)                          (2)
+                                   w∈V
+                               = |V | · 3k2 ≥ 3k2 (4k + 2)
+                      ′
+since we have got αU (w) ≥ k + 1 and |V | ≥ 4k + 2 = |U ′ |.
+    Now, (1) and (2) are in a contradiction, and hence the sought conclusion follows.
+
+Corollary 5.3. Let U and V be the two classes of Lemma 5.2 such that |U |, |V | ≥ 5k + 1. Then
+exactly one of the following two possibilities holds:
+
+(a) every vertex of U is connected to at most 2k vertices of V and every vertex of V is connected
+    to at most 2k vertices of U , or
+(b) every vertex of U is connected to all but at most 2k vertices of V and every vertex of V is
+    connected to all but at most 2k vertices of U .
+
+Proof. We ﬁrst show that either
+
+   • every vertex of U is connected to at most 2k vertices of V , or
+   • every vertex of U is connected to all but 2k vertices of V .
+
+Indeed, for any vertex v ∈ U taken separately, only one of these cases can happen since |V | > 4k,
+and one of these cases has to happen by Lemma 5.2. Assume that there exist v, w ∈ U with
+v having at most 2k neighbours in V while w is connected to all but at most 2k vertices of V .
+Then |N (v) △ N (w)| ≥ |V | − 2k − 2k ≥ k + 1, contradicting the deﬁnition of ρk .
+                                                     11
+    To ﬁnish the proof, we have to show the the following case (relevant if U 6= V ) is impossible:
+every vertex of U connected to at most 2k vertices of V and every vertex of V connected to all
+but at most 2k vertices of U . In the argument we count the total number of edges between U
+and V ; it would be at most 2k · |U | and, at the same time, at least (|U | − 2k) · |V |. Though, the
+diﬀerence between these lower and upper estimates is
+
+                            (|U | − 2k) · |V | − 2k · |U |
+                        = |U | · |V | − 2k · (|U | + |V |)
+                                                                                                 (3)
+                        = |U | − 4k |V | − 4k + 2k |U | + |V | − 16k2
+                                                            
+
+                        > k · k + 2k(5k + 5k) − 16k 2 = 5k2 > 0,
+
+a contradiction, thus ﬁnishing the whole proof.
+
+Remark 5.4. Note that Corollary 5.3 still applies if U = V . I.e., for a single near-k-twin
+equivalence class U with |U | > 5k + 1 either
+a) every vertex of U has at most 2k neighbours in U , or
+
+b) every vertex of U has at least |U | − 2k neighbours in U .
+
+5.2   From near-k-twins to bounded degree
+Here we present the core of our algorithm – a procedure which, given a graph H for which the
+near-k-twin relation of H is an equivalence of bounded index, produces a (labelled) graph GH
+(on the same vertex set) of bounded degree, and a formula ψ(x, y) such that H = Iψ (GH ).
+   The idea behind the procedure is the following: We start by dividing the near-k-twin classes
+of H into “small” and “large” ones (w.r.t. k), dealing with each of these two types of classes
+separately.
+
+   • Each large class (more precisely, the vertices in the class) is assigned a label and each pair
+     of large classes receives another label indicating whether there are “almost all” or “almost
+     none” edges between the two classes. The exceptions to “almost all” or “almost none” rules
+     will be remembered by edges of the graph GH (by Corollary 5.3 each vertex has a bounded
+     number of such exceptions, hence the bounded degree of GH ). Using these labels and the
+     graph GH we properly encode the H-adjacency between the vertices in the large classes.
+
+   • The H-adjacency of the vertices from small equivalence classes (both within the small
+     classes and also to the large ones) is encoded by assigning a new label to each such vertex
+     and another new label to its neighbourhood. The vertices from small classes have no edges
+     in the graph GH .
+
+    Note that the construction sketched above depends on k and also on the number of near-k-
+twin equivalence classes of H. Unfortunately, as explained earlier, we cannot ﬁx one universal
+value of the parameter k beforehand, but at least we can use upper bounds on both k and the
+number of equivalence classes (as in Deﬁnition 4.2). With a slightly more complicated use of
+labels, we can then give a universal formula ψ(x, y) which depends only on the parameters k0 and
+p of a (k0 , p)-near-uniform graph class C, but is independent from particular H ∈ C. This way
+we get a result even stronger than what is required for the proof of Theorem 5.1 (see Section 6
+for more discussion):
+Theorem 5.5. Let k0 , p ∈ N, and C be a (k0 , p)-near-uniform graph class. There exists an FO
+formula ψ(x, y), depending only on k0 and p, such that C ⊆ Iψ (D2k0 p ) where Dd denotes the
+class of (finite) graphs of degree at most d.
+                                                  12
+                             W                         W
+
+
+                                                                     V1
+
+
+
+                                                                     V2
+
+
+
+                                                                     V3
+
+
+
+Figure 3: An illustration; small (on the left, W ) and large (on the right, W ) near-k-twin classes
+of a graph H, and prevailing adjacencies within the large classes remembered by sets F1 = {1}
+and F2 = {{1, 2}}, as in the proof of Theorem 5.5.
+
+
+    Furthermore, for any H ∈ C and k ≤ k0 such that the near-k-twin relation of H is an
+equivalence of index at most p, one can in polynomial time compute a graph GH ∈ D2k0 p such
+that H = Iψ (GH ).
+
+Proof. We are going to prove the theorem by deﬁning the formula ψ(x, y) and, for each H ∈ C,
+eﬃciently constructing a graph GH ∈ D2k0 p such that H = Iψ (GH ). We give the construction
+of the graph GH ﬁrst, while postponing the deﬁnition of ψ to the end of the proof.
+    Let 0 ≤ k ≤ k0 be such that the near-k-twin relation of H is an equivalence of index at
+most p. Let V1 , . . . , Vm where m ≤ p be the near-k-twin classes of H with more than 5k vertices
+(possible “small” near-k-twin classes are ignored now). Observe that W = V1 ∪ · · · ∪ Vm contains
+all but at most 5k(p − m) ≤ 5k0 p vertices of H. Let W = V (H) \ W denote the remaining
+vertices in “small” equivalence classes. See an illustration in Figure 3.
+    We will construct the graph GH in three stages. First, we deﬁne the graph G1 = (W, E1 ∪E2 )
+on the set W , where the edge sets are given as:
+
+   • Let F1 be the set of those indices i from {1, . . . , m} such that every vertex of Vi has at
+     least |Vi | − 2k neighbours in Vi (case (b) of Remark 5.4). We put E1 = {u, v} | u 6=
+     v ∧ ∃i ∈ F1 s.t. u, v ∈ Vi .
+   • Let F2 be the set of those index pairs {i, j} from {1, . . . , m} such that every vertex of Vi
+     is connected to all but at most 2k vertices of Vj and every vertex of Vj is  connected to all
+     but at most 2k vertices of Vi (case (b) of Corollary 5.3). We put E2 = {u, v} | ∃{i, j} ∈
+     F2 s.t. u ∈ Vi ∧ v ∈ Vj .
+
+    In the second step, we adjust G1 by the original edges from H: Let EW = {{u, v} ∈ E(H) |
+u, v ∈ W }. Then we put G2 = (W, E(G1 ) △ EW ). See in Figure 4. Note that every vertex of
+G2 has degree at most 2km by Corollary 5.3.
+    In the degenerate case of k = 0 we arrive at the same conclusion by the following alternative
+argument. By the deﬁnition, each near-0-twin class is an independent set and each pair of
+classes is again independent or induces a complete bipartite subgraph—this now deﬁnes G1 and
+G2 which is actually edgeless.
+    In the third step we add back the vertices from W (remember that V (H) = W ∪ W ) by
+putting GH = (W ∪ W , E(G2 )). Note that GH ∈ D2km ⊆ D2k0 p ,
+                                                13
+                             W                                      W
+
+
+                                                                                 λ′1 , µ′1,2 , µ1,3
+                     σ1 , σ2N             σ1N , σ5N
+
+
+                     σ2 , σ1N σ3                                                       ′ ,µ
+                                                                                 λ2 , ν1,2  2,3
+
+
+                        σ4       σ5
+                                          σ1N, σ6N
+                                                                              λ3 , ν1,3 , ν2,3
+                         σ6
+
+
+
+Figure 4: An illustration; graph G2 of maximum degree 3 constructed for H (the dotted edges)
+from Figure 3, and the resulting labelling of V (G2 ) = W ∪ W , as in the proof of Theorem 5.5.
+
+
+   Finally we label the vertices of GH by the following ﬁxed label set, which is independent of
+particular H ∈ C:
+
+                             L := {λi , λ′i : i = 1, . . . , p}
+                                           ∪ {µi,j , νi,j , µ′i,j , νi,j
+                                                                     ′
+                                                                         : 1 ≤ i < j ≤ p}
+                                           ∪ {σj , σjN : j = 1, . . . , 5k0 p}
+
+   The vertices of GH are labelled as follows (see again Figure 4):
+
+   • For i = 1, . . . , m ≤ p, each vertex of Vi is assigned label λ′i if i ∈ F1 , and label λi otherwise.
+   • For 1 ≤ i < j ≤ m ≤ p, each vertex of Vi is assigned label µ′i,j and each of Vj label νi,j
+                                                                                            ′ if
+
+     {i, j} ∈ F2 , and labels µi,j and νi,j , respectively, if {i, j} 6∈ F2 .
+   • Let W = {w1 , w2 , . . . , wr } be indexed in any chosen order. For j = 1, . . . , r ≤ 5k0 p, the
+     vertex wj is assigned label σj and each neighbour of wj in H is assigned label σjN .
+
+   With GH in place, we can now deﬁne the formula
+
+                                 ψ(x, y) ≡ (x 6= y) ∧ (ψ ′ (x, y) ∨ ψ ′ (y, x))
+
+where
+                                             _
+                        ψ ′ (x, y) ≡
+                                                                                  
+                                                      λi (x) ∧ λi (y) ∧ edge(x, y)
+                                          1≤ i ≤p
+                                            _
+                                                      λ′i (x) ∧ λ′i (y) ∧ ¬edge(x, y)
+                                                                                     
+                                      ∨
+                                          1≤ i ≤p
+                                             _                                          
+                                      ∨                 µi,j (x) ∧ νi,j (y) ∧ edge(x, y)
+                                          1≤ i<j ≤p
+                                             _
+                                                        µ′i,j (x) ∧ νi,j
+                                                                     ′
+                                                                                          
+                                      ∨                                  (y) ∧ ¬edge(x, y)
+                                          1≤ i<j ≤p
+                                              _
+                                                         σj (x) ∧ σjN (y) .
+                                                                         
+                                      ∨
+                                          1≤ j ≤5k0 p
+
+                                                             14
+   Clearly, ψ(x, y) is independent of particular H ∈ C and depends only on the parameters k0
+and p. The construction of GH from H and k is ﬁnished in polynomial time and it is also a
+simple routine to verify that H = Iψ (GH ).
+
+   This also ﬁnishes the proof of Theorem 5.1 via the ﬁxed-parameter tractable algorithm of
+Seese [22].
+
+5.3   Successor-invariant FO
+Model checking of successor-invariant FO properties is the subject of several recent papers such
+that Engelmann, Kreutzer and Siebertz [9], Ganian et al [14], Eickmeyer and Kawarabayashi [8],
+van den Heuvel et al [23], and others.
+     In a nutshell, a successor relation on a domain X is simply a directed path on the vertex set X
+(in case of X being the vertex set of a graph, this successor relation is distinct from the graph
+edges). An FO property over a successor-equipped relational structure is successor-invariant if
+its truth does not change when the same structure is equipped with a diﬀerent successor relation.
+     Since successor-invariant FO sentences are generally more expressive than FO sentences [21],
+it makes good sense to ask whether graph classes with eﬃcient FO model checking algorithms
+also admit eﬃcient successor-invariant FO model checking. So far, the answers provided by the
+previously listed works are all positive. Furthermore, since the known examples separating the
+expressive powers of plain FO and successor-invariant FO are dense (containing large cliques),
+and the previous works (except [14]) studied sparse graphs, it is especially relevant to ask the
+question of successor-invariant FO in our dense case.
+     The answer here is again positive and plain easy, in fact, the following directly follows from
+our Theorem 5.5 and the algorithm of [23]:
+
+Corollary 5.6. Let C be a (k0 , p)-near-uniform graph class for some k0 , p ∈ N. Then the
+successor-invariant FO model checking problem in C is fixed-parameter tractable when param-
+eterized by the formula size.
+
+Proof. We proceed in the same way as previously. To recapitulate, let φ be a successor-invariant
+FO sentence and H ∈ C an input graph. By Theorem 5.5, we get formula ψ and compute a graph
+GH ∈ D2k0 p such that H = Iψ (GH ). Let φ′ be obtained from φ by replacing every occurrence of
+edge(z, z ′ ) with ψ(z, z ′ ). Now, it is important that the domain of GH is the same as the domain
+of H, and so any successor relation on GH is a successor relation on H as well. Consequently,
+for any successor-equipped H and GH we have H |= φ if and only if GH |= φ′ (as with previous
+plain FO logic).
+    Hence it remains to solve in FPT the successor-invariant FO model checking problem of
+graphs of bounded degree. This can be done by the algorithm of [23] (which handles more
+generally graph classes with bounded expansion).
+
+
+6     Interpretability of graphs of bounded degree
+Having deﬁned near-uniform graph classes and shown that these classes can be FO interpreted
+in graph classes of bounded degree, it is a natural question to ask what is the exact relationship
+between those kinds of classes. As it turns out, we can prove (Theorem 6.3) that each class FO
+interpretable in a class of graphs of bounded degree is indeed near-covered and therefore also
+near-uniform. Thus, near-uniform graph classes are exactly those graph classes which are FO
+interpretable in graph classes of bounded degree. This result can then be easily extended to
+the more general case of transductions of graph classes of bounded degree, which again result in
+near-uniform graph classes (Theorem 6.4).
+
+                                                15
+6.1    Adjusted Gaifman’s theorem
+In the proof of the main result of this section we use the famous Gaifman’s locality theorem [11]
+(see also [18]) about the local nature of the FO logic. However, for our purposes we need a
+speciﬁc variant of this theorem. To keep the paper self-contained, in this section we ﬁrst recap
+the notation and statement of Gaifman’s theorem and then state and prove a corollary tailored
+to our needs.
+    An FO formula φ(x1 , . . . , xl ) is r-local, sometimes denoted by         (r)
+                                                                            S φ (x1G, . . . , xl ), if for every
+graph G and all v1 , . . . , vl ∈ V (G) it holds G |= φ(v1 , . . . , vl ) ⇐⇒ 1≤i≤l Nr (vi ) |= φ(v1 , . . . , vl ),
+where NrG (v) is the subgraph of G induced by v and all vertices of distance at most r from v.
+
+Theorem 6.1 (Gaifman’s locality theorem). Every first-order formula with free variables x1 , . . . , xl
+is equivalent to a Boolean combination of the following
+
+    • local formulas φ(r) (x1 , . . . , xl ) around x1 , . . . , xl , and
+
+    • basic local sentences, i.e. sentences of the form
+                                                                            
+                                      ^                          ^
+                     ∃x1 . . . ∃xk        dist(xi , xj ) > 2r ∧   φ(r) (xi ) .
+                                        1≤i<j≤k                             1≤i≤k
+
+    For a given q, the set of semantically diﬀerent FO formulas φ of quantiﬁer rank qr(φ) ≤ q
+with one free variable is ﬁnite. Clearly, this also holds for local FO formulas, as they are a special
+case of FO formulas. For a vertex v of a graph G, we deﬁne its local logical FO (ρ, r)-type as
+tpG           (r)            (r)
+  ρ,r (v) = {φ (x) | G |= φ (v) and qr(φ) ≤ ρ}.
+    It can be derived from Gaifman’s theorem that if two vertices u and v are far apart in
+the graph, then whether ψ(u, v) holds true depends only on the logical (ρ, r)-type of u and v,
+where q and r depend on ψ. This ﬁnding is formalized by the following (folklore) corollary
+of Theorem 6.1; as we were not able to ﬁnd this precise formulation in the literature, we also
+provide a proof, for the sake of completeness.
+
+Corollary 6.2. For every FO formula ψ(y, z) of two free variables there exist integers r and ρ
+such that the following holds true for any graph G: If u, v1 , v2 ∈ V (G) such that dist(u, v1 ) > 2r,
+dist(u, v2 ) > 2r and tpG             G
+                        ρ,r (v1 ) = tpρ,r (v2 ), then G |= ψ(u, v1 ) if and only if G |= ψ(u, v2 ).
+
+Proof. Let ψ(y, z) be a formula, G a graph and u, v1 , v2 ∈ V (G) as in the statement of the
+Corollary. By Theorem 6.1, ψ(y, z) is equivalent to a Boolean combination of local formulas
+φ(r) (y, z) around y and z and basic local sentences. The validity of ψ(y, z) for any choice of y
+and z therefore depends only on local formulas φ(r) (y, z) around y and z (because the validity of
+basic local sentences is independent of the choice of y and z). Thus, whether G |= ψ(u, v1 ) holds
+true depends only on formulas φ(r) (u, v1 ) evaluated on the graph induced by NrG (u) ∪ NrG (v1 ).
+    Because dist(u, v1 ) > 2r, this graph is actually a disjoint union of the graphs induced by
+Nr (u) and NrG (v1 ). By the standard Ehrenfeucht-Fraisse games argument, validity of NrG (u) ∪
+  G
+
+NrG (v1 ) |= φ(r) (u, v1 ) is then fully determined by the types tpG               G
+                                                                   ρ,r (u) and tpρ,r (v1 ) of u and v1
+respectively. The same reasoning can be applied to u and v2 , and since tpG                 G
+                                                                              ρ,r (v1 ) = tpρ,r (v2 ), the
+result follows.
+
+6.2    Characterization of interpretations
+The following theorem provides us with a strong characterization of the classes FO interpreted in
+graphs of degree at most d, in terms of near-k-twin relation and being near-covered. It amounts
+to, in an essence, the “opposite direction” to Theorem 5.5.
+
+                                                          16
+Theorem 6.3. Let Dd be the class of (finite) graphs with maximum degree at most d and let
+ψ(x, y) be an FO formula with two free variables. Then there exist ℓ and q, depending only on
+d and ψ, such that every graph H ∈ Iψ (Dd ) is (ℓ, q)-near-covered. That is, there exists a set
+S = {v1 , . . . , vq } ⊆ V (H) such that every u ∈ V (H) is a near-ℓ-twin of at least one element vi
+of S.
+
+Proof. Let H ∈ Iψ (Dd ) and G ∈ Dd be such that H = Iψ (G). Recall that V (H) = V (G) and
+{u, v} ∈ E(H) if and only if G |= ψ(u, v). Fixing G and H, we say that a vertex x ∈ V (H) is
+a-far from y ∈ V (H) if the graph distance from x to y in G is greater than a.
+    Let ρ and r be values obtained from application of Corollary 6.2 to ψ. Let T be the set of
+all possible FO (ρ, r)-types (this set is ﬁnite for any ρ and r) and let TG ⊆ T be the set of all
+FO (ρ, r)-types realized in G. Set q := |TG | and ℓ := 2dr . For every t ∈ TG we pick one vertex
+in G (and also in H since V (H) = V (G)) which realizes type t to obtain S := {v1 , . . . , vq }. We
+claim that every vertex u of H is near-ℓ-twin of some vertex in S. For every vertex u of H,
+there is a vertex vi in S with the same (ρ, r)-type (in G). By Corollary 6.2, for every w which
+is more than r far from both u and vi , it holds that G |= ψ(w, u) if and only if G |= ψ(w, vi ).
+This means that u and vi will have the same adjacency to all vertices which are more than r far
+from both of them. Consequently, their neighbourhoods in H can only diﬀer in vertices which
+are at most r far from either of them, and there are at most 2dr such vertices.
+
+6.3    Characterization of transductions
+Besides the simpliﬁed case of interpretation from Theorem 6.3, we can go much further with a
+bit of additional eﬀort, as carried out in the following claim.
+
+Theorem 6.4. Let Dd be the class of (finite) graphs with maximum degree at most d and let τ
+be an FO transduction. Then there exist ℓ and q, depending only on d and τ , such that every
+graph H ∈ τ (Dd ) is (ℓ, q)-near-covered.
+
+Proof. Our strategy is to prove that there exist an integer d′ , an FO formula ψ(x, y) and a class
+of labelled graphs G ⊆ Dd′ , all depending on d and τ , such that the following holds: for every
+H ∈ τ (Dd ) there exists a graph H ′ ∈ Iψ (G) such that H ′ is obtained from H by adding isolated
+vertices.
+    Assuming the previous for a moment, we show how it implies our theorem. By Theorem 6.3,
+there exist ℓ1 and q such that, for every graph H ′ ∈ Iψ (G), the following holds: there exists
+S1 = {v1 , . . . , vq } ⊆ V (H ′ ) such that every u ∈ V (H ′ ) is a near-ℓ1 -twin of at least one element
+of S1 . We may assume that at most one element of S1 , say v1 , is among the added isolated
+vertices of H ′ (hence S1 \ V (H) ⊆ {v1 }). If v1 6∈ V (H) and there exists a vertex w1 ∈ V (H)
+which is a near-ℓ1 -twin of v1 , then w1 is a near-2ℓ1 -twin of every near-ℓ1 -twin of v1 , and so
+S := (S1 ∩ V (H)) ∪ {w1 } witnesses that H is (2ℓ1 , q)-near-covered. Otherwise, H is (ℓ1 , q)-near-
+covered by S := S1 ∩ V (H).
+     It remains to deﬁne an appropriate class G and the formula ψ as claimed above.
+     From the deﬁnition of FO transduction, let τ = τ0 ◦ γ ◦ ε where τ0 is a basic transduction, γ
+is a m-copy operation for some m, and ε is a p-parameter expansion for some p. We start with
+setting d′ = max(d + 1, m), and G1 = ε(Dd ). For every G1 ∈ G1 , we take G2 = γ(G1 ). Then,
+for every v ∈ V (G1 ), we add to G2 a new vertex v0 of a new label R (the same for each added
+v0 ), and m edges from v0 to the m copies of v in G2 (making a star K1,m with the new centre
+v0 ). The resulting graph G3 has (m + 1) · |V (G)| vertices and maximum degree d′ . Finally, after
+formally erasing the relation ∼ of γ, we add G3 to G.
+     Regarding the formula ψ(x, y), we recall that the basic transduction τ0 underlying τ is
+determined by a triple of FO formulas (χ, ν, µ), where the role of χ can be safely ignored for
+
+                                                   17
+now. We make formulas ν ′ (x) from ν(x), and µ′ (x, y) from µ(x, y), by restricting every quantiﬁer
+to the vertices not of label R and replacing each occurrence of the predicate u ∼ v (recall that
+γ has been erased from G3 ) with ∃t R(t) ∧ edge(u, t) ∧ edge(v, t) . Then we set
+
+                       ψ(x, y) ≡ ¬R(x) ∧ ν ′ (x) ∧ ¬R(y) ∧ ν ′ (y) ∧ µ′ (x, y) .                   (4)
+
+    Pick now any H ∈ τ (Dd ), and let G1 ∈ G1 = ε(Dd ) be the corresponding graph such that
+G2 = γ(G1 ) and H = τ0 (G2 ). Let G3 ∈ G be constructed from G2 as above. By τ0 and (4),
+every vertex of Iψ (G3 ) not in V (H) is isolated in Iψ (G3 ). Moreover, by the construction of ψ ′
+for every two vertices u, v ∈ V (H) it holds G2 |= µ(u, v) ⇐⇒ G3 |= µ′ (u, v). Hence, by (4),
+Iψ (G3 ) results from H by adding isolated vertices and we can set H ′ = Iψ (G3 ), as desired. The
+proof is ﬁnished.
+
+   Putting together the results of Theorems 5.5 and 6.4, we easily get also the following corollary
+which is interesting on its own:
+
+Corollary 6.5. Let C be a near-uniform graph class, and τ be an FO transduction. Then the
+class τ (C) is again a near-uniform graph class.
+
+Proof. By Theorem 5.5, there exists an FO formula ψ(x, y) such that C ⊆ Iψ (Dd ) for suitable
+degree bound d depending on C. Let τ1 be the corresponding basic transduction (determined by
+(true, true, ψ) ). Then τ (C) ⊆ τ (τ1 (Dd )), and since τ ◦ τ1 is again a transduction by transitivity,
+by Theorem 6.4 every graph of τ (τ1 (Dd )) is (ℓ, q)-near-covered. Consequently, using Lemma 4.4,
+τ (C) is also a near-uniform graph class.
+
+
+7    Hardness of recognizing an interpretation
+Recall the aforementioned result [19] claiming that it is NP-hard to decide whether a given graph
+is a square of some graph. The square of a graph can be straightforwardly described by an FO
+interpretation with ψs (x, y) ≡ edge(x, y) ∨ [x 6= y ∧ ∃z(edge(x, z) ∧ edge(z, y))], expressing that
+edges of the square are original edges or pairs at distance exactly two.
+    In our context, [19] hence means that there exist a graph class C and an FO formula ψ(x, y)
+such that the problem, for a given graph H ∈ Iψ (C), to ﬁnd G ∈ C such that H = Iψ (G) is not
+eﬃciently solvable (unless P=NP). Though, the reduction of [19] requires a class C of unbounded
+maximum degree while we are primarily interested in interpretations of the classes Dd of graphs
+of degrees at most d. Here we show a straightforward alternative reduction working already with
+the class D3 of graphs of degree at most 3.
+    Notice that such a result is not in a contradiction with Theorem 5.5 since each of the two
+results speaks about a diﬀerent particular formula(s) ψ.
+
+Theorem 7.1. Let D3 denote the class of graphs of degree at most 3. There exists an FO
+formula ψ0 (x, y) such that the problem, for a given graph H ∈ Iψ0 (D3 ), to find G ∈ D3 such that
+H = Iψ0 (G) is NP-hard.
+
+Proof. We reduce from the folklore NP-hard problem of 3-colouring a given 4-regular graph H0 .
+We construct a graph H from an arbitrary 4-regular graph H0 as follows:
+
+    • Every vertex v of H0 is replaced with a graph Tv which is a copy of the graph in Figure 5
+      including the dashed edges.
+
+    • Every edge e of H0 is replaced with a graph Ue which is a copy of the graph in Figure 6
+      including the dashed edges.
+
+                                                  18
+                                  v2                            v4
+
+
+                                  v1                            v3
+
+
+                  Figure 5: The vertex gadget Tv in the proof of Theorem 7.1.
+
+
+
+
+                                  e1                            e2
+
+
+                   Figure 6: The edge gadget Ue in the proof of Theorem 7.1.
+
+   • For every edge e = {u, v} of H0 , the terminal e1 of Ue is identiﬁed with ui of Tu , and e2
+     of Ue is identiﬁed with v j of Tv , where e is the i-th edge at u and the j-th edge at v (for
+     arbitrarily chosen orderings of edges incident to u, v).
+The construction of H is independent of whether H0 is 3-colourable. Note that since Ue contains
+a vertex of degree 5, it is H 6∈ D3 .
+    Before deﬁning the formula ψ0 , we brieﬂy explain the underlying idea of the reduction. For
+a suitable subgraph G of H (on the same vertex set), we would like to have H = Iψ0 (G) if and
+only if every vertex gadget (of a vertex of H0 ) restricted to G encodes one of three available
+colours (for this vertex in H0 ), and every edge gadget in G “veriﬁes” that the ends of the edge
+(in H0 ) receive distinct colours.
+    The above rough sketch is made precise now. Considering colours 1, 2, 3, we deﬁne three
+reduced vertex gadgets of a vertex v ∈ V (H0 ) as Tv1 = Tv and Tv2 , Tv3 obtained from Tv by
+removing one or the other dashed edge of Tv in Figure 5. Similarly, a reduced edge gadget Ue′ of
+an edge e ∈ E(H0 ) is obtained from Ue in Figure 6 by removing both dashed edges. Assuming
+any 3-colouring c : V (H0 ) → {1, 2, 3}, we construct a graph G ∈ D3 analogously to the above
+                                                                    c(v)
+construction of H, while replacing every vertex v ∈ V (H0 ) with Tv and every edge e ∈ E(H0 )
+with Ue′ .
+    Note that G ⊂ H. We call a vertex w a v-marker if w is adjacent to precisely one vertex of
+degree 1, and we call w an e-marker if w is adjacent to two vertices of degree 1 (see the circled
+vertices in Figures 5 and 6, respectively). Then every e-marker w of G belongs to some Ue′ of
+e = {u, v} ∈ E(H0 ), and there are precisely two v-markers of G at distance 9 from w belonging
+to Tui and to Tvj . We would now like to “verify” that the colouring c is proper, i.e. that i 6= j, in
+the formula ψ0 .
+    We deﬁne ψ0 (x, y) ≡ edge(x, y) ∨ ν(x, y) ∨ η(x, y) where
+   • ν(x, y) asserts that there exists z which is a neighbour of x or y, such that z is a v-marker
+     and the 5-neighbourhood of z is isomorphic to one of Tv1 , Tv2 , Tv3 , and that x, y are the ends
+     of one of the dashed edges in Figure 5;
+
+   • η(x, y) asserts that one of x, y, say x, is an e-marker, y is at distance two from x, and the
+     following holds: there exist vertices z, z ′ at distance 9 from x such that z, z ′ are v-markers
+     with their 5-neighbourhoods isomorphic to Tvi and Tvj where i 6= j.
+It is routine to rewrite the above description into an FO formula.
+                                                 19
+      Clearly, H = Iψ0 (G) if and only if the above colouring c is proper. Conversely, it remains to
+prove that if H = Iψ0 (G) for any G ∈ D3 , then H0 is 3-colourable. Notice that G ⊆ H and that
+the formula ψ0 does not “add” edges to degree-1 vertices, and so the degree-1 vertices of G must
+be in a one-to-one correspondence with the v-marker and e-marker vertices of H.
+      Fix an e-marker w belonging to Ue ⊆ H. Since w is of degree 5 in H and of degree ≤ 3 in
+G ∈ D3 , it is G |= ψ0 (w, t) for some (actually, at least two) neighbour t of w in H. In particular,
+by the deﬁnition of η(w, t), this means there exist two v-markers w′ , w′′ at distance 9 from w
+in G. From the construction of H we know that w′ , w′′ belong to Tu , Tv , respectively, where u, v
+are the ends of e in H0 . Again by G |= ψ0 (w, t), the subgraph of G induced by V (Tu ) is one of
+Tu1 , Tu2 , Tu3 , say it is Tui . Similarly, the subgraph of G induced by V (Tv ) is, say, Tvj and i 6= j.
+Since the same holds for any edge of H0 , an (arbitrary) graph G ∈ D3 such that H = Iψ0 (G)
+indeed encodes a proper 3-colouring of H0 .
+
+
+8    Questions and open problems
+Our interpretation approach and obtained results open several natural questions which we believe
+are worth further investigation. We list them in this last section of the paper.
+1. Can one characterize under which conditions on a formula ψ(x, y) and a graph class C, the
+   following holds? Given a graph H ∈ Iψ (C) as an input, it would be possible to compute in
+   polynomial (or in FPT with respect to ψ and C) time a graph G ∈ C such that H = ψ(G).
+   We know both of positive and negative examples (Theorems 5.5 and 7.1), but any plausible
+   conjecture seems now out of reach.
+2. It is easy to generalize the notion of near-k-twins u, v in such a way that it would measure
+   not the size of the symmetric diﬀerence between the neighbourhoods, |N (u) △ N (v)|, but
+   structural properties of the subgraph induced on N (u) △ N (v). For example, we may deﬁne
+   a near-sdk -twin relation, in which two vertices u, v would be near-sdk -twins if the subgraph
+   induced on N (u) △ N (v) has shrub-depth at most k (see [15] for the deﬁnition of shrub-depth).
+   One may then consider graph classes where the near-sdk -twin relation is an equivalence. Is
+   there an FPT algorithm for FO model checking on such graph classes?
+3. Is it possible to extend our results to graph classes interpretable in more general sparse graph
+   classes? For example, what is a characterization of graph classes interpretable in trees or in
+   planar graphs? In graph classes of bounded expansion? Are there FPT algorithms for FO
+   model checking on such classes?
+4. In relation to the previous point, we know from Corollary 6.5 that the notion of near-uniform
+   graph classes is robust under FO interpretations and transductions. We know of (at least)
+   two other examples of such behaviour – the graph classes of bounded clique-width [4] and the
+   graph classes of bounded shrub-depth [15] (which are robust even under MSO transductions).
+   Can one come up with other natural and interesting graph properties deﬁning graph classes
+   robust under FO transductions?
+5. Inspired by the classiﬁcation of sparse graph classes by Nešetřil and Ossona de Mendez [20],
+   we may investigate graph classes D with the property that, for every FO formula ψ(x, y) there
+   exists a graph Fψ (as “forbidden”) such that Fψ is not present as an induced subgraph in any
+   member of Iψ (D). This logical deﬁnition may be considered in analogy to the structural
+   deﬁnition(s) of nowhere dense classes [20] (as “nowhere FO dense”). What can we say about
+   complexity of FO model checking on such classes D?
+    To conclude, we make the following two explicit conjectures related to points 3 and 5 of the
+discussion.
+                                                   20
+Conjecture 8.1. Let C be a nowhere dense graph class and D a graph class FO interpretable in
+C. Then D has an FPT algorithm for FO model checking.
+
+Conjecture 8.2 (“Nowhere FO dense”). Let D be a graph class with the following property: for
+every FO formula ψ(x, y) there exists a graph Fψ such that Fψ is not an induced subgraph of any
+member of Iψ (D). Then D has an FPT algorithm for FO model checking.
+
+    Regarding Conjecture 8.2, it is tempting to strengthen its conclusion to; ‘then D is FO
+interpretable in some nowhere dense graph class’, but that actually fails. For example, take the
+class D of graphs of clique-width 2. Then, for every FO formula ψ(x, y), the interpreted class
+Iψ (D) is of bounded clique-width, too, and so a forbidden graph Fψ always exists in this case.
+However, the class D is not interpretable in any nowhere dense graph class.
+
+
+References
+ [1] A. Blumensath and B. Courcelle. On the monadic second-order transduction hierarchy. Log.
+     Methods Comput. Sci., 6(2:2):1–28, 2010.
+
+ [2] S. Bova, R. Ganian, and S. Szeider. Model checking existential logic on partially ordered
+     sets. In CSL-LICS’14, pages 1–10. ACM, 2014. Article No. 21.
+
+ [3] B. Courcelle and J. Engelfriet. Graph Structure and Monadic Second-Order Logic: a
+     Language-Theoretic Approach, volume 138 of Encyclopedia of Mathematics and Its Appli-
+     cations. Cambridge University Press, 2012.
+
+ [4] B. Courcelle and S. Olariu. Upper bounds to the clique width of graphs. Discrete Appl.
+     Math., 101(1-3):77–114, 2000.
+
+ [5] A. Dawar, M. Grohe, and S. Kreutzer. Locally excluding a minor. In LICS’07, pages
+     270–279. IEEE Computer Society, 2007.
+
+ [6] G. Dong, L. Libkin, and L. Wong. Local properties of query languages. In ICDT’97, volume
+     1186 of LNCS, pages 140–154. Springer, 1997.
+
+ [7] Z. Dvořák, D. Kráľ, and R. Thomas. Deciding ﬁrst-order properties for sparse graphs. In
+     FOCS’10, pages 133–142. IEEE Computer Society, 2010.
+
+ [8] K. Eickmeyer and K. Kawarabayashi. Successor-invariant ﬁrst-order logic on graphs with
+     excluded topological subgraphs. In CSL’16, volume 62 of LIPIcs, pages 18:1–18:15. Schloss
+     Dagstuhl - Leibniz-Zentrum fuer Informatik, 2016.
+
+ [9] V. Engelmann, S. Kreutzer, and S. Siebertz. First-order and monadic second-order model-
+     checking on ordered structures. In LICS’12, pages 275–284. IEEE Computer Society, 2012.
+
+[10] M. Frick and M. Grohe. Deciding ﬁrst-order properties of locally tree-decomposable struc-
+     tures. J. ACM, 48(6):1184–1206, 2001.
+
+[11] H. Gaifman. On local and non-local properties. In Proceedings of the Herbrand Symposium,
+     volume 107 of Stud. Logic Found. Math., pages 105 – 135. Elsevier, 1982.
+
+[12] J. Gajarský, P. Hliněný, D. Lokshtanov, J. Obdržálek, S. Ordyniak, M. S. Ramanujan, and
+     S. Saurabh. FO model checking on posets of bounded width. In FOCS’15, pages 963–974.
+     IEEE Computer Society, 2015.
+
+
+                                              21
+[13] J. Gajarský, P. Hliněný, J. Obdržálek, and S. Ordyniak. Faster existential FO model
+     checking on posets. In ISAAC’14, volume 8889 of LNCS, pages 441–451. Springer, 2014.
+
+[14] R. Ganian, P. Hliněný, D. Kráľ, J. Obdržálek, J. Schwartz, and J. Teska. FO model checking
+     of interval graphs. Log. Methods Comput. Sci., 11(4:11):1–20, 2015.
+
+[15] R. Ganian, P. Hliněný, J. Nešetřil, J. Obdržálek, P. O. de Mendez, and R. Ramadurai.
+     When trees grow low: Shrubs and fast MSO1 . In MFCS’12, volume 7464 of LNCS, pages
+     419–430. Springer, 2012.
+
+[16] M. Grohe, S. Kreutzer, and S. Siebertz. Deciding ﬁrst-order properties of nowhere dense
+     graphs. In STOC’14, pages 89–98. ACM, 2014.
+
+[17] M. Lampis. Algorithmic meta-theorems for restrictions of treewidth. In ESA’10, pages
+     549–560, 2010.
+
+[18] L. Libkin. Elements of Finite Model Theory. Texts in Theoretical Computer Science. A
+     EATCS Series. Springer, 2004.
+
+[19] R. Motwani and M. Sudan. Computing roots of graphs is hard. Discrete Appl. Math.,
+     54(1):81–88, 1994.
+
+[20] J. Nešetřil and P. Ossona de Mendez. Sparsity: Graphs, Structures, and Algorithms, vol-
+     ume 28 of Algorithms Combin. Springer, 2012.
+
+[21] B. Rossman. Successor-invariant ﬁrst-order logic on ﬁnite structures.      J. Symb. Log.,
+     72(2):601–618, 2007.
+
+[22] D. Seese. Linear time computable problems and ﬁrst-order descriptions. Math. Structures
+     Comput. Sci., 6(6):505–526, 1996.
+
+[23] J. van den Heuvel, S. Kreutzer, M. Pilipczuk, D. A. Quiroz, R. Rabinovich, and S. Siebertz.
+     Model-checking for successor-invariant ﬁrst-order formulas on graph classes of bounded
+     expansion. arXiv:1701.08516, 2017.
+
+
+
+
+                                              22
+

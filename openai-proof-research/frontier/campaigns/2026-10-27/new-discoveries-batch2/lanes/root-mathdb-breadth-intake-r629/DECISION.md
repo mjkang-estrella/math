@@ -1,0 +1,7 @@
+# Root r629 reconciliation and breadth allocation
+
+Reconciled Sol r624: fifty disjoint literal record reviews, zero proposals or credit. Cumulative coverage6,633. Worker classifies10complete22incomplete18scope-ambiguous; its49definition-dependent flags overlap these classifications and are preserved as reported, not treated as independently established completeness. All incomplete rows require restoration. Earlier coverage unchanged.
+
+No original primary-question passages read. Two selected prior-source bodies and one local concluding proof read, no whole-body/dependency/chronology clearance.385797 encounters an existing critical-height theorem with a short bridge;386319 parameter counts do not solve the small-case question. All AIM primary-scope and current-registry gates remain held. Two binding-timing deviations retained. Root only checks administrative integrity/corpus identities; no upstream mathematical replay.
+
+338366 credit exclusion and its reconstruction/journal/registry limitations carry unchanged from root r627.338408 remains parked. No active focused hypotheses. Sol r626 continues. Fresh Claude r628 uses root r627 queue-r628.json/reserved-ids-r628.json; fresh Sol r630 uses this intake queue-r630.json/reserved-ids-r630.json. Three breadth reservations disjoint. Routing8,000metadata rows remains uncredited. New IMRN DOI403 challenge route and all older stops remain parked. Generic headers/privacy unchanged. Counts9additional39totalnext40; no user input pending.

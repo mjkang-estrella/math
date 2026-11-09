@@ -1,0 +1,10 @@
+# Failures and limits
+
+- Brown author-host Nikolski PDF request timed out once; empty response and exact error retained in source-provenance.json. No retry. The arXiv primary body was retrieved separately.
+- The guessed arXiv 0709.0398 URL was wrong: downloaded PDF concerns physics, not bandwidth. Retained as sources/bandwidth.pdf and work/bandwidth.txt; excluded from all mathematical evidence. Correct author-host URL was discovered by search, retained, hashed, then extracted as bandwidth-correct. This avoidable identifier error was corrected without deleting evidence.
+- No 403, 429 or challenge response occurred in direct HTTP retrieval. Challenge markers were checked before body extraction. No access workaround, account/browser action, TLS bypass, or external message.
+- No direct MathDB requests. The search tool returned incidental MathDB, ScienceDirect and GitHub snippets; these are not primary evidence and no such endpoints were followed. Zero MathDB direct requests does not certify the internals of a third-party search index.
+- One search response is not duplicated in this lane; the tool transcript retains it and search-provenance.json records the queries/leads. Search tools render their output before a local hash can be made; local pre-read freeze applies to downloaded scientific bodies, not these discovery snippets.
+- Administrative AGENTS/intake metadata and a queue title excerpt were read before the freeze. Full literal statements were first extracted after freeze-receipt.json and input-bindings.json were written. No retroactive claim of pristine pre-read administrative freeze.
+- Primary statements/local bodies checked for nine rows; concluding proof read for two; complete dependency audit for zero. No claim of all-fifty primary verification, priority clearance, registry-head audit or independent universal proof replay.
+- Statements with corrupted symbols or omitted hypotheses are retained literally. Easy failures caused by those omissions are uncredited corrections. No hard sweep, Lean or manuscript investment.

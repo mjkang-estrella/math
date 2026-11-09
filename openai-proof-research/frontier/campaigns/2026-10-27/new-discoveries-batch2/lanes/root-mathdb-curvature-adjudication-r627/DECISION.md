@@ -1,0 +1,9 @@
+# Root r627 curvature credit adjudication
+
+Adopt the independent review's recommendation to EXCLUDE338366 from additional-discovery credit as a routine deduction from a prior public graph. This is a credit decision, not a claim that an explicitly named refutation was published or that current MathDB status changed. Reviewer reports independent exact validation of the candidate and the reconstructed Bai-Lu-Yau graph. Root performs no new mathematical proof work.
+
+Material limits remain explicit: the published text/figure require two degree-inconsistent defects to be reconciled; the reviewer calls reconstruction risk low-to-moderate. Both journal bodies remain unread. Idleness-conversion theorem is cited, not fully audited; direct finite checker is independently authored but not rerun at root. No infinite4-regular counterexample established. Do not upgrade these limitations to clean literal-object or complete-prior clearance. Registry remains HOLD. Candidate differs as a weaker witness of the same negation; no Lean/manuscript or further focused investment.338408 remains parked on endpoint objection.
+
+Preserve all reviewer failures, including roughly ten unguarded administrative Python snippets. Integrity PASS does not erase procedural deviations or establish mathematical/novelty PASS. IMRN DOI10.1093/imrn/rnz305 resolved to HTTP403 challenge; that route is now parked, no retry or alternative-route fishing. AJM landing page shell did not provide a body.
+
+Coverage stays6,583 literal record reviews; no new record review credit for this focused adjudication. Counts unchanged9additional39totalnext40. Sol r624/r626 continue. Fresh Claude r628 breadth assignment uses queue-r628.json/reserved-ids-r628.json. Three disjoint breadth reservations; no active focused hypothesis. Preserve protected338366/338408. Routing8,000metadata rows stays uncredited. Generic outbound headers/privacy and earlier access stops unchanged. No input needed.

@@ -1,0 +1,13 @@
+# r696 independent breadth screening
+
+Exactly 50 assigned literal records reviewed; no replacements. Classification: 17 complete, 19 definition-dependent, 7 scope-ambiguous, 7 incomplete. Every row retains its exact UTF-8 statement, canonical record hash, chunk/line, quantifiers, classification reason and individual technical disposition.
+
+Zero hypothesis briefs; zero discovery credit. Counts remain 9 additional / 39 total / next 40. Baseline 8,283 is reported literal reviews, not full technical corpus coverage. These 50 distinct assigned reviews may bring reconciled literal review coverage to 8,333; root alone integrates. The 10,000 routing rows remain metadata only.
+
+Two selected primary passages inspected: arXiv:1011.4658v1 states the n=4 exception refuting literal 320721; arXiv:1303.6651v1 Conjecture2.11 contains the unconstrained p_(s+1) defect in literal325243. Exact integer check s=1, q=qtilde=1, p=(0,0,1) gives hypothesis sums (0,0,0) but violates p2=0. This is a wording correction, not an eligible result. Source page10 visually checked after image binding. No repaired conjecture promoted. No whole-source, full-dependency, successor-body or current-registry clearance claimed.
+
+Integrity: independently checked exact intake payload and direct original/copy pairs without executing upstream verification; all 20 original r301 chunks and eight separately listed frozen inputs checked in place against its intake-bound manifest. Assigned queue equals reservation; all three fifty-ID sets disjoint from 8,283 baseline and protected IDs. r694 and HELD r628 preserved. r304 exclusions, historical dispositions and r363 Cayley decision checked; r695 adjudications retained, including retired338290/339564/372627 and parked337963. 338366 remains excluded with text/figure reconstruction and unread-journal limitations.
+
+Access: two generic-header public arXiv PDF requests, no failures; bytes bound before extraction, derivatives before reading. Zero MathDB requests. All inherited stopped routes preserved, including r578, r642 Gorenstein TLS, r684 v2 404s, OEIS403 and OUP403. Current registry unavailable: HOLD. No absence-of-hits inference. No shared-file/git/Lean/manuscript/credit changes.
+
+Re-run `./verify.sh` to check originals, exact payload, reservations and literal hashes read-only under the fixed 512MiB/210CPU-second/230wall-second guard. Negative tests reject wrong hash, wrong size and extra file on bounded synthetic fixtures. Manifest excludes only itself and final-verification-receipt.json. Integrity PASS is neither mathematical nor novelty PASS. See failures.json for retained deviations and flat-bindings.json for immutable references.

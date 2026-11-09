@@ -1,0 +1,5 @@
+const fs=require('fs');const n=+process.argv[2];let a=Array.from({length:n},(_,i)=>i+1),p=new Int16Array(n+1),cnt=new Float64Array((1<<n)*(n+2)),total=0;
+function visit(){let s=0,d=1;for(let i=0;i<n;i++)p[a[i]]=i;for(let i=1;i<n-1;i++)if(a[i]>a[i-1]&&a[i]>a[i+1])s|=1<<(a[i]-1);for(let i=1;i<n;i++)if(p[i]>p[i+1])d++;cnt[s*(n+2)+d]++;total++;}
+function perm(k){if(k===n){visit();return;}for(let j=k;j<n;j++){[a[k],a[j]]=[a[j],a[k]];perm(k+1);[a[k],a[j]]=[a[j],a[k]];}}
+perm(0);let bad=[],sets=0,min=Infinity;for(let s=0;s<1<<n;s++){let v=Array.from(cnt.slice(s*(n+2),(s+1)*(n+2)));if(!v.some(x=>x))continue;sets++;for(let j=0;j<=Math.floor((n+1)/2);j++){let g=v[j];min=Math.min(min,g);if(g<0)bad.push({s,j,g});let b=1,m=n+1-2*j;for(let k=0;k<=m;k++){v[j+k]-=g*b;b=b*(m-k)/(k+1);}}if(v.some(x=>Math.abs(x)>0.1))bad.push({s,residual:v});}
+let r={n,total,sets,min_gamma:min,bad};console.log(JSON.stringify(r));fs.writeFileSync(`outputs/pinnacle${n}.json`,JSON.stringify({summary:r,counts:Array.from(cnt)}));

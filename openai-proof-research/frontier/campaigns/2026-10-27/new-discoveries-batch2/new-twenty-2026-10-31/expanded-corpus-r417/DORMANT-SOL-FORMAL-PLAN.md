@@ -1,0 +1,8 @@
+# Dormant plan for 337705 — do not execute
+
+Only GPT-6.1 Sol high/default is authorized; no formal execution or delegation in this lane.
+First independently review FULLCANDIDATE.md against source Section2 and Conjecture20 and investigate prior parity obstructions for cordial hypergraphs, especially connected hypergraphs with private leaves and all odd degrees. Do not count the already known hypertree theorem.
+
+If root later authorizes formal work, use six explicit vertices and four explicit distinct finite vertex sets. Define incidence connectivity, retained-edge subhypergraphs and 1-degeneracy; prove every retained edge carries its own degree-one vertex, and handle nonempty edgeless subhypergraphs. Define ZMod2 vertex-induced edge sums and the separate vertex and edge balance predicates. Derive exactly three vertex ones and exactly two edge ones from balance, and double-count the incidence sum (or expand four symbolic sums) to obtain 1=0. Finish the negation of the literal universal conjecture via existence of this connected 1-degenerate noncordial hypergraph. No computational enumeration is needed.
+
+All library/import/dependency choices are uninspected and unpinned here. No estimate of compiled certificate size is verified; the ordinary argument is under a page, but definitions/connectivity/finiteness bridges dominate formal work. Need independent statement-fidelity/significance review, dependency audit admitting only propext/Classical.choice/Quot.sound, fresh source-only strict replay and paper. No sorry/admit/new axiom/unsafe/native_decide. No Lean files or compiler invocation in this lane.

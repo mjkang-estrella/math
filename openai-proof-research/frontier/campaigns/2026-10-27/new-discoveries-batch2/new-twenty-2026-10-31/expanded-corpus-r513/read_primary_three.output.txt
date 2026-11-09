@@ -1,0 +1,1674 @@
+SKILL ---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+
+SOURCE lee LENGTH 161348
+PASSAGE 12177 : the Hamming weight and Hamming weight distribution functions.
+The authors presented improved redundancy bounds and proposed optimal constructions that achieve the
+lower bound in these cases. A generalization of FCCs to b -symbol-pair read channels was introduced
+by Singh et al. in [13], resulting in the notion of b -symbol-pair function-correcting codes. The authors
+established both lower and upper bounds on the optimal redundancy required for general functions in this
+setting. Sampath and Rajan in [14] investigated FCCs for linear functions in the context of b -symbol read
+channels and derived a Plotkin-like bound for such codes. The concept of locally (ρ, λ)-function-correcting
+codes was introduced by Rajput et al. in [15], where an upper bound on the redundancy of such codes
+was derived. An upper bound on the redundancy of FCCs over ﬁnite ﬁelds was derived by Ly et al. in
+[16], who conjectured that this bound holds universally across all ﬁnite ﬁelds. Later, in [17] Gyanendra et.
+al extended function-correcting b-symbol codes for locally (λ, ρ, b)-functions and discussed the possible
+values of λ and ρ for which any function can be considered as locally (ρ, λ)-function in b-symbol metric.
+Recently, Liu et al. in [18] introduced a new class of FCCs known as Function-Correcting Codes with
+Homogeneous Distance (FCCHDs), deriving several bounds on the optimal redundancy for certain classes
+of functions. Very recently, a theoretical framework for systematic FCCs for channels matched to the Lee
+metric has been studied by Gyanendra et al. in [19]. Upper bounds and lower bounds on the optimal
+redundancy were also derived in [19].
+
+C. Contributions
+   In [19], the authors developed theoretical foundations of FCCs for Lee metric channels which introduce
+at most t errors and derived bounds on optimal redundancy of FCLCs. These bounds were then simpliﬁed
+and applied to Lee weight function and Lee weight distribution function. However, [19] did not provide any
+constructions of FCLCs for these functions. We construct explicit FCLCs for speciﬁc classes of functions,
+including the Lee weight, Lee weight distribution, and modular sum function. For these functions, lower
+bounds on redundancy are obtained, and our constructions are shown to be optimal in certain cases. Our
+results demonstrate that FCLCs can achieve signiﬁcantly lower redundancy than both classical Lee error-
+correcting codes and codes that correct errors in function values, while still ensuring accurate function
+evaluation in the presence of errors. The contributions of this paper are summarized as follows:
+   • A Plotkin-like lower bound is presented for irregular-Lee-distance codes over Zq , the ring of integers
+      modulo q.
+   • Explicit constructions are provided for speciﬁc classes of functions in Lee metric, including:
+
+      – Lee weight function,
+      – Lee weight distribution function,
+      – Modular sum function.
+      – Locally bounded function.
+   • Lower bounds on redundancy are derived for the Lee weight, Lee weight distribution and modular
+      sum functions by simplifying the Plotkin-like bounds in certain cases.
+   • The redundancy of these functions is shown to be optimal for certain values of the alphabet size q,
+      message length k, and number of errors t.
+                                                                                                                        4
+
+
+
+D. Organization
+   The rest of the paper is organized as follows. In Section II, we review the basic concepts and deﬁnitions
+related to Lee metric codes, FCCs, and irregular-Lee-distance codes. In Section III, the connection between
+FCLCs and irregular-Lee-distance codes, and bounds on the optimal redundancy of FCLCs [19] are
+reviewed. A variant of Plotkin-like bound is also presented for irregular-Lee-distance codes in this section.
+In Section IV, we apply these general results to speciﬁc classes of functions, including the Lee weight
+function, Lee weight distribution function, modular sum function, and locally bounded function providing
+explicit constructions and corresponding redundancy values and bounds. Section V presents a comparative
+analysis of FCLCs with classical Lee error-correcting codes and codes that correct errors in function values,
+demonstrating the redundancy gains achieved by FCLCs. Finally, Section VI concludes the paper with a
+summary of key results and potential directions for future work.
+Notations: Let N0 denote the set of non-negative integers and NM     0
+                                                                        ×M
+                                                                            represents the set of all M × M
+                                                                       M ×M
+matrices with non-negative integer entries. For a matrix D ∈ N0             , we denote its (i, j) − th entry
+by [D]ij . Given two vectors x, y ∈ Znq , dH (x, y) denotes the Hamming distance between x and y
+and dL (x, y) denotes the Lee distance between x and y for x, y ∈ Znq . For any integer M, we write
+[M]+ , max{M, 0} and we let [M] , {1, 2, . . . , M}. Also {a}k , (a, a, . . . , a), where the element a is
+                                                                          | {z }
+                                                                                   k times
+repeated k times. For two integers 
+PASSAGE 34614 h entries [Df (t, f1 , . . . , fE )]ij = 2t + 1 − dfL (fi , fj ) , if i 6= j
+and [Df (t, f1 , . . . , fE )]ii = 0, for t error correction.
+  An example for a function distance matrix is given next.
+Example 3. Let ui = (ui1 , ui2 ) ∈ Z25 and f (ui ) = ui1 , ∀i ∈ [M], where M = 25. For this function,
+Im(f ) = {0, 1, 2, 3, 4}. The corresponding function distance matrix for t = 1 is given by,
+                                                                       
+                                                             0 2 1 1 2
+                                                            2 0 2 1 1
+                                                                       
+                                Df (t = 1, 0, 1, 2, 3, 4) = 1 2 0 2 1 .
+                                                            1 1 2 0 2
+                                                             2 1 1 2 0
+Theorem 2 ([19]). For any arbitrary function f : Zkq → Im(f ), rLf (q, k, t) ≤ NL (Df (t, f1 , . . . , fE )) .
+  In certain cases, the bound provided in Theorem 2 is tight. One such signiﬁcant case is described in
+the following corollary.
+Corollary 2 ( [19]). If there exists a set of representative information vectors u1 , . . . , uE such that
+{f (u1 ), . . . , f (uE )} = Im(f ) and Df (t, u1 , . . . , uE ) = Df (t, f1 , . . . , fE ), then rLf (q, k, t) =
+NL (Df (t, f . . . , fE )).
+   Although the bound in Theorem 2 is not always tight, it is often more practical to work with the function
+distance matrix Df (t, f1 , . . . , fE ) rather than the full distance requirement matrix Df (t, u1 , . . . , uqk ),
+especially when the number of distinct function values E is small. Computing NL (Df (t, f1 , . . . , fE )) is
+typically much more tractable in such cases.
+                                                                                                            9
+
+
+
+C. A variant of Plotkin Bound on NL (D)
+   The traditional Plotkin bound for error-correcting codes in the Lee metric is derived under the require-
+ment that the Lee distance between any two codewords must be at least the minimum distance of the code.
+In contrast, for function-correcting Lee codes (FCLCs), the requirement is relatively more relaxed: the Lee
+distance between two codewords needs to be at least the minimum distance only when the corresponding
+messages produce different function values. Consequently, bounds derived under the stricter constraints
+of classical error-correcting codes, such as the traditional Plotkin bound, are not directly applicable to
+FCLCs. This highlights the need for bounds speciﬁcally tailored to the FCLC setting. To clarify this point,
+we illustrate the difference through the following example.
+Example 4. Let u = (u1 u2 ) ∈ Z25 be the message. Consider any binary function f : Z25 → {0, 1} and
+consider the following encoding. Enc(u) = (u, {pu }3 ), where
+                                            
+                                              2, f (u) = 0,
+                                       pu =
+                                              0, f (u) = 1,
+and {pu }3 stands for the 3-fold repetition of the parity symbol pu . This encoding results in an FCLC
+for the considered binary function for t = 3. To prove this, we have to show that for all u, u′ ∈ Z25
+with f (u) 6= f (u′ ), the above encoding ensures dL (Enc(u), Enc(u′ )) ≥ 7. Whenever f (u) 6= f (u′ ),
+WLOG assume f (u) = 0 and f (u′ ) = 1. In this case, we have dL (Enc(u), Enc(u′ )) = dL (u, u′ ) +
+dL ({pu }3 , {pu′ }3 ) ≥ 1 + 3 × dL (2, 0) = 1 + 3 × 2 = 7. Therefore, the above encoding yields an FCLC
+for any binary function f : Z25 → {0, 1} and t = 3, achieving a redundancy r = 3.
+   Now consider the traditional Plotkin bound for Lee metric given in Lemma 3. For odd q, we have
+              2 −1)M
+dL ≤ (k+r)(q
+         4q(M −1)
+                      . Equivalently, r ≥ 4q(M   −1)dL
+                                            q 2 −1)M
+                                                       − k. For q = 5, k = 2 and t = 3, we have M = 25 and
+dL = 7. Substituting these values we obtain r ≥ 3.6. That is, by the traditional Plotkin bound, we need
+at least a redundancy of r = 4 to ensure 3 Lee error correction. However, for the binary function, we
+obtained FCLC ensuring 3 Lee error correction with a lesser redundancy of 3.
+   Therefore, we extend the classical Plotkin bound to the setting of irregular Lee-distance codes, as stated
+in the following theorem.
+Theorem 3. For any distance matrix D ∈ NM 0
+                                             ×M
+                                                 ,
+                                   8 X
+                                  
+                                                 [D]ij , if q is even,
+                                   M 2q
+                                  
+                                          i,j:i<j
+                        NL (D) ≥                                                                          (1)
+                                        8q          X
+                                  
+                                  
+                                   M 2 (q 2 − 1)           [D]ij , if q is odd.
+                                                    i,j:i<j
+
+     Proof: Let NL (D) = r. Let {pi }M                                                      M
+                                   
+PASSAGE 34767 or a function distance matrix is given next.
+Example 3. Let ui = (ui1 , ui2 ) ∈ Z25 and f (ui ) = ui1 , ∀i ∈ [M], where M = 25. For this function,
+Im(f ) = {0, 1, 2, 3, 4}. The corresponding function distance matrix for t = 1 is given by,
+                                                                       
+                                                             0 2 1 1 2
+                                                            2 0 2 1 1
+                                                                       
+                                Df (t = 1, 0, 1, 2, 3, 4) = 1 2 0 2 1 .
+                                                            1 1 2 0 2
+                                                             2 1 1 2 0
+Theorem 2 ([19]). For any arbitrary function f : Zkq → Im(f ), rLf (q, k, t) ≤ NL (Df (t, f1 , . . . , fE )) .
+  In certain cases, the bound provided in Theorem 2 is tight. One such signiﬁcant case is described in
+the following corollary.
+Corollary 2 ( [19]). If there exists a set of representative information vectors u1 , . . . , uE such that
+{f (u1 ), . . . , f (uE )} = Im(f ) and Df (t, u1 , . . . , uE ) = Df (t, f1 , . . . , fE ), then rLf (q, k, t) =
+NL (Df (t, f . . . , fE )).
+   Although the bound in Theorem 2 is not always tight, it is often more practical to work with the function
+distance matrix Df (t, f1 , . . . , fE ) rather than the full distance requirement matrix Df (t, u1 , . . . , uqk ),
+especially when the number of distinct function values E is small. Computing NL (Df (t, f1 , . . . , fE )) is
+typically much more tractable in such cases.
+                                                                                                            9
+
+
+
+C. A variant of Plotkin Bound on NL (D)
+   The traditional Plotkin bound for error-correcting codes in the Lee metric is derived under the require-
+ment that the Lee distance between any two codewords must be at least the minimum distance of the code.
+In contrast, for function-correcting Lee codes (FCLCs), the requirement is relatively more relaxed: the Lee
+distance between two codewords needs to be at least the minimum distance only when the corresponding
+messages produce different function values. Consequently, bounds derived under the stricter constraints
+of classical error-correcting codes, such as the traditional Plotkin bound, are not directly applicable to
+FCLCs. This highlights the need for bounds speciﬁcally tailored to the FCLC setting. To clarify this point,
+we illustrate the difference through the following example.
+Example 4. Let u = (u1 u2 ) ∈ Z25 be the message. Consider any binary function f : Z25 → {0, 1} and
+consider the following encoding. Enc(u) = (u, {pu }3 ), where
+                                            
+                                              2, f (u) = 0,
+                                       pu =
+                                              0, f (u) = 1,
+and {pu }3 stands for the 3-fold repetition of the parity symbol pu . This encoding results in an FCLC
+for the considered binary function for t = 3. To prove this, we have to show that for all u, u′ ∈ Z25
+with f (u) 6= f (u′ ), the above encoding ensures dL (Enc(u), Enc(u′ )) ≥ 7. Whenever f (u) 6= f (u′ ),
+WLOG assume f (u) = 0 and f (u′ ) = 1. In this case, we have dL (Enc(u), Enc(u′ )) = dL (u, u′ ) +
+dL ({pu }3 , {pu′ }3 ) ≥ 1 + 3 × dL (2, 0) = 1 + 3 × 2 = 7. Therefore, the above encoding yields an FCLC
+for any binary function f : Z25 → {0, 1} and t = 3, achieving a redundancy r = 3.
+   Now consider the traditional Plotkin bound for Lee metric given in Lemma 3. For odd q, we have
+              2 −1)M
+dL ≤ (k+r)(q
+         4q(M −1)
+                      . Equivalently, r ≥ 4q(M   −1)dL
+                                            q 2 −1)M
+                                                       − k. For q = 5, k = 2 and t = 3, we have M = 25 and
+dL = 7. Substituting these values we obtain r ≥ 3.6. That is, by the traditional Plotkin bound, we need
+at least a redundancy of r = 4 to ensure 3 Lee error correction. However, for the binary function, we
+obtained FCLC ensuring 3 Lee error correction with a lesser redundancy of 3.
+   Therefore, we extend the classical Plotkin bound to the setting of irregular Lee-distance codes, as stated
+in the following theorem.
+Theorem 3. For any distance matrix D ∈ NM 0
+                                             ×M
+                                                 ,
+                                   8 X
+                                  
+                                                 [D]ij , if q is even,
+                                   M 2q
+                                  
+                                          i,j:i<j
+                        NL (D) ≥                                                                          (1)
+                                        8q          X
+                                  
+                                  
+                                   M 2 (q 2 − 1)           [D]ij , if q is odd.
+                                                    i,j:i<j
+
+     Proof: Let NL (D) = r. Let {pi }M                                                      M
+                                     i=1 be codewords of a DL -code of length r. Since {pi }i=1 form a
+DL -code, by deﬁnition we have [D]ij ≤ dL (pi , pj ) ∀i, j. Therefore,
+              
+PASSAGE 35127               0 2 1 1 2
+                                                            2 0 2 1 1
+                                                                       
+                                Df (t = 1, 0, 1, 2, 3, 4) = 1 2 0 2 1 .
+                                                            1 1 2 0 2
+                                                             2 1 1 2 0
+Theorem 2 ([19]). For any arbitrary function f : Zkq → Im(f ), rLf (q, k, t) ≤ NL (Df (t, f1 , . . . , fE )) .
+  In certain cases, the bound provided in Theorem 2 is tight. One such signiﬁcant case is described in
+the following corollary.
+Corollary 2 ( [19]). If there exists a set of representative information vectors u1 , . . . , uE such that
+{f (u1 ), . . . , f (uE )} = Im(f ) and Df (t, u1 , . . . , uE ) = Df (t, f1 , . . . , fE ), then rLf (q, k, t) =
+NL (Df (t, f . . . , fE )).
+   Although the bound in Theorem 2 is not always tight, it is often more practical to work with the function
+distance matrix Df (t, f1 , . . . , fE ) rather than the full distance requirement matrix Df (t, u1 , . . . , uqk ),
+especially when the number of distinct function values E is small. Computing NL (Df (t, f1 , . . . , fE )) is
+typically much more tractable in such cases.
+                                                                                                            9
+
+
+
+C. A variant of Plotkin Bound on NL (D)
+   The traditional Plotkin bound for error-correcting codes in the Lee metric is derived under the require-
+ment that the Lee distance between any two codewords must be at least the minimum distance of the code.
+In contrast, for function-correcting Lee codes (FCLCs), the requirement is relatively more relaxed: the Lee
+distance between two codewords needs to be at least the minimum distance only when the corresponding
+messages produce different function values. Consequently, bounds derived under the stricter constraints
+of classical error-correcting codes, such as the traditional Plotkin bound, are not directly applicable to
+FCLCs. This highlights the need for bounds speciﬁcally tailored to the FCLC setting. To clarify this point,
+we illustrate the difference through the following example.
+Example 4. Let u = (u1 u2 ) ∈ Z25 be the message. Consider any binary function f : Z25 → {0, 1} and
+consider the following encoding. Enc(u) = (u, {pu }3 ), where
+                                            
+                                              2, f (u) = 0,
+                                       pu =
+                                              0, f (u) = 1,
+and {pu }3 stands for the 3-fold repetition of the parity symbol pu . This encoding results in an FCLC
+for the considered binary function for t = 3. To prove this, we have to show that for all u, u′ ∈ Z25
+with f (u) 6= f (u′ ), the above encoding ensures dL (Enc(u), Enc(u′ )) ≥ 7. Whenever f (u) 6= f (u′ ),
+WLOG assume f (u) = 0 and f (u′ ) = 1. In this case, we have dL (Enc(u), Enc(u′ )) = dL (u, u′ ) +
+dL ({pu }3 , {pu′ }3 ) ≥ 1 + 3 × dL (2, 0) = 1 + 3 × 2 = 7. Therefore, the above encoding yields an FCLC
+for any binary function f : Z25 → {0, 1} and t = 3, achieving a redundancy r = 3.
+   Now consider the traditional Plotkin bound for Lee metric given in Lemma 3. For odd q, we have
+              2 −1)M
+dL ≤ (k+r)(q
+         4q(M −1)
+                      . Equivalently, r ≥ 4q(M   −1)dL
+                                            q 2 −1)M
+                                                       − k. For q = 5, k = 2 and t = 3, we have M = 25 and
+dL = 7. Substituting these values we obtain r ≥ 3.6. That is, by the traditional Plotkin bound, we need
+at least a redundancy of r = 4 to ensure 3 Lee error correction. However, for the binary function, we
+obtained FCLC ensuring 3 Lee error correction with a lesser redundancy of 3.
+   Therefore, we extend the classical Plotkin bound to the setting of irregular Lee-distance codes, as stated
+in the following theorem.
+Theorem 3. For any distance matrix D ∈ NM 0
+                                             ×M
+                                                 ,
+                                   8 X
+                                  
+                                                 [D]ij , if q is even,
+                                   M 2q
+                                  
+                                          i,j:i<j
+                        NL (D) ≥                                                                          (1)
+                                        8q          X
+                                  
+                                  
+                                   M 2 (q 2 − 1)           [D]ij , if q is odd.
+                                                    i,j:i<j
+
+     Proof: Let NL (D) = r. Let {pi }M                                                      M
+                                     i=1 be codewords of a DL -code of length r. Since {pi }i=1 form a
+DL -code, by deﬁnition we have [D]ij ≤ dL (pi , pj ) ∀i, j. Therefore,
+                                      X             X
+                                          [D]ij ≤       dL (pi , pj ).                              (2)
+                                        i,j:i<j       i,j:i<j
+
+Combining Lemma 4 and Lemma 5, we obtain
+                                                       
+                                                       
+PASSAGE 101502   (2t + 1 − ( 2q − 1))   (2t + 1 − ( q2 − 2))      (2t + 1 − 1)            ···            0                 (2t + 1 − 1) 
+ (q − 1)      (2t + 1 − 1)        (2t + 1 − 2)   ···         (2t + 1 − 2q )      (2t + 1 − ( q2 − 1))   (2t + 1 − ( q2 − 2))       ···      (2t + 1 − 1)                 0
+
+
+                                                                                                                         q
+                                                                                                                             −1
+                           Fig. 4: Function distance matrix DSm (E, t) for t ≥ 2 2                                                and even q ≥ 6.
+  When q is sufﬁciently large relative to t, the distance requirements can be satisﬁed using a single parity
+symbol, making it possible to construct FCLCs with optimal redundancy equal to one. The following
+conjecture formalizes this observation.
+
+Conjecture 1. For all integers t ≥ 1 and all q ≥ 2t(t + 1) + 1, there exist a p ∈ [2t : ⌊ 2q ⌋], such that
+the encoding Enc(u) = (u, (pf (u)) mod q) yields an FCLC for the Lee weight function, Lee weight
+distribution function and the modular sum function achieving an optimal redundancy 1. For q = 2t(t +
+1) + 1, we have p = 2t + 1.
+
+D. Locally Bounded Function
+  A class of functions that assume only a limited number of values within a given Hamming ball, known
+as locally-bounded functions was introduced in [15]. Recently, these functions were extended to the Lee
+metric and studied in [19]. We propose the construction of FCLCs for the locally-bounded functions,
+which attain optimal redundancy in some cases.
+Deﬁnition 13 (Function Ball [19]). The function ball of a function f : Zkq → Im(f ) with radius ρ around
+u is deﬁned as BLf (u, ρ) = {f (v) | v ∈ Zkq and dL (u, v) ≤ ρ}.
+Deﬁnition 14 (Locally bounded function [19]). A function f : Zkq → Im(f ) is said to be a locally
+(ρ, λ)L -bounded function if | BLf (u, ρ) |≤ λ, ∀u ∈ Zkq .
+  The following lemma, which extends Lemma 1 from [15] to the Lee metric setting, is used in the
+construction of FCLCs for locally-bounded functions.
+Lemma 11 ( [19]). Let f : Zkq → Im(f ) be a locally (ρ, λ)L -bounded function. If there is total order
+on the image set Im(f ) such that BLf (u, ρ) form a contiguous block for all u ∈ Zkq . Then there exists
+a mapping Colf : Zkq → [λ] such that Colf (u) 6= Colf (v) for any u, v ∈ Zkq with f (u) 6= f (v) and
+dL (u, v) ≤ ρ.
+   We now present a construction to design FCLCs corresponding to locally (2t, λ)L -bounded functions
+that satisfy the contiguous block condition in Lemma 11.
+                                                                                                                           21
+
+
+
+Construction 3. Let f : Zkq →Im(f ) = {f1 , f2 , . . . , fλ , . . . , fµ } be a locally (2t, λ)L -bounded function
+that satisfy the contiguous block condition in Lemma 11 such that λ ≤ 2q and t be the no. of errors in the
+channel, where µ ≥ λ and t ∈ N. Deﬁne an encoding for u as Enc(u) = (u, {pColf (u) }r ), where
+                                                             0                 if Colf (u) = 1,
+                                                           
+                                                           
+                                                           
+                                                           
+                                                              j q k
+                                                           
+                                                           
+                                                            2                 if Colf (u) = 2,
+                                                                2λ
+                                                           
+                                                           
+                                                           
+                                                           
+                                                            .                 ...,
+                                                           
+                                                           
+                                             pColf (u) =               j q k
+                                                            2(i − 1)          if Colf (u) = i,
+                                                                       2λ
+                                                           
+                                                           
+                                                           
+                                                           
+                                                             .                 ...,
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                            2(λ − 1) q
+                                                           
+                                                                     j k
+                                                                               if Colf (u) = λ,
+          
+PASSAGE 101543  2))      (2t + 1 − 1)            ···            0                 (2t + 1 − 1) 
+ (q − 1)      (2t + 1 − 1)        (2t + 1 − 2)   ···         (2t + 1 − 2q )      (2t + 1 − ( q2 − 1))   (2t + 1 − ( q2 − 2))       ···      (2t + 1 − 1)                 0
+
+
+                                                                                                                         q
+                                                                                                                             −1
+                           Fig. 4: Function distance matrix DSm (E, t) for t ≥ 2 2                                                and even q ≥ 6.
+  When q is sufﬁciently large relative to t, the distance requirements can be satisﬁed using a single parity
+symbol, making it possible to construct FCLCs with optimal redundancy equal to one. The following
+conjecture formalizes this observation.
+
+Conjecture 1. For all integers t ≥ 1 and all q ≥ 2t(t + 1) + 1, there exist a p ∈ [2t : ⌊ 2q ⌋], such that
+the encoding Enc(u) = (u, (pf (u)) mod q) yields an FCLC for the Lee weight function, Lee weight
+distribution function and the modular sum function achieving an optimal redundancy 1. For q = 2t(t +
+1) + 1, we have p = 2t + 1.
+
+D. Locally Bounded Function
+  A class of functions that assume only a limited number of values within a given Hamming ball, known
+as locally-bounded functions was introduced in [15]. Recently, these functions were extended to the Lee
+metric and studied in [19]. We propose the construction of FCLCs for the locally-bounded functions,
+which attain optimal redundancy in some cases.
+Deﬁnition 13 (Function Ball [19]). The function ball of a function f : Zkq → Im(f ) with radius ρ around
+u is deﬁned as BLf (u, ρ) = {f (v) | v ∈ Zkq and dL (u, v) ≤ ρ}.
+Deﬁnition 14 (Locally bounded function [19]). A function f : Zkq → Im(f ) is said to be a locally
+(ρ, λ)L -bounded function if | BLf (u, ρ) |≤ λ, ∀u ∈ Zkq .
+  The following lemma, which extends Lemma 1 from [15] to the Lee metric setting, is used in the
+construction of FCLCs for locally-bounded functions.
+Lemma 11 ( [19]). Let f : Zkq → Im(f ) be a locally (ρ, λ)L -bounded function. If there is total order
+on the image set Im(f ) such that BLf (u, ρ) form a contiguous block for all u ∈ Zkq . Then there exists
+a mapping Colf : Zkq → [λ] such that Colf (u) 6= Colf (v) for any u, v ∈ Zkq with f (u) 6= f (v) and
+dL (u, v) ≤ ρ.
+   We now present a construction to design FCLCs corresponding to locally (2t, λ)L -bounded functions
+that satisfy the contiguous block condition in Lemma 11.
+                                                                                                                           21
+
+
+
+Construction 3. Let f : Zkq →Im(f ) = {f1 , f2 , . . . , fλ , . . . , fµ } be a locally (2t, λ)L -bounded function
+that satisfy the contiguous block condition in Lemma 11 such that λ ≤ 2q and t be the no. of errors in the
+channel, where µ ≥ λ and t ∈ N. Deﬁne an encoding for u as Enc(u) = (u, {pColf (u) }r ), where
+                                                             0                 if Colf (u) = 1,
+                                                           
+                                                           
+                                                           
+                                                           
+                                                              j q k
+                                                           
+                                                           
+                                                            2                 if Colf (u) = 2,
+                                                                2λ
+                                                           
+                                                           
+                                                           
+                                                           
+                                                            .                 ...,
+                                                           
+                                                           
+                                             pColf (u) =               j q k
+                                                            2(i − 1)          if Colf (u) = i,
+                                                                       2λ
+                                                           
+                                                           
+                                                           
+                                                           
+                                                             .                 ...,
+                                                           
+                                                           
+                                                           
+                                                           
+                                                           
+                                                            2(λ − 1) q
+                                                           
+                                                                     j k
+                                                                               if Colf (u) = λ,
+                                                   
+
+SOURCE nfm LENGTH 106924
+PASSAGE 24644 10 cluster instances generated using
+the NFM in which the simplex distribution is chosen to be the Dirichlet distribution. We fix k = 3
+and the Dirichlet parameter α = 0.3e. The first column denotes the range in which the cluster size
+belongs, and the second column counts the PSD success, i.e. number of cluster instances, out of
+10, which have a positive semidefinite Laplacian. Moreover, the third column contains the mean
+smallest eigenvalue of the Laplacian.
+These computational results suggests a weakness of Theorem 3.1 in the sense that the determinstic
+condition required for exact recovery seems to hold with a probability converging to 0 for the NFM
+with the Dirichlet distribution as the size of input graph grows. Morever, the decreasing smallest
+eigenvalue of the cluster Laplacians may also be interpreted as an increasing amount of noise in the
+clusters which motivates the following conjecture.
+Conjecture 3.2. Let G be a graph generated according to NFM in which the simplex distribution is
+chosen to be the Dirichlet distribution with constant parameter. No algorithm can exactly recover
+the true clusters in G with probability not converging to 0 as n → ∞.
+
+                                                 6
+               Table 1: Verification of positive semidefiniteness of cluster Laplacians.
+
+          Cluster size range    PSD success (/10)       Mean smallest Laplacian eigenvalue
+                 6 − 10                   4                             −1.31
+                11 − 15                   4                             −1.31
+                16 − 20                   0                             −3.60
+                21 − 25                   1                             −2.82
+                26 − 30                   1                             −4.26
+                31 − 35                   0                             −5.96
+                36 − 40                   0                             −6.35
+
+
+Conjecture 3.2 highlights information-theoretic limitations for exactly recovering the ground truth
+clusters, see Banks et al. [2016, 2018], Berthet and Baldin [2020], Berthet et al. [2019], Wang et al.
+[2016] for instance, for results on information-theoretic limits for similar or related problems. The
+above observations also lead us to reformulate the central question posed in Section 2.1 as follows.
+
+   Given W , how can we efficiently recover exactly k disjoint node sets, such that each node set
+         contains exactly one of V1strong , . . . , Vkstrong , using no prior knowledge of k?
+
+We may interpret this reformulation as: instead of attempting to exactly recover the true clusters,
+we focus on exactly recovering the strong nodes, possibly in the presence of fringe nodes, which
+introduce noise in the form of negative within-cluster edges. The usage of the word “contains” in the
+above question indicates that recovery of any fringe node for a cluster is not necessarily intended but
+may happen. This perspective on robust Correlation Clustering, which involves clustering essentially
+only a subgraph of the input graph, is similar to that in Krishnaswamy et al. [2019], which provides
+an approximation algorithm for a generalized Correlation Clustering problem wherein the input
+graph is corrupted with a given number of noisy nodes which must be discarded before performing
+clustering.
+To answer the reformulated question above, we adopt a two-step algorithm analysis approach de-
+scribed as follows. Let G be a graph generated by the NFM and let A be a cluster recovery algorithm
+of interest. For each j ∈ [k], let Vj′ be the union of strong nodes and possibly some fringe nodes for
+cluster j, such that we expect A to successfully recover node sets V1′ , . . . , Vk′ with some non-trivial
+probability as the number of nodes n → ∞. In other words, A is likely to fail on the sets Vj \ Vj′ for
+each j ∈ [k]. We may formalize the behavior of A using the following two steps.
+
+      1. For each j ∈ [k], perturb the features of the node set Vj \ Vj′ to the central set to obtain the
+         stray node set Vjstray , and call the resulting graph G′ . Prescribe deterministic conditions
+         C ′ on node sets Vj′ , for each j ∈ [k], which ensure their exact recoverability from G′ by A.
+      2. For each j ∈ [k], re-perturb the features of the node set Vjstray so as to obtain the node
+         set Vj \ Vj′ , which we may interpret as noisy nodes, i.e. we re-obtain graph G from G′ .
+         Prescribe deterministic conditions C under which A is robust to the presence of node sets
+         Vj \ Vj′ , for each j ∈ [k]. The desired robustness properties are established by applying
+         perturbation arguments to the analysis of A on G′ achieved in the previous step.
+
+In terms of probability quantification, we must also argue that for a graph G generated by the NFM,
+the deterministic conditions required for provably robust recovery hold with probability not converg-
+ing to 0 as n → ∞.
+
+3.2 Theoretical Guarantees
+Using Theorem 3.1, we conclude that if each cluster Laplacian is positive semidefinite, then 1-diag
+achieves exact recovery. Adopting the two-step approach outlined in the previous section, we are
+now interested in the following two questions:
+
+       • What is the probability that, for each cluster, the subgraph induced by the union of strong
+         nodes and possibly some fringe nodes ha
+PASSAGE 24656 nstances generated using
+the NFM in which the simplex distribution is chosen to be the Dirichlet distribution. We fix k = 3
+and the Dirichlet parameter α = 0.3e. The first column denotes the range in which the cluster size
+belongs, and the second column counts the PSD success, i.e. number of cluster instances, out of
+10, which have a positive semidefinite Laplacian. Moreover, the third column contains the mean
+smallest eigenvalue of the Laplacian.
+These computational results suggests a weakness of Theorem 3.1 in the sense that the determinstic
+condition required for exact recovery seems to hold with a probability converging to 0 for the NFM
+with the Dirichlet distribution as the size of input graph grows. Morever, the decreasing smallest
+eigenvalue of the cluster Laplacians may also be interpreted as an increasing amount of noise in the
+clusters which motivates the following conjecture.
+Conjecture 3.2. Let G be a graph generated according to NFM in which the simplex distribution is
+chosen to be the Dirichlet distribution with constant parameter. No algorithm can exactly recover
+the true clusters in G with probability not converging to 0 as n → ∞.
+
+                                                 6
+               Table 1: Verification of positive semidefiniteness of cluster Laplacians.
+
+          Cluster size range    PSD success (/10)       Mean smallest Laplacian eigenvalue
+                 6 − 10                   4                             −1.31
+                11 − 15                   4                             −1.31
+                16 − 20                   0                             −3.60
+                21 − 25                   1                             −2.82
+                26 − 30                   1                             −4.26
+                31 − 35                   0                             −5.96
+                36 − 40                   0                             −6.35
+
+
+Conjecture 3.2 highlights information-theoretic limitations for exactly recovering the ground truth
+clusters, see Banks et al. [2016, 2018], Berthet and Baldin [2020], Berthet et al. [2019], Wang et al.
+[2016] for instance, for results on information-theoretic limits for similar or related problems. The
+above observations also lead us to reformulate the central question posed in Section 2.1 as follows.
+
+   Given W , how can we efficiently recover exactly k disjoint node sets, such that each node set
+         contains exactly one of V1strong , . . . , Vkstrong , using no prior knowledge of k?
+
+We may interpret this reformulation as: instead of attempting to exactly recover the true clusters,
+we focus on exactly recovering the strong nodes, possibly in the presence of fringe nodes, which
+introduce noise in the form of negative within-cluster edges. The usage of the word “contains” in the
+above question indicates that recovery of any fringe node for a cluster is not necessarily intended but
+may happen. This perspective on robust Correlation Clustering, which involves clustering essentially
+only a subgraph of the input graph, is similar to that in Krishnaswamy et al. [2019], which provides
+an approximation algorithm for a generalized Correlation Clustering problem wherein the input
+graph is corrupted with a given number of noisy nodes which must be discarded before performing
+clustering.
+To answer the reformulated question above, we adopt a two-step algorithm analysis approach de-
+scribed as follows. Let G be a graph generated by the NFM and let A be a cluster recovery algorithm
+of interest. For each j ∈ [k], let Vj′ be the union of strong nodes and possibly some fringe nodes for
+cluster j, such that we expect A to successfully recover node sets V1′ , . . . , Vk′ with some non-trivial
+probability as the number of nodes n → ∞. In other words, A is likely to fail on the sets Vj \ Vj′ for
+each j ∈ [k]. We may formalize the behavior of A using the following two steps.
+
+      1. For each j ∈ [k], perturb the features of the node set Vj \ Vj′ to the central set to obtain the
+         stray node set Vjstray , and call the resulting graph G′ . Prescribe deterministic conditions
+         C ′ on node sets Vj′ , for each j ∈ [k], which ensure their exact recoverability from G′ by A.
+      2. For each j ∈ [k], re-perturb the features of the node set Vjstray so as to obtain the node
+         set Vj \ Vj′ , which we may interpret as noisy nodes, i.e. we re-obtain graph G from G′ .
+         Prescribe deterministic conditions C under which A is robust to the presence of node sets
+         Vj \ Vj′ , for each j ∈ [k]. The desired robustness properties are established by applying
+         perturbation arguments to the analysis of A on G′ achieved in the previous step.
+
+In terms of probability quantification, we must also argue that for a graph G generated by the NFM,
+the deterministic conditions required for provably robust recovery hold with probability not converg-
+ing to 0 as n → ∞.
+
+3.2 Theoretical Guarantees
+Using Theorem 3.1, we conclude that if each cluster Laplacian is positive semidefinite, then 1-diag
+achieves exact recovery. Adopting the two-step approach outlined in the previous section, we are
+now interested in the following two questions:
+
+       • What is the probability that, for each cluster, the subgraph induced by the union of strong
+         nodes and possibly some fringe nodes has a positive
+PASSAGE 25703 ant parameter. No algorithm can exactly recover
+the true clusters in G with probability not converging to 0 as n → ∞.
+
+                                                 6
+               Table 1: Verification of positive semidefiniteness of cluster Laplacians.
+
+          Cluster size range    PSD success (/10)       Mean smallest Laplacian eigenvalue
+                 6 − 10                   4                             −1.31
+                11 − 15                   4                             −1.31
+                16 − 20                   0                             −3.60
+                21 − 25                   1                             −2.82
+                26 − 30                   1                             −4.26
+                31 − 35                   0                             −5.96
+                36 − 40                   0                             −6.35
+
+
+Conjecture 3.2 highlights information-theoretic limitations for exactly recovering the ground truth
+clusters, see Banks et al. [2016, 2018], Berthet and Baldin [2020], Berthet et al. [2019], Wang et al.
+[2016] for instance, for results on information-theoretic limits for similar or related problems. The
+above observations also lead us to reformulate the central question posed in Section 2.1 as follows.
+
+   Given W , how can we efficiently recover exactly k disjoint node sets, such that each node set
+         contains exactly one of V1strong , . . . , Vkstrong , using no prior knowledge of k?
+
+We may interpret this reformulation as: instead of attempting to exactly recover the true clusters,
+we focus on exactly recovering the strong nodes, possibly in the presence of fringe nodes, which
+introduce noise in the form of negative within-cluster edges. The usage of the word “contains” in the
+above question indicates that recovery of any fringe node for a cluster is not necessarily intended but
+may happen. This perspective on robust Correlation Clustering, which involves clustering essentially
+only a subgraph of the input graph, is similar to that in Krishnaswamy et al. [2019], which provides
+an approximation algorithm for a generalized Correlation Clustering problem wherein the input
+graph is corrupted with a given number of noisy nodes which must be discarded before performing
+clustering.
+To answer the reformulated question above, we adopt a two-step algorithm analysis approach de-
+scribed as follows. Let G be a graph generated by the NFM and let A be a cluster recovery algorithm
+of interest. For each j ∈ [k], let Vj′ be the union of strong nodes and possibly some fringe nodes for
+cluster j, such that we expect A to successfully recover node sets V1′ , . . . , Vk′ with some non-trivial
+probability as the number of nodes n → ∞. In other words, A is likely to fail on the sets Vj \ Vj′ for
+each j ∈ [k]. We may formalize the behavior of A using the following two steps.
+
+      1. For each j ∈ [k], perturb the features of the node set Vj \ Vj′ to the central set to obtain the
+         stray node set Vjstray , and call the resulting graph G′ . Prescribe deterministic conditions
+         C ′ on node sets Vj′ , for each j ∈ [k], which ensure their exact recoverability from G′ by A.
+      2. For each j ∈ [k], re-perturb the features of the node set Vjstray so as to obtain the node
+         set Vj \ Vj′ , which we may interpret as noisy nodes, i.e. we re-obtain graph G from G′ .
+         Prescribe deterministic conditions C under which A is robust to the presence of node sets
+         Vj \ Vj′ , for each j ∈ [k]. The desired robustness properties are established by applying
+         perturbation arguments to the analysis of A on G′ achieved in the previous step.
+
+In terms of probability quantification, we must also argue that for a graph G generated by the NFM,
+the deterministic conditions required for provably robust recovery hold with probability not converg-
+ing to 0 as n → ∞.
+
+3.2 Theoretical Guarantees
+Using Theorem 3.1, we conclude that if each cluster Laplacian is positive semidefinite, then 1-diag
+achieves exact recovery. Adopting the two-step approach outlined in the previous section, we are
+now interested in the following two questions:
+
+       • What is the probability that, for each cluster, the subgraph induced by the union of strong
+         nodes and possibly some fringe nodes has a positive semidefinite Laplacian?
+
+                                                    7
+       • Is the 1-diag recovery algorithm robust to the presence of noisy nodes, i.e. fringe nodes
+         that are close to being stray nodes?
+In this section, we address the first question above, and in Section 3.4, we address the second ques-
+tion. Observe that if we restrict our attention to the cluster subgraph induced by merely the strong
+nodes, then with probability 1, the Laplacian is positive semidefinite because each edge has a non-
+negative weight. However, we are interested in extending this observation to a cluster subgraph in-
+duced by strong nodes and some fringe nodes which also possibly contains negative edges. (Based
+on the results in Table 1, we cannot expect to include all fringe nodes.) For the NFM, directly
+quantifying the probability of Laplacian positive semidefiniteness for a cluster subgraph comprised
+of strong nodes and some fringe nodes appears a difficult task. Therefore in the following, Theo-
+rems 3.3 and 3.4 provide com
+PASSAGE 36421 n
+Table 2. Each row in the table corresponds to 10 cluster instances generated using the NFM in which
+the simplex distribution is chosen to be the Dirichlet distribution. We fix k = 3 and the Dirichlet
+parameter α = 0.3e. The first column denotes the range corresponding to the size of the subgraph
+induced by strong nodes and fringe nodes whose feature vectors have largest entry at least 0.6; the
+cut-off of 0.6 is based on manual parameter search for the given setting of k and α. The second
+column counts the combinatorial condition success, i.e. number of instances, out of 10, for which
+the subgraph satisfies (1).
+These computational results suggest that the probability with which the cluster subgraphs consisting
+of nodes whose feature vectors have largest entry at least 0.6 have a positive semidefinite Laplacian
+does not apparently converge to 0 as n → ∞, and also motivate the following conjecture.
+Conjecture 3.5. Let G = (V, W ) be a graph generated using the NFM in which the simplex dis-
+                           √ Dirichlet distribution with constant parameter α. Then there exists a
+tribution is chosen to be the
+scalar t(k, α) ∈ (0.5, 1/ 2) such that for each j ∈ [k], with probability not converging to 0 as
+n → ∞, G[Vj′ ] satisfies the hypothesis of Theorem 3.4 where
+                                     Vj′ := {i ∈ [n] : θji ≥ t(k, α)}.
+
+3.3 Proofs
+
+In this section, we include proofs of Theorems 3.1, 3.3, and 3.4 stated in Section 3.2.
+
+Proof of Theorem 3.1. Our analysis uses SDP duality and therefore note that the dual of (P-1D) is
+                                     min      eT y
+                                    (Y,Z,y)
+
+                                    s.t.      Y ≥0                                             (D-1D)
+                                              Z0
+                                              W + Y + Z = Diag(y).
+As mentioned in the theorem statement, X ∗ is the cluster matrix corresponding to the partition
+{V1 , . . . , Vk , {v}v∈Vstray }.
+Both optimization problems (P-1D) and (D-1D) have strictly feasible solutions. For instance, X ′ :=
+0.5I + 0.5E is a positive, positive definite matrix which is feasible for (P-1D). Similarly, Y ′ := E,
+Z ′ := (kW + Ek + ǫ)I − (W + E) and y′ := (kW + Ek + ǫ)e gives a strictly feasible solution
+(Y ′ , Z ′ , y′ ) for (D-1D) for any ǫ > 0. Therefore using the Karush-Kuhn-Tucker (KKT) optimality
+conditions, we observe that X ∗ ∈ Sn is an optimal solution for (P-1D) if and only if X ∗ is feasible
+for (P-1D) and there exists a feasible solution of (D-1D), (Y ∗ , Z ∗ , y∗ ) such that:
+          ∗ ∗
+       • Xij Yij = 0, ∀i, j ∈ [n]
+
+                                                     9
+       • hX ∗ , Z ∗ i = 0.
+
+X ∗ has non-negative entries with each diagonal entry being equal to one. Additionally, up to a
+permutation of its rows and columns, it is a block diagonal matrix in which each non-zero diagonal
+block is the matrix of all ones. Therefore X ∗ is feasible for (P-1D), and in the rest of the proof, we
+explicitly construct (Y ∗ , Z ∗ , y∗ ).
+For each j ∈ [k], we set
+                                           Y ∗ (Vj , Vj ) = 0
+                                           Z ∗ (Vj , Vj ) = L(G[Vj ])
+                                                y∗ (Vj ) = W (Vj , Vj )e.
+
+For each distinct j, j ′ ∈ [k], we set
+                                          Y ∗ (Vj , Vj ′ ) = −W (Vj , Vj ′ )
+                                          Z ∗ (Vj , Vj ′ ) = 0.
+
+For each stray node v ∈ Vstray , we set
+                   Y ∗ (v, :) = −W (v, :)                         (and Y ∗ (:, v) = −W (:, v))
+                   Z ∗ (v, :) = 0                                 (and Z ∗ (:, v) = 0)
+                     y ∗ (v) = 0.
+
+Because each pair of nodes lying in distinct clusters shares a negative edge and because each stray
+node shares a negative edge with every other node in the graph, we have that Y ∗ ≥ 0. Similarly,
+because L(G[Vj ])  0 for each j ∈ [k], we have that Z ∗  0.
+Matrices X ∗ and Y ∗ have disjoint supports by construction, and therefore Xij
+                                                                             ∗ ∗
+                                                                               Yij = 0 for each
+i, j ∈ [n]. Moreover
+                                         X
+                          hX ∗ , Z ∗ i =    hX ∗ (Vj , Vj ), Z ∗ (Vj , Vj )i
+                                                 j∈[k]
+                                                 X
+                                             =           hL(G[Vj ]), Ei
+                                                 j∈[k]
+
+                                             =0
+where the last line uses the fact that each row of a Laplacian matrix sums to zero.
+Lastly, we show that the equation W + Y ∗ + Z ∗ = Diag(y∗ ) is satisfied. For each j ∈ [k], we have
+       W (Vj , Vj ) + Y ∗ (Vj , Vj ) + Z ∗ (Vj , Vj ) = W (Vj , Vj ) + L(G[Vj ])
+                                                                    (using the definitions of Y ∗ , Z ∗ )
+                                                                 ∗
+                                                      = Diag(y (Vj )).
+                                                                    (using the definition of y∗ )
+
+For each distinct j, j ′ ∈ [k], we have
+                              W (Vj , Vj ′ ) + Y ∗ (Vj , Vj ′ ) + Z ∗ (Vj , Vj 
+PASSAGE 36433 ach row in the table corresponds to 10 cluster instances generated using the NFM in which
+the simplex distribution is chosen to be the Dirichlet distribution. We fix k = 3 and the Dirichlet
+parameter α = 0.3e. The first column denotes the range corresponding to the size of the subgraph
+induced by strong nodes and fringe nodes whose feature vectors have largest entry at least 0.6; the
+cut-off of 0.6 is based on manual parameter search for the given setting of k and α. The second
+column counts the combinatorial condition success, i.e. number of instances, out of 10, for which
+the subgraph satisfies (1).
+These computational results suggest that the probability with which the cluster subgraphs consisting
+of nodes whose feature vectors have largest entry at least 0.6 have a positive semidefinite Laplacian
+does not apparently converge to 0 as n → ∞, and also motivate the following conjecture.
+Conjecture 3.5. Let G = (V, W ) be a graph generated using the NFM in which the simplex dis-
+                           √ Dirichlet distribution with constant parameter α. Then there exists a
+tribution is chosen to be the
+scalar t(k, α) ∈ (0.5, 1/ 2) such that for each j ∈ [k], with probability not converging to 0 as
+n → ∞, G[Vj′ ] satisfies the hypothesis of Theorem 3.4 where
+                                     Vj′ := {i ∈ [n] : θji ≥ t(k, α)}.
+
+3.3 Proofs
+
+In this section, we include proofs of Theorems 3.1, 3.3, and 3.4 stated in Section 3.2.
+
+Proof of Theorem 3.1. Our analysis uses SDP duality and therefore note that the dual of (P-1D) is
+                                     min      eT y
+                                    (Y,Z,y)
+
+                                    s.t.      Y ≥0                                             (D-1D)
+                                              Z0
+                                              W + Y + Z = Diag(y).
+As mentioned in the theorem statement, X ∗ is the cluster matrix corresponding to the partition
+{V1 , . . . , Vk , {v}v∈Vstray }.
+Both optimization problems (P-1D) and (D-1D) have strictly feasible solutions. For instance, X ′ :=
+0.5I + 0.5E is a positive, positive definite matrix which is feasible for (P-1D). Similarly, Y ′ := E,
+Z ′ := (kW + Ek + ǫ)I − (W + E) and y′ := (kW + Ek + ǫ)e gives a strictly feasible solution
+(Y ′ , Z ′ , y′ ) for (D-1D) for any ǫ > 0. Therefore using the Karush-Kuhn-Tucker (KKT) optimality
+conditions, we observe that X ∗ ∈ Sn is an optimal solution for (P-1D) if and only if X ∗ is feasible
+for (P-1D) and there exists a feasible solution of (D-1D), (Y ∗ , Z ∗ , y∗ ) such that:
+          ∗ ∗
+       • Xij Yij = 0, ∀i, j ∈ [n]
+
+                                                     9
+       • hX ∗ , Z ∗ i = 0.
+
+X ∗ has non-negative entries with each diagonal entry being equal to one. Additionally, up to a
+permutation of its rows and columns, it is a block diagonal matrix in which each non-zero diagonal
+block is the matrix of all ones. Therefore X ∗ is feasible for (P-1D), and in the rest of the proof, we
+explicitly construct (Y ∗ , Z ∗ , y∗ ).
+For each j ∈ [k], we set
+                                           Y ∗ (Vj , Vj ) = 0
+                                           Z ∗ (Vj , Vj ) = L(G[Vj ])
+                                                y∗ (Vj ) = W (Vj , Vj )e.
+
+For each distinct j, j ′ ∈ [k], we set
+                                          Y ∗ (Vj , Vj ′ ) = −W (Vj , Vj ′ )
+                                          Z ∗ (Vj , Vj ′ ) = 0.
+
+For each stray node v ∈ Vstray , we set
+                   Y ∗ (v, :) = −W (v, :)                         (and Y ∗ (:, v) = −W (:, v))
+                   Z ∗ (v, :) = 0                                 (and Z ∗ (:, v) = 0)
+                     y ∗ (v) = 0.
+
+Because each pair of nodes lying in distinct clusters shares a negative edge and because each stray
+node shares a negative edge with every other node in the graph, we have that Y ∗ ≥ 0. Similarly,
+because L(G[Vj ])  0 for each j ∈ [k], we have that Z ∗  0.
+Matrices X ∗ and Y ∗ have disjoint supports by construction, and therefore Xij
+                                                                             ∗ ∗
+                                                                               Yij = 0 for each
+i, j ∈ [n]. Moreover
+                                         X
+                          hX ∗ , Z ∗ i =    hX ∗ (Vj , Vj ), Z ∗ (Vj , Vj )i
+                                                 j∈[k]
+                                                 X
+                                             =           hL(G[Vj ]), Ei
+                                                 j∈[k]
+
+                                             =0
+where the last line uses the fact that each row of a Laplacian matrix sums to zero.
+Lastly, we show that the equation W + Y ∗ + Z ∗ = Diag(y∗ ) is satisfied. For each j ∈ [k], we have
+       W (Vj , Vj ) + Y ∗ (Vj , Vj ) + Z ∗ (Vj , Vj ) = W (Vj , Vj ) + L(G[Vj ])
+                                                                    (using the definitions of Y ∗ , Z ∗ )
+                                                                 ∗
+                                                      = Diag(y (Vj )).
+                                                                    (using the definition of y∗ )
+
+For each distinct j, j ′ ∈ [k], we have
+                              W (Vj , Vj ′ ) + Y ∗ (Vj , Vj ′ ) + Z ∗ (Vj , Vj ′ ) = 0
+usin
+PASSAGE 64720 (2Θj ΘTj − E)
+are further shown to be consistent using the results in Table 3, 4, and 5. Each row in these tables
+corresponds to 10 cluster instances generated using the NFM in which the simplex distribution is
+chosen to be the Dirichlet distribution. We fix k = 3 and the Dirichlet parameter α = 0.3e. The
+first column denotes the range corresponding to the size of the subgraph induced by strong nodes
+and fringe nodes whose feature vectors have largest entry at least 0.6; the cut-off of 0.6 is based on
+manual parameter search for the given setting of k and α. The second column counts eigenvector
+success, i.e. the number of instances, out of 10, for which the eigenvector of 2.2 · (2Θj ΘTj − E)
+corresponding to its largest eigenvalue is positive. For such instances, the third column contains the
+non-zero eigenvalues of 2.2 · (2Θj ΘTj − E).
+These computational results motivate the following conjecture.
+Conjecture 4.2. Let G = (V, W ) be a graph generated using the NFM in which the simplex dis-
+                           √ Dirichlet distribution with constant parameter α. Then there exists a
+tribution is chosen to be the
+scalar t(k, α) ∈ (0.5, 1/ 2) such that for each j ∈ [k], with probability not converging to 0 as
+n → ∞, the largest eigenvalue of the matrix 4.4Θj ΘTj − 2.2E is well-separated from the remaining
+eigenvalues and the corresponding eigenvector is positive where
+                                   Vj′ := {i ∈ [n] : θji ≥ t(k, α)}
+and
+                                          Θj := Θ(Vj′ , :).
+                p
+Now let qj := λj vj where λj and vj denote the largest eigenvalue and the corresponding unit
+eigenvector respectively of c · (2Θj ΘTj − E). We rewrite (3) as
+
+                                  W (Vj′ , Vj′ ) = qj qTj − Dj + Nj                               (4)
+where Dj is the nj × nj diagonal matrix Diag(qj qTj ) and Nj is the nj × nj symmetric matrix
+whose each diagonal entry is equal to 0 and the off-diagonal entries are chosen to make so as to
+make (3) hold. That is, matrix Dj applies diagonal correction to ensure diag(W (Vj , Vj )) = 0 and
+matrix Nj captures the error in approximating the logarithmic function g by the linear function l and
+the error in approximating c · (2Θj ΘTj − E) by qj qTj . We show, using computational results, the
+validity of Assumption 4.1 for quantities qj , Nj , W (Vj , Vj ) described using (4) in Table 6. Each
+
+                                                 16
+Table 3: Structure of subgraph induced by strong nodes and some fringe nodes for each cluster (part
+1/3).
+
+              Cluster size range    Eigenvector success (/10)     Non-zero eigenvalues
+                    6 − 10                      10                     7.8, 0.5, −1.1
+                                                                      9.8, 0.4, −0.7
+                                                                      9.2, 0.2, −0.4
+                                                                      10.1, 0.4, −0.3
+                                                                      10.1, 0.9, −0.6
+                                                                      8.5, 0.1, −0.3
+                                                                      12.7, 0.2, −0.6
+                                                                      6.6, 0.5, −0.4
+                                                                      9.8, 0.4, −0.5
+                                                                      7.4, 0.3, −0.4
+                   11 − 15                      10                    16.8, 0.2, −0.5
+                                                                      14.2, 0.4, −0.4
+                                                                      12.9, 0.6, −0.5
+                                                                      16.7, 0.6, −0.7
+                                                                      15.8, 0.3, −0.5
+                                                                      15.9, 0.8, −0.8
+                                                                      16.1, 0.2, −0.4
+                                                                      14.0, 0.9, −0.8
+                                                                      12.8, 0.5, −0.4
+                                                                      14.0, 0.3, −0.5
+                   16 − 20                      10                    16.3, 1.0, −1.3
+                                                                      18.1, 0.7, −0.9
+                                                                      17.0, 0.7, −0.7
+                                                                      21.5, 1.2, −1.9
+                                                                      14.5, 1.2, −1.3
+                                                                      21.2, 0.6, −0.7
+                                                                      19.4, 1.2, −1.0
+                                                                      21.6, 0.3, −0.6
+                                                                      23.5, 1.0, −1.0
+                                                                      20.1, 0.6, −1.0
+
+
+
+row in the table corresponds to 10 cluster instances generated using the NFM in which the simplex
+distribution is chosen to be the Dirichlet distribution. We fix k = 3 and the Dir
+PASSAGE 64732 )
+are further shown to be consistent using the results in Table 3, 4, and 5. Each row in these tables
+corresponds to 10 cluster instances generated using the NFM in which the simplex distribution is
+chosen to be the Dirichlet distribution. We fix k = 3 and the Dirichlet parameter α = 0.3e. The
+first column denotes the range corresponding to the size of the subgraph induced by strong nodes
+and fringe nodes whose feature vectors have largest entry at least 0.6; the cut-off of 0.6 is based on
+manual parameter search for the given setting of k and α. The second column counts eigenvector
+success, i.e. the number of instances, out of 10, for which the eigenvector of 2.2 · (2Θj ΘTj − E)
+corresponding to its largest eigenvalue is positive. For such instances, the third column contains the
+non-zero eigenvalues of 2.2 · (2Θj ΘTj − E).
+These computational results motivate the following conjecture.
+Conjecture 4.2. Let G = (V, W ) be a graph generated using the NFM in which the simplex dis-
+                           √ Dirichlet distribution with constant parameter α. Then there exists a
+tribution is chosen to be the
+scalar t(k, α) ∈ (0.5, 1/ 2) such that for each j ∈ [k], with probability not converging to 0 as
+n → ∞, the largest eigenvalue of the matrix 4.4Θj ΘTj − 2.2E is well-separated from the remaining
+eigenvalues and the corresponding eigenvector is positive where
+                                   Vj′ := {i ∈ [n] : θji ≥ t(k, α)}
+and
+                                          Θj := Θ(Vj′ , :).
+                p
+Now let qj := λj vj where λj and vj denote the largest eigenvalue and the corresponding unit
+eigenvector respectively of c · (2Θj ΘTj − E). We rewrite (3) as
+
+                                  W (Vj′ , Vj′ ) = qj qTj − Dj + Nj                               (4)
+where Dj is the nj × nj diagonal matrix Diag(qj qTj ) and Nj is the nj × nj symmetric matrix
+whose each diagonal entry is equal to 0 and the off-diagonal entries are chosen to make so as to
+make (3) hold. That is, matrix Dj applies diagonal correction to ensure diag(W (Vj , Vj )) = 0 and
+matrix Nj captures the error in approximating the logarithmic function g by the linear function l and
+the error in approximating c · (2Θj ΘTj − E) by qj qTj . We show, using computational results, the
+validity of Assumption 4.1 for quantities qj , Nj , W (Vj , Vj ) described using (4) in Table 6. Each
+
+                                                 16
+Table 3: Structure of subgraph induced by strong nodes and some fringe nodes for each cluster (part
+1/3).
+
+              Cluster size range    Eigenvector success (/10)     Non-zero eigenvalues
+                    6 − 10                      10                     7.8, 0.5, −1.1
+                                                                      9.8, 0.4, −0.7
+                                                                      9.2, 0.2, −0.4
+                                                                      10.1, 0.4, −0.3
+                                                                      10.1, 0.9, −0.6
+                                                                      8.5, 0.1, −0.3
+                                                                      12.7, 0.2, −0.6
+                                                                      6.6, 0.5, −0.4
+                                                                      9.8, 0.4, −0.5
+                                                                      7.4, 0.3, −0.4
+                   11 − 15                      10                    16.8, 0.2, −0.5
+                                                                      14.2, 0.4, −0.4
+                                                                      12.9, 0.6, −0.5
+                                                                      16.7, 0.6, −0.7
+                                                                      15.8, 0.3, −0.5
+                                                                      15.9, 0.8, −0.8
+                                                                      16.1, 0.2, −0.4
+                                                                      14.0, 0.9, −0.8
+                                                                      12.8, 0.5, −0.4
+                                                                      14.0, 0.3, −0.5
+                   16 − 20                      10                    16.3, 1.0, −1.3
+                                                                      18.1, 0.7, −0.9
+                                                                      17.0, 0.7, −0.7
+                                                                      21.5, 1.2, −1.9
+                                                                      14.5, 1.2, −1.3
+                                                                      21.2, 0.6, −0.7
+                                                                      19.4, 1.2, −1.0
+                                                                      21.6, 0.3, −0.6
+                                                                      23.5, 1.0, −1.0
+                                                                      20.1, 0.6, −1.0
+
+
+
+row in the table corresponds to 10 cluster instances generated using the NFM in which the simplex
+distribution is chosen to be the Dirichlet distribution. We fix k = 3 and the Dirichlet param
+PASSAGE 78253 m, the rest of the entries. This is supported by computational results shown in Table
+7 which show the performance of ℓ2 -norm-diag. Each row in the table corresponds to 10 graph
+instances generated using the NFM in which the simplex distribution is chosen to be the Dirichlet
+distribution. We fix k = 3 and the Dirichlet parameter α = 0.3e. The first column denotes the
+size of graph, i.e. number of nodes n. The second column counts the ℓ2 -norm-diag success, i.e.
+the number of instances, out of 10, for which the number of recovered clusters is equal to the true
+number of clusters k such that the recovered clusters are disjoint and each recovered cluster contains
+all strong nodes (and possibly some fringe nodes) from exactly one ground-truth cluster.
+The theoretical and computational results regarding the performance of ℓ2 -norm-diag presented in
+this section lead us to make the following conjecture.
+Conjecture 4.5. Let G be a graph generated according to NFM in which the simplex distribution is
+chosen to be the Dirichlet distribution with constant parameter. Then with probability not converging
+to 0 as n → ∞, ℓ2 -norm-diag returns exactly k disjoint clusters V1′ , . . . , Vk′ such that, for each
+j ∈ [k]
+                                             Vjstrong ⊆ Vj′ .
+
+4.2 Proofs
+In this section we build a proof of Theorem 4.1. Our strategy is to demonstrate the desired structure
+in each of the submatrices of an optimal solution corresponding to a cluster. One key ingredient for
+
+                                                   19
+                                 Table 7: Performance of ℓ2 -norm-diag.
+
+                     Graph size (number of nodes)         ℓ2 -norm-diag success (/10)
+                                     60                                9
+                                     70                                8
+                                     80                               10
+                                     90                                9
+                                     100                               9
+                                     110                              10
+                                     120                               9
+                                     130                              10
+                                     140                              10
+
+
+this approach is to determine a point x such that
+                                           (W x)◦1/3 = x.
+However, note that the exact solution to the system
+                                               (qqT x)◦1/3 = q
+can be shown to be x = (βq)◦1/3 where β = [qT (q◦1/3 )]3/2 . Moreover, due to Assumption 4.1,
+W can be interpreted as a perturbation of the matrix qqT by matrices D and N thereby motivating
+the following lemma.
+Lemma 4.6. Let G = (V, W ) be a graph on n nodes satisfying conditions 1, 3, 4 in Assumption 4.1.
+Then the continuous function f : Rn → Rn defined as f (x) := (W x)◦1/3 maps the set
+                                                
+                          1           3
+                  S :=      (βq)◦1/3 , (βq)◦1/3 , where β = [qT (q◦1/3 )]3/2 ,
+                          2           2
+to itself.
+
+Proof. We will show that for any x ∈ S, each of f (x) ≥ (βq)◦1/3 /2 and f (x) ≤ 3(βq)◦1/3 /2
+holds separately. Pick any x ∈ S. We have
+      (W x)◦1/3 = (qqT x − Dx + N x)◦1/3
+                   1/3 T ◦1/3                 ◦1/3
+                    β qq (q      )
+                ≥                   − Dx + N x                    (using the lower bound on x)
+                          2
+                                  ◦1/3
+                    βq
+                =      − Dx + N x                                 (using the definition of β)
+                     2                                                                           (6)
+                                              ◦1/3
+                    βq 3β 1/3 D(q◦1/3 )
+                  
+                ≥      −                 + Nx                     (using the upper bound on x)
+                     2         2
+                                          ◦1/3
+                    βq 3β 1/3 q◦7/3
+                  
+                ≥      −             + Nx       .                 (using the definition of D)
+                     2       2
+Now we bound each of the second and third terms above separately. Condition 1 in Assumption 4.1
+implies for each i ∈ [n],
+                 7/3       kq◦2/3 k2 qi
+                qi     ≤
+                               45       !
+                             P 4/3
+                                 qi       qi
+                             i∈[n]
+                       =
+                                     45
+                             T    ◦1/3
+                         [q (q      )]qi
+                       =
+                                45
+                         β 2/3 qi
+                       =          .                           (using the definition of β)
+                            45
+
+                                                     20
+The above chain implies that
+
+                                 β 2/3 q
+                            q◦7/3 ≤
+                                   45                                                            (7)
+                  3β 1/3 q◦7/3   βq
+               ⇐⇒              ≤     .          (multiplying both si
+PASSAGE 78265 of the entries. This is supported by computational results shown in Table
+7 which show the performance of ℓ2 -norm-diag. Each row in the table corresponds to 10 graph
+instances generated using the NFM in which the simplex distribution is chosen to be the Dirichlet
+distribution. We fix k = 3 and the Dirichlet parameter α = 0.3e. The first column denotes the
+size of graph, i.e. number of nodes n. The second column counts the ℓ2 -norm-diag success, i.e.
+the number of instances, out of 10, for which the number of recovered clusters is equal to the true
+number of clusters k such that the recovered clusters are disjoint and each recovered cluster contains
+all strong nodes (and possibly some fringe nodes) from exactly one ground-truth cluster.
+The theoretical and computational results regarding the performance of ℓ2 -norm-diag presented in
+this section lead us to make the following conjecture.
+Conjecture 4.5. Let G be a graph generated according to NFM in which the simplex distribution is
+chosen to be the Dirichlet distribution with constant parameter. Then with probability not converging
+to 0 as n → ∞, ℓ2 -norm-diag returns exactly k disjoint clusters V1′ , . . . , Vk′ such that, for each
+j ∈ [k]
+                                             Vjstrong ⊆ Vj′ .
+
+4.2 Proofs
+In this section we build a proof of Theorem 4.1. Our strategy is to demonstrate the desired structure
+in each of the submatrices of an optimal solution corresponding to a cluster. One key ingredient for
+
+                                                   19
+                                 Table 7: Performance of ℓ2 -norm-diag.
+
+                     Graph size (number of nodes)         ℓ2 -norm-diag success (/10)
+                                     60                                9
+                                     70                                8
+                                     80                               10
+                                     90                                9
+                                     100                               9
+                                     110                              10
+                                     120                               9
+                                     130                              10
+                                     140                              10
+
+
+this approach is to determine a point x such that
+                                           (W x)◦1/3 = x.
+However, note that the exact solution to the system
+                                               (qqT x)◦1/3 = q
+can be shown to be x = (βq)◦1/3 where β = [qT (q◦1/3 )]3/2 . Moreover, due to Assumption 4.1,
+W can be interpreted as a perturbation of the matrix qqT by matrices D and N thereby motivating
+the following lemma.
+Lemma 4.6. Let G = (V, W ) be a graph on n nodes satisfying conditions 1, 3, 4 in Assumption 4.1.
+Then the continuous function f : Rn → Rn defined as f (x) := (W x)◦1/3 maps the set
+                                                
+                          1           3
+                  S :=      (βq)◦1/3 , (βq)◦1/3 , where β = [qT (q◦1/3 )]3/2 ,
+                          2           2
+to itself.
+
+Proof. We will show that for any x ∈ S, each of f (x) ≥ (βq)◦1/3 /2 and f (x) ≤ 3(βq)◦1/3 /2
+holds separately. Pick any x ∈ S. We have
+      (W x)◦1/3 = (qqT x − Dx + N x)◦1/3
+                   1/3 T ◦1/3                 ◦1/3
+                    β qq (q      )
+                ≥                   − Dx + N x                    (using the lower bound on x)
+                          2
+                                  ◦1/3
+                    βq
+                =      − Dx + N x                                 (using the definition of β)
+                     2                                                                           (6)
+                                              ◦1/3
+                    βq 3β 1/3 D(q◦1/3 )
+                  
+                ≥      −                 + Nx                     (using the upper bound on x)
+                     2         2
+                                          ◦1/3
+                    βq 3β 1/3 q◦7/3
+                  
+                ≥      −             + Nx       .                 (using the definition of D)
+                     2       2
+Now we bound each of the second and third terms above separately. Condition 1 in Assumption 4.1
+implies for each i ∈ [n],
+                 7/3       kq◦2/3 k2 qi
+                qi     ≤
+                               45       !
+                             P 4/3
+                                 qi       qi
+                             i∈[n]
+                       =
+                                     45
+                             T    ◦1/3
+                         [q (q      )]qi
+                       =
+                                45
+                         β 2/3 qi
+                       =          .                           (using the definition of β)
+                            45
+
+                                                     20
+The above chain implies that
+
+                                 β 2/3 q
+                            q◦7/3 ≤
+                                   45                                                            (7)
+                  3β 1/3 q◦7/3   βq
+               ⇐⇒              ≤     .          (multiplying both sides by 3β 1/
+
+SOURCE cubic LENGTH 16713
+                                                            percolation on finite graphs
+
+
+
+
+arXiv:math/0106022v1 [math.PR] 4 Jun 2001
+                                                                           Itai Benjamini
+                                                                         January 16, 2001
+
+
+                                                                               Abstract
+                                                     Several questions and few answers regarding percolation on finite
+                                                  graphs are presented.
+
+                                                The following is a note regarding the asymptotic study of percolation
+                                            on ﬁnite transitive graphs. On the one hand, the theory of percolation on
+                                            inﬁnite graphs is rather developed, although still with many open problems
+                                            (See [9]). On the other hand random graphs were deeply studied (see [7]).
+                                            Finite transitive graphs are somewhat in the middle. Though a big part
+                                            of the picture is similar to the percolation on inﬁnite graphs theory, some
+                                            qualitative phenomena are diﬀerent and provides new challenges.
+                                                Recall that a graph G is transitive iﬀ for every two vertices v, u ∈ G, there
+                                            is an isomorphism of G, mapping v to u. See [4] or [9] for further background
+                                            and deﬁnitions.
+                                               Given a ﬁnite graph G, delete edges from G independently, each with
+                                            probability 1 − p. Denote by pG = pG
+                                                                               1/2 , the threshold probability for having
+                                            a connected component of size |G|/2. I.e.,
+                                                                                                        
+                                                   PpG There is a connected component of size ≥ |G|/2 = 1/2.
+
+                                               Note that for transitive graphs the threshold for having a large connected
+                                            component is sharp [5]. Write pG α for the threshold probability for having a
+                                            component of size α|G|, with probability 1/2.
+
+
+
+
+                                                                                   1
+1     Giant component
+A giant component theorem will be proven under a weak concentration of
+measure assumption. A family of graphs Gn , |Gn | ր ∞, admits a weak
+concentration of measure, if for every C > 0, and every two sets of vertices
+An , Bn ⊂ Gn , |An |, |Bn | ≥ C|Gn |,
+
+                         d(An , Bn ) = o(diameter(Gn )).
+   Assume also that diameter(Gn ) ≤ C log |Gn | and that K is a uniform
+upper bound on the degrees of Gn .
+Theorem 1.1. Let Gn is a sequence of graphs satisfying the conditions above,
+then for every ǫ > 0 and 0 < C < 1,
+                                                                 
+   PpGn +ǫ There is a unique connected component of size ≥ C|G| −→ 1,
+
+as n goes to infinity.
+Proof. It is enough to show that given any two set An , Bn ⊂ Gn , |An |, |Bn | ≥
+C|Gn |, C > 0, and ǫ > 0, if we do ǫ percolation on Gn , there will be an open
+path from An to Bn ,with probability going to 1, with n. We will show that
+there are an exponential number, in the diameter(G), edge disjoint paths of
+length o(diameter(G)) connecting An to Bn . Indeed for every vertex in An
+look at it’s shortest paths to Bn , as n grows for most of the vertices of An
+their shortest path to Bn , has length which is o(diameter(G)), so we get a
+set of paths of size bigger than |An |/2, with length much smaller than the
+diameter, denoted by ln . Now for a ﬁxed l, the number of paths of length
+l, that intersects a paths of length m in Gn , is bounded by m × K l . Which
+implies that there are more than,
+                                       |An |
+                                    2ln × K ln
+disjoint paths of length smaller than ln between An and Bn . Each path
+has probability ≥ ǫln to be open, independently from the other paths. The
+probability of having no open paths is bounded then by,
+                                             |An |
+                                (1 − ǫln ) 2ln ×Kln .
+
+Pick n large to ﬁnish.
+
+                                         2
+    The above concentration condition is clearly satisﬁed by expanders and
+other families of graphs, but not by all transitive graphs of logarithmic di-
+ameter. E.g., let G′n be the product Gn × Cdiameter(Gn ) , where Cn is a cycle
+of length n, and Gn satisfy the above assumptions.
+   One would expect that concentration of measure is not necessary, but
+then we assume that the graphs are transitive.
+
+Conjecture 1.2. Assume Gn is a sequence of finite transitive graphs with
+|Gn | ր ∞. Then for every ǫ > 0 and C > 0,
+                                                              
+  PpGn +ǫ There is a unique connected component of size ≥ C|G| −→ 1,
+
+as n goes to infinity.
+
+    The conjecture is true for a large Euclidean torus by the Grimmett-
+Marstrand theorem [6].
+    The following proposition (due to Oded) is of independent interest. Con-
+sider percolation on a ﬁnite Cayley graph,
+
+Proposition 1.3. Assume
+
+           Pp (v is in a connected component of size ≥ C|G|) = q.
+
+Then for every u ∈ G,
+
+      Pp (v and u are in the same connected component) ≥ (Cq/2)6/qC .
+
+Proof. The expected number of vertices v is connected to, is bigger or
+equal to qC|G|. Thus there are more than qC|G|/2 vertices u which are
+connected to v with probability ≥ qC/2. Let S be the set of these vertices.
+S is symmetric and generating, since it contains v neighbors. By FKG it is
+enough to show that the diameter of the group using S as a generating set is
+bounded by 6/qC. Assume a1 a2 .....al is a shortest word, in the generators S,
+representing an element of the group. It follows that for any k and l, divisible
+by 3, a1 a2 ...ak g 6= a1 a2 ...al g ′ for any g, g ′ ∈ S. Otherwise one can reduced
+the length of the word. We get that l/3 × |S| ≤ |G| i.e. l ≤ 6/qC.
+
+
+
+
+                                         3
+2    Threshold bounds
+In light of the theorem and the conjecture, (which suggests a further study in
+the spirit of random graphs theory, e.g., components size and scaling around
+the birth of the giant component etc. see [7]), it will be useful to have
+upper bounds on pG , guaranteeing the threshold is not converging to 1. The
+techniques mentioned in this section are similar to the inﬁnite graphs case.
+    [2] gives a bound in terms of the length of the longest relation in the
+presentation of the group. Theorem 2 in [4] can be adapted to ﬁnite graphs,
+and will provide a bound in terms of the isoperimetric constant of the graph,
+guaranteeing that the threshold is not converging to 1 for expanders. These
+bounds together do not provide a sharp condition for boundedness away from
+1. We suspect the following condition is sharp.
+
+Conjecture 2.1. Assume that G is a transitive graph. There is a constant
+C < 1, so that if
+                                        |G|
+                      diameter(G) <           ,
+                                      log |G|
+then pG < C.
+
+    Maybe the classiﬁcation theorem for simple groups can be useful in at-
+tacking the conjecture, even just for Cayley graphs. A good start might be
+Cayley graphs of Sn .
+    One way to prove an upper bound on the threshold for a graph G, is to
+ﬁnd a known percolating graph spanning a linear portion of G. Another is
+to use measures on paths with exponential intersection tail (EIT ).
+   Say a graph G, has the EIT (c), 0 < c < 1, property iﬀ for any two
+vertices u, v ∈ G, there is a set of paths, Suv , from v to u, and a measure on
+the paths so that if you pick two paths independently at random from Suv ,
+then the probability that the two paths will have more than k intersections
+decays faster than ck .
+   A second moment argument (done in the inﬁnite graph setting in [3])
+implies that if G has the EIT (c) property, for some c < 1, the threshold for
+giant component will be bounded away from 1.
+   Oriented paths on Z4 , provide a family of such paths for (Z/nZ)4 . ( For
+(Z/nZ)3 , it is harder to construct paths with exponential intersection tail,
+and appears in [3].
+
+
+
+                                      4
+Conjecture 2.2. Let G be a finite transitive graph. There is 0 < c < 1,
+such that if
+
+                            diameter(G) < |G|1/3 ,
+then G admits the EIT (c) property.
+   Adaptation of the argument in [8] gives that if diameter(G) < C log |G|,
+then G admits the EIT (c) property (with c depending on C).
+   If conjecture 2.2 is true, it will also imply the following a bit unrelated
+conjecture.
+Conjecture 2.3. Let G be a finite transitive graph. There is R < ∞, such
+that if
+
+                            diameter(G) < |G|1/3 ,
+then the effective electric resistance between any two vertices in G is smaller
+than R.
+   A natural conjecture sharpening theorem 2 of [4] is as follows. Given a
+graph G, let
+
+           δ(G) = sup{α||∂S| ≥ |S|α, for all S ⊂ G, |S| ≤ |G|/2}.
+
+Conjecture 2.4. If δ(G) > δ > 0, then pG < f (δ) < 1.
+
+
+3     Percolation implies giant component?
+Conjecture 2.1 above is a ﬁnite analog of the still open conjecture from [4],
+that the critical percolation probability is strictly smaller than 1 on inﬁnite
+Cayley graphs of groups which are not ﬁnite extension of Z. We now move
+to discuss the percolation probability function.
+    Note that in [2] it was conjectured that there are no inﬁnite connected
+component for critical percolation on inﬁnite transitive graphs and one expect
+that the percolation probability function should be continuous, (see [11]). It
+is therefore natural to conjecture that for a sequence of ﬁnite transitive graphs
+Gn −→ G, then for any 0 < α1 < α2 < 1,
+
+                              pG     Gn
+                               α1 − pα2 → c > 0.
+                                 n
+
+
+
+
+                                       5
+I.e. the thresholds for connected component of diﬀerent proportion stay
+apart. In the last section we discussed bounds on pG , i.e. birth of a compo-
+nent of half the size. In this section we discuss the birth of components of
+linear size.
+    Assume the transitive graphs Gn converges weakly to the inﬁnite graph
+G and {pGn }n are bounded away from 1. Let θn (p) be the probability a
+ﬁxed vertex is in the largest component, and θ(p) be the probability a ﬁxed
+vertex in G is in an inﬁnite cluster. As usual pc (G) is critical probability for
+percolation on G.
+Question 3.1. Does
+                                θn (p) −→ θ(p)?
+And in particular
+                             lim lim pG
+                                      α = pc (G)?
+                                        n
+                             α→0 n
+
+    For example, assume Gn has growing girth and all vertices has the same
+degree, say 3, and {pGn }n are bounded away from 1. Hence Gn −→ T3 , the
+3-regular tree. Recall that pc (T3 ) = 1/2, that is the critical probability for
+percolation on T3 is 1/2. We have,
+Conjecture 3.2. For every p > 1/2 there is some Cp > 0, such that
+                                                             
+    Pp There is a unique connected component of size Cp |Gn | −→ 1,
+as n −→ ∞.
+    An example that supports the conjecture is as follows, start with a cycle
+of n vertices. Pick uniformly a random matching between the vertices on the
+cycle. Add an edge between any matched pair. Around a typical vertex this
+graph (a typical sample) looks like a regular tree for more than 1/10 log n
+generations, and indeed as n grows the threshold for the existence of a giant
+component goes to 1/2.
+    Of independent interest, we expect the largest components at the thresh-
+old to be of size O(n2/3 ) as in the critical random graphs G(n, 1/n) and
+probably in critical percolation on expanders. In particular we conjecture
+that for percolation with p = (k − 1)−1 on a random k-regular graph (that’s
+the threshold). The largest components is of size O(n2/3 ).
+    Another supporting example is the theorem in [1] asserting that the
+threshold for a giant component on the hypercube {0, 1}d, is 1/d. Con-
+jecture 3.1 is true for a large Euclidean torus by the Grimmett-Marstrand
+theorem [6].
+
+                                       6
+     Note that, if Bn are growing balls in a nonamenable Cayley graph G,
+assuming the conjecture (from [4]) that pc (G) < pu (G), then the threshold
+for connected component of linear size in Bn will converge to pu rather than
+pc .
+     Intuitively the content of the last two conjectures is as follows: On inﬁ-
+nite transitive graph percolation means having unbounded connected com-
+ponents, and uniqueness of the inﬁnite cluster is the analog of existence of a
+giant component. We doubt, whether on ﬁnite transitive graphs component
+of large diameter can occur and moreover contain portion of the vertices,
+without having a giant component. One informal reason we have, is that
+unlike inﬁnite graphs (e.g. regular trees) ﬁnite transitive graphs do not have
+bottlenecks, unless they contain an irreducible cycle, proportional in size to
+the graphs, (as in Cn × G, where Cn are growing cycles and G is a ﬁxed ﬁnite
+graph). An argument using ﬂows (see for instance [10]) gives that the Cheeger
+constant of a ﬁnite transitive graph, h(G), satisﬁes h(G) ≥ diameter−1 (G).
+Remark: (On limits of transitive graphs, by Russ and Yuval) Every weak
+limit of ﬁnite transitive graphs (or even of unimodular inﬁnite transitive
+graphs) is unimodular transitive. This is from the fact that there is a uni-
+modular group acting transitively on the limit graph, namely, the group of
+automorphisms that arise as limits of automorphisms. This group is unimod-
+ular by the criterion of Troﬁmov [12].
+    Let us end by saying that there are further directions to pursue, e.g.,
+compare mixing times of random walks on the giant component to mixing
+times on the graph. Maybe one should start with a further study of the
+geometry of ﬁnite transitive graphs e.g., what asymptotic diameters possible
+for ﬁnite transitive graphs, or cutsets structure.
+Acknowledgments: Thanks to Russell Lyons, Igor Pak, Yuval Peres and
+Oded Schramm for useful discussions.
+
+
+References
+    [1] Ajtai, M., Komlos, J. and Szemerdi, E., Largest random component
+        of a k-cube. Combinatorica 2 (1982), no. 1, 1–7.
+
+    [2] Babson, E. and Benjamini, I., Cut sets and normed cohomology with
+        applications to percolation. Proc. Amer. Math. Soc. 127 (1999), no.
+        2, 589–597.
+
+                                      7
+ [3] Benjamini, I., Pemantle, R. and Peres, Y., Unpredictable paths and
+     percolation. Ann. Probab. 26 (1998), no. 3, 1198–1211.
+
+ [4] Benjamini, I. and Schramm, O., Percolation beyond Zd , many ques-
+     tions and a few answers. Electron. Comm. Probab. 1 (1996), no. 8,
+     71–82 (electronic).
+
+ [5] Friedgut, E. and Kalai, G., Every monotone graph property has a
+     sharp threshold. Proc. Amer. Math. Soc. 124 (1996), no. 10, 2993–
+     3002.
+
+ [6] Grimmett, G. R. and Marstrand, J. M., The supercritical phase of
+     percolation is well behaved. Proc. Roy. Soc. London Ser. A 430 (1990),
+     no. 1879, 439–457.
+
+ [7] Janson, S., Luczak, T. and Rucinski, A., Random graphs. Wiley-
+     Interscience Series in Discrete Mathematics and Optimization. Wiley-
+     Interscience, New York, 2000. xii+333 pp.
+
+ [8] Lyons, R., Random walks and the growth of groups. C. R. Acad. Sci.
+     Paris Sr. I Math. 320 (1995), no. 11, 1361–1366.
+
+ [9] Lyons, R., Phase transitions on nonamenable graphs. Probabilistic
+     techniques in equilibrium and nonequilibrium statistical physics. J.
+     Math. Phys. 41 (2000), no. 3, 1099–1126.
+
+[10] Saloﬀ-Coste, L., Lectures on ﬁnite Markov chains. Lectures on prob-
+     ability theory and statistics (Saint-Flour, 1996), 301–413, Lecture
+     Notes in Math., 1665, Springer, Berlin, 1997.
+
+[11] Schonmann, R. H., Stability of inﬁnite clusters in supercritical per-
+     colation. Probab. Theory Related Fields 113 (1999), no. 2, 287–300.
+
+[12] Troﬁmov, V. I., Groups of automorphisms of graphs as topological
+     groups. (Russian) Mat. Zametki 38 (1985), no. 3, 378–385, 476.
+
+
+
+
+                                   8
+

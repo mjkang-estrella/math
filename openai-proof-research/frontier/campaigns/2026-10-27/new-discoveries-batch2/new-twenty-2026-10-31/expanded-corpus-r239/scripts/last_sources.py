@@ -1,0 +1,3 @@
+import pathlib,json,importlib.util
+D=pathlib.Path(__file__).resolve().parents[1];sp=importlib.util.spec_from_file_location('lh',D/'scripts/http.py');h=importlib.util.module_from_spec(sp);sp.loader.exec_module(h)
+for key,url in [('2605.04859.abs.html','https://arxiv.org/abs/2605.04859'),('2605.04859.pdf','https://arxiv.org/pdf/2605.04859'),('itcs2026-90.html','https://drops.dagstuhl.de/storage/00lipics/lipics-vol362-itcs2026/html/LIPIcs.ITCS.2026.90/LIPIcs.ITCS.2026.90.html'),('itcs2026-90.pdf','https://drops.dagstuhl.de/storage/00lipics/lipics-vol362-itcs2026/LIPIcs.ITCS.2026.90/LIPIcs.ITCS.2026.90.pdf')]:h.get(key,url)

@@ -1,0 +1,6 @@
+# DORMANT — no dispatch
+No qualified new candidate, so no Lean work is authorized or started here. No FULLCANDIDATE.md was created and no acceptance is requested.
+For343634 first prove the whole-block/endpoint prescribed-minor splitter for integer polymatroid rank functions, including empty N; source2026 slice connectivity alone is insufficient.
+For331065 first prove the simultaneous arbitrary-transversal disjoint branch-set augmentation, not merely two-color linkage or a freely chosen root theorem. Read1911.09998 actual proofs first.
+For334518 first obtain an exact all-positive-real-lambda inequality with full graph definitions and local probability bridges, or an authenticated explicit violating graph and exact rational inequality. No numerical certificate qualifies.
+Only after an ordinary full proof, source final/correction audit and bounded current prior qualification should root commission a GPT-6.1Sol high/default formal task. It must state the entire literal or exact negation, implement every bridge and definition, pin dependencies, audit only propext/Classical.choice/Quot.sound, obtain independent fidelity/significance review, source-only strict replay and paper. No code/compiler/formalAPI run in this lane.335867 source-own and336931 correction receive no formal discovery routing.

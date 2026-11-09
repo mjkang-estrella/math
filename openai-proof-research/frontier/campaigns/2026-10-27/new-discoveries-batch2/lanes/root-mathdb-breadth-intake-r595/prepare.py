@@ -1,0 +1,22 @@
+import pathlib
+P=pathlib.Path(__file__).resolve().parent
+s=(P/'frozen/root-mathdb-breadth-intake-r593/verify.py').read_text()
+s=s.replace('root-mathdb-breadth-intake-r591','root-mathdb-breadth-intake-r593').replace('root-mathdb-breadth-intake-r589/reserved-ids.json','root-mathdb-breadth-intake-r591/reserved-ids.json')
+s=s.replace('sol-mathdb-primary-qualified-breadth-r590','sol-mathdb-primary-qualified-breadth-r592').replace('sol-mathdb-primary-qualified-breadth-r594','sol-mathdb-primary-qualified-breadth-r596')
+s=s.replace("7268,'486763e97eeb74cf7b1a336630cc211f784cfe1def3c1da6a05ab056ff87e77d'","4027,'0cfbb20618cca7a80132f2ac1e909d3c9f9e0c7111a4a15d1505115fde95e0de'")
+s=s.replace("d['statement']==r['statement']","d['literal_statement']==r['statement']")
+s=s.replace('5783','5833').replace('5733','5783')
+start=s.index(" (P/'DECISION.md').write_text(");end=s.index('\n files=[]',start)
+decision='''# Root r595 reconciliation
+
+Reconciled r592: fifty disjoint literal record reviews, zero proposals or credit. Cumulative coverage is 5,833 record reviews, not complete-statement or whole-corpus technical coverage. Preserve 28 statement-level screenings and 22 scope-restoration judgments without upgrading them to source-complete mathematics.
+
+401943 reported excluded by Lendl–Peis–Timmermans published arbitrary-two-matroid equality-intersection algorithm, Section 3/Theorem 3; selected primary and successor sections read, Appendix B/external dependencies not replayed. 401599 is only a search-level later-proof lead, body HOLD. Literal density/optimization/infimum defects in 400638/400762/401436 do not earn credit. No scientific acceptance or current novelty clearance.
+
+Four lawful fetches succeeded; metadata-only pages and PDF content-type mismatch explicitly retained. Parked routes not retried. Root performs administrative integrity/corpus reconciliation only, never upstream or mathematical checkers. All adjudications unchanged.
+
+Sol r594 continues. Fifty fresh disjoint records reserved for Sol r596. Claude r504 remains rate-limited with fifty reserved unreviewed IDs. No user input pending. Counts remain 9 additional / 39 total / next 40.
+'''
+s=s[:start]+" (P/'DECISION.md').write_text("+repr(decision)+")"+s[end:]
+(P/'verify.py').write_text(s)
+print('prepared')

@@ -1,0 +1,1 @@
+Lean 4.34.1; mathlib pin d13f23b723b8a846827a245b89c10fc7d3f11612. Run python replay.py using the read-only compatible package tree specified there. One CPU, at most 12GiB address space, 180 second timeout. No package rebuilding. Warning-as-error is enabled. Endpoint and bridges: PROOF.md. Zero discovery credit: routine primary-theorem corollary.

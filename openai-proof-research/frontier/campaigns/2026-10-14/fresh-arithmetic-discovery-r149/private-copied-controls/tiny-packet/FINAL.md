@@ -1,0 +1,15 @@
+# Arithmetic discovery r149 — PREFREEZE / no nominee
+
+No theorem was frozen and no author-proof nominee is submitted. Parent alone determines adoption, grades and count. Source050 and ALL operative upstream proofs at fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb remain stipulated true. All older full targets/dispositions stay unchanged.
+
+The round retains two concrete integrated calculations. First, for the actual source matrices, an explicit smooth Lyapunov function for AB and its three A-translates gives a finite two-coboundary certificate with algebraic positive lower bound c_dyn=2(1−r^−4)/(27(4/9+2√2/3)²), approximately0.03543. This bounds the invariance defects of EVERY finite positive measure, including atoms; it quantitatively pays the dynamical obstruction.
+
+Second, the entire power-map trace construction was carried through for continuous psh squared complex norms. Uniform fiber Lipschitz control, countable-vector extraction and radial base convolution retain a nonzero convex seminorm at EVERY fiber, including the graph divisor. The actual nodal graph inclusions and logarithmic line-curvature proof still apply. Liu–Wan's fully read continuous polar construction fits this interface for smooth semipositive original-bundle Finsler metrics. This compatible source/primary composition is retained as prefreeze payment, not a weaker substantial nominee or an old-scope retry.
+
+The effective geometric interface remains unpaid. No uniform finite-m estimate turns normalized traces into positive measures with controlled pairings against the two explicit coboundaries, and no source-specific smooth separable adjoint certificate with an explicit strict coefficient was constructed. The dual line columns(1,0),(h,d) coalesce at D: inversion loses |d|^−2, or |uv|^−2 at a node. Their negative degrees also fail the positive-line-degree hypothesis of the strongest split primary obstruction. A bounded-psh diagonal example shows why convergence alone supplies no restriction rate; it is not a counterexample to the stipulated source. No effective m0, every-small-m exclusion, arbitrary singular-metric conclusion or impossibility is claimed.
+
+Durable derivations are notes/01-operative-map.md, notes/02-dynamical-certificate.md and notes/03-convex-limit-and-boundary-interface.md. All eight canonical TeX/Bib bodies were authenticated/read in full. The actual strongest primary operations and relevant original sections, exact reading extents, truncation recoveries, late reads, transitive/version limits, false admissions and coarse omissions are recorded in READING-ISOLATION.md. No active-peer material was inspected.
+
+The selected local packet is sealed once with its own manifest and detached FINAL/MANIFEST/outside REPORT anchors in ANCHORS.json. The explicit-anchor verifier and tiny copied controls check artifacts only. No downstream formal/manuscript/release or public action occurred.
+
+Provenance: research sub-agent; Codex / GPT-6 Astra / high / default service tier;2026-10-21.

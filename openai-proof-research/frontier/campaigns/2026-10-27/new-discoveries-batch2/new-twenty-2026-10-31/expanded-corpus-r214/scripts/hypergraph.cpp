@@ -1,0 +1,6 @@
+#include <bits/stdc++.h>
+using namespace std;
+int n; vector<int> es;unordered_set<unsigned long long> fail;
+bool dfs(int used,int v,int start,int full){if(used==full)return v==start; auto key=((unsigned long long)used<<4)|v;if(fail.count(key))return false;for(int j=0;j<(int)es.size();j++)if(!(used>>j&1)&&(es[j]>>v&1))for(int w=0;w<n;w++)if(w!=v&&(es[j]>>w&1))if(dfs(used|1<<j,w,start,full))return true;fail.insert(key);return false;}
+bool tour(){int full=(1<<es.size())-1;for(int s=0;s<n;s++)if(es[0]>>s&1){fail.clear();for(int v=0;v<n;v++)if(v!=s&&(es[0]>>v&1))if(dfs(1,v,s,full))return true;}return false;}
+int main(int argc,char**argv){n=atoi(argv[1]);int k=atoi(argv[2]);vector<int> all;for(int b=0;b<(1<<n);b++)if(__builtin_popcount((unsigned)b)==k)all.push_back(b);long long checked=0,cover=0;for(int mask=0;mask<(1<<(int)all.size());mask++){if(__builtin_popcount((unsigned)mask)<2)continue;es.clear();for(int j=0;j<(int)all.size();j++)if(mask>>j&1)es.push_back(all[j]);bool ok=true;for(int a=0;a<n;a++)for(int b=a+1;b<n;b++){bool hit=false;for(int e:es)if((e>>a&1)&&(e>>b&1))hit=true;if(!hit)ok=false;}checked++;if(!ok)continue;cover++;if(!tour()){cout<<"COUNTEREXAMPLE "<<n<<" "<<k<<" mask "<<mask<<endl;return 2;} }cout<<"n="<<n<<" k="<<k<<" labelled_edge_sets_at_least_two="<<checked<<" 2_covering="<<cover<<" failures=0"<<endl;}

@@ -1,0 +1,5 @@
+Canonical proof replay: `python3 -I scripts/replay.py` from this lane, using a new empty fresh-extraction directory. The delivered fresh-extraction directory is the completed checked replay and must not be silently reused. To repeat, copy the packet and replay scripts into a fresh lane-local directory and adjust their local root together, or choose a new build-directory name explicitly in the script. Dependencies remain read-only.
+
+The checked proof sources are precisely those in 338258-proof-source.zip. package.py deterministically creates the archive from canonical formal sources. Core uses primitive Nat.rec so that generated local declarations are safe and total. The earlier formalgen.py, split_formal.py and add_semantics.py document development steps; they are not the canonical regeneration/replay path. outputs/monolithic-development.lean is an unsuccessful historical monolith, not part of the proof packet.
+
+All mathematical/numerical scripts must be invoked under limited.py. Full process outputs and cap receipts are in logs/. Searches and finite computations are diagnostics unless superseded by the literal Lean endpoint.

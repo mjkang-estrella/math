@@ -1,0 +1,21 @@
+# r76 partial research dossier — zero accepted credit
+
+Campaign count remains9/20 beyond39 prior. No ledger, historical report or shared index was edited. All writes are within this lane. No git, child agents, browser tabs, external messages or publication.
+
+A candidate refutes **MathDB380362**, the printed Drápal–Vojtěchovský Conjecture11.2: two explicitly defined Moufang loops of order16 have inequivalent associators but multiplication-table distance64, below3·16²/8=96. One operation is componentwise addition on F₂⁴; the other is a cubic central extension. See `LOOP-ORDINARY-PROOF.md`, `formal/Loop.lean` and `380362-proof-source.zip`.
+
+The endpoint `Loop380362.source_refutation : ¬ Loop380362.SourceClaim` includes identity, both unique division properties, the exact source Moufang identity, the actual associator equations, inequivalence under identity-preserving bijections, exact cardinality and exact table distance. It is not a bounded diagnostic used as an arbitrary predicate.
+
+Validation: fresh source-only ZIP extraction rebuilt with Lean4.34.1, `-j1 -DwarningAsError=true`; `leanchecker Loop` passed; all28 local declarations, including generated declarations found by module inventory, passed transitive axiom/unsafe/local-axiom audit. Only propext, Classical.choice and Quot.sound occur. Logs and cap receipts are in `logs/fresh-{loop,kernel,audit}.*`; bindings are in `verification.json`. Upstream cached oleans and their summaries remain trusted, and no full mathlib rebuild/source-to-olean attestation is claimed. leanchecker shares the Lean installation/kernel.
+
+**Qualification remains open.** The journal PDF route returned HTTP200 with a challenge page, not a PDF, and was not retried. The author manuscript repeats the conjecture; selected later author bodies and catalogues inspected did not supply this precise refutation. The underlying small Moufang-loop isomorphism type is classical. No worldwide novelty, first-resolution priority, substantive-significance verdict or root acceptance is claimed. Independent source-fidelity and novelty/significance review are required. The strict-quarter isomorphism conjecture380361 is untouched because distance is exactly one quarter.
+
+`results.json` contains exactly40 ID-keyed entries, each with literal statement, raw source/chunk/line hashes, review limits and outcome. `raw/` preserves exact source JSONL lines including newline. `sources/` contains all38 distinct original primary PDFs, text extractions, later sources, live registry JSON and dated URL/status/hash receipts. `outputs/primary-passages.json` is a navigation aid, not proof that every source definition has been completely recovered.
+
+Five source/primary-body exclusions were identified:380378 (real disc algebra stable rank),380504 (zero-endpoint transfinite diameter),381227 (polynomial spectral-radius lower bound),381451 (Alfaro networks),381520 (firefighter lower bound). Other public claims/partial theorems are retained as scope-limited leads, not categorical exclusions.
+
+Live registries: OpenAI/math HEAD4eaee87548250b2682affda7d05d947c05554bae; Omega default HEAD53fc9dd4fd39fca4890eec67ac71df4df30ad829. Both fetched via `/commits/HEAD`. Complete nontruncated preprints,D5,Problems trees were retrieved and bounded path-screened; there is a Gepner hit for381162. This is not an all-proof-body semantic screen or a deleted-history audit.
+
+Sustained routes: the loop counterexample; exact source Weyl-layer computation for381870 plus an unresolved all-rank subset-cost lemma (`WEYL-ROUTE.md`); and381227, stopped after finding its explicit published proof and exact polynomial bridge. Further exact finite diagnostics cover weak Carmichael pairs, CNF autarkies, ternary cyclotomic heights and consecutive prime powers. See `SEARCH-COVERAGE.md` and reproducible scripts/full logs.
+
+**This is not a completed several-hour40-problem pass.** Faithful finite searches for380697,381183 and381468 remain unimplemented (zero instances), and full primary-definition/later-journal comparison remains incomplete for several parked entries. These omissions are explicit, not counted as completed technical coverage. The dossier is useful for review/continuation, but does not satisfy every breadth/depth obligation of TASK.txt. No accepted solution is added.

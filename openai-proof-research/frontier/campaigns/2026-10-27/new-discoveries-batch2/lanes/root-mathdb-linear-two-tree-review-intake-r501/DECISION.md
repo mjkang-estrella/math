@@ -1,0 +1,9 @@
+# MathDB 337963: reported mathematics passes; prior and substantive HOLD
+
+Retain the independent r498 review as an ordinary mathematical PASS report, not an accepted discovery. The primary explicitly supplies Definition 45 for general linear 2-trees: r480's claim that the definition was absent was a reading error. r498 supplies the normal-form argument, corrects triangle adjacency versus full incidence terminology, handles K3/diamond, and audits the cut/diameter/energy argument for the intended unit-resistance class. Root does not replay mathematical checkers.
+
+Acceptance and substantive eligibility remain HOLD. The potentially new content is the diameter-controlled extraction of disjoint cuts, not Nash-Williams or the source-definition correction. The obtained bent-tree and two-forest bodies cover one bend and do not by themselves settle arbitrary bends. Remaining closest bodies: Barrett–Evans–Francis, LAA 606 (2020), 41–67, DOI 10.1016/j.laa.2020.06.031; Evans–Francis, reported RMJM 56(1) (2026), 123–135, DOI 10.1216/RMJ.2026.56.123. Their actual statements, proof applicability, and chronology require lawful qualification. Metadata is not a subsumption bridge.
+
+Assign a separate focused source/prior/substantive review to Sol r502. No Lean/manuscript investment. Do not bypass inherited denied routes or treat absent search hits as clearance. If bodies remain unavailable, preserve a precise HOLD and return the slot to breadth. Do not re-run the completed finite structural check or broaden into unrelated targets.
+
+Preserve the review's pre-freeze administrative manifest-display deviation. Root verifies exact payload and actual frozen/original references; integrity is separate from scientific and procedural clearance. Counts stay 9 additional / 39 total / next 40; coverage stays 3,683 reported reviews. Claude r494 voting review and Sol r500 breadth continue. 339564 retirement and 372627 exclusion unchanged.

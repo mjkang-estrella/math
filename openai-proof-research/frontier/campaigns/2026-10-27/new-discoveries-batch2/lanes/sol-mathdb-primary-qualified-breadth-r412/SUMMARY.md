@@ -1,0 +1,23 @@
+# r412 reserved-fifty screen
+
+**Zero qualified briefs; zero discovery credit.** Exactly the fifty r411 reserved records received literal-statement review and individual dispositions. Counts stay **9 additional / 39 total / next 40**. No Lean or manuscript work.
+
+The input freeze bound 268 flat SHA256/size references before any scientific or historical content was read. These include the r411 manifest, bindings, actual originals, coverage, queue and reservation; r304 accepted-family/history records; r363 Cayley disposition; campaign context; and all twenty actual r301 corpus chunks. All chunks were verified in place against the r301 manifest. No corpus or historical evidence tree was copied or expanded. Root manifest checks were read-only; its receipt-writing verifier was not executed. Other reservation contents were not scientifically inspected.
+
+The assignment is exact-set checked and disjoint from 1,683 reviewed IDs, the other fifty reserved IDs, and 372627/372628/368940. `records.json` preserves the fifty original records. `dispositions.json` gives every literal statement, UTF-8 statement hash, canonical-record hash, exact source URL, scope, individual reason, evidence level, prior limits and credit zero. `proposals.json` is an empty array.
+
+Primary-source passages were read for 37 records (including the complete three-page scanned statistical-geometry original, visually); the referenced MathOverflow answer was read as context for one. Twelve have no primary-body review: eight soap-geometry records whose one shared request timed out, three Wikipedia geometry entries, and the ordinal-analysis entry. These are source HOLDs, not assertions of hardness or ineligibility. All other no-mechanism decisions are provisional parking decisions, not claims that those questions remain open today.
+
+Notable exclusions and scope traps:
+
+- **388829:** Kapovich Problem 97, Remark 33 already reports undecidability for unrestricted finite complexes and supplies the punctured-manifold reduction. Recorded as a **source-reported resolution**, not an independently audited theorem or new result. The nearby balanced-presentation question is distinct.
+- **388986:** Karpenkov Problem 5 asks for all exceptional higher-codimension strata; the two-vertex planar collision is explicitly already supplied. Definitions 1.1–1.3 and the printed example were read. New small instances would not finish the classification.
+- **388818:** The coherence definition follows the broad new-restrictions question and introduces the next problem. It does not define a new coherence conjecture for this ID.
+- **388887 / 388901:** Gromov's actual body restores a missing inequality reference and truncated K-area scope. Fixing those record defects earns no credit. Nearby spin/index proof passages were inspected; no full extension is claimed.
+- **389084:** Shelah E103 version 2022-10-11 2 was read beyond the abstract: Question 0.1, Fact 1.1 proof, Theorem 1.2 and its case discussion, and the opening construction for Theorem 2.1. Explicit exceptional cardinal cases remain; no complete proof/dependency audit or current resolution claim.
+
+No promising cheap mechanism survived the full-scope screen. No sweeps, circulants, formal-chain continuation, inherited failed AIM/Kourovka/EGRES route retries, or successor-proof investment occurred. There are no qualified leads whose closest successor bodies or certificate size could responsibly be asserted. An original problem-list paragraph is distinguished from a proof section; selected proof reads above do not constitute dependency audits. Current public registry clearance remains **HOLD**, unattempted; neither open labels nor empty solutions supply novelty evidence.
+
+Public-source bytes, exact request/final URLs, UTC access times, versions where visible, hashes and sizes are retained in `evidence/` provenance files before extraction. The soap request timeout was not retried. The scanned journal PDF produced blank text; rendered originals were read instead. `failures.json` preserves gaps. Zero MathDB, Google, GitHub, ScienceDirect or browser requests; no accounts, messages, publishing, uploads, TLS bypass or denied-route retry.
+
+`verify.py` separately rechecks all frozen originals, the twenty chunks, the fifty literal/canonical hashes against actual corpus records, assignment/disjointness, source byte hashes and exact payload set. It exits nonzero on mismatch and writes only this lane's `finalreceipt.json`. All Python helpers were invoked through the fixed 512 MiB AS/group-RSS, CPU 210 s / wall 230 s guard, with the specified environment. No guard limit was raised. This is bounded screening evidence, not exhaustive technical coverage or mathematical acceptance.

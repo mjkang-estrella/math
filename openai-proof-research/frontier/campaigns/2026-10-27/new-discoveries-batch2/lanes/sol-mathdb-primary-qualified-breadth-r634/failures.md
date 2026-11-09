@@ -1,0 +1,13 @@
+# Failures, stops and limits
+
+No new HTTP 403/429 received; zero direct MathDB requests. One public PMC fetch succeeded with generic User-Agent/Accept; no identity, workspace data or contact sent. Web search returned incidental restricted-domain results; none opened. No Google/GitHub API/raw/codeload/diff, ScienceDirect, browser/preview or TLS bypass used. No external communication/publication, git, shared edits or children.
+
+All inherited stops remain parked: MathDB429, AIM/Kourovka/EGRES/AIProofWatch, DMGT TLS, ProjectEuclid challenge, ResearchGate403, OEIS A274199/internal403 and DOI10.1093/imrn/rnz305 academic.oup.com403 Cloudflare. Registry unavailable: HOLD; search results and cached snapshots cannot establish current absence of prior proofs.
+
+Several large tool displays were truncated: the initial intake structures, complete-record combined display, combined source-window display, Ohtsuki selected-passages display and broad Agol keyword display. Exact retained files are intact. All 50 literal statements were subsequently displayed separately without metadata; missing 389794/389800 windows were reread. Ohtsuki diagram identities remain unreconstructed. Four rows have no primary-body reading. Selected passages never imply whole-body review. Cached sources were bound before reading; no new PDF extraction or visual work was performed.
+
+The Burnside HTML extraction omits image equations and diagrams. The text says its proofs are outlined; this is not a full proof or dependency clearance. The (2,2)-to-rational-slope bridge remains unreplayed. Public-resolution objections are screening dispositions, not independent mathematical validation.
+
+No new mathematical finite sweeps were performed. Stopped potential shortcuts: small determinant/signature searches preempted by primary remarks, torus-knot equality already known, S^3 literal LMO tautology excluded as a wording correction. No substantial hypothesis remains for delegation. The r304 and ledger scan is exact-ID administrative comparison plus selected contextual reading, not complete semantic exclusion of every accepted family. Zero proposals means no claimed prior clearance.
+
+338366 remains credit-excluded with text/figure reconstruction and unread-journal limitations. 338408 parked. Claude r628 reservation HELD and untouched; Sol r632 reservation preserved; no live polling. Every helper/Python computation, including administrative hashing, ran under the fixed helper_guard.py with unchanged 512MiB/CPU210s/wall230s limits and required environment. Negative tests alter only in-memory verifier inputs, never originals.

@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-08T12:31:38.897389+00:00",
+  "name": "history_and_statements",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r473",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nfrom pathlib import Path\nimport json,hashlib,re,subprocess,sys\np=Path.cwd();orig=json.loads((p/'originals.json').read_text());ids={str(x['object']['mathdb_id']) for x in orig};urls={x['object']['source_url'] for x in orig}\nfor x in orig:\n o=x['object']\n if o['mathdb_id']>=376636:print(o['mathdb_id'],o['source_url'],o['statement'])\n# Filter every relative component before touching a listed path, including flat basenames.\nbase=p.parent;access=[];matches=[];skips=[]\nprotected=re.compile(r'code[-_]?loop|polynexus|crown|tournament|bunkbed|(^|[^a-z])hat([^a-z]|$)|formal|expanded-corpus-r(?:395|463|466|472)(?:$|[^0-9])|lr-translation-degree-source-proof-review-sol-r1',re.I)\ndef walk(v,trail=()):\n if isinstance(v,dict):\n  for k,z in v.items():\n   if str(k) in ids:matches.append({'trail':trail+(str(k),),'value':z})\n   walk(z,trail+(str(k),))\n elif isinstance(v,list):\n  for i,z in enumerate(v):walk(z,trail+(str(i),))\n elif (isinstance(v,int) and str(v) in ids) or (isinstance(v,str) and (v in ids or v in urls)):\n  matches.append({'trail':trail,'value':v})\nfor s,expected in json.loads((p/'historical-results-allowlist.json').read_text()).items():\n f=Path(s);rel=f.relative_to(base)\n if any(protected.search(t) for t in rel.parts):skips.append(str(rel));continue\n data=f.read_bytes();sha=hashlib.sha256(data).hexdigest();assert sha==expected\n start=len(matches)\n try:walk(json.loads(data))\n except json.JSONDecodeError:pass\n access.append({'path':s,'sha256':sha,'matches':len(matches)-start})\n if len(matches)>start:print('HISTORY MATCH',s,json.dumps(matches[start:],ensure_ascii=False)[:4500])\ndef save(n,o):subprocess.run([sys.executable,'-I','-B',str(p/'write_lane.py'),n],input=json.dumps(o,ensure_ascii=False,indent=2),text=True,capture_output=True,check=True)\nsave('history-access.json',{'access':access,'preaccess_skips':skips,'matches':matches});print('HISTORY COUNTS',len(access),len(skips),len(matches))\n# Recover exact JSON string token from raw line, preserving escaped original spelling.\nfor x in orig:\n m=re.search(r'\"statement\"\\s*:\\s*(\"(?:[^\"\\\\]|\\\\.)*\")',x['raw']);assert m\n x['raw_statement_token']=m.group(1);x['raw_statement_token_sha256']=hashlib.sha256(m.group(1).encode()).hexdigest();x['decoded_statement_sha256']=hashlib.sha256(x['object']['statement'].encode()).hexdigest()\nsave('originals.json',orig)\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 0.22026943002128974,
+  "sampled_group_rss_peak_bytes": 21569536,
+  "samples": 3,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 0.196106,
+  "stderr": ""
+}

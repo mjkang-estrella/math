@@ -1,0 +1,277 @@
+===== write_lane.py 681
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+===== charge_search.py 2373
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+===== search-budget.json 120
+{
+  "calls_used": 0,
+  "queries_used": 0,
+  "maximum_calls": 3,
+  "maximum_queries": 9,
+  "charged_before_call": true
+}
+
+===== reservation.json 18491
+{
+  "utc": "2026-11-09T04:17:29.131216+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    359433,
+    355862,
+    340527,
+    321035,
+    360013,
+    369268,
+    347656,
+    360343,
+    318758,
+    325013,
+    344493,
+    322706,
+    363099,
+    361779,
+    353552,
+    344764,
+    373534,
+    374065,
+    364399,
+    352130
+  ],
+  "rows": [
+    {
+      "mathdb_id": 359433,
+      "canonical_url": "https://mathdb.com/p/359433/the-polynomial-exponent-conjecture-for-ordered-ramsey-number",
+      "title": "The polynomial-exponent conjecture for ordered Ramsey numbers of path powers",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "ordered-graphs",
+        "path-powers",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2308.04357",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 355862,
+      "canonical_url": "https://mathdb.com/p/355862/conjecture-on-the-bipartite-ramsey-number-for-c-4-free-color",
+      "title": "Conjecture on the bipartite Ramsey number for $C_4$-free color classes",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "bipartite-graphs",
+        "graph-colorings",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2208.12563",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 340527,
+      "canonical_url": "https://mathdb.com/p/340527/conjecture-on-decompositions-of-complete-uniform-hypergraphs",
+      "title": "Conjecture on decompositions of complete uniform hypergraphs into regular Hamiltonian cycles",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "cycle-decompositions",
+        "design-theory",
+        "hypergraph-theory"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1809.09302",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 321035,
+      "canonical_url": "https://mathdb.com/p/321035/linear-overhead-conjecture-for-greedy-random-walk-on-complet",
+      "title": "Linear overhead conjecture for greedy random walk on complete graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "cover-times",
+        "graph-algorithms",
+        "random-walks"
+      ],
+      "first_stated_year": 2011,
+      "source_url": "https://arxiv.org/abs/1101.5711",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 360013,
+      "canonical_url": "https://mathdb.com/p/360013/jackson-s-hamiltonicity-conjecture-for-regular-oriented-grap",
+      "title": "Jackson's Hamiltonicity conjecture for regular oriented graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "hamiltonian-cycles",
+        "oriented-graphs",
+        "regular-graphs"
+      ],
+      "first_stated_year": 2010,
+      "source_url": "https://arxiv.org/abs/2309.11677",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 369268,
+      "canonical_url": "https://mathdb.com/p/369268/li-and-rousseau-s-asymptotic-ramsey-conjecture-for-complete",
+      "title": "Li and Rousseau's asymptotic Ramsey conjecture for complete fans",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 0,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-combinatorics",
+        "ramsey-theory",
+        "sparse-graphs"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2507.09832",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 347656,
+      "canonical_url": "https://mathdb.com/p/347656/conjecture-on-the-threshold-for-large-monochromatic-k-connec",
+      "title": "Conjecture on the threshold for large monochromatic k-connected subgraphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "edge-colorings",
+        "graph-connectivity",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2008.09001",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 360343,
+      "canonical_url": "https://mathdb.com/p/360343/asymptotic-maximum-conjecture-for-kemeny-s-constant-of-thres",
+      "title": "Asymptot
+===== registry-roots.json 399
+{
+  "urls": [
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures"
+  ],
+  "scope": "Only these4 explicit registry roots, optional fresh metadata. This is not an instruction to traverse another access/history file. Each helper GET charges every reserved ID."
+}
+
+===== model-policy-sol-only.json 452
+{
+  "utc": "2026-11-08T03:52:29.173754+00:00",
+  "user_instruction": "Do not use GLM5.3 for subagents now; only GPT6.1Sol",
+  "provider": "codex",
+  "model": "gpt-6.1-sol",
+  "options": {
+    "reasoningEffort": "high",
+    "serviceTier": "default"
+  },
+  "supersedes": "Prior2026-11-05PiGLMexecution/formalizationrouting; appliesallfutureandcontinuingsubagentsincludingexecution/replay/audit",
+  "preserve_existing_artifacts": true,
+  "accepted": 55
+}
+
+ROOT-PREP.json 2119
+historical-results-allowlist.json 232261
+source_get_guard.py 9762
+frozen-inputs.json 3152

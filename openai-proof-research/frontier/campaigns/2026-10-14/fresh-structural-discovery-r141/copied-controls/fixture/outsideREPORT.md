@@ -1,0 +1,2 @@
+Copied miniature artifact fixture only. No mathematical gate.
+Manifest SHA256: 08d0a8ae5703fa4ee2979ea4f9eee33ea295642c8b0697d76c3746d4ebe609c6

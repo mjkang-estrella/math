@@ -1,0 +1,746 @@
+/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r442/sources/debruijn.txt
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+                                              On word-representability of simplified de Bruijn
+                                                                 graphs
+
+
+
+
+arXiv:2210.14762v2 [math.CO] 12 Jul 2023
+                                                                             Anthony Petyuk∗
+
+                                                                               July 13, 2023
+
+
+
+                                                                                  Abstract
+                                                     A graph G = (V, E) is word-representable if there exists a word w
+                                                 over the alphabet V such that letters x and y alternate in w if and
+                                                 only if xy ∈ E. Word-representable graphs generalize several impor-
+                                                 tant classes of graphs such as 3-colorable graphs, circle graphs, and
+                                                 comparability graphs. There is a long line of research in the literature
+                                                 dedicated to word-representable graphs.
+                                                     In this paper, we study word-representability of simplified de Bruijn
+                                                 graphs. The simplified de Bruijn graph S(n, k) is a simple graph ob-
+                                                 tained from the de Bruijn graph B(n, k) by removing orientations and
+                                                 loops and replacing multiple edges between a pair of vertices by a
+                                                 single edge. De Bruijn graphs are a key object in combinatorics on
+                                                 words that found numerous applications, in particular, in genome as-
+                                                 sembly. We show that binary simplified de Bruijn graphs (i.e. S(n, 2))
+                                                 are word-representable for any n ≥ 1, while S(2, k) and S(3, k) are
+                                                 non-word-representable for k ≥ 3. We conjecture that all simplified de
+                                                 Bruijn graphs S(n, k) are non-word-rerpesentable for n ≥ 4 and k ≥ 3.
+
+
+                                                 1     Introduction
+                                                 1.1 Word-representable graphs and semi-transitive
+                                                 orientations.
+                                                 Two letters x and y alternate in a word w if after deleting in w all
+                                                 letters but the copies of x and y we either obtain a word xyxy · · · (of
+                                                 even or odd length) or a word yxyx · · · (of even or odd length). A
+                                                 graph G = (V, E) is word-representable if there exists a word w over
+                                             ∗
+                                               College of Letters and Science, University of California, Berkeley, California, USA.
+                                           Email: anthony.petyuk@berkeley.edu
+
+
+                                                                                       1
+the alphabet V such that letters x and y alternate in w if and only if
+xy ∈ E.
+    There is a long line of research papers dedicated to the theory of
+word-representable graphs (e.g. see [4, 5] and references therein). The
+motivation to study these graphs is their relevance to algebra, graph
+theory, computer science, combinatorics on words, and scheduling [5].
+In particular, word-representable graphs generalize several important
+classes of graphs (e.g. circle graphs, 3-colorable graphs and compa-
+rability graphs). By [4, 5], the minimal (by the number of vertices)
+non-word-representable graph is the wheel graph W5 on six vertices
+(which is obtained by adding to the cycle graph C5 an all-adjacent
+vertex; see Figure 1).
+    An orientation of a graph is semi-transitive if it is acyclic, and for
+any directed path v0 → v1 → · · · → vk either there is no arc between
+v0 and vk , or vi → vj is an arc for all 0 ≤ i < j ≤ k. An undirected
+graph is semi-transitive if it admits a semi-transitive orientation. A
+key result in the theory of word-representable graphs is the following
+theorem.
+Theorem 1 ([3]). A graph is word-representable if and only if it is
+semi-transitive.
+   As an immediate corollary to Theorem 1 we have the following
+result.
+Theorem 2 ([3]). Any 3-colorable graph is word-representable.
+   Finally, we note the handy software to work with word-representable
+graphs [2, 8].
+
+1.2    Simplified de Bruijn graphs.
+Let A = {0, 1, . . . , k − 1} be a k-letter alphabet and An be the set of
+all words over A of length n. A de Bruijn graph B(n, k) consists of k n
+vertices labeled by words in An and its directed edges are x1 x2 · · · xn →
+x2 · · · xn xn+1 where xi ∈ A for i ∈ {1, 2, . . . , n + 1}. De Bruijn graphs
+are an important structure in combinatorics on words that found wide
+applications, in particular, in genome assembly [1].
+    The simplified de Bruijn graph S(n, k) is a simple graph obtained
+from B(n, k) by removing orientations and loops and replacing mul-
+tiple edges between a pair of vertices by a single edge. To our best
+knowledge, the notion of a simplified de Bruijn graph is introduced in
+this paper for the first time. We label the edge between x1 x2 · · · xn
+and x2 x3 · · · xn+1 in S(n, k) by x1 x2 · · · xn+1 .
+
+
+
+
+                                     2
+1.3     Results in this paper.
+In Section 2 we show that binary simplified de Bruijn graphs are word-
+representable. In Section 3 we show that S(2, k) and S(3, k) are non-
+word-representable for k ≥ 3. In Section 4 we state a conjecture on full
+classification of word-representable simplified de Bruijn graphs along
+with an open problem.
+
+
+2     Word-representability of S(n, 2)
+Let xk = x   . . x} and 0̄ = 1 and 1̄ = 0.
+         | .{z
+          k times
+
+Theorem 3. S(n, 2) is word-representable for any n ≥ 1.
+
+Proof. We will show that S(n, 2) is 3-colorable so that the desired
+result will follow from Theorem 2. Clearly, S(1, 2) is 3-colorable, so
+that we can assume that n ≥ 2.
+    All vertices in S(n, 2) can be subdivided into the following three
+disjoint groups: vertices ending with x̄x2k for k ≥ 1 (where the x̄ can
+be absent), those ending with 102k+1 for k ≥ 0 (where the 1 can be
+absent), and those ending with 012k+1 for k ≥ 0 (where the 0 can be
+absent). We colour the vertices in these groups Red, Blue and Green,
+respectively.
+    Since S(n, 2) has no loops, its edges correspond to the following
+two types of edges in B(n, 2):
+    • Edges uv in B(n, 2), where the words corresponding to u and v
+      end in the same letter. Since one of u or v must end in an odd
+      number of repeated letters and the other must end in an even
+      number of repeated letters, these directed edges correspond to
+      edges in S(2, k) where the colours of u and v are always different.
+    • Edges uv in B(n, 2), where the words corresponding to u and v
+      end in different letters. The vertex v must end in one repeated
+      letter x (an odd number of letters), and u must end in either
+      an even or an odd number of repeated letters x̄. These directed
+      edges also correspond to edges in S(2, k) where the colors of u
+      and v are always different.
+Thus, we have constructed a proper 3-colouring of S(2, k).
+
+
+3 Non-word-representability of S(2, k) and
+S(3, k) for k ≥ 3
+Theorem 4. S(2, k) is non-word-representable for any k ≥ 3.
+
+
+                                      3
+Figure 1: An induced subgraph of S(2, 3) isomorphic to the wheel graph W5 .
+The node labels correspond to words in A2 and edges are labeled according
+to the description in Section 1.2.
+
+
+     Proof. Since S(2, k) is an induced subgraph of S(2, k + 1) for any k ≥
+     1, it is sufficient to prove that S(2, 3) is non-word-representable and
+     to use the hereditary property of non-word-representability. We get
+     non-word-representability of S(2, 3) by observing that it contains the
+     non-word-representable graph W5 as an induced subgraph given in
+     Figure 1.
+
+     Theorem 5. S(3, k) is non-word-representable for any k ≥ 3.
+
+     Proof. Since S(3, k) is an induced subgraph of S(3, k+1) for any k ≥ 1,
+     it is sufficient to prove that S(3, 3) is non-word-representable. Figure 2
+     presents an induced subgraph S of S(3, 3), where we label edges ac-
+     cording to the description in Section 1.2 and label each vertex using
+     two labels, one being the label of the vertex coming from B(3, 3), and
+     the other one is a technical label that we need to present our proof;
+     for example, the vertices 102 and 210 are also labeled by 1 and 2,
+     respectively.
+          Non-word-representability of S can be checked using two indepen-
+     dent user-friendly pieces of software [2, 8]. Moreover, [8] can produce
+     a 100 “line” formal proof of non-word-representability of S that, in
+     principle, can be verified by a human, but it is too long to be included
+     here, so it is presented in the appendix along with instructions on how
+     to understand the proof (coming from [7]).
+
+
+
+
+                                         4
+Figure 2: A non-word-representable induced subgraph S of S(3, 3). The
+lower node labels and edge labels are as described in Section 1.2. The
+upper node labels correspond to those used in the computer-generated proof
+presented in the appendix.
+
+
+     4    Concluding remarks
+     In this paper, we show that binary simplified de Bruijn graphs are
+     word-representable, while S(2, k) and S(3, k), for k ≥ 3, are non-word-
+     representable. We conclude our paper with the following conjecture
+     and an open problem.
+     Conjecture 1. S(n, k) is non-word-rerpesentable for n ≥ 4 and k ≥ 3.
+     Problem 1. Is it true that the graph S in Figure 2 is a minimal
+     (by the number of vertices) non-word-representable induced subgraph of
+     the graph S(3, 3)? Finding a smaller non-word-representable induced
+     subgraph might allow, using the software [8], shortening the formal
+     proof of non-word-representability of S(3, 3) in the proof of Theorem 5.
+
+
+     References
+      [1] P. E. C. Compeau, P. A. Pevzner, G. Tesler. Why are de Bruijn
+          graphs useful for genome assembly? Nat Biotechnol. 29(11)
+
+
+                                        5
+     (2011) 987–991.
+ [2] M. Glen. Software available at personal.strath.ac.uk/
+     sergey.kitaev/word-representable-graphs.html
+ [3] M. M. Halldórsson, S. Kitaev, A. Pyatkin. Semi-transitive orien-
+     tations and word-representable graphs, Discr. Appl. Math. 201
+     (2016) 164–171.
+ [4] S. Kitaev. A Comprehensive Introduction to the Theory of Word-
+     Representable Graphs, Lecture Notes Comp. Sci. 10396 (2017)
+     36–67.
+ [5] S. Kitaev, V. Lozin. Words and Graphs, Springer, 2015.
+ [6] S. Kitaev and A. Pyatkin. On semi-transitive orientability of
+     triangle-free graphs. Discussiones Mathematicae Graph Theory 43
+     (2023) ID: 4621, page 533, to appear.
+ [7] S. Kitaev, H. Sun. Human-veriable proofs in the theory of word-
+     representable graph. arXiv:2110.05405v2.
+ [8] H. Sun. Software available at personal.strath.ac.uk/
+     sergey.kitaev/human-verifiable-proofs.html
+
+
+Appendix: Proof of non-word-representability
+of the graph S in Theorem 5
+Our proof uses the following lemmas.
+Lemma 6 ([6]). Suppose that an undirected graph G has a cycle C =
+x1 x2 · · · xm x1 , where m ≥ 4 and the vertices in {x1 , x2 , . . . , xm } do
+not induce a clique in G. If G is oriented semi-transitively, and m − 2
+edges of C are oriented in the same direction (i.e. from xi to xi+1 or
+vice versa, where the index m + 1 := 1) then the remaining two edges
+of C are oriented in the opposite direction.
+Lemma 7 ([7]). If G is word-representable and u is an arbitrary vertex
+in G, then there exists a semi-transitive orientation of G with source u.
+    We refer to [7] for more details on the format of the proof below.
+By a “line” of a proof we mean a sequence of instructions that directs
+us in orienting a partially oriented graph and necessarily ends with
+detecting a shortcut or another contradiction showing that this partic-
+ular orientation branch will not produce a semi-transitive orientation.
+If no branch produces a semi-transitive orientation then the graph is
+non-semi-transitively orientable (and hence non-word-representable by
+Theorem 1).
+    The proof begins with 15 → 17 showing the orientation of the edge
+(15)(17), which is done W.L.O.G. because reversing all orientations in
+
+
+                                      6
+a semi-transitively oriented graph produces a semi-transitively oriented
+graph. Further, there are four types of instructions:
+   • “MC” followed by a number X means “Move to Copy X”, where
+     Copy X of the graph in question is a partially oriented version of
+     the graph that has been created at some point in the branching
+     process. This instruction is always followed by an oriented edge
+     A → B reminding on the directed edge obtained after application
+     of the branching process; see description of “B” to be discussed
+     next.
+   • “B” followed by “X → Y (Copy Z)” means “Branch on edge XY ,
+     orient the edge as X → Y , create a copy of the current version
+     of the graph except orient the edge XY there as Y → X, and
+     call the new copy Z; leave Copy Z aside and continue to follow
+     the instructions”. The instruction B occurs when the software
+     detects that no application of Lemma 6 is possible in the partially
+     oriented graph.
+   • One “O” followed by “X → Y ”, in turn followed by, in brackets,
+     “C” followed by a cycle “X-Y -Z”. This instruction tells us to
+     orient the edge XY as X → Y because otherwise, in the triangle
+     XY Z, we would get a directed cycle. If instead of a triangle we
+     see a longer cycle, then we deal with an application of Lemma 6
+     to a cycle where all but two edges are oriented in one direction,
+     and one of the remaining two edges is oriented in the opposite
+     direction.
+   • Two “O”s followed by “X → Y ”, in turn followed by, in brackets,
+     “C” followed by a cycle “X-Y -Z-· · · ”. This instruction tells us
+     to which cycle Lemma 6 can be applied and which edges will
+     become oriented.
+Each line ends with “S : X − Y − · · · − Z” indicating that a shortcut
+with the shortcutting edge X → Z is obtained.
+
+The proof:
+By Lemma 7, we can assume that the vertex 13 (of the maximum de-
+gree) is a source. The rest of the proof goes as follows.
+1. B14→16 (Copy 2) O14→12 (C12-14-16-13) O4→12 (C4-13-14-12) B5→6 (Copy 3) O5→3
+(C3-13-6-5) O5→4 (C3-13-4-5) O11→12 O5→11 (C4-12-11-5) O11→6 (C6-13-12-11) B2→6
+(Copy 4) O2→3 (C2-6-5-3) O2→4 (C2-4-5-3) B6→10 (Copy 5) O11→10 (C6-11-10) O11→9
+O9→10 (C6-11-9-10) B8→9 (Copy 6) O7→10 O8→7 (C7-10-9-8) O7→6 (C6-11-10-7) O7→9
+(C6-10-9-7) O8→3 (C2-6-7-8-3) B12→15 (Copy 7) O14→15 (C12-15-14) O16→15 (C12-15-
+16-13) O2→17 O17→15 (C2-17-15-12-4) O17→16 (C14-16-17-15) O1→16 O2→1 (C1-16-17-2)
+O7→1 (C1-7-6-2) O3→1 (C1-7-8-3) S:13-3-1-16
+2. MC7 15→12 O15→14 (C12-15-14-13) O15→16 (C14-16-15) O17→16 O15→17 (C14-16-17-
+15) O2→17 (C2-17-15-12-4) O1→16 O2→1 (C1-16-17-2) O7→1 (C1-7-6-2) O3→1 (C1-7-8-3)
+S:13-3-1-16
+3. MC6 9→8 O3→8 (C3-8-9-11-5) B15→16 (Copy 8) O15→12 (C12-15-16-13) O15→14 (C12-
+15-14-13) O17→16 O15→17 (C14-16-17-15) O2→17 (C2-17-15-12-4) O1→16 O2→1 (C1-16-17-
+2) O1→3 (C1-16-13-3) O1→7 O7→8 (C1-7-8-3) O6→7 (C1-7-6-2) O9→7 (C6-10-9-7) O10→7
+(C6-11-10-7) S:9-10-7-8
+
+
+
+
+                                        7
+4. MC8 16→15 O14→15 (C14-16-15) O12→15 (C12-15-14-13) O2→17 O17→15 (C2-17-15-
+12-4) O17→16 (C14-16-17-15) O1→16 O2→1 (C1-16-17-2) O1→3 (C1-16-13-3) O1→7 O7→8
+(C1-7-8-3) O6→7 (C1-7-6-2) O9→7 (C6-10-9-7) O10→7 (C6-11-10-7) S:9-10-7-8
+5. MC5 10→6 O10→11 (C5-11-10-6) O10→7 O7→6 (C6-11-10-7) B7→8 (Copy 9) O10→9
+O9→8 (C7-10-9-8) O7→9 (C6-10-9-7) O11→9 (C6-11-9-7) O3→8 (C3-8-9-11-5) B12→15 (Copy
+10) O14→15 (C12-15-14) O16→15 (C12-15-16-13) O2→17 O17→15 (C2-17-15-12-4) O17→16
+(C14-16-17-15) O1→16 O2→1 (C1-16-17-2) O7→1 (C1-7-6-2) O3→1 (C1-7-8-3) S:13-3-1-16
+6. MC10 15→12 O15→14 (C12-15-14-13) O15→16 (C14-16-15) O17→16 O15→17 (C14-16-17-
+15) O2→17 (C2-17-15-12-4) O1→16 O2→1 (C1-16-17-2) O7→1 (C1-7-6-2) O3→1 (C1-7-8-3)
+S:13-3-1-16
+7. MC9 8→7 O8→3 (C2-6-7-8-3) B15→16 (Copy 11) O15→12 (C12-15-16-13) O15→14 (C12-15-
+14-13) O17→16 O15→17 (C14-16-17-15) O2→17 (C2-17-15-12-4) O1→16 O2→1 (C1-16-17-2)
+O7→1 (C1-7-6-2) O3→1 (C1-7-8-3) S:13-3-1-16
+8. MC11 16→15 O14→15 (C14-16-15) O12→15 (C12-15-14-13) O2→17 O17→15 (C2-17-15-
+12-4) O17→16 (C14-16-17-15) O1→16 O2→1 (C1-16-17-2) O7→1 (C1-7-6-2) O3→1 (C1-7-8-3)
+S:13-3-1-16
+9. MC4 6→2 O3→2 (C2-6-5-3) O4→2 (C2-4-5-3) B6→10 (Copy 12) O11→10 (C6-11-10) O11→9
+O9→10 (C6-11-9-10) B8→9 (Copy 13) O7→10 O8→7 (C7-10-9-8) O7→6 (C6-11-10-7) O7→1
+O1→2 (C1-7-6-2) O8→3 O3→1 (C1-7-8-3) O16→1 (C1-16-13-3) O16→17 O17→2 (C1-16-17-2)
+O7→9 (C6-10-9-7) O15→17 O14→15 (C14-16-17-15) O12→15 (C12-15-14-13) S:4-12-15-17-2
+10. MC13 9→8 O3→8 (C3-8-9-11-5) B15→16 (Copy 14) O15→12 (C12-15-16-13) O15→14
+(C12-15-14-13) O17→16 O15→17 (C14-16-17-15) O17→2 (C2-17-16-13-3) B7→10 (Copy 15)
+O7→6 (C6-11-10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O7→8 O3→1 (C1-7-8-3)
+S:13-3-1-16
+11. MC15 10→7 O6→7 (C6-10-7) O9→7 (C7-10-9) O8→7 (C7-10-9-8) O1→7 O3→1 (C1-7-8-3)
+O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) S:13-3-1-16
+12. MC14 16→15 O14→15 (C14-16-15) O12→15 (C12-15-14-13) B2→17 (Copy 16) O16→17
+(C2-17-16-13-3) O15→17 (C14-16-17-15) B7→10 (Copy 17) O7→6 (C6-11-10-7) O7→1 O1→2
+(C1-7-6-2) O1→16 (C1-16-17-2) O7→8 O3→1 (C1-7-8-3) S:13-3-1-16
+13. MC17 10→7 O6→7 (C6-10-7) O9→7 (C7-10-9) O8→7 (C7-10-9-8) O1→7 O3→1 (C1-7-8-3)
+O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) S:13-3-1-16
+14. MC16 17→2 O17→15 (C2-17-15-12-4) O17→16 (C14-16-17-15) B7→10 (Copy 18) O7→6
+(C6-11-10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O7→8 O3→1 (C1-7-8-3) S:13-3-1-16
+15. MC18 10→7 O6→7 (C6-10-7) O9→7 (C7-10-9) O8→7 (C7-10-9-8) O1→7 O3→1 (C1-7-8-3)
+O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) S:13-3-1-16
+16. MC12 10→6 O10→11 (C5-11-10-6) O10→7 O7→6 (C6-11-10-7) O7→1 O1→2 (C1-7-6-
+2) B1→16 (Copy 19) O1→3 (C1-16-13-3) O7→8 O8→3 (C1-7-8-3) O10→9 O9→8 (C7-10-9-8)
+O7→9 (C6-10-9-7) O11→9 (C6-11-9-7) S:5-11-9-8-3
+17. MC19 16→1 O16→17 O17→2 (C1-16-17-2) O3→1 (C1-16-13-3) O15→17 O14→15 (C14-
+16-17-15) O12→15 (C12-15-14-13) S:4-12-15-17-2
+18. MC3 6→5 O3→5 (C3-13-6-5) O4→5 (C3-13-4-5) B2→6 (Copy 20) O2→3 (C2-6-5-3) O2→4
+(C2-4-5-3) B2→17 (Copy 21) B16→17 (Copy 22) O15→17 O14→15 (C14-16-17-15) O12→15
+(C12-15-14-13) S:2-4-12-15-17
+19. MC22 17→16 O1→16 O2→1 (C1-16-17-2) O1→3 (C1-16-13-3) B6→11 (Copy 23) O12→11
+(C6-13-12-11) O5→11 (C4-12-11-5) O10→11 O6→10 (C5-11-10-6) B9→10 (Copy 24) O9→11
+(C9-11-10) B1→7 (Copy 25) O6→7 (C1-7-6-2) O9→7 (C6-10-9-7) O10→7 (C6-11-10-7) O9→8
+O8→7 (C7-10-9-8) O8→3 (C1-7-8-3) S:9-8-3-5-11
+20. MC25 7→1 O7→6 (C1-7-6-2) O7→10 (C6-10-7) O7→8 O8→3 (C1-7-8-3) O7→9 (C6-10-9-7)
+O9→8 (C7-10-9-8) S:9-8-3-5-11
+21. MC24 10→9 O7→9 O6→7 (C6-10-9-7) O1→7 (C1-7-6-2) O11→9 (C6-11-9-7) O10→7 (C6-
+11-10-7) O3→8 O8→9 (C3-8-9-11-5) O7→8 (C1-7-8-3) S:10-7-8-9
+22. MC23 11→6 O11→5 (C5-11-6) O11→12 (C4-12-11-5) B1→7 (Copy 26) O6→7 (C1-7-6-2)
+O11→9 O9→7 (C6-11-9-7) O11→10 O10→7 (C6-11-10-7) O6→10 (C5-11-10-6) O9→10 (C6-10-
+9-7) O9→8 O8→7 (C7-10-9-8) O8→3 (C1-7-8-3) S:11-9-8-3-5
+23. MC26 7→1 O7→6 (C1-7-6-2) O7→8 O8→3 (C1-7-8-3) B7→10 (Copy 27) O11→10 (C6-11-
+10-7) O6→10 (C5-11-10-6) O9→10 O7→9 (C6-10-9-7) O11→9 (C6-11-9-7) O9→8 (C7-10-9-8)
+S:11-9-8-3-5
+24. MC27 10→7 O10→6 (C6-10-7) O10→11 (C5-11-10-6) O10→9 O9→8 (C7-10-9-8) O7→9
+(C6-10-9-7) O11→9 (C6-11-9-7) S:11-9-8-3-5
+25. MC21 17→2 O17→16 (C2-17-16-13-3) O17→15 O15→12 (C2-17-15-12-4) O15→14 (C12-
+15-14-13) S:17-15-14-16
+26. MC20 6→2 O3→2 (C2-6-5-3) O4→2 (C2-4-5-3) B2→17 (Copy 28) O16→17 (C2-17-16-13-
+3) O15→17 O14→15 (C14-16-17-15) O12→15 (C12-15-14-13) O16→15 (C12-15-16-13) B6→11
+(Copy 29) O12→11 (C6-13-12-11) O5→11 (C4-12-11-5) O10→11 O6→10 (C5-11-10-6) B6→7
+(Copy 30) O10→7 (C6-11-10-7) B7→8 (Copy 31) O10→9 O9→8 (C7-10-9-8) O7→9 (C6-10-9-7)
+O11→9 (C6-11-9-7) O3→8 (C2-6-7-8-3) S:3-5-11-9-8
+27. MC31 8→7 B3→8 (Copy 32) O1→7 O3→1 (C1-7-8-3) O1→2 (C1-7-6-2) O1→16 (C1-16-
+17-2) S:13-3-1-16
+28. MC32 8→3 O8→9 O9→11 (C3-8-9-11-5) O9→7 (C6-11-9-7) O9→10 (C6-10-9-7) S:8-9-10-7
+29. MC30 7→6 O7→10 (C6-10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O1→3 (C1-16-
+13-3) O7→8 O8→3 (C1-7-8-3) O9→10 O7→9 (C6-10-9-7) O9→11 (C9-11-10) O9→8 (C7-10-9-8)
+S:9-8-3-5-11
+30. MC29 11→6 O11→5 (C5-11-6) O11→12 (C4-12-11-5) B6→10 (Copy 33) O11→10 (C6-11-
+10) O11→9 O9→10 (C6-11-9-10) B8→9 (Copy 34) O7→10 O8→7 (C7-10-9-8) O7→6 (C6-11-
+10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O8→3 O3→1 (C1-7-8-3) S:13-3-1-16
+
+
+
+
+                                         8
+31. MC34 9→8 O3→8 (C3-8-9-11-5) B7→10 (Copy 35) O7→6 (C6-11-10-7) O7→1 O1→2 (C1-
+7-6-2) O1→16 (C1-16-17-2) O7→8 O3→1 (C1-7-8-3) S:13-3-1-16
+32. MC35 10→7 O6→7 (C6-10-7) O9→7 (C7-10-9) O8→7 (C7-10-9-8) O1→7 O3→1 (C1-7-8-3)
+O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) S:13-3-1-16
+33. MC33 10→6 O10→11 (C5-11-10-6) O10→7 O7→6 (C6-11-10-7) O7→1 O1→2 (C1-7-6-2)
+O1→16 (C1-16-17-2) O1→3 (C1-16-13-3) O7→8 O8→3 (C1-7-8-3) O10→9 O9→8 (C7-10-9-8)
+O7→9 (C6-10-9-7) O11→9 (C6-11-9-7) S:11-9-8-3-5
+34. MC28 17→2 B16→17 (Copy 36) O16→1 O1→2 (C1-16-17-2) O3→1 (C1-16-13-3) O15→17
+O14→15 (C14-16-17-15) O12→15 (C12-15-14-13) S:4-12-15-17-2
+35. MC36 17→16 B15→17 (Copy 37) O15→16 (C15-17-16) O15→12 (C12-15-16-13) O15→14
+(C12-15-14-13) B6→11 (Copy 38) O12→11 (C6-13-12-11) O5→11 (C4-12-11-5) O10→11 O6→10
+(C5-11-10-6) B6→7 (Copy 39) O10→7 (C6-11-10-7) B7→8 (Copy 40) O10→9 O9→8 (C7-10-9-8)
+O7→9 (C6-10-9-7) O11→9 (C6-11-9-7) O3→8 (C2-6-7-8-3) S:3-5-11-9-8
+36. MC40 8→7 B3→8 (Copy 41) O1→7 O3→1 (C1-7-8-3) O1→2 (C1-7-6-2) O1→16 (C1-16-
+17-2) S:13-3-1-16
+37. MC41 8→3 O8→9 O9→11 (C3-8-9-11-5) O9→7 (C6-11-9-7) O9→10 (C6-10-9-7) S:8-9-10-7
+38. MC39 7→6 O7→10 (C6-10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O1→3 (C1-16-
+13-3) O7→8 O8→3 (C1-7-8-3) O9→10 O7→9 (C6-10-9-7) O9→11 (C9-11-10) O9→8 (C7-10-9-8)
+S:9-8-3-5-11
+39. MC38 11→6 O11→5 (C5-11-6) O11→12 (C4-12-11-5) B6→10 (Copy 42) O11→10 (C6-11-
+10) O11→9 O9→10 (C6-11-9-10) B8→9 (Copy 43) O7→10 O8→7 (C7-10-9-8) O7→6 (C6-11-
+10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O8→3 O3→1 (C1-7-8-3) S:13-3-1-16
+40. MC43 9→8 O3→8 (C3-8-9-11-5) B7→10 (Copy 44) O7→6 (C6-11-10-7) O7→1 O1→2 (C1-
+7-6-2) O1→16 (C1-16-17-2) O7→8 O3→1 (C1-7-8-3) S:13-3-1-16
+41. MC44 10→7 O6→7 (C6-10-7) O9→7 (C7-10-9) O8→7 (C7-10-9-8) O1→7 O3→1 (C1-7-8-3)
+O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) S:13-3-1-16
+42. MC42 10→6 O10→11 (C5-11-10-6) O10→7 O7→6 (C6-11-10-7) O7→1 O1→2 (C1-7-6-2)
+O1→16 (C1-16-17-2) O1→3 (C1-16-13-3) O7→8 O8→3 (C1-7-8-3) O10→9 O9→8 (C7-10-9-8)
+O7→9 (C6-10-9-7) O11→9 (C6-11-9-7) S:11-9-8-3-5
+43. MC37 17→15 O14→15 (C14-16-17-15) O12→15 (C12-15-14-13) O16→15 (C12-15-16-13)
+B6→11 (Copy 45) O12→11 (C6-13-12-11) O5→11 (C4-12-11-5) O10→11 O6→10 (C5-11-10-
+6) B6→7 (Copy 46) O10→7 (C6-11-10-7) B7→8 (Copy 47) O10→9 O9→8 (C7-10-9-8) O7→9
+(C6-10-9-7) O11→9 (C6-11-9-7) O3→8 (C2-6-7-8-3) S:3-5-11-9-8
+44. MC47 8→7 B3→8 (Copy 48) O1→7 O3→1 (C1-7-8-3) O1→2 (C1-7-6-2) O1→16 (C1-16-
+17-2) S:13-3-1-16
+45. MC48 8→3 O8→9 O9→11 (C3-8-9-11-5) O9→7 (C6-11-9-7) O9→10 (C6-10-9-7) S:8-9-10-7
+46. MC46 7→6 O7→10 (C6-10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O1→3 (C1-16-
+13-3) O7→8 O8→3 (C1-7-8-3) O9→10 O7→9 (C6-10-9-7) O9→11 (C9-11-10) O9→8 (C7-10-9-8)
+S:9-8-3-5-11
+47. MC45 11→6 O11→5 (C5-11-6) O11→12 (C4-12-11-5) B6→10 (Copy 49) O11→10 (C6-11-
+10) O11→9 O9→10 (C6-11-9-10) B8→9 (Copy 50) O7→10 O8→7 (C7-10-9-8) O7→6 (C6-11-
+10-7) O7→1 O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) O8→3 O3→1 (C1-7-8-3) S:13-3-1-16
+48. MC50 9→8 O3→8 (C3-8-9-11-5) B7→10 (Copy 51) O7→6 (C6-11-10-7) O7→1 O1→2 (C1-
+7-6-2) O1→16 (C1-16-17-2) O7→8 O3→1 (C1-7-8-3) S:13-3-1-16
+49. MC51 10→7 O6→7 (C6-10-7) O9→7 (C7-10-9) O8→7 (C7-10-9-8) O1→7 O3→1 (C1-7-8-3)
+O1→2 (C1-7-6-2) O1→16 (C1-16-17-2) S:13-3-1-16
+50. MC49 10→6 O10→11 (C5-11-10-6) O10→7 O7→6 (C6-11-10-7) O7→1 O1→2 (C1-7-6-2)
+O1→16 (C1-16-17-2) O1→3 (C1-16-13-3) O7→8 O8→3 (C1-7-8-3) O10→9 O9→8 (C7-10-9-8)
+O7→9 (C6-10-9-7) O11→9 (C6-11-9-7) S:11-9-8-3-5
+51. MC2 16→14 O12→14 (C12-14-16-13) O12→4 (C4-13-14-12) B5→6 (Copy 52) O5→3 (C3-
+13-6-5) O5→4 (C3-13-4-5) B2→6 (Copy 53) O2→3 (C2-6-5-3) O2→4 (C2-4-5-3) B2→17 (Copy
+54) B16→17 (Copy 55) B15→17 (Copy 56) O15→14 (C14-16-17-15) O15→12 (C12-15-14-13)
+O15→16 (C12-15-16-13) B6→11 (Copy 57) O5→11 (C5-11-6) O12→11 (C4-12-11-5) B6→10
+(Copy 58) O11→10 (C5-11-10-6) O7→10 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1
+(C1-16-17-2) O3→1 (C1-16-13-3) O8→7 O3→8 (C1-7-8-3) O9→10 O8→9 (C7-10-9-8) O9→7
+(C6-10-9-7) O9→11 (C6-11-9-7) S:5-3-8-9-11
+52. MC58 10→6 O10→11 (C6-11-10) O9→11 O10→9 (C6-11-9-10) B8→9 (Copy 59) O8→3
+(C3-8-9-11-5) B7→10 (Copy 60) O7→6 (C6-10-7) O7→9 (C7-10-9) O7→8 (C7-10-9-8) O7→1
+O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) S:13-16-1-3
+53. MC60 10→7 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O8→7
+O1→3 (C1-7-8-3) S:13-16-1-3
+54. MC59 9→8 O10→7 O7→8 (C7-10-9-8) O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1
+(C1-16-17-2) O3→8 O1→3 (C1-7-8-3) S:13-16-1-3
+55. MC57 11→6 O11→12 (C6-13-12-11) O11→5 (C4-12-11-5) O11→10 O10→6 (C5-11-10-
+6) B6→7 (Copy 61) O10→7 (C6-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O3→1
+(C1-16-13-3) O8→7 O3→8 (C1-7-8-3) O10→9 O9→7 (C6-10-9-7) O11→9 (C9-11-10) O8→9
+(C7-10-9-8) S:11-5-3-8-9
+56. MC61 7→6 O7→10 (C6-11-10-7) B7→8 (Copy 62) B3→8 (Copy 63) O9→8 O11→9 (C3-8-
+9-11-5) O7→9 (C6-11-9-7) O10→9 (C6-10-9-7) S:7-10-9-8
+57. MC63 8→3 O7→1 O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) S:13-16-1-3
+58. MC62 8→7 O9→10 O8→9 (C7-10-9-8) O9→7 (C6-10-9-7) O9→11 (C6-11-9-7) O8→3 (C2-
+6-7-8-3) S:8-9-11-5-3
+59. MC56 17→15 O16→15 (C15-17-16) O12→15 (C12-15-16-13) O14→15 (C12-15-14-13) B6→11
+(Copy 64) O5→11 (C5-11-6) O12→11 (C4-12-11-5) B6→10 (Copy 65) O11→10 (C5-11-10-6)
+
+
+
+
+                                        9
+O7→10 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O3→1 (C1-16-13-
+3) O8→7 O3→8 (C1-7-8-3) O9→10 O8→9 (C7-10-9-8) O9→7 (C6-10-9-7) O9→11 (C6-11-9-7)
+S:5-3-8-9-11
+60. MC65 10→6 O10→11 (C6-11-10) O9→11 O10→9 (C6-11-9-10) B8→9 (Copy 66) O8→3
+(C3-8-9-11-5) B7→10 (Copy 67) O7→6 (C6-10-7) O7→9 (C7-10-9) O7→8 (C7-10-9-8) O7→1
+O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) S:13-16-1-3
+61. MC67 10→7 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O8→7
+O1→3 (C1-7-8-3) S:13-16-1-3
+62. MC66 9→8 O10→7 O7→8 (C7-10-9-8) O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1
+(C1-16-17-2) O3→8 O1→3 (C1-7-8-3) S:13-16-1-3
+63. MC64 11→6 O11→12 (C6-13-12-11) O11→5 (C4-12-11-5) O11→10 O10→6 (C5-11-10-
+6) B6→7 (Copy 68) O10→7 (C6-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O3→1
+(C1-16-13-3) O8→7 O3→8 (C1-7-8-3) O10→9 O9→7 (C6-10-9-7) O11→9 (C9-11-10) O8→9
+(C7-10-9-8) S:11-5-3-8-9
+64. MC68 7→6 O7→10 (C6-11-10-7) B7→8 (Copy 69) B3→8 (Copy 70) O9→8 O11→9 (C3-8-
+9-11-5) O7→9 (C6-11-9-7) O10→9 (C6-10-9-7) S:7-10-9-8
+65. MC70 8→3 O7→1 O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) S:13-16-1-3
+66. MC69 8→7 O9→10 O8→9 (C7-10-9-8) O9→7 (C6-10-9-7) O9→11 (C6-11-9-7) O8→3 (C2-
+6-7-8-3) S:8-9-11-5-3
+67. MC55 17→16 O1→16 O2→1 (C1-16-17-2) O1→3 (C1-16-13-3) O17→15 O15→14 (C14-16-
+17-15) O15→12 (C12-15-14-13) S:2-17-15-12-4
+68. MC54 17→2 O17→16 (C2-17-16-13-3) O17→15 O15→14 (C14-16-17-15) O15→12 (C12-
+15-14-13) O15→16 (C12-15-16-13) B6→11 (Copy 71) O5→11 (C5-11-6) O12→11 (C4-12-11-5)
+B6→10 (Copy 72) O11→10 (C5-11-10-6) O7→10 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2)
+O16→1 (C1-16-17-2) O3→1 (C1-16-13-3) O8→7 O3→8 (C1-7-8-3) O9→10 O8→9 (C7-10-9-8)
+O9→7 (C6-10-9-7) O9→11 (C6-11-9-7) S:5-3-8-9-11
+69. MC72 10→6 O10→11 (C6-11-10) O9→11 O10→9 (C6-11-9-10) B8→9 (Copy 73) O8→3
+(C3-8-9-11-5) B7→10 (Copy 74) O7→6 (C6-10-7) O7→9 (C7-10-9) O7→8 (C7-10-9-8) O7→1
+O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) S:13-16-1-3
+70. MC74 10→7 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O8→7
+O1→3 (C1-7-8-3) S:13-16-1-3
+71. MC73 9→8 O10→7 O7→8 (C7-10-9-8) O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1
+(C1-16-17-2) O3→8 O1→3 (C1-7-8-3) S:13-16-1-3
+72. MC71 11→6 O11→12 (C6-13-12-11) O11→5 (C4-12-11-5) O11→10 O10→6 (C5-11-10-
+6) B6→7 (Copy 75) O10→7 (C6-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O3→1
+(C1-16-13-3) O8→7 O3→8 (C1-7-8-3) O10→9 O9→7 (C6-10-9-7) O11→9 (C9-11-10) O8→9
+(C7-10-9-8) S:11-5-3-8-9
+73. MC75 7→6 O7→10 (C6-11-10-7) B7→8 (Copy 76) B3→8 (Copy 77) O9→8 O11→9 (C3-8-
+9-11-5) O7→9 (C6-11-9-7) O10→9 (C6-10-9-7) S:7-10-9-8
+74. MC77 8→3 O7→1 O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) S:13-16-1-3
+75. MC76 8→7 O9→10 O8→9 (C7-10-9-8) O9→7 (C6-10-9-7) O9→11 (C6-11-9-7) O8→3 (C2-
+6-7-8-3) S:8-9-11-5-3
+76. MC53 6→2 O3→2 (C2-6-5-3) O4→2 (C2-4-5-3) B2→17 (Copy 78) O16→17 (C2-17-16-13-3)
+O15→17 O12→15 (C2-17-15-12-4) O14→15 (C12-15-14-13) S:16-14-15-17
+77. MC78 17→2 B16→17 (Copy 79) O16→1 O1→2 (C1-16-17-2) O3→1 (C1-16-13-3) B6→11
+(Copy 80) O5→11 (C5-11-6) O12→11 (C4-12-11-5) B1→7 (Copy 81) O6→7 (C1-7-6-2) O8→7
+O3→8 (C1-7-8-3) B7→10 (Copy 82) O6→10 (C6-10-7) O11→10 (C5-11-10-6) O9→10 O8→9
+(C7-10-9-8) O9→7 (C6-10-9-7) O9→11 (C6-11-9-7) S:5-3-8-9-11
+78. MC82 10→7 O10→11 (C6-11-10-7) O10→6 (C5-11-10-6) O10→9 O9→7 (C6-10-9-7) O9→11
+(C6-11-9-7) O8→9 (C7-10-9-8) S:5-3-8-9-11
+79. MC81 7→1 O7→6 (C1-7-6-2) O9→11 O7→9 (C6-11-9-7) O10→11 O7→10 (C6-11-10-7)
+O10→6 (C5-11-10-6) O10→9 (C6-10-9-7) O8→9 O7→8 (C7-10-9-8) O3→8 (C1-7-8-3) S:5-3-8-
+9-11
+80. MC80 11→6 O11→12 (C6-13-12-11) O11→5 (C4-12-11-5) O11→10 O10→6 (C5-11-10-6)
+B9→10 (Copy 83) O9→7 O7→6 (C6-10-9-7) O7→1 (C1-7-6-2) O9→11 (C6-11-9-7) O7→10 (C6-
+11-10-7) O8→3 O9→8 (C3-8-9-11-5) O8→7 (C1-7-8-3) S:9-8-7-10
+81. MC83 10→9 O11→9 (C9-11-10) B1→7 (Copy 84) O6→7 (C1-7-6-2) O10→7 (C6-10-7)
+O8→7 O3→8 (C1-7-8-3) O9→7 (C6-10-9-7) O8→9 (C7-10-9-8) S:11-5-3-8-9
+82. MC84 7→1 O7→6 (C1-7-6-2) O7→9 (C6-10-9-7) O7→10 (C6-11-10-7) O8→9 O7→8 (C7-
+10-9-8) O3→8 (C1-7-8-3) S:11-5-3-8-9
+83. MC79 17→16 O17→15 O15→14 (C14-16-17-15) O15→12 (C12-15-14-13) S:17-15-12-4-2
+84. MC52 6→5 O3→5 (C3-13-6-5) O4→5 (C3-13-4-5) O12→11 O11→5 (C4-12-11-5) O6→11
+(C6-13-12-11) B2→6 (Copy 85) O2→3 (C2-6-5-3) O2→4 (C2-4-5-3) B6→10 (Copy 86) O11→10
+(C5-11-10-6) O7→10 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) B1→16 (Copy 87) O17→16
+O2→17 (C1-16-17-2) O1→3 (C1-16-13-3) O17→15 O15→14 (C14-16-17-15) O15→12 (C12-15-
+14-13) S:2-17-15-12-4
+85. MC87 16→1 O3→1 (C1-16-13-3) O8→7 O3→8 (C1-7-8-3) O9→10 O8→9 (C7-10-9-8) O9→7
+(C6-10-9-7) O9→11 (C6-11-9-7) S:3-8-9-11-5
+86. MC86 10→6 O10→11 (C6-11-10) O9→11 O10→9 (C6-11-9-10) B8→9 (Copy 88) O8→3 (C3-
+8-9-11-5) B15→16 (Copy 89) O15→14 (C14-16-15) O15→12 (C12-15-14-13) B2→17 (Copy 90)
+O15→17 (C2-17-15-12-4) O16→17 (C14-16-17-15) B7→10 (Copy 91) O7→6 (C6-10-7) O7→9
+(C7-10-9) O7→8 (C7-10-9-8) O7→1 O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2)
+S:13-16-1-3
+87. MC91 10→7 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O8→7
+O1→3 (C1-7-8-3) S:13-16-1-3
+
+
+
+
+                                        10
+88. MC90 17→2 O17→16 (C2-17-16-13-3) O17→15 (C14-16-17-15) B7→10 (Copy 92) O7→6
+(C6-10-7) O7→9 (C7-10-9) O7→8 (C7-10-9-8) O7→1 O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1
+(C1-16-17-2) S:13-16-1-3
+89. MC92 10→7 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O8→7
+O1→3 (C1-7-8-3) S:13-16-1-3
+90. MC89 16→15 O12→15 (C12-15-16-13) O14→15 (C12-15-14-13) O16→17 O17→15 (C14-
+16-17-15) O2→17 (C2-17-16-13-3) B7→10 (Copy 93) O7→6 (C6-10-7) O7→9 (C7-10-9) O7→8
+(C7-10-9-8) O7→1 O1→3 (C1-7-8-3) O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) S:13-16-1-3
+91. MC93 10→7 O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O16→1 (C1-16-17-2) O8→7
+O1→3 (C1-7-8-3) S:13-16-1-3
+92. MC88 9→8 O10→7 O7→8 (C7-10-9-8) O6→7 (C6-11-10-7) O1→7 O2→1 (C1-7-6-2) O3→8
+O1→3 (C1-7-8-3) O1→16 (C1-16-13-3) O17→16 O2→17 (C1-16-17-2) O9→7 (C6-10-9-7) O17→15
+O15→14 (C14-16-17-15) O15→12 (C12-15-14-13) S:2-17-15-12-4
+93. MC85 6→2 O3→2 (C2-6-5-3) O4→2 (C2-4-5-3) B6→10 (Copy 94) O11→10 (C5-11-10-6)
+O7→10 O6→7 (C6-11-10-7) B7→8 (Copy 95) O3→8 (C2-6-7-8-3) B15→16 (Copy 96) O15→14
+(C14-16-15) O15→12 (C12-15-14-13) O17→2 O15→17 (C2-17-15-12-4) O16→17 (C14-16-17-15)
+O16→1 O1→2 (C1-16-17-2) O1→7 (C1-7-6-2) O1→3 (C1-7-8-3) S:13-16-1-3
+94. MC96 16→15 O12→15 (C12-15-16-13) O14→15 (C12-15-14-13) O16→17 O17→15 (C14-16-
+17-15) O17→2 (C2-17-15-12-4) O16→1 O1→2 (C1-16-17-2) O1→7 (C1-7-6-2) O1→3 (C1-7-8-3)
+S:13-16-1-3
+95. MC95 8→7 O9→10 O8→9 (C7-10-9-8) O9→7 (C6-10-9-7) O9→11 (C6-11-9-7) O8→3 (C3-
+8-9-11-5) B12→15 (Copy 97) O14→15 (C12-15-14-13) O16→15 (C14-16-15) O16→17 O17→15
+(C14-16-17-15) O17→2 (C2-17-15-12-4) O16→1 O1→2 (C1-16-17-2) O1→7 (C1-7-6-2) O1→3
+(C1-7-8-3) S:13-16-1-3
+96. MC97 15→12 O15→14 (C12-15-14) O15→16 (C12-15-16-13) O17→2 O15→17 (C2-17-15-
+12-4) O16→17 (C14-16-17-15) O16→1 O1→2 (C1-16-17-2) O1→7 (C1-7-6-2) O1→3 (C1-7-8-3)
+S:13-16-1-3
+97. MC94 10→6 O10→11 (C6-11-10) O9→11 O10→9 (C6-11-9-10) B8→9 (Copy 98) O8→3 (C3-
+8-9-11-5) B15→16 (Copy 99) O15→14 (C14-16-15) O15→12 (C12-15-14-13) O17→2 O15→17
+(C2-17-15-12-4) O16→17 (C14-16-17-15) O16→1 O1→2 (C1-16-17-2) O3→1 (C1-16-13-3) O7→1
+O8→7 (C1-7-8-3) O7→6 (C1-7-6-2) O7→9 (C6-10-9-7) O7→10 (C6-11-10-7) S:8-7-10-9
+98. MC99 16→15 O12→15 (C12-15-16-13) O14→15 (C12-15-14-13) O16→17 O17→15 (C14-16-
+17-15) O17→2 (C2-17-15-12-4) O16→1 O1→2 (C1-16-17-2) O3→1 (C1-16-13-3) O7→1 O8→7
+(C1-7-8-3) O7→6 (C1-7-6-2) O7→9 (C6-10-9-7) O7→10 (C6-11-10-7) S:8-7-10-9
+99. MC98 9→8 O10→7 O7→8 (C7-10-9-8) O6→7 (C6-11-10-7) O9→7 (C6-10-9-7) O3→8 (C2-
+6-7-8-3) B12→15 (Copy 100) O14→15 (C12-15-14-13) O16→15 (C14-16-15) O16→17 O17→15
+(C14-16-17-15) O17→2 (C2-17-15-12-4) O16→1 O1→2 (C1-16-17-2) O1→7 (C1-7-6-2) O1→3
+(C1-7-8-3) S:13-16-1-3
+100. MC100 15→12 O15→14 (C12-15-14) O15→16 (C12-15-16-13) O17→2 O15→17 (C2-17-15-
+12-4) O16→17 (C14-16-17-15) O16→1 O1→2 (C1-16-17-2) O1→7 (C1-7-6-2) O1→3 (C1-7-8-3)
+S:13-16-1-3
+
+
+
+
+                                       11
+

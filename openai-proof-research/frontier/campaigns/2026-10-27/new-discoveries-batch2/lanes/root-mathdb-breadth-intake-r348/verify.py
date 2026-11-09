@@ -1,0 +1,51 @@
+from pathlib import Path
+import hashlib,json,sys,datetime
+R=Path(__file__).resolve().parent
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def put(n,o):(R/n).write_text(json.dumps(o,indent=2,sort_keys=True)+'\n')
+bindings=json.loads((R/'bindings.json').read_text())
+for e in bindings:
+ for p in [Path(e['original']),R/e['copy']]:
+  assert sha(p)==e['sha256'] and p.stat().st_size==e['size'],str(p)
+C=R/'frozen/pi-mathdb-primary-qualified-breadth-r347'
+entries=json.loads((C/'manifest.json').read_text())['files']
+assert {str(p.relative_to(C)) for p in C.rglob('*') if p.is_file()}-{'manifest.json','verification-receipt.json'}=={e['path'] for e in entries}
+for e in entries:
+ p=C/e['path'];assert sha(p)==e['sha256'] and p.stat().st_size==e['size'],str(p)
+inventory=C/'frozen/pi-mathdb-full-corpus-inventory-r301/inventory-manifest.json'
+assert sha(inventory)=='4da10b6dcd6d56a34399195f26abe9ff13f8c3fd67e88b672fc35db2a2a71e15'
+refs=[e for e in json.loads(inventory.read_text())['files'] if e['path'].startswith('corpus/mathdb-normalized-chunk-')]
+assert len(refs)==20
+for e in refs:
+ p=R.parent/'pi-mathdb-full-corpus-inventory-r301'/e['path'];assert sha(p)==e['sha256'] and p.stat().st_size==e['bytes'],str(p)
+for e in json.loads((C/'bindings.json').read_text())['frozen_inputs_pre_content']['entries']:
+ if e['sha256']!='SEE manifest':assert sha(C/e['path'])==e['sha256'],e['path']
+old=json.loads((R/'frozen/root-mathdb-c5-intake-r346/coverage-delta.json').read_text())
+raw=json.loads((C/'dispositions.json').read_text())['dispositions']
+rows=[dict(x,mathdb_id=int(n)) for n,x in raw.items()]
+ids=[str(x['mathdb_id']) for x in rows]
+reserved=json.loads((R/'frozen/root-mathdb-c5-intake-r346/reserved-ids.json').read_text())['ids']
+assert len(old)==383 and len(ids)==len(set(ids))==50 and set(ids)==set(map(str,reserved)) and not(set(ids)&set(old))
+coverage=dict(old)
+for x in rows:coverage[str(x['mathdb_id'])]={'disposition':x['disposition'],'record_statement_review':'delegate_reported_complete','report':'pi-mathdb-primary-qualified-breadth-r347/dispositions.json','source_scope_cleared':False,'prior_cleared':False,'accepted_credit':0}
+queue=[json.loads(s) for s in (R/'frozen/root-mathdb-breadth-intake-r326/frozen/pi-mathdb-full-corpus-inventory-r301/tags/review-queue-top.jsonl').read_text().splitlines()]
+selected=[];seen=set(coverage)
+for x in queue:
+ n=str(x['mathdb_id'])
+ if n in seen or x['status']!='open' or x['statement_completeness']!='full':continue
+ selected.append(x);seen.add(n)
+ if len(selected)==50:break
+assert len(selected)==50
+def payload():return {str(p.relative_to(R)) for p in R.rglob('*') if p.is_file()}-{'manifest.json','verification-receipt.json'}
+if sys.argv[1]=='build':
+ put('coverage-delta.json',coverage);put('queue.json',selected);put('reserved-ids.json',{'ids':[x['mathdb_id'] for x in selected],'lane':'pi-mathdb-primary-qualified-breadth-r349','status':'reserved_not_reviewed'})
+ put('manifest.json',{'files':[{'path':s,'sha256':sha(R/s),'size':(R/s).stat().st_size} for s in sorted(payload())]})
+elif sys.argv[1]=='verify':
+ assert json.loads((R/'coverage-delta.json').read_text())==coverage
+ assert json.loads((R/'queue.json').read_text())==selected
+ own=json.loads((R/'manifest.json').read_text())['files'];assert payload()=={e['path'] for e in own}
+ for e in own:
+  p=R/e['path'];assert sha(p)==e['sha256'] and p.stat().st_size==e['size'],str(p)
+ put('verification-receipt.json',{'status':'PASS','at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'root_bindings':len(bindings),'child_payloads':len(entries),'upstream_actual_hashes':len(refs),'reviewed_ids':len(coverage),'new_reservations':50,'root_payloads':len(own),'math_replay':False})
+else:raise ValueError('build or verify')
+print('PASS',sys.argv[1],len(coverage),'reported reviews',len(refs),'actual upstream hashes')

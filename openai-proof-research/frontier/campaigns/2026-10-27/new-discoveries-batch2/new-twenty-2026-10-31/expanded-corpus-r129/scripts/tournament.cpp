@@ -1,0 +1,4 @@
+#include <bits/stdc++.h>
+using namespace std;using U=uint64_t;
+U count(int n,unsigned mask){U a[26]={1},b[26];for(int len=1;len<n;len++){U s=0; if((mask>>(len-1))&1){for(int j=0;j<=len;j++){b[j]=s;if(j<len)s+=a[j];}}else{for(int j=len;j>=0;j--){b[j]=s;if(j>0)s+=a[j-1];}}copy(b,b+len+1,a);}U s=accumulate(a,a+n,U(0));bool symmetric=true;for(int i=0;i<n-1;i++)if(((mask>>i)&1)==((mask>>(n-2-i))&1))symmetric=false;return s/(symmetric?2:1);}
+int main(){for(int n=5;n<=23;n++){unsigned lim=1u<<(n-1),target=0;for(int j=0;j<n-1;j++){bool up;if(n%2==0)up=j%2==0;else up=j==0 || (j>=3 && j%2==1);if(up)target|=1u<<j;}U mx=0;unsigned arg=0;for(unsigned m=0;m<lim/2;m++){auto v=count(n,m);if(v>mx){mx=v;arg=m;}}auto h=count(n,target);cout<<n<<" maximum "<<mx<<" arg "<<arg<<" target "<<h<<" ok "<<(mx<=h)<<endl;}}

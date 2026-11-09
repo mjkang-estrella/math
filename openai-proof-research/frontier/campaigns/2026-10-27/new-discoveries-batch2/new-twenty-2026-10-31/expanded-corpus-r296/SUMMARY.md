@@ -1,0 +1,11 @@
+# R296 research handback
+
+Exactly twenty immutable reserved IDs have keyed dispositions in results.json, with full original newline records, parsed records, original chunk/one-based line and chunk/raw/statement UTF-8 SHA256 in literal-provenance.json. No reselect or padding. Reservation SHA256890277f18e70d7ccfe401ee1ed552bd72e006fc83fc87dc77275a52399e92f52 matches before/after.
+
+Credit0; campaign remains52/60. Two complete public-source exclusions:325824 endpoint characterization follows explicitly from Sloane3.4 plus Kendrick2015 Theorem14 and starting-edge labels;366826 is exactly Ascoli-He v2 Theorem1.3, promoted from v1 Conjecture5.3. Three sustained ordinary HOLD routes350412/360917/371728 have deductions, failed shortcuts and precise missing full-result lemmas in ATTEMPTS.md. Fifteen other records are parked, including genuine infinite/scaling/flagship routing errors. No new qualified full result, CANDIDATE.md, or Pi execution recommendation. Crown369163 and other protected lanes untouched.
+
+History reconciles adjacent325823,350409 and360916 without conflating endpoints; no matching accepted/excluded object in the bounded ledger check. This is not proof of global absence.371067 source refutation text concerns the stronger P4 density1/8 assertion;363124 solved language concerns other conjectures. Neither is a new refutation of its assigned literal conjecture.
+
+Current registry heads: OpenAI4eaee87548250b2682affda7d05d947c05554bae; Omega5a97247bf6ad10485d8891db5430b9e34def4933 (changed since r295); LeanPool6814773d2f980caadeb58ea33cae432cf824b60c. Root/commit chronology and bounded catalogue/README/candidate/import routing were read. projects.yml404 is inherited and unresolved. No registry index absence clears novelty. See registry-review.json for exact scope and chronology.
+
+read-inventory.json distinguishes actual statements, definitions and proof-body excerpts from abstracts and downloads. HTTP receipts include URLs/UTC/status/errors/bytes/hashes; inherited receipts are references without recursive copies. GAPS.md retains version/journal/correction/companion/citation and graphical read limits. First two uncapped navigation commands are explicitly disclosed; subsequent bounded processing was synchronous and reaped. No forbidden execution or shared changes. Artifact hashes in artifact-manifest.json.

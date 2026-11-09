@@ -1,0 +1,7 @@
+The exact source is Conjecture 3.4, arXiv:2410.04611v3, with valid subset meaning an entire equal-radius fibre of Algorithm 1, not an arbitrary selection of points on that radius.
+
+Put N_K = 2^(DK) - 1. Replacing every bit by its complement sends each BitDistance at every zoom level to its negative. Normalization denominators remain positive (each coordinate's numerator is an odd integer), and all correction weights remain fixed. Thus the projected vector of N_K - x is the negative of that of x. Every complete equal-radius fibre T is closed under x -> N_K - x. This has no fixed integer point since N_K is odd.
+
+For r=B-S, q=2^D and Omega=1+q+...+q^r, the source's formula is phi(x)=q^(r+1) floor(x/q)+Omega (x mod q). If x=q a+b, then N_S-x=q(q^(S-1)-1-a)+(q-1-b). Consequently phi(x)+phi(N_S-x)=q^(r+1)(q^(S-1)-1)+Omega(q-1)=q^B-1=N_B. Pairing the fibre therefore gives sum(phi(T))=|T| N_B/2. The map phi is injective: different quotient blocks have disjoint ranges, and each within-block coefficient Omega is positive. Hence the sum over its image equals the sum over T. Since Psi_B=2^(D-1)(2^(DB)-1), this is exactly Conjecture 3.4.
+
+Verdict: routine symmetry/algebra bridge, zero discovery credit under the brief. The new reasoning is only a complement-pairing observation and the displayed elementary identity using the source's own explicit map. Section 3.2 already discusses bit reflections and inversions. No strong candidate or Lean packet is proposed. No arbitrary partial fibre or floating-point shell grouping is used as a refutation.

@@ -1,0 +1,7 @@
+# Failures and honest coverage limits
+
+No helper/resource-cap failure or denied HTTP response occurred. The extraction and initial binding passed; all seven source HTTP requests returned retained responses. `failures.json` retains the path-discovery error described below; there were zero helper or access failures. No access-denied route was retried, no TLS bypass was used and no original upstream verifier was executed.
+
+Current registry coverage is missing and remains HOLD for every row; no cached absence is clearance. Closest successor bodies were read only for the 381643 v1-to-v5 comparison. Other successor searches and separate publisher correspondence are incomplete except that the retained 404655 report is the publisher's report itself. No claim of exhaustive scientific source coverage follows from twenty verified chunk hashes.
+
+The shell initially looked for a nonexistent `root-mathdb-breadth-intake-r304` directory; it returned “No such file or directory.” The authoritative exclusion lane was then correctly located as `root-mathdb-accepted-exclusions-r304` and bound before scientific reading. This was a path-discovery failure, not a source-access failure. Some initial overlong inspection output was truncated; all fifty literal statements were subsequently reread in a compact untruncated statement-only output. Historical administrative dispositions were bound and scanned as leads, not represented as a complete underlying source-body audit.

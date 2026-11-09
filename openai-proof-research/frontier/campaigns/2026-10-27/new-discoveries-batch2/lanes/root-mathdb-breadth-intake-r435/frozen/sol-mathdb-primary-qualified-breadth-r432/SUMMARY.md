@@ -1,0 +1,13 @@
+# r432 bounded fifty-record screen
+
+Read exactly the fifty assigned full literal cached statements. Baseline 2,183 reported reviews and the fifty r430 active reservations are disjoint; exclusions checked. Queue metadata was used only for assignment. Original SHA256 and sizes were frozen before scientific reading, including r431 manifest/direct originals, r301 manifest and all twenty original chunks (using bytes), r304 accepted/history, and r363 exclusion. Flat references only; no corpus snapshots or upstream verifiers.
+
+Zero hypothesis briefs. Eight records are retired at a public-statement level, one at a selected public-proof level, and one as a routine module-syzygy adaptation. These are evidence-qualified triage dispositions, not claims that every cited proof has been replayed. Hultman's Theorem 3.2 characterization, Lemmas 3.1/3.3 and source-internal example were read; cited dependencies remain open. The union-free report already states stronger exact/general bounds; the support-theory report already characterizes Bousfield equivalence. The remaining records are parked with specific full-scope obstacles or held for missing source/successor scope. See dispositions.json for exact quantifiers and applicability bridges.
+
+Selected sections from seven primary report PDFs and one author manuscript were inspected (12 assigned records have selected primary-body review). No latest-version clearance, full dependency closure, current proof-registry clearance, or novelty is asserted. Missing current registry is HOLD throughout. The author union-free PDF returned 404; report statements suffice only for statement-level retirement. No source access gap is classified as hardness. All inherited denied routes remain parked.
+
+Zero MathDB requests; no browser, forbidden hosts, GitHub routes, messages, uploads or publication. No new certificate or costly sweep. Counts remain **9 additional / 39 total / next 40**. This screen does not establish whole-corpus coverage.
+
+Verification: from this lane's directory run the packet helper_guard.py with python3 -B verify.py, setting OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1. verify.py independently reads and checks originals, chunk manifests, assignment/disjointness, canonical/literal hashes, excerpts, and exact payload set. Only manifest.json and final-receipt.json are excluded by exact relative paths. The final receipt reports the sealed-payload check.
+
+Disposition counts: {"HOLD_PRIMARY_PROOF": 1, "HOLD_PRIMARY_SCOPE": 12, "HOLD_PRIMARY_SUCCESSOR": 2, "HOLD_PRIOR_SCOPE": 1, "PARK_DEEP": 15, "PARK_PROGRAM": 9, "RETIRE_PUBLIC_PROOF": 1, "RETIRE_PUBLIC_STATEMENT": 8, "RETIRE_ROUTINE_ADAPTATION": 1}

@@ -1,0 +1,9 @@
+# Failures and access limits
+
+Two failed guarded freeze attempts are immutable: freeze.log (list versus object manifest schema), freeze-v2.log (wrong corpus filename prefix). Corrected freeze-v3.log passes; neither predecessor receipt was rewritten. These were local verifier-assumption failures, not changed scientific inputs. freeze.py, freeze-v2.py, and freeze-v3.py are retained separately.
+
+ZERO MathDB requests: inherited HTTP 429 restriction remains HOLD. No live registry head, chronology or full resolution clearance. No Google, GitHub, ScienceDirect, browser, account or external mutation; inherited denied AIM/Kourovka/EGRES, AIProofWatch, rigid-body and triangle-gap routes were not requested. No retries or alternative access routes were used. All 43 requested primary arXiv PDFs returned 200 and were text-extracted. No claim that retained PDFs were read in full.
+
+The broad rg diagnostic output was truncated by tool output caps. It is not counted as fully read evidence; targeted locators and explicitly viewed passages support the limited claims. The thesis target was located separately as Conjecture 8.4.1. located-passages.json uses Python splitlines numbering (form-feed counts as a split); target-locators.json uses newline numbering. Neither locator table by itself certifies every passage was read. assessment.tsv identifies actual scientific conclusions; unmatched definitions and closest successors remain HOLD.
+
+332604 numerical signs use binary64 and are not certified interval arithmetic. The angular-unit discrepancy between Eq.12 and Eq.15 prevents a literal-source clearance. 332055's arithmetic comparison does not audit indecomposability or norm minimality. 332933 finite substitutions do not audit the partition proof. No Lean, manuscript, upstream verifier, recursive binding expansion, corpus copy or large computation was performed.

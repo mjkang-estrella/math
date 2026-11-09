@@ -1,0 +1,10 @@
+# Failures and unresolved gates
+
+- Initial preflight assumed every manifest was an object. r304 uses a list; TypeError occurred before scientific reading. Exact traceback and guard exit 1 are preserved in preflight-failure-1.log. Parser corrected; complete binding preflight then passed before statement extraction.
+- EMS landing-page parser expected .pdf URLs and found none. This was a link-format mismatch, not a denied request. Explicit citation_pdf_url links in the downloaded pages were subsequently used; all seven linked PDFs succeeded. No alternate route after a denial was used.
+- https://math.mit.edu/~fox/paper-union-free.pdf returned HTTP 404. Failure retained in source-provenance.json/pdf-fetch.log. No proof-level clearance is claimed for the union-free results. No retry was made.
+- Two early native rg reads preceded completion of downloads and reported absent text files (11129, 11134, 11136, union-free, hultman). Completed report/Hultman downloads were subsequently inspected. union-free.txt remains absent. These were local missing-file checks, not source denials.
+- No current proof-registry head was obtained. Every disposition retains registry HOLD and prior_cleared=false; live search leads do not substitute for registry clearance.
+- No latest-version/successor clearance for proposed discoveries: no discoveries proposed. Hultman author-hosted bytes were downloaded and selected proof read, but are not asserted to be the latest arXiv revision. Deep cited dependencies were not closed.
+- AIM/Kourovka/EGRES, AIProofWatch403, rigid-body successor403 and triangle-gap successor403 inherited routes remain parked; zero attempts here. No 403/429 or challenge was encountered on attempted sources. Zero MathDB requests.
+- First seal verification rejected r304's size-less upstream manifest entries because it compared actual size to None. Failure retained in seal-failure-1.log. Corrected optional upstream-size handling; actual original size and SHA checks in local flat bindings remain mandatory. This was a verifier schema bug, not a source mismatch.

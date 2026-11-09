@@ -1,0 +1,923 @@
+
+Turán densities for matroid basis hypergraphs
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+  /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+     the marker's display to know which way to toggle. The marker draws no box. */
+  .arxiv-html-header { display: contents; }
+  html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+  /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+     icon by making its span a block). */
+  .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+  /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+     arXiv's own render as they are (the logo on the bar, the funder logos on their white
+     chips). Important: ar5iv's dark rules are unlayered, as specific as
+     :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+  :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+  .ds-site-header img { background-color: transparent !important; }
+  /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+     were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+     header, the paper's bar (no site navigation, the paper's controls), takes the second and
+     stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+     The controls show their names. */
+  @media (min-width: 1280px) {
+    html { scroll-padding-top: 80px; }
+    .arxiv-html-site-chrome { display: contents; }
+    .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+    .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+    .arxiv-html-site-chrome .tool-icon { display: none; }
+  }
+  /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+     readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+     bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+     over the header and the paper: it shows only while open, under the chrome, in its place in
+     the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+     inset; the theme gives it none, so it met the screen edges. */
+  @media (max-width: 1279px) {
+    .arxiv-html-site-chrome .tool-wide { display: none; }
+    .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+    .ltx_page_navbar { position: absolute; top: auto; }
+    .arxiv-html-footer { padding-inline: 1rem; }
+  }
+Skip to main content
+      Report GitHub Issue
+      ×
+      Title:
+Content selection saved. Describe the issue below:
+      Description:
+      Submit without GitHub
+      Submit in GitHub
+    Why HTML?
+      Report Issue
+      Back to Abstract
+      Download PDF
+      Contents
+      Reading mode
+      Colour theme
+Abstract
+1 Introduction
+2 Preliminaries
+2.1 Matroids
+2.2 Hypergraphs
+2.3 Extremal problems for matroids and hypergraphs
+3 Matroid basis hypergraphs
+3.1 Density
+3.2 Forbidden substructures
+4  $U_{1,t}$  and  $U_{2,t}$ 
+5  $U_{s,s+1}$ 
+6  $U_{3,t}$ 
+7 Directions for future work
+7.1 Matroid truncations
+7.2 Discrete geometry
+7.3 Exact Turán basis numbers
+7.4 Minor-closed classes
+References
+    License: arXiv.org perpetual non-exclusive license
+arXiv:2502.03673v1 [math.CO] 05 Feb 2025
+Turán densities for matroid basis hypergraphs
+Jorn van der Pol
+Note: University of Twente, Email: j.g.vanderpol@utwente.nl
+Zach Walsh
+Note: Auburn University, Email: zwalsh@auburn.edu
+Michael C. Wigal
+Note: University of Illinois at Urbana–Champaign, Email: wigal@illinois.edu
+August 24, 2026
+Abstract
+Let  $U$  be a uniform matroid.
+For all positive integers  $n$  and  $r$  with  $n\geq r$ , what is the maximum number of bases of an  $n$ -element, rank- $r$  matroid without  $U$  as a minor?
+We show that this question arises by restricting the problem of determining the Turán number of a daisy hypergraph to the family of matroid basis hypergraphs.
+We then answer this question for several interesting choices of  $U$ .
+1 Introduction
+For a matroid  $M$ , we write  $b(M)$  for the number of bases of  $M$ . Classic results of Björner [9] and Purdy [37] were concerned with minimizing  $b(M)$  over all matroids  $M$ .
+This note is concerned with maximizing the number of bases in matroids. Without any restrictions, this problem is trivial, as for any fixed size and rank, a uniform matroid uniquely maximizes the number of bases. To make this problem interesting, we place structural restrictions on the matroids considered. For a matroid  $N$ , we write
+ $\ex_{\mathsf{M}}(n,r,N)=\max\{b(M):\text{$M$ is an $n$-element, rank-$r$, $N$-minor-free matroid}\}$ 
+and
+ $\pi_{\mathsf{M}}(r,N)=\lim_{n\to\infty}\frac{\ex_{\mathsf{M}}(n,r,N)}{\binom{n}{r}}.$ 
+Standard averaging arguments show that  $\pi_{\mathsf{M}}(r,N)$  and  $\lim_{r\to\infty}\pi_{\mathsf{M}}(r,N)$  exist – see Propositions 3.1 and 3.2. We say that the numbers  $\ex_{\mathsf{M}}(n,r,N)$ ,  $\pi_{\mathsf{M}}(r,N)$ , and  $\lim_{r\to\infty}\pi_{\mathsf{M}}(r,N)$  are the Turán basis number, Turán basis density, and link Turán basis density of the matroid  $N$ . We will focus on the case in which  $N$  is a uniform matroid  $U_{s,t}$ .
+Problem 1.1.
+Let  $s$  and  $t$  be positive integers with  $t\geq s$ .
+ $(i)$  
+For all integers  $n$  and  $r$  with  $n\geq r\geq s$ , determine  $\ex_{\mathsf{M}}(n,r,U_{s,t})$ .
+ $(ii)$  
+For all integers  $r$  with  $r\geq s$ , determine  $\pi_{\mathsf{M}}(r,U_{s,t})$ .
+ $(iii)$  
+Determine  $\displaystyle\lim_{r\to\infty}\pi_{\mathsf{M}}(r,U_{s,t})$ .
+While we believe that this problem is interesting from a purely matroidal perspective, it has close connections to several interesting related problems as well.
+We comment that while several past works bound the number of bases of a matroid in terms of other parameters such as number of circuits [16] or sizes of corcircuits [17], we bound the number of bases in terms of rank and number of elements.
+Our first main result is the following.
+Theorem 1.2.
+Let  $n$  and  $r$  be integers and let  $t$  be a prime power such that  $r\geq 2$  and  $n\geq\frac{t^{r}-1}{t-1}$ . Then
+ $\ex_{\mathsf{M}}(n,r,U_{2,t+2})\leq\frac{n^{r}\prod_{i=0}^{r-1}(t^{r}-t^{i})}{r!\cdot(t^{r}-1)^{r}}$ 
+with equality when  $n$  is a multiple of  $\frac{t^{r}-1}{t-1}$ .
+In particular,
+ $\lim_{r\to\infty}\pi_{\mathsf{M}}(r,U_{2,t+2})=\prod_{i=1}^{\infty}(1-t^{-i}).$ 
+Theorem 1.2 was inspired by a recent breakthrough result of Ellis, Ivan, and Leader [18] regarding vertex Turán problems for the hypercube.
+They found a construction that gives a lower bound for the limit of Theorem 1.2, which has had widereaching consequences throughout combinatorics, see e.g. [1, 2, 26]. Our matching upper bound of Theorem 1.2 shows that one must look beyond matroid basis hypergraphs to improve upon their work. We discuss this further in Section 2.
+We also obtain bounds for forbidding  $U_{s,s+1}$ -minors.
+The number  $\ex_{\mathsf{M}}(n,r,U_{s,s+1})$  is particularly natural: it is the maximum number of bases among all  $n$ -element rank- $r$  matroids with circumference at most  $s$ , where circumference is the number of elements in a largest circuit of the matroid.
+We determine  $\pi_{\mathsf{M}}(r,U_{3,4})$  for all  $r\geq 3$ .
+Theorem 1.3.
+Let  $r$  be an integer with  $r\geq 3$ . Then  $\pi_{\mathsf{M}}(r,U_{3,4})=\frac{r!\cdot 2^{\lfloor r/2\rfloor}}{r^{r}}$ .
+In particular,  $\pi_{\mathsf{M}}(3,U_{3,4})=4/9$ . We can interpret  $\pi_{\mathsf{M}}(s,U_{s,t})$  as a specialization of the well-known hypergraph Turán density parameter  $\pi(K_{t}^{(s)})$ , where  $K_{t}^{(s)}$  is the  $s$ -uniform hypergraph on  $t$  vertices. This problem is particularly well-studied in the case  $t=s+1$  [4, 31, 38]. We discuss this further in Section 2.
+Finally, in Section 6, we focus on  $\pi_{\mathsf{M}}(3,U_{3,t})$ .
+Our third main result is as follows.
+Theorem 1.4.
+ $\pi_{\mathsf{M}}(3,U_{3,5})=3/4$ .
+This confirms a famous conjecture of Turán [41], that  $\pi(K_{5}^{(3)})=3/4$ , in the special case of matroid basis hypergraphs.
+In addition to Theorem 1.4, we also prove two structural results (Theorems 6.2 and 6.3) for rank- $3$  matroids with no  $U_{3,t}$ -restriction. These may provide a future approach for finding  $\pi_{\mathsf{M}}(3,U_{3,t})$ , and may be of independent interest to matroid theorists and finite geometers.
+The rest of this note is organized as follows. In Section 2, we will outline preliminaries regarding matroids and hypergraphs. In Section 3 we will show that the limits of Problem 1.1 exist and discuss characterizations of matroid basis hypergraphs, including a characterization via induced Turán numbers as introduced by Loh, Tait, Timmons, and Zhou [30].
+In Section 4 we will prove Theorem 1.2.
+In Section 5 we will prove Theorem 1.3 and present a conjecture for  $\ex_{\mathsf{M}}(n,U_{s,s+1})$ . In Section 6 we will prove Theorem 1.4 along with the structural properties of Theorems 6.2 and 6.3. Finally, in Section 7, we will discuss some related problems and directions for future work.
+2 Preliminaries
+In this section we will give a brief overview of relevant matroid terminology and how it relates to hypergraphs. We refer the reader to [35] for any notation that remains undefined and for background information regarding matroids.
+2.1 Matroids
+A matroid  $M$  is a pair  $(E,\mathcal{B})$  where  $E$  is a finite set and  $\mathcal{B}$  is a non-empty family of subsets of  $E$  that satisfies the following property:
+(B1) 
+For all  $B_{1},B_{2}\in\mathcal{B}$  and  $x\in B_{1}-B_{2}$ , there exists  $y\in B_{2}-B_{1}$  so that  $(B_{1}-\{x\})\cup\{y\}\in\mathcal{B}$ .
+The set  $E$  is the ground set of  $M$ , the sets in  $\mathcal{B}$  are the bases of  $M$ , and property (B1) is the basis-exchange property.
+We often write  $\mathcal{B}(M)$  for the set of bases of a matroid  $M$ .
+We will take the standard matroid theory convention and write  $X-x$  for  $X-\{x\}$  for a set  $X$  with an element  $x$ .
+It follows from (B1) that all sets in  $\mathcal{B}$  have the same cardinality, which is the rank of  $M$ .
+So, every rank- $r$  matroid  $M=(E,\mathcal{B})$  can be viewed as an  $r$ -uniform hypergraph with vertex set  $E$  and edge set  $\mathcal{B}$ ; we say that this hypergraph is the basis hypergraph of  $M$ .
+We write  $\mathsf{M}$  for the class of matroid basis hypergraphs.
+Matroid basis hypergraphs are not particularly well-studied, although they do play a central role in several recent works [11, 14, 32].
+Let  $M=(E,\mathcal{B})$  be a matroid.
+We say that  $M$  is representable over a field  $\mathbb{F}$  is there is a matrix over  $\mathbb{F}$  with columns indexed by  $E$  so that the elements of  $\mathcal{B}$  are precisely those subsets of columns that form a basis of the column space.
+While not every matroid is representable, much of the standard matroid terminology is inspired by this connection to linear algebra.
+The rank  $r(X)$  of a set  $X\subseteq E$  is the cardinality of a maximum subset of  $X$  contained in a basis.
+A loop of  $M$  is an element that is not in any basis,
+and a coloop is an element that is in every basis.
+A circuit of  $M$  is a minimal set of elements that does not appear in any basis.
+A point of  $M$  is a maximal rank- $1$  set, and a line of  $M$  is a maximal rank- $2$  set.
+The closure  $\cl_{M}(X)$  of a set  $X\subseteq E$  is the maximal set of rank  $r(X)$  that contains  $X$ .
+Non-loop elements of  $M$  are parallel if they are not in a common basis, and the equivalence classes under this relation are the parallel classes of  $M$ .
+Restricting the ground set of  $M$  to consist of one element from each parallel class gives a new matroid  $\si(M)$  called the simplification of  $M$ .
+A matroid is simple if it is equal to its simplification.
+The deletion of a non-coloop element  $e$  from  $M$  is the matroid  $M\!\setminus\!e=(E-e,\mathcal{B}^{\prime})$ , where  $\mathcal{B}^{\prime}=\{B\in\mathcal{B}\colon e\notin B\}$ , and the contraction of a non-loop element  $e$  from  $M$  is the matroid  $M/e=(E-e,\mathcal{B}^{\prime\prime})$ , where  $\mathcal{B}^{\prime\prime}=\{B-e\colon e\in B\in\mathcal{B}\}$ .
+If  $e$  is a coloop, we define  $M\!\setminus\!e$  to be  $M/e$ , and if  $e$  is a loop, we define  $M/e$  to be  $M\!\setminus\!e$ .
+A matroid  $N$  is a minor of  $M$  if it can be obtained from  $M$  by a sequence of deletions and contractions.
+Reordering the sequence of deletions and contractions does not change the minor, so for disjoint sets  $C,D\subseteq E$  we write  $M/C\!\setminus\!D$  for the matroid obtained from  $M$  by contracting the elements in  $C$  and deleting the elements in  $D$ .
+We write  $M|X$  for  $M\!\setminus\!(E-X)$ , the restriction of  $M$  to  $X$ .
+The dual of  $M=(E,\mathcal{B})$  is the matroid  $M^{*}$  on ground set  $E$  whose bases are the complements of bases of  $M$ .
+Finally, the direct sum of matroids  $M_{1}=(E_{1},\mathcal{B}_{1})$  and  $M_{2}=(E_{2},\mathcal{B}_{2})$  with disjoint ground sets is the matroid  $M_{1}\oplus M_{2}=(E_{1}\cup E_{2},\mathcal{B})$ , where  $\mathcal{B}=\{B_{1}\cup B_{2}\colon B_{1}\in\mathcal{B}_{1}\textrm{ and }B_{2}\in\mathcal{B}_{2}\}$ .
+2.2 Hypergraphs
+We will also use some standard notation for hypergraphs.
+Given a hypergraph  $\mathcal{H}=(V,F)$ , a subgraph of  $\mathcal{H}$  is a hypergraph obtained from  $\mathcal{H}$  by deleting vertices and edges, and an induced subgraph is a hypergraph obtained from  $\mathcal{H}$  by deleting vertices.
+For a hypergraph  $\mathcal{H}=(V,F)$  and  $W\subseteq V$  we write  $\mathcal{H}\!\setminus\!W$  for the hypergraph obtained by deleting the vertices in  $W$ , and we write  $\mathcal{H}/W$  for the link of  $\mathcal{H}$  at  $W$ , which is the hypergraph with vertex set  $V-W$  and edge set  $\{X-W\colon W\subseteq X\in F\}$ .
+Note that if  $\mathcal{H}$  is the basis hypergraph of a matroid  $M$ , then  $\mathcal{H}\!\setminus\!v$  is the basis hypergraph of  $M\!\setminus\!v$  (if  $v$  is a non-coloop of  $M$ ), and  $\mathcal{H}/v$  is the basis hypergraph of  $M/v$  (if  $v$  is a non-loop of  $M$ ).
+We write  $|\mathcal{H}|$  for the number of edges of  $\mathcal{H}$ .
+We will refer to  $r$ -uniform hypergraphs as  $r$ -graphs and to  $2$ -graphs as graphs.
+2.3 Extremal problems for matroids and hypergraphs
+We now explain how Problem 1.1 arises by restricting Turán parameters to matroid basis hypergraphs.
+Given an  $r$ -graph  $\mathcal{H}$ , let  $\ex(n,\mathcal{H})$  be the maximum number of edges of an  $n$ -vertex  $r$ -graph with no subgraph isomorphic to  $\mathcal{H}$ .
+Then let
+ $\pi(\mathcal{H})=\lim_{n\to\infty}\ex(n,\mathcal{H})/\binom{n}{r}$ ; it is well-known that this limit exists.
+The parameters  $\ex(n,\mathcal{H})$  and  $\pi(\mathcal{H})$  are the Turán number and Turán density, respectively, of  $\mathcal{H}$ .
+When  $r=2$ , Turán’s classical theorem [40] shows that  $\ex(n,K_{t})\leq(1-\frac{1}{t-1})\binom{n}{2}$  for all integers  $n$  and  $t$  with  $n,t\geq 3$ , with equality for balanced complete  $(t-1)$ -partite graphs, which implies that  $\pi(K_{t})=1-\frac{1}{t-1}$  for all  $t\geq 3$ .
+When  $r\geq 3$ , determining Turán numbers and densities for cliques becomes much more difficult.
+Amazingly,  $\pi(K^{(s)}_{t})$  is not known for any  $t>s\geq 3$ , where  $K^{(s)}_{t}$  is the complete  $s$ -uniform graph on  $t$  vertices.
+We direct the reader to Keevash’s comprehensive survey [27] and the more recent survey of Balogh, Clemen, and Lidický [5] for details on past results for hypergraph Turán densities.
+In 2011, Bollabás, Leader, and Malvenuto [10] defined a natural generalization of  $K_{t}^{(s)}\!\!\!\!$ .
+For all integers  $r,s,t$  with  $t\geq r\geq s\geq 1$ , an  $(r,s,t)$ -daisy, denoted  $\mathcal{D}_{r}(s,t)$ , is an  $r$ -uniform hypergraph with vertex set  $S\cup T$  and edge set  $\{S\cup X\colon X\in T^{(s)}\}$ , where  $S$  is an  $(r-s)$ -element set,  $T$  is a  $t$ -element set disjoint from  $S$ , and  $T^{(s)}$  is the set of all  $s$ -element subsets of  $T$ .
+The set  $S$  is the stem and the sets in  $T^{(s)}$  are the petals.
+Note that  $\mathcal{D}_{s}(s,t)$  is simply  $K^{(s)}_{t}$ , and as  $r$  grows with  $s$  and  $t$  fixed,  $\mathcal{D}_{r}(s,t)$  becomes sparser because the number of edges remains constant.
+Motivated by vertex Turán problems on the hypercube, Bollobás, Leader, and Malvenuto conjectured that  $\lim_{r\to\infty}\pi(\mathcal{D}_{r}(s,t))=0$  for all integers  $s$  and  $t$  with  $t\geq s\geq 1$ .
+(It is straightforward to show that  $\lim_{r\to\infty}\pi(\mathcal{D}_{r}(s,t))$  exists; see Propositions 3.1 and 3.2.)
+Ellis, Ivan, and Leader [18] recently disproved this conjecture by showing that  $\lim_{r\to\infty}\mathcal{D}_{r}(2,4)\geq\prod_{i=1}^{\infty}(1-2^{-i})\approx 0.29$ , which implies that  $\lim_{r\to\infty}\mathcal{D}_{r}(s,t)\gtrsim 0.29$  whenever  $s\geq 2$  and  $t\geq s+2$ . In fact they proved something more general.
+Theorem 2.1 (Ellis, Ivan, and Leader [18]).
+If  $t$  is a prime power, then
+ $\lim_{r\to\infty}\pi(\mathcal{D}_{r}(2,t+2))\geq\prod_{i=1}^{\infty}(1-t^{-i}).$ 
+For all integers  $r$  and  $n$  with  $r\geq 2$  and  $n=k\cdot\frac{t^{r}-1}{t-1}$  for a positive integer  $k$ , they consider the  $n$ -vertex  $r$ -uniform hypergraph whose vertices are points in  $r$ -dimensional projective space over the finite field  $\mathbb{F}_{t}$  with  $k$  copies of each vector, and whose edges are bases, and they show that this hypergraph has no  $\mathcal{D}_{r}(2,t+2)$ -subgraph.
+We now present an attractive matroidal reinterpretation of the construction by Ellis, Ivan, and Leader. First, we relate matroid minors to hypergraph suspensions (also known as hypergraph augmentations), see e.g. [1, 6, 33].
+For any  $s$ -uniform hypergraph  $\mathcal{H}$  and integer  $r\geq s$ , the rank- $r$  suspension of  $\mathcal{H}$ , denoted  $\mathcal{S}_{r}(\mathcal{H})$ , is the  $r$ -uniform hypergraph with vertex set  $S\cup V(\mathcal{H})$  with  $|S|=r-s$  and edge set  $\{S\cup X\colon X\in E(\mathcal{H})\}$ . The set  $S$  is the stem of  $\mathcal{S}_{r}(\mathcal{H})$ . We see that  $\mathcal{D}_{r}(s,t)=\mathcal{S}_{r}(K_{t}^{(s)})$ .
+For an  $n$ -element rank- $s$  matroid  $N$  with basis hypergraph  $\mathcal{H}$  and an integer  $r\geq s$ , define  $\mathsf{F}_{r}(N)$  to be the set of all  $r$ -uniform hypergraphs  $\mathcal{K}$  on  $n+r-s$  vertices that contain  $\mathcal{S}_{r}(\mathcal{H})$  with stem  $S$  as a subgraph, with the property that whenever an edge  $e$  of  $\mathcal{K}$  contains  $S$ , then  $e$  is an edge of  $\mathcal{S}_{r}(\mathcal{H})$  (this is equivalent to the link of  $\mathcal{K}$  at  $S$  being a copy of  $\mathcal{H}$ ).
+Proposition 2.2.
+Let  $r\geq s\geq 1$  be integers and let  $N$  be a rank- $s$  matroid. For every rank- $r$  matroid  $M$  with basis hypergraph  $\mathcal{F}$ ,  $M$  has an  $N$ -minor if and only if  $\mathcal{F}$  has an induced subgraph belonging to  $\mathsf{F}_{r}(N)$ . If, in addition,  $N$  is a uniform matroid, then  $\mathcal{F}$  contains  $\mathcal{S}_{r}(\mathcal{H})$  as a subgraph if and only if  $M$  has an  $N$ -minor.
+Proof.
+First, suppose that  $M$  has an  $N$ -minor. Then there are disjoint sets  $E_{1},E_{2}\subseteq E(M)$  so that  $M\!\setminus\!E_{1}/E_{2}=N$  and  $E_{2}$  is independent in  $M$  [35, Lemma 3.3.2].
+Since  $E_{2}$  is independent, the bases of  $N$  are precisely the subsets of  $E(N)$  whose union with  $E_{2}$  is a basis of  $M$ .
+Equivalently, the link of  $\mathcal{F}\!\setminus\!E_{1}$  at  $E_{2}$  is a copy of  $\mathcal{H}$ .
+Therefore, the restriction of  $\mathcal{F}$  to the vertex set  $E(M)\!\setminus\!E_{1}$  contains a copy of  $\mathcal{S}_{r}(\mathcal{H})$  with stem  $E_{2}$ . Therefore the induced subgraph of  $\mathcal{F}$  corresponding to  $E(M)\!\setminus\!E_{1}$  belongs to  $\mathsf{F}_{r}(N)$ .
+Now suppose  $\mathcal{F}$  has an induced subgraph  $\mathcal{D}$  belonging to  $\mathsf{F}_{r}(N)$ . Then  $\mathcal{D}$  contains  $\mathcal{S}_{r}(\mathcal{H})$  as a subgraph with a stem  $S$ . Deleting the vertices outside of  $\mathcal{D}$  and taking the link at  $S$  gives  $\mathcal{H}$ . These operations correspond to deleting elements of  $M$  outside of  $\mathcal{D}$  and contracting the elements in  $S$  to obtain a copy of  $N$ . That is,  $M$  has an  $N$ -minor.
+When  $N$  is uniform, it suffices to argue that if  $\mathcal{F}$  has  $\mathcal{S}_{r}(\mathcal{H})$  as a subgraph, then  $M$  has  $N$  as a minor. Indeed, if  $S$  is the stem of  $\mathcal{S}_{r}(\mathcal{H})$ , deleting the vertices outside  $\mathcal{S}_{r}(\mathcal{H})$  and taking the link at  $S$  yields  $\mathcal{H}$ .
+∎
+An application of Proposition 2.2 to uniform matroids shows that a rank- $r$  matroid is  $U_{s,t}$ -minor-free if and only its basis hypergraph does not have the daisy  $\mathcal{D}_{r}(s,t)=\mathcal{S}_{r}(K_{t}^{(s)})$  as a subgraph.
+Corollary 2.3.
+Let  $r,s,t$  be integers with  $r,t\geq s\geq 1$ , and let  $\mathcal{H}$  be the basis hypergraph of a matroid  $M$ .
+Then  $\mathcal{H}$  has  $\mathcal{D}_{r}(s,t)$  as a subgraph if and only if  $M$  has a  $U_{s,t}$ -minor.
+Therefore Problem 1.1 arises by restricting hypergraph Turán parameters to matroid basis hypergraphs.
+From this perspective,  $\mathcal{D}_{r}(2,t+2)$ -subgraph-freeness of the hypergraph constructed by Ellis, Ivan, and Leader is immediate, as the associated matroid is  $\mathbb{F}_{t}$ -representable and therefore has no  $U_{2,t+2}$ -minor (see e.g. [35, Corollary 6.5.3]).
+Moreover, Ellis, Ivan, and Leader show that the same hypergraph is  $\mathcal{D}_{r}(t,t+2)$ -subgraph-free in [19, Proposition 1].
+From the matroid perspective, this follows immediately from the fact that  $U_{t,t+2}$  is the dual matroid of  $U_{2,t+2}$ , and the class of  $\mathbb{F}_{t}$ -representable matroids is closed under duality.
+3 Matroid basis hypergraphs
+In this section we will show that the limits of Problem 1.1 exist, and describe – in terms of forbidden substructures – how the class of rank- $r$  matroid basis hypergraph sits within the class of all  $r$ -uniform hypergraphs.
+3.1 Density
+Given families  $\mathsf{Q}$  and  $\mathsf{H}$  of hypergraphs, let  $\ex_{\mathsf{Q}}(n,r,\mathsf{H})$  be the maximum number of edges of an  $r$ -uniform,  $n$ -vertex, hypergraph in  $\mathsf{Q}$  with no subgraph in  $\mathsf{H}$ .
+We set  $\ex_{\mathsf{Q}}(n,r,\mathsf{H})=0$  if no such hypergraph exists.
+Furthermore, we allow  $\mathsf{H}$  to be empty; in this case,  $\ex_{\mathsf{Q}}(n,r,\varnothing)$  simply denotes the maximum number of edges of an  $r$ -uniform,  $n$ -vertex, hypergraph in  $\mathsf{Q}$ .
+Let  $\pi_{\mathsf{Q}}(r,\mathsf{H})=\lim_{n\to\infty}\ex_{\mathsf{Q}}(n,r,\mathsf{H})/\binom{n}{r}$ , if this limit exists.
+Note that when  $\mathsf{Q}$  is the class of  $r$ -uniform hypergraphs and  $\mathsf{H}=\{\mathcal{H}\}$  for an  $r$ -graph  $\mathcal{H}$ , then  $\ex_{\mathsf{Q}}(n,r,\mathsf{H})$  is equal to the classical Turán number  $\ex(n,\mathcal{H})$ .
+We will show that  $\pi_{\mathsf{Q}}(r,\mathsf{H})$  exists whenever  $\mathsf{Q}$  is closed under vertex deletion.
+The following argument is standard, but we include it for completeness.
+Proposition 3.1.
+Let  $\mathsf{Q}$  and  $\mathsf{H}$  be families of hypergraphs, and let  $r$  be an integer with  $r\geq 1$ .
+If  $\mathsf{Q}$  is closed under vertex deletion, then  $\pi_{\mathsf{Q}}(r,\mathsf{H})$  exists.
+Proof.
+We will show that the sequence  $\{{\ex_{\mathsf{Q}}(n,r,\mathsf{H})}/{\binom{n}{r}}\colon n\geq r\}$  is monotone decreasing.
+Let  $n\geq r+1$ .
+If  $\ex_{\mathsf{Q}}(n,r,\mathsf{H})=0$ , then  $\ex_{\mathsf{Q}}(m,r,\mathsf{H})=0$  for all  $m\geq n$  because  $\mathsf{Q}$  is closed under vertex deletion.
+So let  $\mathcal{F}\in\mathsf{Q}$  be an  $n$ -vertex  $r$ -graph with no subgraph in  $\mathsf{H}$  and with  $|\mathcal{F}|=\ex_{\mathsf{Q}}(n,r,\mathsf{H})$ .
+By computing the average edge density of all single-vertex deletions of  $\mathcal{F}$ , we see that
+ $\displaystyle\frac{1}{n}\sum_{v\in V(\mathcal{F})}\frac{|\mathcal{F}\!\setminus\!v|}{\binom{n-1}{r}}=\frac{1}{n}\cdot\frac{(n-r)|\mathcal{F}|}{\binom{n-1}{r}}=\frac{|\mathcal{F}|}{\binom{n}{r}}=\frac{\ex_{\mathsf{Q}}(n,r,\mathsf{H})}{\binom{n}{r}}.$ 
+Therefore there is some vertex  $v$  of  $\mathcal{F}$  so that  $|\mathcal{F}\!\setminus\!v|/\binom{n-1}{r}\geq\ex_{\mathsf{Q}}(n,r,\mathsf{H})/\binom{n}{r}$ . As  $\mathsf{Q}$  is closed under vertex deletion,  $\mathcal{F}\!\setminus\!v\in\mathsf{Q}$ , thus  $\ex_{\mathsf{Q}}(n-1,r,\mathsf{H})/\binom{n-1}{r}\geq\ex_{\mathsf{Q}}(n,r,\mathsf{H})/\binom{n}{r}$ , as desired.
+∎
+The next result uses the notion of hypergraph suspension as defined in Section 2.
+Given a family  $\mathsf{H}$  of  $s$ -graphs and an integer  $r\geq s$ , let  $\mathcal{S}_{r}(\mathsf{H})=\{\mathcal{S}_{r}(\mathcal{H})\colon\mathcal{H}\in\mathsf{H}\}$ .
+Proposition 3.2.
+Let  $\mathsf{Q}$  be a family of hypergraphs and let  $\mathsf{H}$  be a family of  $s$ -graphs.
+If  $\mathsf{Q}$  is closed under vertex deletion and taking links, then  $\lim_{r\to\infty}\pi_{\mathsf{Q}}(r,\mathcal{S}_{r}(\mathsf{H}))$  exists.
+Proof.
+We will show that the sequence  $\{\pi_{\mathsf{Q}}(r,\mathcal{S}_{r}(\mathsf{H}))\colon r\geq s\}$  is monotone decreasing.
+Fix some  $r\geq s+1$  and  $n\geq r+1$ .
+If  $\pi_{\mathsf{Q}}(r,\mathcal{S}_{r}(\mathsf{H}))=0$ , then  $\pi_{\mathsf{Q}}(t,\mathcal{S}_{t}(\mathsf{H}))=0$  for all  $t\geq r$  because  $\mathsf{Q}$  is closed under taking links.
+So let  $\mathcal{F}\in\mathsf{Q}$  be an  $n$ -vertex  $r$ -graph with no subgraph in  $\mathcal{S}_{r}(\mathsf{H})$  and with  $|\mathcal{F}|=\ex_{\mathsf{Q}}(n,\mathcal{S}_{r}(\mathsf{H}))$ .
+By computing the average basis density of all link graphs of  $\mathcal{F}$ , we see that
+ $\displaystyle\frac{1}{n}\sum_{v\in V(\mathcal{F})}\frac{|\mathcal{F}/v|}{\binom{n-1}{r-1}}=\frac{1}{n}\cdot\frac{r|\mathcal{F}|}{\binom{n-1}{r-1}}=\frac{|\mathcal{F}|}{\binom{n}{r}}=\frac{\ex_{\mathsf{Q}}(n,\mathcal{S}_{r}(\mathcal{H}))}{\binom{n}{r}}.$ 
+Therefore there is some vertex  $v$  of  $\mathcal{F}$  so that  $|\mathcal{F}/v|/\binom{n-1}{r-1}\geq\ex_{\mathsf{Q}}(n,\mathcal{S}_{r}(\mathsf{H}))/\binom{n}{r}$ .
+In particular,  $v$  is in at least one edge, so  $\mathcal{F}/v$  is a nonempty  $(r-1)$ -graph.
+Since  $\mathcal{F}/v\in\mathsf{Q}$  because  $\mathsf{Q}$  is closed under taking links, it follows that  $\ex_{\mathsf{Q}}(n-1,r,\mathcal{S}_{r-1}(\mathsf{H}))/\binom{n-1}{r}\geq\ex_{\mathsf{Q}}(n,r,\mathcal{S}_{r}(\mathsf{H}))/\binom{n}{r}$ .
+This implies that the sequence  $\{\pi_{\mathsf{Q}}(r,\mathcal{S}_{r}(\mathsf{H}))\colon r\geq s\}$  is monotone decreasing, as desired.
+∎
+We have the following corollary for matroid basis hypergraphs.
+Corollary 3.3.
+If  $N$  is a matroid, then  $\pi_{\mathsf{M}}(r,N)$  exists for all integers  $r\geq 1$ , and  $\lim_{r\to\infty}\pi_{\mathsf{M}}(r,N)$  exists.
+Proof.
+Let  $\mathcal{M}$  be the class of  $N$ -minor-free matroids, and let  $\mathsf{Q}$  be the class of basis hypergraphs of matroids in  $\mathcal{M}$ .
+Then  $\pi_{\mathsf{M}}(r,N)=\pi_{\mathsf{Q}}(r,\varnothing)$ .
+Note that  $\mathsf{Q}$  is closed under vertex deletion and taking links because  $\mathcal{M}$  is closed under deletion and contraction.
+Therefore  $\pi_{\mathsf{M}}(r,N)$  exists for all  $r\geq 1$  by Proposition 3.1, and  $\lim_{r\to\infty}\pi_{\mathsf{M}}(r,N)$  exists by Proposition 3.2.
+∎
+Note that the same proof shows that if  $\mathcal{M}$  is any minor-closed class of matroids and  $\mathsf{Q}$  is the class of basis hypergraphs of matroids in  $\mathcal{M}$ , then  $\pi_{\mathsf{Q}}(r,\varnothing)$  and  $\lim_{r\to\infty}\pi_{\mathsf{M}}(r,\varnothing)$  both exist.
+In this case we write  $\pi_{\mathcal{M}}(r)$  for  $\pi_{\mathsf{Q}}(r,\varnothing)$ .
+3.2 Forbidden substructures
+Since we will be specializing problems for  $r$ -uniform hypergraphs to the class  $\mathsf{M}$  of matroid basis hypergraphs, we will briefly discuss how  $\mathsf{M}$  fits into the class of all uniform hypergraphs.
+Since  $\mathsf{M}$  is closed under vertex deletion and taking links, it is natural to ask for a characterization of  $\mathsf{M}$  via a list of hypergraphs that are not in  $\mathsf{M}$  but have every vertex deletion and every link in  $\mathsf{M}$ .
+This list was found by Cordovil, Fukuda, and Moreira [15]; it consists of three  $4$ -vertex graphs, and the infinite family of  $2$ -edge  $r$ -graphs whose vertex set is the disjoint union of the two edges.
+It is also natural to ask for a characterization of the class  $\mathsf{M}$  by forbidden induced subgraphs.
+It is straightforward to show that for each  $r\geq 2$ , the class of  $r$ -uniform matroid basis hypergraphs can be characterized by a finite collection of forbidden induced subgraphs; we omit the proof.
+Proposition 3.4.
+An  $r$ -uniform hypergraph is a matroid basis hypergraph if and only if every induced subgraph with at most  $2r$  vertices is a matroid basis hypergraph.
+Let  $\mathsf{F}$  and  $\mathsf{H}$  denote families of  $r$ -uniform hypergraphs, and let  $\ex(n,\{\mathsf{H},\mathsf{F}\text{-ind}\})$  denote the maximum number of edges in an  $n$ -vertex  $r$ -uniform hypergraph containing no subgraph isomorphic to a hypergraph belonging to  $\mathsf{H}$  and no induced subgraph isomorphic to a hypergraph belonging to  $\mathsf{F}$ . If  $N$  is a rank- $s$  uniform matroid on  $t$  elements, then its basis hypergraph is  $K_{t}^{(s)}$ . An immediate consequence of Corollary 2.3 and Proposition 3.4 is for  $r\geq s$ ,
+ $\ex_{\mathsf{M}}(n,r,N)=\ex(n,\{\mathcal{D}_{r}(s,t),\mathsf{F}\text{-ind}\}),$ 
+for an appropriate family  $\mathsf{F}$  of  $r$ -uniform hypergraphs. In the case when  $H$  and  $F$  are graphs, the problem of determining  $\ex(n,\{H,F\text{-ind}\})$  was introduced by Loh, Tait, Timmons, and Zhou [30] in 2018 and has received significant attention henceforth.
+While the number of forbidden induced subgraphs for  $r$ -uniform matroid basis hypergraphs is finite for all  $r$ , it grows exponentially as a function of  $r$ .
+Write  $B_{n}$  for the  $n$ -th Bell number, which counts the number of partitions of an  $n$ -element set, and write  $m(n,2)$  for the number of rank- $2$  matroids on an  $n$ -element set. While better asymptotics for  $B_{n}$  are known, we will use only the trivial bound  $B_{n}\leq n^{n}$ . Every rank-2 matroid on  $[n]$  can be described as a set partition of  $[n+1]$  (in which the class containing  $n+1$  denotes the set of loops), so  $m(n,2)\leq B_{n+1}\leq(n+1)^{n+1}$ .
+Proposition 3.5.
+The class of  $r$ -uniform matroid basis hypergraphs has at least  $2^{r^{2}/2-O(r\log(r))}$  non-isomorphic forbidden induced subgraphs on  $r+2$  vertices.
+Proof.
+We first show that every non-empty  $r$ -graph  $\mathcal{H}$  with at most  $r+1$  vertices is in  $\mathsf{M}$ .
+If  $\mathcal{H}$  has at most  $r$  vertices, then it has at most one edge, so its edges trivially satisfy the basis exchange axiom.
+So we may assume that  $\mathcal{H}$  has  $r+1$  vertices.
+Let  $F_{1}$  and  $F_{2}$  be edges of  $\mathcal{H}$ .
+Note that  $|F_{1}-F_{2}|=|F_{2}-F_{1}|=1$ .
+Let  $v_{1}\in F_{1}-F_{2}$  and let  $v_{2}\in F_{2}-F_{1}$ .
+Since  $(F_{1}-v_{1})\cup v_{2}$  and  $(F_{2}-v_{2})\cup v_{1}$  are both edges (the former is  $F_{2}$  and the latter is  $F_{1}$ ), the edges of  $\mathcal{H}$  satisfy the basis exchange axiom, so  $\mathcal{H}\in\mathsf{M}$ .
+Consequently, an  $r$ -graph  $\mathcal{H}$  on  $r+2$  vertices is a forbidden induced subgraph if and only if it is not in  $\mathsf{M}$ .
+The number of  $r$ -graphs in  $\mathsf{M}$  on  $r+2$  vertices is equal to the number of  $(r+2)$ -element matroids of rank  $r$ , which, by matroid duality, is equal to the number of  $(r+2)$ -element matroids of rank  $2$ . It follows that the number  $f_{r}$  of non-isomorphic forbidden induced subgraphs on  $r+2$  vertices satisfies
+ $f_{r}\geq\frac{1}{(r+2)!}\left(2^{\binom{r+2}{r}}-m(r+2,2)\right)\geq\frac{1}{(r+2)!}\left(2^{\binom{r+2}{r}}-(r+3)^{r+3}\right).$ 
+The proposition then follows from Stirling’s approximation.
+∎
+The proof of Proposition 3.5 shows that, as  $r\to\infty$ , almost every  $r$ -graph on  $r+2$  vertices is a forbidden induced subgraph for the class of matroidal hypergraphs. The actual number of forbidden induced subgraphs is likely much larger than this lower bound, because the proof only considers  $r$ -graphs on  $r+2$  vertices, while forbidden induced subgraphs can have up to  $2r$  vertices.
+Finally, we remark that a typical  $r$ -graph is not the basis hypergraph of a matroid, in the sense that
+ $\lim_{n\to\infty}\frac{m(n,r)}{2^{\binom{n}{r}}}=0\qquad\text{for all $r\geq 2$},$ 
+where  $m(n,r)$  is the number of  $r$ -uniform matroid basis hypergraphs on a given set of  $n$  vertices. For  $r=2$ , this follows immediately from the above observation that  $m(n,2)\leq(n+1)^{n+1}$ , while for  $r\geq 3$  this follows from the bound  $\log m(n,r)=O\left(\frac{\log n}{n}\binom{n}{r}\right)$  as  $n\to\infty$ , see e.g. [8].
+4  $U_{1,t}$  and  $U_{2,t}$ 
+In this section we consider  $\pi_{\mathsf{M}}(r,U_{s,t})$  with  $s\in\{1,2\}$ , and prove Theorem 1.2.
+We begin with  $\pi_{\mathsf{M}}(r,U_{1,t})$ , which is straightforward to calculate.
+Proposition 4.1.
+Let  $r\geq 1$  and  $t\geq 2$  be integers. Then
+ $\ex_{\mathsf{M}}(n,r,U_{1,t})\leq(t-1)^{r},$ 
+with equality when  $t-1$  divides  $n$ .
+Proof.
+We proceed by induction on  $r$ .
+A matroid of rank  $1$  with no  $U_{1,t}$ -restriction has at most  $t-1$  non-loop elements, and therefore at most  $t-1$  bases. Thus the bound holds when  $r=1$ , establishing the base case of the induction.
+Now let  $r>1$  and assume that the claim holds for all rank- $(r-1)$  matroids. Let  $M$  be a rank- $r$  matroid with no  $U_{1,t}$ -minor and let  $C^{*}$  be a largest cocircuit (a circuit of the dual) of  $M$ . As  $M$  has no  $U_{1,t}$ -minor, we have  $|C^{*}|\leq t-1$ . Furthermore, as  $C^{*}$  is a cocircuit, every basis of  $M$  contains an element of  $C^{*}$  (see [35, Proposition 2.1.19]) and  $C^{*}$  contains no loops of  $M$ .
+For each element  $e\in C^{*}$ , as  $e$  is not a loop of  $M$ , the matroid  $M/e$  has rank  $r-1$  and therefore at most  $(t-1)^{r-1}$  bases, by induction.
+Since  $|C^{*}|\leq t-1$ , it follows that  $M$  has at most  $(t-1)(t-1)^{r-1}=(t-1)^{r}$  bases, as desired.
+Finally, we show that the bound is sharp when  $t-1$  divides  $n$ .
+If  $t-1$  divides  $n$ , let  $M$  be the union of  $r$  parallel classes with cardinality  $t-1$  so that the bases of  $M$  are the transversals of these classes, i.e.,  $M$  is a parallel extension of an  $r$ -element independent set.
+Then  $M$  has  $n$  elements, rank  $r$ , and exactly  $(t-1)^{r}$  bases.
+∎
+Proposition 4.1 implies that  $\pi_{\mathsf{M}}(r,U_{1,t})=0$  for all  $t\geq 2$  and  $r\geq 1$ . We comment that this already follows from the stronger result that  $\ex(n,\mathcal{D}_{r}(1,t))\leq\frac{t-1}{n-r+1}\binom{n}{r}$ . To see why the latter result holds, note that if  $\mathcal{H}$  is an  $r$ -uniform hypergraph with  $n$  vertices that does not contain  $\mathcal{D}_{r}(1,t)$  as a subgraph, then every  $r-1$  vertices of  $\mathcal{H}$  are contained in at most  $t-1$  edges; it follows that  $\mathcal{H}$  has at most  $\binom{n}{r-1}\frac{t-1}{r}$  edges, from which the result follows.
+We next turn our attention to  $\pi_{\mathsf{M}}(r,U_{2,t})$ .
+We will rely on the following theorem of Kung [29].
+Theorem 4.2 (Kung [29]).
+For all integers  $r$  and  $t$  with  $r,t\geq 2$ , every simple rank- $r$  matroid with no  $U_{2,t+2}$ -minor has at most  $\frac{t^{r}-1}{t-1}$  elements.
+For general matroids, Theorem 4.2 implies that any matroid forbidding  $U_{2,t+2}$  as a minor has a bounded number of parallel classes.
+In general,  $U_{s,t}$ -minor-free matroids need not have this property.
+For example, one can take a direct sum of  $r/2$  copies of  $U_{2,\ell}$  to obtain a simple rank- $r$  matroid with  $r\cdot\ell$  points and no  $U_{s,t}$ -minor with  $s\geq 3$  and  $t\geq 5$ .
+For  $r\geq 1$  and  $t\geq 2$ , define
+ $b(r,t)=\frac{\prod_{i=0}^{r-1}(t^{r}-t^{i})}{r!\cdot(t-1)^{r}}=\frac{\prod_{i=0}^{r-1}(\frac{t^{r}-1}{t-1}-\frac{t^{i}-1}{t-1})}{r!}.$ 
+(1)
+When  $t$  is a prime power,  $b(r,t)$  is the number of bases of the rank- $r$  projective geometry  $\text{PG}(r-1,t)$  (see e.g. [35, Proposition 6.1.4]).
+Noting that  $b(1,t)=1$  for all  $t$ , the following recursion holds for all  $r\geq 2$  and  $t\geq 2$ :
+ $b(r,t)=\frac{b(r-1,t)\cdot t^{r-1}(t^{r}-1)}{r\cdot(t-1)}.$ 
+(2)
+Our calculation of  $\pi_{\mathsf{M}}(r,U_{2,t+2})$  will rely on the theory of hypergraph Lagrangians.
+The Lagrangian polynomial of an  $n$ -vertex hypergraph  $\mathcal{H}$  is the polynomial
+ $p_{\mathcal{H}}(x_{1},\ldots,x_{n})=\sum_{e\in E(\mathcal{H})}\prod_{i\in e}x_{i}.$ 
+The Lagrangian of a hypergraph  $\mathcal{H}$  with vertex set  $[n]$ , denoted  $\lambda(\mathcal{H})$ , is the maximum value of  $p_{\mathcal{H}}(x_{1},\ldots,x_{n})$  over the standard simplex  $\{x_{i}\geq 0:\sum_{i}x_{i}=1\}$ . By continuity, as the standard simplex is bounded and closed,  $\lambda(\mathcal{H})$  is well-defined.
+For background and applications regarding Lagrangians, see [27].
+For a matroid  $M$  with basis hypergraph  $\mathcal{H}$ , we write  $p_{M}$  for  $p_{\mathcal{H}}$  and  $\lambda(M)$  for  $\lambda(\mathcal{H})$ .
+An immediate observation is that  $\lambda(M)=\lambda(\si(M))$  for any matroid  $M$  on ground set  $[s]$ . Clearly deleting a loop does not change  $\lambda(M)$ , because loops are not in any bases, and if elements  $1$  and  $2$  of  $M$  are parallel, then  $p_{M}(x_{1},x_{2},x_{3},\dots,x_{s})=p_{M\!\setminus\!1}(x_{1}+x_{2},x_{3},\dots,x_{s})$  because  $1\cup J\in\mathcal{B}(M)$  if and only if  $2\cup J\in\mathcal{B}(M)$  for any  $J\subseteq[s]$ .
+The following lemma relates derivatives of  $p_{M}$  to matroid contraction.
+Lemma 4.3.
+Let  $r\geq 2$ , let  $M$  be a rank- $r$  matroid on a ground set  $[s]$  with Lagrangian polynomial  $p_{M}$ , and let  $i\in[s]$ . Then
+ $\frac{\partial}{\partial x_{i}}p_{M}\left(x_{1},\ldots,x_{s}\right)\leq(1-x_{i})^{r-1}\cdot\lambda(M/i)$ 
+for all nonnegative reals  $x_{1},\ldots,x_{s}$  such that  $\sum_{j}x_{j}=1$ .
+Proof.
+If  $i$  is a loop of  $M$ , then  $p_{M}$  does not depend on  $x_{i}$ , so the left-hand side is equal to 0 and the claim holds trivially.
+So we may assume that  $i$  is not a loop of  $M$ .
+In that case, the bases of  $M$  that contain  $i$  are in one-to-one correspondence with the bases of  $M/i$ .
+We see that
+ $\displaystyle\frac{\partial}{\partial x_{i}}p_{M}\left(x_{1},\ldots,x_{s}\right)$ 
+ $\displaystyle=\frac{\partial}{\partial x_{i}}\left(\sum_{B\in\mathcal{B}(M)}\prod_{j\in B}x_{j}\right)=\sum_{\begin{subarray}{c}B\in\mathcal{B}(M)\\
+i\in B\end{subarray}}\prod_{j\in B-i}x_{j}$ 
+ $\displaystyle=\sum_{B^{\prime}\in\mathcal{B}(M/i)}\prod_{j\in B^{\prime}}x_{j}=(1-x_{i})^{r-1}\cdot\sum_{B^{\prime}\in\mathcal{B}(M/i)}\prod_{j\in B^{\prime}}\frac{x_{j}}{1-x_{i}}$ 
+ $\displaystyle\leq(1-x_{i})^{r-1}\cdot\lambda(M/i).\qed$ 
+Using Lemma 4.3 and Theorem 4.2, we bound the Lagrangian of a  $U_{2,t+2}$ -minor-free matroid for  $t\geq 2$ . Our techniques for optimizing the Lagrangian are well-known, see for example Sidorenko’s classic work [39], see also [27]. We comment that the computation for the specific case of  $t=2$  was done implicitly by Alon [1] via probabilistic techniques in the context of bounding the size of erasure list-decodable codes.
+Theorem 4.4.
+Let  $t\geq 2$  and let  $r\geq 1$  be integers. Let  $M$  be a rank- $r$   $U_{2,t+2}$ -free matroid. Then
+ $\lambda(M)\leq b(r,t)\left(\frac{t-1}{t^{r}-1}\right)^{r}.$ 
+Proof.
+As  $\lambda(M)=\lambda(\si(M))$ , without loss of generality, we may suppose  $M$  is simple. Let  $s$  denote the number of elements of  $M$ . By Theorem 4.2,  $s\leq\frac{t^{r}-1}{t-1}$ . Let  $p(x_{1},\ldots,x_{s})$  be the Lagrangian polynomial of  $M$ . When  $r=1$ , this clearly implies  $\lambda(M)=1$ . If  $s=r$ , then by convexity we have  $\lambda(M)=(1/r)^{r}$ . Note then,
+ $\displaystyle\frac{r!}{r^{r}}=\prod_{i=0}^{r-1}\left(1-\frac{i}{r}\right)\leq\prod_{i=0}^{r-1}\left(1-\frac{t^{i}-1}{t^{r}-1}\right)$ 
+where the inequality follows from the fact that the function  $(t^{x}-1)/x$  is increasing on  $(0,\infty)$ . By (1) and the above inequality, we have,
+ $\displaystyle\lambda(M)=\left(\frac{1}{r}\right)^{r}\leq\frac{1}{r!}\cdot\prod_{i=0}^{r-1}\left(1-\frac{t^{i}-1}{t^{r}-1}\right)=\frac{1}{r!}\cdot\prod_{i=0}^{r-1}\left(\frac{t^{r}-t^{i}}{t^{r}-1}\right)=b(r,t)\left(\frac{t-1}{t^{r}-1}\right)^{r}.$ 
+We proceed with induction on  $r$  and  $s$ . Let  $\mathbf{x}^{*}=(x_{1}^{*},\ldots,x_{s}^{*})$  maximize  $p(x_{1},\ldots,x_{s})$  over the standard simplex. If  $x^{*}_{i}=0$ , then the claim holds by induction on  $s$ . So we may suppose  $x^{*}_{i}>0$  for all  $i\in[s]$ . Thus  $\mathbf{x}^{*}$  belongs to the relative interior of the standard simplex, and as a consequence, the gradient of  $p$  must be orthogonal to the hyperplane defined by  $\sum_{i}x_{i}=1$ . In particular, there exists a constant  $c\in\mathbb{R}$  such that  $\frac{\partial}{\partial x_{i}}p(\mathbf{x}^{*})=c$  for all  $i\in[s]$ . By Euler’s identity for homogeneous functions, we have
+ $\displaystyle r\cdot p(\mathbf{x}^{*})=\sum_{i=1}^{s}x_{i}^{*}\frac{\partial}{\partial x_{i}}p(\mathbf{x}^{*})=\sum_{i=1}^{s}x_{i}^{*}c=c.$ 
+By Lemma 4.3, for all  $i\in[s]$ ,
+ $c=\frac{\partial}{\partial x_{i}}p\left(\mathbf{x}^{*}\right)\leq(1-x_{i}^{*})^{r-1}\lambda(M/i)=(1-x_{i}^{*})^{r-1}\lambda(\si(M/i)).$ 
+By the pigeonhole principle, there exists some  $j$  such that  $x_{j}\geq\frac{t-1}{t^{r}-1}$ . It follows by induction on  $r$  and (2) that
+ $\displaystyle c$ 
+ $\displaystyle\leq\left(1-\frac{t-1}{t^{r}-1}\right)^{r-1}b(r-1,t)\left(\frac{t-1}{t^{r-1}-1}\right)^{r-1}$ 
+ $\displaystyle=\left(\frac{t(t^{r-1}-1)}{t^{r}-1}\right)^{r-1}b(r-1,t)\left(\frac{t-1}{t^{r-1}-1}\right)^{r-1}$ 
+ $\displaystyle=\left(\frac{t(t^{r-1}-1)}{t^{r}-1}\right)^{r-1}b(r,t)\frac{r(t-1)}{t^{r-1}(t^{r}-1)}\left(\frac{t-1}{t^{r-1}-1}\right)^{r-1}=r\cdot b(r,t)\left(\frac{t-1}{t^{r}-1}\right)^{r}.$ 
+We have  $r\cdot p(\mathbf{x}^{*})\leq r\cdot b(r,t)\left((t-1)/(t^{r}-1)\right)^{r}$ , which yields the claim.
+∎
+We have the following corollary for the maximum number of bases of an  $n$ -element, rank- $r$  matroid with no  $U_{2,t+2}$ -minor.
+Theorem 4.5.
+Let  $n,r,t$  be integers with  $r\geq 1$  and  $t\geq 2$  and  $n\geq\frac{t^{r}-1}{t-1}$ . Then
+ $\ex_{\mathsf{M}}(n,r,U_{2,t+2})\leq b(r,t)\cdot\left(\frac{n(t-1)}{t^{r}-1}\right)^{r}.$ 
+Furthermore, this bound is tight when  $t$  is a prime power and  $n$  is a multiple of  $\frac{t^{r}-1}{t-1}$ .
+Proof.
+Let  $M$  be an  $n$ -element rank- $r$  matroid with no  $U_{2,t+2}$ -minor, and let  $N=\si(M)$ .
+For each element  $i$  of  $N$ , let  $y_{i}$  be the number of elements of  $M$  parallel to  $i$ , and let  $x_{i}=y_{i}/n$ .
+Then
+ $\displaystyle b(M)=\sum_{B\in\mathcal{B}(N)}\prod_{i\in B}y_{i}=n^{r}\cdot\sum_{B\in\mathcal{B}(N)}\prod_{i\in B}x_{i}\leq n^{r}\cdot\lambda(N)\leq n^{r}\cdot b(r,t)\cdot\left(\frac{t-1}{t^{r}-1}\right)^{r}\!\!,$ 
+where the last inequality holds by Theorem 4.4.
+When  $n$  is a multiple of  $\frac{t^{r}-1}{t-1}$  and  $t$  is a prime power, equality holds for the loopless  $n$ -element rank- $r$  matroid whose simplification is  $\text{PG}(r-1,t)$  and whose parallel classes all have equal size.
+∎
+Since Theorem 4.5 is asymptotically tight whenever  $t$  is a prime power, we have the following corollary.
+Corollary 4.6.
+For every integer  $r\geq 2$  and every prime power  $q$  we have
+ $\pi_{\mathsf{M}}(r,U_{2,q+2})=b(r,q)\cdot\left(\frac{q-1}{q^{r}-1}\right)^{r}\cdot r!=\prod_{i=1}^{r-1}\left(1-\frac{q^{i}-1}{q^{r}-1}\right).$ 
+In particular, this implies that the lower bound of Theorem 2.1 is tight when restricted to matroid basis hypergraphs.
+Corollary 4.7.
+For every prime power  $q$  we have
+ $\lim_{r\to\infty}\pi_{\mathsf{M}}(r,U_{2,q+2})=\prod_{i=1}^{\infty}(1-q^{-i}).$ 
+While Theorem 4.5 is tight when  $t$  is a prime power, this is likely not the case when  $t$  is not a prime power because of the following result.
+Theorem 4.8 (Geelen and Nelson [24]).
+Let  $t\geq 2$  be an integer, and let  $q$  be the largest prime power at most  $t$ .
+For all sufficiently large  $r$ , every simple rank- $r$  matroid with no  $U_{2,t+2}$ -minor has at most  $\frac{q^{r}-1}{q-1}$  elements.
+In light of this theorem and Theorem 4.5, we make the following conjecture.
+Conjecture 4.9.
+Let  $t\geq 2$ , and let  $q$  be the largest prime power at most  $t$ .
+For all sufficiently large integers  $r$  and  $n$  we have
+ $\ex_{\mathsf{M}}(n,r,U_{2,t+2})\leq b(r,q)\cdot\left(\frac{n(q-1)}{(q^{r}-1)}\right)^{r}.$ 
+If true, Conjecture 4.9 would be asymptotically tight. Conjecture 4.9 seems more difficult than Theorem 4.5.
+The main difficulty is that we can no longer use direct induction on  $r$  because Theorem 4.8 only applies when  $r$  is sufficiently large.
+In spite of this, we can use standard prime estimation techniques to prove an approximate version of Conjecture 4.9; a similar estimate was made in [18]. We use the following well-known prime estimation result.
+Theorem 4.10 (Baker, Harman, and Pintz [3]).
+For all sufficiently large real numbers  $x$ , there is a prime in the interval  $[x-x^{0.525},x]$ .
+We can now approximate  $\ex_{M}(n,r,U_{2,t+2})$  using the largest prime at most  $t$ .
+Theorem 4.11.
+Let  $r$  be a fixed positive integer and let  $t$  be a sufficiently large integer. For all  $n\geq r$  we have
+ $\ex_{\mathsf{M}}(n,r,U_{2,t+2})\leq\left(b(r,q)\left((q-1)/(q^{r}-1)\right)^{r}+O_{t}(t^{\theta-2})\right)n^{r}$ 
+where  $\theta=0.525$  and  $q$  is the largest prime at most  $t$ .
+Proof.
+Let  $t_{0}$  be such that the interval  $[t-t^{\theta},t]$  contains a prime number for all  $t\geq t_{0}$  (such a  $t_{0}$  exists by Theorem 4.10), and assume that  $t\geq t_{0}$ .
+As  $t\leq q+t^{\theta}$ , we have  $\ex_{\mathsf{M}}(n,U_{2,t+2})\leq\ex_{\mathsf{M}}(n,U_{2,q+t^{\theta}+2})$  because every matroid with no  $U_{2,t+2}$ -minor also has no  $U_{2,q+t^{\theta}+2}$ -minor. By (1),
+ $\displaystyle b(r,t)\left((t-1)/(t^{r}-1)\right)^{r}=\frac{1}{r!}\prod_{i=0}^{r-1}\left(\frac{t^{r}-t^{i}}{t^{r}-1}\right)=\frac{1}{r!}\prod_{i=0}^{r-1}\left(1-\frac{t^{i}-1}{t^{r}-1}\right).$ 
+As  $q\leq t$ , by the binomial theorem we have that
+ $(q+t^{\theta})^{r}\leq q^{r}+2^{r}t^{r+\theta-1}.$ 
+As  $t$  is sufficiently large, there exists a constant  $C=C(r)$ ,
+ $\displaystyle-\frac{1}{(q+t^{\theta})^{r}-1}\leq-\frac{1}{q^{r}+2^{r}t^{r+\theta-1}-1}\leq-\frac{1}{q^{r}-1}+\frac{C}{t^{r+1-\theta}}.$ 
+We have,
+ $\displaystyle\frac{1}{r!}\prod_{i=0}^{r-1}\left(1-\frac{t^{i}-1}{t^{r}-1}\right)$ 
+ $\displaystyle\leq\frac{1}{r!}\prod_{i=0}^{r-1}\left(1-\frac{t^{i}-1}{(q+t^{\theta})^{r}-1}\right)\leq\frac{1}{r!}\prod_{i=0}^{r-1}\left(1-\frac{t^{i}-1}{q^{r}-1}+\frac{C(t^{i}-1)}{t^{r+1-\theta}}\right)$ 
+ $\displaystyle\leq\frac{1}{r!}\prod_{i=0}^{r-1}\left(1-\frac{q^{i}-1}{q^{r}-1}+\frac{C(t^{i}-1)}{t^{r+1-\theta}}\right)=\frac{1}{r!}\prod_{i=0}^{r-1}\left(1-\frac{q^{i}-1}{q^{r}-1}\right)+O_{t}\left(\frac{1}{t^{2-\theta}}\right).$ 
+By Theorem 4.5, the claim follows.
+∎
+Once again, we have a corollary for Turán basis density.
+Corollary 4.12.
+Let  $r$  and  $t$  be integers with  $r\geq 2$  and  $t$  sufficiently large, and let  $q$  be the largest prime power at most  $t$ . Then
+ $\prod_{i=1}^{r-1}\Big(1-\frac{q^{i}-1}{q^{r}-1}\Big)\leq\pi_{\mathsf{M}}(r,U_{2,t+2})\leq\prod_{i=1}^{r-1}\Big(1-\frac{q^{i}-1}{q^{r}-1}\Big)+\frac{C\cdot r!}{t^{2-\theta}},$ 
+where  $\theta=0.525$  and  $C$  is a positive constant depending only on  $r$ .
+5  $U_{s,s+1}$ 
+In this section we consider  $U_{s,s+1}$ .
+The problem of finding  $\ex_{\mathsf{M}}(n,r,U_{s,s+1})$  has a particularly interesting interpretation, which we briefly describe.
+First, the circumference of a matroid with at least one circuit is the number of elements in a largest circuit, and a matroid has circumference at most  $s$  if and only if it has no  $U_{s,s+1}$ -minor.
+To see this, let  $M$  be a matroid whose largest circuit has  $k\geq s+1$  elements; deleting all elements outside the circuit and then contracting  $k-s-1$  elements from the circuit results in a  $U_{s,s+1}$ -minor. In the other direction, note that the circumference cannot increase when deleting or contracting an element, so if  $M$  has a  $U_{s,s+1}$ -minor, then the circumference of  $M$  is at least the circumference of  $U_{s,s+1}$ , which is  $s+1$ .
+So,  $\ex_{\mathsf{M}}(n,r,U_{s,s+1})$  is the maximum number of bases over all matroids with  $n$  elements, rank  $r$ , and circumference at most  $s$ .
+When  $s=1$  we have  $\ex_{\mathsf{M}}(n,r,U_{s,s+1})=1$  by Proposition 4.1.
+We can easily get a tight upper bound when  $s=2$ .
+Proposition 5.1.
+Let  $n\geq r\geq 2$ . Then
+ $\ex_{\mathsf{M}}(n,r,U_{2,3})\leq\left(\frac{n}{r}\right)^{r},$ 
+with equality when  $r$  divides  $n$ .
+Proof.
+Let  $n\geq r\geq 2$  be integers, and let  $M$  be an  $n$ -element rank- $r$  matroid with no  $U_{2,3}$ -minor. Without loss of generality, we may assume that  $M$  is loopless. Let  $B$  be a basis of  $M$ .
+Every element of  $M$  is parallel to an element of  $B$ , or else  $M$  has a  $U_{2,3}$ -minor.
+So  $M$  is a direct sum of parallel classes  $P_{1},P_{2},\dots,P_{r}$  with  $\sum_{i}|P_{i}|=n$ .
+The number of bases of  $M$  is  $\prod_{i}|P_{i}|$ , and since  $\sum_{i}|P_{i}|=n$ , by convexity, it follows that  $\prod_{i}|P_{i}|\leq(\frac{n}{r})^{r}$ , as desired.
+When  $r$  divides  $n$ , equality holds when  $|P_{i}|=n/r$  for all  $i\in[r]$ .
+∎
+We next consider the case when  $s=3$ . The following lemma is a structural result for  $U_{3,4}$ -minor-free matroids.
+Lemma 5.2.
+If  $M$  be a  $U_{3,4}$ -minor-free matroid, then  $M$  is a direct direct sum of matroids of rank at most 2.
+Proof.
+The claim is trivial if  $M$  has rank at most  $2$ . Suppose  $M$  has rank  $r\geq 3$ , and without loss of generality, suppose  $M$  is simple.
+Let  $B$  be a basis of  $M$ . Then each element not in  $B$  is spanned by a pair from  $B$ , or else  $M$  has a  $U_{3,4}$ -minor.
+If  $e,f\in E(M)-B$  are spanned by the pairs  $\{b_{1},b_{2}\}$  and  $\{b_{2},b_{3}\}$ , respectively, with  $b_{1}\neq b_{3}$ , then by the circuit elimination axiom there is a circuit  $C$  contained in  $\{b_{1},b_{3},e,f\}$ .
+Then  $C$  must be  $\{b_{1},b_{3},e,f\}$  or else  $M$  has two distinct lines that share two points, a contradiction.
+Therefore there is a partition of  $B$  so that each part has size at most 2, each  $e\in E(M)-B$  is spanned by a part of size 2, and each part of size 2 spans some  $e\in E(M)-B$ . These parts span matroids whose direct sum is equal to  $M$ , so  $M$  is a direct sum of matroids of rank at most 2.
+∎
+For each real number  $x$  and positive integer  $k$  we write
+ $\binom{x}{k}=\prod_{i=0}^{k-1}\frac{x-i}{k-i}.$ 
+Recall that for a matroid  $M$  we write  $b(M)$  for the number of bases of  $M$ .
+Theorem 5.3.
+Let  $n$  and  $r$  be positive integers with  $n>r\geq 2$ .
+ $(i)$  
+If  $r$  is even, then  $\ex_{\mathsf{M}}(n,r,U_{3,4})\leq\binom{\frac{2n}{r}}{2}^{\frac{r}{2}}$ , and  $\pi_{\mathsf{M}}(r,U_{3,4})=\frac{r!\cdot 2^{r/2}}{r^{r}}$ .
+ $(ii)$  
+If  $r$  is odd, then  $\ex_{\mathsf{M}}(n,r,U_{3,4})\leq\big(1+o_{n}(1)\big)\frac{n}{r}\binom{\frac{2n}{r}}{2}^{\frac{r-1}{2}}$  and  $\pi_{\mathsf{M}}(r,U_{3,4})=\frac{r!\cdot 2^{\frac{r-1}{2}}}{r^{r}}$ .
+Proof.
+Let  $M$  be an  $n$ -element, rank- $r$ ,  $U_{3,4}$ -minor-free matroid such that  $b(M)=\ex_{\mathsf{M}}(n,r,U_{3,4})$ . By Lemma 5.2, we may assume that  $M$  is a direct sum of matroids of rank at most two. We first show that the desired upper bounds hold by induction on  $r$ .
+When  $r=2$ , clearly  $(i)$  holds, so we may assume that  $r\geq 3$ .
+We consider two cases, depending on the parity of  $r$ .
+First suppose that  $r$  is even.
+Then  $M=M_{1}\oplus M_{2}$  where  $r(M_{1})=2$  and  $r(M_{2})=r-2$ .
+Let  $n_{i}=|M_{i}|$  for  $i=1,2$ , so  $n_{1}+n_{2}=n$ .
+Then
+ $b(M)=b(M_{1})\cdot b(M_{2})\leq\binom{n_{1}}{2}\cdot\binom{\frac{2n_{2}}{r-2}}{2}^{\frac{r-2}{2}},$ 
+where the bound on  $b(M_{2})$  holds by induction on  $r$ .
+Since  $n_{1}+n_{2}=n$ , this product is maximized when  $n_{1}=\frac{2n}{r}$  and  $n_{2}=n-\frac{2n}{r}$ , so  $n$  is distributed equally to each of the  $\frac{r}{2}$  factors in the product.
+Since  $\frac{2n_{2}}{r-2}=\frac{2n}{r}$ , we see that  $b(M)\leq\binom{\frac{2n}{r}}{2}^{\frac{r}{2}}$ , as desired.
+Next suppose  $r$  is odd.
+Then  $M=M_{1}\oplus M_{2}$ , where  $r(M_{1})=1$  and  $r(M_{2})=r-1$ .
+Let  $n_{i}=|M_{i}|$  for  $i=1,2$ , so  $n_{1}+n_{2}=n$ .
+Then
+ $b(M)=b(M_{1})\cdot b(M_{2})\leq n_{1}\cdot\binom{\frac{2n_{2}}{r-1}}{2}^{\frac{r-1}{2}}\leq\left(\frac{\sqrt{2}}{r-1}\right)^{r-1}n_{1}n_{2}^{r-1},$ 
+where the bound on  $b(M_{2})$  holds by induction on  $r$ .
+Since  $n_{1}+n_{2}=n$ , this product is maximized when  $n_{1}=\frac{n}{r}$  and  $n_{2}=\frac{r-1}{r}n$ . It follows that  $b(M)\leq(\sqrt{2})^{r-1}(n/r)^{r}\leq\big(1+o_{n}(1)\big)\frac{n}{r}\binom{\frac{2n}{r}}{2}^{\frac{r-1}{2}}$ , as desired.
+We now combine the upper bounds with asymptotically matching lower bounds to find  $\pi_{\mathsf{M}}(r,U_{3,4})$ .
+If  $r$  is even and  $r/2$  divides  $n$ , let  $M$  be the direct sum of  $r/2$  copies of  $U_{2,\frac{n}{r/2}}$ .
+Then  $b(M)=\binom{\frac{2n}{r}}{2}^{\frac{r}{2}}$  and  $M$  has no  $U_{3,4}$ -minor.
+Combined with the upper bound from  $(i)$  we see that
+ $\pi_{\mathsf{M}}(r,U_{3,4})=\lim_{n\to\infty}\frac{\binom{\frac{2n}{r}}{2}^{\frac{r}{2}}}{\binom{n}{r}}=\frac{r!\cdot 2^{r/2}}{r^{r}}.$ 
+If  $r$  is odd and  $r$  divides  $n$ , let  $M$  be the direct sum of  $\frac{r-1}{2}$  copies of  $U_{2,\frac{2n}{r}}$  and one copy of  $U_{1,\frac{n}{r}}$ .
+Then  $b(M)=\frac{n}{r}\binom{\frac{2n}{r}}{2}^{\frac{r-1}{2}}$  and  $M$  has no  $U_{3,4}$ -minor.
+Combined with the upper bound from  $(ii)$  we see that
+ $\pi_{\mathsf{M}}(r,U_{3,4})=\lim_{n\to\infty}\frac{\frac{n}{r}\binom{\frac{2n}{r}}{2}^{\frac{r-1}{2}}}{\binom{n}{r}}=\frac{r!\cdot 2^{\frac{r-1}{2}}}{r^{r}}.\qed$ 
+We have the following corollary for  $r=3$ .
+Corollary 5.4.
+ $\pi_{\mathsf{M}}(3,U_{3,4})=4/9$ .
+The basis hypergraph of  $U_{3,4}$  is the 3-uniform hypergraph  $K_{4}^{(3)}$ , and while its Turán density is not known, a construction due to Turán [40] shows that  $\pi(K_{4}^{(3)})\geq 5/9$ .
+So Corollary 5.4 is notable because it shows that the Turán density of  $K_{4}^{(3)}$  is significantly smaller when we restrict to matroid basis hypergraphs.
+We next consider  $s\geq 4$ .
+Matroids with circumference  $s$  are not as well-structured when  $s\geq 4$ , but we expect that  $\ex_{\mathsf{M}}(n,r,U_{s,s+1})$  is achieved by a direct sum of uniform matroids of rank  $s-1$ , as it is for  $s=2$  and  $s=3$ .
+Conjecture 5.5.
+Let  $s,r$  be positive integers with  $s\geq 4$  and  $r\geq s-1$ .
+Then  $\ex_{\mathsf{M}}(n,r,U_{s,s+1})\leq\binom{\frac{n}{r/(s-1)}}{s-1}^{\frac{r}{s-1}}$  for all  $n\geq r$ , with equality when  $s-1$  divides  $r$  and  $\frac{r}{s-1}$  divides  $n$  for the direct sum of  $r/(s-1)$  copies of  $U_{s-1,\frac{n}{r/(s-1)}}$ .
+This may not be difficult to prove, but the direct structural approach of Theorem 5.3 seemingly does not apply.
+6  $U_{3,t}$ 
+After considering  $\pi_{\mathsf{M}}(r,U_{s,t})$  when  $s\in\{1,2\}$  or  $t=s+1$ , perhaps the next natural cases to consider are  $s=3$  or  $t=s+2$ .
+While we believe that  $\pi_{\mathsf{M}}(r,U_{s,s+2})$  and  $\pi_{\mathsf{M}}(r,U_{3,t})$  are interesting parameters for future work, we will next focus on the simpler parameter  $\pi_{\mathsf{M}}(3,U_{3,t})$ , the Turán basis density for rank-3 matroids with no  $U_{3,t}$ -restriction.
+We freely use the facts that any two lines in a matroid share at most one point, and that if  $\mathcal{L}$  is a collection of subsets of a set  $E$  so that each set in  $\mathcal{L}$  has at least three elements and each pair of sets in  $\mathcal{L}$  shares at most one common element, then  $\mathcal{L}$  is the set of long lines (i.e. lines with at least three points) of a simple, rank-3 matroid with ground set  $E$  [35, Proposition 1.5.6].
+We first give lower bounds for  $\pi_{\mathsf{M}}(3,U_{3,t})$ .
+Proposition 6.1.
+For all integers  $m\geq 2$ ,
+ $(a)$  
+ $\pi_{M}(3,U_{3,2m+1})\geq 1-\frac{1}{m^{2}}$  and
+ $(b)$  
+ $\pi_{M}(3,U_{3,2m+2})\geq\frac{4m^{4}}{(2m^{2}+1)^{2}}=1-\frac{2}{2m^{2}+1}+\frac{1}{(2m^{2}+1)^{2}}$ .
+Proof.
+For (a), it suffices to exhibit an  $n$ -element rank-3 matroid that does not have a  $U_{3,2m+1}$ -restriction and has a large number of bases.
+Suppose that  $m$  divides  $n$ , and let  $M$  be the simple rank-3 matroid on ground set  $\{1,2,\ldots,n\}$  with long lines  $L_{1},L_{2},\ldots,L_{m}$  where  $L_{i}=\{m(i-1)+1,m(i-1)+2,\ldots,mi\}$ . Any set of  $2m+1$  points intersects one of these lines in at least three points, so  $M$  does not have a  $U_{3,2m+1}$ -restriction.
+The bases of  $M$  are all 3-elements subsets that are not contained in one of the  $L_{i}$ , so
+ $b(M)=\binom{n}{3}-m\binom{n/m}{3}=\binom{n}{3}\left(1-\frac{1}{m^{2}}\right)+o(n^{3}).$ 
+For (b), it suffices to exhibit an  $n$ -element rank-3 matroid that does not have a  $U_{3,2m+2}$ -restriction and has a large number of bases.
+Let  $\alpha=\frac{2m}{2m^{2}+1}$  and let  $\beta=1-m\alpha$ . Let  $E$  be an  $n$ -element set, and partition  $E=L_{1}\cup L_{2}\cup\ldots\cup L_{m}\cup P$  such that  $||L_{i}|-\alpha n|\leq 1$  for all  $i$  and  $||P|-\beta n|\leq 1$ . Let  $M$  be the rank-3 matroid on  $E$  in which  $L_{1},L_{2},\ldots,L_{m}$  are the long lines of  $M$ , the restriction  $M|L_{i}$  is simple for all  $i\in[m]$ , and  $P$  is a parallel class.
+By the pigeonhole principle, each set of  $2m+2$  elements intersects  $P$  in more than one element or one of the sets  $L_{1},L_{2},\ldots,L_{m}$  in more than two elements, so  $M$  does not have a  $U_{3,2m+2}$ -restriction.
+The number of bases of  $M$  is
+ $\displaystyle b(M)$ 
+ $\displaystyle=|P|\binom{\sum_{i}|L_{i}|}{2}+\sum_{1\leq p<q<r\leq m}|L_{p}||L_{q}||L_{r}|+\sum_{\begin{subarray}{c}1\leq p,q\leq m\\
+p\neq q\end{subarray}}\binom{|L_{p}|}{2}|L_{q}|$ 
+ $\displaystyle=\beta n\binom{m\alpha n}{2}+\binom{m}{3}(\alpha n)^{3}+m(m-1)\binom{\alpha n}{2}\alpha n+o(n^{3})$ 
+ $\displaystyle=\binom{n}{3}\left(\frac{2m^{2}}{2m^{2}+1}\right)^{2}+o(n^{3}).\qed$ 
+We next prove a general structural result for rank- $3$  matroids with no  $U_{3,t}$ -restriction (in two cases, depending on the parity of  $t$ ).
+Roughly speaking, this theorem says that every matroid with no  $U_{3,2m+1}$ -restriction is a union of at most  $m$  lines and a small leftover set.
+Theorem 6.2.
+Let  $m\geq 2$ .
+If  $M$  is a rank- $3$  matroid with no  $U_{3,2m+1}$ -restriction, then there is an integer  $k$  with  $0\leq k\leq m$  and disjoint sets  $X$  and  $Y$  with  $X\cup Y=E(M)$  such that
+• 
+ $M|X$  is a union of  $k$  lines, and
+• 
+ $M|Y$  has no  $U_{3,2(m-k)+1}$ -restriction (if  $k<m$ ), no  $U_{2,\binom{2(m-k)}{2}+2}$ -restriction, and at most  $\binom{2(m-k)}{2}\big(\binom{2(m-k)}{2}-1\big)+2(m-k)$  points.
+Proof.
+We may assume that  $M$  is simple.
+Let  $(L_{1},L_{2},\dots,L_{k})$  be a maximal sequence of subsets of  $E(M)$  so that  $k\leq m$  and for each  $i\in[k]$  the set  $L_{i}$  is a line of  $M\!\setminus\!(L_{1}\cup\cdots\cup L_{i-1})$  with at least  $\binom{2(m-i)+1}{2}+2$  points (taking  $L_{0}=\varnothing$ ).
+Let  $X=L_{1}\cup L_{2}\cup\cdots\cup L_{k}$  and let  $Y=E(M)-X$ .
+By maximality, each line of  $M|Y$  has at most  $\binom{2(m-(k+1))+1}{2}+1=\binom{2(m-k)}{2}+1$  points.
+Suppose  $M|Y$  has a  $U_{3,2(m-k)+1}$ -restriction, where  $U_{3,1}$  refers to a single point. Then  $k\geq 1$  because  $M$  has no  $U_{3,2m+1}$ -restriction. The lines  $L_{1},\dots,L_{k}$  are large enough that we can iteratively (in reverse order) add two points from each line to extend the  $U_{3,2(m-k)+1}$ -restriction of  $M|Y$  to a  $U_{3,2m+1}$ -restriction of  $M$ .
+We now make this idea precise.
+Write  $Y=L_{k+1}$  for convenience. Let  $j$  be minimum so that  $M$  has a  $U_{3,2(m-j+1)+1}$ -restriction  $N$  contained in  $L_{j}~\cup~L_{j+1}~\cup~\cdots~\cup~L_{k+1}$ .
+Note that  $j>1$  because  $M$  has no  $U_{3,2m+1}$ -restriction, and that  $j$  is well-defined because  $j=k+1$  is a valid option.
+The points of  $N$  span  $\binom{2(m-j+1)+1}{2}$  lines, and each line contains at most one point of  $L_{j-1}$ .
+Since  $L_{j-1}$  has at least  $\binom{2(m-(j-1))+1}{2}+2$  points, it contains points  $a$  and  $b$  not spanned by any line of  $N$ .
+Also,  $\{a,b\}$  does not span any point  $e$  of  $N$ , because then  $e\in L_{j-1}$ , while  $N$  is disjoint from  $L_{j-1}$  by the definitions of  $(L_{1},L_{2},\dots,L_{k})$  and  $Y$ .
+Therefore  $N\cup\{a,b\}$  is a  $U_{3,2(m-j+1)+3}$ -restriction of  $M$  contained in
+ $L_{j-1}~\cup~L_{j}~\cup~\cdots~\cup~L_{k+1}$ , which contradicts the minimality of  $j$ .
+Therefore  $M|Y$  has no  $U_{3,2(m-k)+1}$ -restriction.
+Finally, we bound the number of points of  $M|Y$ . If  $Y$  is a set of rank at most 2, which is true in particular when  $k=m$  or  $k=m-1$ , then the bound follows by a straightforward computation. So we may assume that  $Y$  has rank 3. Let  $t$  be maximum so that  $M|Y$  has a  $U_{3,t}$ -restriction  $N$ .
+By the maximality of  $t$ , each point of  $M|Y$  is spanned by a pair of elements of  $N$ .
+So  $M|Y$  is a union of  $\binom{t}{2}$  lines, each with at most  $\binom{2(m-k)}{2}-1$  points not in  $E(N)$ .
+Since  $t\leq 2(m-k)$ , it follows that  $M|Y$  has at most  $\binom{2(m-k)}{2}(\binom{2(m-k)}{2}-1)+2(m-k)$  points.
+∎
+Note that if  $k=m$  then  $M|Y$  has  $0$  points, and if  $k=m-1$  then  $M|Y$  has no  $U_{3,3}$ -restriction and therefore has rank at most  $2$ .
+So if  $k\in\{m-1,m\}$ , then  $M$  is covered by  $m$  lines.
+In particular, when  $m=2$ , Theorem 6.2 implies that every rank- $3$  matroid with no  $U_{3,5}$ -restriction is either the union of two lines, or has at most  $34$  points.
+We have a similar result for matroids with no  $U_{3,2m+2}$ -restriction; we omit the proof as it is nearly identical to the proof of Theorem 6.2.
+Theorem 6.3.
+Let  $m\geq 2$ .
+If  $M$  is a rank- $3$  matroid with no  $U_{3,2m+2}$ -restriction, then there is an integer  $k$  with  $0\leq k\leq m$  and disjoint sets  $X$  and  $Y$  with  $X\cup Y=E(M)$  so that
+• 
+ $M|X$  is a union of  $k$  lines, and
+• 
+ $M|Y$  has no  $U_{3,2(m-k)+2}$ -restriction (if  $k<m$ ), no  $U_{2,\binom{2(m-k)}{2}+2}$ -restriction, and at most  $\binom{2(m-k)+1}{2}\big(\binom{2(m-k)+1}{2}-1\big)+2(m-k)+1$  points.
+Note that if  $k=m$  then  $M|Y$  has no  $U_{2,2}$ -restriction and therefore consists of at most one point, and if  $k=m-1$  then  $M|Y$  has no  $U_{3,4}$ -restriction and is therefore the direct sum of a line and a point by Lemma 5.2.
+So if  $k\in\{m-1,m\}$ , then  $M$  is covered by  $m$  lines and a point.
+Roughly speaking, Theorems 6.2 and 6.3 reduce the problem of finding  $\pi_{\mathsf{M}}(3,U_{3,t})$  to analyzing matroids with a small number of points.
+We do this for  $t=5$ .
+Lemma 6.4.
+Let  $M$  be a rank- $3$  matroid with no  $U_{3,5}$ -restriction. Either
+ $(a)$  
+ $M$  has no  $U_{2,5}$ -minor, or
+ $(b)$  
+ $M$  is the union of two lines.
+Proof.
+We may assume that  $M$  is simple, because the statement holds for  $M$  if and only if it holds for  $\si(M)$ .
+An ordered pair  $(L_{1},L_{2})$  of lines of  $M$  is good if  $|L_{1}-L_{2}|\geq 4$  and  $|L_{2}-L_{1}|\geq 2$ .
+First suppose that  $M$  has a good pair  $(L_{1},L_{2})$  of lines.
+Suppose there is a point  $w$  of  $M$  outside of  $L_{1}\cup L_{2}$ .
+Let  $x,y\in L_{2}-L_{1}$ .
+The lines  $\cl_{M}(\{w,x\})$  and  $\cl_{M}(\{w,y\})$  each contain at most one point in  $L_{1}-L_{2}$ , and so there are points  $s,t\in L_{1}-L_{2}$  that are not spanned by any pair of  $\{w,x,y\}$ .
+But then  $\{w,x,y,s,t\}$  forms a  $U_{3,5}$ -restriction of  $M$ , a contradiction.
+So  $E(M)\subseteq L_{1}\cup L_{2}$ , and therefore  $(b)$  holds when  $M$  has a good pair of lines.
+Next suppose that  $M$  has a line  $L_{1}$  with  $|L_{1}|\geq 5$ .
+There are points  $x$  and  $y$  of  $M$  outside of  $L_{1}$ , or else  $(b)$  holds.
+Let  $L_{2}=\cl_{M}(\{x,y\})$ .
+Then  $(L_{1},L_{2})$  is a good pair of lines of  $M$ , and so  $(b)$  holds.
+So we may assume that  $M$  has no good pairs and no lines with at least five points.
+We will show that  $(a)$  holds. Suppose, towards a contradiction, that  $M$  has a  $U_{2,5}$ -minor.
+Since  $M$  has a  $U_{2,5}$ -minor, there is a point  $e_{0}$  so that  $M/e_{0}$  has a  $U_{2,5}$ -restriction.
+Then  $e_{0}$  is on at least five lines of  $M$ , because the lines of  $M$  through  $e_{0}$  correspond to the points of  $M/e_{0}$ .
+Let  $T$  be a transversal of five of the lines through  $e_{0}$ .
+Since  $M$  has no line with at least five points,  $M|T$  has rank  $3$ .
+And since  $M|T$  is a simple rank- $3$  matroid with five points, it has a  $U_{3,4}$ -restriction or contains a line with four points. In the former case, adding  $e_{0}$  to the  $U_{3,4}$ -restriction gives  $U_{3,5}$ , because no pair from  $T$  spans  $e_{0}$ , and this is a contradiction. In the latter case,  $(L_{1},L_{2})$  is a good pair of lines, where  $L_{1}\subseteq T$  is the line with four points and  $L_{2}=\cl_{M}((T\setminus L_{1})\cup\{e_{0}\})$ , and this is again a contradiction.
+∎
+We can use the previous lemma to find  $\pi_{\mathsf{M}}(n,3,U_{3,5})$ .
+Recall that  $\ex_{\mathsf{M}}(n,3,U_{2,5})\leq b(3,3)\cdot(\frac{n}{13})^{3}$ , by Theorem 4.5, where  $b(3,3)$  is the number of bases of the ternary projective plane, which is  $\frac{13\cdot 12\cdot 9}{3!}=234$ .
+Theorem 6.5.
+If  $n\geq 14$ , then
+ $\ex_{\mathsf{M}}(n,3,U_{3,5})\leq\left(\frac{n}{2}\right)^{3}-\left(\frac{n}{2}\right)^{2}.$ 
+Furthermore, equality holds when  $n$  is even, so  $\pi_{\mathsf{M}}(3,U_{3,5})=3/4$ .
+Proof.
+Let  $M$  be an  $n$ -element, rank- $3$  matroid with no  $U_{3,5}$ -restriction and  $b(M)=\ex_{\mathsf{M}}(n,r,U_{3,5})$ .
+Either  $(a)$  or  $(b)$  holds from Lemma 6.4.
+If  $(a)$  holds, then  $b(M)\leq\ex_{\mathsf{M}}(n,r,U_{2,5})$  and therefore by Theorem 4.5,
+ $\ex_{\mathsf{M}}(n,3,U_{3,5})\leq\ex_{\mathsf{M}}(n,3,U_{2,5})=b(3,3)\Big(\frac{n}{13}\Big)^{3}=234\Big(\frac{n}{13}\Big)^{3}<\Big(\frac{n}{2}\Big)^{3}-\Big(\frac{n}{2}\Big)^{2},$ 
+where the last inequality holds because  $n\geq 14$ .
+So  $(b)$  holds, and  $M$  is the union of lines  $L_{1}$  and  $L_{2}$ .
+It is straightforward to check that  $b(M)$  is maximized when  $L_{1}$  and  $L_{2}$  are disjoint lines and have  $\lfloor n/2\rfloor$  and  $\lceil n/2\rceil$  points, respectively.
+Then  $M$  has at most  $(\frac{n}{2})^{3}-(\frac{n}{2})^{2}$  bases, as desired.
+∎
+By Proposition 2.2, the basis hypergraph of a  $U_{3,5}$ -free matroid is  $K^{(3)}_{5}$ -subgraph-free. Turán [41] conjectured that  $\pi(K^{(3)}_{5})=3/4$ , and Theorem 6.5 confirms this conjecture for matroid basis hypergraphs. The extremal construction of bases in the rank- $3$  matroid consisting of two lines is a special case of a family of examples due to Keevash and Mubayi, showing that  $\pi(K^{(3)}_{5})\geq 3/4$  – see [27, Section 9]. The actual value of  $\pi(K^{(3)}_{5})$  remains unknown.
+7 Directions for future work
+We close by discussing directions for future work relating to Problem 1.1.
+7.1 Matroid truncations
+As discussed in Section 2, some of the strongest constructions for daisy-free hypergraphs are naturally cast in matroidal terms.
+We believe that this connection can be further explored.
+Ellis, Ivan, and Leader proved the following lower bound on  $\pi(\mathcal{D}_{r}(s,t))$ .
+Theorem 7.1 (Ellis, Ivan, and Leader [18]).
+Let  $q$  be a prime power,  $m$  a positive integer and  $s$  even, and  $t=\lfloor sq^{\frac{2m}{s}+1}+1\rfloor$ .
+Then
+ $\lim_{r\to\infty}\pi(\mathcal{D}_{r}(s,t))\geq 1-q^{-(m+1)}-O(q^{-(m+2)}).$ 
+In the special case that  $s=m=k$  and  $q=2$ , this shows that  $\lim_{r\to\infty}\pi(\mathcal{D}_{r}(k,8k+1))=1-O(2^{-k})$ .
+Improving on this, Alon [1] showed that  $\lim_{r\to\infty}\pi(\mathcal{D}_{r}(k+2\log_{2}k,2k+3\log_{2}k))\geq 1-2^{-k}$  where  $k$  is some large fixed integer. Both of these results on link Turán densities are of interest due to applications to lower bounding vertex Turán densities of the hypercube, see [18] for further details. For recent progress regarding link Turán densities and vertex Turán problems in the hypercube, see [13, 19].
+Just as in Theorem 2.1, both constructions are matroidal.
+When  $n=k(q^{m+r}-1)$  for a positive integer  $k$ , they consider the  $\mathbb{F}_{q}$ -representable matroid whose elements are the nonzero vectors in  $\mathbb{F}_{q}^{m+r}$  with  $k$  copies of each vector.
+(This matroid simplifies to the projective geometry  $\text{PG}(m+r-1,q)$ .)
+They then take the  $m^{th}$  truncation of this matroid, where the  $m^{th}$  truncation of a rank- $(r+m)$  matroid  $M$  is the rank- $r$  matroid  $T^{(m)}(M)$  whose bases are the rank- $r$  independent sets in  $M$  [35, Proposition 7.3.10].
+Then Theorem 7.1 follows by showing that truncations do not lead to  $U_{s,t}$ -minors with  $t$  arbitrarily large. Alon’s bound is obtained by improving the analysis in their proof utilizing the classic Plotkin bound [36] from the theory of error-correcting codes. We propose the following problem.
+Problem 7.2.
+Let  $q$  be a prime power and let  $r$  and  $m$  be integers with  $r\geq 2$  and  $m\geq 0$ .
+For all  $s$ , what is the maximum  $t$  so that  $T^{(m)}(\text{PG}(r+m-1,q))$  has a  $U_{s,t}$ -minor?
+It will certainly be difficult to give an exact answer. Even when  $m=0$ , the problem is equivalent to the question over which fields the uniform matroid  $U_{s,t}$  is representable [35, Problem 6.5.19], an open problem in projective geometry and coding theory. However, as shown by Theorem 7.1, even coarse bounds can have significant consequences for vertex Turán problems on the hypercube.
+7.2 Discrete geometry
+By restricting the parameter  $\ex_{\mathsf{M}}(n,s,U_{s,t})$  to affine matroids over  $\mathbb{R}$  (see [35, Proposition 1.5.1]), we obtain the following natural problem.
+Problem 7.3.
+Let  $n,s,t$  be positive integers with  $t\geq s\geq 3$ .
+Among all sets of  $n$  vectors in  $\mathbb{R}^{s-1}$  with no  $t$  in general position, what is the maximum number of  $s$ -sets in general position?
+One can ask this question for vectors over other fields as well, but we focus on  $\mathbb{R}$  for simplicity.
+In the special case  $s=3$ , this problem is asking for the maximum number of non-colinear triples among  $n$  points in  $\mathbb{R}^{2}$  with no  $t$  in general position.
+This is in some sense dual to a problem of Erdős [20] that asks for the minimum cardinality of a set of points in general position among  $n$  points in  $\mathbb{R}^{2}$  with no four on a line; see [7] for recent progress.
+By noting that the lower bound of Proposition 6.1 also holds for  $\mathbb{R}$ -representable matroids, Theorem 6.5 solves Problem 7.3 in the case  $(t,3)=(5,3)$ .
+We expect that the parameter  $\ex_{\mathsf{M}}(n,s,U_{s,t})$  can be used to solve Problem 7.3 in other cases as well.
+We mention one other direction for future work relating to Section 6.
+For a positive integer  $a$ , the  $a$ -covering number of a matroid  $M$ , denoted  $\tau_{a}(M)$ , is the minimum number of sets of rank at most  $a$  required to cover the ground set of  $M$ .
+In particular,  $\tau_{1}(M)$  is the number of points of  $M$ , and  $\tau_{2}(M)$  is the number of lines needed to cover the ground set of  $M$ .
+Theorems 6.2 and 6.3 imply that if  $M$  is a rank- $3$  matroid with no  $U_{3,t}$ -restriction, then  $\tau_{2}(M)=O(t^{2})$ .
+On the other hand, the  $U_{3,t}$ -free matroids exhibiting the bounds of Proposition 6.1 have  $2$ -covering number  $\Omega(t)$ .
+This leads to the following problem.
+Problem 7.4.
+Find the maximum  $2$ -covering number for rank- $3$  matroids with no  $U_{3,t}$ -restriction.
+More generally, one could ask for the maximum  $(s-1)$ -covering number for rank- $s$  matroids with no  $U_{s,t}$ -restriction, but we will focus on  $s=3$  for simplicity.
+Problem 7.4 has several interesting variants and extensions.
+It is interesting even if we restrict to the class of  $\mathbb{R}$ -representable matroids: what is the maximum number of lines needed to cover  $n$  points in  $\mathbb{R}^{2}$  with no  $t$  in general position?
+One could also allow rank to increase and ask for the maximum  $2$ -covering number for rank- $r$  matroids with no  $U_{3,t}$ -minor; this would be an analogue of Theorem 4.8.
+Problem 7.4 also fits nicely with more general but coarser results of Geelen and Nelson [25, 34] which show that there are very few possibilities for the behavior of  $a$ -covering numbers for matroids in minor-closed classes.
+We should also mention that while Problems 1.1 and 7.4 ask for specific properties of the class of matroids with no  $U_{s,t}$ -minor, there are a number of deep conjectures about the overall structure of matroids in this class; see [21, 22].
+7.3 Exact Turán basis numbers
+The bound on  $\ex_{\mathsf{M}}(n,r,U_{2,t+2})$  in Theorem 4.5 is tight whenever  $t$  is a prime power and  $n$  is a multiple of  $\frac{t^{r}-1}{t-1}$ ; in this case the bound is attained by the matroid that is obtained from  $\text{PG}(r-1,t)$  by replacing each element by a parallel class containing  $n/\frac{t^{r}-1}{t-1}$  elements. In this section, we speculate on the exact value of  $\ex_{\mathsf{M}}(n,r,U_{2,t+2})$  when  $n\leq\frac{t^{r}-1}{t-1}$ .
+Let  $t$  be a prime power, and let  $r$  and  $c$  be integers such that  $1\leq c\leq r-1$ . Let  $F$  be a rank- $(r-c)$  flat of  $\text{PG}(r-1,t)$ , and let  $\text{BB}(r-1,t,c-1)$  be the matroid obtained by restricting  $\text{PG}(r-1,t)$  to the complement of  $F$ . Note that  $\text{BB}(r-1,t,c)$  has  $\frac{t^{r}-t^{r-c}}{t-1}$  points and rank  $r$ .
+Problem 7.5.
+Let  $t>2$  be prime power, and let  $r$  and  $c$  be integers such that  $1\leq c\leq r-1$ . Is it true that
+ $\ex_{\mathsf{M}}\left(\frac{t^{r}-t^{r-c}}{t-1},r,U_{2,t+2}\right)=b(\text{BB}(r-1,t,c-1))?$ 
+The statement holds when  $t=2$  and  $r\leq 3$ . This is immediate for  $r\leq 2$ ; for  $r=3$ , it can be shown that a matroid attaining the maximum number of bases is simple, after which the statement follows from a case analysis.
+The matroids  $\text{BB}(r-1,t,c)$  play a role in extremal matroid theory similar to that of balanced complete multipartite graph in extremal graph theory: the matroid  $\text{BB}(r-1,t,c)$  does not contain a  $\text{PG}(c,t)$  as a submatroid, and Bose and Burton [12] showed that it is the densest submatroid of  $\text{PG}(r-1,t)$  with this property.
+7.4 Minor-closed classes
+For a minor-closed class  $\mathcal{M}$  of matroids, let  $\ex_{\mathcal{M}}(n,r)$  be the maximum number of bases of an  $n$ -element, rank- $r$  matroid in  $\mathcal{M}$ . Our proof of Theorem 4.5 relies heavily on Theorem 4.2, which provides an upper bound on the number of elements of a rank- $r$  matroid with no  $U_{2,t+2}$ -minor.
+The function  $h_{\mathcal{M}}$  that maps a positive integer  $r$  to the maximum number of elements of a simple matroid in  $\mathcal{M}$  with rank at most  $r$  is the extremal function or growth rate function of  $\mathcal{M}$ .
+Our proof of Theorem 4.5 leads to the following question: can  $h_{\mathcal{M}}(r)$  be used to find  $\ex_{\mathcal{M}}(n,r)$ ?
+We give a concrete example in which this may be of interest.
+Let  $\mathcal{N}$  be the class of binary matroids with no  $\text{PG}(2,2)$ -minor ( $\text{PG}(2,2)$  is also commonly called the Fano plane, and denoted by  $F_{7}$ ).
+Kung [29, Corollary 6.4] proved that  $h_{\mathcal{N}}(r)=\binom{r+1}{2}$  with equality holding for the graphic matroid of a complete graph on  $r+1$  vertices.
+This leads to the following natural problem.
+Problem 7.6.
+Let  $n,r$  be integers with  $n\geq r\geq 1$ . Determine  $\ex_{\mathcal{N}}(n,r)$  for the class  $\mathcal{N}$  of binary matroids with no  $F_{7}$ -minor.
+If for every large  $n$  there is an  $n$ -element, rank- $r$  graphic matroid  $M$  with  $b(M)=\ex_{\mathcal{N}}(n,r)$ , a solution would generalize Kelmans’ result [28] on the maximum the number of spanning trees of an  $(r+1)$ -vertex graph with  $n$  edges.
+More generally, the Growth Rate Theorem [23] shows that there are only four possibilities for the behavior of  $h_{\mathcal{M}}$  for a minor-closed class  $\mathcal{M}$ : linear, quadratic, exponential, or infinite.
+We close with the following open-ended question: does the classification of extremal functions lead to a corresponding classification of Turán basis densities  $\pi_{\mathcal{M}}(r)$  for minor-closed classes of matroids?
+Acknowledgements
+The authors would like to thank Dylan King for the helpful discussion. The third author was supported in part by NSF RTG DMS-1937241 and an AMS-Simons Travel Grant.
+References
+[1]
+N. Alon.
+Erasure list-decodable codes and Turán hypercube problems.
+Finite Fields and Their Applications, 100:102513, 2024.
+[2]
+M. Axenovich and D. Liu.
+Visibility in hypercubes.
+arXiv:2402.04791, 2024.
+[3]
+R. C. Baker, G. Harman, and J. Pintz.
+The difference between consecutive primes. II.
+Proc. London Math. Soc. (3), 83(3):532–562, 2001.
+[4]
+J. Balogh, T. Bohman, B. Bollobás, and Y. Zhao.
+Turán densities of some hypergraphs related to  $K_{k+1}^{k}$ .
+SIAM J. Discrete Math., 26(4):1609–1617, 2012.
+[5]
+J. Balogh, F. C. Clemen, and B. Lidický.
+Hypergraph Turán problems in  $\ell_{2}$ -norm.
+In Surveys in combinatorics 2022, volume 481 of London
+Math. Soc. Lecture Note Ser., pages 21–63. Cambridge Univ. Press,
+Cambridge, 2022.
+[6]
+J. Balogh, A. Halfpap, B. Lidický, and C. Palmer.
+Positive co-degree densities and jumps.
+arXiv:2412.08597, 2024.
+[7]
+J. Balogh and J. Solymosi.
+On the number of points in general position in the plane.
+Discrete Anal., pages No. 16, 20, 2018.
+[8]
+N. Bansal, R. A. Pendavingh, and J. G. van der Pol.
+An entropy argument for counting matroids.
+J. Combin. Theory Ser. B, 109:258–262, 2014.
+[9]
+A. Björner.
+Some matroid inequalities.
+Discrete Math., 31(1):101–103, 1980.
+[10]
+B. Bollobás, I. Leader, and C. Malvenuto.
+Daisies and other Turán problems.
+Combin. Probab. Comput., 20(5):743–747, 2011.
+[11]
+E. Boros, V. Gurvich, N. B. Ho, K. Makino, and P. Mursic.
+Sprague–Grundy function of matroids and related hypergraphs.
+Theoret. Comput. Sci., 799:40–58, 2019.
+[12]
+R. C. Bose and R. C. Burton.
+A characterization of flat spaces in a finite geometry and the
+uniqueness of the Hamming and the MacDonald codes.
+J. Combinatorial Theory, 1:96–104, 1966.
+[13]
+P. J. Cameron.
+Problems from BCC30.
+arXiv:2409.07216, 2024.
+[14]
+P. J. Cameron, Aparna Lakshmanan S., and M. V. Ajith.
+Hypergraphs defined on algebraic structures.
+arXiv:2303.00546, 2023.
+[15]
+R. Cordovil, K. Fukuda, and M. L. Moreira.
+Clutters and matroids.
+Discrete Math., 89(2):161–171, 1991.
+[16]
+G. Ding.
+Bounding the number of bases of a matroid.
+Combinatorica, 15(2):159–165, 1995.
+[17]
+J. D. Douthitt and J. Oxley.
+Bounding the number of bases of a matroid.
+Discrete Math., 345(1):Paper No. 112636, 3, 2022.
+[18]
+D. Ellis, M.-R. Ivan, and I. Leader.
+Turán densities for daisies and hypercubes.
+Bull. Lond. Math. Soc., 56(12):3838–3853, 2024.
+[19]
+D. Ellis, M.-R. Ivan, and I. Leader.
+Turán densities for small hypercubes.
+arXiv:2411.09445, 2024.
+[20]
+P. Erdős.
+Some old and new problems in combinatorial geometry.
+In Applications of discrete mathematics (Clemson, SC,
+1986), pages 32–37. SIAM, Philadelphia, PA, 1988.
+[21]
+J. Geelen.
+Some open problems on excluding a uniform matroid.
+Adv. in Appl. Math., 41(4):628–637, 2008.
+[22]
+J. Geelen, B. Gerards, and G. Whittle.
+The highly connected matroids in minor-closed classes.
+Ann. Comb., 19(1):107–123, 2015.
+[23]
+J. Geelen, J. P. S. Kung, and G. Whittle.
+Growth rates of minor-closed classes of matroids.
+J. Combin. Theory Ser. B, 99(2):420–427, 2009.
+[24]
+J. Geelen and P. Nelson.
+The number of points in a matroid with no  $n$ -point line as a
+minor.
+J. Combin. Theory Ser. B, 100(6):625–630, 2010.
+[25]
+J. Geelen and P. Nelson.
+Projective geometries in exponentially dense matroids. I.
+J. Combin. Theory Ser. B, 113:185–207, 2015.
+[26]
+A. Grebennikov and J. P. Marciano.
+ ${C}_{10}$  has positive Turán density in the hypercube.
+J. Graph Theory, 2024.
+[27]
+P. Keevash.
+Hypergraph Turán problems.
+In Surveys in combinatorics 2011, volume 392 of London
+Math. Soc. Lecture Note Ser., pages 83–139. Cambridge Univ. Press,
+Cambridge, 2011.
+[28]
+A. K. Kelmans.
+The properties of the characteristic polynomial of a graph.
+In Cybernetics—in the service of Communism, Vol. 4
+(Russian), pages 27–41. “Ènergija”, Moscow, 1967.
+[29]
+J. P. S. Kung.
+Extremal matroid theory.
+In Graph structure theory (Seattle, WA, 1991), volume 147
+of Contemp. Math., pages 21–61. Amer. Math. Soc., Providence, RI,
+1993.
+[30]
+P.-S. Loh, M. Tait, C. Timmons, and R. M. Zhou.
+Induced Turán numbers.
+Combin. Probab. Comput., 27(2):274–288, 2018.
+[31]
+L. Lu and Y. Zhao.
+An exact result for hypergraphs and upper bounds for the Turán
+density of  $K_{r+1}^{r}$ .
+SIAM J. Discrete Math., 23(3):1324–1334, 2009.
+[32]
+A. Lucchini.
+Generating hypergraphs of finite groups.
+arXiv:2404.11186, 2024.
+[33]
+S. Mukherjee.
+Extremal numbers of hypergraph suspensions of even cycles.
+European J. Combin., 118:Paper No. 103935, 16, 2024.
+[34]
+P. Nelson.
+Projective geometries in exponentially dense matroids. II.
+J. Combin. Theory Ser. B, 113:208–219, 2015.
+[35]
+J. Oxley.
+Matroid theory, volume 21 of Oxford Graduate Texts in
+Mathematics.
+Oxford University Press, Oxford, second edition, 2011.
+[36]
+M. Plotkin.
+Binary codes with specified minimum distance.
+IRE Trans., IT-6:445–450, 1960.
+[37]
+G. Purdy.
+The independent sets of rank  $k$  of a matroid.
+Discrete Math., 38(1):87–91, 1982.
+[38]
+A. Sidorenko.
+Turán numbers of  $r$ -graphs on  $r+1$  vertices.
+J. Combin. Theory Ser. B, 169:150–160, 2024.
+[39]
+A. F. Sidorenko.
+The maximal number of edges in a homogeneous hypergraph containing no
+prohibited subgraphs.
+Mathematical notes of the Academy of Sciences of the USSR,
+41:247–259, 1987.
+[40]
+P. Turán.
+On an extremal problem in graph theory.
+Mat. Fiz. Lapok, 48:436–452, 1941.
+[41]
+P. Turán.
+Research problems.
+Magyar Tud. Akad. Mat. Kutató Int. Közl., 6:417–423,
+1961.
+    Experimental support, please
+    view the build logs
+    for errors. Generated by
+        L
+        A
+        T
+        E
+      xml
+    .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue" (
+          ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+        We gratefully acknowledge support from our major funders,
+        member institutions, ,
+        and all contributors.
+        About ·
+        Help ·
+        Contact ·
+        Subscribe ·
+        Copyright ·
+        Privacy ·
+        Accessibility ·
+        Operational Status (opens in new tab)

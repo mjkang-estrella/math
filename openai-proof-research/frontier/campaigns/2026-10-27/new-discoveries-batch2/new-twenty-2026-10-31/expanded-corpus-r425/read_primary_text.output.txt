@@ -1,0 +1,1214 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+PRIMARY 1401.6992 CHARS 37303
+                                            SIZE OF DOT PRODUCT SETS DETERMINED BY PAIRS OF
+                                               SUBSETS OF VECTOR SPACES OVER FINITE FIELDS
+
+
+
+
+arXiv:1401.6992v1 [math.CO] 27 Jan 2014
+                                                                      DOOWON KOH AND YOUNGJIN PI
+
+
+                                                   Abstract. In this paper we study the cardinality of the dot product set gen-
+                                                   erated by two subsets of vector spaces over finite fields. We notice that the
+                                                   results on the dot product problems for one set can be simply extended to two
+                                                   sets. Let E and F be subsets of the d-dimensional vector space Fdq over a finite
+                                                   field Fq with q elements. As a new result, we prove that if E and F are subsets
+                                                   of the paraboloid and |E||F | ≥ Cq d for some large C > 1, then |Π(E, F )| ≥ cq
+                                                   for some 0 < c < 1. In particular, we find a connection between the size of the
+                                                   dot product set and the number of lines through both the origin and a nonzero
+                                                   point in the given set E. As an application of this observation, we obtain more
+                                                   sharpened results on the generalized dot product set problems. The discrete
+                                                   Fourier analysis and geometrical observation play a crucial role in proving our
+                                                   results.
+
+
+
+
+                                                                               1. Introduction
+                                             How many distinct distances can be determined by a finite subset of Rd ? In
+                                          1946, this question was addressed by Erdős [3]. This problem is well known as the
+                                          Erdős distance problem in the Euclidean space. More generally, given E, F ⊂ Rd
+                                          with |E|, |F | < ∞, one may ask for the cardinality of the distance set ∆(E, F ) in
+                                          terms of the sizes of E and F , where | · | denotes the cardinality of a finite set of
+                                          Rd and the distance set ∆(E, F ) is defined by
+                                                                 np                                                 o
+                                                      ∆(E, F ) =    (x1 − y1 )2 + · · · + (xd − yd )2 : x ∈ E, y ∈ F .
+
+                                          If E = F, then we shall write ∆(E) for ∆(E, F ). The first nontrivial result on this
+                                          problem was obtained by Erdős [3]. He proved that if E ⊂ Rd , then |∆(E)| ≥
+                                          c|E|1/d for some constant 0 < c < 1 independent of |E|. In addition, he conjectured
+                                          that for every ε > 0 there exists cε > 0 such that |∆(E)| ≥ cε |E|2/d−ε . The conjec-
+                                          ture on the plane was recently solved by Guth and Katz [6] but it is still open for
+                                          higher dimensions (see, for example, [14, 11, 13]).
+
+                                             As a continuous version of the Erdős distance problem, the Falconer distance
+                                          problem has been studied. The Falconer distance conjecture says that if E is a
+                                          compact subset of Rd , d ≥ 2, and the Hausdorff dimension of E is greater than d/2,
+                                          then the distance set ∆(E) has a positive Lebesgue measure. Since this conjecture
+                                          was first addressed by Falconer [5], much attention has been given to this problem
+
+                                             Date: October 27, 2021.
+                                             2010 Mathematics Subject Classification. Primary: 52C10 ; Secondary 11T23.
+                                             Key words and phrases. Dot product sets, finite fields, paraboloids.
+                                             The first author was supported by the research grant of the Chungbuk National University in
+                                          2012 .
+                                                                                          1
+2                          DOOWON KOH AND YOUNGJIN PI
+
+
+but it has not been solved for any dimensions. Using the decay estimate of the
+Fourier transform on the sphere, Falconer [5] firstly obtained that
+                                  d+1
+                       dimH (E) >        =⇒ L(∆(E)) > 0,
+                                    2
+where dimH (E) denotes the Hausdorff dimension of E ⊂ Rd and L(∆(E)) denotes
+one-dimensional Lebesgue measure of the distance set ∆(E). The Falconer’s result
+was generalized by Mattila who proved in [12] that for any compact sets E, F ⊂ Rd ,
+                dimH (E) + dimH (F ) > d + 1 =⇒ L(∆(E, F )) > 0.
+The currently best known results on the Falconer problem are due to Wolff [15] for
+two dimensions and Erdog̃an [4] for higher dimensions. Their results say that if
+E ⊂ Rd , d ≥ 2, with dimH (E) > d/2 + 1/3, then L(∆(E)) > 0.
+
+   In recent years, the Erdős-Falconer distance problems have been reconstructed
+in the finite field setting. Let Fdq denote the d-dimensional vector space over a
+finite field Fq with q elements. Throughout the paper, we always assume that the
+characteristic of Fq is greater than two. Given E, F ⊂ Fdq , d ≥ 2, the distance set,
+denoted by D(E, F ), is defined by
+                     D(E, F ) = {kx − yk ∈ Fq : x ∈ E, y ∈ F },
+where kαk = α21 + · · · + α2d for α = (α1 , . . . , αd ) ∈ Fdq . We point out that the
+function k · k on Fdq is not a standard norm but its image is invariant under the
+rotations in Fdq . The Erdős distance problem in the finite field setting is to find
+the connection between |D(E, F )| and cardinalities of E, F ⊂ Fdq . In the prime
+field setting, the Erdős distance problem in two dimensions was initially posed and
+studied by Bourgain-Katz-Tao [1]. In 2007, Iosevich and Rudnev [8] developed the
+problem in arbitrary dimensional vector spaces over general finite fields. Using the
+Kloosterman sum estimate, Iosevich and Rudnev [8] obtained that if E ⊂ Fdq , then
+                                               (          )
+                                                      |E|
+(1.1)                        |D(E, E)| ≫c min q, d−1 .
+                                                     q 2
+Remark 1.1. Here and throughout this paper, the notation A ≫c B for A, B > 0
+means that there exists a constant 0 < c < 1 depending only on the dimension
+d such that A ≥ cB. On the other hand, we shall use the notation A ≫C B to
+indicate that there exists a sufficient large constant C > 1 depending only on the
+dimension d such that A ≥ CB. The constants 0 < c < 1 and C > 1 may be
+changed from one line to another line but they are independent of the size of the
+underlying finite field Fq . We also write B ≪C A for A ≫c B. A ∼ B means that
+there exist constants 0 < c < 1, 1 < C such that cB ≤ A ≤ CB, where c, C depend
+only on the dimension d.
+   As a finite field version of the Falconer distance problem, Iosevich and Rudnev [8]
+conjectured that if E ⊂ Fdq with |E| ≫C q d/2 , then |D(E, E)| ≫c q. As a corollary
+of (1.1), they also obtained that |D(E, E)| ≫c q as long as |E| ≫C q (d+1)/2 . The
+authors in [7] constructed arithmetic examples which show that the conjecture by
+Iosevich and Rudnev is not true in odd dimensions and the exponent (d + 1)/2
+gives a sharp result on the Falconer distance problem in odd dimensional vector
+spaces over Fq . However, it has been believed that the conjecture may be true in
+                            SIZE OF DOT PRODUCT SETS                                 3
+
+
+even dimensions, in part because the authors in [2] recently showed that if E ⊂ F2q
+with |E| ≫C q 4/3 , then |D(E, E)| ≫c q. When d = 2, the exponent 4/3 is better
+than the exponent (d + 1)/2 which gives a sharp exponent in odd dimensions. This
+result for dimension two was generalized by Koh and Shen [9] who proved that if
+E, F ⊂ F2q with |E||F | ≫C q 8/3 , then |D(E, F )| ≫c q. In [10], they also stated
+the following conjecture which generalizes the conjecture originally stated in [8] for
+even dimensions.
+Conjecture 1.2. Let d ≥ 2 be an even integer. Suppose E, F ⊂ Fdq . If |E||F | ≫C
+q d , then |D(E, F )| ≫c q.
+   This conjecture has not been solved but there are some specific sets which yield
+the conclusion of the conjecture for any dimensions d ≥ 2. For example, Iosevich
+and Rudnev [8] showed that the conclusion of the conjecture holds if E = F and
+E is a Salem set. Here, we recall that a set E ⊂ Fdq is called a Salem set if
+            p
+ b
+|E(m)|  ≪C |E|/q d for all m ∈ Fdq \ {(0, . . . , 0)}. Considering the number of vec-
+tors determined by two sets E, F ⊂ Fdq , Koh and Shen [9] deduced that if one of
+sets E, F ⊂ Fdq is a Salem set, then the conclusion of Conjecture 1.2 follows for any
+dimensions d ≥ 2.
+
+   By analogy with the distance set D(E, F ), if E, F ⊂ Fdq , then one can define a
+set of dot products as
+                       Π(E, F ) = {x · y ∈ Fq : x ∈ E, y ∈ F }.
+In the case when E = F ⊂ Fdq , the authors in [7] investigated the cardinality of
+|Π(E, F )|. They proved the following result.
+Proposition 1.3. If E ⊂ Fdq with |E| ≫C q (d+1)/2 , then |Π(E, E)| ≫c q.
+  In addition, they provided an example to show that the exponent (d + 1)/2 in
+Proposition 1.3 can not be improved on a general set E. However, they made a
+remarkable observation that if E lies on a unit sphere, then Proposition 1.3 can be
+improved. More precisely, they proved the following.
+Proposition 1.4. Suppose that E ⊂ S1 := {x ∈ Fdq : x21 + · · · + x2d = 1}. If
+|E| ≫C q d/2 , then |Π(E, E)| ≫c q.
+  As a direct application of this proposition, they deduced the following Erdős-
+Falconer distance result on the unit sphere.
+Proposition 1.5. Let S1 = {x ∈ Fdq : x21 + x22 + · · · + x2d = 1}. If d ≥ 3, E ⊂ S1
+and |E| ≫C q d/2 , then |D(E, E)| ≫c q.
+  This proposition implies that the conclusion of Conjecture 1.2 holds for the di-
+mensions d ≥ 3 if the set E is restricted to the unit sphere.
+
+1.1. Purpose of this paper. For each x ∈ Fd∗
+                                          q , define
+
+(1.2)                         lx = {sx ∈ Fdq : s ∈ F∗q },
+where we denote Fd∗        d                                   ∗
+                     q = Fq \ {(0, . . . , 0)} for d ≥ 2, and Fq = Fq \ {0}. Estimating
+maxx∈Fd∗q
+           |E ∩ lx | was one of the most important ingredients in proving Proposi-
+tions 1.3, 1.4, and 1.5. One of the purposes of this paper is to announce that such
+4                           DOOWON KOH AND YOUNGJIN PI
+
+
+an idea enables us to extend results of aforementioned propositions to the general
+dot product set Π(E, F ). In particular, we prove that the conclusion of Proposition
+1.4 still holds in the case when the unit sphere S1 is replaced by the paraboloid
+P := {x ∈ Fdq : x21 + · · · + x2d−1 = xd }. Furthermore, we observe that if one of the
+sets E, F is a Salem set, then we are able to obtain extremely good results on the
+generalized dot product set problem.
+
+   The other purpose of this paper is to introduce a new point of view in deriving
+the results on generalized dot product sets . Roughly speaking, we relate the dot
+product problem to estimation of the number of lines containing both the origin
+and an element in a set E \ {(0, . . . , 0)} ⊂ Fdq . As a result, we improve statements
+of aforementioned propositions for general two sets E, F ⊂ Fdq . In addition, we
+classify certain class of the sets E, F ⊂ Fdq which yield much better result than that
+of Proposition 1.3. For example, assuming that the number of lines both passing
+through the origin and intersecting with E \ {(0, . . . , 0)} (or F \ {(0, . . . , 0)}) is
+much greater than |E|/q (or |F |/q), we shall see that the result of Proposition 1.3
+can be improved.
+
+                                   2. Preliminaries
+   Discrete Fourier analysis is considered as one of the most useful tools in studying
+problems in the finite field setting. In this section, we briefly review it and derive
+lemmas which are essential in proving our results.
+
+2.1. Discrete Fourier analysis. We shall denote by ψ a nontrivial additive char-
+acter of Fq . All results in this paper are independent of the choice of the character
+ψ. Recall that ψ : Fq → {u ∈ C : |u| = 1} is a group homomorphism. The
+orthogonality relation of ψ yields that
+                      X               
+                                         0      if m 6= (0, . . . , 0)
+                           ψ(m · x) =      d
+                         d
+                                         q      if m = (0, . . . , 0),
+                    x∈Fq
+
+where m · x denotes the usual dot-product notation. Given a function f : Fdq → C,
+the Fourier transform of the function f is defined by
+                            1 X
+                   fb(m) = d        f (x)ψ(−x · m) for m ∈ Fdq .
+                           q      d
+                                 x∈Fq
+
+Then the Plancherel theorem in this content says that
+                         X               1 X
+                              |fb(m)|2 = d       |f (x)|2 .
+                            d
+                                        q      d
+                            m∈Fq                  x∈Fq
+
+Thus, it is clear that if E ⊂ Fdq , then
+                                   X                   |E|
+                                           b
+                                          |E(m)| 2
+                                                   =       .
+                                                        qd
+                                   m∈Fd
+                                      q
+
+
+Here, throughout this paper, we identify the set E ⊂ Fdq with the characteristic
+function on the set E.
+                                     SIZE OF DOT PRODUCT SETS                                       5
+
+
+2.2. Key lemmas related to a general dot product set Π(E, F ). Given
+E, F ⊂Fqd , a counting function ν on Fq is defined by
+                              ν(t) = |{(x, y) ⊂ E × F : x · y = t}|.
+By the definition of the dot product set Π(E, F ), it is clear that
+                                        X
+                             |E||F | =        1 × ν(t).
+                                                   t∈Π(E,F )
+
+Applying the Cauchy-Schwarz inequality, we see that
+                                                     |E|2 |F |2
+(2.1)                                  |Π(E, F )| ≥ P       2
+                                                                 .
+                                                      t∈Fq ν (t)
+
+Following the argument in [7], we obtain the following formula.
+Lemma 2.1. Let E, F ⊂ Fdq with (0, . . . , 0) ∈
+                                              / E. Then we have
+                                                                      
+                            
+                                                                      
+                                                                       
+                                                  |E||F |2            
+          |Π(E, F )| ≫c min q,               P P                         ,
+                            
+                             q
+                                   2d−1                 E(sx)|Fb(x)|2 
+                                                                       
+                                                                       
+                                                d∗     ∗
+                                                         x∈Fq s∈Fq
+
+where Fd∗    d
+       q := Fq \ {(0, . . . , 0)}.
+
+Proof. Since (0, . . . , 0) ∈
+                            / E, it is enough by (2.1) to show that
+                 X                  |E|2 |F |2              X X
+                        ν 2 (t) ≤              + q 2d−1 |E|      E(sx)|Fb (x)|2 .
+                                        q
+                 t∈Fq                                        d x∈Fq s∈Fq
+                                                               ∗
+
+
+
+By the Cauchy-Schwarz inequality, it follows that for each t ∈ Fq ,
+                                     2                        2
+                         X X                    X        X
+             ν 2 (t) =              1 ≤ |E|                  1
+                                x∈E y∈F :x·y=t                   x∈E      y∈F :x·y=t
+                                       X
+                                                                  ′
+                          = |E|                   E(x)F (y)F (y ).
+                                    x·y=t=x·y ′
+
+Summing over t ∈ Fq and using the orthogonality relation of ψ, it follows
+       X                     X    X
+           ν 2 (t) ≤ |E|q −1            ψ(sx · (y − y ′ ))
+          t∈Fq                        s∈Fq x∈E,y,y ′∈F
+                                                         X            X
+                         = q −1 |E|2 |F |2 + |E|q −1                          ψ(sx · (y − y ′ )).
+                                                            q x∈E,y,y ∈F
+                                                         s∈F∗        ′
+
+
+
+By the definition of the Fourier transform and a change of variables,
+            X                                          X
+                ν 2 (t) ≤ q −1 |E|2 |F |2 + q 2d−1 |E|   E(x)|Fb(sx)|2
+             t∈Fq                                               x∈Fd
+                                                                   q ,s∈Fq
+                                                                         ∗
+
+                                                                      X
+                            = q −1 |E|2 |F |2 + q 2d−1 |E|                   E(sx)|Fb(x)|2 ,
+                                                                x∈Fd
+                                                                   q ,s∈Fq
+                                                                         ∗
+
+
+
+which completes the proof.                                                                          
+6                          DOOWON KOH AND YOUNGJIN PI
+
+
+Definition 2.2. For E, F ⊂ Fdq , we define
+                                    X X
+                      B(E, F ) =           E(sx)|Fb(x)|2
+                                       x∈Fd∗
+                                          q
+                                             s∈F∗
+                                                q
+                                       X
+                                   =           |E ∩ lx ||Fb(x)|2 ,
+                                       x∈Fd∗
+                                          q
+
+
+where lx is defined as in (1.2).
+  According to Lemma 2.1, a lower bound of |Π(E, F )| can be determined by an
+upper bound of B(E, F ). More precisely we have the following result.
+Lemma 2.3. Let E, F ⊂ Fdq . Assume that maxx∈Fd∗
+                                              q
+                                                 |E ∩ lx | ≪C q β for some
+0 ≤ β ≤ 1. Then if |E||F | ≫C q d+β , we have
+                                    |Π(E, F )| ≫c q.
+Proof. Without a loss of generality, we may assume that (0, . . . , 0) ∈   / E. Since
+                         β
+maxx∈Fd∗
+       q
+         |E ∩ l x | ≪C q   , it follows from the   Plancherel theorem that
+                                           X
+                      B(E, F ) ≪C q β         |Fb (x)|2 = q β−d |F |.
+                                           x∈Fd
+                                              q
+
+
+Combining this with Lemma 2.1, we conclude that
+                                                    
+                                             |E||F |
+                      |Π(E, F )| ≫c min q, d+β−1 ,
+                                            q
+which implies the statement of the lemma.                                          
+
+              3. Results on the generalized dot product sets
+  In this section, we first collect results on the generalized dot product set, which
+can be obtained by a direct application of Lemma 2.3 or Lemma 2.1. For example,
+we will be able to simply generalize the results of Propositions 1.3, 1.4, and 1.5.
+As a core part of this section, we derive a dot product result on subsets of the
+paraboloid, which may not be obtained by a direct application of Lemma 2.3.
+
+3.1. Direct consequences of Lemma 2.3. The general version of Proposition
+1.3 is as follows.
+Theorem 3.1. If E, F ⊂ Fdq with |E||F | ≫C q d+1 , then |Π(E, F )| ≫c q.
+Proof. Since every line contains exactly q points, it is clear that
+                                   max |E ∩ lx | ≤ q.
+                                   x∈Fd∗
+                                      q
+
+
+Thus, the result follows immediately by using Lemma 2.3 with β = 1.                
+
+    The following theorem is a generalization of Proposition 1.4.
+Theorem 3.2. Let F ⊂ Fdq and E ⊂ Sj := {x ∈ Fdq : x21 + · · · + x2d = j ∈ F∗q }.
+Then if |E||F | ≫C q d , we have |Π(E, F )| ≫c q.
+                            SIZE OF DOT PRODUCT SETS                                    7
+
+
+Proof. Since j 6= 0, it follows that
+                                    max |E ∩ lx | ≤ 2.
+                                   x∈Fd∗
+                                      q
+
+Therefore, the statement of the theorem follows by applying Lemma 2.3 with β =
+0.                                                                           
+  We now give the generalization of Proposition 1.5 .
+Theorem 3.3. Let Sj = {x ∈ Fdq : x21 + x22 + · · · + x2d = j}. Suppose that E ⊂ Si
+and F ⊂ Sj for some i, j ∈ F∗q . Then if d ≥ 3, and |E||F | ≫C q d , we have
+|D(E, F )| ≫c q.
+Proof. Notice that if x ∈ E ⊂ Si and y ∈ F ⊂ Sj , then
+                   kx − yk = x · x − 2x · y + y · y = i + j − 2x · y.
+Thus, |D(E, F )| = |Π(E, F )|. It therefore suffices to prove that |Π(E, F )| ≫c q as
+long as |E||F | ≫C q d . However, this follows immediately from Theorem 3.2.       
+    Now we address a result on the dot product set Π(E, F ) in the case when one
+of sets E, F ⊂ Fdq is a Salem set. Recall that a set F ⊂ Fdq is a Salem set if
+                p
+|Fb (m)| ≪C q −d |F | for all m 6= (0, . . . , 0).
+Theorem 3.4. Let E, F ⊂ Fdq . If F is a Salem set and |F | ≫C q, then
+                                      |Π(E, F )| ≫c q.
+Proof. Notice that we may assume that (0, . . . , 0) ∈
+                                                     / E. Since F is a Salem set, we
+see that
+                           max |Fb (x)|2 ≪C q −2d |F |.
+                              x∈Fd∗
+                                 q
+
+It therefore follows that
+                                X X
+       B(E, F ) ≪C q −2d |F |                E(sx) < q −2d |F ||E|q = q 1−2d |E||F |.
+                                x∈Fd∗
+                                   q
+                                      s∈F∗
+                                         q
+
+
+By this and Lemma 2.1, we obtain that
+                             |Π(E, F )| ≫c min{q, |F |},
+which implies the statement of the theorem.                                             
+3.2. Dot product sets determined by subsets of the paraboloid. In the
+finite field setting, the paraboloid in Fdq , denoted by P , is defined by
+                        P = {x ∈ Fdq : x21 + · · · + x2d−1 = xd },
+which is an analog of the Euclidean paraboloid.
+
+   Unlike the sphere Sj with nonzero radius, the paraboloid P ⊂ Fdq , d ≥ 3, contains
+lines through the origin. For example, the set H := {x ∈ P : xd = 0} consists of
+some of lines through the origin. Thus, if E ⊂ P contains some of such lines, then
+maxx∈Fd∗ q
+           |E ∩ lx | = q − 1. In this case, if we simply use Lemma 2.3 , then we only
+get that if |E||F | ≫C q d+1 , then |Π(E, F )| ≫c q. This result is much weaker than
+the dot product result on spheres with nonzero radius, but there are no known good
+results for sets in the paraboloid. In this subsection, we prove that if E, F ⊂ P and
+8                            DOOWON KOH AND YOUNGJIN PI
+
+
+|E||F | ≫C q d , then |Π(E, F )| ≫c q. We begin with a definition. Let π : Fdq → Fd−1
+                                                                                  q
+be a projection map defined as
+                  π(x) = (x1 , . . . , xd−1 ) for x = (x1 , . . . , xd−1 , xd ).
+We have the following result.
+Lemma 3.5. Let E ⊂ P and F ⊂ Fdq . If |E||π(F )| ≫C q d , then |Π(E, F )| ≫c q.
+Proof. Write that E = G ∪ B where
+                 G = {x ∈ E : xd 6= 0} and B = {x ∈ E : xd = 0}.
+We may assume that either |G| ≥ |E|/2 or |B| ≥ |E|/2.
+
+   Case 1. Assume that |G| ≥ |E|/2. Since G ⊂ P , it is not hard to see that
+|G ∩ lx | ≤ 1 for all x ∈ Fd∗                                               d
+                           q . By Lemma 2.3, we see that if |G||F | ≫C q , then
+                                                 d
+|Π(G, F )| ≫c q. Since 2|G||F | ≥ |E||π(F )| ≫C q , and |Π(E, F )| ≥ |Π(G, F )|, the
+statement of the lemma follows.
+
+  Case 2. Assume that |B| ≥ |E|/2. By the definitions of B and the dot product,
+notice that
+    Π(B, F ) = Π(B, π(F ) × {0})
+            = Π(π(B), π(F )) := {α · β ∈ Fq : α ∈ π(B) ⊂ Fd−1
+                                                          q   , β ∈ π(F ) ⊂ Fd−1
+                                                                             q   }
+Since π(B), π(F ) ⊂ Fd−1
+                      q  , we can use Theorem 3.1 for dimension d − 1 to deduce
+that
+           |Π(B, F )| = |Π(π(B), π(F ))| ≫c q if |π(B)||π(F )| ≫C q d .
+Since B is a subset of the paraboloid P, it is clear that |π(B)| = |B| ≥ |E|/2, where
+the inequality follows by our case assumption. Since |Π(E, F )| ≥ |Π(B, F )|, we
+complete the proof.                                                                
+
+  Since |Π(F )| = |F | for F ⊂ P, the following result follows immediately from
+Lemma 3.5.
+Theorem 3.6. Let E, F ⊂ P ⊂ Fdq . If |E||F | ≫C q d , then |Π(E, F )| ≫c q.
+
+Remark 3.7. Let E ⊂ P ⊂ Fdq , and F ⊂ Fdq with |π(F )| ≫c |F |/q γ for some 0 ≤ γ ≤
+1. In this case, Lemma 3.5 implies that if |E||F | ≫C q d+γ , then |Π(E, F )| ≫c q.
+     Here we may have a natural question.
+Question 3.8. Let E ⊂ P and F ⊂ Fdq . Then is it true that |Π(E, F )| ≫c q as
+long as |E||F | ≫c q d ?
+   Considering Remark 3.7, it seems that the answer is negative. However, Theorem
+3.2 says that if we replace the paraboloid P by the sphere Sj with nonzero radius,
+then the answer is positive. Now, we show that if the paraboloid P is appropriately
+translated, then the answer to Question 3.8 is also positive.
+Theorem 3.9. Let a ∈ Fdq \ P := {x ∈ Fdq : x21 + · · · + x2d−1 = −xd }. Suppose
+that E ⊂ P + a := {x + a : x ∈ P } and F ⊂ Fdq . Then if |E||F | ≫C q d , we have
+|Π(E, F )| ≫c q.
+                              SIZE OF DOT PRODUCT SETS                                    9
+
+
+Proof. By Lemma 2.3, it suffices to prove that for every a ∈ Fdq \ P , and x 6=
+(0, . . . , 0),
+(3.1)                             |(P + a) ∩ lx | ≪C 1,
+where we recall that lx = {sx ∈ Fd∗       ∗
+                                 q : s ∈ Fq }. Fix x ∈ P + a. Then it follows that
+
+                     (x1 − a1 )2 + · · · + (xd−1 − ad−1 )2 = xd − ad .
+With this assumption, it is enough to prove that
+                              |{s ∈ F∗q : sx ∈ P + a}| ≤ 2.
+It follows from a routine algebra that if a ∈    / P ( namely, a21 + · · · + a2d−1 6= −ad ),
+then
+          |{s ∈ F∗q : (sx1 − a1 )2 + · · · + (sxd−1 − ad−1 )2 = sxd − ad }| ≤ 2.
+Thus, the proof is complete.                                                             
+   Observe that (0, . . . , 0) ∈ P, but the sphere Sj for j 6= 0 or P + a for a ∈
+                                                                                / P does
+not contain (0, . . . , 0). From Theorem 3.2 and Theorem 3.9, this observation may
+lead us to the following conjecture.
+Conjecture 3.10. Let V = {x ∈ Fdq : Q(x) = 0} be a variety where Q(x) ∈
+Fq [x1 , . . . , xd ] is a polynomial. In addition, assume that (0, . . . , 0) ∈
+                                                                               / V. If E ⊂ V
+                 d                   d
+and F ⊂ Fq with |E||F | ≫C q , then we have
+                                     |Π(E, F )| ≫c q.
+
+        4. Sharpened results on the generalized dot product set
+   In the previous section, we deduced the results on the dot product set by consid-
+ering maxx∈Fd∗q
+                 |E ∩ lx |. This method may give us a sharp result for the set E ⊂ Fdq
+in the case when |E ∩ lx | ∼ |E ∩ ly | for almost elements x, y ∈ Fd∗
+                                                                   q . However, it may
+not be efficient in the case when the variation of |E ∩ lx | for x ∈ Fd∗q is relatively
+large. In this section, we introduce a new approach to compensate the defect of the
+previous method and provide improved statements of the results in the previous
+section.
+
+   Now, we derive a new formula to determine |Π(E, F )|, which is much stronger
+than Lemma 2.3.
+Lemma 4.1. Let E, F ⊂ Fdq . Assume that the number of lines through the origin
+and a point in E\{(0, . . . , 0)} is at least ∼ q −α |E| for some 0 ≤ α ≤ 1. If |E||F | ≫C
+q d+α then there exists a set E0 ⊂ E with |E0 | ∼ q −α |E| such that
+                                    |Π(E0 , F )| ≫c q.
+Proof. Note that we may assume that (0, . . . , 0) ∈      / E. Let n be an integer with
+n ∼ q −α |E|. By assumption, we may choose n lines, say that lj , j = 1, 2, . . . , n,
+such that each of them contains at least one point in E, and is also passing through
+the origin. For each j = 1, 2, . . . , n, choose exactly an element xj ∈ lj ∩ E and
+define
+                              E0 = {xj : j = 1, 2, . . . , n}.
+Since |E0 | = n ∼ q −α |E| for some 0 ≤ α ≤ 1, it suffices to prove that  P|Π(E0 , F )| ≫c
+q as long as |E||F | ≫C q d+α . By the definition of E0 , it is clear that s∈F∗ E0 (sx) =
+                                                                                q
+10                          DOOWON KOH AND YOUNGJIN PI
+
+                                                                P
+1 for each x 6= (0, . . . , 0). This implies that B(E0 , F ) ≤ x∈Fd |Fb (x)|2 = q −d |F |.
+                                                                  q
+Now applying Lemma 2.1 with E0 , F yields that
+                                                             
+                                                    |E0 ||F |
+                             |Π(E0 , F )| ≫c min q,             .
+                                                     q d−1
+Since |E0 | ∼ q −α |E| , the statement of the theorem follows immediately from the
+assumption that |E||F | ≫C q d+α .                                              
+   The value α given in Lemma 4.1 must be contained in [0, 1]. For example, if E
+lies on a unit sphere S1 := {x ∈ Fdq : kxk = 1}, then α can be taken as zero. In
+addition, observe that for each E \ {(0, . . . , 0)}, there are at least ∼ q −1 |E| such
+lines, because a line contains exactly q points. Namely, α must be less than or equal
+to one. Also notice from Lemma 4.1 that we can expect better dot product results
+whenever the set E intersects with lots of such lines. In order words, the smaller
+α is, the better the result is. As mentioned before, the (d + 1)/2 is the optimal
+exponent to obtain the conclusion of Proposition 1.3 for arbitrary set E. Thus,
+the exponent d + 1 in the assumption of Theorem 3.1 is also optimal in general.
+However, Lemma 4.1 illustrates that the exponent d + 1 can be improved in the
+case when the set E \ {(0, . . . , 0) intersects with at least |E|/q 1−ε lines through the
+origin for some 0 < ε ≤ 1.
+
+   Now, we claim that Lemma 4.1 is much superior to Lemma 2.3. Indeed, an
+upgraded version of Lemma 2.3 can be given by a corollary of Lemma 4.1. More
+precisely, we can derive the following fact.
+Lemma 4.2. Let E, F ⊂ Fdq . Assume that maxx∈Fd∗        q
+                                                          |E ∩ lx | ≪C q β for some
+                                d+β
+0 ≤ β ≤ 1. Then if |E||F | ≫C q     , there exists a set E0 ⊂ E with |E0 | ∼ q −β |E|
+such that
+                                 |Π(E0 , F )| ≫c q.
+Proof. Since maxx∈Fd∗q
+                        |E ∩ lx | ≪C q β , it is clear that the number of lines through
+the origin and a point in E \ {(0, . . . , 0)} is at least ∼ q −β |E|. Hence, the statement
+of the lemma follows immediately by Lemma 4.1.                                           
+   Lemma 4.2 enables us to deduce stronger conclusion than Lemma 2.1, because
+|Π(E0 , F )| ≤ |Π(E, F )| for E0 ⊂ E. For example, Theorem 3.1 can be improved by
+the following statement.
+Theorem 4.3. Let E, F ⊂ Fdq . It |E||F | ≫C q d+1 , then there exists a set E0 ⊂ E
+with |E0 | ∼ q −1 |E| such that
+                                    |Π(E0 , F )| ≫c q.
+Proof. Since |E ∩ lx | ≤ q, this theorem is an immediate consequence of Lemma
+4.2.                                                                        
+  Notice that Lemma 4.2 can be also used to deduce the improved conclusions of
+Theorem 3.2 and Theorem 1.5. We close this paper with an important remark on
+Theorem 4.3.
+Remark 4.4. The authors in [2] studied the pinned distance sets and proved the
+following strong result (Theorem 2.2 in [2]).
+                                SIZE OF DOT PRODUCT SETS                                       11
+
+
+Proposition 4.5. Let E ⊂ Fdq , d ≥ 2. If |E| ≥ q (d+1)/2 , then there exists a set E ′ ⊂ E
+with |E ′ | ≫c |E| such that if x ∈ E ′ , then |Π(x, E)| > q/2, where Π(x, E) := {x · y :
+y ∈ E}.
+   This proposition is much superior to our Theorem 4.3 in the case when E = F.
+The existence of such set E ′ in Proposition 4.5 was proved by using an averaging
+argument. Therefore, there is no information about how to choose an exact element
+x of E ′ so that |Π(x, E)| ≫c q. On the other hand, the proof of our Theorem 4.3
+clearly indicates how to choose the set E0 . In practice, our Theorem 4.3 can be
+very useful.
+
+                                         References
+[1] J. Bourgain, N. Katz, and T. Tao, A sum-product estimate in finite fields, and applications,
+    Geom. Funct. Anal., 14, (2004), 27–57.
+[2] J. Chapman, M. Erdog̃an, D. Hart, A. Iosevich, and D. Koh, Pinned distance sets, Wolff ’s
+    exponent in finite fields and sum-product estimates, Math.Z., 271, (2012), 63–93.
+[3] P. Erdős, On sets of distances of n points, Amer. Math. Monthly, 53, (1946), 248–250.
+[4] M. Erdog̃an, A bilinear Fourier extension theorem and applications to the distance set prob-
+    lem, Internat. Math. Res. Notices, 23, (2005), 1411-1425.
+[5] K. Falconer, On the Hausdorff dimension of distance sets, Mathematika, 32 (1985), 206–212.
+[6] L. Guth and N. Katz, On the Erdős distinct distance problem in the plane , preprint.
+[7] D. Hart, A. Iosevich, D. Koh and M. Rudnev, Averages over hyperplanes, sum-product theory
+    in vector spaces over finite fields and the Erdös-Falconer distance conjecture, Trans. Amer.
+    Math. Soc. 363, no.6, (2011), 3255-3275.
+[8] A. Iosevich and M. Rudnev, Erdős distance problem in vector spaces over finite fields, Trans.
+    Amer. Math. Soc. 359, (2007), 6127-6142.
+[9] D. Koh and C. Shen, Sharp extension theorems and Falconer distance problems for algebraic
+    curves in two dimensional vector spaces over finite fields, Revista Matematica Iberoamericana,
+    28, no 1, (2012), 157-178.
+[10] D. Koh and C. Shen, Additive energy and the Falconer distance problem in finite fields ,
+    Integers 13, (2013), 1-10.
+[11] N. Katz and G. Tardos, A new entropy inequality for the Erdős distance problem, In: Con-
+    temp. Math. Towards a Theory of Geometric Graphs, 342, Amer. Math. Soc., Providence
+    (2004),119–126.
+[12] P. Mattila, Spherical averages of Fourier transforms of measures with finite energy: dimen-
+    sion of intersections and distance sets, Mathematika, 34, (1987), 207–228.
+[13] J. Solymosi and V. Vu, Distinct distances in high dimensional homogeneous sets in: Towards
+    a Theory of Geometric Graphs (J. Pach, ed.), Contemporary Mathematics, 342, Amer. Math.
+    Soc. (2004), 259–268.
+[14] J. Solymosi and V. Vu, N ear optimal bounds for the number of distinct distances in high
+    dimensions, Combinatorica, 28, no 1, (2008), 113–125.
+[15] T. Wolff, Decay of circular means of Fourier transforms of measures, Internat. Math. Res.
+    Notices (1999), 547–567.
+
+  Department of Mathematics, Chungbuk National University, Cheongju city, Chungbuk-
+Do 361-763 Korea
+  E-mail address: koh131@chungbuk.ac.kr
+
+  Department of Mathematics, Chungbuk National University, Cheongju city, Chungbuk-
+Do 361-763 Korea
+  E-mail address: pi@chungbuk.ac.kr
+
+PRIMARY 1401.3498 CHARS 80841
+                                                       LIST RANKINGS AND ON-LINE LIST RANKINGS OF GRAPHS
+
+
+
+                                                                                        DANIEL C. MCDONALD
+
+                                                               Department of Mathematics, University of Illinois, Urbana, IL, USA
+
+
+
+
+arXiv:1401.3498v1 [math.CO] 15 Jan 2014
+                                                  Abstract. A k-ranking of a graph G is a labeling of its vertices from {1, . . . , k} such that any nontrivial
+                                                  path whose endpoints have the same label contains a larger label. The least k for which G has a k-ranking
+                                                  is the ranking number of G, also known as tree-depth. The list ranking number of G is the least k such
+                                                  that if each vertex of G is assigned a set of k potential labels, then G can be ranked by labeling each vertex
+                                                  with a label from its assigned list. Rankings model a certain parallel processing problem in manufacturing,
+                                                  while the list ranking version adds scheduling constraints. We compute the list ranking number of paths,
+                                                  cycles, and trees with many more leaves than internal vertices. Some of these results follow from stronger
+                                                  theorems we prove about on-line versions of list ranking, where each vertex starts with an empty list having
+                                                  some fixed capacity, and potential labels are presented one by one, at which time they are added to the lists
+                                                  of certain vertices; the decision of which of these vertices are actually to be ranked with that label must be
+                                                  made immediately.
+
+
+                                                                                             1. Introduction
+                                             We consider a special type of proper vertex coloring using positive integers, called “ranking.” As with
+                                          proper colorings, there exist variations on the original ranking problem. In this paper we consider the list
+                                          ranking problem, first posed by Jamison in 2003 [7].
+                                          Definition 1.1. Let G be a finite simple graph, and let f : V (G) → N. An f -ranking α of G labels each
+                                          v ∈ V (G) with an element of {1, . . . , f (v)} in such a way that if u 6= v but α(u) = α(v), then every u, v-path
+                                          contains a vertex w satisfying α(w) > α(u) (equivalently, every path contains a unique vertex with largest
+                                          label). For a positive integer k, a k-ranking of G is an f -ranking for the constant function f = k. The
+                                          ranking number of G, denoted here by ρ(G) (though in the literature often as χr (G)), is the minimum k
+                                          such that G has a k-ranking.
+                                             Vertex rankings of graphs were introduced in [4], and results through 2003 are surveyed in [7]. Their
+                                          study was motivated by applications to VLSI layout, cellular networks, Cholesky factorization, parallel
+                                          processing, and computational geometry. Vertex rankings are sometimes called ordered colorings, and the
+                                          ranking number of a graph is trivially equal to its “tree-depth,” a term introduced by Nes̆etr̆il and Ossona
+                                          de Mendez in 2006 [9] in developing their theory of graph classes having bounded expansion.
+                                             In general, rankings are used to design efficient divide-and-conquer strategies for minimizing the time
+                                          needed to perform interrelated tasks in parallel [5]. The most basic example concerns a complex product
+                                          being assembled in stages from its individual parts, where each stage of construction consists of individual
+                                          parts being attached to previously assembled components in such a way that no component ever has more
+                                          than one new part. Here, the complex product is represented by the graph G whose vertices are the individual
+                                          parts and whose edges are the connections between those parts; assuming all parts require the same amount
+                                          of to be installed, the fewest number of stages needed to complete construction is ρ(G), achieved by finding
+                                          some ρ(G)-ranking α of G and installing each part v in stage α(v). Similarly, rankings can be use to optimize
+                                          the disassembly of a product into parts, where each stage of deconstruction consists of individual parts being
+                                          detached from remaining components in such a way that no component loses multiple parts at the same
+                                          time; G can be disassembled in ρ(G) stages by removing each part v in stage ρ(G) − α(v) + 1.
+
+                                             E-mail address: dmcdona4@illinois.edu.
+                                                                                                        1
+   The vertex ranking problem has spawned multiple variations, including edge ranking [6], on-line ranking
+[2, 8], and list ranking, studied here. The list ranking problem is to vertex ranking as the list coloring
+problem is to ordinary vertex coloring.
+Definition 1.2. A function L that assigns each vertex of G a finite set of positive integers is an f -list
+assignment for G if |L(v)| = f (v) for each v ∈ V (G). If |L(v)| = k for all v, then L is k-uniform. An
+L-ranking of G is a ranking α such that α(v) ∈ L(v) for each v. Say that G is f -list rankable if G has an
+L-ranking whenever L is an f -list assignment for G, and say that G is k-list rankable if G is f -list rankable
+for f = k. Let the list ranking number of G, denoted ρℓ (G), be the least k such that G is k-list rankable.
+    Note that G is f -rankable if G is f -list rankable, since an f -ranking is just an L-ranking if L is the f -list
+assignment defined by L(v) = {1, . . . , f (v)} for each v ∈ V (G). In terms of our application concerning
+a product made from parts, list ranking corresponds to determining the feasability of (dis)assembly when
+predetermined scheduling restraints limit the times at which each individual part can be (dis)assembled.
+The complexity of finding rankings from a given list assignment was considered by Dereniowski in 2008 [3].
+    In Section 2 we introduce three on-line versions of list ranking, which relate to list ranking similarly to
+the way on-line list coloring (also known as paintability) relates to list coloring [10]. We define these on-line
+versions of list ranking as games between adversaries Taxer and Ranker. At the beginning of the game each
+vertex is assigned a size for its list of potential labels, but no actual labels. Taxer in effect fills out these
+lists in real time by iterating through the possible labels one by one, stipulating which vertices have the
+given label in their lists (the order in which Taxer iterates through the labels depends on the version of the
+game, and once a label comes up it cannot be revisited). Ranker must decide immediately which of those
+vertices just selected by Taxer are to receive the given label, extending a partial ranking of the graph (Taxer
+is allowed to use knowledge of the partial ranking already created by Ranker when deciding which vertices
+are to have a given label in their lists). Ranker wins by creating a ranking of the graph before any vertex
+has its list filled with unused labels, and Taxer wins otherwise.
+    Complete descriptions of the on-line ranking games are postponed until Section 2, though we do introduce
+relevant terminology and notation here. Given a graph G and function f : V (G) → N, we say G is on-line
+f -list rankable if Ranker has a winning strategy for the game R± (G, f ), and we define the on-line list ranking
+number of G, denoted ρ±     ℓ (G), to be the least k such that G is on-line f -list rankable for the constant function
+f = k. We similarly define the on-line list low-ranking number ρ−        ℓ (G) and on-line list high-ranking number
+ρ+ℓ (G)  based    on the games  R −
+                                    (G, f ) and R +
+                                                    (G, f ).
+    Just as we have seen that finding an f -ranking of G is equivalent to finding an L-ranking of G for a special
+f -list assignment L, we will see that any f -list assignment can be modeled by special strategies for Taxer in
+the games R− (G, f ) and R+ (G, f ), and these games in turn can be modeled by special Taxer strategies in
+R± (G, f ). Thus our parameters will satisfy ρ(G) ≤ ρℓ (G) ≤ min{ρ−                  +                −      +
+                                                                            ℓ (G), ρℓ (G)} ≤ max{ρℓ (G), ρℓ (G)} ≤
+  ±
+ρℓ (G).
+    In Section 3 we investigate how ranking a graph relates to ranking its minors in our various versions of
+the ranking problem.
+    In Sections 4 and 5 we consider paths and cycles. As stated in [1], ρ(Pn ) = ⌈log(n + 1)⌉: the largest label
+can appear only once, so rankings are achieved by individually ranking the subpaths on either side of the
+vertex receiving the largest label. For instance, P7 can be ranked by labeling vertices from left to right with
+1, 2, 1, 3, 1, 2, 1. Furthermore, ρ(Cn ) = 1 + ⌈log n⌉, as stated in [2]: the largest label can appear only once,
+so rankings are achieved by ranking the copy of Pn−1 left by deleting the vertex receiving the largest label.
+    The first main result of this paper is proved in Section 4.
+Theorem 1.3. ρ±
+              ℓ (Pn ) = ρ(Pn ).
+
+    This theorem is proved using a more general result. For aPnonnegative integer valued function f whose
+domain includes some finite set V of vertices, define σf (V ) = v∈V 2−f (v) ; we prove that Pn is on-line f -list
+rankable if σf (V (Pn )) < 1. The result is sharp, because P2k is not even k-rankable; the construction extends
+to all n. On the other hand, for n ≥ 5 there are functions f satisfying σf (V (Pn )) > 1 such that Pn is on-line
+f -list rankable.
+    The second main result of this paper is proved in Section 5 and relies heavily on the work of the previous
+section.
+                                                          2
+Theorem 1.4. ρ±
+              ℓ (Cn ) = ρ(Cn ).
+
+   Turning our attention toward more complicated graphs, we note the following lower bound for ρℓ (G).
+Proposition 1.5. If q is the maximum number of leaves in a subtree T of a graph G, then ρℓ (G) ≥ q.
+Proof. Construct a (q − 1)-uniform list assignment L by giving each vertex that is not a leaf of T the list
+{1, . . . , q − 1} and each leaf of T the list {q, . . . , 2q − 2}. If G has an L-ranking, then two leaves u and v of T
+must receive the same label, but no interior vertex of the u, v-path through T can contain a larger label. 
+   Thus ρℓ (G) − ρ(G) can be made arbitrarily large, since ρ(K1,n ) = 2 (label the leaves with 1 and the center
+with 2) but ρℓ (K1,n ) ≥ n. Section 6 finds a class of trees for which the bound of Proposition 1.5 is equality,
+yielding our third main result.
+Theorem 1.6. For any positive integer p, there is a positive integer qp such that for any tree T with p
+internal vertices and at least qp leaves, ρℓ (T ) equals the number of leaves of T .
+   The proof Theorem 1.6 gives a specific value of qp that is exponential in p, but this does not appear to
+be anywhere near sharp.
+Conjecture 1.7. If T is a tree with p internal vertices and q leaves, and p < q, then ρℓ (T ) = q.
+   It also seems likely that Theorem 1.6 can be strengthened in another way.
+Conjecture 1.8. For any positive integer p, there is a positive integer qp such that for any tree T with p
+internal vertices and at least qp leaves, ρ±
+                                           ℓ (T ) equals the number of leaves of T .
+
+                                        2. On-line list ranking games
+   In this section we introduce the various on-line versions of list ranking, presented as games between Taxer
+and Ranker. Let G be a graph and f : V (G) → N. Each v ∈ V (G) starts the game possessing f (v) tokens
+(representing the open slots in the list of labels available to v), and each round of the game corresponds
+to a label to be used by Ranker to rank G. Taxer starts the round corresponding to the label c by taking
+tokens from a set T of unranked vertices in G (in effect inserting c into the list of each vertex in T ). Ranker
+responds by removing some subset R of T from G and potentially adding certain edges to the resulting graph
+(in effect labeling vertices in R with c, with restrictions placed on R according to c, and the set of edges
+added determined by c and R). Taxer’s goal is to bankrupt some vertex without Ranker being able to assign
+it any of its possible labels.
+   The three on-line list ranking games we introduce differ in the order the potential labels are introduced.
+We start with the game in which the labels are introduced in increasing order. In terms of the application
+of list ranking given in Section 1 concerning a product made from parts, this variation corresponds to
+determining the feasability of assembly when the list of individual parts that can be attached at each stage
+of construction is not known until that stage is reached.
+Definition 2.1. G is on-line f -list low-rankable if Ranker has a winning strategy over Taxer in the following
+game R− (G, f ), which starts by setting G1 = G and allotting f (v) tokens to each vertex v. During round
+i for i ≥ 1, Taxer begins play by taking a single token from each element of a nonempty set Ti of vertices
+of Gi . Ranker responds by creating the graph Gi+1 from Gi by first selecting a subset Ri of Ti that is
+independent in Gi , then adding an edge between any nonadjacent vertices that have a common neighbor in
+Ri , and finally deleting Ri . Taxer wins after round i if Gi+1 contains any vertex without a token; Ranker
+wins after round i if Gi+1 is empty. Say G is on-line k-list low-rankable if G is on-line f -list low-rankable
+for the constant function f = k. Let the on-line list low-ranking number of G, denoted ρ−  ℓ (G), be the least
+k such that G is on-line k-list low-rankable.
+   Note that if Ranker wins the game after round j, then G can be given a j-ranking by labeling each vertex
+in Ri with i: if u, v ∈ Ri then u and v are not adjacent in Gi , so each u, v-path in G has an interior vertex
+w that appears in Gi but not Ri , meaning w receives a larger label than do u and v. Further note that
+G is f -list rankable if G is on-line f -list low-rankable: finding an L-ranking from an f -list assignment L,
+whose set of labels we may presume to be precisely {1, . . . , m}, is equivalent to finding a winning strategy
+                                                          3
+                            Ti
+                                                        '&%$
+                                                         !"#                                      ❝❝ '&%$
+                                                                                                      !"#
+                 '&%$
+                  !"# w       
+                            '&%$
+                             !"#         '7'&%$
+                                            !"# ❣❣❣❣❣❣❣❣ 3                    '&%$
+                                                                               !"# ❝❝❝❝❝❝❝❝❝❝❝❝❝❝❝ 3
+                  3g         2              4 ❲❲❲❲❲❲❲                          1 ❬❬❬❬❬❬❬❬❬❬❬❬
+                                                                                   ❬
+                                                       ❲'&%$
+                                                         !"#                                    ❬❬❬❬ '&%$
+                                                                                                      !"#
+                                                         2                                            2
+                            Ri
+                                                                    ✤       / Gi+1
+                                                         Gi
+
+
+        Figure 1. A possibility for round i of R− (G, f ) (or of R± (G, f ), if the round is low), where
+        the number on each vertex counts its remaining tokens.
+
+for Ranker in R− (G, f ) where Taxer must declare before the game that any vertex v remaining in round i
+will be put in Ti if and only if i ∈ L(v).
+    We now introduce the on-line list ranking game in which the labels are introduced in decreasing order
+(should Ranker win after round j, the actual value of the first label introduced will be j). In terms of our
+application of list ranking, this variation corresponds to determining the feasability of dissassembly when
+the list of individual parts that can be detached at each stage of deconstruction is not known until that stage
+is reached.
+Definition 2.2. G is on-line f -list high-rankable if Ranker has a winning strategy over Taxer in the following
+game R+ (G, f ), which starts by setting G1 = G and allotting f (v) tokens to each vertex v. During round
+i for
+PRIMARY 2006.06551 CHARS 136761
+                                                 Upper Bounding Rainbow Connection Number by Forest Number
+
+                                                        L. Sunil Chandran1? , Davis Issac2?? , Juho Lauri ? ? ? , and Erik Jan van Leeuwen3
+                                                                                 1
+                                                                                     Indian Institute of Science, Bangalore, India.
+                                                                                 2
+                                                                                     Hasso Plattner Institute, Potsdam, Germany.
+                                                                                       3
+                                                                                         Utrecht University, The Netherlands.
+
+
+
+
+                                                   Abstract. A path in an edge-colored graph is rainbow if no two edges of it are colored the same, and the
+
+
+
+
+arXiv:2006.06551v1 [math.CO] 11 Jun 2020
+                                                   graph is rainbow-connected if there is a rainbow path between each pair of its vertices. The minimum number
+                                                   of colors needed to rainbow-connect a graph G is the rainbow connection number of G, denoted by rc(G).
+                                                          A simple way to rainbow-connect a graph G is to color the edges of a spanning tree with distinct colors
+                                                   and then re-use any of these colors to color the remaining edges of G. This proves that rc(G) ≤ |V (G)| − 1.
+                                                   We ask whether there is a stronger connection between tree-like structures and rainbow coloring than that
+                                                   is implied by the above trivial argument. For instance, is it possible to find an upper bound of t(G) − 1 for
+                                                   rc(G), where t(G) is the number of vertices in the largest induced tree of G? The answer turns out to be
+                                                   negative, as there are counter-examples that show that even c · t(G) is not an upper bound for rc(G) for any
+                                                   given constant c.
+                                                          In this work we show that if we consider the forest number f(G), the number of vertices in a maximum
+                                                   induced forest of G, instead of t(G), then surprisingly we do get an upper bound. More specifically, we prove
+                                                   that rc(G) ≤ f(G) + 2. Our result indicates a stronger connection between rainbow connection and tree-like
+                                                   structures than that was suggested by the simple spanning tree based upper bound.
+
+
+
+                                            Keywords: rainbow connection, forest number, upper bound
+
+
+                                            1     Introduction
+
+                                            Let G be a connected, simple and finite graph. Consider any edge-coloring of G. A path in G is said to
+                                            be rainbow if no two edges of it are colored the same. The graph G is rainbow-connected if there is a
+                                            rainbow path between each pair of its vertices. If there is a rainbow shortest path between every pair of
+                                            its vertices, we say that G is strongly rainbow-connected. The minimum number of colors required
+                                            to rainbow-connect G is known as the rainbow connection number of G, and denoted as rc(G).
+                                            Similarly, the minimum number of colors needed to strongly rainbow-connect G is the strong rainbow
+                                            connection number of G, denoted as src(G). These measures of rainbow connectivity were introduced
+                                            by Chartrand et al. [5] in 2008. The concept has gathered significant attention from both combinatorial
+                                            and algorithmic perspectives. Indeed, the work of Chartrand et al. [5] has already amassed more than
+                                            400 citations. In addition to being a theoretically interesting way of strengthening the usual notion of
+                                            connectivity, rainbow connectivity has potential applications in networking [3], layered encryption [7],
+                                            and broadcast scheduling [9].
+                                               While introducing the parameters, Chartrand et al. [5] established basic bounds along with exact
+                                            values of the parameters for some structured graphs. To repeat their results, recall that the diameter
+                                            of G, denoted by diam(G), is the length of a longest shortest path in G. Now, it is straightforward to
+                                            verify that diam(G) ≤ rc(G) ≤ src(G) ≤ m, where m is the number of edges of G. In other words, both
+                                            rc(G) and src(G) are always sandwiched between one and m. The extremal cases are not difficult to
+                                             ?
+                                               The major part of the work was done when this author was on a long-term research visit at Max Planck Institute for
+                                               Informatics, Saarbrücken, Germany. The visit was funded by the Alexander von Humboldt fellowship.
+                                            ??
+                                               The major part of the work was done when this author was a PhD student at Max Planck Institute for Informatics,
+                                               Saarbrücken, Germany.
+                                           ???
+                                               The major part of the work was done when this author was at Bell Labs, Dublin, Ireland.
+see: rc(G) = src(G) = 1 if and only if G is complete; rc(G) = src(G) = m if and only if G is a tree.
+The authors also determined the exact rainbow connection numbers for cycle graphs, wheel graphs, and
+complete multipartite graphs.
+   Much of the research on rainbow connectivity has focused on finding bounds on the parameters, either
+in terms of the number of vertices n or some other well-known parameters. It follows that rc(G) ≤ n − 1
+by taking a spanning tree and coloring its edges with distinct colors, and repeating an already used color
+for the other edges. For 2-connected graphs, Ekstein et al. [8] showed that rc(G) ≤ dn/2e, and this is
+tight as witnessed by e.g., odd cycles. Further, it has turned out that domination is a useful concept when
+deriving upper bounds on rc(G) (see e.g., [2,11,4]). Specifically, Krivelevich and Yuster [11] showed that
+rc(G) ≤ 20n                                                          3n
+           δ , later improved by Chandran et al. [4] to rc(G) ≤ δ+1 + 3, where δ denotes the minimum
+degree of G. Moreover, the latter authors derived that when δ ≥ 2, then rc(G) ≤ γc (G)+2, where γc (G) is
+the connected domination number. For some structured graph classes, this leads to upper bounds of the
+form rc(G) ≤ diam(G) + c, where c is a small constant. For instance, it follows that rc(G) ≤ diam(G) + 1
+when G is an interval graph and rc(G) ≤ diam(G)+3, when G is an AT-free graph, both bounds holding
+when δ ≥ 2. Basavaraju et. al. [1] show that for every bridgeless graph G with radius r, rc(G) ≤ r(r + 2),
+and for a bridgelss graph with radius r and chordality (length of a largest induced cycle) k, rc(G) ≤ rk.
+   In addition to domination, various authors (see e.g., [2]) have noted trees to be useful in bounding
+rc(G). As mentioned earlier, rc(G) ≤ n − 1 follows by coloring the edges of a spanning tree of G with
+distinct colors. Moreover, Kamčev et al. [10] proved that rc(G) ≤ diam(G1 ) + diam(G2 ) + c, where
+G1 = (V, E1 ) and G2 = (V, E2 ) are connected spanning subgraphs of G and c ≤ |E1 ∩ E2 |. For a more
+comprehensive treatment, we refer the curious reader to the books [6,14] and the surveys [13,15] on
+rainbow connectivity.
+    In light of the above results, it makes sense to search for bounds on rc(G) in terms of other graph
+parameters, that possibly arise from “tree-related” and “dominating” graph structures. Intuitively, a
+graph structure that has both characteristics is a maximum induced forest of a graph. Hence, the
+question arises whether one can bound rc(G) in terms of its forest number f(G), the number of
+vertices in the largest induced forest in the graph. We answer this in the affirmative by proving the
+following theorem.
+Theorem 1. A connected graph G with forest number f(G) has rc(G) ≤ f(G) + 2.
+Observe that the bound is tight up to an additive factor of 3 due to trees that have rc(G) = n − 1 =
+f(G) − 1. Our bound improves the upper bound of n − 1 obtained by coloring the edges of a spanning
+tree in distinct colors, except when f(G) ≥ n − 2. We leave as an open problem the question of whether
+the stronger upper bound of f(G) − 1 is true.
+   One might be tempted to conjecture a strengthening of our bound, namely that rc(G) is at most
+t(G), the number of vertices in the largest induced tree in the graph. However, this turns out to be not
+true. To see this, one can consider a graph G obtained by taking a Kk for any k ≥ 3 with a pendant
+vertex attached to each of its vertices. Then, we have that rc(G) = k whereas t(G) = 4.
+   Finally, we note that the complement of an induced forest is a feedback vertex set. The feedback vertex
+set number is the size of the smallest set of vertices in a graph whose removal leaves an induced forest.
+Hence, Theorem 1 directly implies the following.
+Corollary 1. A connected graph G with feedback vertex set number fvs(G) has rc(G) ≤ |V (G)|−fvs(G)+
+2.
+
+1.1   Overview of our Techniques
+We give the proof of the upper bound in three takes. In Take 1 in Section 2.1, we give a short proof that
+rc(G) ≤ 3 f(G) + 1. For this, we first observe that given a connected dominating set D such that each
+of the remaining vertices have at least two neighbors in D, it is easy to find a rainbow coloring with
+|D| + 1 colors. Then we observe that any maximal induced forest F can be turned into such a connected
+dominating set by adding at most 2|F | more vertices. The bound of 3 f(G) + 1 follows from these two
+observations.
+   In Take 2 in Section 2.2, we strengthen our bound from 3 f(G) + 1 to 2 f(G) + 2. In this section, we
+already introduce the main structures and insights used for our final bound in Take 3. We fix a maximum
+induced forest F and define H to be the graph obtained from G by contracting each connected component
+of G − F , each of which is a tree, of G into a single vertex. Thus H consists of tree vertices and non-tree
+vertices. An edge from a non-tree vertex u to a tree-vertex xT is classified as a 2-edge if u has at least
+two edges to the tree T (the tree that was contracted into the tree-vertex xT ), and as a 1-edge otherwise.
+We fix a carefully chosen spanning tree of H, root it at some (contracted) tree vertex, and direct all the
+edges towards root. We call this the skeleton B. The skeleton is chosen so that the number of 2-edges
+in it is maximized. The inner skeleton B1 is defined to be B minus the leaves of B that are non-tree
+vertices.
+    Our idea is to color all the edges of the forest F with distinct colors and then associate each tree of
+F with two additional colors called surplus colors, and also keep aside two global surplus colors. Note
+that this makes the total number of colors 2 f(G) + 2 as required. Then, we show that the 2 surplus
+colors per tree are sufficient to color the edges of the inner skeleton B1 so that there is a rainbow path
+between every pair of vertices in B1 , also giving a corresponding rainbow path in G between every pair
+of vertices in B1 . We show that if each tree T can take care of the first three edges while following the
+outward path to the root, then we cover all edges of B1 . Although we only have two surplus colors, the
+three edges can indeed be taken care of. For this, we show that the third edge is not taken care of by
+any other tree only when the first outgoing edge is a 2-edge. In this case, this out-going 2-edge, say xT u
+can be colored with the same color as some edge in the path between the 2 neighbors of u in T , while
+still maintaining a rainbow connection in G between every pair of vertices in B1 .
+   After rainbow-connecting B1 , we connect the vertices outside of the inner skeleton to the inner
+skeleton using the two global surplus colors. From the choice of the skeleton, we have that each outer
+vertex has a 2-edge to at least one tree-vertex. Thus, the outer vertices have at least two edges to one
+tree, that we color with the two different global surplus colors. Thus to get a rainbow path between two
+outer vertices x and y, we can travel from x into the inner skeleton using global surplus color 1, then
+use the path inside the inner skeleton, and then go to y using global surplus color 2.
+   In Take 3 in Section 2.3, we improve the bound from 2 f(G) + 2 to f(G) + 2. The improvement comes
+from the fact that we use only one surplus color per tree instead of two. In order to make the coloring
+of B1 work with one surplus color per tree, we do a case analysis to color the edges around a vertex in
+B1 . The cases are differentiated mainly on the basis of the number of edges and the number of 2-edges
+incident on a vertex.
+
+
+1.2   Preliminaries
+
+
+For a graph G, a subgraph H of G, and any E 0 ⊆ E(G), we use E 0 (H) to denote E 0 ∩ E(H). For a
+vertex v of (di)graph G, we use degG (v) to denote the degree of v in G. We use distG (u, v) to denote
+number of vertices in any shortest path between u and v in G. For graph G and S ⊆ V (G), we define
+G \ S := G[V (G) \ S]. We use uv for an edge between u to v and for a directed edge from u to v,
+        # » For the latter, we may omit the arrow, when the direction is not relevant. For a directed
+we use uv.
+graph G, we denote by G̃, the underlying undirected graph of it. Since, for a forest F, each connected
+component is a tree, we will use the phrases “tree of F” and “connected component of F” analogously.
+An in-arborescence is a directed graph with a special root vertex such that all vertices have a unique
+directed path to the root vertex. For a tree T and vertices u and v in T , we use Tuv to denote the unique
+path in T between u and v.
+
+
+2     Proof of Theorem 1
+
+Let G = (V, E) be a connected graph. Our goal is to prove that rc(G) ≤ f(G)+2. In what is to follow, we
+proceed incrementally by starting from a weaker bound, namely that rc(G) ≤ 3 f(G) − 1 in Section 2.1,
+and then improving upon this by proving that rc(G) ≤ 2 f(G) + 2 in Section 2.2. Finally, in Section 2.3,
+to prove our final result, we use the ideas presented in these proofs in a more detailed and technically
+involved manner.
+
+
+2.1    Take 1: rc(G) ≤ 3 f (G) − 1
+
+In this subsection, as a starting point, we prove that rc(G) ≤ 3 f(G) − 1 which is considerably weaker
+but significantly less involved than our main result. We begin with the following simple construction of
+a rainbow coloring.
+
+Lemma 1. If there is a set D ⊆ V such that G[D] is connected and every vertex in V \ D has at least
+two neighbors in D, then rc(G) ≤ |D| + 1.
+
+Proof. Since G[D] is connected, it has at least one spanning tree T . Pick any spanning tree T of G[D]
+and color its edges with distinct colors from 1 to |D| − 1. By the second precondition of the lemma,
+every vertex v ∈ V \ D has at least two neighbors in D; call them d1 (v) and d2 (v). Color the edge vd1 (v)
+with color |D| and vd2 (v) with color |D| + 1. We will now prove that there is a rainbow path between
+any u, v ∈ V (G).
+    When u, v ∈ V (D), the proof is trivial as G[D] is rainbow-connected using only edges from T , all of
+which we colored distinctly. Similarly, when u ∈ D and v ∈ V \ D, a rainbow path between the two uses
+only edges of T plus either vd1 (v) or vd2 (v), both colored with a color not appearing on any edge in T .
+Finally, suppose both u and v are in V \ D. Observe that there is a rainbow path between d1 (u) and
+d2 (v) using only edges from T , particularly not using colors |D| or |D| + 1. Since ud1 (u) is colored with
+color |D| and vd2 (v) is colored with color |D| + 1, we have a rainbow path between u and v, completing
+the proof.                                                                                                 t
+                                                                                                           u
+
+To proceed, let F be a maximum induced forest of G. Let F = V (F), i.e., the set of vertices in F and
+let T denote the set of connected components of F. The following structural observation will be useful
+for us.
+
+Lemma 2. For any maximum induced forest F of G and for any v ∈ V \ F , there exists a connected
+component T of F such that v has at least two neighbors in T .
+
+Proof. Otherwise, G[F ∪ {v}] is a forest, contradicting the maximality of F.                              t
+                                                                                                          u
+
+The proof of the following lemma is folklore after observing that F is a dominating set of G (by the
+maximality of F), and proved here only for the sake of completeness.
+
+Lemma 3. There exists a vertex set A ⊆ V \ F of size at most 2|F | − 2 such that G[F ∪ A] is connected.
+
+Proof. Let B

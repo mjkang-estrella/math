@@ -1,0 +1,15 @@
+# Fixed twenty discovery handoff — r508
+
+**Zero qualified full-scope survivors; zero credit.** No formal execution, children, dispatch, independent PASS or acceptance.
+
+All twenty exact original JSONL objects are retained under raw/, with chunk path/hash, one-based line, complete raw newline bytes/hash, raw statement token/hash and decoded UTF8/hash in originals.json. Every ID has separate literal/source/ordinary/prior/novelty/significance/formal/independent/acceptance gates in results.json.
+
+The strongest sustained routes are documented in ORDINARY.md: cake-cutting safe-arc deletion, two-group separation, rational compactness and the precise one-cut deficit; tree spectral contraction, branch balancing, and uniform binary leaf expansion with its failure to preserve the required balanced candidate. Neither reaches the full quantified endpoint. Marmor's exact public pattern theorem and Hatami–Hatami's exact public implicit-graph refutation were read and bridged to the literals; they earn zero. Even-q matching is explicitly already corrected in the actual source. Positive fan containment is a source polarity error. Builder k1 is an impossible budget endpoint; its k>=2 theorem is publicly reported by the source, with the original Lichev proof unread.
+
+Ten guarded GET hops succeeded with ten PDF payloads, no redirects or new denials. Six distinct assigned original works cover seven IDs; thirteen assigned exact original bodies remain unread (including316033's Wikipedia source, replaced for proof comparison by the actual primary refutation). Four additional distinct primary comparisons were acquired. One precharged native search with three exact queries was immediately fully saved. No current registry clearance: all four exact roots remain inherited unavailable and were not retried.
+
+865 exact completed historical files were read only after path-component/basename protection filters. One exact structural source match was reconciled:355353 is a different Hamiltonian strategy target, not a disposition of355352. No protected peer, quarantined evidence, embedded source path, formal certificate or other campaign body was followed. History matching and metadata routing do not establish novelty.
+
+No material figure was visually inspected. Primary text acquisition, actual definitions/statements/proofs read and unread portions are separately recorded in source-inventory.json. Final journal/correction equivalence is unqualified. Initial and some source displays were truncated; applicable literal and mathematical text recoveries are saved. This is not a universal procedural, fidelity or deep audit PASS.
+
+Frozen-before checked all13 with no mismatch. The terminal frozen-after report and SHA256 manifest complete this handoff. The manifest explicitly excludes only its own bytes and its producing terminal runner receipt/output to avoid circularity; every completed earlier receipt, helper, frozen-after, source/plan/ledger and handoff file is included. Resource receipts are sampled evidence, with native/transient/writer limitations retained.

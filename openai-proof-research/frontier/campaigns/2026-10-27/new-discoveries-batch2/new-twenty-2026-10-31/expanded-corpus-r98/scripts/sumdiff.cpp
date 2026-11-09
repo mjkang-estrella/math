@@ -1,0 +1,3 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc,char**argv){int maxe=argc>1?atoi(argv[1]):24; for(int e=1;e<=maxe;e++){uint64_t valid=0,odd=0,bad=0; for(uint64_t s=1;s<(1ULL<<e);s++){if(!(__builtin_popcountll(s)&1))continue;bool ok=true;uint64_t t=s;while(t&&ok){int x=__builtin_ctzll(t);t&=t-1;uint64_t u=s;while(u){int y=__builtin_ctzll(u);u&=u-1;if(!((s>>((x+y)%e)&1)||(s>>((x-y+e)%e)&1))){ok=false;break;}}}if(ok){odd++;bool sym=s&1;for(int x=1;x<e;x++)if((s>>x&1)!=(s>>(e-x)&1))sym=false;if(!sym){bad++;cout<<"WITNESS "<<e<<" "<<s<<endl;return 0;}}}cout<<e<<" subsets="<<(1ULL<<e)<<" odd_solutions="<<odd<<" violations="<<bad<<endl;}}

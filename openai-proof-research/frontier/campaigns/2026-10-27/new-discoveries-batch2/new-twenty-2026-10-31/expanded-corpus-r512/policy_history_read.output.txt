@@ -1,0 +1,784 @@
+FILE source_get_guard.py LEN 9762
+"""One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+FILE charge_search.py LEN 2373
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+FILE inherited-denials.json LEN 214420
+{
+  "utc": "2026-11-08T18:18:03.417675+00:00",
+  "blocked_keys": [
+    "aimath.robertj1.com",
+    "arxiv.org/abs/0806.0252",
+    "arxiv.org/abs/0808.1167",
+    "arxiv.org/abs/1409.5853",
+    "arxiv.org/abs/1803.11032",
+    "arxiv.org/abs/2407.20226",
+    "arxiv.org/pdf/0806.0252",
+    "arxiv.org/pdf/0808.1167",
+    "arxiv.org/pdf/1409.5853",
+    "arxiv.org/pdf/1803.03947",
+    "arxiv.org/pdf/1803.11032",
+    "arxiv.org/pdf/2004.05544",
+    "arxiv.org/pdf/2407.20226",
+    "bims.iranjournals.ir/article_1148.html",
+    "cmup.pt/cmup/apdias/2006_14269.pdf",
+    "directory.nau.edu/person/jmn3",
+    "doi.org/10.1002/jgt.22812",
+    "doi.org/10.1002/jgt.23014",
+    "doi.org/10.1002/rsa.70063",
+    "doi.org/10.1007/978-3-642-02029-2_20",
+    "doi.org/10.1007/s00010-026-01266-w",
+    "doi.org/10.1007/s00373-018-1991-8",
+    "doi.org/10.1007/s00454-017-9954-z",
+    "doi.org/10.1007/s10107980012a",
+    "doi.org/10.1007/s40863-022-00339-3",
+    "doi.org/10.1016/j.disc.2006.01.001",
+    "doi.org/10.1016/j.disc.2013.07.025",
+    "doi.org/10.1016/j.disc.2015.06.002",
+    "doi.org/10.1016/j.ejc.2008.07.011",
+    "doi.org/10.1016/j.ejc.2017.05.005",
+    "doi.org/10.1016/j.ffa.2019.01.003",
+    "doi.org/10.1016/j.jcta.2007.12.007",
+    "doi.org/10.1016/j.jcta.2011.02.005",
+    "doi.org/10.1016/j.jctb.2020.08.003",
+    "doi.org/10.1016/j.jctb.2024.12.002",
+    "doi.org/10.1016/j.laa.2009.06.023",
+    "doi.org/10.1016/j.laa.2012.01.037",
+    "doi.org/10.1063/1.2982848",
+    "doi.org/10.1109/TIT.2011.2168901",
+    "doi.org/10.1112/S0025579315000157",
+    "doi.org/10.1137/0208037",
+    "doi.org/10.1137/20M1323345",
+    "doi.org/10.1142/S021819671850008X",
+    "doi.org/10.1142/S0218216522500110",
+    "doi.org/10.1142/S0219498823502390",
+    "doi.org/10.1184/R1/12026448.V1",
+    "doi.org/10.1216/rmj.2025.55.997",
+    "doi.org/10.17777/pjms.2024.27.4.021",
+    "doi.org/10.4310/JOC.260511223458",
+    "dspace.mit.edu/bitstreams/2aa44fa8-de7c-436f-b7dc-9885a7d090e0/download",
+    "emis.dsd.sztaki.hu/journals/EJC/Surveys/ds6.pdf",
+    "eprint.iacr.org/2021/583.pdf",
+    "eprint.iacr.org/2021/896.pdf",
+    "epubs.siam.org/doi/abs/10.1137/0208037",
+    "epubs.siam.org/doi/pdf/10.1137/18M1186769",
+    "epubs.siam.org/doi/pdf/10.1137/20M1323345",
+    "escholarship.org/content/qt0zw766c2/qt0zw766c2.pdf",
+    "escholarship.org/content/qt1qg5647z/qt1qg5647z_noSplash_7c4e7857ef028cae7bff428d260da921.pdf",
+    "escholarship.org/content/qt5h16p4t1/qt5h16p4t1.pdf",
+    "github.com/LeanPool/lean-pool",
+    "github.com/TauCetiProject/TauCeti",
+    "github.com/google-deepmind/formal-conjectures",
+    "github.com/openai/math",
+    "hexagonmath.org/2610.00329v1",
+    "ieeexplore.ieee.org/document/6094262/",
+    "irep.ntu.ac.uk/id/eprint/53057/1/2378021_Smith.pdf",
+    "jnsaonline.watsci.org/abstract_pdf/2013v4/v4n1-pdf/5.pdf",
+    "kanazawa-u.repo.nii.ac.jp/record/13248/files/SC-PR-ITO-T-682.pdf",
+    "kilthub.cmu.edu/articles/Exploiting_Structure_In_Data_Sampling_and_Signal_Processing_on_Graphs/12026448/1",
+    "kopi.sztaki.hu/journals/EJC/Surveys/ds6.pdf",
+    "lemon.cs.elte.hu/egres/open/Cyclic_orderings_of_matroids",
+    "library.uoh.edu.iq/admin/ebooks/95071-beck_robins-computing_the_continuous_discretely.pdf",
+    "link.intlpress.com/JDetail/2053846444201803777",
+    "link.springer.com/10.1007/978-3-642-02029-2_20",
+    "link.springer.com/10.1007/s00373-018-1991-8",
+    "link.springer.com/article/10.1007/s00010-026-01266-w",
+    "link.springer.com/article/10.1007/s00224-017-9825-2",
+    "link.springer.com/article/10.1007/s00454-017-9954-z",
+    "link.springer.com/content/pdf/10.1007/s11083-012-9253-5.pdf",
+    "link.springer.com/content/pdf/10.1007/s40863-022-00339-3.pdf",
+    "linkinghub.elsevier.com/retrieve/pii/S0012365X06000021",
+    "linkinghub.elsevier.com/retrieve/pii/S0012365X13003361",
+    "linkinghub.elsevier.com/retrieve/pii/S002437951200119X",
+    "linkinghub.elsevier.com/retrieve/pii/S0095895620300782",
+    "linkinghub.elsevier.com/retrieve/pii/S009731650800006X",
+    "linkinghub.elsevier.com/retrieve/pii/S0097316511000458",
+    "linkinghub.elsevier.com/retrieve/pii/S019566981730063X",
+    "linkinghub.elsevier.com/retrieve/pii/S1071579719300036",
+    "mathdb.com/p/324571/equal-distribution-pair-discrepancy-bound",
+    "mathdb.com/p/327053/the-first-two-layers-conjecture-for-spherical-designs-of-euc",
+    "mathdb.com/p/332073/optimality-conjecture-for-the-local-set-based-piecewise-cons",
+    "mathdb.com/p/350044/lower-bound-conjecture-for-spanning-trees-containing-a-fores",
+    "mathweb.ucsd.edu/~erdosproblems/erdos/newproblems/OddCycleOfLargeChromaticNumber.html",
+    "mathweb.ucsd.edu/~sspiro/Research/Problems2Solve.pdf",
+    "mediatum.ub.tum.de/doc/1210538/1210538.pdf",
+    "micheldeza.altervista.org/lpubHyperlink.html",
+    "n.ethz.ch/~ywigderson/math/publications/Hedetniemi.pdf",
+    "ntu-repository.worktribe.com",
+    "old.sztaki.hu/~csaji/csaji-pagerank-alt-2010.pdf",
+    "oldlemon.cs.elte.hu/egres/open/Cyclic_orderings_of_matroids",
+    "onlinelibrary.wiley.com/doi/10.1002/jgt.22812",
+    "onlinelibrary.wiley.com/doi/10.1002/rsa.70063",
+    "onlinelibrary.wiley.com/doi/abs/10.1112/S0025579315000157",
+    "onlinelibrary.wiley.com/doi/pdf/10.1002/jcd.21739",
+    "onlinelibrary.wiley.com/doi/pdf/10.1002/jgt.22029",
+    "onlinelibrary.wiley.com/doi/pdf/10.1002/jgt.22401",
+    "onlinelibrary.wiley.com/doi/pdf/10.1002/jgt.23014",
+    "paperzz.com/doc/8919938/balanced-equitable-mixed-doubles-round-robin",
+    "people.kth.se/~jbarmak/thmafinal.pdf",
+    "people.math.harvard.edu/~knill/graphgeometry/papers/reidemeister.pdf",
+    "perso.univ-rennes1.fr/michel.coste/polyens/SAG.pdf",
+    "projecteuclid.org/journals/rocky-mountain-journal-of-mathematics/volume-55/issue-4/NEURAL-CODES-AND-NEURAL-RING-ENDOMORPHISMS/10.1216/rmj.2025.55.997.full",
+    "pubs.aip.org/jmp/article/49/12/125207/231170/Susceptibility-in-subcritical-random-graphs",
+    "repository.tudelft.nl/file/File_07951d55-4804-4c69-a83f-4560e70209fb",
+    "research-portal.uu.nl/files/146783022/1_s2.0_S0012365X22000358_main.pdf",
+    "ricerca.sns.it/bitstream/11384/128462/1/soposc_rev.pdf",
+    "ricerca.sns.it/rm-password-login",
+    "scispace.com/pdf/the-sierpinski-product-of-graphs-1r0hy4x9.pdf",
+    "sztaki.hun-ren.hu/~csaji/csaji-pagerank-alt-2010.pdf",
+    "teses.usp.br/teses/disponiveis/45/45131/tde-10072011-093023",
+    "theoryofcomputing.org/articles/v007a009/v007a009.pdf",
+    "tsapps.nist.gov/publication/get_pdf.cfm",
+    "web.archive.org/web/20251230112235/https://citeseerx.ist.psu.edu//document",
+    "www-circa.mcs.st-and.ac.uk/Preprints/EJCBruHuc.pdf",
+    "www.aimsciences.org/data/article/export-pdf",
+    "www.cs.cmu.edu/~deepay/mywww/papers/srds03.pdf",
+    "www.dlib.si/details/URN:NBN:SI:DOC-05TQJS6H",
+    "www.dlib.si/details/URN:NBN:SI:doc-5FQG3FNZ",
+    "www.dlib.si/stream/URN:NBN:SI:DOC-05TQJS6H/0b433388-ece2-4e0e-b676-beb051f82b80/PDF",
+    "www.dlib.si/stream/URN:NBN:SI:doc-5FQG3FNZ/8ae7cffe-36c2-4cb2-b460-c633f357c4cf/PDF",
+    "www.ecs.umass.edu/mduarte/Publications.html",
+    "www.ecs.umass.edu/mduarte/publications.html",
+    "www.erdosproblems.com/1187",
+    "www.erdosproblems.com/642",
+    "www.erdosproblems.com/809",
+    "www.erdosproblems.com/881",
+    "www.kurims.kyoto-u.ac.jp/EMIS/journals/EJC/Volume_9/PDF/v9i2r20.pdf",
+    "www.math.auckland.ac.nz/~sgal018/birthday.pdf",
+    "www.math.vanderbilt.edu/saffeb/texts/240.pdf",
+    "www.mscand.dk/article/download/18001/15760/41028",
+    "www.sciencedirect.com/science/article/abs/pii/S0024379523003014",
+    "www.sciencedirect.com/science/article/am/pii/S0097316519301177",
+    "www.sciencedirect.com/science/article/pii/0012365X94903883",
+    "www.sciencedirect.com/science/article/pii/S0012365X04004066",
+    "www.sciencedirect.com/science/article/pii/S0022314X14001012",
+    "www.sciencedirect.com/science/article/pii/S0024379508000529",
+    "www.sciencedirect.com/science/article/pii/S002437950900319X",
+    "www.sciencedirect.com/science/article/pii/S0024379519302022",
+    "www.sciencedirect.com/science/article/pii/S0095895624000996",
+    "www.sciencedirect.com/science/article/pii/S0166218X17302202/pdfft",
+    "www.sciencedirect.com/science/article/pii/S0166218X26001903",
+    "www.sztaki.hu/~csaji/csaji-pagerank-alt-2010.pdf",
+    "www.tandfonline.com/doi/full/10.1080/00150517.2026.2711260",
+    "www.tandfonline.com/doi/pdf/10.1080/00927872.2024.2347582",
+    "www.worldscientific.com/doi/10.1142/S0219498823502390",
+    "www2.math.upenn.edu/~pemantle/papers/negcor.pdf",
+    "zbmath.org/emis"
+  ],
+  "blocked_artifacts": [
+    "0012365x94903883",
+    "0601731",
+    "0608694",
+    "0704.0541",
+    "0711.2867",
+    "0711.3388",
+    "0806.0252",
+    "0806.2096",
+    "0808.1167",
+    "0809.0158",
+    "0904.4778",
+    "0zw766c2",
+    "10.1002/jcd.21739",
+    "10.1002/jgt.22029",
+    "10.1002/jgt.22401",
+    "10.1002/jgt.22812",
+    "10.1002/jgt.23014",
+    "10.1007/978-3-642-02029-2_20",
+    "10.1007/s00010-026-01266-w",
+    "10.1007/s00224-017-9825-2",
+    "10.1007/s00454-017-9954-z",
+    "10.1007/s10107980012a",
+    "10.1007/s10444-015-9440-1",
+    "10.1007/s11083-012-9253-5",
+    "10.1007/s40863-022-00339-3",
+    "10.1016/0012-365x(94)90388-3",
+    "10.1016/j.dam.2017.04.030",
+    "10.1016/j.dam.2026.03.043",
+    "10.1016/j.disc.2004.04.022",
+    "10.1016/j.disc.2006.01.001",
+    "10.1016/j.disc.2013.07.025",
+    "10.1016/j.disc.2015.06.002",
+    "10.1016/j.ejc.2008.07.011",
+    "10.1016/j.ejc.2009.07.013",
+    "10.1016/j.ejc.2017.05.005",
+    "10.1016/j.ffa.2019.01.003",
+    "10.1016/j.jcta.2007.12.007",
+    "10.1016/j.jcta.2011.02.005",
+    "10.1016/j.jctb.2020.08.003",
+    "10.1016/j.jctb.2024.12.002",
+    "10.1016/j.jnt.2014.02.015",
+    "10.1016/j.laa.2008.01.023",
+    "10.1016/j.laa.2009.06.023",
+    "10.1016/j.laa.2012.01.037",
+    "10.1016/j.laa.2019.04.038",
+    "10.1063/1.2982848",
+    "10.1080/00150517.2026.2711260",
+    "10.1080/00927872.2024.2347582",
+    "10.1109/tit.2011.2168901",
+    "10.1112/s0025579315000157",
+    "10.1137/18m1186769",
+    "10.1137/20m1323345",
+    "10.1137/20m1348248",
+    "10.1142/s021819671850008x",
+    "10.1142/s0218216522500110",
+    "10.1142/s0219498823502390",
+    "10.1184/r1/12026448",
+    "10.1184/r1/12026448.v1",
+    "10.1216/rmj.2025.55.997",
+    "10.17777/pjms.2024.27.4.021",
+    "10.26493/1855-3974.2199.97e",
+    "10.37236/1692",
+    "10.4086/toc.2011.v007a009",
+    "10.4310/joc.260511223458",
+    "1106.5068",
+    "1111.0531",
+    "113173907",
+    "1302.3212",
+    "1307.8396",
+    "1401.2891",
+    "1409.2057",
+    "1409.5853",
+    "1509.03754",
+    "1701.06404",
+    "1706.03298",
+    "1708.06955",
+    "1803.02523",
+    "1803.03947",
+    "1805.04144",
+    "1811.08322",
+    "1812.08065",
+    "1904.04180",
+    "1907.09644",
+    "2002.04198",
+    "2003.14335",
+    "2004.05544",
+    "2006.06551",
+    "2006.14269",
+    "2103.05294",
+    "2104.02296",
+    "2109.09249",
+    "2205.06464",
+    "2212.05733",
+    "2378021_smith.pdf",
+    "2507.18272",
+    "2610.00329",
+    "2aa44fa8-de7c-436f-b7dc-9885a7d090e0",
+    "46d335722cf8c1ecbe141bcbc614e62f6c9dbc3c",
+    "6094262",
+    "95071-beck_robins-computing_the_continuous_discretely.pdf",
+    "Marco Duarte current publication-page artifact",
+    "Ye1999 Approximating quadratic programming with bound and quadratic constraints, Mathematical Programming84(2)219-226, DOI10.1007/s10107980012a",
+    "a bijective proof for a theorem of ehrhart",
+    "a strengthening of erdos-gallai theorem and proof of woodall conjecture",
+    "aimath.robertj1.com current ai claims index",
+    "berman-smith2013 balanced equitable mixed doubles round-robin tournaments",
+    "bims.iranjournals.ir/article_1148.html",
+    "cayley's hyperdeterminant a combinatorial approach via representation theory",
+    "chapoton mathematica scandinavica115(2014)20-61 final flows-on-rooted-trees work",
+    "computing the continuous discretely",
+    "csaji-pagerank-alt-2010.pdf",
+    "current mathdb324571 record delivery containing challenge-platform script",
+    "decoding linear codes via optimization and graph-based techniques",
+    "distance-regular graphs and the q-tetrahedron algebra",
+    "distinguishing number and distinguishing index of natural and fractional powers of graphs final bims 43 7 2017",
+    "ds6.pdf",
+    "egres cyclic orderings of matroids page",
+    "egres/open/cyclic_orderings_of_matroids",
+    "ejcbruhuc.pdf",
+    "epidemic spreading in real networks: an eigenvalue viewpoint",
+    "erdos-ko-rado for perfect matchings",
+    "erdosproblems.com/1187",
+    "erdosproblems.com/642",
+    "erdosproblems.com/809",
+    "erdosproblems.com/881",
+    "erdosproblems1187 current page",
+    "erdosproblems642 exact current page",
+    "erdosproblems809 current page",
+    "erdosproblems881 current page",
+    "exploiting structure in data: sampling and signal processing on graphs",
+    "fast neighbor joining",
+    "fast neighbour joining",
+    "fc80df4469c8556fed45357cea8ba65f0c97535e",
+    "finding cactus roots in polynomial time",
+    "galbraith-holmes2012 a non-uniform birthday problem with applications to discrete logarithms",
+    "gallian dynamic survey of graph labeling",
+    "generalised stretched littlewood-richardson coefficients",
+    "geometry of antimatroidal point sets",
+    "graph invariants from ideas in physics and number theory",
+    "he-wigderson hedetniemi conjecture asymptotically false",
+    "hitting times cover cost and the wiener index of a tree identified2017 final",
+    "ilinca-kahn order30(2013)427-435 identified final maximal-independent-set paper",
+    "invariants of tutte partitions and a q-analogue",
+    "inverse conjecture for the gowers norm is false",
+    "jaja1979 optimal evaluation ofpairs ofbilinearforms",
+    "lower bounds on the uniquely restricted matching number original1803.11032/final2019",
+    "math/0005270",
+    "math/0212343",
+    "math/0601731",
+    "math/0608694",
+    "maximizing pagerank via outlinks",
+    "micheldeza.altervista.org/lpubhyperlink.html",
+    "models of random spanning trees 2407.20226/doi10.1002/rsa.70063",
+    "n.ethz.ch/~ywigderson/math/publications/hedetniemi.pdf",
+    "negcor.pdf",
+    "network tomography based on additive metrics",
+    "oddcycleoflargechromaticnumber.html",
+    "on complete subsets of the cyclic group",
+    "on distance preserving and sequentially distance preserving graphs",
+    "on polynomial digraphs",
+    "on quillen's theorem a for posets",
+    "on structural decompositions of finite frames final2016",
+    "open math problems claimed to be solved with ai current registry index",
+    "p-partition generating function equivalence of naturally labeled posets, pii s0097316519301177",
+    "packing patterns into words",
+    "pagerank optimization in polynomial time by stochastic shortest path reformulation",
+    "pjms27(4)(2024)773-780",
+    "poly-antimatroid polyhedra",
+    "problems2solve.pdf",
+    "qmc designs: optimal order quasi monte carlo integration schemes on the sphere",
+    "qt1qg5647z",
+    "rank of 3-tensors with 2 slices and kronecker canonical forms",
+    "s0012365x04004066",
+    "s0012365x06000021",
+    "s0012365x13003361",
+    "s0012365x22000358",
+    "s0024379508000529",
+    "s002437950900319x",
+    "s002437951200119x",
+    "s0024379519302022",
+    "s0095895620300782",
+    "s0095895624000996",
+    "s009731650800006x",
+    "s0097316511000458",
+    "s0097316519301177",
+    "s0166218x17302202",
+    "s0166218x26001903",
+    "s019566981730063x",
+    "s1071579719300036",
+    "sc-pr-ito-t-682.pdf",
+    "small cones of m-hemimetrics",
+    "some erdos-ko-rado theorems for injections",
+    "soposc_rev.pdf",
+    "srds03.pdf",
+    "sum and difference sets in generalized quaternion groups",
+    "susceptibility in subcritical random graphs",
+    "the combinatorics of a tree-like functional equation for connected chord diagrams",
+    "the d-distance p-packing domination number",
+    "thmafinal.pdf",
+    "towards a theory of negative dependence",
+    "urn:nbn:si:doc-5fqg3fnz",
+    "v9i2r20.pdf",
+    "viruslike dynamics on starlike graphs",
+    "zigzag structure of thin chamber complexes"
+  ],
+  "records": [
+    {
+      "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=933481",
+      "reason": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r392/all-access.json",
+        "sha256": "c161159b6ac26de34009133dc71caa681887c9a94b95b6da16db83d57572456e"
+      }
+    },
+    {
+      "url": "https://doi.org/10.1142/S0218216522500110",
+      "reason": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r392/all-access.json",
+        "sha256": "c161159b6ac26de34009133dc71caa681887c9a94b95b6da16db83d57572456e"
+      }
+    },
+    {
+      "url": "https://hexagonmath.org/2610.00329v1",
+      "reason": {
+        "status": null,
+        "error": "<HTTPError 403: 'Forbidden'>",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r394/all-access.json",
+        "sha256": "91d5cd3ef40eab4be1ede44886df062cf36e55167a74004a19d1b05415845973"
+      }
+    },
+    {
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0024379523003014",
+      "reason": {
+        "status": null,
+        "error": "<HTTPError 403: 'Forbidden'>",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r394/all-access.json",
+        "sha256": "91d5cd3ef40eab4be1ede44886df062cf36e55167a74004a19d1b05415845973"
+      }
+    },
+    {
+      "url": "https://escholarship.org/content/qt5h16p4t1/qt5h16p4t1.pdf",
+      "reason": {
+        "status": 202,
+        "error": null,
+        "bytes": 0
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r394/all-access.json",
+        "sha256": "91d5cd3ef40eab4be1ede44886df062cf36e55167a74004a19d1b05415845973"
+      }
+    },
+    {
+      "url": "https://hexagonmath.org/2610.00329v1",
+      "reason": {
+        "status": null,
+        "error": "<HTTPError 403: 'Forbidden'>",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r395/all-access-combined.json",
+        "sha256": "0a47d388d63dd0581c066688d021a1a6f2d58725252bc04d6c6f15d787ce7256"
+      }
+    },
+    {
+      "url": "https://hexagonmath.org/2610.00329v1",
+      "reason": {
+        "status": null,
+        "error": "<HTTPError 403: 'Forbidden'>",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r395/metadata-access.json",
+        "sha256": "b09217d20d46de7770ad8f0ae769ae2747d03641597fe7a02622070fad75394a"
+      }
+    },
+    {
+      "url": "https://hexagonmath.org/2610.00329v1",
+      "reason": {
+        "status": null,
+        "error": "<HTTPError 403: 'Forbidden'>",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r395/seed-r394-all-access.json",
+        "sha256": "91d5cd3ef40eab4be1ede44886df062cf36e55167a74004a19d1b05415845973"
+      }
+    },
+    {
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0024379523003014",
+      "reason": {
+        "status": null,
+        "error": "<HTTPError 403: 'Forbidden'>",
+        "bytes": null
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r395/seed-r394-all-access.json",
+        "sha256": "91d5cd3ef40eab4be1ede44886df062cf36e55167a74004a19d1b05415845973"
+      }
+    },
+    {
+      "url": "https://escholarship.org/content/qt5h16p4t1/qt5h16p4t1.pdf",
+      "reason": {
+        "status": 202,
+        "error": null,
+        "bytes": 0
+      },
+      "evidence": {
+        "path": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r395/seed-r394-all-access.json",
+        "sha256": "91d5cd3ef40eab4be1ede44886df062cf36e55167a74004a19d1b05415845973"
+      }
+    },
+    {
+      "url": "https://people.math.harvard.edu/~knill/graphgeometry/papers/reidemeister.pdf",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "url": "https://teses.usp.br/teses/disponiveis/45/45131/tde-10072011-093023/",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "url": "https://doi.org/10.1142/S021819671850008X",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "url": "https://mediatum.ub.tum.de/doc/1210538/1210538.pdf",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "url": "https://doi.org/10.1016/j.disc.2015.06.002",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "url": "https://eprint.iacr.org/2021/583.pdf",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "url": "https://eprint.iacr.org/2021/896.pdf",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "url": "https://hexagonmath.org/2610.00329v1",
+      "reason": "Inherited denied/timeout endpoint retained; no new retrieval",
+      "evidence": "root conversation retained denial record"
+    },
+    {
+      "reason": "Observed HTTP200 Incapsula challenge, unavailable/no retry; DOI initial and final routes blocked",
+      "evidence": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/neural-circulant-count-source-review-r1/guard-ledger.jsonl",
+      "evidence_sha256": "a34ca2115a0a93f0eb526247f80d853b280750274f38ec29401e9a5731e74bf8",
+      "DOI": "10.1216/rmj.2025.55.997"
+    },
+    {
+      "DOI": "10.1142/S0219498823502390",
+      "reason": "r398 journal redirect returned403; initial/final routes and artifact unavailable, no retry or alternate delivery bypass",
+      "evidence": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r398/guard-ledger.jsonl",
+      "sha256": "5a543b602f83655d86805645c58e630a1c14e4775702925b367e7f3afb5f2890"
+    },
+    {
+      "url": "https://perso.univ-rennes1.fr/michel.coste/polyens/SAG.pdf",
+      "reason": "URLError(TimeoutError('timed out'))",
+      "evidence": "/home/mj-kang/Docume
+RELEVANT_HISTORY /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r279/results.json
+335299 {"mathdb_id": 335299, "title": "Chen–Lev conjecture on periodic intersections of representation-equivalent sets", "canonical_url": "https://mathdb.com/p/335299/chen-lev-conjecture-on-periodic-intersections-of-representat", "literal_statement": "Let $C$ and $D$ be different sets of nonnegative integers, and let $R_C(n)$ count representations of $n$ as a sum of two distinct elements of $C$, with the analogous definition for $D$. Assume\n\n$$\nC\\cup D=\\mathbb N,\n$$\n\n$$\nC\\cap D=r+m\\mathbb N,\n$$\n\nwhere $r\\ge0$ and $m\\ge2$ are integers.\n\n**Chen–Lev conjecture.** If $R_C(n)=R_D(n)$ for every positive integer $n$, then there exists an integer $l\\ge1$ such that\n\n$$\nr=2^{2l}-1,\\qquad m=2^{2l+1}-1.\n$$\n\nThis question seeks a classification of covering pairs with periodic intersection and identical two-element representation functions. The source presents the assertion as a question posed by Chen and Lev; no resolution is supplied.", "statement_sha256": "015b3c276a04a31d9760c4e143c19380753ef3679c9ea9b011c4aebd0c901b76", "statement_hash_encoding": "UTF-8 of exact parsed statement string; no trailing newline", "raw_provenance": {"chunk": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/mathdb-normalized-chunk-0004.jsonl", "line": 4735, "chunk_sha256": "c607c6f61cba474938f89333bc53bade4f1f97bc3677fdb23521a7c94f6b90da", "raw_sha256": "011d71c91e7c37a47b1bff3ecf0576d0dedc19f278dedc80acbb38cf1cdcc73e"}, "raw_file": "raw/335299.jsonl", "full_parsed_record": {"mathdb_id": 335299, "uuid": "040ef5c3-5a6b-46eb-8c0b-0b99049bc106", "canonical_url": "https://mathdb.com/p/335299/chen-lev-conjecture-on-periodic-intersections-of-representat", "title": "Chen–Lev conjecture on periodic intersections of representation-equivalent sets", "statement": "Let $C$ and $D$ be different sets of nonnegative integers, and let $R_C(n)$ count representations of $n$ as a sum of two distinct elements of $C$, with the analogous definition for $D$. Assume\n\n$$\nC\\cup D=\\mathbb N,\n$$\n\n$$\nC\\cap D=r+m\\mathbb N,\n$$\n\nwhere $r\\ge0$ and $m\\ge2$ are integers.\n\n**Chen–Lev conjecture.** If $R_C(n)=R_D(n)$ for every positive integer $n$, then there exists an integer $l\\ge1$ such that\n\n$$\nr=2^{2l}-1,\\qquad m=2^{2l+1}-1.\n$$\n\nThis question seeks a classification of covering pairs with periodic intersection and identical two-element representation functions. The source presents the assertion as a question posed by Chen and Lev; no resolution is supplied.", "statement_completeness": "full", "post_type": "open_problem", "status": "open", "tags": ["additive-combinatorics", "representation-functions", "set-partitions"], "importance": "corpus", "source_name": "Sándor Z. Kiss and Csaba Sándor, “On the structure of sets which have coinciding representation functions”, arXiv:1702.04499 (2020).", "source_url": "https://arxiv.org/abs/1702.04499", "first_stated_year": 2017, "first_stated_year_source_url": "https://arxiv.org/abs/1702.04499", "documented_by_year": null, "documented_by_source_url": null, "references": "Source: https://arxiv.org/abs/1702.04499\n\nStatus: no resolution is reported in the source (as of February 2017).", "solutions": [], "solution_count": 0, "has_formal_statement": null, "has_bounty": null, "created_at": "2026-08-11T05:40:19.062149Z", "edited_at": null, "lastmod": "2026-09-09T06:40:39Z", "in_sitemap": true, "historical": false, "retrieval_source": "probxiv_2026-09-29"}, "disposition": "park_infinite_classification", "literal_read": true, "review_depth": "arXiv1702.04499 v1/v2 Conjectures 3–4, conditional Theorem 6, generating-function proof opening read; Integers2019 source obtained.", "ordinary_attempt_or_exclusion": "The coefficient identity gives a precise route but not the global periodic-zero/sign classification. Theorem 6 is conditional, not a resolution.", "remaining_gap_and_limits": "Integers PDF cached and extracted; full journal proof not claimed read. Later search hit 2111.07754 concerns a different finite-hole problem, body unread.", "ordinary_attempts_file": "ordinary-attempts.md", "source_inventory": [{"path": "sources/335299v1.txt", "sha256": "dcea4480aa609cc87e2d240f6eaa6060cb34fe41e13815b824a7dfcd954af156", "complete_file_read": false}, {"path": "sources/335299v2.txt", "sha256": "936cc2c8b8e376a6133c0a43756a090c4af507b738eeb5373a1b6c4696b8d043", "complete_file_read": false}, {"path": "sources/335299-journal.txt", "sha256": "aae2a01de4f941e7dcdecb565538bc98a0233896a68d4fb37d2ae05a6f743bcc", "complete_file_read": false}], "receipt_file": "receipts.jsonl", "historical_check": "history-matches.txt, history-title-source-check.json, historical-dispositions.json and reconciliation.md: bounded ID/title/URL/source-family searches; absence not clearance", "all_versions_target_checked": true, "all_source_bodies_and_citing_proofs_read": false, "current_registry_clearance": false, "full_literal_solution_produced": false, "pi_execution_assignment": null, "lean_run": false, "independent_review": false, "credit": 0}
+RELEVANT_HISTORY /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r293/results.json
+360520 {"mathdb_id": 360520, "title": "Bipartite-graph density dichotomy conjecture", "literal_statement": "Let $H$ be a bipartite graph. For a graph $G$, write $d(G)$ for its average degree. **Bipartite-graph density dichotomy conjecture.** For every bipartite graph $H$, there is a constant $C_H$ such that, for every integer $s\\geq 1$ and every $H$-free graph $G$ with\n\n$$\nd(G)\\geq s^{C_H},\n$$\n\neither $G$ contains a copy of $K_{s,s}$, or $G$ has an induced subgraph $G'\\subset G$ with $d(G')\\geq s$ that contains no $4$-cycles. This would give a polynomial density alternative for $H$-free graphs, separating large balanced bicliques from dense induced $C_4$-free subgraphs.", "canonical_url": "https://mathdb.com/p/360520/bipartite-graph-density-dichotomy-conjecture", "source_url": "https://arxiv.org/abs/2310.18452", "disposition": "PARK_FULL_SCOPE_GAP", "reason_and_gap": "Need one exponent depending only on H for all s. Pruning small degree does not remove induced four-cycles. Need a density-preserving induced selection lemma with polynomial loss.", "review_depth": "Literal full record plus arXiv submission/journal metadata navigation; targeted body review only for 336022,339877,343103,348040,354997,360537. See read-inventory.json.", "provenance": {"chunk": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/mathdb-normalized-chunk-0009.jsonl", "line": 4771, "chunk_sha256": "e2f7f18e7d350aafecbf4e1e1d61fcd0ee1c2e6fde38a646bae50b0427bd4dfd", "raw_sha256": "6f07d514df96ebf64f5c81974c7c80aac0b56e9e20468aad7aa1bbb056b80094", "statement_sha256": "cf07d200bfe2df408560198204868c6167f7706afc94c7ad8adea4e2a570625d"}, "full_parsed_record": "provenance.json#360520", "raw_file": "raw/360520.jsonl", "accepted": false, "credit": 0, "pi_authorized": false, "literature_gate": "No global clearance. Unread versions, journal/corrections and citing bodies remain gates for parked targets."}
+RELEVANT_HISTORY /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r443-parent-integration.json
+RELEVANT_HISTORY /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r437/results.json
+335297 {"mathdb_id": 335297, "source_url": "https://arxiv.org/abs/1702.04499", "title": "Kiss–Rozgonyi–Sándor conjecture on higher-order representation functions", "literal_statement": "Let $h>2$, and let $C$ and $D$ be different infinite sets of nonnegative integers. For a set $A$, write $A(z)=\\sum_{a\\in A}z^a$, and let $F_C(z)$, $F_D(z)$, and $T(z)$ denote the generating polynomials of the finite sets $F_C$, $F_D$, and $T$, respectively. The functions $R_{h,C}^{(1)}$ and $R_{h,D}^{(1)}$ count ordered representations as sums of $h$ elements of the indicated set.\n\n**Kiss–Rozgonyi–Sándor conjecture.** The equality $R_{h,C}^{(1)}(n)=R_{h,D}^{(1)}(n)$ from some point onward holds if and only if there exist positive integers $n_0$ and $M$, and finite sets $F_C,F_D,T$ satisfying $F_C\\cup F_D\\subset[0,Mn_0-1]$ and $T\\subset[0,M-1]$, such that\n\n$$\nC=F_C\\cup\\{lM+t:l\\ge n_0,\\,t\\in T\\},\n$$\n\n$$\nD=F_D\\cup\\{lM+t:l\\ge n_0,\\,t\\in T\\},\n$$\n\n$$\n(1-z^M)^{h-1}\\mid(F_C(z)-F_D(z))T(z)^{h-1}.\n$$\n\nThis conjectures a periodic-tail characterization of pairs of infinite sets whose ordered $h$-fold representation functions eventually coincide, generalizing Nathanson's result for $h=2$.", "provenance": "literal-provenance.json#335297", "disposition": "PARK_INCOMPLETE", "gap": "Need eventual equality implies periodic common tails, plus full pole-cancellation divisibility bridge for h>2. Same-source335299 two-distinct-summands question not transferable.", "gates": {"literal": "PASS original full raw JSONL/newline/token/decoded binding; all20 read before prioritization", "source": "UNREAD actual primary body; metadata provides no scientific clearance", "ordinary": "INCOMPLETE exact full-scope proof; explicit gap", "prior": "Bounded exactID/source-family allowlist reconciliation; current4registry roots acquired only; no exact registry proof-body clearance", "novelty": "HOLD no worldwide novelty established; specific unread matching/comparison claims retained", "significance": "NOT ESTABLISHED; no credit from shortness, source labels or metadata", "formal": "NOT RUN; prohibited; conditional dormant plan only341052", "independent": "NOT PERFORMED; investigator derivation is not independent review", "acceptance": "NO; root only;55/60 beyond39 unchanged"}, "credit": 0, "accepted": false}
+RELEVANT_HISTORY /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r443/results.json
+343025 {"mathdb_id": 343025, "title": "The standard-example or clique-minor conjecture for posets", "source_url": "https://arxiv.org/abs/1906.08145", "statement": "Let $P$ be a poset, let $\\dim(P)$ denote its dimension, let $S_d$ be the standard example of order $d$, and let the cover graph of $P$ be the graph whose vertices are the elements of $P$ and whose edges are its cover relations. For positive integers $n$ and $d$ with $d\\ge2$, **the standard-example or clique-minor conjecture.** There is an integer $d_0$ such that if $\\dim(P)\\ge d_0$, then either $P$ contains $S_d$ or the cover graph of $P$ contains a $K_n$ minor. This is stated as a considerably stronger conjecture than the planar-poset standard-example conjecture and is presented as open.", "provenance": "literal-provenance.json", "disposition": "PARKED: arbitrary n,d threshold requires structural control of unbounded poset dimension, not standard-example examples. No uniform bound under both exclusions proved; primary body unread.", "gates": {"literal": "READ ALL20; exact raw newline objects, raw statement tokens and decoded UTF8 SHA256 preserved; ambiguities not repaired", "source": "UNPAID: primary body not acquired/read; literal only", "ordinary": "PARKED: arbitrary n,d threshold requires structural control of unbounded poset dimension, not standard-example examples. No uniform bound under both exclusions proved; primary body unread.", "prior": "No exact reserved-ID structural match in checked allowlisted results. Eight files have exact SOURCE-URL matches for other IDs; dispositions reconciled without transferring neighboring status; see exact-history-scope.json and history outputs. Source-scope timing FAIL retained. Current registry roots only; applicable exact proof bodies not cleared.", "novelty": "NOT ESTABLISHED; bounded current searches and roots are not worldwide clearance", "significance": "ZERO eligibility for source-own/endpoint adaptations; otherwise UNPAID full-scope significance", "formal": "NOT EXECUTED; no Lean/checker/solver permitted; no literal kernel endpoint", "independent": "NOT PERFORMED; personal ordinary investigation only", "acceptance": "NONE; root only; no credit requested"}, "credit": 0, "qualified_survivor": false}

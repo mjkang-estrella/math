@@ -1,0 +1,15 @@
+# r464 completed discovery handoff
+
+No qualified full-scope new survivor; no FULLCANDIDATE, formal plan, dispatch or credit. The accepted count remains57/60 beyond39 prior (96total).
+
+All twenty fixed literals were read before prioritization and preserved losslessly in literal-bindings.json with complete original newline objects, chunk and line provenance, raw-line/token/decoded SHA256 bindings. results.json contains twenty separately keyed literal, source, ordinary, prior, novelty, significance, family, formal, independent and acceptance gates.
+
+The strongest sustained routes are351661 (balanced V multicolor Ramsey: a precise one-dimension loss and incompatible coatom extension) and332619 (all-n apex move families: new apex-vertex and face-compatibility obstructions to the propagation proof). The full derivations, paid branches and exact unpaid lemmas are in SUSTAINED-DERIVATIONS.md. No finite search or numerical experiment was used.
+
+Four zero cases:352903 is a printed exponent-placement correction, exposed by the exact triangle polynomial and already forced by the source's preceding Proposition1.11;356183 is covered in intended source scope by Yu-Feng-Liu2410.23662 Theorem1.4;343484 is exactly Hodges2311.07078 Theorem1.1 with source symmetric-duality convention;338009 is the source's own explicitly false Conjecture4.1. Public theorem attribution is not an independent proof audit. Missing cardinality or pairing hypotheses do not create credit.
+
+Six successful GETs, no new unavailable outcomes; three precharged native calls/nine exact queries with full responses saved. Four registry-root metadata artifacts remained unavailable and were not refreshed or reconstructed. Current registry/proof novelty clearance is not claimed. Four reserved originals and two public comparisons received targeted actual-body reading; sixteen reserved originals remain unread, fourteen IDs have no body comparison. Remaining targets carry individual concrete gaps, not generic worldwide-uncertainty vetoes.
+
+History reconciliation accessed785 exact completed allowlisted files after protected-name filtering, found no exact assigned-ID key/scalar hits and14 exact sourceURL scalar hits. Actual relevant neighbor dispositions were read; none was transferred. No protected peer file/metadata access, no source-quarantine reuse, no children, math programs, solvers, Lean, compiler, formal API, git or external mutation.
+
+One local documentary text-label failure (conclusion_proof_reads, exit1 ValueError) is preserved and recovered by a changed Unicode-aware read. Large output truncations are retained in complete runner outputs; material excerpts recovered. Resource measurements are sampled and do not cover native-tool telemetry or transient/separate-writer peaks. Real receipts, searches, source access/hashchain, reading/figure limits and byte inventory accompany the handoff. Standalone frozen-before checked all13 inputs; standalone frozen-after and terminal manifest complete the packet.

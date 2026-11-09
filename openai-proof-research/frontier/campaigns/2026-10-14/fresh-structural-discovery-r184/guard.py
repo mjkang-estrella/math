@@ -1,0 +1,22 @@
+from pathlib import Path
+import fnmatch,re
+ROOT=Path('/home/mj-kang/Documents/Dev/math/openai-proof-research')
+OWN='frontier/campaigns/2026-10-14/fresh-structural-discovery-r184'
+WILDCARDS="""
+*analytic*r162* *structural*r168* *arithmetic*r134* *analytic*r163* *structural*r169* *arithmetic*r135* *analytic*r164* *structural*r170* *arithmetic*r136*
+*analytic*r144* *analytic*r145* *analytic*r146* *analytic*r147* *analytic*r148* *analytic*r149* *analytic*r150* *analytic*r151* *analytic*r152* *analytic*r153* *analytic*r154* *analytic*r155* *analytic*r156* *analytic*r157* *analytic*r158* *analytic*r159* *analytic*r160* *analytic*r161*
+*structural*r151* *structural*r152* *structural*r153* *structural*r154* *structural*r155* *structural*r156* *structural*r157* *structural*r158* *structural*r159* *structural*r160* *structural*r161* *structural*r162* *structural*r163* *structural*r164* *structural*r165* *structural*r166* *structural*r167*
+*arithmetic*r116* *arithmetic*r117* *arithmetic*r118* *arithmetic*r119* *arithmetic*r120* *arithmetic*r121* *arithmetic*r122* *arithmetic*r123* *arithmetic*r124* *arithmetic*r125* *arithmetic*r126* *arithmetic*r127* *arithmetic*r128* *arithmetic*r129* *arithmetic*r130* *arithmetic*r131* *arithmetic*r132* *arithmetic*r133*
+*t126s161* *t360s147* *t337a161* *h138-* *t185r144-* *t177c143-* *t373e135-* *k369r134-* *t088p133-*
+*arithmetic*r136* *arithmetic*r137* *arithmetic*r138* *arithmetic*r139* *arithmetic*r140* *arithmetic*r141* *arithmetic*r142* *arithmetic*r143* *arithmetic*r144*
+*analytic*r164* *analytic*r165* *analytic*r166* *analytic*r167* *analytic*r168* *analytic*r169* *analytic*r170* *analytic*r171*
+*structural*r171* *structural*r172* *structural*r173* *structural*r174* *structural*r175* *structural*r176* *structural*r177* *structural*r178* *structural*r179* *s176a*
+*arithmetic*r147* *analytic*r177* *structural*r183* *structural*r184*
+*analytic*r172* *analytic*r173* *analytic*r174* *structural*r180* *structural*r181* *structural*r182* *arithmetic*r145* *arithmetic*r146* *arithmetic*r147*
+*analytic*r175* *analytic*r176* *analytic*r177* *structural*r183* *structural*r184* *structural*r185* *arithmetic*r148* *arithmetic*r149* *arithmetic*r150*
+""".split()
+SUBSTRINGS="""corpus source primary history derivative search inventory fixture control extract render vendor build copy copied frozen role formal manuscript release parent private input upstream shortlist context fetched scratch preprint catalogue catalog receipt brief intake bundle recovery manifest authentication task work family-title literature venv site-packages packet payload archive cache download external third-party hits index navigation audit log provenance evidence ledger helper readme direct.tex pinned- scan snapshot submissions retention retrieve record_evidence validation invocation checkpoint-output journal status progress final report handoff disposition integrity checkpoint contribution proof-role ten-findings twenty-findings new-ten sharedtasks terminal-summary summary.json summary sawin-2018 tao-teravainen acquire checks verify seal_once exact_moments tools scripts verification prepare metadata contracts bind_passages replay stderr author-completion reading-limit reading-limits verifier fetch-family seal-family isolation reading-and-failures compound-history write_notes diagnostics result-helper reading failure outcome completion retrieval seal diagnostic history-scout history-focused screen review proof-r check- freeze rights dispatch integration reproduce reproduction resume launch scout dependencies node_modules .git __pycache__ toolkit canonical-bindings capture.py bind.py publication check""".split()
+EXPLICIT=[r'(?:^|/)history[0-9][^/]*',r'(?:^|/)further-history-[^/]*',r'(?:^|/)[^/]*screen-[^/]*',r'(?:^|/)[^/]*screen[0-9]+[^/]*',r'(?:^|/)(?:role|proof-r[0-9]+|check|freeze|summary|rights)(?:/|$)']
+def blocked(rel):
+    p=rel.casefold()
+    return p==OWN or p.startswith(OWN+'/') or any(fnmatch.fnmatchcase(p,w) for w in WILDCARDS) or any(s in p for s in SUBSTRINGS) or any(re.search(x,p) for x in EXPLICIT)

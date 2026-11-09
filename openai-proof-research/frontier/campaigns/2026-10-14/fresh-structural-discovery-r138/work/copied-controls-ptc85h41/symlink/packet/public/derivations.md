@@ -1,0 +1,1 @@
+/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/fresh-structural-discovery-r138/packet/public/derivations.md

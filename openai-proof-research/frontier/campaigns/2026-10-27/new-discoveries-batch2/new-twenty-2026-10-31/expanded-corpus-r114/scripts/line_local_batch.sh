@@ -1,0 +1,1 @@
+for a in "20 21" "20 24" "20 30" "20 38" "30 32" "30 40" "30 55" "40 45" "40 60"; do python3 scripts/line_local.py $a 4000 3 2 > outputs/line-local-$(echo $a | tr ' ' '-').json; python3 -c "import json;d=json.load(open('outputs/line-local-$(echo $a | tr ' ' '-').json'));print(d['n'],d['m'],d['max_excess'])"; done

@@ -1,0 +1,19 @@
+# Process and access receipts
+
+The first actual command was exactly the requested timeout20 Python-I-B bootstrap. Its untouched bootstrap-receipt.json records its early caps and AGENTS/TASK reads. Every later shell command began timeout140 python3-I-B, set affinity to the first two allowed CPUs [0,1], RLIMIT_CPU120, RLIMIT_AS6442450944 before source reads. Fetch programs record UTC, URL, method, final URL, status/error, returned bytes/hash, elapsed time and actual self rusage in http-receipts.jsonl. pdftotext children inherited caps and had explicit subprocess timeouts<=60; all were synchronously waited. No mathematical execution occurred.
+
+Observed exceptions and telemetry limits:
+
+- Early local preprocessing commands returned actual exit0 and rusage in tool transcripts but did not persist a separate per-process resource JSON. They cannot be reconstructed as independently sampled group receipts. Relevant transcript chunk IDs:053658 bootstrap; e16ad7 reservation/allowlist; 9acc74 scalar metadata; 80b657 literal extraction; d77ff0 history and fetch-script creation; 8284ca, d4b169,05cb10,78ba4b,14b74f,9e2eff text processing; f77c83 registry/companions;253d0f journal conversion; a87d94 version excerpts; a9e1bc thesis conversion; b8ed36 artifact writing. These completed with exit0. Some displayed excerpt outputs were truncated; no full-body review is claimed from them.
+- c75033 exited0 after reporting ModuleNotFoundError for optional pypdf. No install was attempted. pdftotext was available and used instead.
+- d62480 exited1 after a completed pdftotext conversion of Branden actions, then attempting to read a nonexistent journal-text file after its source GET failed403. No process was left running. The failed source was not retried; no alternate protected endpoint was tried.
+- The thesis GET was the only yielding job (PTY/session40720). Its final receipt reports HTTP200, elapsed69.082219s, self maxrss28052KiB; the process completed and was reaped. Waiting calls were <=5 seconds; no tool blocking wait over60 seconds was used. Its parent timeout140 bounded the whole command.
+- The first reservation/allowlist output was truncated. Structured parsing was then used; TASK itself had already been emitted completely, untruncated, by bootstrap.
+- STATUS substring extraction printed extra accepted-summary lines beyond the requested scalar count. No protected/active body was opened. Ledger processing printed scalar fields only. This is a metadata-output scope imperfection, not new mathematical review.
+- A Python string literal warning during writing ATTEMPTS concerned a backslash before a brace; command exited0 and artifacts were saved. This did not execute any mathematical code.
+
+Self ru_maxrss and waited-child ru_maxrss are NOT aggregate concurrent RSS, group/cgroup RSS or service-tool telemetry. No group/cgroup/service accounting is available; there is no claim to have measured it. RLIMIT_AS bounds each local process, not remote search infrastructure. Earlier command timing/exit evidence is in tool transcripts; no fabricated replacement samples are saved here.
+
+Read-only public requests were GET only. No POST/HEAD mutations, form submissions, cookie/JS/auth challenges, TLS changes, proxy bypass, denied-route retries or browser tabs were used. The newly denied Kyoto Branden journal route is recorded and abandoned. Prior denied hosts/routes were not retried. Institutional thesis byte-file GET was independently identified from a public thesis result, not an alternate query to a denied service.
+
+All jobs launched in this task are reaped; no other worker or system process was polled. The final manifest hashes only this lane, never protected paths. No git, Lean, mathematical search, solver, CAS, child agents, dispatch, shared writes, paper, upload or contact.

@@ -1,0 +1,9 @@
+# r464 intake and r470 reservation
+
+Reconcile fifty delegate-reported literal statement reviews to 3,083 distinct reported reviews. Six public statement matches and forty-four HOLDs; no proposals. Counts unchanged: 9 additional / 39 total / next 40. No whole-corpus or full-proof clearance claim.
+
+Public matches are 324737 strong edge colouring, 325152 genus counterexamples, 325208 critical exponent, 325785 Hyatt unimodality, 326009 Caporaso counterexamples, 326045 both coprime-core averages. Selected statements/proof passages only, not complete independent proof audits. 324641 and 326150 remain prior-report HOLD. Scope repairs to knot augmentation, Ferrers subpartitions, bipartite tournaments and signed domination earn no credit. Filling-area source passage remains unlocated. Two bounded family checks do not settle universal claims.
+
+Forty-eight primary and two successor PDFs retained, selected sections only; successor and registry gaps explicit. The child final verifier selects inventory frozen entries from files instead of the separately listed frozen_inputs, so root independently checks all eight actual frozen_inputs against the already bound inventory manifest. No claim that this postcheck repairs pre-reading procedure. Child manifest exclusion descriptions contain explanatory parentheticals; root exactset uses the actual two relative filenames. Neither issue changes mathematical status.
+
+Root froze before content, read summary/verifier and inspected schema; independently checks originals, twenty chunks, eight inventory frozen inputs, payloads and exact disjoint assignment/literal hashes. No mathematical replay. Preserve r466 active breadth reservations, reserve r470 next fifty. The independent Claude r376 review completed and r468 focused prior review is separately prepared in root r467; no coverage or credit increment for it.

@@ -1,0 +1,48 @@
+# Sustained investigations (zero claimed resolutions)
+
+All statements below concern the source definitions, rather than defects of their MathDB paraphrases. None is a full resolution. Numerical routines are diagnostics, not certificates or Lean endpoints.
+
+## 367199: cycle displacement
+
+Write the ground set as Z/nZ and let c be translation by one. The relevant coset consists of all permutations pi c^j. Computing c^j pi instead gives conjugate permutations and therefore identical cycle counts, so the diagnostic implementation using output shifts has the required cycle statistic. The source defines t(n)=max_pi min_j(n-cyc(pi c^j)). Observation 3.1 supplies t(n)<=n-2. For n>2, its Lemma 3.5 shows that if a coset attains n-2 then every member has cycle type (n-1,1): across the n shifts each point is fixed exactly once; a permutation with at most two cycles has at most one fixed point, so every shift must have exactly one.
+
+First obstruction: for even n>2 this cannot happen. Translation c is an odd permutation, so pi and pi c have opposite signs. But every permutation with cycle type (n-1,1) has the same sign (-1)^(n-2). This rules out all even composites in one argument, rather than a search.
+
+Second obstruction: affine permutations do not supply odd composite counterexamples. Suppose pi(x)=a x+b with a a unit. If every output shift has exactly one fixed point, multiplication by a-1 must be bijective; equivalently a-1 is a unit. Translation to the unique fixed point conjugates each affine permutation in the coset to x->a x. Multiplication by a preserves gcd(x,n). For composite n, the three nonempty sets {0}, the units, and the nonzero nonunits are invariant. Thus this multiplication has at least three cycles, contradicting the required two. If a-1 is not a unit, already the fixed-point distribution fails. This closes the whole affine shortcut, not the conjecture.
+
+Third mechanism: arbitrary nonlinear permutations were searched by annealing the defect sum_j max(cyc(pi+j)-2,0), using six restarts of 5000 proposed transpositions at each n=9,15,21,25. Seed and witnesses are saved. Best defects were 4,8,17,22. These are heuristic non-findings: they imply no lower bound for other permutations. In particular n=9 is already covered by the source's reported n<=11 verification, so that portion is only a sanity check. The decisive missing lemma is that an arbitrary permutation whose every cyclic translate has type (n-1,1) forces n prime. No such lemma was obtained. Formalizing only parity or affine obstructions would be a helper, excluded from campaign credit.
+
+## 367491: integer restricted sumsets
+
+Let A,B be finite nonempty integer sets with |B|<=|A|. A relation R consists of forbidden pairs, and each b has at most Delta forbidden partners in A. Put U=A+B. If S is the allowed sumset and T=U\S, then every representation of each t in T must be forbidden. Consequently
+
+    for every b in B: |(A+b) intersect T| <= Delta.
+
+Conversely, any T subset U satisfying these inequalities defines a valid relation by forbidding exactly the pairs whose sum lies in T, and its allowed sumset is exactly U\T. This is an exact finite combinatorial reduction. We may restrict to this canonical relation without losing any potential counterexample; unnecessary forbidden pairs never reduce S further. For fixed A,B, minimizing |S| is thus maximizing |T| subject to the displayed translate budgets. The scripts solve this binary packing optimization using one variable per integer sum. Every returned deletion set is checked with exact Python integer membership and the actual degree bound; optimizer optimality is not needed for validating a putative counterexample, but no returned set violated the proposed inequality.
+
+A full special-case proof explains why intervals are not good counterexamples. After translating/scaling a common arithmetic progression, take A=[0,a-1], B=[0,b-1], a>=b. The two translates A+0 and A+(b-1) cover all of U=[0,a+b-2], because b-1<=a. Hence |T| <= |T intersect A|+|T intersect(A+b-1)| <=2Delta. Therefore |S|>=a+b-1-2Delta, stronger than the conjectured a+b-1-floor(5Delta/2). This does not extend to arbitrary sets: the endpoint translates need not cover the intermediate sums.
+
+The source's Theorem 1.9 and proof explicitly use a punctured interval with an interior deletion budget to achieve the larger floor(5Delta/2) deficit. Its following discussion explains why spreading holes improves the interior count but prevents simultaneously deleting both endpoints. This primary construction/proof discussion was read; it is not a discovery in this lane.
+
+The bounded diagnostic explored 240 fixed-seed pairs, mixing two separated interval blocks, random sets, and an interval against a random smaller set. Cardinalities a=5..16, 3<=b<=a and Delta up to 4 were used. Each MILP had a 0.15-second time limit and 300-node limit, in addition to the process wrapper. The exact A,B,Delta,T and resulting inequality gap are saved for every case. Minimum observed gap was zero, which is only evidence that the search reaches the proposed boundary. No negative gap was found.
+
+The missing full-scope step is a stability/counting theorem bounding deletable sum diagonals in terms of the excess |A+B|-(|A|+|B|-1). The two-endpoint argument alone gives no floor(5Delta/2) control for arbitrary sets, and the source's 3Delta result cannot simply be rounded to the desired coefficient. Without that structural step, no ordinary or Lean endpoint survives.
+
+## 367727: two cuts to a shuffle square
+
+The statement permits arbitrary permutation of three consecutive blocks, and a shuffle square means that ALL positions can be partitioned into two equal ordered subsequences. Equality of counts in two blocks is insufficient. The source's Section 6.3 fixes this precise cutting convention; Section 6.4 expressly distinguishes reverse shuffle squares.
+
+An exact dynamic program tracks the unmatched suffix of whichever of the two subsequences is currently longer. When reading the next letter, either append it to the leading suffix or consume the first unmatched letter, if equal, by assigning it to the lagging subsequence. When the suffix is empty the two subsequences have equal histories and their names can be exchanged. Acceptance is the empty suffix after the last input letter. The queue representation matters: replacing its first letter by its last would recognize reverse matching instead. The program does not merely split into equal Parikh vectors.
+
+Every even binary word of lengths 2,4,...,14 was checked. Counts by cutting distance 0/1/2/>2 are retained in outputs/shuffle-diagnostics.json. All tested words required at most one cut. The source's 24-letter example P=111110110000111100010000 was independently tested by the same algorithm and has distance exactly two: no rotation accepts, while some permutation of three blocks accepts. Thus an attempted stronger universal one-cut claim is already false in the source, and the shorter sweep provides no evidence for such a proof.
+
+A second, structural route is necklace splitting. It partitions the counts of both letters with two cuts, but its natural ordering produces subsequences in opposite order, giving a reverse shuffle square. The source explicitly records this consequence only for reverse squares. There is no established bridge that reverses one chosen subsequence using the same three whole-word blocks. Treating the two notions as equivalent would leave the central theorem unproved. The source P also warns against reducing to a cyclic rotation. A full proof still needs an order-preserving matching after an allowed block permutation for every even binary word, or a word for which all such permutations fail. Neither was obtained. The k-ary generalization 367728 is not separately claimed or counted.
+
+## Other decisive source dispositions
+
+- 367140: current Conjecture 7.3 says simply laced, with the old B2 failure explicitly in its footnote. Omega's pinned C2 formal refutation is the same polynomial and concerns its older all-type statement. The claim and result proof tail were read; this lane did not replay it or claim it as new.
+- 367262: the primary source conjectures that two equivalent conditions hold in order two, but gives a proof of their equivalence immediately afterward. The MathDB literal biconditional is therefore already supplied by the source. The known j-function counterexample has order three and does not resolve the stronger order-two assertion.
+- 367490: Theorem 1.11(ii) in its own source gives a symmetric degree-one partial relation on A of size 6 floor(p/11)-3 with restricted sumset p-3. Completing the partial matching to a bijection cannot enlarge the allowed sumset. For sufficiently large primes 2|A|>=p+2, contradicting that branch of the displayed old conjecture. This is a direct bridge from an already supplied source construction, not a new result.
+- 367561: its source is itself a paper refuting Roverato's general formula. Sections 2–3 derive an incompatible edge-removal ratio; Section 5 explains the formula as a saddle-point approximation. The analytic continuation used in Section 3 is explicit. No claim of a new independent analytic proof is made here.
+- 367420: checking only cycles of lengths k..n is wrong: the primary definition requires EVERY EDGE in every length 3..k and in a Hamilton cycle. The task does not authorize credit for attacking the weaker paraphrase.
+- 367451: the retrieved current source defines ped(G), but does not supply the exact pdd(n) extremal conjecture. The remaining source identification gap is material and is parked, rather than filled with an invented definition.

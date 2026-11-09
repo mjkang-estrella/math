@@ -1,0 +1,8 @@
+# Dormant only — 377665
+No Lean/compiler/checker/formal API was executed. Do not dispatch: routine-adaptation exclusion proposed and no acceptance.
+
+Exact mathematical endpoint: for a finitely generated additive commutative group G, define Avoidable(U) by existence of a coloring c:G→ZMod2 such that x≠y and x+y∈U imply c(x)≠c(y). Define Saturated(U) as Avoidable(U) and every avoidable superset V of U equals U. Assume U is disjoint from {2*x:x∈G}. Prove existence of a NONZERO additive hom phi:G→+ZMod2 with U={x:phi(x)=1}. Then pay the explicit product/direct-sum coordinate bridge to the printed decomposition and coefficients a_i. Do not replace this with maximality only among odd sets or assert the converse.
+
+Library implementation tasks if independently authorized: quotient by the doubling subgroup; elementary2 quotient module structure; finite-dimensionality from finitely generated G; finite-list reflection composition; absence of odd zero relations; parity linear map on span and basis extension; singleton0 avoidability including negation fixed points; maximality equality; coordinate homomorphism classification on odd/even cyclic and free factors. A direct finitely many parity coordinates proof could avoid abstract quotient infrastructure but still needs its finite-relation linear-algebra lemma.
+
+Acceptance would require exact source fidelity audit, independent adversarial proof/significance decision, only propext/Classical.choice/Quot.sound, no sorry/admit/axioms/unsafe/native_decide, strict fresh extracted source replay and root acceptance. None is supplied or requested here. This plan records feasibility, not a certificate.

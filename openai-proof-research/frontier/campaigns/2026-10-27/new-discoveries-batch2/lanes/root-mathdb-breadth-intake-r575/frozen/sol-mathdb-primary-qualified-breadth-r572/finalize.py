@@ -1,0 +1,22 @@
+import pathlib,json,hashlib,datetime,itertools
+P=pathlib.Path(__file__).resolve().parent
+spec={'2602.17459.html.txt':[(41,65)],'2605.07380.html.txt':[(318,393)],'2605.26916.html.txt':[(802,831),(1330,1390)],'math_0205071.html.txt':[(1452,1501)],'math_0508362.html.txt':[(478,505)],'math_0610410.html.txt':[(45,60),(215,249)],'math_0606072.html.txt':[(81,95)]}
+out=[]
+for name,ranges in spec.items():
+ lines=(P/name).read_text().splitlines()
+ for a,b in ranges:out.append({'file':name,'first_line':a,'last_line':b,'text':'\n'.join(lines[a-1:b]),'coverage':'Selected passage only; no whole-body or full-dependency audit'})
+(P/'selected-passages.json').write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n')
+(P/'source-coverage.json').write_text(json.dumps({'literal_records_read':50,'non_self_contained_records':30,'complete_statement_claim':False,'primary_documents':7,'primary_records_with_selected_passages':[373234,374620,374957,374965,377466,379218,379783,380104],'selected_ranges':spec,'whole_bodies_read':0,'successor_bodies_read':0,'full_dependency_audits':0,'registry':'unavailable HOLD; no requests; no absence inference','source_version_limit':'Fetched unversioned arXiv HTML URLs; exact retrieval bytes and UTC pinned. Version number not independently established; do not cite as v1 or as journal bodies.','prior_context':'r304 accepted exclusions/historical dispositions and r363 Cayley decision bound directly. No promotion; broad old summaries not upgraded to primary proof evidence.'},indent=2)+'\n')
+(P/'bounded-checks.json').write_text(json.dumps({'executed':[{'id':375684,'calculation':'K2: Delta=1, chi_list=2, c*log(1)=0 for every finite c; literal bound fails. Only excluded domain correction.'},{'id':376020,'calculation':'Edgeless n=3 graph: four color classes each integer <1.5 hence <=1; a balanced assignment exists (1,1,1,0). Initial disposition claiming conflict was mistaken and corrected before finalization.'}],'no_finite_sweeps':True,'planned_only':['No hypothesis-specific calculation authorized or recommended: primary and full-scope gates not met.']},indent=2)+'\n')
+# Correct the small-n scope check: n=3 is feasible; retain error history.
+ds=json.loads((P/'dispositions.json').read_text())
+for d in ds:
+ if d['mathdb_id']==376020:d['technical_judgment']='Full target is linear runtime including construction, not existence. For n=3 strict class bound permits sizes 1,1,1,0; no small-n obstruction established. A general constructive linear algorithm needs source details and cannot follow solely from an existence theorem.';d['scope_qualification_required']=False
+ if d['mathdb_id']==374957:d['technical_judgment']+=' Primary Proposition 4.3 already proves chain preorders; those would be ineligible subcases.'
+(P/'dispositions.json').write_text(json.dumps(ds,ensure_ascii=False,indent=2)+'\n')
+(P/'failures.json').write_text(json.dumps({'access_failures_this_lane':[],'parked_routes_preserved':['MathDB 429 zero requests','Google/GitHub API/raw/codeload/diff','ScienceDirect','AIM/Kourovka/EGRES/AIProofWatch','DMGT TLS','ProjectEuclid challenge','ResearchGate 403','OEIS A274199/internal 403 r542'],'process_deviations':['Pre-durable-binding header exposure documented in binding-receipt.json.','Initial shell read used nonexistent shortened r304 path; located correct originals and bound before reading.','Overlarge record/grep/admin outputs truncated; all literal statements then reread in two bounded batches; selected mathematical passages reread separately. No whole-admin-body reading claim.','Initial manual n=3 coloring objection in draft disposition was wrong; corrected in bounded-checks.json before final manifest.'],'stopped_routes':['No inversion search without definitions','No new LEGO reflection proof: exact theorem already in source','No transpose/reciprocity proof from diagonal equality or chain subcase','No witness-family refutation by unrelated VC-dimension counterexample','No successor or registry clearance inferred from source availability'],'resource_limits':'All Python through fixed helper_guard.py: 512MiB AS/group RSS, CPU210s, wall230s; no changes.'},indent=2)+'\n')
+files=[]
+for p in sorted(P.rglob('*')):
+ if p.is_file() and p.name not in {'manifest.json','final-verification-receipt.json'}:
+  b=p.read_bytes();files.append({'path':str(p.relative_to(P)),'size':len(b),'sha256':hashlib.sha256(b).hexdigest()})
+(P/'manifest.json').write_text(json.dumps({'excluded_exact_paths':['manifest.json','final-verification-receipt.json'],'files':files},indent=2)+'\n')

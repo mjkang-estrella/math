@@ -1,0 +1,7 @@
+#include <bits/stdc++.h>
+using namespace std;int n,A[16];long long leaves=0,nd=0,sc=0,nc=0,found=0;int full;
+bool strong(int S){if(!S)return false;int st=__builtin_ctz((unsigned)S),r=1<<st;for(int k=0;k<n;k++){int t=r;for(int i=0;i<n;i++)if(r>>i&1)t|=A[i]&S;if(t==r)break;r=t;}if(r!=S)return false;r=1<<st;for(int k=0;k<n;k++){int t=r;for(int i=0;i<n;i++)if(S>>i&1 && A[i]&r)t|=1<<i;if(t==r)break;r=t;}return r==S;}
+bool acyclic(int S){while(S){int rem=0;for(int i=0;i<n;i++)if(S>>i&1 && !(A[i]&S))rem|=1<<i;if(!rem)return false;S^=rem;}return true;}
+void check(){leaves++;int in[16]={};for(int i=0;i<n;i++)for(int j=0;j<n;j++)if(A[i]>>j&1)in[j]++;for(int i=0;i<n;i++)if(in[i]<2)return;nd++;if(!strong(full))return;sc++;for(int i=0;i<n;i++){int ins=0;for(int j=0;j<n;j++)if(A[j]>>i&1)ins|=1<<j;if(acyclic(A[i])||acyclic(ins))return;}nc++;for(int S=1;S<full;S++)if(__builtin_popcount((unsigned)(full^S))>=2 && acyclic(S)&&!strong(full^S))return;found++;cout<<"WITNESS ";for(int i=0;i<n;i++)cout<<A[i]<<",";cout<<endl;}
+void dfs(int i,int m){if(i==n){check();return;}for(int S=0;S<=full;S++)if(!(S>>i&1)){int d=__builtin_popcount((unsigned)S);if(d>=2 && m+d+2*(n-i-1)<3*n-3){A[i]=S;dfs(i+1,m+d);}}}
+int main(int argc,char**argv){n=atoi(argv[1]);full=(1<<n)-1;dfs(0,0);cout<<"n "<<n<<" outdegree>=2 arc<3n-3 leaves "<<leaves<<" indegree>=2 "<<nd<<" strong "<<sc<<" neighborhood_cyclic "<<nc<<" counterexamples "<<found<<endl;}

@@ -1,0 +1,297 @@
+FILE run.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+FILE write_lane.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE source_get_guard.py
+"""One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+FILE charge_search.py
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+TASK MIDDLE
+correction0;distinctBickle353974original2203.10239/2023finalpublicrefutation0. LiNingJCTB2021redirect-only/CMUthesis202/allolddenialsbinding.
+Four exactpublicregistryROOTmetadataartifacts504unavailable:NOroot/README/tree/API/branch/versionalternate refresh/retry/reconstruction;notblanketban everydistinctproofpublication/repo,cannotindirectlyrestoredeniedmetadata. Cacheddatedheads navigationonly,nocurrentproof/chronology/noveltyclearance/worldwideabsence. IndependentlyidentifiedconcretematchingcounterclaimneedsactualbodyorpreciseHOLD. SpecificapplicableunreadbodyHOLD/genericworldwideunknownnotautomaticveto.
+Recentcompletedall0:r450340211actualsourceownstrongerDiracT4.4;337615specificKardosNarboni2019proofbodyHOLD;340492listarborability/333550two-rowbuttons/339730339731labelinggaps.336282Johnson-Steinerconverse isDISTINCT notbuttons,rootdraftmisattributioncorrectedbeforedispatchandoriginalgatesunchanged. r451350677/350678/350679actualZhu2611.01172 fixesparametersnotjointarbitraryminors/Hankel,350679(c)public;347351higher-exterioruniformrank/isotropymergegap,330954actualrecoloring-localizationdefinitioncorrection0. r452323005reversalformula/343308nullity-degree-domaincorrections0,331056concreteKeuschproofbodyunread;authorautomaticredirectFAIL/networkSTOPretained. r449352639/344760/376136actualpublic/sourceown0,338284singlevertexfactorboundary0/nontrivialproductgap,346690ONEcoloringALLs,k fixedhgap. Rootintakesdocumentary/provenance/routingonlynotmathproofvalidation.
+BOOKKEEPING: IMMUTABLEcharge_search.py,THIRTEENfrozenbindings. BeforeEACHnativeSEARCH persist plan top-levelqueriesEXACTstrings; invokeABSOLUTEhelperownplanpathUNDERrun.py. AuthenticateLIVEoldcounter+chargeledger BEFOREmutation,neverdirectbudget/chargeledgerediting. AfterchargeexactnativecallONCE,FULLactualresponseIMMEDIATELYsavedbeforeotherwork. Wholelane3calls9queries,failedattemptsstaycharged,norefund/reset/backfill. GETsolefixedguard. BEFOREsignificantinvestment exactIDkeys/scalarIDsANDexactsourceURLstructuralhistorymatches/readactualrelevantdispositions,noneighbortransfer;sourceown/strongertheoremproofs beforeclaimnew. Standalonefirsttwocommandsno dot/prosepunctuation;inertownverifierargumenttrue0/all13checkedundercapsrecordedinvocationdeviationnotautomaticexternalpolicybreach/abandonment. Genuineprotected/frozen/access/cap/network/budgetviolationsretainSTOP/disclosure. Allr39576acquisitionspermanentquarantine;latestuserONLYGPT-6.1Solhigh/default ALLagents,nochildren/fallback.
+
+LATEST: Active328748independent perfectmatchingliteral/source-range/specificpublicsmall-nconstruction/significance review ONLY,noformal. Author107>105central-switch n54,t50family self-check;actualsourceafterConj1.3discusseslargen andMeagherprimaryslidesreportpublicsmall-n phenomenonwithoutproof. Paystrict-vsweakintersectionandrangebeforeclaimnew;no inferredrangecorrectionorpriorbridgewithoutactualsource. Newreviewtarget1409.2057 notdenied;no duplicateinvestment/parameter/helpercredit. Recentr453338330sourceownrationalB=A/mrefutation and350142sourceownKempe/randompairrefutationpublic0;350349orbit3/4convergence gap/public>=5,348329rankedLatin deletion-vsL1removalgap,345905specificallalphabetweakshuffleprimaryproofHOLD. Latevisibledenial-overlaprecoveryafterretrieval retainedqualification;fullcapped-childoutputhadbeenread/saved,nouniversalretroactivePASS,noinheriteddeniedartifactrequested. r454342490balanced-subsequenceallwordinjectivity and329404exactcliquefactorgaps;340276sourceowncounterexample/335343strongerpublicrestricted-sumtheorem0,329896sourcecapacity-vsmultichoosabilitydefinitioncorrection0.15GETsuccess/acrosstwocompletedlanes,nonewdenial;2search6queries and3search9querieslivecontinuityauthenticated. Allrootintakesdocumentaryonly,notindependentmathvalidation.
+
+LATESTr455all0:336597ordinary all-parameterinverse-kernel algebraicproof author-only,selfchecknotindependentreview. SpecificallyidentifiedearlierexactByrne-Fulcher Invariants of Tutte partitions and a q-analogue,JCTB172May2025,DOI10.1016/j.jctb.2024.12.002/PIIS0095895624000996 actualpublisherbody403: ENTIREpriorworkALLnewalternatehost/query/version/arxiv/author/DOI/API/cache/mirror/bodydeliveriesUNAVAILABLE. No authenticatedprior-exclusionfromsnippets/no noveltyclearance. ParkatSPECIFICpriorbodyHOLD,nofreshretrieval/formallane. Different2017originalBollen-Crapo-Jurrius1707.03459 notthatdeniedwork,but target336597/1707.03459excludedfromnewinvestment.339903balancedshapeFK/330224sourcetrimmedB-lattice/350593publicloopless-colooplessmatroidrefutationzero.355749posetfiberinjection/quantitativecoupling and347515allcubicmatchingordersgap;14originalbodiesunread.8GETattempts7success1HTTP403,noalternate delivery;2search6querieslivecontinuityverified. Rootmetadata/ordinaryproposalnotnewscientificacceptance.
+
+LATESTmatching328748reviewCOMPLETED/PARK,notactive. Independentordinary107>105strict>50 PASS/fullv1printedunqualifiedscopeandstrictglyphVISUALLYpaid;originalsubsequentlarge-ncontext separate. Meagherslidespublicsmall-nclaim lacksconstruction/strictthreshold/cardinalitybridge:weak51largerthan15notnecessarilylargerthan105. Exact2017LindzeyEJC65pp130-142DOI10.1016/j.ejc.2017.05.005/PIIS019566981730063X/original1409.2057returned2668byteRedirectingHTMLonly: ENTIREsameworkALLnewalternatehost/query/version/arxiv/author/cache/mirror/API/DOI/body/metadataDELIVERIESUNAVAILABLE. Guardtransport200historyunchanged,manualclassificationseparate. Explicitcopiedv1onlynotfinalequivalence. Distinct1811.06160unread/notautomaticallydenied,butcannotindirectlyrestore2017work. Scientificrange/known-small-nadaptation/finalHOLD,nofreshretrieval/formallane/credit. No intendedlarge-nbreakthrough,unsupportedroutineexclusion orworldwidenoveltyclaim. Onefamilyonly,n54/alln/threshold/helper/formalizationnotrecounted.
+
+LATEST completed r456 and r457: neither has a qualified full-scope survivor. r456: 367030 lacks the modulo-four pairing of cycle-reversal orbits, despite actual final-source conjecture context; 369042 lacks arbi
+OWN NAMES ['reservation.json', 'reservation.sha256', 'bootstrap.py', 'run.py', 'write_lane.py', 'verify_frozen.py', 'registry-roots.json', 'source_get_guard.py', 'model-policy-sol-only.json', 'charge_search.py', 'inherited-denials.json', 'historical-results-allowlist.json', 'search-budget.json', 'TASK.txt', 'frozen-inputs.json', 'ROOT-PREP.json', 'bootstrap-receipt.json', 'frozen-before.json']

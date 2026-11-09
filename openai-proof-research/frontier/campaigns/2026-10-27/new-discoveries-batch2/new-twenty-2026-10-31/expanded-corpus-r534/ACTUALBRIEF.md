@@ -1,0 +1,50 @@
+# ACTUALBRIEF — expanded-corpus-r534 (Claude Opus 5.5, high effort)
+
+Status: two author-complete ordinary proofs, neither independently reviewed. No self-credit. Root alone adjudicates acceptance. Full proofs: FULLCANDIDATE.md. Dormant formal plan: DORMANT-SOL-FORMAL-PLAN.md. Twenty gates: results.json and the table below. Literal bindings with trailing newline in the line hash: literal-bindings.json.
+
+## Headline
+* 368315: Theorem A proves Conjecture 4.1 of arXiv 2505.04000v1 for every fixed m. On generic ICS, rowmotion is rotation by 1 of a set of 2m marks on Z_{m+n+1} carrying a fixed noncrossing matching, with a hidden zone of m-1 positions (token travelling through the rows as a tie). This is the small exact state summary. Counting gives r(n)=1-O_m(1/n). Imports source Theorem 1.1, attributed; bracket confirmed in the source proof; four transitions hand-checked against toggles. Lean should replace it by direct toggle lemmas.
+* 342017: Theorem B proves, for every fixed m, N(m,n) is quasi-polynomial in n of degree exactly m-1 with leading coefficient alpha_{m-1}/(m-1)!, alpha_k=(15/4)(5/2)^k+(1/4)(-1/2)^k, so N(m,n)/binom(m+n-1,n)->alpha_{m-1}, via a Stern-Brocot reformulation and a 10-state coupled doubling transducer. Exact GF. Reproduces source Theorems 3.1 and 4.2 exactly and the 47/4 leading coefficient of Theorem 5.3. It also locates an arithmetic error in source Table 2 that undercounts P_{3,n} by 1 for odd n>=5, with a hand-checked witness on P_{3,5}. Correction earns zero.
+
+## Adversarial generic-proof attempts (full text in FULLCANDIDATE A6 and B7)
+* 368315: no reduction to order-ideal rowmotion on one product of chains found; source Thm 1.1 gives one step only; a uniform orbit statement fails (quadratic orbits at m=2). Strongest objection: Section 4.1 of the source names the good-family plan, so this may be read as completing a stated strategy; its orbit claim was conditional and is false as literally worded for all good ICS.
+* 342017: Theta(n^{m-1}) alone looks reachable by iterating the source's mod-4 casework, though carrying it through for general m needs a state summary equivalent to mine. Strongest objection: routine extension for the Theta reading; the constant alpha and the exact GF go beyond it. "Same rate" is informal, root must rule; a uniform two-variable reading is false.
+
+## Public or recorded (zero)
+334707 Brown-Erey 1611.09536v1 Thms 4.5, 4.7, Cor 4.8, same coefficient mechanism as my reconstruction; 388669 DJMMUW 1904.04791v5 Thm 57; 320923 Jenssen-Keevash 2009.08315v2 Thm 1.5 (deep proofs attributed, unaudited); 340378 and 376374 recorded as solved in the literal, bodies unread.
+
+## Parked after literal review, precise gaps in results.json
+359698, 328911, 379604 (helper identity only), 327839, 317900, 331104, 375132, 361001, 356725, 349568, 350513, 338369, 321231. Recorded parks are not open-status certifications. Seventeen assigned original works unread (these thirteen plus 340378, 376374, 320923 and 388669, whose public or recorded status was taken from other sources or the literal).
+
+## Lean feasibility (no Lean run here)
+368315: finite ICS, toggles, counting; limit of explicit rationals; medium-high; direct toggle lemmas replace Thm 1.1. 342017: needs a ruling on the literal; words, 2x2 matrices, coefficient recursion and explicit polynomial bounds; medium. Details in the dormant plan.
+
+## Inventories
+Literal: literal-bindings.json (20 raw lines, chunk hashes, statement tokens, decoded hashes). History: history-scan.json, 933 allowlisted files read, 0 skipped by the additional protected-token filter, no exact-ID matches, six same-source neighbour files recorded and not transferred. HTTP: access-inventory.json and guard-ledger.jsonl: 8 charged GET hops, 7 success (PDF), 1 HTTP 403 (core.ac.uk 345953608, NEW-UNAVAILABLE.json, identity unread). Search: 3 calls / 3 strings, full responses saved in searches/ in the next tool call after each. Read depth: 1903.01398 main text; 1611.08920 full; 1611.09536 and 2505.04000, 1904.04791, 2009.08315 relevant passages by text extraction; no visual figure inspection. Resources: every substantive step under run.py with outer timeout 140; native search and writer peaks not separately measured.
+
+## Process disclosures
+The task and denial files were read in contiguous 15000-character chunks; bootstrap output and one history-shape listing were too large for the tool and were persisted by the harness outside the lane, read only as their previews. get_core_345953608 exited 1 and is preserved. All writes through write_lane.py, some via subprocess from the runner. Comparison against the accepted-results family (58+39 scopes) is NOT paid here: no ledger of scopes was supplied in this lane beyond the allowlisted history; root must perform it. No final-journal versions checked; no worldwide novelty claim.
+
+## Twenty gates
+| ID | literal | source | ordinary | prior | significance | formal | acceptance |
+|---|---|---|---|---|---|---|---|
+| 359698 | PASS literal read; general poset P, no restriction | UNREAD 2308.14863 | NONE; no mechanism attempted beyond literal | not checked | hard | not assessed | PARK: exact gap is a container count for arbitrary P |
+| 340378 | PASS; literal status records proof by Yu | UNREAD 1809.04394 | NONE | literal-recorded public proof, body unread | zero | none | ZERO per recorded public solution, unaudited |
+| 328911 | PASS literal read; emin/C parameters only as printed in literal | UNREAD 1409.7983; history source-neighbour fresh-corpus-r8 is a different ID, not transferred | NONE | not checked | unassessed | not assessed | PARK: needs general tree construction |
+| 379604 | PASS literal; n=1 chain case makes literal false as worded (jump number 0), domain correction, zero | UNREAD math/0602509 | HELPER only: exact identity E[bumps]=sum_y E[1/W_y] by conditional uniform slot insertion, W_y=width of y window | not checked | helper zero | cheap for identity only | PARK: gap is W_y→∞ uniformly, including m=2, n→∞ |
+| 327839 | PASS literal | UNREAD 1405.1576 | NONE | from memory Chan-Grzesik-Kral-Noel partial results, unread, not asserted | hard | analytic, expensive | PARK at small c_3 gap |
+| 317900 | PASS literal | UNREAD 0811.0036 | NONE | not checked | hard | knot certificates expensive | PARK: general part sizes gap |
+| 331104 | PASS literal; bars single plane reading inferred, source unread | UNREAD 1508.02616 | PARTIAL: lower bound m/4 by unit-bar degree 4; proposed brick-wall lattice labelling, gaps between same-row bars expose same-part sight lines, unresolved | not checked | unassessed | finite, medium | PARK: explicit layout unpaid |
+| 342017 | PASS; "same rate" informal, tenable reading fixed m, n→∞; uniform two-variable reading false by N symmetry and source m=2 | READ 1903.01398v1 in full text; Integers final NOT read; core.ac.uk 345953608 HTTP403 identity unread HOLD | AUTHOR-COMPLETE: exact 10-state doubling-transducer system, exact GF, Theorem B | 1 search; Keyes-Reiter 2007.15100v2 statement-only mention read; no proof found, bounded | serious routine-extension objection to Theta reading retained; constant alpha and GF go further | plan written, medium | SURVIVOR-PROPOSED, root adjudication; no self-credit |
+| 375132 | PASS literal | UNREAD 2606.07471 | NONE | history source-neighbour expanded-corpus-r70 different ID, not transferred | hard probabilistic | expensive | PARK |
+| 376374 | PASS; literal records later resolution by Lv-Gyori-He-Salia-Tompkins-Zhu | UNREAD 2607.27284 | NONE | literal-recorded public solution, unread | zero | none | ZERO per recorded public solution, unaudited |
+| 368315 | PASS; literal Conjecture 4.1 of 2505.04000v1 confirmed in actual source text | READ 2505.04000v1 definitions, Thm 1.1 proof, Section 4.1 strategy; [ELMSW] Thm 2.20 attributed; final/later version not checked | AUTHOR-COMPLETE: Theorem A via rotating noncrossing matching on Z_{m+n+1} with hidden zone; imports source Theorem 1.1 (bracket confirmed); four transitions hand-checked against toggles | 1 search, no proof found, bounded | contrary case: source named good-family plan; reply: orbit claim unproved there and hidden-zone mechanism absent | plan written, medium-high, replaces Thm 1.1 by direct toggle lemmas | SURVIVOR-PROPOSED, root adjudication; no self-credit |
+| 361001 | PASS literal | UNREAD 2312.01419 | NONE | history source-neighbour expanded-corpus-r79, different ID, not transferred | hard algorithmic | expensive | PARK |
+| 356725 | PASS literal | UNREAD 2211.01032 | NONE | not checked | hard analytic | expensive | PARK: sharp constant 2 in ln n |
+| 349568 | PASS literal; property (BI) only named | UNREAD 2101.12601; history source-neighbour expanded-corpus-r103 different ID | NONE | not checked | hard | expensive | PARK |
+| 350513 | PASS literal | UNREAD 2104.11850 | NONE | not checked | hard | expensive | PARK |
+| 338369 | PASS literal; model G_n(F,r) only named | UNREAD 1802.02002; history source-neighbour expanded-corpus-r521 is 338368, not transferred | NONE | not checked | hard | expensive | PARK |
+| 320923 | PASS literal | Target source UNREAD; actual public 2009.08315v2 Theorem 1.5 read | NONE new | Jenssen-Keevash Theorem 1.5 is the exact formula for q>=3; q=1,2 are trivial boundary cases | zero | none | ZERO public; deep proof attributed, not audited |
+| 321231 | PASS literal | UNREAD 1103.0080 | NONE | not checked | hard dense enumeration | expensive | PARK |
+| 334707 | PASS; actual source Conjecture 3.1 read | READ 1611.08920v1 relevant full text | author coefficient proof reconstructs the public mechanism, no new credit | actual Brown-Erey 1611.09536v1 Theorems 3.1-3.2, 4.5, 4.7 and Corollary 4.8 read: exact public solution | zero | none | ZERO public |
+| 388669 | PASS literal | Target page not fetched; actual 1904.04791v5 Theorem 57 read | NONE new | DJMMUW Theorem 57 states every planar graph has an O(n) volume 3D grid drawing, resolving the open problem (with Lemma 56, Theorem 53) | zero | none | ZERO public; deep proof attributed, not audited |

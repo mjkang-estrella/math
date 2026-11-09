@@ -1,0 +1,7 @@
+Live heads fetched: Lean Pool 01db1d7049cf9668bda1e9e106875ee1278b43e6; Omega 5d7ab66d0e11d7ff962b4a132ee71001c55a9fa0; OpenAI/math 4eaee87548250b2682affda7d05d947c05554bae. Exact head and tree receipts are in sources.
+
+Lean Pool tree is complete; projects.yml was initially requested at the root (404) and then obtained at its actual path LeanPool/projects.yml. All files under candidates/ were fetched at the pinned head and screened. The screen includes IDs, source arXiv numbers, authors and topic strings. Broad terms produce false positives retained in registry-screen.json. The relevant Omega packing hit proves a different conjecture in the same paper; it does not imply reserved 373854. The Omega Svinin identity is from arXiv:1505.06394, not reserved 334353.
+
+The Omega recursive tree is truncated, so its path screen is incomplete. The OpenAI recursive tree is also checked for its truncation flag in registry-screen.json. This pass does not claim global registry clearance. GitHub repository search queries and bounded zero-hit responses are preserved as search-*.json and receipts. Repository search is not code search and cannot establish absence of proofs.
+
+No denied host was deliberately revisited. Crossref, Semantic Scholar, export.arxiv.org (search API), ScienceDirect and DBLP were preblocked in the direct fetcher. Web search result snippets can mention those hosts; none of those result links was opened. No TLS verification was disabled. HTTP receipts are immutable per requested filename.

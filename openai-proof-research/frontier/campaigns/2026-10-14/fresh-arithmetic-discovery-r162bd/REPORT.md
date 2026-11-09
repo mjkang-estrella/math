@@ -1,0 +1,13 @@
+# Local handoff report — r162bd
+
+Outcome: PREFREEZE/no nominee. No statement frozen; no correctness, contribution or acceptance gate; no count change. Campaign19/20/latestR041 is inherited context only. No old target is reopened.
+
+The main research result of this investigation is a stronger integrated comparison, not a proposed acceptance. Firm projection gives mean residual at most (1+kappa)/(2 sqrt(kappa)) times the replica residual, with an exact rational sharpness family. A separate sharp quadratic inequality removes the gap but demands a smaller error budget. Most importantly, the actual source's all-step geometric guarantee supplies a larger-step witness on the same mean; this yields a stronger small-step estimate and completes the compatible fixed-constant retuning. The remaining variable-model compiler and joint-error obligations are unproved and unfrozen.
+
+Complete canonical text reading and scoped primary proof reading are distinguished in private/READING-LIMITS.md. All16 source blobs are authenticated; all15 operative text objects were read. Six primary PDFs were acquired, with121 distinct pages read, including two full short papers. Two primary pages were visually checked. Five completed original exceptions were read; zero optional history traversals. Transitive primary ancestry, other primary pages and full source algorithm execution remain incomplete. Truncated-display recovery, incidental search snippets and the own-root missing-file attempt are disclosed.
+
+The exclusive root contains original notes and verifier alongside private bodies/metadata. REPORT.md is outside the manifest payload list and is instead bound by its own explicit detached anchor. The verifier checks exact whole-root membership, sorted unique safe file paths, lengths, modes, SHA256, directory modes, source Git blob/metadata bindings, and recorded completed-copy bindings. It never reads the old originals or writes files. Original-to-copy equality was checked before sealing; later verification uses the anchored private binding records.
+
+A tiny copied fixture exercises the same verifier on a valid packet and a corrupted copy. The final manifest is preflighted in memory by the same verification logic, then written once, followed by read-only verification. Terminal results and detached anchors are the final artifact-check record; no post-seal log is appended. Artifact checks are not mathematical gates.
+
+Publication, uploads, submissions, contacts, browser UI, Git changes, nested agents and downstream formal/manuscript/release work stayed stopped. Every write is confined to this root. Authorized provenance: Codex / GPT-6 Astra / high / default; no service-tier inspection was performed.

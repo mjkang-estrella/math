@@ -1,0 +1,7 @@
+# Bounded web search log
+
+Public search discovery was used during 2026-11-06 00:24–00:30 UTC. Exact requests were: `2509.15764 precoloring complete bipartite`, `2310.06464 colorability`, `1712.06143 perfect matching directed cut`, `2502.06237 self avoiding ladder`; title/author searches for Bärnkopf precoloring bipartite conjecture 2026, bi-hypergraphs Conjecture 4, Cuts in matchings Conjecture 6, Grid Representations polynomial; and Knauer Valicov bipartite directed conjecture 2026, colorability-extension bi-hypergraphs, rainbow 2-factor conjecture. Quoted identifiers/titles were included in the actual tool requests.
+
+Useful primary-body leads were the author Knauer PDF, Bärnkopf journal DOI 10.1016/j.dam.2026.02.041, Balko journal DOI 10.1016/j.comgeo.2013.05.003, and the earlier rainbow-path PDF. A public ProbXiv proof attempt for primitive grid drawings was separately fetched and read. Search snippets of AI review text were not taken as mathematical certification. The source bodies and HTTP receipts, rather than search ranking, support dispositions. Search responses themselves remain in the tool transcript and do not have independent on-disk response hashes; this file is a request/result summary, not an exact response archive.
+
+No new current MathDB solution/comment-body clearance was claimed from search-index snippets. No Scholar/MathSciNet/zbMATH complete citation sweep, no exhaustive current-paper search across all twenty, and no global absence claim.

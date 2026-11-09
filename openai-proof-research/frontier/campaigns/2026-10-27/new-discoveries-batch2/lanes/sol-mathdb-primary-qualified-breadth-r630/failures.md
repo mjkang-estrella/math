@@ -1,0 +1,11 @@
+# Failures, stops, limits
+
+No HTTP or helper failure occurred in this lane. Eight direct primary/author HTTP fetches returned200. No MathDB request: inherited429 HOLD. Current proof registry unavailable; no novelty clearance. Generic User-Agent/Accept only; no email, contact information, personal name, credentials or workspace identifiers in outbound requests. No Google/GitHub API/raw/codeload/diff, ScienceDirect, browser/preview, TLS bypass, accounts, messages, uploads or publication.
+
+Inherited parked routes stayed parked: AIM/Kourovka/EGRES/AIProofWatch, DMGT TLS, ProjectEuclid challenge, ResearchGate403, OEIS A274199/internal403, DOI10.1093/imrn/rnz305 academic.oup.com403 Cloudflare. No retries or alternate-route fishing. 338366 remains excluded with text/figure reconstruction and unread-journal limits;338408 remains parked endpoint objection. No protected target selected.
+
+Two display commands exceeded output limits: initial verbose literal-record output and a broad PDF grep. No full-body coverage claimed from truncated output. A compact statement-only pass displayed all50 statements; targeted bounded PDF reads supplied the recorded selected passages. An unrelated corpus prefix was displayed during schema inspection; it receives no review credit. No corpus copied or historical tree recursively expanded/copied. Flat r363 root-level references added after resolving its actual lane name, before reading its decision.
+
+The only mathematical computation was exact rational area bookkeeping for five packing prefixes. It is neither an infinite packing nor a discovery. No centroid sweep, finite persistence/primality/reverse-add search, proof generation or formalization. No proposed full-scope route survived. All Python, including administrative/hash scripts and negative tests, ran under the fixed helper guard, unchanged512MiB AS/groupRSS,210s CPU,230s wall, with required single-thread/no-bytecode environment. No child agents, git, shared edits, Lean/manuscript/credit changes.
+
+Hash, size and extra-file synthetic negative fixtures use the same payload validator as the independent verifier. Fixtures exist only transiently inside this lane, never mutate originals, and are deleted before the final manifest. These integrity negatives do not test mathematics.

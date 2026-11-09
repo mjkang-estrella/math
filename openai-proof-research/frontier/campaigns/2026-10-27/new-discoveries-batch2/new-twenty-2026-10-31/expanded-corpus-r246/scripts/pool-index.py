@@ -1,0 +1,2 @@
+import pathlib,json
+D=pathlib.Path(__file__).resolve().parents[1];t=json.loads((D/'sources/leanpool-tree.json').read_text())['tree'];h=json.loads((D/'sources/leanpool-head.json').read_text())['sha'];ps=[x['path'] for x in t if x['path'].startswith('candidates/') or x['path']=='projects.yml'];print('head',h,'indexfiles',len(ps));print('\n'.join(ps[:20]));q=[('leanpool-'+p.replace('/','--'),'https://raw.githubusercontent.com/Vilin97/lean-pool/'+h+'/'+p) for p in ps if next(x['type'] for x in t if x['path']==p)=='blob'];(D/'queue-pool.json').write_text(json.dumps(q))

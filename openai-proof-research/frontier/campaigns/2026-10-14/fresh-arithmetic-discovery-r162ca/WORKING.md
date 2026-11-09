@@ -1,0 +1,3 @@
+# R162CA
+
+PREFREEZE / no nominee. Codex / GPT-6 Astra / high / serviceTier default. Source161 is stipulated true at the assigned pin. All 14 canonical texts, all seven acquired primary papers (156 pages), and the five exact completed exceptions were read; no optional original-history traversal was used. Full derivation and source/payment/read-limit records are private. The entire affine/complement path is closed as a source/primary comparison, not parked as a new gap. No theorem or diagnostic was selected/frozen, no gate/count assigned, and no downstream work was performed. Parent alone adopts dispositions.

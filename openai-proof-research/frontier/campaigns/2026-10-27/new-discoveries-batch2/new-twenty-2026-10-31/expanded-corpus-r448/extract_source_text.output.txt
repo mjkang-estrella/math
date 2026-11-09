@@ -1,0 +1,1068 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+forest pages 65
+neighborhood pages 10
+linear pages 9
+LINEAR FULL                                                  Plane Triangulations Without Spanning 2-Trees
+
+                                                                                   Allan Bickle
+
+
+
+
+arXiv:2203.10239v1 [math.CO] 19 Mar 2022
+                                                                         Department of Mathematics,
+                                                      Penn State University, Altoona Campus, Altoona, PA 16601, U.S.A.
+                                                                             E-mail:    aub742@psu.edu
+
+                                                                                 March 22, 2022
+
+
+                                                                                       Abstract
+                                                    A 2-tree is a graph that can be formed by starting with a triangle and iterating
+                                                the operation of making a new vertex adjacent to two adjacent vertices of the existing
+                                                graph. Leizhen Cai asked in 1995 whether every maximal planar graph contains a
+                                                spanning 2-tree. We answer this question in the negative by constructing an infinite
+                                                class of maximal planar graphs that have no spanning 2-tree.
+
+                                                keywords: k-tree, triangulation, Hamiltonian cycle, maximal k-degenerate graph
+
+
+                                           1    Introduction
+                                           We consider the problem of whether every maximal planar graph contains a spanning 2-tree,
+                                           first proposed by Leizhen Cai [5, 6] in 1995.
+
+                                           Definition 1.1 A k-tree is a graph that can be formed by starting with Kk and iterating
+                                           the operation of making a new vertex adjacent to all the vertices of a k-clique of the existing
+                                           graph.
+
+                                                 Note that a k-tree is a chordal graph. A more general recursive construction of k-trees
+                                           is that Kk and Kk+1 are k-trees, and any larger k-tree can be formed by identifying two
+                                           k-trees on Kk or Kk+1 .
+
+                                           Definition 1.2 A spanning subgraph of a graph has the same vertex set. A Hamilto-
+                                           nian cycle of a graph G is a spanning cycle of G. A graph with a Hamiltonian cycle is
+                                           called a Hamiltonian graph.
+                                                 A graph is planar if it has a drawing in the plane that has no crossings. The regions
+                                           of a plane drawing are the maximal pieces of the plane surrounded by edges and vertices. The
+                                           infinite region is the exterior region. The length of a region is the length of a walk around
+                                           it. A graph is maximal planar if no edge can be added without making it not planar. A
+                                           graph is outerplanar if it has a plane drawing with all vertices on the exterior region.
+
+
+
+                                                                                          1
+       Definitions of terms and notation not defined here appear in [2]. In particular, Kn and
+Cn are the complete graph and cycle of order n and G + H is the join of graphs G and H.
+       Every connected graph has a spanning tree. A spanning 3-tree of a graph with order
+n ≥ 3 would have size 3n − 6, so a planar graph has a spanning 3-tree if and only if it is a
+3-tree. The problem of determining whether there is a spanning 2-tree is more complicated.
+       Results on k-trees and related topics are surveyed in [3]. Bern [1] showed that deter-
+mining whether a graph has a spanning k-tree is NP-complete when k ≥ 2. Cai and Maffay
+[7] show this is true even for planar graphs with ∆ (G) ≤ 6 when k = 2. Cai found several
+sufficient conditions for a spanning 2-tree and showed that it is NP-complete to determine
+if G has a spanning k-tree even given a spanning l-tree of G, l < k [5, 6].
+       Any complete graph has a spanning k-tree. Bern [1] showed that it is NP-complete
+to find a minimum spanning 2-tree for weighted complete graphs, and found an exponential
+algorithm for this problem. Cai [5] shows that there is no good approximation algorithm for
+weighted complete graphs in general, but there is such an algorithm when they satisfy the
+triangle inequality. Shangin and Pardalos [16] consider various heuristics for the spanning
+k-tree problem.
+       Ding [8] found applications of spanning k-trees to linguistic grammars, the RNA 3D
+structure prediction problem, and learning Markov or Bayesian networks. Spanning 2-trees
+have applications in geodesy (geodetic surveying) [12] and logic and probability [10, 13].
+
+
+2     Hamiltonian Cycles and 2-Trees
+Leizhen Cai [5, 6] asked in 1995 whether every plane triangulation contains a spanning 2-tree.
+Cai did not conjecture an answer, but I will reframe the problem as a conjecture to simplify
+discussion of it.
+
+Conjecture 2.1 Every maximal planar graph with order n ≥ 3 contains a spanning 2-tree.
+
+      It is easy to show that some special classes of maximal planar graphs have spanning
+2-trees.
+
+Lemma 2.2 [5] Every Hamiltonian maximal planar graph contains a spanning 2-tree.
+
+Proof. Adding the edges inside (or outside) a Hamiltonian cycle produces a spanning 2-tree.
+✷
+
+      Denote a 4-connected maximal planar graph as a 4MP. For these graphs, the converse
+is true.
+
+Proposition 2.3 Every spanning 2-tree of a 4MP has a unique Hamiltonian cycle.
+
+Proof. A 2-tree has a Hamiltonian cycle if and only if it contains no K2 + K 3 [15]. Let G
+be a 4MP with a spanning 2-tree T . If T is not Hamiltonian, it contains K2 + K 3 , so G has
+a separating triangle and is not 4-connected. Thus T has a Hamiltonian cycle C.
+      A 2-tree with order n ≥ 3 is Hamiltonian if and only if it is outerplanar [14]. It is easily
+shown by induction that the cycle is unique, and T can be drawn so that C is the exterior
+
+
+                                                2
+region.                                                                                       ✷
+
+     This shows a correspondence between Hamiltonian cycles and pairs of spanning 2-trees
+of 4MPs.
+Corollary 2.4 Every 4MP has twice as many spanning 2-trees as Hamiltonian cycles.
+     Whitney [18] showed that every 4MP is Hamiltonian. Tutte proved a stronger state-
+ment.
+Theorem 2.5 [17] Every planar 4-connected graph has a Hamiltonian cycle through any two
+edges of a region.
+     Cai observed the following corollary to Theorem 2.5.
+Corollary 2.6 [5] Every 4MP contains a spanning 2-tree.
+     There is another easy special case. Cai and Maffray [7] showed that every l-tree contains
+a spanning k-tree when l ≥ k ≥ 1.
+Corollary 2.7 [7] Every 3-tree contains a spanning 2-tree.
+
+
+3    Path-Tree Partitions
+Denote a 4MP or K4 as a 4-block. Every maximal planar graph can be formed by identifying
+triangles of 4-blocks. Any 4-block has a spanning 2-tree. The question is whether a spanning
+2-tree for the whole graph can be pieced together from those of the 4-blocks.
+      A spanning 2-tree contains 0, 1, 2, or 3 edges of any given triangle. If there were some
+4MP such that for every spanning 2-tree T , there is some triangle with no edge of T , that
+would be sufficient to disprove Conjecture 2.1. (We could simply attach another 4-block at
+every triangle, and a spanning 2-tree could not extend into all of them.) We will show that
+this is the case.
+Definition 3.1 A maximal planar graph has a linear Hamiltonian cycle if the regions
+inside (or outside) the cycle share edges with at most two other such regions (that is, the
+dual of these regions is a path).
+
+Conjecture 3.2 Every 4MP has a linear Hamiltonian cycle.
+
+       Conjecture 3.2 is weaker than Conjecture 2.1. We will show that Conjecture 3.2 is
+false, so Conjecture 2.1 is false. To study Conjecture 3.2, it is convenient to look at the dual
+graph.
+Definition 3.3 The Hamiltonian dual of a planar graph with a given Hamiltonian cycle
+is formed by deleting any edges that cross the Hamiltonian cycle from the dual graph.
+      Denote the dual of a 4MP as a 4MP dual. A 4MP dual is a 3-connected cubic planar
+graph with no nontrivial 3-edge cut. (A trivial edge cut has all edges incident with a common
+vertex.)
+
+
+                                               3
+Definition 3.4 A cubic graph has a path-tree partition if its vertices can be partitioned
+into two sets so that one induces a path and the other induces a tree. A path-path partition
+and tree-tree partition are defined similarly. A Yutsis graph is a multigraph in which
+the vertex set can be partitioned in two parts such that each part induces a tree.
+
+      A tree-tree partition is also known as a Yutsis decomposition. Yutsis graphs have
+applications in physics, particularly the quantum theory of angular momenta [19].
+      A simple degree sum argument shows that the two vertex sets in a tree-tree partition
+must have equal size. Theorem 2.5 implies that the every 4MP dual has a tree-tree partition.
+
+Proposition 3.5 A 4MP has a linear Hamiltonian cycle if and only if its dual has a path-
+tree partition.
+
+Proof. (⇒) Since all vertices are on a Hamiltonian cycle, no vertex is inside it. Thus each
+component of the Hamiltonian dual is acyclic. Each is clearly connected, so each is a tree.
+They have the same order since there are the same number of regions inside and outside the
+Hamiltonian cycle. To have a linear Hamiltonian cycle, one of the trees must be a path.
+       (⇐) If a 4MP dual has a path-tree partition, the 4MP clearly has a linear Hamiltonian
+cycle.                                                                                     ✷
+
+      To show that Conjecture 3.2 is false, we produce a 4MP dual that has no path-tree
+partition.
+      Let Gk have vertices ai , bi , ci , 1 ≤ i ≤ 2k. The ai ’s and bi ’s induce 2k-cycles, ai ↔ ci ,
+bi ↔ ci , and c2i−1 ↔ c2i for all i, (all mod 2k). We show G4 below.
+
+
+
+
+Theorem 3.6 For k ≥ 4, Gk has no path-tree partition.
+
+Proof. Denote the graph formed from C6 by adding a single chord joining opposite vertices
+as a brick. Clearly Gk contains k bricks. Assume to the contrary that Gk has a path-tree
+partition with path P and tree T . Both P and T must contain at least one vertex from each
+cycle.
+       The ends of P are in one or two bricks, so P must pass through at least two bricks
+without ending. It is not possible for P and T to both pass through the same brick since
+the two c-vertices would be part of an induced 4-cycle of one of them. If P enters and exists
+a brick using two a’s, it must end at a b in the same brick (or vice versa).
+       To pass through a brick without ending there, P must enter at an a-vertex and exit at
+a b-vertex (or vice versa). Now P must contain (nonadjacent) a-vertices in distinct bricks
+
+
+                                                 4
+with a b-vertex between them. But then the graph induced by the vertices not in P is dis-
+connected and hence not a tree, a contradiction.                                       ✷
+
+      Essentially the same construction appeared in [4], where it is used to analyze the
+number of triangles of certain types in Hamiltonian maximal planar graphs. Note that G4
+has order 24. In fact, a computer search conducted for [4] has shown that the smallest
+order of a 4MP dual with no path-tree partition is 24 (personal communication with Gunnar
+Brinkmann).
+      The dual of G4 is a maximal planar graph with order 14. This is shown below, where
+the two black vertices must be identified. Adding a degree 3 vertex inside each of its 24
+regions produces a maximal planar graph of order 38 with no spanning 2-tree.
+
+
+
+
+     To produce infinite classes of graphs that do and don’t have path-tree partitions, we
+need an operation to generate cubic graphs.
+
+Definition 3.7 Let uv and wx be edges of a cubic graph. Let adding a handle be the
+operation of subdividing uv and wx and adding a new edge yz between the new vertices. Let
+4-handling be the operation of adding a handle between two nonadjacent edges of a region
+of length 4 of a 4MP dual.
+
+     Every 4MP dual can be constructed from the cube by adding handles [9, 11].
+
+Proposition 3.8 Let H be formed by 4-handling a 4MP dual G. If G has no path-tree
+partition then so does H.
+
+                              u     y     v                u     v
+
+                     H                             ←→                     G
+
+                              x     z    w                 x     w
+
+Proof. (contrapositive) Let uyvwzx be a 6-cycle of H, and yz be a handle. Let uvwx be a
+region of length 4 of G which is 4-handled to produce the 6-cycle. Assume H has a path-tree
+partition with path P and tree T . We want to show that G has a path-tree partition with
+path P ′ and tree T ′ .
+      First suppose that yz is not in P or T . Then y and z are not both in P or both in T .
+If uy and yv are both in P or T , let uv be in P ′ or T ′ , respectively. Similarly, if wz and zx
+
+
+                                               5
+are both in P or T , let wx be in P ′ or T ′ , respectively. Else don’t put uv (or wx) in P ′ or
+T ′ . Thus P ′ and T ′ are both connected, acyclic, and have the same order in G, so we have
+a path-tree partition of G.
+       Now suppose that yz is in T . At least one of the other vertices, say x, is in T . Then u
+is a leaf of P . Then put ux in T ′ and leave v and w in the same corresponding sets. Thus
+P ′ and T ′ are both connected, acyclic and have the same order in G, so we have a path-tree
+partition of G. If we exchange the roles of P and T , the argument is similar.                ✷
+
+       The statement of this proposition does not hold in general for regions of length more
+than 4. Since all graphs formed by 4-handling G4 have no path-tree partition, we have an
+infinite class of counterexamples to Conjecture 2.1.
+
+
+4     Path-Path Partitions
+The smallest 4MPs are the double wheels Cn−2 + K 2 , whose duals are the prisms Cr K2 ,
+r ≥ 4. Note that any prism can be generated from the cube by adding handles.
+Theorem 4.1 Any 4MP dual constructed from a prism by adding at most two handles has
+a path-path partition.
+      Proving this requires many tedious cases. We outline a proof and leave the details
+to the reader. A prism Cr K2 has two distinct regions up to symmetry, a 4-cycle and an
+r-cycle. Denote the edges joining the two (chordless) r-cycles of a prism as spokes. A prism
+has a path-path partition using any two spokes and hence omitting any two given edges of
+one of the r-cycles (see the example below).
+
+
+
+
+      A handle can always be added to maintain a path-path partition when both of the
+edges used are in a path-path partition. One way of adding a handle to a 4-cycle produces
+a larger prism and need not be considered further. The other way produces a path-path
+partition. The other way of adding a handle uses two edges of an r-cycle, which is always
+possible (provided they are nonconsecutive).
+      When two handles are added, they can be added in two separate 4-cycles (adjacent or
+nonadjacent), both in the same 4-cycle (two ways), both in the same r-cycle (independent
+or not), in two different r-cycles (multiple cases), or one in a 4-cycle and one in an r-cycle.
+In each case, a path-path partition is easily found.
+      Note that G4 can be generated from a prism by adding four handles. Next we show
+that there is a 4MP dual of order 22 with no path-path partition. It can be formed by adding
+three handles to a prism. Call the graph below H22 . Let the vertices on the exterior 8-cycle
+be a-vertices, and the vertices on the interior 8-cycle be b-vertices. Call the two edges joining
+a and b-vertices spokes.
+
+
+                                               6
+Theorem 4.2 The graph H22 has no path-path partition.
+
+Proof. Assume there is a path-path partition with paths P1 and P2 . Now H22 has three
+bricks and two spokes. It is not possible for P1 and P2 to both pass through the same brick,
+and when one does, it must enter at an a-vertex and exit at a b-vertex (or vice versa).
+      If a path passes two bricks, two spokes, or one of each, it either induces a cycle or
+disconnects the other path, so this is not possible. If a path contains a spoke, it could have
+ends in two bricks, but would miss the third, so this is not possible.
+      Thus each path must go through one brick and have ends in the other two. Thus each
+path misses all edges between some consecutive pair of bricks, and this must be a different
+pair for each path. Thus one vertex of a spoke cannot be contained in either path, a contra-
+diction.                                                                                    ✷
+
+      A computer search by Gunnar Brinkmann shows that 22 is the smallest order of a
+4MP dual with no path-path partition (personal communication). I had hand-checked that
+all 4MP duals of order at most 16 have a path-path partition.
+
+
+5    Spanning Maximal 2-degenerate Graphs
+While Conjecture 2.1 is false, a weaker statement is true.
+Definition 5.1 A graph is k-degenerate if its vertices can be successively deleted so that
+immediately prior to deletion, each has degree at most k. A graph is maximal k-degenerate
+if no edges can be added without violating this condition.
+      Every k-tree is maximal k-degenerate, but the converse is false when k > 1. We
+construct a maximal k-degenerate graph by starting with Kk and successively adding vertices
+of degree k. Unlike for a k-tree, the neighbors of a new vertex are not required to induce a
+clique.
+Theorem 5.2 Every maximal planar graph contains a spanning maximal 2-degenerate graph.
+Proof. This is obvious for order n ≤ 3. Let G be maximal planar, and construct it by
+starting with some 4-block B1 and iteratively adding each new 4-block Br by identifying a
+triangle Tr of Br with a triangle Tr∗ of the existing graph. Let G1 = B1 and Gr be the graph
+after r 4-blocks have been added. We will show that for each r, Gr has a spanning maximal
+2-degenerate subgraph Mr .
+      If Br is a 4-block containing triangle Tr , then by Theorem 2.5 it has a spanning 2-tree
+that contains Tr . Any 2-tree can be constructed starting with any of its triangles. When
+
+
+                                              7
+identifying Tr and Tr∗ , delete any edges of Tr from the spanning 2-tree of Gr that are not in
+Mr−1 . Thus the construction of Mr−1 can continue from Tr into Gr , producing Mr . Iterating
+this process proves the theorem.                                                            ✷
+
+
+
+6    Conclusion
+There is more work to do on this problem. In a subsequent paper with Gunnar Brinkmann,
+we show that there are maximal planar graphs so that any 2-tree that is a subgraph of a
+graph G with order n contains at most 6n+23
+                                         7
+                                             vertices. We further examine the question of
+what is the smallest order of a maximal planar graph with no spanning 2-tree. We would
+like to characterize exactly which maximal planar graphs have a spanning 2-tree, but that
+problem seems difficult.
+
+Acknowledgments
+Thanks to Gunnar Brinkmann for informing me of some relevant articles and the results of
+several computer searches of maximal planar graphs that he conducted.
+
+
+References
+ [1] M. W. Bern, Network design problems: Steiner trees and spanning k-trees, PhD thesis,
+     University of California, Berkeley, CA (1987).
+ [2] A. Bickle, Fundamentals of Graph Theory, AMS (2020).
+ [3] A. Bickle, A Survey of Maximal k-degenerate Graphs and k-Trees, 2021+. Submitted.
+ [4] G. Brinkmann, K. Ozeki, and N. Van Cleemput, Types of triangle in plane Hamil-
+     tonian triangulations and applications to domination and k-walks, Ars Mathematica
+     Contemporanea, 17 1 (2019), 51-66.
+ [5] L. Cai, Spanning 2-trees. In: Kanchanasut K., Levy JJ. (eds) Algorithms, Concurrency
+     and Knowledge. ACSC 1995. Lecture Notes in Computer Science, vol 1023. Springer,
+     Berlin, Heidelberg. (1995)
+ [6] L. Cai, On spanning 2-trees in a graph. Discrete Appl. Math. 74 (1997), 203–216.
+ [7] L. Cai and F. Maffray. On the SPANNING k-TREE problem. Disc. Appl. Math., 44
+     (1993), 139-156.
+ [8] L. Ding, Maximum Spanning k-Trees: Models and Applications, PhD Thesis, University
+     of Georgia, 2016.
+ [9] G. B. Faulkner, D. H. Younger, The recursive generation of cyclically k-connected cu-
+     bic planar maps, Proceedings of the Twenty-Fifth Summer Meeting of the Canadian
+     Mathematical Congress, Thunder Bay, 1971, 349–356.
+
+
+                                              8
+[10] D. R. Hoover, Subset complement addition upper bounds—an improved inclusion-
+     exclusion method, J. Statist. Plann. Inference 24 (1990), 195–202.
+
+[11] A. Kotzig, Regularly connected trivalent graphs without non-trivial cuts of cardinality
+     3, Acta. Fac. Rerum Natur. Univ. Comenian Math. Publ. 21 (1969), 1–14.
+
+[12] T. A. McKee, 2-trees in geodesy, 1850–1950, Bull. Inst. Combin. Appl. 21 (1997), 77–82.
+
+[13] T. A. McKee, Spanning (2-)trees of intersection graphs and Hunter-Worsley-type
+     bounds, Util. Math. 68 (2005), 97-102.
+
+[14] A. Proskurowski, Minimum dominating cycles in 2-trees, Internat. J. Comput. Inform.
+     Sci. 8 (1979), 405–417.
+
+[15] P. Renjith and N. Sadagopan, 2-Trees: Structural Insights and the study of Hamiltonian
+     Paths, (2015) arXiv:1511.02038
+
+[16] R. Shangin and P. Pardalos, Heuristics for Minimum Spanning k-tree Problem, Procedia
+     Computer Science 31 (2014), 1074-1083.
+
+[17] W. T. Tutte, A theorem on planar graphs, Trans. Amer. Math. Soc. 82 (1956), 99-116.
+
+[18] H. Whitney, A theorem on graphs. Ann. of Math. 32 (1931), 378-390.
+
+[19] A. P. Yutsis, I. B. Levinson, V. V. Vanagas, Mathematical Apparatus of the Theory of
+     Angular Momentum, Israel Program for Scientific Translation, Jerusalem, 1962.
+
+
+
+
+                                             9
+
+NEIGHBORHOOD FULL                                                       Disjoint Total Dominating Sets in Near-Triangulations
+                                                                                                  P. Francis∗
+                                                                                    Department of Mathematics
+                                                                       SAS, VIT-AP University, Amaravati, Andhra Pradesh, India.
+                                                                                         francis@vitap.ac.in
+
+
+                                                            Abraham M. Illickan, Lijo M. Jose, and Deepak Rajendraprasad
+
+
+
+
+arXiv:2205.06464v1 [math.CO] 13 May 2022
+                                                                                  Department of Computer Science
+                                                                               Indian Institute of Technology Palakkad
+                                                            111901003@smail.iitpkd.ac.in, 112004005@smail.iitpkd.ac.in, deepak@iitpkd.ac.in
+
+
+                                                                                               May 16, 2022
+
+
+                                                                                                   Abstract
+                                                     We show that every simple planar near-triangulation with minimum degree at least three contains
+                                                  two disjoint total dominating sets. The class includes all simple planar triangulations other than
+                                                  the triangle. This affirms a conjecture of Goddard and Henning [Thoroughly dispersed colorings, J.
+                                                  Graph Theory, 88 (2018) 174–191].
+
+                                                  Key words Total dominating sets, Total domatic number, Coupon coloring, Planar near-triangulations.
+                                                  2010 AMS Subject Classification 05C15, 05C69.
+
+
+
+                                           1      Introduction
+                                           All graphs considered in this paper are finite, simple and undirected. A near-triangulation is a simple
+                                           planar graph embedded in the plane such that all its faces except possibly the outer one are bounded by
+                                           three edges. The most general form of the result we establish in the paper is
+
+                                           Theorem 1. Let G be a near-triangulation and V ′ be a subset of vertices of G containing all the vertices
+                                           of degree at least three and at most two vertices of degree two. Then, there exists two disjoint subsets V1
+                                           and V2 of V (G) such that each vertex v ∈ V ′ has at least one neighbor each in V1 and V2 .
+
+                                               If we place a restriction on the minimum degree, the above result can be stated in the language of
+                                           total domination. Let G(V, E) be a graph. For S ⊂ V , the open neighborhood N (S) of S is the set of
+                                           all vertices in G which have at least one neighbor in S. The set S is called dominating if N (S) ∪ S = V
+                                           and total dominating if N (S) = V . The minimum size of a dominating (resp. total dominating) set is
+                                           called the domination number γ(G) (resp. total domination number γt (G)) of G, while the maximum
+                                           number of pairwise disjoint dominating (total dominating) sets in G is called the domatic number d(G)
+                                           (total domatic number dt (G)) of G. A triangulated disk (resp. triangulation) is a near-triangulation in
+                                           which the unbounded face is bounded by a simple cycle (resp. triangle). The following two corollaries
+                                           follow by restricting Theorem 1 to the respective graph classes.
+
+                                           Corollary 2 (The Goddard-Henning Conjecture, Conjecture 30, [13]). If G is a planar triangulation of
+                                           order at least four, then dt (G) ≥ 2.
+                                               ∗ Part of the work was done as a post-doctoral fellow at Indian Institute of Technology Palakkad.
+
+
+
+
+                                                                                                        1
+Corollary 3 (Speculated in [13]). If G is a near-triangulation with minimum degree at least three, then
+dt (G) ≥ 2.
+
+    Both the above results were speculated by Goddard and Henning [13] in 2018. They had termed
+the first one as one of the “most frustrating” questions to them and it indeed served as our primary
+target in this investigation. There were several attempts made on the Goddard-Henning Conjecture
+which affirmed it on many interesting classes of triangulations. This includes Hamiltonian triangulations
+(Nagy [23]), triangulations with all odd-degree vertices, triangulations with a Hamiltonian dual (Goddard
+and Henning [13]), triangulations with at most two vertices of degree at most four, and triangulations
+with a 2-factor in which no cycle has length congruent to 2 modulo 4. (Bérczi and Gábor [5]). Some of
+these attempts also reformulated the conjecture in various equivalent and slightly stronger ways. The
+interested reader is invited to check [5] for a nice catalog.
+    Theorem 1 is tight in two senses. Firstly we cannot increase the number of degree two vertices in
+  ′
+V . The 3-sun, which is a graph obtained by adding a triangle of chords to a six-cycle, does not have
+two disjoint dominating sets [13]. Secondly, the result cannot be extended to general graphs as shown by
+Zelinka [28]. He observed that for any positive integer k, the incidence graph of the complete k-uniform
+hypergraph H on n vertices with n ≥ 2k − 1 does not have two disjoint total dominating sets even though
+the minimum degree is high (k). But we do not know whether Theorem 1 can be extended to planar
+graphs which are not near-triangulations. Goddard and Henning [13] had also shown that dt (G) ≤ 4
+for every planar graph G and hence conditions which ensure dt (G) ≥ 3 are equally interesting, but we
+haven’t been able to make any progress there yet. Goddard and Henning [13] conjecture that every
+triangulation G with minimum degree four has dt (G) ≥ 3.
+    There are at least two other ways in which total domatic number is studied in literature. A k-coloring
+of the vertices of a graph G is called a k-coupon coloring if every vertex sees at least one vertex of each
+color in its open neighborhood [8]. This is also known as a total domatic coloring [12, 11] and a thoroughly
+dispersed coloring [13]. The coupon chromatic number χc (G) of a graph G is the maximum k for which
+G has a k-coupon coloring. It is easy to see that dt (G) = χc (G) since every color class in a coupon
+coloring has to be a total dominating set. In fact, in this paper we present our arguments in the form
+of vertex coloring (Theorem 4). A hypergraph H has a proper k-coloring if there is a k-coloring of the
+vertices of H such that every hyperedge contains all the k colors1. Given a graph G(V, E), its open
+neighborhood hypergraph is the hypergraph H on the same vertex set V in which the open-neighborhood
+of each vertex in G is a hyperedge in H. Hence a k-coupon coloring of G corresponds to a proper k-
+coloring of the open-neighborhood hypergraph of G. In particular, Corollary 3 can be seen as a guarantee
+that the open-neighborhood hypergraph of a triangulated disk with minimum degree at least three has
+Property B.
+    There is considerable literature on total domination in graphs. See for instance, [7, 14, 18, 19] and
+a survey of selected topics by Henning [16]. The concept of domatic number and total domatic number
+were introduced by Cockayne et al., in [10] and [9] respectively, and are investigated further as follows. In
+[27], Zelinka obtained the characterization of r-regular bipartite (both directed and undirected) graphs
+with dt (G) = r. Akbari et al., [1] provided a criterion for cubic graphs which have total domatic number
+at least two but the same problem is NP-complete even for bipartite graphs (Heggernes and Telle [15]).
+Also, Henning and Peterin [17] provided a constructive characterization of graphs that have two disjoint
+total dominating sets. Aram et al., [4] shown that the total domatic number of a random r-regular
+graph is almost surely at most r − 1, and they gave a lower bound on the total domatic number of
+a graph in terms of order, minimum degree and maximum degree. Chen et al., [8] shown that every
+r-regular graph has dt (G) ≥ (1 − o(1))r/ log r as r → ∞, and the proportion of r-regular graphs for
+which dt (G) ≤ (1 + o(1))r/ log r tends to 1 as |V (G)| → ∞. Bouchemakh and Ouatiki [6] studied the
+  1 This is not the standard definition.
+                                       The more common definition is to keep a weaker demand that no hyperedge is
+monochromatic. The two definitions agree when k = 2 and 2-colorability of hypergraph is also known as Property B.
+
+
+
+                                                       2
+domatic and the total domatic numbers of the 2-section graph of the order-interval hypergraph of a
+finite poset. In [21], Koivisto et al., showed that it is NP-complete to decide whether dt (G) ≥ 3 where
+G is a bipartite planar graph of bounded maximum degree. Also, they have shown that if G is split or
+k-regular graph for k ≥ 3, then it is NP-complete to decide whether dt (G) ≥ k. The first and last author
+of this paper have studied the domatic and total domatic number of Cartesian product graphs [12, 11].
+In [22], Matheson and Tarjan showed that if G is a triangulated disk, then d(G) ≥ 3 and conjectured
+that for large enough n, every triangulation on n vertices has a dominating set of size at most n/4. This
+conjecture is still open.
+
+
+Terminology and notation
+Let G be a graph and k ∈ N. The vertex-set and edge-set of G are denoted respectively by V (G) and
+E(G). The subgraph of G induced on a set S ⊂ V (G) is denoted by hSi. The degree dG (v) of a vertex v
+in G is |NG (v)|. The subscripts may be omitted when the graph is clear from the context. The minimum
+and maximum degree of G are denoted, respectively by δ(G) and ∆(G). A vertex of degree exactly k,
+at least k and at most k in G are respectively termed k-vertex, k + -vertex and k − -vertex. For a vertex
+v (resp. edge e) of G, the subgraph of G obtained by removing v (resp. e) from G is denoted by G \ v
+(resp. G \ e). A cut in G is a partition of V (G) into two disjoint subsets. An edge of G with one endpoint
+in each part of the cut is said to cross the cut.
+    Let Kn , Pn and Cn , respectively denote the complete graph, the simple path and the simple cycle
+on n vertices. The graph obtained by adding a universal vertex to Pn (resp. Cn ) is called the n-fan
+Fn (resp. n-wheel Wn ). A diamond is a 4-cycle (v1 , v2 , v3 , v4 ) together with a chord v1 v3 . A 3-sun is a
+6-cycle (v1 , v2 , v3 , v4 , v5 , v6 ) together with three chords forming a triangle (v1 , v3 , v5 ).
+    In a near-triangulation G, we refer to the cycle bounding the unbounded face as the boundary B(G)
+of G and the vertices and edges in B(G) as boundary vertices and boundary edges of G. The remaining
+vertices and edges are called internal. An internal edge between two boundary vertices is called a chord.
+    Given a (partial) k-coloring of the vertices of G, a vertex v is said to be satisfied if N (v) contains at
+least one vertex of each color. Given a two-coloring of some set X, we call the the process of swapping
+the color of each vertex in X as flipping the colors.
+
+
+2    Proof of Theorem 1
+In this section, we prove the following theorem which is a restatement of Theorem 1 in the language of
+vertex coloring. However this is stronger than Corollary 3 since we handle all near-triangulations. The
+strengthening helps us run a proof by structural induction since near-triangulations, unlike triangulated
+disks, is a family that is closed under deletion of vertices and edges from the boundary. On the other
+hand, if one restricts to triangulations (Corollary 2), then the initial observations in this section are
+unnecessary. We will say more about this simplification after Observation 12.
+
+Theorem 4. Let G be a near-triangulation. Let T be the set of all 3+ -vertices in G and let S be any
+subset of 2-vertices in G such that |S| ≤ 2. There exists a two-coloring of V (G) such that each vertex
+v ∈ T ∪ S sees both the colors in N (v).
+
+    Till we complete the proof of Theorem 4, we call near-triangulations which satisfy the theorem as
+good and others as bad. Given a near-triangulation G and a subset S of 2-vertices in G, a two-coloring
+which satisfies all the 3+ -vertices and the vertices in S is called a good coloring of (G, S). The vertices
+in S will be called special.
+    For the rest of this section, we fix G(V, E) to be a bad near-triangulation with the smallest |V | + |E|.
+We also fix S to be an arbitrary subset of 2-vertices of G such that |S| ≤ 2. We will show that (G, S) has
+
+
+
+                                                      3
+a good coloring, contradicting the existence of G. The minimality in the choice of G helps us to simplify
+the following observations.
+
+Observation 5. G is 2-connected.
+
+Proof. If G is disconnected, then each component of G is smaller than G and hence good. In this case,
+G is easily seen to be good.
+    Suppose G contains a bridge e = uv and let Gu and Gv be the two components of G\e. For x ∈ {u, v},
+let Sx = S ∩ V (Gx ). Without loss of generality we can assume that |Sv | ≤ 1, and let Sv′ = Sv ∪ {v}, if
+dGv (v) = 2 and Sv′ = Sv otherwise. By the minimality of G, both Gu and Gv are good. If dG (u) > 3
+or dG (u) = 1 then a good coloring of (Gu , Su ) together with a good coloring of (Gv , Sv′ ) will be a good
+coloring of (G, S). If dG (u) ∈ {2, 3} then the above procedure will still give a good coloring of (G, S)
+provided we flip the coloring of Gv if u does not see both colors in the first coloring.
+    Suppose G contains a cut vertex v. We can consider G as two smaller graphs G1 and G2 which
+share exactly one common vertex v. For i ∈ {1, 2}, let Si = S ∩ V (Gi ) and let di = dGi (v). Since G is
+bridgeless, di ≥ 2. Without loss of generality we can assume |S2 | ≤ 1 and let S2′ = S2 ∪ {v} if d2 = 2
+and S2′ = S2 otherwise. A good coloring of (G1 , S1 ) can be combined with a good coloring of (G2 , S2′ ),
+flipping the coloring of G2 if necessary to match the color of v in both colorings, to obtain a good coloring
+of (G, S).
+
+Remark. Insisting that a good coloring should satisfy a set S of 2-vertices along with all the 3+ -vertices
+not just strengthened Theorem 4 marginally, but also helped us critically in establishing Observation 5.
+In fact, we could not bypass this strengthening even if we restricted to 2-connected near-triangulations
+(triangulated disks) since we need closure of the graph class under deletion of boundary vertices and
+edges for some of the further observations (c.f. Observation 6) too.
+   Since G is a 2-connected near-triangulation, it is a triangulated disk. The only triangulated disks on
+at most 4 vertices are K3 , K4 and the diamond. We can easily verify that all three of them are good.
+Henceforth we assume that G is a triangulated disk with at least 5 vertices.
+
+Observation 6. There are no consecutive 4+ -vertices on the boundary of G.
+
+Proof. Let e be the boundary edge between such a pair of consecutive vertices. A good coloring of
+(G \ e, S), which exists by the minimality of G, will be a also a good coloring of (G, S).
+
+Observation 7. No 2-vertex in G has a 3− -neighbor.
+
+Proof. Let v be a 2-vertex in G with neighbors u and w. Since G is a simple triangulated disk on at least
+5 vertices, all the three vertices u, v and w are on the boundary of G and there exists an edge uw which
+is an internal in G. Hence {u, w} has a second common neighbor x and h{u, v, w, x}i is a diamond with
+uw as the chord. In particular, both u and w are 3+ -vertices. Let one of them, say w, be a 3-vertex.
+Then the edge wx is also a boundary edge of G and hence H = G \ {v, w} is also a near-triangulation.
+We can extend a good coloring of (H, S \ {v}) to a good coloring of (G, S) by giving v the color different
+from that of x and w the color different from that of u.
+
+Observation 8. G has no 2-vertices outside S.
+
+Proof. Suppose G has a 2-degree vertex v ∈ / S and let u and w be its neighbors. By Observation 7, both
+u and w are 4+ -vertices. Hence any good coloring of (G \ {v} , S) can be extended to a good coloring
+of (G, S) by giving any color to v. Notice that we do not need to satisfy v since it is a 2-vertex outside
+S.
+
+    Due to Observation 8, we do not need to specify S separately anymore. S will be the set of all
+2-vertices in the triangulated disk G. Moreover any good coloring of (G, S) is an ordinary 2-coupon
+coloring of G since it satisfies all the vertices of G.
+
+                                                     4
+Observation 9. There is no chord between two 3-vertices on the boundary of G.
+
+Proof. Let uv be a chord between two 3-degree vertices u and v on the boundary of G. As uv is an
+internal edge, it will be a part of two triangular faces h{u, v, w1 }i and h{u, v, w2 }i. Since u and v are
+3-vertices, w1 and w2 are their only neighbors other than each other. In this case all the four edges of
+the cycle C = (u, w1 , v, w2 , u) are on the boundary of G. Since G is a triangulated disk, (Observation 5),
+C is the entire boundary of G, and hence G is a diamond. This contradicts our assumption that G had
+at least 5 vertices.
+
+   Next we construct a special independent set I in G as follows.
+
+Construction 10 (I). Start with I = ∅. In Round 1, for each 4+ -vertex on the boundary B(G) of G,
+we add its clockwise next boundary vertex to I. In Round 2, we enlarge I to a maximal independent set
+of 3− -vertices from B(G). In Round 3, we enlarge I to a maximal independent set of 4− -vertices from
+G.
+
+Observation 11. I is a maximal independent set of 4− -vertices in G which contains all the 2-vertices
+and none of the 4+ -vertices from the boundary of G.
+
+Proof. By Observations 6 and 9, I is an independent set after Round 1. It remains so, by construction,
+after the subsequent two rounds. By Observation 7, all the 2-vertices in B(G) are added to I in Round 1.
+By Observation 6, no 4+ -vertices in B(G) are added to I in Round 1 and since they are all dominated
+by I after Round 1, by construction, they are not added to I in any of the two subsequent rounds.
+
+Observation 12. If v ∈ I, then every pair of vertices in N (v) has a second common neighbor in G.
+
+Proof. Let v be a 2-vertex in I with neighbors u and w. Since G is a triangular disk with at least 5
+vertices, uw is a chord of G and hence {u, w} have a second common neighbor.
+    Let v be a boundary 3-vertex in I with neighbors u, v ′ and w, where u and w are in B(G). Since v
+has degree exactly three, v ′ is a common neighbor of u and w. If uv ′ is a boundary edge of G, u would be
+a 2-vertex. By Observation 11, u ∈ I in which case v would not have been in I. Hence uv ′ is an internal
+edge of G and hence {u, v ′ } has a common neighbor other than v. The case for {v ′ , w} is similar.
+    Finally let v be any 3-degree or 4-degree internal vertex in I. Let u and w be two distinct vertices in
+N (v). If u and w are non-adjacent in G, then v is a 4-vertex, and hence both the remaining vertices in
+N (v) are common neighbors of {u, w}. If uw is an internal edge of G, then since G is a near triangulation,
+{u, w} has a common neighbor other than v. Suppose uw is a boundary edge of G, then by Observation
+6 either u or w is a 3-degree vertex. Without loss of generality, let w be the 3-degree vertex. Then the
+cyclically next boundary neighbor of w other than u, say x is also a neighbor of v. At least one vertex
+in {u, w, x} will be included in I by the end of Round 2. Hence v would not have been added to I.
+    Since these are the only types of vertices in I (Observation 11), the above cases are exhaustive.
+
+Remark. If G is a triangulation of order at least 4, Observation 12 can be directly established for any
+4− -vertex v, since every edge is part of two triangles. In that case, we can pick I to be any maximal
+independent set of 4− -vertices in G and skip all previous observations made in this section. This would
+have sufficed if our aim was limited to affirming Corollary 2.
+   Observation 12 leads us to a simple idea which helped us unlock this problem.
+
+Observation 13 (Key Observation). If there exists a two-coloring f of V (G) such that every vertex in
+V (G) \ N (I) is satisfied, then f can be modified to a two-coloring which satisfies every vertex in G.
+
+Proof. Suppose there is a vertex v ∈ I such that a vertex in N (v) is unsatisfied. Let Gv = G \ {v} and
+fv be f restricted to V (Gv ). Let U ⊂ N (v) be the set of unsatisfied vertices in N (v) under fv . Note
+that this may contain vertices which were satisfied under f . If |U | ≥ 2, by Observation 12, each pair of
+
+
+                                                     5
+vertices in U have a common neighbor in Gv and hence miss the same color under fv (the color different
+from that of the common neighbor). Since this is true for every pair in U , all the vertices in U miss the
+same color, say c, under fv . If |U | = 1, we choose c to be the color missing for the single vertex u ∈ U
+under fv .
+   Recoloring v to c in f gives a new two-coloring f ′ of V (G) which satisfies all the vertices in U and all
+the vertices originally satisfied by f . We can repeat this procedure till no vertex in I has an unsatisfied
+neighbor to get a 2-coupon coloring of G.
+
+   In view of Observation 13, we can focus on finding a two-coloring of G such that every vertex in
+V = V (G) \ N (I) is satisfied. The set V ′ consists of two types of vertices - those in I and those not
+ ′
+
+dominated by I. Those in I are all 4− -vertices and those not dominated by I are 5+ -vertices in G
+and remain so even in G \ I. These two types of vertices pose different challenges which can be jointly
+addressed by a new type of coloring for a triangulation G′ which contains G \ I as a spanning subgraph.
+First we construct the graph G′ and then define the new type of coloring.
+
+Construction 14 ((G′ , P ′ )). Let v1 , . . . , vk be an arbitrary order of vertices in I and let G0 = G and
+P0 = ∅. For each i ∈ [k], the graph Gi is obtained from Gi−1 by deleting vi and adding any missing edge
+between the neighbors of vi in Gi−1 as long as they do not violate planarity. Add all the edges of Gi
+between the neighbors of vi in Gi−1 to Pi−1 to obtain Pi . Let (G′ , P ′ ) = (Gk , Pk ). We call the edges in
+P ′ and their endpoints protected and the remaining vertices unprotected.
+
+Observation 15. Every unprotected vertex in G′ is a 5+ -vertex in G′ .
+
+Proof. Since I is a maximal independent set of 4− -vertices, every 4− -vertex v is in I ∪ N (I). If v ∈ I it
+gets deleted and if v ∈ N (I), it gets protected. Hence every unprotected vertex u in G′ is a 5+ -vertex in
+G. Since u ∈/ N (I), it remains a 5+ -vertex in G \ I and in G′ which is a supergraph of G \ I.
+
+Observation 16. If v ∈ I is a 3+ -vertex in G, hNG (v)i contains a triangle Tv in G′ and all the three
+edges of Tv are in P ′ . If v ∈ I is a 2-vertex in G, the edge in hNG (v)i is in P ′ .
+
+Proof. For every vertex vi ∈ I, N (vi ) ⊂ V (G′ ) since V (G′ ) = V (G) \ I and I is an independent set.
+If vi is an internal 3-vertex of G, then NG (vi ) induces a triangle in G. If vi is a boundary 3-vertex of
+G and NGi−1 (vi ) induced only a 2-length path, it can be completed to a triangle in Gi by connecting
+the two boundary neighbors of vi through the outer face of Gi−1 . Finally, if vi is an internal 4-vertex,
+NGi−1 (vi ) contains at least one pair of non-adjacent vertices in Gi−1 (since Gi−1 is K5 -free) and they can
+be connected in Gi by an edge through the 4-face created by deleting vi from Gi−1 . Notice that no edge
+between two vertices in NG (vi ), whether originally present in G or added in one of the steps, gets deleted
+later since I is an independent set. The required memberships in P ′ follow from the construction.
+
+Definition 17 (Fair four-coloring). Given a graph G and P ⊂ E(G), a four-coloring of V (G) is called
+a fair four-coloring of (G, P ) if the endpoints of every edge in P gets different colors and every vertex v
+not spanned by P sees at least three colors in N (v).
+
+Lemma 18. If Γ is a planar graph and P ⊆ E(Γ) spans all 4− -vertices in Γ, then (Γ, P ) has a fair
+four-coloring.
+
+Proof. Borrowing the terminology from Construction 14, we call the edges in P and their endpoints
+protected and the remaining vertices unprotected. Consider a cut (A, B) in Γ with maximum number
+of edges crossing the parts subject to the constraint that no protected edge crosses the cut. By the
+maximality of the cut, every unprotected vertex v will have at least half of its neighbors in the opposite
+part. Otherwise, we can shift v to the other part to get a larger cut without violating the constraint.
+Since all unprotected vertices in G are 5+ -vertices, they will have at least three neighbors on the other
+side.
+
+                                                     6
+    We color V (Γ) by coloring A and B independently, starting with A. Remove all the edges between the
+vertices in B. If there are more than three neighbors for any unprotected vertex v ∈ B, then arbitrarily
+delete some edges incident on v until exactly three edges remain. Call the resulting subgraph Γ′ . Pick a
+planar drawing of Γ′ and for each unprotected vertex v ∈ B, add any missing edge in the A-part between
+every pair of vertices in NΓ′ (v). This can be done without violating planarity since each unprotected
+vertex in B has only three neighbors in Γ′ . Let us call this graph H and the planar subgraph of H
+induced on A as HA . By the four color theorem [2, 3], there exists a proper four-coloring fA of HA .
+Repeat the same procedure to find a coloring fB of the vertices in B and combine them to get a coloring
+f of Γ.
+    For every unprotected vertex v ∈ B (resp., v ∈ A), there will be a triangle induced in HA (resp., HB )
+by the three neighbors of v in H. Hence N (v) will see 3 different colors in f . Since none of the edges
+in P crossed the cut and since all of them where present in either HA or HB , the endpoints of every
+protected edge gets different colors. Hence f is a fair four-coloring of (Γ, P ).
+
+Remark. The idea of using a max-cut (without any constraint) was used by Bérczi and Gábor [5] to
+prove that triangulations with at most two vertices of degree at most four have a 2-coupon coloring.
+   By Lemma 18, the pair (G′ , P ) obtained from Construction 14 has a fair four-coloring f . We construct
+a two-coloring of G from f as follows.
+
+Construction 19 (f2 ). Consider f as a partial four-coloring of G. Note that for each 2-vertex v ∈ I,
+N (v) contains a protected edge (Observation 16) and hence N (v) sees two colors under f . Group the
+four colors into two pairs so that for each 2-vertex v in I, the two colors on the neighbors of v go to
+different pairs. This is indeed possible since we have at most two 2-vertices in G. Now merge the two
+colors in a pair into a single color. Extend this partial two-coloring to a full two-coloring f2 of G by
+giving the vertices in I any of the two colors arbitrarily.
+
+Observation 20. In the two-coloring f2 obtained from Construction 19, every vertex in V (G) \ N (I) is
+satisfied.
+
+Proof. Recall that V (G) \ N (I) consists of two types of vertices - the unprotected vertices in G′ and the
+vertices in I. If v is an unprotected vertex, since f is a fair four-coloring, N (v) contains vertices of at
+least three colors under f and hence two colors under f2 . If v is a 2-vertex in I, then it is satisfied due
+to the careful merging of colors in Construction 19. If v is a 3+ -vertex in I, then N (v) in G′ contains
+a triangle Tv , all of whose edges are protected (Observation 16). Hence N (v) sees at least three colors
+under f and hence two colors under f2 .
+
+   Observation 20 says that the f2 satisfies the premise of Observation 13 and hence we can conclude
+that f2 can be modified to a two-coloring which satisfies every vertex in G. Hence G is good. This
+completes the proof of Theorem 4 and equivalently Theorem 1.
+Remark. It should be clear by now that key role played by the proper four-coloring of HA and HB is in
+ensuring that no triangle is monochromatic after the merger into a two-coloring. The existence of such
+two-colorings can be proved without resorting to the four-color theorem (c.f. Kaiser and Škrekovski,
+2004 [20], Thomassen, 2008 [26]). Perhaps the easiest way (due to Barnette) is to use a stronger version
+of Petersen’s theorem which asserts that every edge of a bridgeless cubic multigraph is contained in a
+1-factor (Schönberger, 1934 [25]). Hence we could have bypassed the use of four-color theorem if we
+did not have to handle the two 2-vertices. In particular, we can prove Corollary 2 without using the
+four-color theorem.
+
+
+
+
+                                                     7
+3    Concluding Remarks
+Our proof of Theorem 4 lends itself to a polynomial-time algorithm. Notice that even though finding
+a max-cut is NP-hard for general graphs, it is polynomial-time solvable for planar graphs. Moreover,
+we do not even need a max-cut for our purpose. As soon as we get a cut which cannot be improved by
+shifting one unprotected vertex to the opposite part, we are done. This can be done greedily and will
+terminate in at most as many rounds as the number of unprotected edges. Four coloring of a planar
+graph can be done in quadratic time [24].
+    While we were able to affirm two of the conjectures in [13], we could not solve a tantalizing strength-
+ening which states that the vertex set of a triangulation G with at least four vertices can be partitioned
+into two total dominating sets - both of which induce a bipartite subgraph of G. Equivalently, there
+exists a proper four-coloring with color classes {V1 , V2 , V3 , V4 } such that both V1 ∪ V2 and V3 ∪ V4 are
+total dominating sets (Conjecture 32, [13]). Our method seems to be limited in power when we need a
+proper coloring.
+    Since we have affirmed two conjectures in this paper, we wish to restore the balance by posing two
+of our own. The first one stems out of the key technique we used in our proof and the second one comes
+out of our attempts to refute the original conjecture which we ended up proving.
+
+Conjecture 1. Every near-triangulation has a four-coloring of its vertices such that every vertex v sees
+at least min{d(v), 3} different colors in N (v).
+
+    Conjecture 1 will immediately give Theorem 4 via the color merger argument we used in Construc-
+tion 19. We anticipate that, if proven, this may find many more applications than Theorem 4. Some of
+the earlier attempts to settle the Goddard-Henning conjecture on certain classes of triangulations can
+be modified to affirm Conjecture 1 for those classes. For example, once can see that triangulations with
+acyclic chromatic number at most four (this includes triangulations with all vertex degrees odd) satisfy
+Conjecture 1.
+
+Conjecture 2. If G is a planar graph with minimum degree at least three, then dt (G) ≥ 2.
+
+   A look in to the coloring part in the proof of Lemma 18 will show that if G is a planar graph which
+has a cut such that every vertex v has at least three neighbors in the opposite part, then (G, ∅) has a fair
+four-coloring and hence G has a 2-coupon coloring. This suffices to confirm Conjecture 2 for all planar
+graphs with minimum degree at least five and all bipartite planar graphs.
+
+
+References
+ [1] S. Akbari, M. Motiei, S. Mozaffari, and S. Yazdanbod, Cubic graphs with total domatic number at
+     least two, Discuss. Math. Graph Theory 38 (2018), 75–82.
+
+ [2] K. Appel and W. Haken, Every planar map is four colorable. I. Discharging, Illinois J. Math. 21
+     (1977), 429–490.
+
+ [3] K. Appel, W. Haken, and J. Koch, Every planar map is four colorable. II. Reducibility, Illinois J.
+     Math. 21 (1977), 491–567.
+
+ [4] H. Aram, S. M. Sheikholeslami, and L. Volkmann, On the total domatic number of regular graphs,
+     Trans. Comb. 1 (2012), 45–51.
+
+ [5] K. Bérczi and H. Gábor, Total domatic number of triangulated planar graphs, EGRES Quick-Proof
+     (2018), 1–12.
+
+ [6] I. Bouchemakh and S. Ouatiki, On the domatic and the total domatic numbers of the 2-section graph
+     of the order-interval hypergraph of a finite poset, Discrete Math. 309 (2009), 3674–3679.
+
+                                                     8
+ [7] B. Brešar, T. R. Hartinger, T. Kos, and M. Milanič, On total domination in the Cartesian product
+     of graphs, Discuss. Math. Graph Theory 38 (2018), 963–976.
+
+ [8] B. Chen, J. H. Kim, M. Tait, and J. Verstraete, On coupon colorings of graphs, Discrete Appl. Math.
+     193 (2015), 94–101.
+
+ [9] E. J. Cockayne, R. M. Dawes, and S. T. Hedetniemi, Total domination in graphs, Networks 10
+     (1980), 211–219.
+
+[10] E. J. Cockayne and S. T. Hedetniemi, Towards a theory of domination in graphs, Networks 7 (1977),
+     247–261.
+
+[11] P. Francis and D. Rajendraprasad, On domatic and total domatic numbers of product graphs, arXiv
+     preprint arXiv:2103.10713 (2021).
+
+[12] P. Francis and D. Rajendraprasad, On coupon coloring of Cartesian product of some graphs, Al-
+     gorithms and discrete applied mathematics, Lecture Notes in Comput. Sci., vol. 12601, Springer,
+     Cham, [2021] ©2021, pp. 309–316.
+
+[13] W. Goddard and M. A. Henning, Thoroughly dispersed colorings, J. Graph Theory 88 (2018), 174–
+     191.
+
+[14] S. Gravier, Total domination number of grid graphs, Discrete Appl. Math. 121 (2002), 119–128.
+
+[15] P. Heggernes and J. A. Telle, Partitioning graphs into generalized dominating sets, Nordic J. Comput.
+     5 (1998), 128–142.
+
+[16] M. A. Henning, A survey of selected recent results on total domination in graphs, Discrete Math.
+     309 (2009), 32–63.
+
+[17] M. A. Henning and I. Peterin, A characterization of graphs with disjoint total dominating sets, Ars
+     Math. Contemp. 16 (2019), 359–375.
+
+[18] M. A. Henning and D. F. Rall, On the total domination number of Cartesian products of graphs,
+     Graphs Combin. 21 (2005), 63–69.
+
+[19] P. T. Ho, A note on the total domination number, Util. Math. 77 (2008), 97–100.
+
+[20] T. Kaiser and R. Škrekovski, Planar graph colorings without short monochromatic cycles, J. Graph
+     Theory 46 (2004), 25–38.
+
+[21] M. Koivisto, P. Laakkonen, and J. Lauri, NP-completeness results for partitioning a graph into total
+     dominating sets, Theoret. Comput. Sci. 818 (2020), 22–31.
+
+[22] L. R. Matheson and R. E. Tarjan, Dominating sets in planar graphs, European J. Combin. 17
+     (1996), 565–568.
+
+[23] Z. L. Nagy, Coupon-coloring and total domination in Hamiltonian planar triangulations, Graphs
+     Combin. 34 (2018), 1385–1394.
+
+[24] N. Robertson, D. P. Sanders, P. Seymour, and R. Thomas, Efficiently four-coloring planar graphs,
+     Proceedings of the Twenty-eighth Annual ACM Symposium on the Theory of Computing (Philadel-
+     phia, PA, 1996), ACM, New York, 1996, pp. 571–575.
+
+[25] T. Schönberger, Ein beweis des petersenschen graphensatzes, Acta Litt. Sci. Szeged 7 (1934), 51–57.
+
+[26] C. Thomassen, 2-list-coloring planar graphs without monochromatic triangles, J. Combin. Theory
+     Ser. B 98 (2008), 1337–1348.
+
+                                                    9
+[27] B. Zelinka, Regular totally domatically full graphs, Discrete Math. 86 (1990), 71–79.
+
+[28] B. Zelinka, Total domatic number and degrees of vertices of a graph, Math. Slovaca 39 (1989), 7–11.
+
+
+
+
+                                                   10
+

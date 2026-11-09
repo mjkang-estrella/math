@@ -1,0 +1,4 @@
+#include <bits/stdc++.h>
+using namespace std;
+int score(int n,const vector<pair<int,int>>&e){vector<uint64_t>b(n);unordered_set<uint64_t>s;for(int i=0;i<n;i++)s.insert(b[i]=1ull<<i);for(auto [i,j]:e){b[i]|=1ull<<j;b[j]|=1ull<<i;s.insert(b[i]);s.insert(b[j]);}return s.size();}
+int main(int argc,char**argv){mt19937 rng(208);for(int n=6;n<=20;n++){vector<pair<int,int>>base;for(int i=0;i<n;i++)for(int j=i+1;j<n;j++)base.emplace_back(i,j);auto e=base,best=base;int top=0,cur=0;long count=0;for(int run=0;run<10;run++){shuffle(e.begin(),e.end(),rng);cur=score(n,e);for(int it=0;it<10000;it++){int i=rng()%e.size(),j=rng()%e.size();swap(e[i],e[j]);int v=score(n,e);count++;double temp=.02+.8*(1.-it/10000.);if(v>=cur||generate_canonical<double,32>(rng)<exp((v-cur)/temp))cur=v;else swap(e[i],e[j]);if(cur>top){top=cur;best=e;}}}cout<<"n="<<n<<" evaluations="<<count<<" best="<<top<<" conjectured="<<n*n-(3*n+1)/2+2<<" edges=";for(auto [i,j]:best)cout<<i<<","<<j<<";";cout<<endl;}}

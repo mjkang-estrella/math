@@ -1,0 +1,5 @@
+Network STOP / non-PASS
+
+The final-source request for Xi-Wang, On the A_alpha spectral radius of strongly connected digraphs, DOI 10.7153/OAM-2022-16-67, source 2105.10903, automatically redirected through HTTPS then to HTTP. The immutable guard rejected the HTTP target before dispatch. Its unavailable logger also failed on the HTTP key; no unavailable row has been backfilled. See get_digraph_final.receipt.json and guard-ledger.jsonl. No HTTP request, manual retry, HTTPS upgrade, alternate source delivery, or post-stop search was made. The entire identified original/final work is unavailable for ALL NEW host/query/version/arxiv/author/cache/mirror/DOI/API/body/metadata or indirect deliveries. Previously acquired own source remains documentary, not final equivalence.
+
+No actual dispatched prohibited request or budget excess is established. This is a guard-policy failure with network STOP/non-PASS and preserved original evidence, not a universal process clearance. No candidate qualified, formal dispatch or credit authorized. Remaining one search/three strings and GET allowance are deliberately unused following STOP.

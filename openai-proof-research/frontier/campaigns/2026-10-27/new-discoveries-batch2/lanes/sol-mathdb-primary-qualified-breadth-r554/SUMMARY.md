@@ -1,0 +1,11 @@
+# r554 breadth handback
+
+**50/50 assigned literal statements reviewed; zero proposals; zero credit.** Baseline remains 4,783 reconciled reviews until root integrates these 50 (potential 4,833). This is not full technical corpus review. Campaign 9 additional / 39 total / next 40 unchanged.
+
+Every row has an individual disposition, exact UTF-8 statement, statement hash, canonical record hash, original corpus chunk and 1-based line. Five records received selected primary passage review (APN and four billiard invariants); Postnikov 394356 received an exact public successor theorem/local proof check. No whole-primary-body or full dependency audit is claimed. The bibliography companion's theorem and proof passages were checked for the billiard cluster. See source-coverage.md for precise limits and the complete routine k602 reduction.
+
+No hypothesis passes the breadth-to-substantial-work gate. k602 is elementary classical focal tangent algebra, retained with exact rational sanity check and no discovery claim. Postnikov has an exact public theorem. APN's unproved parameter gap remains; other analytic/arithmetic/asymptotic targets lack short full-scope routes. Reported-source-theorem records remain conservatively labelled, with no invented proof verification. Access/metadata gaps and registry remain HOLD.
+
+Integrity verification independently checks exact intake and own payloads, direct original/copy pairs, all 20 r301 chunks in place, all 8 frozen inputs, manifest binding, 4,783 baseline size, reservation disjointness/protected IDs, and all literal/canonical hashes. No upstream verifier execution. Flat original references only. Hash/size/extra-file negative tests use temporary copies of this lane only and never mutate originals. The final receipt binds exact manifest SHA256+size; manifest covers verifier and every payload, excluding only itself and final-verification-receipt.json. Integrity PASS is administrative, never mathematical or novelty PASS.
+
+Run verify.py through the fixed helper_guard.py with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python3 -B (full command in receipt). Failure/deviation record: failures.md. No shared artifacts, corpus copies, git, Lean/manuscript/credit changes or external mutations.

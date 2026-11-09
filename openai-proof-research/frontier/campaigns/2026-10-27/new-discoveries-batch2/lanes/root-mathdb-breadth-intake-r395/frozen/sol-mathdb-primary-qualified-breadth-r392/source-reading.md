@@ -1,0 +1,27 @@
+# Selected successor reading
+
+Original AIM pages were not recovered. All 50 literal statements were read in two bounded outputs after freeze and all-chunk verification. Tags were not used as mathematical evidence. Seven selected original HTTPS pages failed hostname validation; their exact requests/errors are retained. No TLS bypass or retry of a failed URL occurred. Sending further distinct paths to the same failing host was unnecessary; the resulting failures are preserved.
+
+## 384542: known existence, no proposal
+
+Primary successor: Girouard–Polymerakis, *Large Steklov eigenvalues under volume constraints*, arXiv:2403.08925v1, displayed 13 March 2024; internal date March 15, 2024. Exact downloaded URL, UTC, SHA256 and bytes in successor-provenance.json, written before PDF extraction. Journal correspondence and newer versions not checked.
+
+Read introduction definitions of the Dirichlet-to-Neumann map and sigma_1, Theorems 2–4, Section 2 opening mixed-boundary definitions, and all Section 4 (Proposition 11 through proof of Theorem 3, pp.11–18). This is a selected proof-section read, not an audit of all dependencies.
+
+Full applicable bridge to the literal existential dimension-three request: choose a smooth compact connected disk B^2 with a metric having a product boundary collar, and any closed connected metric circle F^1. Apply Theorem 2, n=2>k=1, to M=B×F (solid torus). It gives smooth g_epsilon equal to g_B+g_F near the boundary with dV_g_epsilon=dV_product and sigma_1→infinity. Thus both interior volume and boundary area are fixed, stronger than bounded. Set epsilon_j→0 to obtain the sequence. This does not resolve a strengthened all-topologies formulation; none is literal in the record. Original workshop context remains inaccessible.
+
+The retained proof mechanism is anisotropic warping g=h^(-2k/n)g_B+h^2g_F. Base volume scales by h^(-k) and fiber volume by h^k; the total factor is one. Proposition 13 separates the zero fiber mode and positive fiber modes. Choose delta=3/4 when n=2,k=1. Its positive-mode lower bound is min(epsilon^(delta-1)/8,lambda_1(F)epsilon^(1-delta*n/k)/4), i.e. min(epsilon^(-1/4)/8,lambda_1(F)epsilon^(-1/2)/4), tending to infinity. Proposition 11 supplies the zero-mode divergence. Theorem 14 uses a uniform quasi-isometry to handle general boundary collars; the direct product-collar choice avoids that step for this existential application. Theorem 3 further extends to connected product boundaries using a collar and volume adjustment; not needed for the chosen product.
+
+Dependencies read as statements/uses, not fully audited: variational characterization Propositions 6–7, separation Theorems 4/10, Proposition 11 and its cited [5,Lemma3.4], quasi-isometry Proposition 9 for the general theorem. No independent spectral proof or formal dependency audit, no registry clearance. This is established primary-source coverage and earns zero credit.
+
+## 384373: HOLD prior scope, no claimed full bridge
+
+Primary successor: Hu–Zhan–Chen, *Improvement of Hermite-Fujiwara Theorem for the Inertia of Polynomials*, Numerical Mathematics 15(1), October 2013, pp.1–13, institutional PDF. Exact URL/hash/UTC/bytes retained before extraction. Read pp.1–6: definitions (1.1)–(1.4), squarefree gcd factorization (2.1)–(2.6), Theorem 2.2 and its complete perturbation proof, Theorem 2.3 and Corollary 2.4. No whole-paper or complete dependency claim.
+
+The nonsingular Bezoutian -iB(f,conjugate(f)) gives inertia counts if f and conjugate(f) are coprime. Common roots can include nonreal conjugate pairs, not just real roots: f=z^2+1 makes this Bezoutian zero but has one root in each half-plane. Thus the standard naive Hermite construction alone does NOT solve the literal universal request. The 2013 paper explicitly treats the common real factor p=gcd(f,conjugate(f)), factors p as product p_k^k with squarefree real p_k, and obtains the counts by adding a nonsingular residual Bezoutian inertia to counts derived from nu(B(p_k,p_k')). This is a sequence of matrix inertia calculations. It is strong prior evidence, but an n-by-n coefficient-built single-matrix bridge has not been supplied here. Do not call the entire question a routine adaptation merely because these formulas are short.
+
+The proof of Theorem 2.2 uses q_epsilon(z)=q(z-i epsilon), coprimality for small positive epsilon, derivative B'(0)=2iB(q,q'), nonsingularity of B(q,q') for squarefree q and stability of inertia under small Hermitian perturbations. External Hermite-Fujiwara and Bezout-Hankel congruence dependencies not audited. A diagonal of Im(root_j), with roots already obtained, answers a weak literal existential reading tautologically and supplies no new mathematics; primary workshop requirements for coefficient dependence are not recovered. HOLD rather than a new claim or full known-resolution claim.
+
+## Other statements
+
+No primary body or proof read is claimed for the other 48. Per-ID exact literal text, hashes, scope and concrete blocking mechanism are in dispositions.json. Topic fragments and missing operators were held for primary context, rather than repaired. Programmatic and hard requests were parked at literal-review level without sweeps or speculative proof investment. No source-internal counterexample was rediscovered or credited. The r304 exclusions and historical dispositions and r363 Cayley disposition were bound before read; their administrative statuses are not current registry clearance.

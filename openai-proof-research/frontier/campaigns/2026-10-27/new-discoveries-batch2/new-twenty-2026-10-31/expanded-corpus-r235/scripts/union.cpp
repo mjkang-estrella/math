@@ -1,0 +1,3 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(){for(int n=2;n<=5;n++){vector<int>a;for(int s=0;s<(1<<n);s++)if(__builtin_popcount((unsigned)s)>=2)a.push_back(s);uint64_t good=0, checked=0;for(uint64_t f=1;f<(1ull<<a.size());f++){uint64_t fam=0;for(int i=0;i<(int)a.size();i++)if(f>>i&1)fam|=1ull<<a[i];bool ok=true;vector<int>v;for(int s:a)if(fam>>s&1)v.push_back(s);for(int x:v){for(int y:v)if(!(fam>>(x|y)&1)){ok=false;break;}if(!ok)break;}if(!ok)continue;good++;int abundant=0;for(int i=0;i<n;i++){int c=0;for(int x:v)c+=x>>i&1;if(2*c>(int)v.size())abundant++;}if(abundant<2){cout<<"FAIL "<<n<<" "<<fam<<endl;return 1;}checked++;}cout<<"n "<<n<<" nonempty_families "<<((1ull<<a.size())-1)<<" union_closed "<<good<<" tested "<<checked<<" no_failure"<<endl;}}

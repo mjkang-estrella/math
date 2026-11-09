@@ -1,0 +1,5 @@
+- Initial read_inputs.py failed nonzero on the r304 manifest's list schema; preserved reading.initial-failure.log. Fixed parsing and reran successfully; no integrity mismatch occurred.
+- All five public arXiv PDF retrievals succeeded. No403/429/challenge or retry.
+- Initial broad search returned prohibited-domain snippets incidentally. No direct request or follow-up to those hosts and no reliance on their proof bodies; see search-notes.md.
+- Thirty-three plus twelve (45) statements have record-level evidence only. Source bodies and complete proof dependencies were not audited for them. Five primary statements and selected local proof sections were reviewed, not five complete papers.
+- Bounded successor search had low relevance and cannot clear prior art. No novelty claim or proposal survives. Ordinary337039 is preserved with zero credit.

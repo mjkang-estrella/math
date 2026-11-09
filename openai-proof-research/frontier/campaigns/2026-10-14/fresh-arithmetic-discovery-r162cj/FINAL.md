@@ -1,0 +1,11 @@
+# r162cj handoff
+
+PREFREEZE / no nominee. No theorem or diagnostic was frozen. No correctness/contribution gate, acceptance or campaign increment is assigned; parent alone controls those decisions.
+
+The complete Source171 operative proof and stronger probabilistic, patch, profile, resampling, transfer and endpoint/Hall interfaces are credited. The retained author comparison closes prescribed-color noninduced cube embedding at a linear vertex budget for EVERY FIXED positive surplus above density1/2, with a constant depending on that surplus. Degree bucketing and paired-neighborhood averaging provide two conditional parent references for the SAME stream; a separate uniform reference pays tuple caps and means. The actual source branch then supplies the injection and Hall completion. This is a compatible source/classical derivation, not an additional nonroutine nominee. The initially suspected reference incompatibility is closed.
+
+No uniform constant as the surplus tends to zero, exact half-density endpoint, induced/resilience/many-color theorem or efficient algorithm is established. A balanced bilinear host rejects one strict-gain parent shortcut, but itself has a paid same-host embedding via a color flip; it is not a counterexample. The exact same-host quotient count and actual primary block budgets identify only limits of specific transfers. No necessity, impossibility, exhaustion or priority claim is made.
+
+Private mathematical record: private/DERIVATION.md. Reading and limitations: private/READING-LIMITS.md. All26 canonical texts621556bytes were read completely,27blobs/4trees authenticated; compiled PDF authentication only. Primary reading:53 distinct pages across4PDFs,2full papers,2visual checks; versions, recovered displays,404 access and incomplete ancestry disclosed. Five exact completed exceptions read; zero optional history traversals. Four finite example checks are sanity, not gates. Protected bodies and metadata remain private.
+
+Authorized provenance: Codex / GPT-6 Astra / high / serviceTier default. Campaign context19/20,latestR041 unchanged. No nested agents, git, publication/contact/browser UI or downstream work. The packet is sealed once with detached FINAL/MANIFEST/REPORT anchors and a read-only explicit-anchor verifier. Artifact verification is not mathematical review.

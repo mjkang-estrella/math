@@ -1,0 +1,2 @@
+import json,pathlib
+p=pathlib.Path(__file__).parent/'failures.json';x=json.loads(p.read_text());x['resource_failures'].append({'check':'first final-verifier invocation','exit':1,'error':'JSONDecodeError on empty final receipt created by shell stdout redirection before verifier inspected it','correction':'Remove empty own-lane receipt; run verifier without redirection and write returned receipt afterward. No original data changed.'});p.write_text(json.dumps(x,indent=2)+'\n')

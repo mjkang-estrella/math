@@ -1,0 +1,2133 @@
+
+Graph-Based Product Form
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+  /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+     the marker's display to know which way to toggle. The marker draws no box. */
+  .arxiv-html-header { display: contents; }
+  html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+  /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+     icon by making its span a block). */
+  .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+  /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+     arXiv's own render as they are (the logo on the bar, the funder logos on their white
+     chips). Important: ar5iv's dark rules are unlayered, as specific as
+     :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+  :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+  .ds-site-header img { background-color: transparent !important; }
+  /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+     were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+     header, the paper's bar (no site navigation, the paper's controls), takes the second and
+     stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+     The controls show their names. */
+  @media (min-width: 1280px) {
+    html { scroll-padding-top: 80px; }
+    .arxiv-html-site-chrome { display: contents; }
+    .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+    .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+    .arxiv-html-site-chrome .tool-icon { display: none; }
+  }
+  /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+     readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+     bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+     over the header and the paper: it shows only while open, under the chrome, in its place in
+     the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+     inset; the theme gives it none, so it met the screen edges. */
+  @media (max-width: 1279px) {
+    .arxiv-html-site-chrome .tool-wide { display: none; }
+    .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+    .ltx_page_navbar { position: absolute; top: auto; }
+    .arxiv-html-footer { padding-inline: 1rem; }
+  }
+Skip to main content
+      Report GitHub Issue
+      ×
+      Title:
+Content selection saved. Describe the issue below:
+      Description:
+      Submit without GitHub
+      Submit in GitHub
+    Why HTML?
+      Report Issue
+      Back to Abstract
+      Download PDF
+      Contents
+      Reading mode
+      Colour theme
+Abstract
+1 Introduction
+1.1 Contributions
+1.2 Prior work
+2 Model and definitions
+2.1 Graph notation and terminology
+2.2 Markov chains and product-form relationship
+2.3 Cuts with a given source node set
+2.4 Joint-ancestor freeness
+3 S-product-form, cuts, and joint-ancestor freeness
+3.1 Main theorem
+3.2 Illustrative examples
+3.3 The existence of a single-sourced cut implies S-product-form
+3.4 The existence of a single-sourced cut is equivalent to joint-ancestor freeness
+3.5 S-product-form implies joint-ancestor freeness
+4 Cut graph and higher-level cuts
+4.1 Cut graph
+4.2 PS-product-form relationships
+4.3 Higher-level cuts
+5 Examples
+5.1 Multiserver jobs
+5.2 Queue with batch arrivals: structured
+5.3 Queue with batch arrivals: unstructured
+A Cliques in the cut graph
+B Second-level cuts: Progress towards 
+B.1 Paths in the cut graph
+B.2 Special case: Expanding  $I$  when  $|J|=1$ 
+References
+    License: CC BY-SA 4.0
+arXiv:2502.13890v1 [math.PR] 19 Feb 2025
+LAAS–CNRS, Université de Toulouse, CNRS, Toulouse, Franceceline.comte@cnrs.frhttps://orcid.org/0009-0005-9413-7124
+Industrial Engineering and Management Science, Northwestern University, Evanston, IL, USA  and Electrical and Computer Engineering, University of Illinois, Urbana-Champaign, Urbana, IL, USAizzy.grosof@northwestern.eduhttps://orcid.org/0000-0001-6205-8652Supported by AFOSR Grant FA9550-24-1-0002 and by a startup package from Northwestern University
+Graph-Based Product Form
+Céline Comte11footnotemark: 
+          1
+Isaac Grosof
+Note: Authors are joint first authors, and are written in alphabetical order.
+Abstract
+Product-form stationary distributions in Markov chains have been a foundational advance and driving force in our understanding of stochastic systems. In this paper, we introduce a new product-form relationship that we call “graph-based product-form”. As our first main contribution, we prove that two states of the Markov chain are in graph-based product form if and only if the following two equivalent conditions are satisfied: (i) a cut-based condition, reminiscent of classical results on product-form queueing systems, and (ii) a novel characterization that we call joint-ancestor freeness. The latter characterization allows us in particular to introduce a graph-traversal algorithm that checks product-form relationships for all pairs of states, with time complexity  $O(|V|^{2}|E|)$ , if the Markov chain has a finite transition graph  $G=(V,E)$ . We then generalize graph-based product form to encompass more complex relationships, which we call “higher-level product-form”, and we again show these can be identified via a graph-traversal algorithm when the Markov chain has a finite state space. Lastly, we identify several examples from queueing theory that satisfy this product-form relationship.
+ccsMathematics of computing Markov processes
+ccsApplied computing Operations research
+keywordsMarkov chain, product-form, directed graph, graph cut
+††runningauthor: C. Comte and I. Grosof††copyright: C. Comte and I. Grosof
+1 Introduction
+Important classes of queueing systems and stochastic networks have been shown to have a so-called product-form stationary distribution, where the stationary probability of a given state has a simple multiplicative relationship to the stationary probability of other nearby states.
+The product-form property allows the stationary distribution of these systems to be cleanly and precisely characterized in closed-form, which is not possible for many other queueing systems. Such characterization has been instrumental in numerically evaluating performance [1, 2] and analyzing scaling regimes [3, 4, 5], and it was more recently applied in the context of reinforcement learning [6, 7].
+Important queueing systems and stochastic networks that have been proven to exhibit product-form behavior include Jackson networks [8], BCMP networks [9], Whittle networks [10], and networks of order-independent queues [11] (also see [12]).
+Similar structures have appeared in other fields, such as statistical physics, with the zero-range process [13].
+Discovering these categories of product-form systems and the underlying properties that give rise to their product-form behavior has represented a foundational advance and driving force in our understanding of stochastic systems.
+Product-form results are often tied to time reversibility or quasi-reversibility properties. These can be established through the detailed balance property given the stationary distribution,
+as well as by applying Kolmogorov’s criterion on the transition rates of the Markov chain [14]. In the simplest case of birth-and-death processes, both product-form and reversibility are implied by the transition diagram of the Markov chain.
+However, there are important queueing systems that exhibit product-form behavior which cannot be explained under any existing product-form framework.
+A motivating example for this paper is the multiserver-job saturated system with two job classes, which [15] demonstrated to have a product-form stationary distribution.
+We explore this system via our novel framework in Section 5.1.
+We introduce a new kind of product-form Markov chains,
+graph-based product form.
+In these Markov chains, product-form arises purely from the connectivity structure of the transition graph,
+or in other words from the set of transitions with nonzero probability, for discrete-time Markov chains, abbreviated DTMCs; or nonzero rate, for continuous-time Markov chains, abbreviated CTMCs.
+If a Markov chain has graph-based product form,
+that product form holds regardless of its transition probabilities or rates,
+under a given connectivity structure.
+This is in contrast to most prior classes of product-form relationships,
+where tweaking a single transition probability or rate would remove the product-form property.
+In this paper, we characterize which directed graphs hold the correct structure to give rise to graph-based product-form Markov chains.
+Our characterization is built up from a product-form relationship between states
+(i.e., nodes in the transition diagram),
+which exists when the ratio of the stationary probabilities for two nodes forms a simple multiplicative relationship, arising from the graph structure.
+If those relationships span the graph, then the whole Markov chain has graph-based product form.
+We therefore focus on characterizing which graphs give rise to product-form relationships between
+a given pair of nodes.
+In our main result, Theorem 9,
+we give two necessary and sufficient conditions
+under which such a product-form relationship exists:
+a cut-based characterization,
+reminiscent to classical conditions for product-form,
+and a novel characterization which we call joint-ancestor freeness. More specifically, focusing on two particular nodes or states  $i$  and  $j$ :
+• 
+Cut-based characterization:
+For the first condition,
+we show that if there exists a cut (i.e. a partition of the nodes into two sets),
+where  $i$  is on one side of the cut and  $j$  is on the other,
+and where the only edges that cross the cut have either  $i$  or  $j$  as their source nodes,
+then  $i$  and  $j$  have a product-form relationship.
+We call such a cut an  $i,j$ -sourced cut.
+Unfortunately, directly searching for such cuts is inefficient and impractical,
+as there are exponentially many cuts in the graph.
+• 
+Joint-ancestor freeness:
+We show that the existence of such a cut is equivalent to a second, simpler-to-check property,
+which we call joint-ancestor freeness.
+We refer to a node  $k$  as a joint ancestor of  $i$  and  $j$  if there exists a path from  $k$  to  $i$  which does not go through  $j$ , and a path from  $k$  to  $j$  which does not go through  $i$ .
+We show that the existence of an  $i,j$ -sourced cut is equivalent to  $i$  and  $j$  having no joint ancestors,
+which is efficient to directly search for.
+Finally, we show in Theorem 18 that this relationship is bidirectional:
+If there is no  $i,j$ -sourced cut, or equivalently if there is a joint ancestor  $k$ ,
+then nodes  $i$  and  $j$  will not have a straightforward product-form relationship.
+Even in graphs where the most straightforward product-form relationships do not connect every pair of nodes,
+a less-direct kind of product-form relationship can still exist,
+which we call “higher-level product-form”.
+We call the above product-form relationships “first-level product-form”,
+and we show that a weaker, but still noteworthy, kind of product-form relationship,
+“second-level product-form”,
+exists whenever there exists a cut with multiple nodes as sources on one or both sides of the cut,
+such that the sources on each side are connected by first-level product-form relationships.
+Further levels can be defined recursively.
+We study this higher-level product-form behavior in Sections 4.3 and 4.3,
+with Section 5.2 as a motivating example.
+1.1 Contributions
+In Section 2.2, we define the novel concept of graph-based product-form.
+In Section 3, and specifically Theorem 9,
+we prove that graph-based product-form
+between two nodes  $i$  and  $j$ 
+is equivalent to two graph-based properties:
+The existence of an  $i,j$ -sourced cut,
+and the absence of a joint ancestor of  $i$  and  $j$ .
+In Sections 4.1 and 4.2, we introduce the cut graph and its connection to graph-based product-form spanning an entire Markov chain.
+In Section 4.3, we explore and characterize higher-level product-form relationships, which we show correspond to higher-level cuts.
+In Sections 3.2 and 5, we give a variety of examples of graphs which do or do not have graph-based product-form, and use them to illustrate our characterization.
+1.2 Prior work
+There is a massive literature that focuses on deriving
+the stationary distribution (or a stationary measure)
+of Markov chains with countable
+(finite or infinite) state spaces.
+In reviewing this literature, we focus on results that
+either provide a closed-form expression for the stationary measures
+or make structural assumptions on the Markov chain,
+or both.
+Reversibility, quasi-reversibility, and partial balance
+A long series of works has derived product-form stationary distributions
+by focusing on Markov chains
+where a stronger form of the balance equations holds,
+thus balancing the probability flow between a state and each set
+in a partition of its neighbors.
+This is often equivalent to
+properties of the time-reversed process [10].
+For example, the Kolmogorov criterion [10, Theorem 2.8]
+is a necessary and sufficient condition for reversibility,
+which as a by-product yields a closed-form expression for the stationary distribution
+as a product of transition rates.
+Another example is quasi-reversibility,
+as described in [14, Chapter 3].
+Among these works, many have focused on Markov chains
+exhibiting a specific transition diagram,
+e.g., multi-class queueing systems with arrivals and departures occurring one at a time,
+and have identified necessary and sufficient conditions
+on the transition rates
+that yield a product-form stationary distribution.
+This approach has therefore produced many models
+applicable to queueing theory and statistical physics.
+Reversible models and their variants involving internal routing include
+the celebrated Jackson networks [8],
+the zero-range process [13],
+and Whittle networks [10].
+Quasi-reversibility has also given rise to multiple models,
+including order-independent queues [11, 16]
+and pass-and-swap queues [17]; see [18] for a recent survey.
+Other examples of queueing models
+that satisfy partial balance equations are
+token-based order-independent queues [19]
+and certain saturated multiserver-job queues [20, 15].
+Graph-based product form
+To the best of our knowledge,
+very few papers exploit the structure
+of a Markov chain’s transition diagram
+(rather than its transition rates)
+to guarantee the existence of a product-form stationary distribution.
+One example is [21], which introduces
+single-input super-state decomposable Markov chains:
+the Markov chain’s state space is partitioned into a finite number of sets,
+called superstates,
+such that all edges into a superset
+have the same node as endpoint.
+(All finite-state-space Markov chains satisfy this condition
+when the partition is formed by singletons.)
+Under this assumption, the process of deriving the Markov chain’s stationary distribution
+can be divided into two steps,
+one that solves the stationary distribution
+of a Markov chain defined over the superstates,
+and another that solves the stationary distribution
+of a Markov chain restricted to each superstate.
+While the superstate decomposition has a loose resemblance to our cuts,
+there is no deeper similarity between the methods.
+In particular,
+our approach is nontrivial both for finite and infinite Markov chains.
+The superstate decomposition approach can be seen as a different approach to deriving product-forms.
+Closer to our work,
+[15] considers a multiserver-job (MSJ) model
+described by a CTMC
+and show that it has a product-form stationary distribution
+irrespective of the transition rates.
+This result is proven in more detail in a technical report [22].
+This example, which inspired the present work,
+is discussed in detail in Section 5.1.
+Symbolic solutions
+Our graph-based product-form method
+can also be seen an algorithmic way to discover a particular
+type of product-form relationships in Markov chains, giving a clean symbolic solution for the stationary distribution.
+If the Markov chains are structured, as in the examples in Section 5, these relationships can be found explicitly.
+However, if algorithm searching is required, we give an algorithmic approach to discover single-source cuts in the underlying graph in Algorithm 3 in  $O(|V|^{2}|E|)$  time, if the Markov chain has a finite transition graph  $G=(V,E)$ , allowing us to discover whether a product-form relationship exists.
+Prior to our approach, one could symbolically find the stationary distribution for a general symbolic Markov chain in  $O(|V|^{2})$  time, by symbolically solving the balance equations. However, there is no guarantee that the resulting symbolic expression would be in a simple form.
+Simplifying and factorizing the resulting symbolic expression, which might have  $O(|V|^{2})$  terms,
+does not have a known efficient, deterministic algorithm.
+In fact, polynomial factorization is a more complicated version of the polynomial identity testing (PIT) problem,
+for which no polynomial-time deterministic algorithm is known [23];
+the two problems were recently proven equivalent, in the sense that a deterministic polynomial-time algorithm for one would imply the same for the other [24].
+Finding such an algorithm has remained a major open problem.
+Other related methods
+Product-form stationary distributions
+for DTMCs or CTMCs
+have been studied in many different contexts,
+such as Stochastic Petri networks,
+which sometimes lead to constructive and algebraic methods
+that assume particular structure of the transition rates [25, 26].
+Orthogonally, the graph structure of a Markov chain
+has also been used for other purpose
+than deriving a simple closed-form expression
+for the stationary distribution.
+For instance, the survey [27] focuses on iterative methods
+to approximate the stationary distribution of a finite
+Markov chain with transition matrix  $A$ 
+using updates of the form  $\pi_{t+1}=\pi_{t}A$ .
+The algorithms described in [27],
+called aggregation-disaggregation methods,
+aim at speeding-up iterative methods
+by occasionally replacing  $\pi_{t+1}$  with  $\tilde{\pi}_{t+1}=S(\pi_{t+1})$ ,
+where  $S$  is a function that exploits
+structure in the Markov chain’s transition diagram.
+2 Model and definitions
+We start by introducing preliminary graph notation and terminology in Section 2.1, in particular set-avoiding path and ancestor sets,
+then introduce the key notions of an formal Markov chain and graph-based product-form
+in Section 2.2.
+2.1 Graph notation and terminology
+The focus of this paper is on the directed graphs
+that underlie Markov chains and on cuts in these graphs.
+Besides recalling classical graph-theoretic notions,
+we introduce set-avoiding paths and ancestor sets
+that will be instrumental in the rest of the paper.
+A directed graph is a pair  $G=(V,E)$ ,
+where  $V$  is a countable set of nodes, and
+ $E\subseteq V\times V$  is a set of directed edges.
+The graph  $G$  is called finite if  $V$  is finite
+and infinite if  $V$  is countably infinite.
+A cut of a directed graph  $G=(V,E)$  is a pair  $(A,B)$ 
+of nonempty sets that form a partition of  $V$ , that is,
+ $A\cup B=V$  and  $A\cap B=\emptyset$ .
+An edge  $(u,v)\in E$  is then said to cross the cut  $(A,B)$ 
+if either  $u\in A$  and  $v\in B$ , or  $u\in B$  and  $v\in A$ .
+A path in a directed graph  $G=(V,E)$ 
+is a sequence  $v_{1},v_{2},\ldots,v_{n}$ 
+of distinct nodes in  $V$ , with  $n\in\{1,2,\ldots\}$ ,
+such that  $(v_{p},v_{p+1})\in E$  for each  $p\in\{1,2,\ldots,n-1\}$ ;
+the length of the path is the number  $n-1$  of edges that form it.
+In particular, a path of length 0 consists of a single node and no edges.
+A graph  $G=(V,E)$  is called strongly connected if,
+for each  $i,j\in V$ ,
+there exists a path from node  $i$  to node  $j$  in the graph  $G$ .
+In Section 2.2, we will relate the existence of cuts that yield convenient balance equations with the following two definitions that will be instrumental in the paper.
+Definition 1 (Set-avoiding subgraph and set-avoiding path).
+Consider a directed graph  $G=(V,E)$ 
+and let  $U\subseteq V$ .
+The set-avoiding subgraph  $G{\setminus}U=(V{\setminus}U,E^{\prime})$ 
+is defined with
+ $E^{\prime}=\{(i,j)\in E:i,j\notin U\}$ .
+Given  $i,j\in V{\setminus}U$ ,
+we let  $P(i\to j{\setminus}U)$  denote
+an arbitrary path  $v_{1},v_{2},\ldots,v_{n}$  in  $G$ ,
+with  $n\in\{1,2,\ldots\}$ ,
+with source node  $v_{1}=i$  and destination node  $v_{n}=j$ ,
+and such that  $v_{p}\notin U$  for each  $p\in\{1,2,\ldots,n\}$ .
+Such a path is said to avoid the set  $U$ .
+Equivalently, a path  $P(i\to j{\setminus}U)$ 
+is a path from node  $i$  to node  $j$  in the subgraph  $G{\setminus}U$ .
+If  $U=\{u\}$  is a singleton,
+we write  $G{\setminus}u$  for  $G{\setminus}\{u\}$ 
+and  $P(i\to j{\setminus}u)$  for  $P(i\to j{\setminus}\{u\})$ .
+Definition 2 (Ancestor and ancestor set).
+Consider a directed graph  $G=(V,E)$ 
+and let  $i,j\in V$ .
+Node  $i$  is called an ancestor of node  $j$  (in  $G$ )
+if there exists a directed path from node  $i$  to node  $j$  (in  $G$ ), i.e.,
+if there exists a path  $v_{1},v_{2},\ldots,v_{n}$  (in  $G$ )
+with  $v_{1}=i$  and  $v_{n}=j$ .
+For each  $i\in V$ ,  $A_{i}(G)$  denotes the set of ancestors of node  $i$  (in  $G$ ).
+For each  $I\subseteq V$ ,
+ $A_{I}(G)=\bigcup_{i\in I}A_{i}(G)$ 
+denotes the ancestor set of node set  $I$  (in  $G$ ).
+The ancestor set of a node contains the node itself
+(via a path of length zero),
+so that  $I\subseteq A_{I}(G)$  for each  $I\subseteq V$ .
+A directed graph  $G=(V,E)$  is strongly connected if and only if
+the ancestor set of each node is the whole set  $V$ .
+Procedure Ancestors in Algorithm 1
+is a classical breadth-first-search algorithm
+that returns the ancestor set of a node set in a finite graph  $G$ .
+This algorithm can run in time  $O(|E|)$ 
+with the appropriate data structure
+(e.g., the graph is encoded as
+a list of ancestor lists for each node)
+because each edge is visited at most once
+over all executions of 7.
+Algorithm 1  Returns the ancestor set of a node set in a finite graph
+              1:
+            procedure Ancestors(finite directed graph  $G=(V,E)$ , set  $I\subseteq V$ )
+ $\to$  set  $A\subseteq V$ 
+              2:
+               $A\leftarrow\emptyset$ 
+ $\triangleright$  Ancestor set under construction
+              3:
+               $F\leftarrow I$ 
+ $\triangleright$  Set of “frontier” nodes: nodes that have been visited
+              4:
+               $\triangleright$  but whose neighbor list has not yet been read
+              5:
+              while  $F\neq\emptyset$  do
+              6:
+                $A\leftarrow A\cup F$ 
+              7:
+                $N\leftarrow\bigcup_{\ell\in F}\{k\in V{\setminus}A:(k,\ell)\in E\}$ 
+ $\triangleright$  New frontier nodes
+              8:
+                $F\leftarrow N$ 
+              9:
+              end while
+              10:
+              return  $A$ 
+              11:
+            end procedure
+2.2 Markov chains and product-form relationship
+As announced in Section 1,
+our goal is to identify necessary and sufficient conditions
+on a Markov chain’s transition diagram  $G$ 
+for which the associated stationary measures have a product-form relationship,
+for all values of the transition rates.
+Therefore, we start by defining a formal Markov chain,
+where the transition rates are free variables rather than fixed values,
+and we define the corresponding stationary distribution.
+We then specify our definition of a product-form Markov chain.
+Formal Markov chain
+Our goal is to understand how the structure
+of a Markov chain’s transition diagram impacts
+the relationship between its transition rates
+and stationary measures.
+This motivates the definition of a formal Markov chain.
+Definition 3 (Formal Markov chain).
+Let  $G=(V,E)$  be a (possibly infinite) strongly-connected directed graph.
+Define the corresponding formal Markov chain
+to have transition rate from node  $i$  to node  $j$ 
+equal to  $q_{i,j}>0$  for each  $(i,j)\in E$ 
+and  $0$  for each  $(i,j)\in(V\times V){\setminus}E$ .
+Note that  $q_{i,j}$  is a free variable, not instantiated to a specific rate.
+For each strongly-connected graph  $G$ , there is a single corresponding formal Markov chain, and vice versa. We will therefore refer to the two interchangeably. The quantities  $q_{i,j}$  can be interpreted either as transition rates (CTMC) or as transition probabilities (DTMC; introducing the additional assumption that  $\sum_{j\in V}q_{i,j}=1$  for each  $i\in V$ ).
+For each formal Markov chain  $G=(V,E)$ ,
+we can define the associated (formal) stationary distribution  $\pi$ 
+to be the solution, as a function of the free variables  $q_{i,j}$ ,
+to the balance equation and normalization requirement:
+ $\displaystyle\pi_{i}\sum_{j\mid(i,j)\in E}q_{i,j}$ 
+ $\displaystyle=\sum_{k\mid(k,i)\in E}\pi_{k}q_{k,i},\quad i\in V,$ 
+(1)
+ $\displaystyle\sum_{i\in V}\pi_{i}$ 
+ $\displaystyle=1.$ 
+(2)
+Because  $q_{i,j}$  are free variables,
+if  $G$  is an infinite graph,
+one cannot in general guarantee
+that the summation requirement (2) is satisfied.
+Thus for infinite graphs, we will instead consider a stationary measure and omit (2), but we will still refer to stationary distributions for simplicity.
+In fact, all our results apply directly to all the stationary measures of a formal Markov chain, irrespective of whether or not the instantiations of this Markov chain are positive recurrent.
+Product-form relationship
+We now come to the central concept of the paper.
+Definition 4
+gives our definition of
+a product-form relationship between two nodes,
+while Definition 5
+considers the entire graph.
+Definition 4 (Graph-based product-form).
+Consider a formal Markov chain  $G=(V,E)$ 
+and let  $i,j\in V$ .
+Nodes  $i$  and  $j$ 
+are in a graph-based product-form relationship
+with one another
+if, letting  $\pi$  denote the Markov chain’s stationary distribution,
+we have
+ $\displaystyle\pi_{i}f_{i,j}=\pi_{j}f_{j,i},$ 
+(3)
+where  $f_{i,j}$  and  $f_{j,i}$  are polynomials (or more generally, rational functions)
+in the transition rates of the formal Markov chain.
+The complexity of a product-form relationship
+will be measured by the complexity of the associated polynomials
+(e.g., degree, number of monomials, arithmetic circuit complexity, arithmetic circuit depth, etc.).
+The term graph-based product form
+will only be employed in association with a certain complexity level,
+as will be defined below.
+Definition 5 (Product-form distribution).
+A formal Markov chain has a product-form stationary distribution at a given complexity level if all pairs of nodes in the graph are in a graph-based product-form relationship at that complexity level.
+For brevity, we will often say “product-form”, leaving “graph-based” implicit. Note however that this notion of product-form is more specific than the general concept in the literature, as discussed in Section 1.2.
+We will be particularly interested in the following types of product-form relationships, in increasing order of complexity:
+S-product-form:
+S stands for sum.
+Let  $N_{i}:=\{j\in V\mid(i,j)\in E\}$  denote the out-neighborhood of  $i$ .
+Focusing on  $f_{i,j}$ , we say that nodes  $i$  and  $j$  are
+in an S-product-form relationship
+if there exists some  $S_{i,j}\subseteq N_{i}$ , such that
+ $\displaystyle f_{i,j}$ 
+ $\displaystyle=\sum_{k\in S_{i,j}}q_{i,k}.$ 
+PS-product-form:
+P stands for product.
+Again focusing on  $f_{i,j}$ ,
+we say that nodes  $i$  and  $j$  are in a PS-product-form relationship
+if  $f_{i,j}$  is the product of sums of subsets of transition rates emerging from nodes in the graph: for some  $F_{i,j}\subseteq V$ ,
+there exists  $S_{a,i,j}\subseteq N_{a}$  for each  $a\in F_{i,j}$ , such that
+ $\displaystyle f_{i,j}$ 
+ $\displaystyle=\prod_{a\in F_{i,j}}\sum_{k\in S_{a,i,j}}q_{a,k}.$ 
+SPS-product-form:
+We add another layer of alternation. Each sum is over neighboring vertices, while the products are over arbitrary vertices.
+We also allow the terms in the products to be the inverses of sums, as well as direct sums.
+Focusing on  $f_{i,j}$ ,
+we say that nodes  $i$  and  $j$  are in an SPS-product-form relationship if
+there exist  $S_{i,j}\subseteq N_{i}$ ,  $F_{k,i,j}\subseteq(V\times\{-1,1\})$  for each  $k\in S_{i,j}$ ,
+and  $S_{a,k,i,j}\subseteq N_{a}$  for each  $(a,p)\in F_{k,i,j}$ , such that
+ $\displaystyle f_{i,j}=\sum_{k\in S_{i,j}}\prod_{(a,p)\in F_{k,i,j}}\Big(\sum_{k^{\prime}\in S_{a,k,i,j}}q_{a,k^{\prime}}\Big)^{p}.$ 
+Higher-order:
+We can similarly define PSPS-product-form, SPSPS-product-form and more generally (PS)n and S(PS)n product form for any  $n\in\{1,2,3,\ldots\}$ .
+These product-form classes correspond to limited-depth arithmetic circuit complexity classes: S-product-form is a subclass of depth-1 circuits, PS-product-form is a subclass of depth-2 circuits, and so forth. The width of these arithmetic circuits, or more specifically the in-degree of the gates, is also limited by the degrees of the graph’s nodes. Thus simple product-form classes correspond to simple arithmetic circuits.
+2.3 Cuts with a given source node set
+The following lemma is borrowed from [14, Lemma 1.4].
+It shows that cuts in a Markov chain’s transition diagram
+can be exploited to derive (from the balance equations)
+a new set of equations, called cut equations,
+that can sometimes be used to derive the stationary distribution more easily.
+Lemma 6.
+Consider a formal Markov chain  $G=(V,E)$ 
+and let  $\pi$  denote its stationary distribution.
+For each cut  $(A,B)$  of the graph  $G$ , we have
+ $\displaystyle\sum_{(i,j)\in E\cap(A\times B)}\pi_{i}q_{i,j}$ 
+ $\displaystyle=\sum_{(j,i)\in E\cap(B\times A)}\pi_{j}q_{j,i}.$ 
+(4)
+Proof.
+Equation (4) follows by summing the balance equations (1) over all  $i\in A$  and making simplifications.
+∎
+The rest of the paper focuses on identifying
+necessary and sufficient conditions on the graph structure
+that guarantee the existence of “nice cuts”
+that yield a simple expression
+for the Markov chain’s stationary distribution via (4).
+A simple and famous example is a birth-and-death process,
+as shown in Figure 1:
+for each  $i\in\{0,1,2,\ldots,\}$ ,
+cut  $i$  relates  $\pi_{i}$  and  $\pi_{i+1}$  via the cut equation
+ $\pi_{i}q_{i,i+1}=\pi_{i+1}q_{i+1,i}$ ,
+so that nodes  $i$  and  $i+1$  are on an S-product-form relationship.
+Although these cut equations follow from the balance equations
+ $\pi_{i}(q_{i,i-1}\mathds{1}[i\geq 1]+q_{i,i+1})=\pi_{i-1}q_{i-1,i}\mathds{1}[i\geq 1]+\pi_{i+1}q_{i+1,i}$  for  $i\in\{0,1,2,\ldots\}$ ,
+they allow us to explicitate the stationary distribution more directly.
+As a slightly more intricate toy example,
+in Figure 2,
+the cut  $(\{0,4\},\{1,2,3,5,6\})$ 
+implies  $\pi_{4}(q_{4,1}+q_{4,5})=\pi_{1}q_{1,0}$ ,
+hence nodes  $1$  and  $4$  are on an S-product-form relationship.
+ $0$  $1$  $2$  $3$  $4$  $\cdots$ Cut  $0$ Cut  $1$ Cut  $2$ Cut  $3$ Cut  $4$ 
+Figure 1: A birth-and-death process.
+ $0$  $1$  $2$  $3$  $4$  $5$  $6$ 
+Figure 2: A simple formal Markov chain exhibiting a product form relationship between nodes  $1$  and  $4$ , as a result of the cut  $(\{0,4\},\{1,2,3,5,6\})$ .
+In general, a cut equation (4) as given in Lemma 6
+is more convenient that the balance equations (1)
+if the set of nodes  $i$  such that  $\pi_{i}$  appears
+on either side of the equation is small.
+This set is called the source of the corresponding cut,
+as it consists of the nodes that are the sources of the edges that cross the cut.
+Definition 7 (Source).
+Consider a formal Markov chain  $G=(V,E)$ .
+The source of a cut  $(A,B)$  of the graph  $G$ 
+is the pair  $(I,J)$  defined by
+ $\displaystyle I=\{i\in A:E\cap(\{i\}\times B)\neq\emptyset\},\qquad\qquad J=\{j\in B:E\cap(\{j\}\times A)\neq\emptyset\}.$ 
+(5)
+Equivalently,  $(A,B)$  is called an  $(I,J)$ -sourced cut.
+In Section 3,
+we will focus on the special case
+where the source sets  $I$  and  $J$  are both singletons,  $I=\{i\}$  and  $J=\{j\}$ .
+We refer to such a cut as a single-sourced cut.
+2.4 Joint-ancestor freeness
+In Definition 8 below,
+we identify a simpler condition,
+called joint-ancestor freeness,
+that we will prove to be necessary and sufficient for
+the existence of a cut with a particular source pair
+in Section 3.4.
+Definition 8 (Joint-ancestor freeness).
+Consider a formal Markov chain  $G=(V,E)$ 
+and two disjoint nonempty sets  $I,J\subsetneq V$ .
+A node  $k\in V$  is a joint ancestor of node sets  $I$  and  $J$ 
+if  $k\in A_{I}(G{\setminus}J)\cap A_{J}(G{\setminus}I)$ ,
+i.e., there is both a path from node  $k$  to some node in  $I$  that avoids set  $J$ 
+and a path from node  $k$  to some node in  $J$  that avoids set  $I$ .
+Node sets  $I$  and  $J$  are said to be joint-ancestor free
+if  $A_{I}(G{\setminus}J)\cap A_{J}(G{\setminus}I)=\emptyset$ .
+In the special case where  $I$  and/or  $J$  are singletons,
+we drop the curly brackets in the notation,
+e.g., we write  $A_{i}(G{\setminus}J)$  for  $A_{\{i\}}(G{\setminus}J)$ .
+To make this definition more concrete,
+lets us again consider the birth-and-death process
+of Figure 1.
+Focusing on  $I=\{2\}$  and  $J=\{3\}$ ,
+we have  $A_{2}(G{\setminus}3)=\{0,1,2\}$ 
+and  $A_{3}(G{\setminus}2)=\{3,4,5,\ldots\}$ ,
+so that nodes 2 and 3 are joint-ancestor free.
+To see why  $A_{2}(G{\setminus}3)=\{0,1,2\}$ ,
+it suffices to observe that
+the subgraph  $G{\setminus}3$  consists of two strongly connected components:
+ $\{0,1,2\}$  and  $\{4,5,6,\ldots\}$ .
+Anticipating over Proposition 15 below,
+we observe that
+ $(A_{2}(G{\setminus}3),A_{3}(G{\setminus}2))=(\{0,1,2\},\{3,4,5,\ldots\})$ 
+is exactly Cut 2 in Figure 1.
+Similarly,  $I=\{1\}$  and  $J=\{2,4\}$ 
+are joint-ancestor free because
+ $A_{1}(G{\setminus}\{2,4\})=\{0,1\}$ 
+and  $A_{\{2,4\}}(G{\setminus}1)=\{2,3,4,\ldots\}$ .
+On the contrary, nodes 1 and 3 are not joint-ancestor free
+because  $A_{1}(G{\setminus}3)=\{0,1,2\}$ 
+and  $A_{3}(G{\setminus}1)=\{2,3,4,\ldots\}$ 
+have non-empty intersection  $\{2\}$ .
+The MutuallyAvoidingAncestors procedure
+in Algorithm 2
+returns the joint-ancestor sets  $A_{I}(G{\setminus}J)$  and  $A_{J}(G{\setminus}I)$ 
+in time  $O(|E|)$  in a finite graph  $G$ ,
+by calling the Ancestors procedure
+from Algorithm 1.
+MutuallyAvoidingAncestors can be used to test
+if two node sets are joint-ancestor free.
+Algorithm 2  Returns the mutually-avoiding ancestors of two node sets
+              1:
+            procedure MutuallyAvoidingAncestors(finite directed graph  $G=(V,E)$ , disjoint nonempty sets  $I,J\subseteq V$ )
+ $\to$  ancestor sets  $A_{I}(G{\setminus}J),A_{J}(G{\setminus}I)$ 
+              2:
+               $A_{I}\leftarrow$  Ancestors( $I$ ,  $G{\setminus}J$ )
+              3:
+               $A_{J}\leftarrow$  Ancestors( $J$ ,  $G{\setminus}I$ )
+              4:
+              return  $A_{I},A_{J}$ 
+              5:
+            end procedure
+3 S-product-form, cuts, and joint-ancestor freeness
+In this section, we focus on the S-product-form relationship
+introduced in Section 2.2.
+Theorem 9, the main result of this section,
+is stated in Section 3.1
+and illustrated on toy examples in Section 3.2.
+The proof of Theorem 9
+relies on intermediary results shown in
+Sections 3.3, 3.4 and 3.5.
+Higher-order product-form relationships,
+such as PS-product-form,
+will be considered in Section 4.
+3.1 Main theorem
+Theorem 9 below is our first main contribution:
+it gives simple necessary and sufficient conditions
+under which two nodes are in an S-product-form relationship.
+This result relies on the two graph-based notions introduced earlier,
+namely, cuts with a given source node (Section 2.3)
+and joint-ancestor freeness (Section 2.4).
+The rest of Section 3 will give further insights into this result.
+Theorem 9.
+Consider a formal Markov chain  $G=(V,E)$ 
+and let  $i,j\in V$ .
+The following statements are equivalent:
+[(i)]
+1. 
+Nodes  $i$  and  $j$  are in an S-product-form relationship.
+2. 
+There is an  $i,j$ -sourced cut.
+3. 
+Nodes  $i$  and  $j$  are joint-ancestor free.
+If these statements are true, then
+the S-product-form between nodes  $i$  and  $j$  has factors
+ $\displaystyle f_{i,j}=\sum_{\begin{subarray}{c}k\in A_{j}(G{\setminus}i):\\
+(i,k)\in E\end{subarray}}q_{i,k}\quad\text{and}\quad f_{j,i}=\sum_{\begin{subarray}{c}k\in A_{i}(G{\setminus}j):\\
+(j,k)\in E\end{subarray}}q_{j,k}.$ 
+(6)
+Proof.
+The implication (2)  $\implies$  (1)
+is a classical result that will be recalled
+in Lemma 14 in Section 3.3.
+The equivalence (2)  $\iff$  (3)
+will be shown in Proposition 15 in Section 3.4.
+The implication (1)  $\implies$  (3)
+will be shown in Theorem 18 in Section 3.5.
+Lastly, Equation (6) follows for instance
+by combining Lemma 14 and Proposition 15.
+∎
+The equivalence between conditions
+(1) and (2)
+is reminiscent of classical sufficient conditions
+on the existence of a product-form relationship,
+except that the focus is now on the transition graph
+rather than on the transition rates.
+Now, the equivalence between conditions
+(2) and (3)
+can be intuitively understood as follows.
+If two nodes  $i,j\in V$  are joint-ancestor free,
+meaning that  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)=\emptyset$ ,
+then one can verify that  $(A_{i}(G{\setminus}j),A_{j}(G{\setminus}j))$ 
+forms a cut and that its source nodes are  $i$  and  $j$ .
+On the contrary, if  $i$  and  $j$  are not joint-ancestor free,
+there exists  $k\in V{\setminus}\{i,j\}$ 
+such that there are two paths  $P(k\to i{\setminus}j)$ 
+and  $P(k\to j{\setminus}i)$ .
+The existence of these two paths
+precludes any cut  $(A,B)$ 
+from having source  $i,j$ .
+Indeed, assuming for example that  $i,k\in A$  and  $j\in B$ ,
+the path  $P(k\to j{\setminus}i)$ 
+needs to go from part  $A$  (containing  $k$ )
+to part  $B$  (containing  $j$ ),
+and it cannot do so via node  $i$ 
+since this is an  $i$ -avoiding path.
+Therefore, the source of part  $A$  cannot be reduced to node  $i$ .
+Thanks to Theorem 9,
+we can directly apply procedure MutuallyAvoidingAncestors from Algorithm 2
+to verify if two nodes  $i$  and  $j$  are in an S-product-form relationship
+and, if yes, compute the corresponding factors,
+all with time complexity  $O(|E|)$ .
+This is far more efficient than directly testing each cut in the graph to see if its sources are  $i$  and  $j$ :
+there are  $2^{|V|}$  such cuts, each of which would take  $|E|$  time to check.
+Testing the S-product-form relationship of all pairs of nodes in the graph
+can be done in time  $O(|V|^{2}|E|)$ 
+(also see Section 4.1).
+3.2 Illustrative examples
+Before we prove the intermediary results
+that appear in the proof of Theorem 9,
+let us illustrate this connection between single-sourced cuts, joint-ancestor freeness, and product-form relationships with a few toy examples, shown in Figures 1 and 6.
+We first revisit the birth-and-death process
+already discussed in Sections 2.3 and 2.4.
+For a more sophisticated example involving S-product-form,
+please see Section 5.1.
+Example 10 (Birth-and-death process).
+Consider a formal Markov chain  $G=(V,E)$  with
+ $V=\{0,1,2,\ldots\}$  and  $E=\bigcup_{i\in V}\{(i,i+1),(i+1,i)\}$ ,
+as in Figure 1.
+For each  $i\in V$ ,
+nodes  $i$  and  $i+1$  are in an S-product-form relationship
+through the  $i,i+1$ -sourced cut formed by
+ $A_{i}(G{\setminus}i+1)=\{1,2,\ldots,i\}$ 
+and  $A_{i+1}(G{\setminus}i)=\{i+1,i+2,\ldots\}$ .
+However, for each  $i,j\in V$ 
+such that  $i\leq j-2$ ,
+nodes  $i$  and  $j$  are not in an S-product-form relationship
+because  $A_{i}(G{\setminus}j)=\{0,1,2,\ldots,j-1\}$ 
+and  $A_{j}(G{\setminus}i)=\{i+1,i+2,\ldots,n\}$ 
+intersect at
+ $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)=\{i+1,i+2,\ldots,j-1\}$ .
+{subfigure}
+.3
+12345
+Figure 3: One-way cycle
+{subfigure}
+.3
+12345
+Figure 4: One-way cycle with an additional edge
+{subfigure}
+.3
+12345
+Figure 5: Two-way cycle
+Figure 6: Illustrative examples of S-product-form relationships.
+Example 11 (One-way cycle).
+Consider a formal Markov chain  $G=(V,E)$  with
+ $V=\{1,2,\ldots,n\}$  for some  $n\geq 3$ 
+and  $E=\{(i,i+1)|i\in V\}\cup E^{\prime}$ ,
+where  $E^{\prime}\subseteq\{(i,i)|i\in V\}$ ,
+with the convention that nodes are numbered modulo  $n$ .
+For instance, Figure 6.
+For each  $i,j\in V$ , say with  $i<j$ ,
+the sets
+ $A_{i}(G{\setminus}j)=\{j+1,j+2,\ldots,n,1,2,\ldots,i\}$ 
+and  $A_{j}(G{\setminus}i)=\{i+1,i+2,\ldots,j\}$ 
+are disjoint and therefore form an  $i,j$ -sourced cut.
+Theorem 9 implies that
+nodes  $i$  and  $j$  are in an S-product-form relationship with
+ $f_{i,j}=q_{i,i+1}$  and  $f_{j,i}=q_{j,j+1}$ .
+Equivalently, we can check visually
+that there is no node from which there is a directed path
+to node  $i$  without visiting node  $j$  and vice versa.
+This example shows in particular that an  $i,j$ -sourced cut may exist
+even if there is neither an edge  $(i,j)$  nor an edge  $(j,i)$ .
+Example 12 (One-way cycle with an additional edge).
+Consider the same directed cycle,
+but with an additional edge
+from node  $1$  to some node  $k\in\{3,4,\ldots,n\}$ .
+For instance, Figure 6.
+For each  $i\in\{2,3,\ldots,k-1\}$ 
+and  $j\in\{k,k+2,\ldots,n\}$ ,
+nodes  $i$  and  $j$  are no longer joint-ancestor free because
+ $1\in A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)$ .
+Indeed,
+ $1\to 2\to 3\to\cdots\to i$ 
+is a  $P(1\to i{\setminus}j)$  path
+and
+ $1\to k\to k+1\to\dots\to j$ 
+is a  $P(1\to j{\setminus}i)$  path.
+Therefore, nodes  $i$  and  $j$  are no longer
+in an S-product-form relationship.
+Example 13 (Two-way cycle).
+Lastly, consider a directed graph  $G=(V,E)$  with
+ $V=\{1,2,\ldots,n\}$  for some  $n\geq 3$ 
+and  $E=\bigcup_{i\in V}\{(i,i+1),(i+1,i)\}$ ,
+again with the convention that nodes are numbered modulo  $n$ .
+For instance, Figure 6.
+For each  $i,j\in V$ , the sets
+ $A_{i}(G{\setminus}j)=V{\setminus}\{j\}$ 
+and  $A_{j}(G{\setminus}i)=V{\setminus}\{i\}$ 
+have nonempty intersection
+ $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)=V{\setminus}\{i,j\}$ .
+Hence, there are no S-product-form relationships in this graph.
+3.3 The existence of a single-sourced cut implies S-product-form
+Lemma 14 below shows the implication
+(2)  $\implies$  (1)
+from Theorem 9.
+This result is recalled for completeness,
+but it follows directly by combining
+the definition of a sourced cut (Definition 7)
+with Lemma 6.
+Lemma 14.
+Consider a formal Markov chain  $G=(V,E)$ 
+and two nodes  $i,j\in V$ .
+If there is an  $i,j$ -sourced cut in the graph  $G$ ,
+then these nodes are in an S-product-form relationship (3),
+with factors as given in (6).
+3.4 The existence of a single-sourced cut is equivalent to joint-ancestor freeness
+We now prove
+the equivalence
+(2)  $\iff$  (3)
+from Theorem 9,
+that is, joint-ancestor freeness
+is necessary and sufficient
+for the existence of a cut with a particular source pair.
+We show that this equivalence holds
+both when the source pair is a pair  $i,j$  of nodes
+(Proposition 15)
+and more generally for any pair  $I,J$  of source sets
+(Proposition 16).
+Cuts where the source pair is a general pair of source sets  $I,J$  give rise to
+higher-level cuts, as we show and discuss in Section 4.
+Proposition 15.
+Consider a formal Markov chain  $G=(V,E)$ 
+and let  $i,j\in V$ .
+Nodes  $i$  and  $j$  are joint-ancestor free
+if and only if
+there exists an  $i,j$ -sourced cut.
+In this case, the only  $i,j$ -sourced cut is
+ $(A_{i}(G{\setminus}j),A_{j}(G{\setminus}i))$ .
+Proposition 15 is a special case of Proposition 16,
+which is stated and proved later in this section.
+To illustrate the intuition behind Proposition 15,
+again consider the toy example of Figure 2.
+Nodes  $1$  and  $4$  are joint-ancestor free
+because  $A_{1}(G{\setminus}4)=\{1,2,3,5,6\}$ 
+and  $A_{4}(G{\setminus}1)=\{0,4\}$  are disjoint
+and therefore form a  $1,4$ -sourced cut.
+In contrast, nodes  $1$  and  $2$  are not joint-ancestor free
+because  $A_{1}(G{\setminus}2)=\{0,1,4\}$ 
+and  $A_{2}(G{\setminus}1)=\{2,3,4,5,6\}$ 
+intersect at node  $4$ .
+Any cut  $(A,B)$  such that  $1\in A$  and  $2\in B$ 
+has to be crossed by an edge from a path  $P(4\to 2{\setminus}1)$ 
+(if  $4\in A$ )
+or from a path  $P(4\to 1{\setminus}2)$ 
+(if  $4\in B$ ),
+which makes it impossible to build a cut
+whose sources are restricted to nodes  $1$  and  $2$ .
+This intuition is formalized
+in Statement (2)
+of Lemma 17 below.
+Proposition 15 implies in particular that
+an  $i,j$ -sourced cut is unique when it exists,
+hence we can say the  $i,j$ -sourced cut.
+For Proposition 16 below, the situation is slightly more complicated.
+When considering
+joint-ancestor free sets  $I,J$  containing more than one node,
+cuts may not be unique, and may not have the entire sets  $I,J$  as sources.
+Nonetheless, there is still a bidirectional relationship between mutually-avoiding ancestor sets
+and cut-source sets.
+Proposition 16.
+Consider a formal Markov chain  $G=(V,E)$ 
+and two disjoint nonempty sets  $I,J\subseteq V$ .
+We have the following:
+[(i)]
+1. 
+If  $I$  and  $J$  are joint-ancestor free,
+then the cut  $(A_{I}(G{\setminus}J),A_{J}(G{\setminus}I))$ 
+is an  $(\underline{I},\underline{J})$ -sourced cut, for some non-empty sets  $\underline{I}\subseteq I$  and  $\underline{J}\subseteq J$ .
+2. 
+If  $(A_{I}(G{\setminus}J),A_{J}(G{\setminus}I))$  is a cut and has sources  $(I,J)$ , then it is the unique cut with sources ( $I$ ,  $J$ ).
+3. 
+If  $I$  and  $J$  are not joint-ancestor free,
+then there is no  $(I,J)$ -sourced cut.
+Again considering the example of Figure 2,
+let  $I=\{1,4\}$  and  $J=\{2,5\}$ .
+The ancestor sets
+ $A_{I}(G{\setminus}J)=\{0,1,4\}$ 
+and  $A_{J}(G{\setminus}I)=\{2,3,5,6\}$ 
+are disjoint,
+and we can verify that they form an
+ $(\underline{I},\underline{J})$  sourced-cut
+with  $\underline{I}=\{1,4\}=I$ 
+and  $\underline{J}=\{2\}\subsetneq J$ .
+For a negative example, node sets
+ $I^{\prime}=\{1\}$  and  $J=\{2,5\}$  are not joint-ancestor free
+because  $A_{I^{\prime}}(G{\setminus}J)=\{0,1,4\}$ 
+and  $A_{J}(G{\setminus}I^{\prime})=\{2,3,4,5,6\}$ 
+intersect at node  $4$ .
+Correspondingly, one can verify that there is no  $(I^{\prime},J)$ -sourced cut in the graph.
+Before proving Propositions 15 and 16,
+we prove the following intermediary lemma,
+which will also be instrumental for later results.
+Lemma 17.
+Consider a formal Markov chain  $G=(V,E)$ 
+and two disjoint nonsets  $I,J\subsetneq V$ .
+We have the following:
+[(i)]
+1. 
+ $A_{I}(G{\setminus}J)\cup A_{J}(G{\setminus}I)=V$ .
+2. 
+If  $(A,B)$  is an  $(I,J)$ -sourced cut,
+then  $A_{I}(G{\setminus}J)\subseteq A$ 
+and  $A_{J}(G{\setminus}I)\subseteq B$ .
+Proof of Lemma 17.
+Let us first prove Lemma 17(1).
+Let  $k\in V$ .
+Since  $G$  is strongly connected
+and  $I$  is nonempty,
+there is a directed path
+ $v_{1},v_{2},\ldots,v_{n}$  in  $G$ ,
+with  $n\geq 1$ ,
+such that  $v_{1}=k$  and  $v_{n}\in I$ .
+Let  $p=\min\{q\in\{1,2,\ldots,n\}|k_{q}\in I\cup J\}$ .
+Then  $k\in A_{I}(G{\setminus}J)$  if  $k_{p}\in I$ 
+and  $k\in A_{J}(G{\setminus}I)$  if  $k_{p}\in J$ .
+Hence,  $k\in A_{I}(G{\setminus}J)\cup A_{J}(G{\setminus}I)$ 
+for each  $k\in V$ , which implies that  $V=A_{I}(G{\setminus}J)\cup A_{J}(G{\setminus}I)$ .
+We now prove Lemma 17(2).
+Assume that  $(A,B)$  is an  $(I,J)$ -sourced cut
+and let  $k\in A_{I}(G{\setminus}J)$ :
+there is a directed path  $v_{1},v_{2},\ldots,v_{n}$ 
+such that  $v_{1}=k$ ,  $v_{n}\in I$ ,
+and  $v_{p}\notin J$  for each  $p\in\{1,2,\ldots,n\}$ .
+Our goal is to prove that  $k\in A$ .
+If  $n=1$ , we have directly  $k\in I\subseteq A$ .
+Now consider the case where  $n\geq 2$ .
+Assume for the sake of contradiction that  $k\notin A$ ,
+that is,  $k\in B$ ,
+so that  $v_{1}=k\in B$  and  $v_{n}\in A$ .
+Then we can define
+ $p=\max\{q\in\{1,2,\ldots,n-1\}|v_{q}\in B\}$ ,
+and we have  $(v_{p},v_{p+1})\in E\cap(B\times A)$ .
+We also know by construction of the path that  $k_{p}\notin J$ .
+This contradicts our assumption that  $J$  is the second source of the cut  $(A,B)$ .
+Hence,  $k\in A$ .
+∎
+Proof of Propositions 15 and 16.
+Proposition 15 is a special case of Proposition 16
+because the only nonempty subset of a singleton is the singleton itself.
+Therefore, in the remainder, we focus on proving Proposition 16.
+Let us first prove Proposition 16(1).
+Assume that  $I$  and  $J$  are joint-ancestor free,
+that is,  $A_{I}(G{\setminus}J)\cap A_{J}(G{\setminus}I)=\emptyset$ .
+Combining this assumption with
+Lemma 17(1)
+shows that  $(A_{I}(G{\setminus}J),A_{J}(G{\setminus}I))$ 
+is a cut.
+Assume for the sake of contradiction that
+the source  $(\underline{I},\underline{J})$ 
+of the cut  $(A_{I}(G{\setminus}J),A_{J}(G{\setminus}I))$ 
+does not satisfy  $\underline{I}\subseteq I$ 
+and  $\underline{J}\subseteq J$ .
+Specifically, suppose
+there exists  $(k,\ell)\in E\cap(A_{I}(G{\setminus}J)\times A_{J}(G{\setminus}I))$ 
+such that  $k\notin I$ .
+Since  $\ell\in A_{J}(G{\setminus}I)$ ,
+there exists a directed path
+ $v_{1},v_{2},\ldots,v_{n}$ , with  $n\geq 1$ ,
+such that  $v_{1}=\ell$ ,  $v_{n}=j\in J$ ,
+and  $v_{p}\notin I$  for each  $p\in\{1,2,\ldots,n\}$ .
+Since we assumed  $k\notin I$ ,
+it follows that  $k,v_{1},v_{2},\ldots,v_{n}$  is a directed path
+from  $k$  to  $j$  in  $G{\setminus}I$ ,
+hence  $k\in A_{J}(G{\setminus}I)$ ,
+which is impossible since we assumed  $k\in A_{I}(G{\setminus}J)$ 
+and  $A_{I}(G{\setminus}J)\cap A_{J}(G{\setminus}I)=\emptyset$ .
+Next, we prove Proposition 16(2).
+By Lemma 17(2), any cut  $(A,B)$  with source  $(I,J)$  is such that
+ $A_{I}(G{\setminus}J)\subseteq A$ 
+and  $A_{J}(G{\setminus}I)\subseteq B$ .
+But we assumed  $(A_{I}(G{\setminus}J),A_{J}(G{\setminus}I))$  forms a cut,
+and no nodes can be outside of the cut.
+Thus,  $A_{I}(G{\setminus}J)=A$  and  $A_{J}(G{\setminus}I)=B$ .
+Lastly, we prove Proposition 16(3).
+Assume that  $I$  and  $J$  are not joint-ancestor free,
+i.e.,  $A_{I}(G{\setminus}J)\cap A_{J}(G{\setminus}I)\neq\emptyset$ .
+Assume for the sake of contradiction that
+there is a cut  $(A,B)$  with source  $(I,J)$ .
+Lemma 17(2) implies that
+ $A_{I}(G{\setminus}J)\subseteq A$ 
+and  $A_{J}(G{\setminus}I)\subseteq B$ ,
+which in turn implies that
+ $A\cap B\supseteq A_{I}(G{\setminus}J)\cap A_{J}(G{\setminus}I)\neq\emptyset$ .
+This contradicts our assumption that  $(A,B)$  is a cut.
+∎
+3.5 S-product-form implies joint-ancestor freeness
+Our last step in the proof of Theorem 9
+is to show the implication
+(1)  $\implies$  (3),
+that is,
+S-product-form relationship implies joint-ancestor freeness.
+We have shown so far that statements
+(2) and (3)
+are equivalent to each other,
+and that they imply (1).
+In other words,
+we proved that if a  $i,j$ -sourced cut exists, or equivalently if nodes  $i$  and  $j$  have no joint ancestor, then an S-product-form relationship between  $i$  and  $j$  exists. Specifically, a product-form relationship exists where  $f_{i,j}$  depends only on transition rates along edges whose source is  $i$ , and  $f_{j,i}$  depends only on transition rates along edges whose source is  $j$ .
+Theorem 18 below proves this condition is necessary.
+The intuition behind the proof is as follows.
+If an  $i,j$ -sourced cut does not exist, then by Proposition 15 there exist nodes
+which are ancestors of both  $i$  and  $j$ , i.e.,  $A_{i}(G\setminus j)\cap A_{j}(G{\setminus}i)$  is nonempty. In particular, there must exist a node  $k$  which is an ancestor of both nodes  $i$  and  $j$  via disjoint paths.
+If such a node  $k$  exists, we show that the ratio  $\frac{\pi_{i}}{\pi_{j}}$  depends on edge weights  $q_{k,k^{\prime}}$  with source  $k$ .
+This violates the definition of S-product-form given in Section 2.2, so Theorem 18 shows that a joint ancestor implies no S-product-form, or equivalently that S-product-form implies no joint ancestor.
+Theorem 18.
+Consider a formal Markov chain  $G=(V,E)$ 
+and let  $i,j\in V$ .
+Suppose nodes  $i$  and  $j$  are not joint-ancestor free,
+i.e.,  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)\neq\emptyset$ .
+Then there exists a node  $k\in A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)$  such that the stationary probability ratio  $\frac{\pi_{i}}{\pi_{j}}$  depends on at least one of edge weights emerging from  $k$ .
+Proof.
+We will choose  $k$  to be a node in  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)$  such that  $k$  is an ancestor of both nodes  $i$  and  $j$  via disjoint paths.
+To see why such a node must exist, consider an arbitrary node  $k^{\prime}$  in  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)$ . From any such node, there exist paths from  $k^{\prime}$  to  $i$  and  $k^{\prime}$  to  $j$ .
+Consider the shortest such paths. Either these paths are disjoint,
+or there is a node  $k^{\prime\prime}$  which is a joint ancestor of  $i$  and  $j$  via shorter paths than  $k^{\prime}$ .
+Over all nodes in  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)$ ,
+let  $k$  be the node that is the ancestor of  $i$  via the shortest path length, choosing arbitrarily in case of a tie.
+By the above argument, the shortest paths from  $k$  to  $i$  and from  $k$  to  $j$  must be disjoint.
+Let  $a$  be the shortest path from  $k$  to  $i$ ,  $a:=k,a_{2},a_{3},\ldots,i$ .
+Let  $b$  be the shortest path from  $k$  to  $j$ ,  $b:=k,b_{2},b_{3},\ldots,j$ . As shown above,  $a$  and  $b$  share no nodes except node  $k$ .
+Consider the subchain,
+with node set  $U=\{i,j,k\}$ ,
+obtained by looking at the subsequence of states
+visited by the original Markov chain  $G=(V,E)$ 
+inside the set  $U$ .
+This subchain satisfies the Markov property,
+and for each  $u,v\in U$ 
+we let  $p_{u,v}$  denote
+its transition probability
+from state  $u$  to state  $v$ ;
+these are functions of the original Markov chain’s
+transition rates  $q_{i,j}$  for  $i,j\in V$ .
+Critically, letting  $\pi_{i}$ ,  $\pi_{j}$ , and  $\pi_{k}$ 
+denote the stationary probabilities for states  $i$ ,  $j,$  and  $k$ 
+in the original Markov chain,
+as defined by (1),
+we can verify that
+ $\frac{\pi_{i}}{\pi_{i}+\pi_{j}+\pi_{k}}$ ,
+ $\frac{\pi_{j}}{\pi_{i}+\pi_{j}+\pi_{k}}$ ,
+and  $\frac{\pi_{k}}{\pi_{i}+\pi_{j}+\pi_{k}}$ 
+form the stationary distribution of the subchain.
+Using this definition,
+we will quantify the relative state probabilities  $\pi_{i}$  and  $\pi_{j}$  in terms of the subchain transition probabilities  $p_{u,v}$  for  $u,v\in U$ .
+Using the balance equations for the subchain, we obtain successively:
+ $\displaystyle\pi_{k}$ 
+ $\displaystyle=p_{ik}\pi_{i}+p_{jk}\pi_{j}+p_{kk}\pi_{k},$ 
+(7)
+ $\displaystyle\pi_{k}$ 
+ $\displaystyle=\frac{p_{ik}\pi_{i}+p_{jk}\pi_{j}}{1-p_{kk}},$ 
+(8)
+ $\displaystyle\pi_{i}$ 
+ $\displaystyle=p_{ii}\pi_{i}+p_{ji}\pi_{j}+p_{ki}\pi_{k},$ 
+(9)
+ $\displaystyle\pi_{i}$ 
+ $\displaystyle=p_{ii}\pi_{i}+p_{ji}\pi_{j}+p_{ki}\frac{p_{ik}\pi_{i}+p_{jk}\pi_{j}}{1-p_{kk}},$ 
+(10)
+ $\displaystyle\pi_{i}\left(1-p_{ii}-\frac{p_{ik}p_{ki}}{1-p_{kk}}\right)$ 
+ $\displaystyle=\pi_{j}\left(p_{ji}+\frac{p_{jk}p_{ki}}{1-p_{kk}}\right),$ 
+(11)
+ $\displaystyle\pi_{i}\left(p_{ij}+p_{ik}-\frac{p_{ik}p_{ki}}{p_{ki}+p_{kj}}\right)$ 
+ $\displaystyle=\pi_{j}\left(p_{ji}+\frac{p_{jk}p_{ki}}{p_{ki}+p_{kj}}\right),$ 
+(12)
+ $\displaystyle\pi_{i}\left(p_{ij}+p_{ik}\frac{p_{kj}}{p_{ki}+p_{kj}}\right)$ 
+ $\displaystyle=\pi_{j}\left(p_{ji}+p_{jk}\frac{p_{ki}}{p_{ki}+p_{kj}}\right).$ 
+(13)
+Equations (7) and (9)
+are the balance equations of the subchain
+for states  $k$  and  $i$ .
+Equation (8) follows
+by solving (7) with respect to  $\pi_{k}$ ,
+and once injected into (9)
+it yields (10).
+Equation (11)
+follows by rearranging (10),
+and becomes (12) after injecting
+ $p_{ii}+p_{ij}+p_{ik}=1$ .
+Equation (13) then follows
+by rearraging (12).
+Equation (13) shows that,
+if we change  $\frac{p_{ki}}{p_{ki}+p_{kj}}$ 
+while holding  $p_{ij},p_{ik},p_{ji},p_{jk}$  constant,
+then the relative probabilities of  $\pi_{i}$  and  $\pi_{j}$  will change.
+Therefore, to conclude, it suffices to show that, by only changing  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$ ,  $\frac{p_{ki}}{p_{ki}+p_{kj}}$  can be changed while holding  $p_{ij},p_{ik},p_{ji},p_{jk}$  constant.
+Specifically, in the remainder of the proof, we show that if certain free variables  $q_{c,d}$  in the graph are fixed to specific values, and  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$  are left free to vary,
+then  $\frac{p_{ki}}{p_{ki}+p_{kj}}$  can still vary.
+This implies that  $\frac{p_{ki}}{p_{ki}+p_{kj}}$  depends on  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$ ,
+as desired.
+We can immediately note that  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$  have no effect on  $p_{ij},p_{ik},p_{ji},$  or  $p_{jk}$ ,
+as  $(k,a_{2})$  and  $(k,b_{2})$  originate at  $k$ , and therefore cannot be visited on  $k$ -avoiding paths from  $i$  to  $j$  or any of the other pairs listed.
+Recall that we label the nodes within paths  $a$  and  $b$  as  $a_{1},a_{2},\ldots$  and  $b_{1},b_{2},\ldots$ ,
+with  $a_{1}=b_{1}=k$ . Let  $|a|,|b|$  be the number of edges within each path. There are  $|a|+1$  and  $|b|+1$  nodes in the paths, and  $a_{|a|+1}=i$ , and  $b_{|b|+1}=j$ .
+All other nodes within  $a$  and  $b$  are disjoint, and are neither  $i,j,$  nor  $k$ .
+Let us fix all edge weights  $q$  whose source nodes are within path  $a$ , other than nodes  $k$  and  $i$ .
+We will show that even with these edge weights fixed, changing  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$ 
+still affects  $\frac{p_{ki}}{p_{ki}+p_{kj}}$ .
+Let  $\epsilon>0$  be a constant to be specified later,
+and let  $\Delta(v)$  be the degree of node  $v$ .
+Let us specify the edge weights for edges whose source node is within  $a$  as follows:
+ $\displaystyle q_{a_{\ell},a_{\ell+1}}$ 
+ $\displaystyle:=1-\epsilon,\quad\forall\ell,2\leq\ell\leq|a|,$ 
+ $\displaystyle q_{a_{\ell},a^{\prime}}$ 
+ $\displaystyle:=\frac{\epsilon}{\Delta(a_{i})-1},\quad\forall a^{\prime}\neq a_{\ell+1},(a_{\ell},a^{\prime})\in E.$ 
+Note that we have fixed the edge weight for all edges whose source node is within  $a$ ,
+except for  $a_{1}=k$  and  $a_{|a|+1}=i$ .
+We fix the edge weights for nodes whose source vertex is within  $b$  in the same manner.
+Let us also fix all edge weights whose source node is  $k$ , other than  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$ ,
+to be  $\frac{\epsilon}{\Delta(k)-1}$ .
+Now, we consider two extreme configurations:
+[(a)]
+1. 
+The  $a$ -emphasizing configuration:  $q_{k,a_{2}}=1-\epsilon$ , and  $q_{k,b_{2}}=\frac{\epsilon}{\Delta(k)-1}$ .
+2. 
+The  $b$ -emphasizing configuration:  $q_{k,b_{2}}=1-\epsilon$ , and  $q_{k,a_{2}}=\frac{\epsilon}{\Delta(k)-1}$ .
+Let us bound  $p_{ki}$  and  $p_{kj}$  in each configuration.
+In Configuration 1,
+the system may move from  $k$  to  $i$  via traversing path  $a$ .
+Each edge weight in this path has probability  $(1-\epsilon)$ , so
+ $p_{ki}^{(a)}\geq(1-\epsilon)^{|a|}$ .
+A similar lower bound holds in Configuration 2:
+ $p_{kj}^{(b)}\geq(1-\epsilon)^{|b|}$ .
+Let us specify  $\epsilon=3\max(|a|,|b|)$ .
+Note that for all  $x\geq 1$ ,
+ $(1-\frac{1}{3x})^{x}\in[2/3,e^{-1/3})$ .
+As a result,
+ $p_{ki}^{(a)}\geq 2/3$  and  $p_{kj}^{(b)}\geq 2/3$ ,
+which yields
+ $\displaystyle\frac{p_{ki}^{(a)}}{p_{ki}^{(a)}+p_{kj}^{(a)}}$ 
+ $\displaystyle\geq 2/3,$ 
+ $\displaystyle\frac{p_{ki}^{(b)}}{p_{ki}^{(b)}+p_{kj}^{(b)}}$ 
+ $\displaystyle\leq 1/3.$ 
+Between Configurations 1 and 2,
+only  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$  changed, and yet  $\frac{p_{ki}}{p_{ki}+p_{kj}}$  changed.
+Thus, between Configurations 1 and 2,
+the relative probability  $\frac{\pi_{i}}{\pi_{j}}$  changes.
+As a result,  $\frac{\pi_{i}}{\pi_{j}}$  depends on at least one of  $q_{k,a_{2}}$  and  $q_{k,b_{2}}$ ,
+both with partially-fixed weights and with all weights as free variables.
+∎
+4 Cut graph and higher-level cuts
+In this section, we explore product-form relationships beyond the S-product-form
+which was the focus of Section 3.
+In Section 4.1, we define the cut graph, which is an undirected graph whose edges represent S-product-form relationships between nodes.
+Based on this definition, in Section 4.2, we explore PS-product-form relationships, corresponding to combinations of S-product-form relationships produced by paths in the cut graph.
+In Sections 4.3 and 4.3, we introduce and explore higher-level cuts, which correspond to SPS-product-form relationships and beyond.
+4.1 Cut graph
+Let us first introduce the cut graph of a formal Markov chain.
+Definition 19 (Cut graph).
+Consider a strongly-connected directed graph  $G=(V,E)$ .
+The cut graph of  $G$ 
+is the undirected graph  $C_{1}(G)=(V,R)$ 
+where  $R$  is the family of doubletons  $\{i,j\}\subseteq V$ 
+such that  $i$  and  $j$  are in an S-product-form relationship.
+In other words,  $C_{1}(G)$  is the graph of
+the S-product-form binary relation.
+Recall that, by Theorem 9,
+two nodes  $i$  and  $j$  are in an S-product-form relationship
+if and only if there exists an  $i,j$ -sourced cut,
+that is,  $i$  and  $j$  are joint-ancestor free.
+Using this observation,
+Algorithm 3 returns the cut graph
+of a formal Markov chain with a finite number of states.
+It uses the MutuallyAvoidingAncestors procedure
+from Algorithm 2.
+Since each call to this procedure takes time  $O(|E|)$ ,
+the CutGraph procedure runs in time  $O(|V|^{2}|E|)$ .
+If the cut graph is connected,
+then the stationary distribution
+can be entirely computed by applying S-product-form relationships.
+Lastly, observe that the S-product-form relationship is not transitive,
+i.e., if the pairs  $i,j$  and  $j,k$  of nodes are both on an S-product-form relationship,
+this does not imply that nodes  $i,k$  are.
+Instead, we show in Section 4.2 that nodes  $i,k$  are then in a PS-product-form relationship.
+Algorithm 3  Returns the cut graph  $C_{1}(G)$  of a finite directed graph  $G=(V,E)$ 
+              1:
+            procedure CutGraph(finite directed graph  $G=(V,E)$ )
+ $\to$  the cut graph  $C_{1}(G)$ 
+              2:
+               $E^{\prime}\leftarrow\emptyset$ 
+              3:
+              for each pair of distinct nodes  $i,j\in V$  do
+              4:
+                $A_{i},A_{j}\leftarrow\textsc{MutuallyAvoidingAncestors}(G,i,j)$ 
+              5:
+               if  $A_{i}\cap A_{j}=\emptyset$  then
+              6:
+                 add edge  $\{i,j\}$  to  $E^{\prime}$ 
+              7:
+               end if
+              8:
+              end for
+              9:
+              return  $(V,E^{\prime})$ 
+              10:
+            end procedure
+In Appendix A,
+we relate the structure of a formal Markov chain  $G$ 
+to the existence of a clique in its cut graph  $C_{1}(G)$ .
+This condition can be seen as an extension of Proposition 15,
+as an edge is a clique of size 2.
+Appendix A shows in particular that
+the one-way cycle of Example 11
+is the only finite formal Markov chain whose cut graph is the complete graph.
+4.2 PS-product-form relationships
+The next lemma shows that, if two nodes are connected in the cut graph  $C_{1}(G)$ , they are in a PS-product-form relationship.
+In this way, each connected component of the cut graph forms a set of nodes that are pairwise in PS-product-form relationships. An example of a fully-connected cut graph appears in Section 5.1.
+Lemma 20.
+Consider a formal Markov chain  $G=(V,E)$ 
+and two nodes  $i,j\in V$ .
+Let  $i=k_{1},k_{2},\ldots,k_{d},k_{d+1}=j$  denote a path of length  $d$ 
+between nodes  $i$  and  $j$  in the cut graph  $C_{1}(G)$ ,
+where  $d$  is the distance between nodes  $i$  and  $j$  in  $C_{1}(G)$ .
+Then
+ $\displaystyle\pi_{i}\prod_{p=1}^{d}f_{k_{p},k_{p+1}}$ 
+ $\displaystyle=\pi_{j}\prod_{p=1}^{d}f_{k_{p+1},k_{p}}.$ 
+(14)
+where the  $f$ ’s are given by Equation (6) in Theorem 9.
+In this case, nodes  $i$  and  $j$  are in a PS-product-form relationship.
+Lemma 20 follows from the fact that each edge in the cut graph represents an S-product-form relationship, as proven in Lemma 14,
+which chains together along the path to give a PS-product-form relationship.
+We can be more specific than simply saying that  $i$  and  $j$  are in a PS-product-form
+relationship.
+The arithmetic circuit
+associated with the left-hand side of (14)
+has depth 2 and size
+ $\displaystyle 1+d+\sum_{p=1}^{d}\left|E\cap\left(\{k_{p}\}\times A_{k_{p+1}}(G{\setminus}k_{p})\right)\right|.$ 
+In particular, if the out-degree of each node on the path is upper-bounded by  $D$ ,
+the size of the arithmetic circuit is upper-bounded by  $1+d+dD$ .
+4.3 Higher-level cuts
+Up to this point, we have focused on cuts with a single source vertex on each of side of the cut:  $i,j$ -sourced cuts, where  $i$  and  $j$  are each single vertices.
+We refer to such cuts as “first-level” cuts. These cuts correspond to pairs of states which are joint-ancestor free, and result in S-type product form relationships between these states.
+In addition to these first-level cuts, we are also interested in second-level cuts.
+We now define such second-level cuts with reference to the cut graph  $C_{1}(G)$  introduced in Section 4.1.
+In Lemma 22 we will prove that
+second-level cuts give rise to SPS-product-form relationships.
+Table 1 summarizes this section
+by showing what levels of cuts give rise to the graph-structure product-form relationships enumerated in Section 2.2.
+Nodes  $i$  and  $j$  are neighbors in  $C_{1}(G)$ 
+S-product-form
+Theorem 9
+Nodes  $i$  and  $j$  are connected by a path in  $C_{1}(G)$ 
+PS-product-form
+Lemma 20
+Nodes  $i$  and  $j$  are connected by a hyperpath in  $C_{2}(G)$  containing
+\multirow2*SPS-product-form
+\multirow2*Lemma 22
+at most one hyperedge made of more than two nodes
+Nodes  $i$  and  $j$  are connected by a hyperpath in  $C_{2}(G)$ 
+PSPS-product-form
+Table 1: Sufficient conditions under which two distinct states  $i$  and  $j$  of a formal Markov chain  $G=(V,E)$  are in a product-form relationship. A hyperpath is defined as a sequence of distinct nodes such that each pair of consecutive nodes in the path is connected by a hyperedge.
+Second-level cuts
+We define two kinds of second-level cuts, closely related but subtly different.
+Definition 21 (Second-level cuts).
+Consider a formal Markov chain  $G=(V,E)$ . 
+A broad second-level cut is a cut with source  $(I,J)$  such that the nodes in  $I$  are connected to one another via the cut graph  $C_{1}(G)$ , and the same is true of  $J$ .
+In other words, an  $(I,J)$ -sourced cut is a broad second-level cut if there exists a pair  $K_{1}$  and  $K_{2}$  of connected components of the cut graph  $C_{1}(G)$ 
+such that  $I\subseteq K_{1}$  and  $J\subseteq K_{2}$ . 
+A narrow second-level cut is a cut arising from a joint-ancestor free relationship between two connected components of the cut graph  $C_{1}(G)$ .
+Specifically, the narrow second-level cut arising from two connected component  $K_{1}$  and  $K_{2}$  of  $C_{1}(G)$  is the cut  $(A_{K_{1}}(G{\setminus}K_{2}),A_{K_{2}}(G{\setminus}K_{1}))$ .
+Note that a narrow second-level cut is also a broad second-level cut: its sources must be subsets of  $K_{1}$  and  $K_{2}$ , by Proposition 16. The reverse is not as clear. Nonetheless, we conjecture that whenever a broad second-level cut exists, a corresponding narrow second-level cut also exists; see Conjecture 23 later in this section for details.
+If a broad second-level cut exists in the graph, generated by  $I\subseteq K_{1}$  and  $J\subseteq K_{2}$ , we will show in Lemma 22 that this cut gives rise to an SPS-product form relationship between any pair of vertices  $i\in K_{1},j\in K_{2}$ . It follows that, if all connected components of the cut graph are connected via broad second-level cuts, then  $G$  exhibits a PSPS-product form; an example appears in Section 5.2. Our primary motivation for introducing narrow second-level cuts is that they can be algorithmically discovered more easily than broad second-level cuts; see the following sub-subsection for details.
+One can similarly define broad third-level cuts, fourth-level cuts, and so on, which give rise to S(PS)n and (PS)n product-form relationships for larger  $n$ .
+A broad third-level cut is a cut whose source sets  $I$  and  $J$  are connected by a combination of first-level cuts and broad second-level cuts, and so forth.
+One can also define narrow third-level cuts with reference to narrow second-level cuts, and so forth.
+Intuitively, each additional sum (S) appears by applying a cut equation, and each additional product (P) appears by combining combining several product-form relationships.
+We also define the narrow second-level cut graph  $C_{2}(G)$  as follows. Starting with the first-level cut graph  $C_{1}(G)$ , for each pair of connected components  $K_{1},K_{2}$  which form a narrow second-level cut, we add a hyperedge containing the sources of the cut  $(A_{K_{1}}(G{\setminus}K_{2}),A_{K_{2}}(G{\setminus}K_{1}))$ .
+Assuming Conjecture 23, which claims that broad and narrow second-level cuts are equivalent,  $C_{2}(G)$  contains all necessary information to identify all first-level and second-level cuts, and we can characterize the corresponding S, PS, SPS, and PSPS product-form relationships. We can similarly define narrow third-level and higher-level cut graphs. If Conjecture 23 fails, then we can define a distinct broad second-level cut graph, and higher-level broad cut graphs.
+SPS-product-form
+We show that if there exists a broad second-level cut with source  $(I,J)$ , then not only are every pair of vertices in  $I$  and  $J$  in an SPS-product-form relationship (Definition 4), but in fact every pair of vertices in  $K_{1}$  and  $K_{2}$  are in an SPS-product-form relationship, where  $K_{1}$  and  $K_{2}$  are the connected components of the cut graph  $C_{1}(G)$  that include  $I$  and  $J$ , respectively.
+Lemma 22.
+Consider a formal Markov chain  $G=(V,E)$ .
+Given an  $(I,J)$ -sourced broad second level cut, with  $I\subseteq K_{1}$  and  $J\subseteq K_{2}$ , and  $K_{1},K_{2}$  connected components of  $C_{1}(G)$ ,
+then every pair of vertices  $i\in K_{1}$  and  $j\in K_{2}$  are in an SPS-product-form relationship.
+Proof.
+First, recall from Lemma 20 that because  $K_{1}$  is a connected component of  $C_{1}(G)$ , every pair of vertices  $i,i^{\prime}\in K_{1}$  is in a PS relationship. Letting  $i=k_{1},k_{2},\ldots k_{d},k_{d+1}=i^{\prime}$  be a path connecting  $i$  and  $i^{\prime}$  in  $K_{1}$ , a PS-product-form relationship is given by:
+ $\displaystyle f_{i,i^{\prime}}$ 
+ $\displaystyle=\prod_{p=1}^{d}f_{k_{p},k_{p+1}},\quad f_{i^{\prime},i}=\prod_{p=1}^{d}f_{k_{p+1},k_{p}},$ 
+(15)
+ $\displaystyle\pi_{i}f_{i,i^{\prime}}$ 
+ $\displaystyle=\pi_{i^{\prime}}f_{i^{\prime},i}.$ 
+(16)
+A similar PS-product-form relationship holds for any pair  $j,j^{\prime}\in K_{2}$ .
+Next, let us apply Lemma 6 to the cut with source sets
+ $(I,J)$ .
+By Lemma 6, we have
+ $\displaystyle\sum_{(i,j)\in E\cap(I\times J)}\pi_{i}q_{i,j}=\sum_{(j,i)\in E\cap(J\times I)}\pi_{j}q_{j,i}.$ 
+(17)
+Note that all edges that cross the cut belong to either  $I\times J$  or  $J\times I$ .
+Let  $i_{*}$  and  $j_{*}$  be an arbitrary pair of vertices,  $i_{*}\in K_{1}$ 
+and  $j_{*}\in K_{2}$ . We will now explicitate the SPS-product form relationship between  $i_{*}$  and  $j_{*}$ .
+Applying the PS-product form relationships within  $K_{1}$  and  $K_{2}$ ,
+given by (15),
+we can rewrite (17) in terms of  $\pi_{i_{*}}$ 
+and  $\pi_{j_{*}}$ :
+ $\displaystyle\sum_{(i,j)\in E\cap(I\times J)}\pi_{i_{*}}\frac{f_{i_{*},i}}{f_{i,i_{*}}}q_{i,j}$ 
+ $\displaystyle=\sum_{(j,i)\in E\cap(J\times I)}\pi_{j_{*}}\frac{f_{j_{*},j}}{f_{j,j_{*}}}q_{j,i},$ 
+ $\displaystyle\pi_{i_{*}}\sum_{(i,j)\in E\cap(I\times J)}\frac{f_{i_{*},i}}{f_{i,i_{*}}}q_{i,j}$ 
+ $\displaystyle=\pi_{j_{*}}\sum_{(j,i)\in E\cap(J\times I)}\frac{f_{j_{*},j}}{f_{j,j_{*}}}q_{j,i}.$ 
+This gives the SPS-product form relationship between  $i_{*}$  and  $j_{*}$  as desired. Note that we have made use of the flexibility of the SPS-product form definition, which allows us to invert the sums within the SPS formula, or equivalently to invert the products within  $f_{i,j}$  as defined in (15).
+Because  $i_{*}$  and  $j_{*}$  were an arbitrary pair of vertices in  $K_{1},K_{2}$ , this completes the proof.
+∎
+Algorithmic discovery
+We now discuss how to algorithmically and efficiently find all second-level cuts which exist in a given graph  $G$ , akin to Algorithm 3, which did the same for first-level cuts.
+Specifically, we find all narrow second-level cuts, via the following straightforward but efficient algorithm. We iterate over all pairs  $K_{1},K_{2}$  of connected components in the cut graph  $C_{1}(G)$ .
+For each pair of components, we use Algorithm 2 to check whether the components are joint-ancestor free, and hence form a narrow second-level cut.
+In contrast, attempting to discover broad second-level cuts directly via a similar procedure is not nearly as straightforward, as one may in principle be required to search over all pairs of subsets  $I\subseteq K_{1},J\subseteq K_{2}$ , which is inefficient.
+However, in all cases that we have examined, broad second-level cuts are only present between subsets of components that form narrow second-level cuts. This motivates the following conjecture.
+Conjecture: Equivalence of broad and narrow second-level cuts
+We conjecture that all broad second-level cuts have a corresponding narrow second-level cut, in the sense specified in Conjecture 23 below.
+As a result, we conjecture that the algorithmic procedure described above discovers all components  $K_{1}$  and  $K_{2}$  that contain broad second-level cuts:
+If there exist  $I\subseteq K_{1}$  and  $J\subseteq K_{2}$  which form a second-level cut, then  $K_{1}$  and  $K_{2}$  are joint-ancestor free, and the above procedure will discover a narrow second-level cut between  $K_{1}$  and  $K_{2}$ , even if that cut’s sources are not necessarily  $I$  and  $J$ .
+Conjecture 23.
+Consider a formal Markov chain  $G=(V,E)$ .
+For each pair of connected components  $K_{1}$  and  $K_{2}$  of  $C_{1}(G)$ ,
+if there exist two nonempty sets
+ $I\subseteq K_{1}$  and  $J\subseteq K_{2}$ 
+such that  $I$  and  $J$  are join-ancestor free in  $G$ ,
+then we conjecture that  $K_{1}$  and  $K_{2}$  are joint-ancestor free in  $G$ .
+In other words, if there is a broad second-level cut with source  $(I,J)$ ,
+then we conjecture that there is a narrow second-level cut arising from  $K_{1}$  and  $K_{2}$ .
+If Conjecture 23 holds, then we would be able to remove the distinction between broad and narrow second level cuts.
+The reason this claim is nontrivial is that in principle,  $K_{1}$  and  $K_{2}$  may have a joint ancestor even if  $I$  and  $J$  are joint-ancestor free. However, we were not able to build such an example.
+Thus, to prove Conjecture 23, one must leverage the fact that  $K_{1}$  and  $K_{2}$  are connected components of the cut graph  $C_{1}(G)$ .
+We explored the following avenue towards proving this conjecture. Given joint-ancestor free subsets  $I\subseteq K_{1}$  and  $J\subseteq K_{2}$ , we further conjecture that there always exists either an additional node by which either  $I$  or  $J$  can be expanded, while preserving the joint-ancestor free property:
+Conjecture 24.
+Given two joint-ancestor free subsets  $I\subseteq K_{1}$  and  $J\subseteq K_{2}$ , where either  $I\neq K_{1},J\neq K_{2}$ , or both,
+there exists either
+• 
+ $i\in K_{1}{\setminus}I$  such that  $I\cup\{i\}$  and  $J$  are joint-ancestor free, or
+• 
+ $j\in K_{2}{\setminus}J$  such that  $I$  and  $J\cup\{j\}$  are joint-ancestor free.
+If Conjecture 24 holds, then by applying it inductively we show  $K_{1}$  and  $K_{2}$  must be joint-ancestor free in  $G$  whenever  $I$  and  $J$  are, which would complete the proof of Conjecture 23.
+In Appendix B, we prove in Theorem 28 that in the special case where  $J$  contains a single vertex ( $|J|=1$ ), there exists an  $i\in K_{1}{\setminus}I$  such that  $I\cup\{i\}$  and  $J$  are joint-ancestor free. However, we were not able to resolve the general conjecture, either Conjecture 24 or Conjecture 23, and leave both as open problems.
+5 Examples
+We now give several examples of formal Markov chains arising from queueing systems which exhibit graph-based product form.
+5.1 Multiserver jobs
+First, we give a practical example of a Markov chain with PS-product form arising from its graph structure. This setting is taken from [15]. The setting is explored in more detail in a technical report [22].
+Consider the following multiserver-job (MSJ) queueing system.
+There are two types of jobs:
+class-1 jobs, which each require 3 servers to enter service,
+and class-2 jobs, which require 10 servers to enter service.
+There are 30 servers in total.
+Servers are assigned to jobs in first-come-first-served order,
+with head-of-line blocking.
+We will specifically consider a saturated queueing system,
+meaning that fresh jobs are always available, rather than having an external arrival process.
+Saturated queueing systems are used to characterize the stability region [28, 29]
+and mean response time [30]
+of the corresponding open system with external arrivals.
+In the saturated system, fresh jobs are always available,
+and a new job enters into the system whenever it is possible that this fresh job might receive service,
+based on the number of available servers.
+Specifically, if at least 3 servers are available, a fresh job will enter the system.
+If that job is a class-2 job,
+and if not 10 servers are available,
+the class-2 job will wait in the queue.
+There will always be at most one job in the queue,
+and only a class-2 job can be in the queue.
+Said differently, when a job completes service,
+we uncover the classes of as many fresh jobs as needed
+to verify that no more fresh jobs can be added to service.
+The service time of each job is exponentially distributed,
+with a rate based on the class of the job:
+ $\mu_{1}$  for class-1 jobs,
+and  $\mu_{2}$  for class-2 jobs.
+There are several Markov chains corresponding to this system
+that we could examine at this point.
+For instance, we could consider the standard CTMC,
+or the embedded DTMC with steps at epochs where jobs complete.
+These two Markov chains both exhibit product-form stationary distributions,
+but they do not exhibit graph-based product form: the specific transition rates, not just the graph structure, produce the product-form behavior.
+However, we instead examine a nonstandard DTMC, with epochs whenever a job either enters the system or completes.
+In particular, whenever a job leaves upon service completion,
+the DTMC transitions through a the sequence of states,
+starting right after the job has completed and no fresh job has been entered the system,
+then after a the first fresh job has entered, then the second, and so on,
+until there is no possibility that any further fresh jobs could immediately enter service.
+This DTMC does exhibit graph-based product form,
+and this product-form behavior transfers to the other two Markov chains
+mentioned above.
+More specifically, to reveal the graph-based product form,
+we examine the embedded DTMC of this system, examining moments at which jobs enter the system or complete.
+There are two kinds of states in the system:
+completion states,
+from which the next transition is a service completion,
+and arrival states,
+from which the next transition is a job arrival.
+In any state where at least 3 servers are available, and no job is in the queue,
+a fresh job enters the system.
+That job is a class-1 job with probability  $p_{1}$ , and a class-2 job otherwise.
+Otherwise, jobs complete.
+Class-1 jobs have service rate  $\mu_{1}$ , and class-2 jobs have service rate  $\mu_{2}$ ,
+resulting in some probability of a completion of each class of job.
+After a completion, the job in the queue (if any) moves into service if enough servers are available,
+transitioning to a new state.
+{subfigure}
+0 $\bar{0}$ 1 $\bar{1}$ 2 $\bar{2}$ 3 $\bar{3}$ 4 $\bar{4}$ 5 $\bar{5}$ 6 $\bar{6}$ 7 $\bar{7}$ 8 $\bar{8}$ 9 $\bar{9}$ 10
+Figure 7: Transition diagram graph  $G$ .
+{subfigure}
+0 $\bar{0}$ 1 $\bar{1}$ 2 $\bar{2}$ 3 $\bar{3}$ 4 $\bar{4}$ 5 $\bar{5}$ 6 $\bar{6}$ 7 $\bar{7}$ 8 $\bar{8}$ 9 $\bar{9}$ 10
+Figure 8: Cut graph  $C_{1}(G)$ .
+Figure 9: Multiserver jobs example.
+We denote states by the number of class-1 jobs in the system, from 0 to 10,
+and by whether the state is a completion state or an entering state.
+This naming convention is sufficient to differentiate all states in the system (see more details in [15, Section 4]).
+An overbar denotes an arrival state, while the number alone denotes a completion state.
+For instance, state  $4$  consists of  $4$  class-1 jobs and  $1$  class-2 job in service, for a total of 22 servers occupied, with another class-2 job in the queue.
+State  $\bar{4}$  is the same state but without the class-2 job in the queue.
+Note that the arrival states such as  $\bar{4}$  are present in this arrivals-and-completions embedded DTMC, and would not be present in a more standard completions-only DTMC.
+Figure 9 shows the graph  $G$  underlying the Markov chain for this saturated MSJ queue, with white backgrounds for completion states and grey backgrounds for arrival states.
+For instance, starting in state  $4$ , a class-1 job can complete, transitioning to state  $3$ ,
+with  $3$  class-1 jobs and  $2$  class-2 jobs in service,
+or a class-2 job can complete, transitioning to state  $\bar{4}$ .
+From state  $\bar{4}$ , a class-1 job can enter the system, transitioning to state  $\bar{5}$ ,
+with  $5$  class-1 jobs and  $1$  class-2 job in service,
+or a class-2 job can enter, transitioning to state  $4$ .
+Figure 9 shows the (first-level) cut graph  $C_{1}(G)$  corresponding to this graph.
+For instance, there is a first-level cut between nodes  $4$  and  $\bar{4}$ .
+This cut partitions the graph notes into two subsets:
+ $A_{\bar{4}}(G{\setminus}4)=\{0,\bar{0},\ldots,3,\bar{3},\bar{4}\}$ 
+and  $A_{4}(G{\setminus}\bar{4})=\{4,5,\bar{5},\ldots,\bar{9},10\}$ .
+The only edges crossing this cut are the outgoing edges from  $4$  and  $\bar{4}$ .
+Nodes
+Product-form Relation
+ $0$  and  $\bar{0}$ 
+ $\pi(\bar{0})(q_{\bar{0},0}+q_{\bar{0},1})=\pi(0)q_{0,\bar{0}}$ 
+ $\bar{0}$  and 1
+ $\pi(1)q_{1,0}=\pi(\bar{0})q_{\bar{0},\bar{1}}$ 
+ $1$  and  $\bar{1}$ 
+ $\pi(\bar{1})(q_{\bar{1},1}+q_{\bar{1},\bar{2}})=\pi(1)(q_{1,0}+q_{1,\bar{1}})$ 
+ $\bar{1}$  and  $2$ 
+ $\pi(2)q_{2,1}=\pi(\bar{1})q_{\bar{1},\bar{2}}$ 
+ $2$  and  $\bar{2}$ 
+ $\pi(\bar{2})q_{\bar{2},3}=\pi(2)(q_{2,1}+q_{2,\bar{2}})$ 
+ $\bar{2}$  and  $3$ 
+ $\pi(3)q_{3,\bar{2}}=\pi(\bar{2})q_{\bar{2},3}$ 
+ $3$  and  $\bar{3}$ 
+ $\pi(\bar{3})(q_{\bar{3},3}+q_{\bar{3},4})=\pi(3)q_{3,\bar{3}}$ 
+ $\bar{3}$  and  $4$ 
+ $\pi(4)q_{4,3}=\pi(\bar{3})q_{\bar{3},4}$ 
+Table 2: First-level cuts involving states  $i$  or  $\bar{i}$ ,
+for  $i\in\{0,1,2,3\}$ , in the multiserver job example.
+Table 2 lists some of the cuts
+and the corresponding product-form relationships between pairs of nodes,
+where the transition rate from state  $i$  to state  $j$  is denoted by  $q_{i,j}$ .
+Note that each first-level cut gives rise to an S-product-form relationship,
+defined in Section 2.2,
+as shown in Lemma 14.
+Because the cut graph is fully connected, as shown in Figure 9,
+every pair of nodes has a PS-product-form relationship, by composing S-product-form relationships
+along a path connecting those nodes in the cut graph, as described in Lemma 20.
+As a result, the entire formal Markov chain has a PS-product-form stationary distribution.
+If the three structural parameters of the system are changed (3 servers for class 1 jobs, 10 servers for class 2 jobs, 30 servers total), PS product form continues to hold.
+In prior work [15], this saturated queueing system was shown to have a PS-product-form stationary distribution, and that stationary distribution was given with respect to the specific transition probabilities  $q_{i,j}$  for that system. This work further illuminates the system, demonstrating that the underlying graph of the Markov chain gives rise to the product-form stationary distribution. A similar product form would exist for a system with arbitrary transition rates and the same graph.
+Critical to this graph-based product-form is the inclusion of the arrival states  $\bar{i}$ , in addition to the completion states  $i$ . Consider for instance the embedded DTMC with only completion states and no arrival states: arrival states  $\bar{i}$  are deleted, and transitions involving these states are replaced with transitions between completion states  $i$  whose rates take the form of a product. This completion-only embedded DTMC, which is the one studied by [15], still has a product-form stationary distribution, related to the stationary distribution of our completion-and-arrival DTMC by removing all arrival states and renormalizing over the completion states. In particular, all ratios of stationary probability between completion states are preserved, thus maintaining the product-form distribution. However, this DTMC does not exhibit graph-based product-form. One can verify that its product-form is “probability-specific” in the sense that it is a consequence of the fact that some transition rates in the completions-only DTMC are themselves written as products.
+5.2 Queue with batch arrivals: structured
+Next, we give an example of a queueing Markov chain whose associated cut graph is not connected via first-level cuts, but is connected via second-level cuts as discussed in Section 4.3, giving rise to PSPS-product form from its graph structure.
+Note that for this particular Markov chain, Conjecture 23 holds,
+so we do not need to distinguish between broad second-level cuts and narrow second-level cuts.
+Consider a single-server queueing system with structured batch arrivals. Jobs arrive in batches of size sampled from a geometric distribution, but the batch size is truncated to not bring the total number of jobs in the system above the next multiple of 3. More specifically, if there were  $4$  jobs present prior to an arrival, the number of jobs in queue would be increased to  $\min(4+N,6)$  where  $\mathbb{P}(N=n)=(1-p)p^{n-1}$  for each  $n\in\{1,2,3,\ldots\}$ ,
+with the truncation ensuring that the total number of jobs after the batch arrival does not exceed 6.
+Jobs are indistinguishable, with exponentially-distributed service times. Batch arrivals occur according to a Poisson process and have i.i.d. sizes.
+{subfigure}
+ $0$  $1$  $2$  $3$  $4$  $5$  $6$  $7$  $\bar{1}$  $\bar{2}$  $\bar{3}$  $\bar{4}$  $\bar{5}$  $\bar{6}$  $\bar{7}$  $\cdots$  $\cdots$ 
+Figure 10: Transition diagram graph  $G$ .
+{subfigure}
+ $0$  $1$  $2$  $3$  $4$  $5$  $6$  $7$  $\bar{1}$  $\bar{2}$  $\bar{3}$  $\bar{4}$  $\bar{5}$  $\bar{6}$  $\bar{7}$  $\cdots$  $\cdots$  $0$  $1$  $2$  $3$  $4$  $5$  $6$  $7$  $\bar{1}$  $\bar{2}$  $\bar{3}$  $\bar{4}$  $\bar{5}$  $\bar{6}$  $\bar{7}$  $\cdots$  $\cdots$ 
+Figure 11: First-level cut graph  $C_{1}(G)$ . Edges (solid lines) connect nodes that are in an S-product-form relationship. Dashed contours outline connected components of  $C_{1}(G)$ .
+{subfigure}
+ $0$  $1$  $2$  $3$  $4$  $5$  $6$  $7$  $\bar{1}$  $\bar{2}$  $\bar{3}$  $\bar{4}$  $\bar{5}$  $\bar{6}$  $\bar{7}$  $\cdots$  $\cdots$  $0$  $1$  $2$  $3$  $4$  $5$  $6$  $7$  $\bar{1}$  $\bar{2}$  $\bar{3}$  $\bar{4}$  $\bar{5}$  $\bar{6}$  $\bar{7}$  $\cdots$  $\cdots$ 
+Figure 12: Second-level cut graph  $C_{2}(G)$ . Solid lines intersecting at a dot represent second-level cuts, showing the source nodes of the cut.
+Figure 13: Queue with batch arrivals, first version.
+Level
+Nodes
+Equation
+\multirow11.2cm1
+ $0$  and  $1$ 
+ $\pi(0)q_{0,\bar{1}}=\pi(1)q_{1,0}$ 
+ $0$  and  $\bar{1}$ 
+ $\pi(0)q_{0,\bar{1}}=\pi(\bar{1})(q_{\bar{1},1}+q_{\bar{1},\bar{2}})$ 
+ $1$  and  $\bar{1}$ 
+ $\pi(1)q_{1,0}=\pi(\bar{1})(q_{\bar{1},1}+q_{\bar{1},\bar{2}})$ 
+ $2$  and  $\bar{2}$ 
+ $\pi(2)q_{2,1}=\pi(\bar{2})(q_{\bar{2},2}+q_{\bar{2},\bar{3}})$ 
+ $3$  and  $\bar{3}$ 
+ $\pi(3)q_{3,2}=\pi(\bar{3})(q_{\bar{3},3}+q_{\bar{3},\bar{2}})$ 
+ $3$  and  $4$ 
+ $\pi(3)q_{3,\bar{4}}=\pi(4)q_{4,3}$ 
+ $4$  and  $\bar{4}$ 
+ $\pi(4)q_{4,3}=\pi(\bar{4})(q_{\bar{4},4}+q_{\bar{4},\bar{3}})$ 
+ $5$  and  $\bar{5}$ 
+ $\pi(5)q_{5,4}=\pi(\bar{5})(q_{\bar{5},5}+q_{\bar{5},\bar{4}})$ 
+ $6$  and  $\bar{6}$ 
+ $\pi(6)q_{6,5}=\pi(\bar{6})(q_{\bar{6},6}+q_{\bar{6},\bar{5}})$ 
+ $6$  and  $7$ 
+ $\pi(6)q_{6,\bar{7}}=\pi(7)q_{7,6}$ 
+ $7$  and  $\bar{7}$ 
+ $\pi(7)q_{7,6}=\pi(\bar{7})(q_{\bar{7},7}+q_{\bar{7},\bar{6}})$ 
+\multirow4.2cm2
+ $\{1,\bar{1}\}$  and  $2$ 
+ $\pi(1)q_{1,\bar{2}}+\pi(\bar{1})q_{\bar{1},\bar{2}}=\pi(2)q_{2,1}$ 
+ $\{2,\bar{2}\}$  and  $3$ 
+ $\pi(2)q_{2,\bar{3}}+\pi(\bar{2})q_{\bar{2},\bar{3}}=\pi(3)q_{3,2}$ 
+ $\{4,\bar{4}\}$  and  $5$ 
+ $\pi(4)q_{4,\bar{5}}+\pi(\bar{4})q_{\bar{4},\bar{5}}=\pi(5)q_{5,4}$ 
+ $\{5,\bar{5}\}$  and  $6$ 
+ $\pi(5)q_{5,\bar{6}}+\pi(\bar{5})q_{\bar{5},\bar{6}}=\pi(6)q_{6,5}$ 
+Table 3: Cuts associated with
+the single-server queue batch example of Figure 13.
+We consider the embedded DTMC of the system, examining moments when jobs enter the system or complete.
+Figure 13 shows the graph  $G$  underlying the Markov chain for this batch-arrivals system. It is infinite in one direction,
+in contrast to the finite graph we considered in Section 5.1.
+In the same spirit as Section 5.1,
+there are two kinds of states: during a batch, when a job has just arrived, and in the bulk of time, when jobs may complete or a new batch may arrive. We denote states by the number of jobs in the system, and by whether the state is immediately-post-arrival, shown in grey, or spanning a nonzero amount of time, shown in white.
+An overbar denotes an immediately-post-arrival state.
+For instance, state  $4$  has four jobs in the system, and jobs may complete or a new batch may begin.
+State  $\bar{7}$  has seven jobs, and a batch of arrivals is ongoing.
+When a batch ends, the system transitions from the immediately-post-arrival state to the corresponding general-time state, such as from state  $\bar{2}$  to state  $2$ .
+Figure 13 shows the first-level cut graph  $C_{1}(G)$  corresponding to this graph. For instance, there is a first-level cut between nodes  $3$  and  $\bar{4}$ .
+This cut partitions the graph into two subsets:  $A_{\bar{4}}(G{\setminus}3)=\{\bar{4}\}$ , and  $A_{3}(G{\setminus}\bar{4})=V\setminus\{\bar{4}\}$ .
+This cut gives rise to an S-product form relationship between nodes  $3$  and  $\bar{4}$ . More first-level cuts and corresponding S-product-form relationships are listed in Table 3.
+The connected components of  $C_{1}(G)$ , illustrated with dashed outlines in Figure 13, each contain two to four vertices. Between these components, there exist second-level cuts, as shown in Figure 13.
+For instance, between components  $K_{1}=\{2,\bar{2}\}$  and  $K_{2}=\{3,\bar{3},4,\bar{4}\}$ ,
+there exists a cut with sources  $I=K_{1}=\{2,\bar{2}\}$  and  $J=\{3\},J\subseteq K_{2}$ . Correspondingly,  $K_{1}$  and  $K_{2}$  are joint-ancestor free.
+This cut partitions the graph into two subsets:  $A_{I}(G{\setminus}J)=\{0,1,\bar{1},2,\bar{2}\},$ 
+and  $A_{J}(G{\setminus}I)=\{3,\bar{3},4,\bar{4},5,\bar{5},\ldots\}$ .
+Due to this second-level cut, the graph induces an SPS-product-form relationship between each pair of vertices in  $K_{1}$  and  $K_{2}$ , by Lemma 22. Each connected component has a second-level cut with each of its neighbors, as shown in Figure 13 and in Table 3, so the Markov chain has a PSPS-product-form.
+The same is true if one varies the parameters defining the system and its Markov chain, for instance by changing the multiplier 3 that truncates the batches to some other multiplier, or truncating the batches at an arbitrary sequence of cutoff values.
+5.3 Queue with batch arrivals: unstructured
+Finally, we give an example of a queueing system with a positive number of first-level cuts, second-level, third-level, and so forth, but for which the entire graph is not connected via any finite level of cuts.
+Consider a single-server queueing system with unstructured batch arrivals, of size either 1 or 2. Jobs arrive in batches of size 1 with probability  $p_{1}$  and 2 with probability  $p_{2}$ , with  $p_{1}+p_{2}=1$ . Jobs are indistinguishable, with exponential service time. Batch arrivals occur according to a Poisson process.
+We examine the embedded DTMC of the system, examining moments when jobs enter the system or complete. We use the same state representation as in Section 5.2.
+Figure 18 shows the graph  $G$  underlying the Markov chain for this batch-arrivals system. Figure 18 shows the first-level cut graph  $C_{1}(G)$  corresponding to this graph. Table 4 lists some such cuts and the corresponding S-product form relationships.
+{subfigure}
+.49
+ $0$  $1$  $2$  $3$  $4$  $5$  $\bar{1}$  $\bar{3}$  $\bar{5}$  $\bar{2}$  $\bar{4}$  $\cdots$  $\cdots$ 
+Figure 14: Transition diagram  $G$ .
+{subfigure}
+.49
+ $0$  $1$  $2$  $3$  $4$  $5$  $\bar{1}$  $\bar{3}$  $\bar{5}$  $\bar{2}$  $\bar{4}$  $\cdots$  $\cdots$ 
+Figure 15: First-level cut graph  $C_{1}(G)$ .
+{subfigure}
+.49
+ $0$  $1$  $2$  $3$  $4$  $5$  $\bar{1}$  $\bar{3}$  $\bar{5}$  $\bar{2}$  $\bar{4}$  $\cdots$  $\cdots$ 
+Figure 16: Second-level cut graph  $C_{2}(G)$ .
+{subfigure}
+.49
+ $0$  $1$  $2$  $3$  $4$  $5$  $\bar{1}$  $\bar{3}$  $\bar{5}$  $\bar{2}$  $\bar{4}$  $\cdots$  $\cdots$ 
+Figure 17: Third-level cut graph  $C_{3}(G)$ .
+Figure 18: Queue with batch arrivals, second version.
+In contrast to the structured batch setting in Section 5.2, there are very few second-level cuts in this graph. In fact, the only second level cuts are between subsets of the two leftmost components of the cut graph, namely  $K_{1}=\{0,1,\bar{1},\bar{2}\}$  and  $K_{2}=\{2,\bar{3}\}$ , as shown in Figure 18.
+A narrow second-level cut exists between these components, namely  $A_{K_{1}}(G{\setminus}K_{2})=K_{1}$  and  $A_{K_{2}}(G{\setminus}K_{1})=G{\setminus}K_{1}$ . This cut has source  $(\{\bar{1},\bar{2}\},\{2\})$ , as shown in Figure 18.
+Level
+Nodes
+Equation
+\multirow6.2cm1
+ $0$  and  $1$ 
+ $\pi(0)q_{0,\bar{1}}=\pi(1)q_{1,0}$ 
+ $0$  and  $\bar{1}$ 
+ $\pi(0)q_{0,\bar{1}}=\pi(\bar{1})(q_{\bar{1},1}+q_{\bar{1},2})$ 
+ $1$  and  $\bar{1}$ 
+ $\pi(1)q_{1,0}=\pi(\bar{1})(q_{\bar{1},1}+q_{\bar{1},2})$ 
+ $2$  and  $\bar{3}$ 
+ $\pi(2)q_{2,\bar{3}}=\pi(\bar{3})(q_{\bar{3},3}+q_{\bar{3},4})$ 
+ $3$  and  $\bar{4}$ 
+ $\pi(3)q_{3,\bar{4}}=\pi(\bar{4})(q_{\bar{4},4}+q_{\bar{4},5})$ 
+ $4$  and  $\bar{5}$ 
+ $\pi(4)q_{4,\bar{5}}=\pi(\bar{5})(q_{\bar{5},5}+q_{\bar{5},6})$ 
+2
+ $\{\bar{1},\bar{2}\}$  and  $2$ 
+ $\pi(\bar{1})q_{\bar{1},2}+\pi(\bar{2})(q_{\bar{2},2}+q_{\bar{2},3})=\pi(2)q_{2,1}$ 
+3
+ $\{\bar{2},\bar{3}\}$  and  $3$ 
+ $\pi(\bar{2})q_{\bar{2},3}+\pi(\bar{3})(q_{\bar{3},3}+q_{\bar{3},4})=\pi(3)q_{3,2}$ 
+Table 4: Cuts associated with
+the single-queue batch example of Figure 18.
+This cut implies an SPS product-form relationship between every pair of vertices  $i\in K_{1}$  and  $j\in K_{2}$ . The key equation for defining that SPS relationship is the second-level equation in Table 4.
+Note that other subsets of  $K_{1}$  and  $K_{2}$  also form broad second-level cuts, such as  $\{\bar{1},1\}\subset K_{1},\{2\}\subset K_{2}$ . This is the behavior predicted by Conjecture 23, which states that broad second level cuts will only exist between subsets of connected components that also have narrow second-level cuts, but that the sources may differ.
+We can recursively define third-level cuts based on the connected components of the second-level cut graph. However, as the second-level cut graph only adds a single hyperedge, the only difference between the first-level components and the second-level components is that  $K_{1}$  and  $K_{2}$  are combined into a single component. As result, there is only a single third-level cut, shown in Figure 18. We can continue on to higher and higher levels of the cut graph, adding a single cut each time.
+Corresponding to the fact that the  $n$ th cut graph is not fully connected for any finite level  $n$ , the Markov chain does not exhibit (PS)n or S(PS)n product form for any finite level  $n$ . However, any two specific nodes  $i,j\in V$  are connected in some (potentially large) level of the cut graph, and are in an S(PS)n product-form relationship for some correspondingly large  $n$ .
+Acknowledgements
+Thank you to Jean-Michel Fourneau for pointing out [21] in an informal discussion on queueing systems with product-form stationary distributions.
+Appendix A Cliques in the cut graph
+As announced in Section 4.1,
+Theorem 25 below gives a necessary and sufficient condition
+for the existence of a clique in the cut graph
+of a formal Markov chain.
+This condition can be seen as an extension of Proposition 15,
+which corresponds to a clique of size 2.
+Theorem 25.
+Consider a formal Markov chain  $G=(V,E)$ 
+and a set  $K\subseteq V$  of  $n\geq 2$  nodes.
+Also let  $V_{i}=A_{i}(G{\setminus}(K{\setminus}\{i\}))$  for each  $i\in K$ ,
+and consider the directed graph  $Q=(K,L)$  where
+ $L=\{(i,j)\in K\times K:i\neq j~\text{and}~E\cap(V_{i}\times V_{j})\neq\emptyset\}$ .
+Then:
+[(i)]
+1. 
+ $V=\bigcup_{i\in K}V_{i}$ .
+2. 
+The following statements are equivalent:
+(a) 
+ $K$  is a clique in  $C_{1}(G)$ .
+(b) 
+ $(V_{i})_{i\in K}$  is a partition of  $V$ 
+and  $Q$  is a directed cycle.
+3. 
+If the equivalent statements of (2) are satisfied
+then, for each  $i,j\in K$ ,
+the  $i,j$ -sourced cut is  $(S,T)$  with
+ $S=\bigcup_{k\in A_{i}(Q{\setminus}j)}V_{k}$ 
+and  $T=\bigcup_{k\in A_{j}(Q{\setminus}i)}V_{k}$ .
+Theorem 25 is illustrated in Figure 19
+with a  $9$ -node formal Markov chain
+whose cut graph contains the clique  $K=\{1,5,6,8,9\}$ .
+Indeed, condition (2b) of Theorem 25 is satisfied:
+the sets  $V_{1}$ ,  $V_{5}$ ,  $V_{6}$ ,  $V_{8}$ , and  $V_{9}$  are disjoint,
+and the quotient graph  $Q$ 
+as defined in Theorem 25 is a cycle
+visiting  $V_{1}$ ,  $V_{5}$ ,  $V_{6}$ ,  $V_{8}$ , and  $V_{9}$ , in this order11
+            1
+          Note that we identify each subset  $V_{i}$  with its representative vertex  $i\in K$ . While formally  $Q$  is defined with  $K$  as its set of vertices,
+we equivalently think of it as having the family  $(V_{i})_{i\in K}$  as vertices.
+.
+Intuitively, the nodes in  $K$  act as no-return points in the graph  $G$ 
+in the sense that, once the set  $V_{i}$  has been exited (necessarily via  $i$ ) for some  $i\in K$ ,
+the only way of returning to this set is by traversing the graph  $G$ 
+consistently with the cycle  $Q$ .
+Saying that the sets  $V_{1}$ ,  $V_{5}$ ,  $V_{6}$ ,  $V_{8}$ , and  $V_{9}$  are pairwise disjoint
+(and therefore form a partition of  $V$ )
+is equivalent to saying that node  $i$  is the only exit point from set  $V_{i}$ , for each  $i\in K$ .
+Focusing for instance on nodes  $5$  and  $8$ ,
+the  $5,8$ -sourced cut is given by  $(V_{5}\cup V_{1}\cup V_{9},V_{8}\cup V_{6})$ .
+123456789123456789 $V_{5}$  $V_{6}$  $V_{8}$  $V_{9}$  $V_{1}$ 
+Figure 19: A formal Markov chain whose cut graph contains the clique  $\{1,5,6,8,9\}$ .
+Proof of Theorem 25.
+We prove each statement one after another.
+(1)
+Let  $k\in V$ .
+Since  $G$  is strongly connected,
+there exists a directed path  $k_{1},k_{2},\ldots,k_{n}$ ,
+with  $k_{1}=k$  and  $k_{n}\in K$ .
+Then  $k\in V_{k_{p}}$  with  $p=\min\{q\in\{1,2,\ldots,n\}|k_{q}\in K\}$ .
+(2)
+We prove each direction of the equivalence separately.
+First assume that (2a) is satisfied:
+ $K$  is a clique in  $C_{1}(G)$ .
+By Proposition 15,
+it means that  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)=\emptyset$  for each  $i,j\in K$ .
+We now verify the two parts of (2b):
+• 
+ $(V_{i})_{i\in K}$  is a partition of  $V$ :
+For each  $i,j\in K$ , we have  $V_{i}\cap V_{j}=\emptyset$  because
+ $V_{i}\subseteq A_{i}(G{\setminus}j)$ ,
+ $V_{j}\subseteq A_{j}(G{\setminus}i)$ ,
+and  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)=\emptyset$ .
+Therefore,  $(V_{i})_{i\in K}$  is a family of pairwise disjoint sets.
+Combining this with (1)
+implies that  $(V_{i})_{i\in K}$  is a partition of  $V$ .
+• 
+ $Q$  is a directed cycle:
+ $Q$  is strongly connected
+because  $G$  is and  $(V_{i})_{i\in V}$  covers  $V$ .
+It remains to be proved that, for each  $i\in K$ ,
+there is at most one  $j\in K{\setminus}\{i\}$ 
+such that  $(i,j)\in L$ .
+First observe that, for each  $i,j\in K$ ,
+we have  $E\cap(V_{i}\times V_{j})\subseteq\{i\}\times V_{j}$ 
+because  $V_{i}\subseteq A_{i}(G{\setminus}j)$ ,
+ $V_{j}\subseteq A_{j}(G{\setminus}i)$ , and
+(2a) implies that
+ $(A_{i}(G{\setminus}j),A_{j}(G{\setminus}i))$ 
+is an  $i,j$ -sourced cut.
+Now assume for the sake of contradiction that
+there are  $j,j^{\prime}\in K$ , with  $j\neq j^{\prime}$ ,
+such that  $(i,j)\in L$  and  $(i,j^{\prime})\in L$ .
+Combined with the previous observation,
+it follows there exist  $k\in V_{j}$  and  $k^{\prime}\in V_{j^{\prime}}$ 
+such that  $(i,k)\in E$  and  $(i,k^{\prime})\in E$ .
+Recalling the definitions of  $V_{j}$  and  $V_{j^{\prime}}$ ,
+we conclude that  $i\in A_{j}(G{\setminus}j^{\prime})\cap A_{j^{\prime}}(G{\setminus}j)$ ,
+By Proposition 15,
+this contradicts our assumption that there is a  $j,j^{\prime}$ -sourced cut.
+Now assume that (2b) is satisfied, i.e.,
+ $(V_{i})_{i,\in K}$  is a partition of  $V$ 
+and  $Q$  is a directed cycle.
+We proceed step-by-step.
+[(A)]
+1. 
+We first verify that,
+for each  $(i,j)\in L$ , we have
+ $E\cap(V_{i}\times V_{j})\subseteq\{i\}\times V_{j}$ ,
+i.e., edges in  $G$  from  $V_{i}$  to  $V_{j}$  necessarily have source node  $i$ .
+Let  $(i,j)\in L$ .
+Assume for the sake of contradiction that
+there exist  $k\in V_{i}{\setminus}\{i\}$ 
+and  $\ell\in V_{j}$ 
+such that  $(k,\ell)\in E$ .
+Then there exists a path from  $k$  to  $j$ 
+(through  $\ell$ ) that does not visit
+any node in  $K{\setminus}\{j\}$ ,
+meaning that  $k\in V_{j}$ ,
+which is impossible since
+ $k\in V_{i}$  and  $V_{i}\cap V_{j}=\emptyset$ .
+Now let  $i,j\in K$ ,
+ $S=\bigcup_{k\in A_{i}(Q{\setminus}j)}V_{k}$ ,
+and  $T=\bigcup_{k\in A_{j}(Q{\setminus}i)}V_{k}$ .
+Our end goal is to prove that  $(S,T)$ 
+is an  $i,j$ -sourced cut.
+[(A)]
+2. 
+We know that  $(S,T)$  is a partition of  $V$  because
+ $(A_{i}(Q{\setminus}j),A_{j}(Q{\setminus}i))$ 
+is a partition of  $K$ 
+(since  $Q$  is a directed cycle)
+and  $(V_{k})_{k\in k}$  is a partition of  $V$ .
+3. 
+Let us prove that,
+for each  $k\in A_{i}(Q{\setminus}j)$ ,
+every path in  $G$ 
+from any node in  $V_{k}$  to node  $j$  visits node  $i$ .
+Let  $k\in A_{i}(Q{\setminus}j)$  and  $\ell\in V_{k}$ .
+Consider any path  $\ell_{1},\ell_{2},\ldots,\ell_{n}$  in  $G$ 
+such that  $\ell_{1}=\ell$  and  $\ell_{n}=j$ .
+For each  $p\in\{1,2,\ldots,n\}$ ,
+let  $k_{p}$  denote the unique node in  $K$ 
+such that  $\ell_{p}\in V_{k_{p}}$ ;
+we have in particular  $k_{1}=k$  and  $k_{n}=j$ .
+By definition of  $Q$ , for each  $p\in\{1,2,\ldots,n-1\}$ ,
+we have either  $k_{p}=k_{p+1}$  or  $(k_{p},k_{p+1})\in L$ ,
+i.e., the sequence of distinct nodes
+in  $k_{1},k_{2},\ldots,k_{n}$  forms a path in  $Q$ .
+Since  $Q$  is a directed cycle
+and  $k\in A_{i}(Q{\setminus}j)$ ,
+the only path in  $Q$  from  $k_{1}=k$  to  $k_{n}=j$  visits  $i$ .
+Hence, there is  $q\in\{1,2,\ldots,n-1\}$ 
+such that  $k_{q}=i$ ,
+and we can define
+ $p=\max\{q\in\{1,2,\ldots,n\}:k_{q}=i\}$ .
+We know that  $p\leq n-1$  since  $k_{n}=j\neq i$ .
+We obtain  $(k_{p},k_{p+1})\in L$ ,
+so that by 1
+we have necessarily  $\ell_{p}=i$ .
+4. 
+Let us now prove that
+ $A_{j}(G{\setminus}i)\subseteq T$ ,
+i.e., if  $\ell\in S=V{\setminus}T$ 
+then  $\ell\notin A_{j}(G{\setminus}i)$ .
+Let  $\ell\in S$ .
+By definition of  $S$ ,
+there is  $k\in A_{i}(Q{\setminus}j)$ 
+so that  $\ell\in V_{k}$ .
+By 3, every path in  $G$ 
+from node  $\ell$  to node  $j$  visits node  $i$ 
+(and such a path exists since  $G$  is strongly connected).
+By definition of  $A_{j}(G{\setminus}i)$ ,
+this means that  $\ell\notin A_{j}(G{\setminus}i)$ .
+5. 
+Putting all the pieces together,
+we have that  $A_{j}(G{\setminus}i)\subseteq T$  (by 4),
+ $A_{i}(G{\setminus}j)\subseteq S$  (by symmetry),
+ $(S,T)$  is a partition of  $V$  (by 2),
+and  $A_{i}(G{\setminus}j)\cup A_{j}(G{\setminus}i)=V$ 
+(by Lemma 17(1)).
+It follows that  $A_{i}(G{\setminus}j)=S$  and  $A_{j}(G{\setminus}i)=T$ ,
+and that  $A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}i)=\emptyset$ ,
+i.e., nodes  $i$  and  $j$  are joint-ancestor free.
+By Proposition 15,
+we conclude that
+ $(A_{i}(G{\setminus}j),A_{j}(G{\setminus}i))=(S,T)$ 
+is the  $i,j$ -sourced cut.
+(3)
+This is a by-product of the proof of (2).
+∎
+Appendix B Second-level cuts: Progress towards Conjecture 23
+In Section B.1, we prove intermediary results
+that are then applied in Section B.2
+to prove Theorem 28.
+B.1 Paths in the cut graph
+Let us first study the behavior of paths  $i_{1},i_{2},\ldots,i_{n}$  in the cut graph  $C_{1}(G)$ ,
+where each pair of neighboring vertices in the path is joint-ancestor free.
+We are interested in the joint-ancestor freeness of the two terminal nodes in the path,
+ $i_{1}$  and  $i_{n}$ .
+We show that the endpoints  $i_{1}$  and  $i_{n}$  cannot share a joint ancestor in the subgraph graph  $G{\setminus}\{i_{2},i_{3},\ldots i_{n-1}\}$ .
+First, for the purpose of induction, we prove this claim for length-3 paths:
+Lemma 26.
+Consider a directed graph  $G=(V,E)$ 
+and three nodes  $i_{1},i_{2},i_{3}\in V$ 
+such that  $i_{1}$  and  $i_{2}$  are joint-ancestor free
+(i.e.,  $A_{i_{1}}(G{\setminus}i_{2})\cap A_{i_{2}}(G{\setminus}i_{1})=\emptyset$ )
+and  $i_{2}$  and  $i_{3}$  are joint-ancestor free
+(i.e.,  $A_{i_{2}}(G{\setminus}i_{3})\cap A_{i_{3}}(G{\setminus}i_{2})=\emptyset$ ).
+Then  $A_{i_{1}}(G{\setminus}\{i_{2},i_{3}\})\cap A_{i_{3}}(G{\setminus}\{i_{1},i_{2}\})=\emptyset$ .
+Proof.
+Assume for the sake of contradiction that
+ $A_{i_{1}}(G{\setminus}\{i_{2},i_{3}\})\cap A_{i_{3}}(G{\setminus}\{i_{1},i_{2}\})\neq\emptyset$ ,
+and let  $k\in A_{i_{1}}(G{\setminus}\{i_{2},i_{3}\})\cap A_{i_{3}}(G{\setminus}\{i_{1},i_{2}\})$ .
+We will prove that either
+ $k\in A_{i_{2}}(G{\setminus}i_{1})$ 
+or  $k\in A_{i_{2}}(G{\setminus}i_{3})$ ,
+which will contradict our assumption that
+ $i_{1}$  and  $i_{2}$  are joint-ancestor free
+and  $i_{1}$  and  $i_{3}$  are joint-ancestor free.
+Since  $G$  is strongly connected,
+there is a path  $p=p(k\to i_{2})$ .
+We now make a case disjunction.
+First, suppose that  $p(k\to i_{2})$  either does not visite node  $i_{1}$  or does not visit node  $i_{3}$ .
+If  $p(k\to i_{2})$  does not visit node  $i_{1}$ , then  $k\in A_{i_{2}}(G{\setminus}i_{1})$ .
+Since  $k\in A_{i_{1}}(G\setminus\{i_{2},i_{3}\})\subseteq A_{i_{1}}(G\setminus i_{2})$ , this contradicts our assumption that nodes  $i_{1}$  and  $i_{2}$  are joint-ancestor free.
+If  $p(k\to i_{2})$  does not visit node  $i_{3}$ , then  $k\in A_{i_{2}}(G{\setminus}i_{3})$ , which leads to a similar contradiction regarding nodes  $i_{2}$  and  $i_{3}$ .
+On the other hand, suppose that  $p(k\to i_{2})$  visits both  $i_{1}$  and  $i_{3}$ .
+Let us consider  $p^{\prime}$ , the last portion of  $p$  beginning at the last visit to either  $i_{1}$  or  $i_{3}$ .
+Without loss of generality, suppose  $p^{\prime}$  begins at  $i_{1}$ 
+and reaches  $i_{2}$  without visiting  $i_{3}$ .
+Since we assumed that  $k\in A_{i_{1}}(G{\setminus}\{i_{2},i_{3}\})$ ,
+concatenating  $p(k\to i_{1}{\setminus}\{i_{2},i_{3}\})$  and  $p^{\prime}$ 
+gives us a path from  $k$  to  $i_{2}$  without visiting  $i_{3}$ .
+So  $k\in A_{i_{2}}(G{\setminus}i_{3})$ ,
+which as explained before leads to a contradiction.
+In every case, we have a contradiction to either our assumption that  $i_{1}$  and  $i_{2}$  are joint-ancestor free, or that  $i_{2}$  and  $i_{3}$  are joint-ancestor free.
+Thus, our initial assumption much be wrong: There is no node  $k$  in  $A_{i_{1}}(G{\setminus}\{i_{2},i_{3}\})\cap A_{i_{3}}(G{\setminus}\{i_{1},i_{2}\})$ , as desired. ∎
+Next, we build inductively on this result to handle paths of arbitrary lengths.
+Lemma 27.
+Consider a directed graph  $G=(V,E)$ 
+and a sequence of  $n\geq 3$  distinct nodes
+ $i_{1},i_{2},\ldots,i_{n}$ 
+such that  $i_{p}$  and  $i_{p+1}$ 
+are joint-ancestor free
+for each  $p\in\{1,2,\ldots,n-1\}$ .
+Then  $A_{i_{1}}(G{\setminus}\{i_{2},i_{3},\ldots,i_{n}\})\cap A_{i_{n}}(G{\setminus}\{i_{1},i_{2},\ldots,i_{n-1}\})=\emptyset$ .
+Proof.
+We make a proof by induction over  $n$ ,
+using Lemma 26 as a base case for  $n=3$ .
+Let  $n\geq 4$  and assume the induction assumption is true for each  $p\in\{3,4,\ldots,n-1\}$ .
+Assume for the sake of contradiction that
+the conclusion does not hold,
+i.e., there exist  $k\in V$  and two paths
+ $p_{(a)}=p(k\to i_{1}{\setminus}\{i_{2},i_{3},\ldots,i_{n}\})$ 
+and  $p_{(b)}=p(k\to i_{n}{\setminus}\{i_{1},i_{2},\dots,i_{n-1}\})$ .
+Since  $G$  is strongly connected,
+we know that at least one of the following is true:
+there is a path  $p_{(1)}=p(i_{1}\to i_{n-1}{\setminus}i_{n})$ ,
+or there is a path  $p_{(2)}=p(i_{n}\to i_{n-1}{\setminus}i_{1})$ .
+To see why, consider a path  $x$  from  $i_{1}$  to  $i_{n-1}$ . If the path  $x$  avoids  $i_{n}$ ,  $x$  is  $p_{(1)}$ , and we have the first case. If the path visits  $i_{n}$ , the tail of the path  $x$  starting at its visit to  $i_{n}$  is  $p_{(2)}$ , satisfying the second case.
+Let us consider each case in turn:
+• 
+Suppose there is a path  $p_{(1)}=p(i_{1}\to i_{n-1}{\setminus}i_{n})$ .
+In this case, concatenating
+ $p_{(a)}$ 
+and  $p_{(1)}$ 
+gives us a path
+ $p_{(3)}=p(k\to i_{n-1}{\setminus}i_{n})$ .
+The existence of paths  $p_{(3)}$  and  $p_{(b)}$ 
+implies that that
+ $k\in A_{i_{n-1}}(G{\setminus}i_{n})\cap A_{i_{n}}(G{\setminus}i_{n-1})$ ,
+which contradicts our assumption that
+ $i_{n-1}$  and  $i_{n}$  are joint-ancestor free.
+• 
+On the other hand, suppose that there is a path  $p_{(2)}=p(i_{n}\to i_{n-1}{\setminus}i_{1})$ .
+Let  $q\in\{2,3,\ldots,n-1\}$ 
+so that  $i_{q}$  is the first node in  $p_{(2)}$  that belongs to  $\{i_{2},i_{3},\ldots,i_{n-1}\}$ .
+This provides us with a path
+ $p_{(4)}=p(i_{n}\to i_{q}{\setminus}\{i_{1},\ldots,i_{q-1},i_{q+1},\ldots,i_{n-1}\})$ 
+Concatenating  $p_{(b)}$ 
+and  $p_{(4)}$ 
+gives us a path
+ $p_{(5)}=p(k\to i_{q}{\setminus}\{i_{1},\ldots,i_{q-1},i_{q+1},\ldots,i_{n-1}\})$ .
+The existence of paths  $p_{(5)}$  and  $p_{(a)}$  implies that
+ $k\in A_{i_{1}}(G{\setminus}\{i_{2},i_{3},\ldots,i_{q-1}\})\cap A_{i_{q}}(G{\setminus}\{i_{1},\ldots,i_{q-1}\})$ .
+If  $q=2$ , this contradicts our assumption
+that  $i_{1}$  and  $i_{2}$  are joint-ancestor free.
+If  $q\geq 3$ , this contradicts the induction assumption.∎
+B.2 Special case: Expanding  $I$  when  $|J|=1$ 
+Now building on Lemma 27,
+we are ready to prove Theorem 28,
+which we see as a stepping stone to prove Conjecture 23,
+that any joint-ancestor free subsets  $I\subseteq K_{1}$  and  $J\subseteq K_{2}$ 
+can be expanded to joint-ancestor freeness of the entire connected components of the cut graph,  $K_{1}$  and  $K_{2}$ .
+In other words, that any broad second-level cut gives rise to a narrow second-level cut.
+Here, we only focus on the case of expanding  $I$  when  $J$  is a single node  $\{j\}$ .
+Theorem 28.
+Consider a directed graph  $G=(V,E)$ .
+Let  $K_{1}$  and  $K_{2}$  denote two connected components of  $C_{1}(G)$ .
+Assume that there is a nonempty strict subset  $I$  of  $K_{1}$ 
+and a vertex  $j\in K_{2}$ 
+such that  $I$  and  $j$  are joint-ancestor free (in G).
+Then there exists  $i\in K_{1}{\setminus}I$ 
+such that  $I\cup\{i\}$  and  $j$ 
+are also joint-ancestor free.
+Proof.
+First, because  $I$  and  $j$  are joint-ancestor free
+and since  $G$  is strongly connected,
+there is  $\ell\in A_{I}(G{\setminus}j)$ 
+such that  $(j,\ell)\in E$ :
+In particular, there must be a path from  $j$  to some node in  $I$ ,
+and we may take  $\ell$  to be the second node on that path, after  $j$ .
+Next, because  $\ell\in A_{I}(G{\setminus}j)$ ,
+there is a path  $p(\ell\to i^{\prime}{\setminus}j)$ 
+for some  $i^{\prime}\in I$ .
+In particular, by ending when the path first enters  $I$ ,
+there must exist a path
+ $p_{(1)}(\ell\to i^{\prime}{\setminus}(\{j\}\cup I{\setminus}\{i^{\prime}\})$ 
+for some  $i^{\prime}\in I$ .
+Now, we will switch to viewing paths in the cut graph  $C_{1}(G)$ .
+In particular, we will think about  $I$  and  $K_{1}$ ,
+the connected component of  $C_{1}(G)$  that  $I$  lies within.
+Because  $K_{1}$  is a connected component of  $C_{1}(G)$ ,
+there is a path in the cut graph going from  $i^{\prime}$  to an arbitrary node  $i\in K_{1}{\setminus}I$ .
+In particular, there is a path in the cut graph that
+stays within  $I$  until it visits  $i$  as the first node in the path outside of  $I$  and in  $K_{1}$ .
+In other words, this is a cut graph path in  $I\cup\{i\}$ .
+Now, assume for the sake of contradiction that
+ $I\cup\{i\}$  and  $j$ 
+are not joint-ancestor free,
+i.e., there exists
+ $k\in A_{I\cup\{i\}}(G{\setminus}j)\cap A_{j}(G{\setminus}(I\cup\{i\}))$ .
+Because  $I$  and  $j$  are joint-ancestor free,
+we necessarily have
+ $k\in A_{i}(G{\setminus}j)\cap A_{j}(G{\setminus}(I\cup\{i\}))$ .
+Hence, there exists a path (in  $G$ )
+ $p(k\to i{\setminus}j)$ 
+and a path  $p(k\to j{\setminus}(I\cup\{i\})$ .
+Now, note that the path  $p(k\to i{\setminus}j)$  does not visit  $I$ ,
+so it is also a path  $p(k\to i{\setminus}I)$ .
+To see why, note that if this path did visit  $I$ ,
+then taking the portion from  $k$ 
+to the first visit to  $I$ 
+would give a path  $p(k\to I{\setminus}j)$ .
+But since we also have a path
+ $p(k\to j{\setminus}(I\cup\{i\}))$ ,
+it follows that
+ $k\in A_{I}(G{\setminus}j)\cap A_{j}(G{\setminus}I)$ ,
+which contradicts our assumption
+that  $I$  and  $j$  are joint-ancestor free.
+Now, let us return to the path  $p_{(1)}(\ell\to i^{\prime}{\setminus}(\{j\}\cup I{\setminus}\{i^{\prime}\}))$ .
+We claim that the path  $p_{(1)}(\ell\to i^{\prime}{\setminus}(\{j\}\cup I{\setminus}\{i^{\prime}\}))$  does not visit node  $i$ ,
+so in particular it is a path
+ $p_{(1)}(\ell\to i^{\prime}{\setminus}(I\cup\{i\}{\setminus}\{i^{\prime}\})$ .
+To see why, note that if  $p_{(1)}$  did visit  $i$  prior to visiting  $i^{\prime}$ ,
+then by taking the portion of the path just after visiting  $i$ ,
+there is a path  $p(i\to I{\setminus}j)$ .
+Concatenating this path with the  $p(k\to i{\setminus}j)$  path mentioned previously, we now have a path  $p(k\to I{\setminus}j)$ .
+Thus,  $k$  is a joint ancestor of  $I$  and  $j$ , contradicting our assumption.
+Now, we’re ready to put it all together.
+Concatenating
+the path  $p(k\to j{\setminus}(I\cup\{i\})$ ,
+the edge  $(j,\ell)$ ,
+and then to the path
+ $p_{(1)}(\ell\to i^{\prime}{\setminus}(I\cup\{i\}{\setminus}\{i^{\prime}\})$ 
+yields a path
+ $p(k\to i^{\prime}{\setminus}(I\cup\{i\}{\setminus}\{i^{\prime}\})$ .
+Therefore, we have a path
+ $p(k\to i{\setminus}I)$ 
+and a path  $p(k\to i^{\prime}{\setminus}(I\cup\{i\}{\setminus}\{i^{\prime}\})$ .
+By Lemma 27,
+this contradicts the fact that
+there is a path between  $i$  and  $i^{\prime}$ 
+through  $I$  in the cut graph  $C_{1}(G)$ .
+Thus, our assumption was false, and  $I\cup\{i\}$  and  $j$  are joint-ancestor free, as desired.
+∎
+References
+[1]
+Jeffrey P. Buzen.
+Computational algorithms for closed queueing networks with
+exponential servers.
+Communications of the ACM, 16(9):527–531.
+[2]
+M. Reiser and S. S. Lavenberg.
+Mean-value analysis of closed multichain queuing networks.
+Journal of the ACM, 27(2):313–322.
+[3]
+L. R. van Kreveld, O. J. Boxma, J. L. Dorsman, and M. R. H. Mandjes.
+Scaling limits for closed product-form queueing networks.
+Performance Evaluation, 151:102220.
+[4]
+Ellen Cardinaels, Sem Borst, and Johan S. H. van Leeuwaarden.
+Heavy-traffic universality of redundancy systems with assignment
+constraints.
+Operations Research, 72(4):1539–1555.
+[5]
+Ellen Cardinaels, Sem Borst, and Johan S.H. van Leeuwaarden.
+Multi-dimensional state space collapse in non-complete resource
+pooling scenarios.
+Proceedings of the ACM on Measurement and Analysis of Computing
+Systems, 8(2):24:1–24:52.
+[6]
+Jonatha Anselmi, Bruno Gaujal, and Louis-Sébastien Rebuffi.
+Learning optimal admission control in partially observable queueing
+networks.
+Queueing Systems, 108(1):31–79.
+[7]
+Céline Comte, Matthieu Jonckheere, Jaron Sanders, and Albert Senen-Cerda.
+Score-aware policy-gradient methods and performance guarantees using
+local Lyapunov conditions: Applications to product-form stochastic networks
+and queueing systems.
+[8]
+James R. Jackson.
+Networks of waiting lines.
+Operations Research, 5(4):518–521, 1957.
+[9]
+Forest Baskett, K. Mani Chandy, Richard R. Muntz, and Fernando G. Palacios.
+Open, closed, and mixed networks of queues with different classes of
+customers.
+Journal of the ACM, 22(2):248–260, apr 1975.
+[10]
+Richard Serfozo.
+Introduction to stochastic networks.
+Springer.
+[11]
+S. A. Berezner, C. F. Kriel, and A. E. Krzesinski.
+Quasi-reversible multiclass queues with order independent departure
+rates.
+Queueing Systems, 19(4):345–359.
+[12]
+A. E. Krzesinski.
+Order independent queues.
+In Richard J. Boucherie and Nico M. van Dijk, editors, Queueing
+networks: A fundamental approach, number 154 in International Series in
+Operations Research & Management Science, pages 85–120. Springer US.
+[13]
+Enrique Daniel Andjel.
+Invariant measures for the zero range process.
+The Annals of Probability, 10(3).
+[14]
+F. P. Kelly.
+Reversibility and stochastic networks.
+Cambridge University Press.
+[15]
+Isaac Grosof, Mor Harchol-Balter, and Alan Scheller-Wolf.
+New stability results for multiserver-job models via product-form
+saturated systems.
+ACM SIGMETRICS Performance Evaluation Review, 51(2):6–8.
+[16]
+S. A. Berezner and A. E. Krzesinski.
+Order independent loss queues.
+Queueing Systems, 23(1):331–335.
+[17]
+Céline Comte and Jan-Pieter Dorsman.
+Pass-and-swap queues.
+Queueing Systems, 98(3):275–331.
+[18]
+Kristen Gardner and Rhonda Righter.
+Product forms for FCFS queueing models with arbitrary server-job
+compatibilities: an overview.
+Queueing Systems, 96(1):3–51.
+[19]
+Urtzi Ayesta, Tejas Bodas, Jan-Pieter L. Dorsman, and Ina Maria Verloop.
+A token-based central queue with order-independent service rates.
+Operations Research, 70(1):545–561, 2022.
+[20]
+Alexander Rumyantsev and Evsey Morozov.
+Stability criterion of a multiserver model with simultaneous service.
+Annals of Operations Research, 252(1):29–39.
+[21]
+Brion N. Feinberg and Samuel S. Chiu.
+A method to calculate steady-state distributions of large Markov
+chains by aggregating states.
+Operations Research, 35(2):282–290.
+[22]
+Isaac Grosof, Mor Harchol-Balter, and Alan Scheller-Wolf.
+Stability for two-class multiserver-job systems.
+arXiv preprint arXiv:2010.00631, 2020.
+[23]
+Manindra Agrawal and Ramprasad SaptharishiI.
+Classifying polynomials and identity testing.
+Indian Academy of Sciences, 2009.
+[24]
+Swastik Kopparty, Shubhangi Saraf, and Amir Shpilka.
+Equivalence of polynomial identity testing and polynomial
+factorization.
+Computational Complexity, 24(2):295–331.
+[25]
+Susanna Donatelli and Matteo Sereno.
+On the product form solution for stochastic Petri nets.
+In K. Jensen, editor, Application and Theory of Petri Nets
+1992, pages 154–172. Springer.
+[26]
+Simonetta Balsamo, Peter G. Harrison, and Andrea Marin.
+Methodological construction of product-form stochastic Petri nets
+for performance evaluation.
+Journal of Systems and Software, 85(7):1520–1539.
+[27]
+Moshe Haviv.
+Aggregation/disaggregation methods for computing the stationary
+distribution of a Markov chain.
+SIAM Journal on Numerical Analysis, 24(4):952–966.
+[28]
+François Baccelli and Serguei Foss.
+On the saturation rule for the stability of queues.
+Journal of Applied Probability, 32(2):494–507, 1995.
+[29]
+Serguei Foss and Takis Konstantopoulos.
+An overview of some stochastic stability methods.
+Journal of the Operations Research Society of Japan,
+47(4):275–303, 2004.
+[30]
+Isaac Grosof, Yige Hong, Mor Harchol-Balter, and Alan Scheller-Wolf.
+The RESET and MARC techniques, with application to
+multiserver-job analysis.
+Performance Evaluation, 162:102378, 2023.
+    Experimental support, please
+    view the build logs
+    for errors. Generated by
+        L
+        A
+        T
+        E
+      xml
+    .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue" (
+          ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+        We gratefully acknowledge support from our major funders,
+        member institutions, ,
+        and all contributors.
+        About ·
+        Help ·
+        Contact ·
+        Subscribe ·
+        Copyright ·
+        Privacy ·
+        Accessibility ·
+        Operational Status (opens in new tab)

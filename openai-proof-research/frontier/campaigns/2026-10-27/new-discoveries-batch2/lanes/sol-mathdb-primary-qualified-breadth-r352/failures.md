@@ -1,0 +1,7 @@
+# Preserved failures and limits
+
+1. First freeze/check helper exited 1: `KeyError: 'size'` on r301 inventory, which uses `bytes`. Root r350's 25 entries had passed. The exact first script is `work/freeze-first-failed.py`. No scientific corpus was read before correcting the schema and validating all 20 chunks.
+2. Second checker exited 1 at r304 README: attempted comparison with an absent size field (the r304 manifest records only SHA256). Script remains `work/freeze.py`. This was not evidence of changed bytes. The later `work/audit.py` verified every r304 SHA256 entry successfully. All r350 and twenty corpus checks had passed before this failure. Existing input hashes were never waived.
+3. No HTTP failures occurred in eight newly retained fetches (all returned 200). No retry, fallback around denial, or MathDB fetch was attempted. Search result snippets are not proof bodies. An incidental indexed MathDB search result was not opened or relied on.
+4. No useful full-scope novel mechanism survived the early screen, so no expensive enumeration or speculative formalization was run. This is not evidence that parked targets are unsolvable, resolved, or novel.
+5. The forty-four rows without primary-body review remain source-unqualified beyond their literal cached statements. 405063 has a primary theorem statement but not its full proof. 318969 and 405092 do not have new resolution proofs from this lane. There is no current registry clearance or comprehensive literature search.

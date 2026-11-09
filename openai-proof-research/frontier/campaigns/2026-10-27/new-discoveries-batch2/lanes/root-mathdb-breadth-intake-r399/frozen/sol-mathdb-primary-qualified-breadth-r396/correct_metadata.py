@@ -1,0 +1,14 @@
+from pathlib import Path
+R=Path(__file__).parent
+p=R/'finish.py';s=p.read_text().replace("if actual!={'size':e.get('size',e.get('bytes')),'sha256':e['sha256']}:","if actual['sha256']!=e['sha256'] or (e.get('size',e.get('bytes')) is not None and actual['size']!=e.get('size',e.get('bytes'))):")
+s=s.replace('The r304 historical binding of the mutable ledger did not match current bytes. The initial assertion failure is retained. The historical expected values and actual current hashes are separately recorded; current originals were frozen, not represented as matching the historical snapshot.', 'The initial r304 checker incorrectly required a size field absent from its SHA-only bindings. Both actual original hashes match the historical bindings. The initial assertion and subsequent metadata-reader KeyError are retained in helper-failures.txt. Flat references additionally record actual sizes. historical-binding-mismatches.json is empty after the corrected comparison.')
+s=s.replace('One initial freeze failed because a historical r304 binding refers to older shared-ledger bytes. Historical expected and current actual values are retained separately in historical-binding-mismatches.json.', 'The initial freeze and first reporting helper failed on assumptions about absent size fields in r304 SHA-only bindings. Both failures are retained in helper-failures.txt. Corrected checks show both historical original hashes match; historical-binding-mismatches.json is empty.')
+p.write_text(s)
+import json
+f=R/'failures.json';a=json.loads(f.read_text());a=a[:1]
+a[0]['correction']='The initial mismatch interpretation was wrong: size metadata is absent from r304 bindings; both original SHA256 values match. Actual sizes are frozen in input-bindings.json.'
+a[0]['failure']='AssertionError because initial metadata checker compared actual size with missing size/bytes field in r304 SHA-only binding'
+a[0]['action']='Retain failure and correction; verify SHA-only historical bindings correctly; bind actual original SHA256 and sizes.'
+a.append({'phase':'first report build','failure':"KeyError: size reading SHA-only r304 binding",'guard_exit':1,'guard_reason':None,'sampled_peak_group_rss':8224768,'wall_seconds':0.08030502300243825,'action':'Correct optional size handling; preserve failure in helper-failures.txt'})
+f.write_text(json.dumps(a,indent=2)+'\n')
+p=R/'helper-failures.txt';p.write_text(p.read_text()+'\nCORRECTION: The initially reported ledger byte mismatch was a checker error, not an upstream mismatch. r304 bindings have SHA256 only, no size/bytes fields. Both actual original SHA256 hashes equal the historical expected values. The corrected comparison does not require absent size metadata. Actual original sizes and hashes were frozen before scientific content reading. No upstream bytes were changed.\n')

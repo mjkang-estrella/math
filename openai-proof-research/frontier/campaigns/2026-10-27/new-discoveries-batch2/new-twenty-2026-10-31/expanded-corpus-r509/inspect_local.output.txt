@@ -1,0 +1,573 @@
+
+FILE run.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+
+FILE write_lane.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+
+FILE reservation.json
+{
+  "utc": "2026-11-08T17:22:56.770063+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    342889,
+    372226,
+    364989,
+    349348,
+    334536,
+    325981,
+    326701,
+    325385,
+    356838,
+    358042,
+    375377,
+    375756,
+    376155,
+    371758,
+    363105,
+    364571,
+    360678,
+    356539,
+    345481,
+    338806
+  ],
+  "rows": [
+    {
+      "mathdb_id": 342889,
+      "canonical_url": "https://mathdb.com/p/342889/the-spectrum-conjecture-for-odd-sun-systems",
+      "title": "The spectrum conjecture for odd sun systems",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "design-theory",
+        "graph-decompositions",
+        "sun-systems"
+      ],
+      "first_stated_year": 2019,
+      "source_url": "https://arxiv.org/abs/1906.00630",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 372226,
+      "canonical_url": "https://mathdb.com/p/372226/draganic-keevash-muyesser-conjecture-on-induced-k-r-factors",
+      "title": "Dragani\u0107\u2013Keevash\u2013M\u00fcyesser conjecture on induced $K_r$-factors",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "graph-factors",
+        "random-induced-subgraphs"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2512.20287",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 364989,
+      "canonical_url": "https://mathdb.com/p/364989/3-colorability-conjecture-for-string-graphs-of-sufficiently",
+      "title": "3-colorability conjecture for string graphs of sufficiently large odd girth",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-coloring",
+        "odd-girth",
+        "string-graphs"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2409.18820",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 349348,
+      "canonical_url": "https://mathdb.com/p/349348/the-nagy-conjecture-on-stability-for-saturated-graphs",
+      "title": "The Nagy conjecture on stability for saturated graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "graph-saturation",
+        "stability"
+      ],
+      "first_stated_year": 2021,
+      "source_url": "https://arxiv.org/abs/2101.03223",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 334536,
+      "canonical_url": "https://mathdb.com/p/334536/quantitative-forcing-conjecture-for-bipartite-graphs",
+      "title": "Quantitative forcing conjecture for bipartite graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "quasirandomness"
+      ],
+      "first_stated_year": 2016,
+      "source_url": "https://arxiv.org/abs/1611.02099",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 325981,
+      "canonical_url": "https://mathdb.com/p/325981/the-typical-partite-structure-conjecture-for-sparse-strictly",
+      "title": "The typical-partite structure conjecture for sparse strictly 2-balanced edge-color-critical graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "forbidden-subgraphs",
+        "random-graphs"
+      ],
+      "first_stated_year": 2013,
+      "source_url": "https://arxiv.org/abs/1307.5967",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 326701,
+      "canonical_url": "https://mathdb.com/p/326701/erde-gole-nia-and-gole-nia-s-generalized-knight-s-tour-conje",
+      "title": "Erde, Gol\u00e9 nia and Gol\u00e9 nia's generalized knight's tour conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "hamiltonian-cycles",
+        "knights-tours"
+      ],
+      "first_stated_year": 2013,
+      "source_url": "https://arxiv.org/abs/1311.4109",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 325385,
+      "canonical_url": "https://mathdb.com/p/325385/the-logarithmic-tail-conjecture-for-kadanoff-sandpile-config",
+      "title": "The logarithmic tail conjecture for Kadanoff sandpile configurations",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 18,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "cellular-automata",
+        "combinatorics",
+        "sandpile-models"
+      ],
+      "first_stated_year": 2013,
+      "source_url": "https://arxiv.org/abs/1304.5109",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 356838,
+      "canonical_url": "https://mathdb.com/p/356838/asymptotic-sharpness-of-the-lower-bound-for-edge-intersectio",
+      "title": "Asymptotic sharpness of the lower bound for edge intersection cycles",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "elementary_inequality_cue",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 33,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-combinatorics",
+        "hypergraph-theory"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2211.06245",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 358042,
+      "canonical_url": "https://mathdb.com/p/358042/cranston-et-al-s-revised-planar-turan-conjecture-for-cycles",
+      "title": "Cranston et al.'s revised planar Tur\u00e1n conjecture for cycles",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 29,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "planar-graphs",
+        "turan-numbers"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2304.05584",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 375377,
+      "canonical_url": "https://mathdb.com/p/375377/the-exact-asymptotic-bound-conjecture-for-small-q-kernels",
+      "title": "The exact asymptotic bound conjecture for small q-kernels",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "digraphs",
+        "extremal-combinatorics",
+        "q-kernels"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2606.16971",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 375756,
+      "canonical_url": "https://mathdb.com/p/375756/cambie-cames-van-batenburg-joannis-de-verclos-kang-asymptoti",
+      "title": "Cambie\u2013Cames van Batenburg\u2013Joannis de Verclos\u2013Kang asymptotic conjecture for $h_t(\\Delta)$",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "asymptotic-combinatorics",
+        "degree-diameter",
+        "graph-distances"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2607.02698",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 376155,
+      "canonical_url": "https://mathdb.com/p/376155/liu-and-ning-s-interpolation-conjecture-for-2-connected-subg",
+      "title": "Liu and Ning's interpolation conjecture for 2-connected subgraphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "connectivity",
+        "graph-theory",
+        "subgraphs"
+      ],
+      "first_stated_year": 2026,
+      "source_url": "https://arxiv.org/abs/2607.18964",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 371758,
+      "canonical_url": "https://mathdb.com/p/371758/asymptotic-feedback-vertex-set-conjecture-for-bounded-degree",
+      "title": "Asymptotic feedback vertex set conjecture for bounded-degree digraphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "bounded-degree",
+        "digraphs",
+        "feedback-vertex-sets"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2512.01676",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 363105,
+      "canonical_url": "https://mathdb.com/p/363105/the-asymptotic-extremal-size-conjecture-for-forbidden-posets",
+      "title": "The asymptotic extremal-size conjecture for forbidden posets",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-combinatorics",
+        "posets",
+        "set-systems"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2405.09635",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 364571,
+      "canonical_url": "https://mathdb.com/p/364571/minimum-volume-scaling-conjecture-for-random-triangulations",
+      "title": "Minimum-volume scaling conjecture for random triangulations of the d-sphere",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "probabilistic-combinatorics",
+        "random-triangulations",
+        "spheres"
+      ],
+      "first_stated_year": 2024,
+      "source_url": "https://arxiv.org/abs/2409.00235",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 360678,
+      "canonical_url": "https://mathdb.com/p/360678/doubly-layered-maximizer-conjecture-at-the-principal-special",
+      "title": "Doubly layered maximizer conjecture at the principal specialization q = -1",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "asymptotics",
+        "layered-permutations",
+        "schubert-polynomials"
+      ],
+      "first_stated_year": 2023,
+      "source_url": "https://arxiv.org/abs/2311.04487",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 356539,
+      "canonical_url": "https://mathdb.com/p/356539/yuan-s-additive-constant-conjecture-for-nim-h-edges",
+      "title": "Yuan's additive-constant conjecture for NIM-H edges",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "edge-colorings",
+        "extremal-graph-theory",
+        "turan-theory"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2210.11037",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 345481,
+      "canonical_url": "https://mathdb.com/p/345481/eppstein-s-integer-power-conjecture-for-planar-subgraph-coun",
+      "title": "Eppstein's integer-power conjecture for planar subgraph counts",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "planar-graphs",
+        "subgraph-counts"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2002.04579",
+      "finite_cue_count": 3
+    },
+    {
+      "mathdb_id": 338806,
+      "canonical_url": "https://mathdb.com/p/338806/high-girth-approximation-conjecture-for-uniquely-restricted",
+      "title": "High-girth approximation conjecture for uniquely restricted matching number",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request",
+        "few_quantified_parameters",
+        "hard_structural",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 21,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "high-girth-graphs",
+        "matchings"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1803.11032",
+      "finite_cue_count": 3
+    }
+  ],
+  "input_hashes": {
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/coverage-delta.json": "014e0d4835ddb95509b956de619aa969568b4e2c8a95dea06518648aa26b2644",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/routing-queue.jsonl": "b0a830b96c47b2b64c46686c318ad16d21a1985d18224fc246b88583e8201a95",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/tags/screening-tags.jsonl": "cfee4e3848c396dc462eff7aa883009c995243d77120d369fa4118f4e96dd45e"
+  },
+  "excluded_ids_count": 20550,
+  "eligible_metadata_rows_after_filters": 64297,
+  "finite_discrete_pool": 2870,
+  "selection": "reserve8 (reserve7 with classic colouring names also penalised; reserve6 with flagship-name conjectures ranked last; finite, kernel-checkable discrete conjectures): same eligibility and exclusions as earlier expanded-corpus reservations; first_stated_year >= 1900, solution_count 0, discrete keyword in MathDB tags or title; asymptotic/probabilistic/analytic language softly ranked later rather than excluded; ranked by finite-instance cue count, absence of hard_structural, few-parameter cue, review score, newer year, then ID.",
+  "limitation": "Unassigned in checked indexes, not globally unreviewed or novelty-cleared; no corpus-wide technical review claimed.",
+  "output_requirement": "Exactly20 ID-keyed dispositions with exact literal provenance, historical checks and actual source/proof review depth; sustain strongest exact mechanisms and finish full Lean endpoint if justified.",
+  "root_routing_note": "Metadata only, scientific clearance absent. Active formal peer directories filtered BEFORE reservation stat/open; target IDs/sourceURLs excluded using retained root metadata, no active-child file access."
+}
+

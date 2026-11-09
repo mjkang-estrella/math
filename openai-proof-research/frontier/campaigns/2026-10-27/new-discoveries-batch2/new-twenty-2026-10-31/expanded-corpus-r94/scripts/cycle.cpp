@@ -1,0 +1,3 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc,char**argv){int n=atoi(argv[1]),m=n/2;uint64_t total=1ull<<n,full=total-1;vector<uint8_t> g(total);uint64_t terminals=0;auto t=chrono::steady_clock::now();for(uint64_t s=1;s<total;s++){uint64_t gone=full^s,doubled=gone|(gone<<n);bool term=false;for(int i=0;i<n;i++)if(((doubled>>i)&((1ull<<m)-1))==((1ull<<m)-1)){term=true;break;}if(term){terminals++;continue;}uint64_t vals=0;for(uint64_t z=s;z;z&=z-1){uint64_t b=z&-z;vals|=1ull<<g[s^b];}g[s]=__builtin_ctzll(~vals);}cout<<"n "<<n<<" nim "<<int(g[full])<<" states "<<total<<" terminal_nonempty "<<terminals<<" wall "<<chrono::duration<double>(chrono::steady_clock::now()-t).count()<<endl;}

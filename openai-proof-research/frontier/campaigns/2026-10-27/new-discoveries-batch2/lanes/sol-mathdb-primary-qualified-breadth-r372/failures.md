@@ -1,0 +1,9 @@
+# Failures and limits
+
+Initial read_inputs.py failed because r304's manifest is a list, unlike the object-shaped root manifest. Second run failed because r304 entries have hashes without sizes: a missing-size comparison was incorrectly treated as a content failure. Both tracebacks are retained in input-reading-first-failure.guard.log and input-reading-second-failure.guard.log. Parser repaired to accept either schema and compare available inventory sizes; our own frozen bindings always include sizes. Third run verifies all hashes and sizes available. No scientific input or reservation was changed.
+
+history.py first run printed the accepted family scopes then failed on a string-valued list item (AttributeError: 'str' object has no attribute 'items'). A type check repaired the reporting helper; final history-reading logs retained. No mathematical inference was made from the failed report.
+
+Author-site toric route returned status200 HTML publication listing rather than PDF. Kept in sources as HTML with final URL, not falsely extracted. Actual toric PDF came from versioned arXiv. The first rg request for a toric-successor.txt returned missing-file exit2, correctly exposing that difference. Acquisition/extraction commands passed their guards. No HTTP403/429/challenge occurred in direct retrievals; no denied route was retried.
+
+All fifty literal records were reviewed; only six IDs have selected retained primary-body reads. No whole-paper read, complete dependency validation, public computational replay, Lean proof, manuscript, global priority clearance or new mathematical result is claimed. Most deep or reported-resolved records were parked at literal evidence level. Finite sweeps and endpoint/wording variants were not used to manufacture proposals. Zero MathDB requests under 429HOLD. Search-engine snippets are not retained primary bodies or independent status verifications.

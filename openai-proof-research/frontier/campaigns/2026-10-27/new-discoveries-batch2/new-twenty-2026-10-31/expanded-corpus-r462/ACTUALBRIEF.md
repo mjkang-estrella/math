@@ -1,0 +1,15 @@
+# r462 completed discovery packet
+
+Zero qualified full-scope survivors from the fixed twenty. No acceptance, formal dispatch, or credit. Campaign count remains the supplied57/60 beyond39 prior.
+
+All20 complete originals, raw JSON statement tokens and decoded UTF8 statements are preserved with chunk hashes and one-based lines in provenance.json. All20 separate gates and exact unpaid lemmas are in results.json. DERIVATIONS.md supplies sustained routes for331192(Motzkin fibers),325688(two-variable Tutte ideal),326360(specified Cayley minor), and the complete applicable public exclusion for331491.
+
+The three investigated mechanisms remain incomplete: competing connectors do not factor automatically; specialization at x=1 does not establish two-variable ideal membership; equivariant contractions introduce incompatible conjugations. No FULLCANDIDATE or dormant formal plan is appropriate. Short proofs and small witnesses were not dismissed as routine without a full bridge. The2024public Merino–Welsh proof gives all-three negations by its printed direct-sum-with-dual construction and earns zero.
+
+Four guarded GETs acquired four actual primary PDFs, with no new denial. Three precharged native calls used nine exact querystrings; every full actual tool-returned response was saved immediately. The four inherited registry-root artifacts remain unavailable, so no current registry proof/head/chronology clearance is claimed. Specific unread public solution claims are retained as HOLDs rather than settled by snippets. Generic worldwide uncertainty was not used as the mathematical reason to stop the three routes; their concrete gaps are stated.
+
+Read-depth and visual limits are explicit in source-read-inventory.json. Sixteen reserved source works remain unread; for325688 the final was read instead of the original, and for331491 a later exact refutation was read instead of the original. Acquisition is not full-paper review. History reconciliation authenticated permitted completed files, read relevant source-neighbor dispositions and did not transfer them to exact reserved IDs.
+
+Resource receipts are genuine wrapper records, not universal process-compliance certificates. Supervisor sampling can miss transients; native search telemetry and separate writer peak RSS are unavailable. Full capped outputs are saved even where tool displays truncated. No mathematical program, enumeration, numerical experiment, CAS, Lean, compiler, solver, formal API, child, external write or peer access was performed. All writes stayed in r462 through the prescribed writer (guard/runner helper outputs follow their immutable authorized implementations).
+
+The terminal byte manifest includes all completed receipts, frozen helpers, exact plans, sources, original bindings, ledgers, results and frozen-after.json. Its precisely named noncircular exclusions are itself and the two outputs of its still-running manifest invocation, as recorded in MANIFEST-EXCLUSIONS.json. These terminal artifacts cannot circularly hash their own final bytes. Frozen-after is a standalone verifier exception; no frozen input is subsequently written.

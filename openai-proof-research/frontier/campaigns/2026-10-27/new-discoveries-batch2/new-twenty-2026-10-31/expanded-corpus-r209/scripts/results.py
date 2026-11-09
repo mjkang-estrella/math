@@ -1,0 +1,38 @@
+import json,sys
+from pathlib import Path
+L=Path(sys.argv[1]); X=json.loads((L/'outputs/exact-records.json').read_text())
+D={
+'350452':dict(outcome='CANDIDATE: literal refutation (finite certificate)',depth='primary source bodies read (arXiv:1812.03382v3 definitions, Lemma Lem_Not_Path, Thm on P3-P5/C5-C7, Open Problems; arXiv:2104.09004v2 Open Problems); exhaustive search; independent re-verification; registry screen',
+  summary='A 9-vertex graph G (K_{3,3,3} on parts {0,1,2},{3,4,5},{6,7,8} minus edges 05,08,14,23,26,37,56; 20 edges) has IR(G)=3 and exactly nine IR(G)-sets, whose swap graph is the path P_9. So P_9 is an IR-graph, refuting part (i) and hence the conjunction. Exhaustive: no connected source graph on <=8 vertices has IR-graph P_m (m>=3) or C_m (m>=5); on 9 vertices exactly P_7, P_8, P_9 occur (3 isomorphism classes), no P_6 and no cycle. One-vertex growth gives P_9..P_12 on 10 and P_9..P_14 on 11 vertices (no cycles). Also answers negatively the authors\' Problem (independent IR-set => max degree >= 3): {0,1,2} is an independent IR-set.',
+  prior_art='No refutation found: web/literature search (2019-2026), citing works (DM 2022 IR-trees paper still lists it open), survey arXiv:2003.05956, Omega (fresh head e0da8fcc), Lean Pool, OpenAI/math, GitHub (5 queries, 0 hits).',
+  files=['CANDIDATE.md','outputs/certificate-350452.json','lean-packet/IRPathCounterexample.lean','outputs/irgraph-N7.txt','outputs/irgraph-N8.txt','outputs/irgraph-N9-chunks.jsonl','outputs/registry-screen.json'],
+  remaining='Lean compilation by root/Sol (draft UNCOMPILED); independent review; cycle part (ii) remains open but is not needed for the negation.'),
+'354089':dict(outcome='parked after computation',depth='primary source read (arXiv:2203.15764 Conj. 2.8 = K4bal3par, tripartite proposition, extremal K_{5n/9,2n/9,2n/9}); companion refutation of Conj 2.7 by Xu-Zhang arXiv:2412.13485 (I_7 v C_5 blow-ups) read',
+  summary='Exact for all n divisible by 3. Source proves it for 3-partite graphs. Exact computations: W5 blow-ups I_a v C5^t for n<=24 and (25;4,4,4,4,4) at n=45 (D3b=90 < 100) stay below 4n^2/81; simulated annealing over maximal K4-free graphs n=9 (best 4 = bound, tight), n=12 (best 5); I_a v H with H random maximal triangle-free: n=12 max 6 (< 7.11), n=15 max 10 (< 11.11). No counterexample; asymptotic flag-algebra-type problem.',
+  files=['outputs/blowup-run1.txt','outputs/blowup-run45.txt','outputs/sa3-runs.jsonl','outputs/join3-runs.jsonl']),
+'356083':dict(outcome='excluded: source-internal refutation (zero credit)',depth='primary source read (arXiv:2209.06402 Thm 1 thm:general, Example 7.12, closing Conjecture)',
+  summary='The conjecture (a non-extendable partial 6-factorization of a sub-hypergraph of K_10^3 with 106 colours exists) is false by the source\'s own Theorem 1: greedily colour each uncoloured triple (each vertex has degree <=35 in coloured triples, so at most 5 saturated colours per vertex, <=15 blocked of 111), giving a partial 6-factorization of all of K_10^3, which extends to K_38^3 since 38 >= 2(2*10-1) and (38,3,1,6) is admissible. A two-line bridge from the source: zero credit.'),
+'349147':dict(outcome='parked after exhaustive computation',depth='primary source read (arXiv:2012.11162v2 conjecture after Thm 5.3)',
+  summary='All trees n<=16 (1301, 3159, 7741, 19320 trees for n=13..16), all k: no violation of either inequality (none for n<12 either). The k=n case of the left inequality is exactly the open Radenkovic-Gutman minimum Laplacian-energy conjecture for trees, so a full proof is out of reach.',files=['outputs/kyfan-4-12.jsonl','outputs/kyfan-13-16.jsonl']),
+'352073':dict(outcome='excluded: publicly refuted',depth='abstract and journal reference read',summary='Pure twin group = pure flat braid group; Genevois (arXiv:2502.17917, Pacific J. Math. 340 (2026) 37-70) proves PFB_n is not virtually a RAAG for n=7 and n>=11, disproving the Naik-Nanda-Singh conjecture.'),
+'351156':dict(outcome='excluded: proved',depth='abstract read',summary='Labbe-Lapointe-Steiner, "A q-analog of the Markoff injectivity conjecture holds", arXiv:2212.09852, Algebraic Combinatorics 6 (2023) 1677-1685.'),
+'348416':dict(outcome='excluded: proved in source / Shallit 2021',depth='record text',summary='Record itself states the paper proves it.'),
+'348866':dict(outcome='excluded: solved in source',depth='record text',summary='Source presents a bijection resolving existence.'),
+'356852':dict(outcome='excluded: proved in source',depth='record text',summary='Source proves it by a bijection.'),
+'356212':dict(outcome='parked',depth='abstract and OEIS A218225 note',summary='First pattern set proved by Chern-Fu-Lin (arXiv:2209.12137, Proc. Edinburgh Math. Soc. 2023); remaining sets are all-n enumeration claims with no finite certificate route; no later proof located.'),
+'352605':dict(outcome='parked',depth='abstract and conjecture text (Conj 3.2, verified to n=35 by the authors)',summary='All-n Wilf-type equalities; needs a bijection or generating-function proof; no later proof located; not attempted computationally beyond the authors\' n=35.'),
+'349851':dict(outcome='parked',depth='primary source read (Mészáros-Tanjaya Conj 5.1; verified for S_n, n<=8 by the authors)',summary='Extends Gao\'s conjecture; pushing to S_9 needs ~1.7e9 elementary steps in pure Python (no numpy available); not run in this pass. 2026 citing paper arXiv:2605.10276 still lists it as open.'),
+'350804':dict(outcome='parked (deep)',depth='record text',summary='Rota unimodality of Whitney numbers of the second kind; only top-heaviness (Braden-Huh-Matherne-Proudfoot-Wang) is known; no finite route.'),
+'351464':dict(outcome='parked (analytic)',depth='record text',summary='Necessity of a gradient condition for magnetic Schrodinger eigenvalue bounds; not finite.'),
+'352014':dict(outcome='parked (number-theoretic, infinite)',depth='record text',summary='Goldbach-type statement for all SP numbers > 27; finite checks cannot settle it.'),
+'347121':dict(outcome='parked (deep classification)',depth='abstract (Boyvalenkov-Safaei, verified n<=1000)',summary='Diophantine classification problem; no proof located.'),
+'348076':dict(outcome='parked',depth='abstract',summary='Fractional version of the 7n/10 induced-forest conjecture for planar girth-5 graphs (dodecahedron tight); planar graph generation not available in this lane.'),
+'348375':dict(outcome='parked: routine-bridge pattern, Lean-infeasible',depth='Keith-Zanello source (Conj b19conj) and Barman-Singh-Singh arXiv:2209.01639 read (p=5, 11 proved; p=7 fails)',summary='The congruence for p is equivalent to f|T_p == 0 (mod 2) for f = sum b19(2n) q^(8n+3); given an eta-quotient 2-dissection this follows for a positive proportion of primes from Serre\'s density theorem: the standard Ono/Radu route (routine) and not formalizable here.'),
+'348577':dict(outcome='parked',depth='record text',summary='Hyperbolic-volume minimization over all fullerenes; needs fullerene generation and volume computation; no finite route in this lane.'),
+'357011':dict(outcome='parked',depth='abstract (Bui, Ann. Comb. 2024; data to n=56)',summary='Infinite monotonicity claim; refutation would need polyomino counts beyond n=56 (infeasible here); no proof route.'),
+}
+out={}
+for i,v in D.items():
+    r=X[i]; out[i]={'mathdb_id':int(i),'title':r['record']['title'],'source_url':r['record']['source_url'],'chunk':r['chunk'],'line':r['line'],'chunk_sha256':r['chunk_sha256'],'raw_sha256':r['raw_sha256'],'statement_sha256':r['statement_sha256'],**v}
+assert len(out)==20 and set(out)==set(X)
+(L/'results.json').write_text(json.dumps(out,indent=2)); print(len(out))

@@ -1,0 +1,21 @@
+# r580 fifty-record breadth handback
+
+Exactly the fifty IDs assigned in r579 reserved-ids.json and queue.json were read as literal mathematical statements, with individual technical dispositions, corpus chunk/line, exact UTF-8 statement hash, canonical JSON record hash and explicit scope flags. Baseline: 5,433 reported RECORD reviews; this packet adds 50 record reviews, subject to root reconciliation (5,483 before any sibling delta). This is not 5,483 complete mathematical statements or corpus-wide technical coverage.
+
+Zero hypothesis briefs and zero credit. Most rows request sharp asymptotic constants, exact extremal functions over all parameters, or full classifications without a bounded full-scope route. Ten rows explicitly flag primary quantifier/domain/definition restoration; no cached `full` label certifies self-contained mathematics. Other rows also retain source-scope HOLD. No Lean, manuscript, focused task, ledger or count changes: 9 additional / 39 total / next 40.
+
+One primary/successor body read: Araujo–Filipe–Miyazaki, arXiv:2512.16062v2 (04 Feb 2026), https://arxiv.org/html/2512.16062v2, fetched 2026-10-31 UTC. HTML bytes bound before extraction; derivative bound before reading. Sections 1–3, definitions, Theorems 1.2–1.3, 2.1–2.2, Lemma 2.3, proofs and references read. For 391133 the source proves limsup g=M² and liminf g≥L²; convergence requires both Conjecture 1.1 and existence of the diagonal Ramsey limit. External cited Ramsey theorem bodies and numerical optimization are not independently audited. No unconditional resolution or routine-adaptation proposal. All other primary bodies and successors remain unreviewed; metadata links confer no proof clearance.
+
+One exact bounded calculation: 391007 recurrence, first 64 bits. Initial fractional-bit convention fails at n=1; integer-bit-first convention matches all 64. Both outputs and the failed interpretation remain in bounded-checks.json. No recurrence for arbitrary algebraic numbers and no proof inferred from finite matching. No further sweep.
+
+Independent integrity: r579 exact payload, every direct original/copy pair, current reservations and 5,433 coverage baseline checked. All 20 original r301 corpus chunks and all eight separately listed frozen inputs checked in place against r301 inventory, whose manifest matches the intake binding. Flat references only; no corpus/historical-tree copies. r304 accepted exclusions/historical dispositions, r363 Cayley exclusion, current adjudications and hypothesis queue bound and consulted. Three active reservations (r504, r578, r580) are mutually disjoint, disjoint from coverage and protected targets; r504 untouched. Incomplete 344924/386396/387650 remain restoration-limited upstream; protected adjudications persist.
+
+Access: zero MathDB requests; registry unavailable => HOLD; no absence-of-hits inference. One successful lawful arXiv HTML fetch, no PDF/browser/Google/GitHub/ScienceDirect/OEIS requests. All parked routes remain parked. No new HTTP failure. Sequencing deviation: queue heads displayed a few scientific titles during schema inspection before initial bindings; no disposition relied on them. Complete statement-only output replaced a truncated first full-record display after binding.
+
+The independent read-only verifier checks exact payload/hash/size, original references, corpus/inventory, assignment/reservation disjointness and every literal/canonical hash. Run from any directory:
+
+```sh
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python3 -B /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python3 -B /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-mathdb-primary-qualified-breadth-r580/verify.py
+```
+
+Guard limits unchanged: 512 MiB AS/group RSS, CPU 210s, wall 230s. Bounded fixture negatives test hash, size and extra-file rejection without original mutation. Manifest excludes ONLY itself and final-verification-receipt.json; the separate receipt states its exact hash and size. Integrity PASS does not certify mathematics, source-scope, novelty, dependencies or acceptance.

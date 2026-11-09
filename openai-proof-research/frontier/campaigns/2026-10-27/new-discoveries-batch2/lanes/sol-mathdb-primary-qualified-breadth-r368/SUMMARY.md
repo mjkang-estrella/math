@@ -1,0 +1,17 @@
+# r368 — fifty individual breadth dispositions
+
+No discovery proposals and no credit. All fifty reserved literal statements were read; each has a compact individual reason, exact statement SHA256, and an immutable corpus path/line reference in dispositions.json. No complete new ordinary result emerged to retain for separate review. proposals.json is empty deliberately.
+
+Coverage is separated: 50 record-statement reviews; 10 primary problem/body-and-adjacent-update reviews (Hayman); 2 additional retained successor-body reviews (orientation and matroids); 2 selected successor-proof-section reviews; 0 complete concluding proofs/dependency closures. Reading a source statement and its update is not a full proof audit. The Egres originals timed out, so those two rows have no original primary-body clearance. No proposal relies on an abstract as clearance.
+
+The most tempting analytic lead, 387622, is already answered in its own primary source, Update3.23, citing Govorov1968 with an O(1/r) disc-radius bound. Update2.66 reports independence for387575; that underlying unpublished argument was not revalidated. Update8.6 already supplies a nontrivial Korenblum converse for387941, while leaving fixed-p sharp classification outside this review. The analytic-only wording of387679 permits trivial linear counterexamples, but this is a missing-hypothesis correction with zero credit. No mathematical search was spent on those leads.
+
+The retained graph successors show why routine routes do not qualify:2603.09475v1 gives restricted-family orientation classifications and source/sink obstructions, while1911.09890v1 distinguishes two-sided2Delta-1 from one-sidedDelta-1. Neither supplies a new full-scope resolution here. Selected proofs and examples were read before any possible computational investment; no sweeps were run.
+
+The input freeze uses flat original references, without corpus/history copies. The r367 manifest and r301 inventory files are checked in place, including all twenty corpus chunks. The exact assigned50 and the active r359/r365 sets of50 each are pairwise disjoint. r304 accepted-family/history originals and r363 Cayley364119 exclusion are bound; Cayley is absent from this reservation. Its source-contained counterexample remains excluded, not revived.
+
+Baseline coverage683 is administrative and belongs to root reconciliation; this packet claims only its fifty record reviews, not an independently adjudicated cumulative total. Campaign counts remain9 additional /39 total / next40. No shared edits, git, Lean, manuscript, MathDB request, external message, browser use, or publication occurred.
+
+Three public-primary PDFs are retained with URL/version/UTC/hash recorded before extraction. Egres timeout failures remain in sources.json and failures.md. Bounded live searches found successor leads only; no exhaustive novelty or live proof-registry clearance is claimed. Search snippets from disallowed or secondary hosts were not used as proof. All retained conclusions are rejection/hold reasons, not certifications of current worldwide open/solved status.
+
+Run verify.py through the specified helper_guard.py with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python3 -B. A separate final verify invocation rechecks original hashes, root/inventory manifests, all twenty chunks, literal statements, exact disjoint sets, coverage flags, and the exact packet manifest. Any failed assertion exits nonzero. Only manifest.json itself and verification-receipt.json are excluded from the SHA256+size manifest.

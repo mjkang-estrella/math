@@ -1,0 +1,9 @@
+import Mathlib.Tactic
+#check finRotate
+#check finRotate_apply
+#check Fin.finRotate
+#check Fin.rotate
+#check Finset.eq_of_subset_of_card_le
+#check Relation.ReflTransGen.head_induction_on
+#check Relation.ReflTransGen.trans
+#check Finset.mem_powersetCard

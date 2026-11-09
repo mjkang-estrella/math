@@ -1,0 +1,9 @@
+# 331859: valid but uncredited refutation
+
+Use the 16-vertex tree with hub o and vertices A_j, B_j, C_j (1 <= j <= 5), with each arm a path of five edges from o. Let Q_A = A_4 A_5, Q_B = B_4 B_5, Q_C = C_4 C_5, with nonterminal endpoints A_4, B_4, C_4. These are disjoint terminal paths and the unique path joining any two nonterminal endpoints goes through o and meets the corresponding terminal paths only at those endpoints. Distinct nonterminal endpoints have distance 8.
+
+Their union is three disjoint edges. It cannot burn in three rounds: each component needs a source, so there would be exactly one source in each component, and the last source has radius zero and misses the other endpoint of its edge. It burns in four rounds by putting the first three sources in distinct components; thus its burning number is 4.
+
+The ambient tree burns in four rounds with sources B_1, C_3, A_4, B_5. The radius-three ball at B_1 covers the hub, B_1..B_4, A_1..A_2, C_1..C_2. The radius-two ball at C_3 covers C_1..C_5; the radius-one ball at A_4 covers A_3..A_5; the last source covers B_5. Each source is unburned when selected. Hence b(T) <= 4, contrary to the proposed b(T) >= 5 for k = 4. The source's 'all i,j' distance condition is understood for distinct indices, as its own Theorem 10 and proof do; we do not use the diagonal-index typo to refute it.
+
+This is NOT nominated as new. Bonato and Lidbetter, *Bounds on the burning numbers of spiders and path-forests*, arXiv:1707.09968, explicitly state in the n = 16 case that (5,5,5) has burning number 4 and display its optimal sequence in Figure 4 (local text lines 474-475 and 508 onward). The paper's general spider theorem also subsumes this upper bound. Appending the three-edge forest observation is a short source-ingredient bridge, excluded by the campaign standard. No Lean effort is justified for campaign credit. Root retains the acceptance decision.

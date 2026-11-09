@@ -1,0 +1,7 @@
+import pathlib,json,re
+D=pathlib.Path(__file__).resolve().parents[1];r=json.loads((D/'outputs/registry-screen.json').read_text());terms=['grundydomination','perfectmatching','taxicab','separated','matroidbased','conlonlee','generatinggraph','q-ehrhart','chapoton','knightcolor','starside','hiltonmilner']
+for p in list((D/'sources').glob('scope-*/body'))+list((D/'sources').glob('full-*/body')):
+ t=json.loads(p.read_text());hits=[x['path'] for x in t.get('tree',[]) if any(w in x['path'].lower().replace('_','').replace('-','') for w in terms)];r.setdefault('complete_subtrees',{})[str(p.relative_to(D))]={'sha':t.get('sha'),'truncated':t.get('truncated'),'paths':len(t.get('tree',[])),'hits':hits};print(p.parent.name,len(t.get('tree',[])),t.get('truncated'),hits[:25])
+text=(D/'sources/pool-projects-found/body').read_text();r['pool_projects']={'receipt':'sources/pool-projects-found/receipt.json','hits':[{'line':j+1,'text':l[:500]} for j,l in enumerate(text.splitlines()) if any(w in l.lower().replace('_','').replace('-','') for w in terms)]};print('pool hits',r['pool_projects']['hits'])
+r['limitations']=['Complete Lean Pool tree, fetched projects/projects.yml and every candidates file; metadata/path screen only.','Root recursive OpenAI and Omega responses truncated. Complete fetched subtrees listed separately. No exhaustive reading of proof bodies.','Eight spaced GitHub repository queries, no code search and no worldwide novelty clearance.']
+(D/'outputs/registry-screen.json').write_text(json.dumps(r,indent=2))

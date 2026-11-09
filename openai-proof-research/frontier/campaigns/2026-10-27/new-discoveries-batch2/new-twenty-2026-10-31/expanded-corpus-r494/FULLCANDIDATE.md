@@ -1,0 +1,13 @@
+# 316875 — author ordinary full negation, unqualified
+
+Exact original literal and raw/token/decoded bindings: results.json and original-bindings.json. Actual source is Hamidoune0711.4074v1 Conj5; actual final CPC17(2008)793–798 DOI10.1017/S0963548308009425 Conj2.2 p795 is unchanged in the material hypotheses. Whole extracted final body read, p795 visually checked, source image retained. No hypothesis says weights are units; that is the separate known case explicitly discussed below the conjecture.
+
+G=Z/4Z, n=4, k=2, x=(1,1,3,3), w=(1,2). Max fiber2. Let I be any nonempty subset of{1,2}, f:I→{1,2,3,4} any injection. If1∈I, the weighted sum has odd reduction modulo2 and hence is not0 modulo4. Otherwise I={2} and the sum equals2 modulo4. Thus every admissible sum is nonzero, disproving the full universal claim. There is no unverified finite search and no reliance on any upstream theorem. The proof even permits arbitrary f; distinct indices cannot create an omitted case.
+
+SUSTAINED-DERIVATIONS.md contains the failed padding and multiplicity routes and the successful quotient construction, including a Z/9Z instance and arbitrary finite groups surjecting onto Z/p²Z. These are one obstruction family only.
+
+Source gate paid by actual original/final bodies and visual page. Ordinary proof authored and personally checked, NOT independent PASS. Search/history gate bounded only: 831 allowed completed files, 43 exact structural source matches, no exact-ID dispositions, no transfer from source neighbors. Three searches/nine query strings saved/precharged. Four inherited public registry roots unavailable, not retried. No concrete matching earlier counterexample proof was authenticated. No worldwide novelty claim. Related A-weighted Gao theorem and older Hamidoune conjectures in search are not automatically this prescribed finite-weight-list problem.
+
+Significance remains an explicit HOLD: a small nonunit-weight obstruction may fall under the campaign's domain-correction exclusion. Strongest contrary case: the final primary intentionally states arbitrary weights and separately records the coprime case, so this is not a corpus transcription error or merely an even-modulus range mistake. No complete earlier primary-result-to-target routine bridge was found, and smallness itself cannot establish one. Root must adjudicate this conflict; this dossier grants no credit or qualification. Correction/latest-publication chronology beyond bounded searches not exhaustively cleared.
+
+No Lean/formal execution, certificate, independent review, paper acceptance or dispatch occurred. Dormant plan supplied only for reviewability.

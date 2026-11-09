@@ -1,0 +1,3 @@
+exec(open(__file__.replace('fetch2.py','fetch.py')).read().split('items=')[0])
+items=[('bicyclic-solved','https://arxiv.org/pdf/2308.12159'),('bicyclic-published','https://match.pmf.kg.ac.rs/electronic_versions/Match91/n2/match91n2_509-534.pdf'),('transference','https://arxiv.org/pdf/2005.02234'),('gerzon-barg-musin','https://arxiv.org/pdf/0903.4774'),('omega-tree','https://api.github.com/repos/the-omega-institute/trureturing/git/trees/83d511b2495f30ac194415b446456e054419be22?recursive=1')]
+exec(open(__file__.replace('fetch2.py','fetch.py')).read().split('receipts=[]')[1].join(['receipts=[]','']).replace("H/'fetch-receipts.json'","H/'fetch2-receipts.json'"))

@@ -1,0 +1,7 @@
+# Literal submodular-separation packet
+
+Separator.lean gives the general mathematical separation assertion for every d and r <= d. Points are sets of subset-indexed coordinates, allowed when all labels have cardinality <= r. phi is the set of labels contained in the input subset; it includes the empty coordinate. Separator requires submodularity on the entire Boolean lattice of allowed coordinates, strict negativity on the monomial image, and nonnegativity off it. Coordinates outside the allowed set have no role and can be assigned arbitrary values. This is the source Boolean-coordinate model with labels, rather than an arbitrary ordering of coordinates.
+
+Certificate.lean proves no_separator_5_2 and the general negation source_existence_refuted. It uses genuine coordinate permutations and group averaging; the normalization equalities are kernel decide proofs on finite sets. It does not treat numerical LP output as an axiom. The polynomial-time evaluation requirement is unnecessary: the theorem disproves existence of any integer-valued function with the required properties, so also excludes an efficiently evaluable one. No bounded-obstruction theorem is substituted for the general negation.
+
+Use scripts/replay.py under scripts/limited.py. Lean 4.34.1, -M3500 -j2 -DwarningAsError=true; mathlib read-only cache d13f23b723b8a846827a245b89c10fc7d3f11612. Upstream cache is trusted; no complete upstream rebuild claimed. Review still required for source fidelity, novelty and credit. SIAM version of record body was denied.

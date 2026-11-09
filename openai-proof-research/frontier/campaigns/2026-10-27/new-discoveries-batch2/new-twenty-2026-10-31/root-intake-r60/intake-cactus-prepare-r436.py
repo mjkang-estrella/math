@@ -1,0 +1,51 @@
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,hashlib,datetime,collections,re,sys,runpy,contextlib,io,shutil
+P=Path(__file__).resolve().parent.parent;ROOT=P/'root-intake-r60';R=P/'cactus-randic-ratio-source-review-sol-r1'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(p,v):
+ assert not p.exists(),str(p)
+ p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(v,indent=2)+'\n')
+now=datetime.datetime.now(datetime.timezone.utc).isoformat();ledger=json.loads((P/'ledger.json').read_text());assert ledger['accepted_new']==55
+assert not (P/'expanded-corpus-r436').exists()
+m=json.loads((R/'SHA256-MANIFEST.json').read_text());files=m['files']
+assert all(sha(R/n)==(v['sha256'] if isinstance(v,dict) else v) for n,v in files.items())
+frozen=json.loads((R/'frozen-inputs.json').read_text());assert len(frozen)==176 and all(sha(Path(s))==v for s,v in frozen.items())
+after=json.loads((R/'frozen-after.json').read_text());assert after['count']==176 and not after['mismatches']
+prev='0'*64;events=[]
+for i,line in enumerate((R/'guard-ledger.jsonl').read_bytes().splitlines(keepends=True)):
+ e=json.loads(line);assert e['seq']==i and e['previous']==prev;prev=hashlib.sha256(line).hexdigest();events.append(e)
+ if e['event']=='success':assert sha(R/e['destination'])==e['sha256']
+assert sum(e['event']=='attempt' for e in events)==1 and sum(e['event']=='success' for e in events)==1
+rec=[]
+for n,v in files.items():
+ if n.endswith('.receipt.json'):
+  j=json.loads((R/n).read_text());rec.append({'path':n,'sha256':sha(R/n),'exit':j.get('exit'),'killed':j.get('killed')})
+terminal='seal_manifest.receipt.json';j=json.loads((R/terminal).read_text());rec.append({'path':terminal,'sha256':sha(R/terminal),'exit':j.get('exit'),'killed':j.get('killed'),'terminal':True})
+budget=json.loads((R/'search-budget.json').read_text());assert budget['calls_used']==2 and budget['queries_used']==6
+for i in [1,2]:assert isinstance(json.loads((R/f'search-response-{i}.json').read_text()),str)
+parent=P/'cactus-randic-ratio-source-parent-integration-sol-r1.json'
+record={'utc':now,'mathdb_id':351165,'review_lane':str(R),'manifest_files_verified':len(files),'manifest_mismatches':[],'frozen_verified':176,'frozen_mismatches':[],'frozen_after':after,'receipt_count':len(rec),'receipt_exit_counts':dict(collections.Counter(str(x['exit']) for x in rec)),'receipts':rec,'guard_chain_verified':True,'guard_last_sha256':prev,'GET_hops':1,'GET_successes':1,'new_unavailable_artifacts':[],'search_calls':2,'query_strings':6,'review_sha256':sha(R/'REVIEW.md'),'proof_sha256':sha(R/'PROOF.md'),'gap_sha256':sha(R/'GAP.md'),'keyed_review':json.loads((R/'keyedreview.json').read_text()),'root_disposition':'ADOPT_ZERO_CREDIT_NUMERICAL_SOURCE_COROLLARY; PARK_AMBIGUOUS_FULL_LITERAL. No formal dispatch or further equality-retrieval research for campaign credit.','complete_bridge':'Actual2107.00071v2Theorems5.2/5.4giveR>=J=d/2+A/2-N/4;Lemma3.2givesd<=N/2;provedA/N>1/2inbothcyclicranges;identityJ-dA/N=(A/N-1/2)(N/2-d)>=0 gives both numerical targets. Independentreviewreconstructsactualapplicablepremises/mixedleaves/tree-skeletoncases and strongestcontrarysignificancecase; numerical result already direct source corollary.','full_literal_gap':'Undefined longitudinal-symmetry antecedent, mixedtwo-leaves versus exactlytwo-pendantbridges restriction, singleton/positive-diameter convention. Numeric equality characterization not a new source predicate. No authenticated full-literal refutation or complete prior proof of ambiguous equality is claimed; source/domain/equality corrections receive zero credit.','procedure':'Failedfitzrender preserved, Popplerrecoverymaterialninepagesallfigures viewed, materialtruncationsrecovered; no protectedpeer access reported; sampled/native/writer limits explicit. Hashpassnotuniversalcomplianceclaim.','accepted_new':55,'target_new':60,'previous_accepted':39,'credit':0,'root_execution':'Documentary integrity/adjudication only; no new mathematical program or Lean execution'}
+save(parent,record)
+den=json.loads((ROOT/'inherited-denials-r435-intake.json').read_text());den['utc']=now
+den['root_cactus351165_outcome']='One successful author-tenure navigationGET,no newdenial. Independentfull-literalGAP; numericalsubsetexactsourcehalf-diametercorollary,zero. Undefinedsymmetry/mixedequality/domainnotrepairedintoresult; no newdelivery/implementationlane forcredit.'
+denpath=ROOT/'inherited-denials-r436.json';save(denpath,den)
+
+# Reuse only validated metadata reservation/preparation; no earlier integration executes.
+source=(ROOT/'integrate-cover-r2-prepare-r434.py').read_text();tail=source[source.index('# Metadata selector:'):];tail=tail[:tail.rfind('\nprint(')]
+tail=tail.replace('selection-routing-r434.json','selection-routing-r436.json').replace('for num in range(421,434):','for num in range(421,436):')
+tail=tail.replace('cmdrr-five-three-formal-sol-r3','cmdrr-five-three-formal-sol-r4').replace('shoe-pair-discrepancy-formal-sol-r2','shoe-pair-discrepancy-formal-sol-r3')
+tail=tail.replace("'cover-ratio-primary-comparison-sol-r2']:","'cover-ratio-primary-comparison-sol-r2','cactus-randic-ratio-source-review-sol-r1']:")
+latest='''\nLATEST ROOT ROUTING:55/60beyond39accepted,94total;ONLYGPT-6.1Solhigh/defaultALLagents/nochildren. Activecmdrr-five-three-formal-sol-r4 andshoe-pair-discrepancy-formal-sol-r3fullyprotectedfromread/hash/glob/list/poll evenmetadata. RootexcludedIDs326555/324571andprimaryURLs1310.5240/1211.6486usingretainedmetadata. CMDRR22production+auditpartialcompiled,centralA+B=1+z/B+z=2/cycle-sign/universalendpointunpaid; historicalr3inventorymetadata-traversal/missingreapreceiptbreachretained, NOTclearedbyhashes,newr4runnerforcesowncwd. Rootprospectiveown-logcappeddisplayexceptionr4doesnotwaivebreach orsource/peerboundaries. Shoe8core+controls/auditpartialpaidiiD/chronologicalwinner/conditionalpair/termination; blockprobability/minorization/TV/supremumunpaid, noacceptedresult. Bothsourceordinary/finalPASSandboundedprospectivequalificationnotworldwidenovelty;priorCMDRR2013companion403/Galbraith-Holmes2012birthday404unreadlimitsretained,allalternatedeliveriesdenied.\nLatestcompletedr435zero:352883actualpublicissue19720all-kweighteddescentproofexactzero;351851sourceTheorem4dual-signcorrectioncompletebridgezero.351165independentfull-literalGAP: numericalbothcactusinequalitiesalreadydirectcorollariesofactualsource2107.00071v2Theorems5.2/5.4+Lemma3.2,fullallrangescasebridgepaid;undefinedlongitudinalsymmetry/mixedtwo-leavesvs2pendantbridges/singletondomainremainingNOTfullrefutation,NOcredit/noformal/furtherretrievallane. Oldallowlistedauthornumericcandidateproposalissupersededbyindependent/rootadjudication.\nr434zero:349307actualDing-Yan2608.15521jointcycleJfractionbridgepublic;356364sourceowncycle-orderinvariant/exceptioncorrectionzero;354623sourcev3cochordalcounterexamplezero;3545712balancedspanningtreeaugmentationgap. r432scoring323064/323065ordinaryproposalsunqualifiedsamefamily,source3.4completeadaptationobjection.323059fourK9d8n36ordinary-v1PASSbutactual2013Orderfinal10.1007/s11083-012-9253-5cookie-loopALLnewdeliveryunavailable=>PARK.323710coverratioordinary/current1206.6605v1PASS,provisionalcontentPASS,butactual2017JGTcompanion10.1002/jgt.22029final403ALLnewdeliveryunavailable=>PARKnoformal/retrievallane;cachedv2Figure3signinconsistencyNOTattributedfinal/notusedwitness.323032actualpinnedupstream185T1.1packingcoveringcounterexamplepubliczero;323987actualLin1310.6726signedmultisetproofpubliczero.324245specificP-partitionCor3.4PIIS0097316519301177body403ALLnewdeliveryunavailableHOLD.323164/323165Chapoton2014final404ALLnewdeliveryunavailable;Su2017forkproofspecificUNREADnotdenied;cached1203.1780notfinalequivalence. CurrentMathDB324571recordchallenge-suffixALLnewdeliveryunavailable,noguardledgerbackfill;cachedliteral/actualshoePDFs distinctallowedonlywherecopied.\nOtherrootprecedents:326886exactMa1506.05525v2T3.2fullparameterpublicproofzero,actualbodyread;Feng2019redirect-onlydenied.340110technicalfullLeanPASSbutrootEXCLUDEcompleteinverse-lemma/unit2cycle/cosetcollisionroutineadaptation; noearlierexactprintedwitnessclaimed.337705hypergraphspecificclassicalproofunreadPARK;329292framefinal429PARK;332935graphsquarefinal/cactusrootunavailablePARK;334556finiteenergyPASSbutexactnorm/wcebridgeunpaidQMC2014TLSallnewdeliverydenied. Everyinheriteddenial/r39576acquisitionquarantinecontinues. No false source-family/neighborIDtransfer, no oldcertificateaudit. All rootintakesdocumentaryorchestration,notnewmathproof. ReadexactallowedcompletedIDANDsource-familydispositionsBEFOREinvestment;actualprimarytheorem+proofbodyrequired, neverturnhistorysummary/openlabel/head/snippetintoevidenceofnewresult. Genericworldwideunknownnotautomaticveto;specificidentifiedmatchingunreadtheoremHOLD; boundednonmatchnotworldwidenovelty. Sourcepublicsolutions/routinefullybridgedcorollaries/wording-domain-endpointcorrectionsZEROcredit.\n'''
+tail=re.sub(r"latest='''.*?'''",lambda _: 'latest='+repr(latest),tail,count=1,flags=re.S)
+L=P/'expanded-corpus-r436'
+exec(compile(tail,str(ROOT/'integrate-cover-r2-prepare-r434.py')+'#metadata-only-r436','exec'),globals())
+t=(L/'TASK.txt').read_text()
+for word in ['Resources fixed:','Deliver actual','frozen-after','receiptJSON','wholelane maximum3 actual calls9','cmdrr-five-three-formal-sol-r4','shoe-pair-discrepancy-formal-sol-r3']:assert word in t,word
+assert not (L/'bootstrap-receipt.json').exists()
+f=json.loads((L/'frozen-inputs.json').read_text());assert len(f)==12 and all(sha(Path(s))==v for s,v in f.items())
+ready={'utc':now,'new_discovery_lane':str(L),'task_sha256':sha(L/'TASK.txt'),'ids':json.loads((L/'reservation.json').read_text())['ids'],'intake_review_manifest_count':len(files),'intake_review_frozen':176,'intake_review_receipt_exit_counts':record['receipt_exit_counts'],'parent_integration':str(parent),'latest_denials':str(denpath),'accepted_new':55,'credit':0,'other_active_peers':['cmdrr-five-three-formal-sol-r4','shoe-pair-discrepancy-formal-sol-r3'],'root_role':'Documentaryintegrity/orchestrationonly'}
+save(ROOT/'r436-ready-after-cactus.json',ready);print(json.dumps(ready))

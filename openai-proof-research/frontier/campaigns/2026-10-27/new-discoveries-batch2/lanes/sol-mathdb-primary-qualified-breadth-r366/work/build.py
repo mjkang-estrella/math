@@ -1,0 +1,88 @@
+from pathlib import Path
+import json,hashlib,datetime,re
+R=Path(__file__).resolve().parents[1];L=R.parent
+records=json.loads((R/'records.json').read_text())
+notes={
+343115:('reject_record_reports_resolution','Almost-all n assertion, not a pointwise inequality. The literal record explicitly reports the stronger every-fixed-k>1 almost-all result. Status text contradicts it; no discovery eligibility follows. Primary proof not checked.'),
+343541:('park_full_scope_construction','All odd n>=7 require explicit minimum-coprime labelings and a matching lower bound. Small n label searches cannot settle the universal family; no uniform congruence construction established. References misleadingly cite ladders/GP(n,1), which do not settle GP(n,3).'),
+344207:('reject_primary_successor_proves_exact_scope','Sankar Conj8.3 matches exactly. Axelrod-Freed arXiv2010.11834v1 Cor5.1.2 proves it: substitute j=k-i in its alternating sum. Read Theorem5.1 and the complete short Cor5.1.2 proof; full bijection dependency audit not performed. No new credit for rederiving the binomial cancellation.'),
+344395:('park_deep_existence','Every height m requires a cyclotomic construction with exact coefficient maximum. Unitary analogs and individual heights do not settle it; no cheap all-height mechanism identified.'),
+344873:('park_deep_modularity','All finite-type Cartan-like T-data and all sigma require modular functions for a common congruence subgroup. Finite q-series matching cannot certify modularity; classification/dilogarithm dependencies are substantial.'),
+345564:('park_uniform_coefficient_inequality','Uniform n>=45, 13<=k<=n-13 and every interior coefficient beyond distance25. Computation already through n430 is not proof; no uniform exact coefficient comparison established.'),
+345668:('park_nontrivial_bijection','Must treat each of three square positions and all lengths; classical Wilf equivalence alone is insufficient, as the literal source description warns. No explicit distant-pattern bijection or exact counterexample mechanism.'),
+346442:('park_intersection_theory','Three generic degree formulas for every d>=3, including two multidegrees. Degree<=10 monodromy evidence cannot handle generic base-locus multiplicities in all degrees.'),
+347079:('park_determinant_family','All admissible n,k,d,t with unbounded alpha require a nonzero determinant or MSR construction over sufficiently large fields. Alpha<=3003 already covered. No symbolic factorization supplied; small determinant checks would repeat prior scope.'),
+347689:('park_sandpile_structure','Universal connected graphs and every attachment sink impose recurrent-identity constraints. Graphs<=10 already searched. No parity obstruction established that forces bipartiteness; finite enumeration would not resolve scope.'),
+348834:('park_deep_prime_values','Infinitely many prime j coefficients is a prime-values assertion; ECPP certificates for isolated coefficients provide no infinite family. No cheap arithmetic mechanism.'),
+350279:('park_missing_definition','The matrix associated with index n is absent from the literal statement, as is the intended domain of n. Decimal constants cannot be interpreted as exact sharp bounds without primary definitions. No fabricated matrix or low-index counterexample.'),
+350548:('reject_record_reports_counterexample','The literal record already supplies a path13 plus pendant-vertex counterexample family (>=190 leaves). Recomputing eigenvalues or shrinking it is not discovery. Primary body not read; scope exclusion based on explicit record evidence.'),
+352560:('park_asymptotic_percolation','Requires a strict next-order lower bound for all sufficiently small positive intensities. A limiting first-order slope does not yield its sign; no controlled second-order expansion or coupling identified.'),
+354656:('park_graph_coloring','All graphs with Delta=4 and mad<4 must have square chromatic number<=13. Random small graphs cannot establish coloring; no reducible-configuration/discharging proof supplied.'),
+356400:('reject_record_reports_refutation','Literal full planar assertion is expressly said to be disproved in2022; the Delta>=4 restriction is a distinct surviving scope. Do not silently replace the original with that restriction or count source counterexamples.'),
+356915:('park_source_scope_geometry','Smooth-locus Fubini-Study curvature integral for every isolated-A1 singular quartic requires analysis of local singular contributions. A smooth K3 Chern-number identity cannot be transferred to the punctured singular metric without a boundary calculation. No primary body audited; no credit for a Gauss-Bonnet correction.'),
+358626:('park_oriented_matroid_existence','Every rank r>=3 and every uniform oriented matroid up to2r-1 elements, with sharpness, requires global reorientation arguments. Known ranks<=5 do not give a uniform construction.'),
+360524:('park_graph_embedding','For every k and every oriented path orientation, minimum semidegree>k/2 must suffice. Directed-path special case is already known; no all-orientation embedding mechanism.'),
+360703:('reject_literal_domain_shortcut','Literal m is integer, so m maps to1-m in binom(m,2); (14,-363) shadows (14,364). This is a domain/wording correction, excluded from credit. Positive-domain uniqueness remains a large Diophantine problem already tested through4.6e7; no long sweep.'),
+362039:('park_famous_hard','The g=3 oriented-graph Thomasse path conjecture remains distinct from refuted g>=4 versions. No cheap path-extension argument reaches2delta; small digraph sweeps are not a full-scope route.'),
+363467:('park_unbounded_construction','Read primary Conj3 p40, Theorem13 and Cor13.1 p39: upper2^d already follows by splitting into2-cubes. Table8 covers d4..7; the missing full scope is lower-bound construction for every d>=4. No all-d lifting construction found; counting the existing upper bound would be a helper.'),
+364088:('park_exact_feasibility_family','Read primary Conj5.13, spread definition excluding n, examples5.1/5.3/5.6, Table4a and conditional Prop5.8 proof. Realizable means feasibility on an interval of positive length; endpoint-only bases do not count. Need uniform upper spread bound and attained positive interval for every n>=6. No exact all-n root/sign mechanism established. Table checks already n<=500; no redundant long sweep.'),
+365040:('park_knot_invariant_dependencies','All almost classical flat knots require invariance/minimal-diagram and state-sum control. Checking crossings<=10 repeats known data; no homological identity giving evaluation1 established.'),
+365442:('park_frame_existence','Every positive dimension needs exact complex d-by2d ETF existence. Verified dimensions/numerical frames are not universal certificates; quote about Zauner does not establish this distinct conjecture.'),
+366641:('park_spectral_extremal','All graph orders require a sharp two-smallest-eigenvalue inequality. n<=9 already verified; no exact Gram or variational bound reaching-2n/3 identified.'),
+366769:('reject_malformed_record_reports_refutation','Comparison signs and k/n inequalities are lost in literal text. It explicitly states odd-k infinite counterexamples and k3,n82. Thus neither reconstructing the missing relation nor repeating that witness qualifies. Even-k remainder is a different source scope requiring primary statement.'),
+367476:('park_record_reports_refutation','The source annotation labels the universal spectral bound refuted, but no counterexample is given in the literal statement and no body read here. Exclude as a novelty candidate pending primary verification; do not assert a newly verified refutation.'),
+368037:('reject_record_reports_resolution','Literal record says the log(n+2)-1 leaf-length bound follows from a stronger theorem. Annotation quotes an unrelated cycle23 statement. No inference of openness from conflicting status; primary proof not checked.'),
+368102:('reject_classical_record_scope','The literal statement is exactly the equitable coloring theorem at k>Delta, and itself credits Hajnal-Szemeredi1970. Proving a small graph case or giving a routine proof is not eligible; no primary audit claimed.'),
+368387:('reject_record_reports_refutation','Literal universal all-capacity convex assertion already gives Haim-Kislev-Ostrover pentagon-product counterexample. Centrally symmetric polar products are distinct and Mahler-related. No reused counterexample or hard-problem sweep.'),
+369245:('reject_record_reports_bijection','Literal record says its source constructs a bijection for all t>=1 and n. Status quote about Knuth is irrelevant; no new novelty from empty solution arrays. Primary proof not read.'),
+371923:('park_modularity_family','All k>=3 Nahm sums need exact modular transformations, not coefficients at finite q orders. The solved tag cites k2 of a different conjecture and does not settle this scope. No cheap theta/product identity established.'),
+372057:('reject_primary_successor_proves_exact_scope','Primary2512.13450v2 Conj6.12 and Remark6.14 explicitly report Murakami proof. Retained2602.16159v2 Conj1.1, Thm1.2 and final proof match all coprime odd0<q<p. Read final proof using Thm6.5(iii) and Prop7.1; complete modular-form dependency audit not claimed.'),
+372553:('park_digit_carries','All n>4 except64,256; failure of divisibility by4 forces binary sparsity, but excluding further powers of2 using base3 carries is the substantive unresolved step. Finite exponent tests are not a proof.'),
+372554:('park_deep_digit_distribution','Every fixed odd prime requires linear valuation asymptotic with O(sqrt k) discrepancy for powers of2. Carry heuristics/uniform digits are not a proven distribution theorem; no cheap deterministic estimate.'),
+372762:('park_partition_perfect_powers','For every fixed d eventual stabilization in exponent k requires excluding near-perfect powers of partition numbers for all unbounded n. Finite n<=1e8 evidence cannot settle it; no uniform Diophantine mechanism.'),
+372869:('reject_record_reports_resolution','The record explicitly attributes a full affirmative proof to Bucic-Korandi-Sudakov for its r-colored minimum-degree condition. No body inspected, but no eligibility from an open label. No small monochromatic-cover search.'),
+374733:('park_record_attributes_proof','The literal identity already attributes a proof to W5, while the set S-prime is not defined locally. Primary/reference retrieval is needed before any proof attempt; not a survivor based on missing verification. No invented permutation class.'),
+376077:('park_finite_but_large_extremal','Exact f(31,31)=8 is a finite universal graph extremal problem, not a small31-vertex witness alone: need all minimum-degree8 graphs or a min-degree8 counterexample. The solved tag quotes other conjectures. No compact certificate route established.'),
+376698:('park_prior_proof_lead_access_limited','Read primary Conj4.1 Eq4.30, preceding explicit k1..7 examples and Eq4.31 rearrangement. Search returned Zhou2003 Thm6 claiming an equivalent formula and proof. Publisher403, no retry; primary successor body not retained, so this is a strong prior-proof lead rather than verified full-body exclusion. No new formula or routine trigonometric rearrangement credited.'),
+379585:('park_parity_coloring','Universal bipartite equality requires controlling parity of every path and strong parity walks. General odd-cycle counterexamples do not refute bipartite scope. No small exact bipartite witness or structural conversion found.'),
+383167:('park_famous_hard','Global smoothness versus finite-time singularity for finite-energy smooth 3D Euler data is a major analytic problem. A clarification paper title is not a full proof or license to infer one; no numerical residual sweep.'),
+384074:('park_broad_geometric_program','Several separate Bridgeland-stability constructions and Bogomolov inequalities on degenerate varieties; literal source/dependency definitions missing. No single cheap universal proposition or short certificate isolated.'),
+384627:('park_sharp_hypercontractivity','Three sharp-constant problems across dimensions/degrees, including degree2 homogeneous L2/L1. Known nonsharp hypercontractive estimates and individual extremizers do not determine all requested optima. No full sharp mechanism.'),
+384688:('park_vague_asymptotic_quantifiers','Largest delta in terms of epsilon uses unspecified constants in O(delta) and Omega(epsilon). Need a precise asymptotic regime/source formulation before a sharp full-scope claim. A trivial average bound does not answer largest delta.'),
+384823:('park_statistical_thresholds','Bayes/ML threshold equality requires precise dimension limit, tensor normalization and nontrivial-correlation criterion. d2 subcase or finite-n simulations cannot resolve general d. No exact all-order inference argument.'),
+385648:('park_famous_convex_geometry','Maximizing affine-invariant isotropic determinant among all3D convex bodies is a longstanding slicing extremal problem. Testing simplex/balls/polytopes is not a global bound; no variational reduction established.'),
+385929:('reject_literal_missing_hypotheses_shortcut','Pairwise coprimality alone allows sequences with summable reciprocals, making the first cancellation assertion fail by elementary divisibility-density arguments; that is a missing-hypothesis correction, not campaign-eligible discovery. The separate all-shifts existence question remains much deeper and is not answered by that shortcut.'),
+386187:('park_integrable_probability_scope','Requests finite-time KPZ multipoint laws for various initial data plus a scaling-limit statement. Exact stochastic normalization/time-space conventions and primary definitions must be recovered. Known Airy limits are not automatically the requested finite-time joint distribution; no short full-scope route.')}
+assert len(notes)==50 and set(notes)=={x['mathdb_id'] for x in records}
+primary={344207:'hooks',363467:'queens',364088:'spread',372057:'signature',376698:'generating'}
+rows=[]
+for x in records:
+ n=x['mathdb_id'];d,reason=notes[n]
+ rows.append(dict(mathdb_id=n,title=x['title'],canonical_url=x['canonical_url'],literal_statement=x['statement'],literal_statement_sha256=hashlib.sha256(x['statement'].encode()).hexdigest(),source_url=x.get('source_url'),disposition=d,reason=reason,record_statement_read=True,primary_statement_read=n in primary,primary_body_review=n in primary,primary_source_tag=primary.get(n),source_examples_or_proofs_screened=n in primary,successor_statement_read=n in [344207,372057],concluding_resolution_proof_read=n in [344207,372057],complete_dependency_audit=False,novelty_coverage='No openness or global priority clearance; bounded source/successor check only' if n in primary else 'Record-only triage; current source/prior status unverified',accepted_credit=0,eligible_proposal=False))
+def put(n,o):(R/n).write_text(json.dumps(o,indent=2,ensure_ascii=False)+'\n')
+put('dispositions.json',{'dispositions':rows});put('proposals.json',[])
+# History match evidence: flatten matching objects, preserve explicit limits.
+D=L/'root-mathdb-accepted-exclusions-r304'
+ids={str(n) for n in notes};matches=[]
+def walk(x,path):
+ if isinstance(x,dict):
+  if any(str(x.get(k)) in ids for k in ['mathdb_id','related_mathdb_id']):matches.append({'path':path,'entry':x})
+  for k,v in x.items():walk(v,path+'/'+k)
+ elif isinstance(x,list):
+  for i,v in enumerate(x):walk(v,path+'/'+str(i))
+for name in ['accepted-exclusions.json','historical-dispositions.json']:walk(json.loads((D/name).read_text()),name)
+put('history-scope-screen.json',dict(exact_id_matches=matches,limit='Cached r304 only; not exhaustive history or current registries',families=[{'number':x['number'],'title':x['title'],'scope':x.get('scope')} for x in json.loads((D/'accepted-exclusions.json').read_text())['families']]))
+# Bounded consistency check of already printed source data, not discovery.
+table=[[1],[3,5],[14,51,42],[84,485,849,462],[594,4743,13004,14819,6006],[4719,48309,182311,322789,271452,87516],[40898,511607,2472322,5999489,7794646,5182011,1385670]]
+import math
+checks=[{'k':k,'printed_row_alternating_sum':sum((-1)**(k-i)*a for i,a in enumerate(row,1)),'Catalan':math.comb(2*k,k)//(k+1)} for k,row in enumerate(table,1)]
+assert all(c['printed_row_alternating_sum']==c['Catalan'] for c in checks)
+put('bounded-checks.json',dict(purpose='Source-table consistency only; no conjecture search, proof, novelty or substantive result',checks=checks,guard={'AS_bytes':536870912,'groupRSS_bytes':536870912,'CPU_seconds':210,'wall_seconds':230,'raised':False}))
+# Capture exact excerpts from retained body extractions; extracted only after response provenance written.
+parts=[]
+for tag,a,b in [('hooks',1040,1140),('hooks-successor',517,605),('queens',1680,1765),('spread',2090,2136),('spread',2310,2418),('spread',1228,1250),('generating',1210,1297),('signature',1210,1245),('signature-successor',55,90),('signature-successor',2240,2265)]:
+ lines=(R/'work'/(tag+'.txt')).read_text().splitlines();parts.append(f'\n=== {tag}, extracted lines {a}-{b} ===\n'+'\n'.join(lines[a-1:b]))
+(R/'primary-excerpts.txt').write_text('\n'.join(parts))
+versions={tag:re.findall(r'arXiv:[^\n]+', (R/'work'/(tag+'.txt')).read_text())[:1] for tag in ['hooks','hooks-successor','queens','spread','generating','signature','signature-successor']}
+put('source-versions.json',dict(method='Printed PDF identifier after hash/provenance, not guessed URL version',versions=versions))
+print('built',len(rows),'dispositions;',len(primary),'primary screens;',len(matches),'cached exact ID matches')

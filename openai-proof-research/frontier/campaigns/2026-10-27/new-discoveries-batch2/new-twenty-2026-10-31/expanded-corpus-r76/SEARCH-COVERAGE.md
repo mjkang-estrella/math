@@ -1,0 +1,14 @@
+# Finite search coverage and unmet obligations
+
+Every output below is diagnostic until its semantics is independently checked; only the 380362 endpoint is Lean-certified.
+
+* 380361/380362: all reduced Latin loop tables at orders1,2,4, filtered by the Moufang identity, then all simultaneous relabelings.16 labeled tables at order4;120 unordered pairs. All are associative. Additionally128 explicit central-extension cochains on F₂³, each checked on every triple for the middle Moufang identity, and all128 normalized central coboundaries;16384 difference cochains. The minimum across the cubic/noncubic split is64. This is a restricted cochain family, not an exhaustive Moufang-loop catalogue or all relabelings. formal/Loop.lean independently uses the source's exact identity and unique division.
+* 381166:77 exponent pairs1<=e<=f<=12,e+f>=3, all ordered distinct odd primes below1000 (167 primes;27722 ordered pairs per exponent). Exact modular divisibility criterion from source Theorem2.4. No forbidden finite prime-set collisions. Infinite-set equality not certified. Initial p<q diagnostic was corrected; corrected log retained.
+* 381210: all clause sets on1 variable; all on2 variables; every3-variable clause set with at most5 clauses, using the26 nonempty nontautological clauses.83036 full-variable sets at n3,4310 satisfy surplus/minimum-degree antecedent; all have an autarky. Surplus is minimum over nonempty variable-neighborhood deficiencies; nM skips2^j-1. This does not decide uniform polynomial-time complexity.
+* 381498:916 triples of distinct odd primes<=100, product<=30000. Exact cyclotomic coefficient recurrence, degrees up to26880. Only bounded representative data, no conclusion on absolute growth exponents.
+* 381737: all4<=k<=60 and0<=n<=20000 meeting n+k>=least prime>=k. Factor every integer in each consecutive product, aggregate exact prime exponents, test for some prime>k of exponent1. Counts in consecutive-small.json; no counterexample. Negative-domain and zero-product defects excluded.
+* 381870: ranks2..6, partition size at most4 on each side, all admissible bipartitions and every Weyl permutation; exact centered weights. See WEYL-ROUTE.md.
+
+Unmet mandatory finite-search obligations:380697 exact sharbly-cycle/good-candidate algorithm;381183 exact branch-divisor/orbit family;381468 actual block/defect/sectional-rank data. No instances of those three were tested. Other finite-looking parameterizations (knots, CFTs, geometric invariants) have not been claimed to be faithful finite decision procedures. Known-source exclusions were stopped before additional discovery investment.
+
+The required several-hour full investigation has not been completed in this lane. This is a partial dossier with a verified candidate, not a claim that all requested breadth/depth obligations are satisfied.

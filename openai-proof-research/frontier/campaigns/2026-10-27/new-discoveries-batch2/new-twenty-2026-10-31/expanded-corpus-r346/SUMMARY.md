@@ -1,0 +1,16 @@
+# r346 standalone research brief
+
+Saved state: all exact 20 reserved IDs have results; no eligible candidate; zero credit. Campaign count remains 52/60 beyond 39 prior results. Sol 6.1 high/default discovery and ordinary reasoning only. No children, Lean, mathematical search/enumeration, solver, CAS, git, paper, shared edits, execution dispatch or acceptance.
+
+Strongest sustained work:
+- 360636: complete exact polynomial decision proof, including arbitrary-prescription feasibility and bounded-counting self-reduction. Excluded as a complete routine classical/source bridge. No explicit prior publication of the final conjecture resolution is claimed.
+- 364029: complete affine-flat proof with six codewords per support; final journal Theorem 38 already proves the exact formula. Excluded as public and routine. The arXiv conjecture label is stale relative to the journal.
+- 362193: uniform middle-rank density obstruction, including every n rather than just infinitely many n. Nonconstant progression and density semantics remain gates; endpoint/definition correction only, not a qualified candidate.
+
+Additional exact zero-credit findings: 367457 public source refutation; 364062 public exact EKR theorem, same family excluded for 363989 in completed r331; 364875 edgeless vacuity correction; 359842 r=1/empty-family corrections. Other rows retain concrete unpaid gaps. In particular do not falsely classify classical positive-integer sum-product as disproved by a separate positive-real finite inequality.
+
+PROOFS-GAPS.md supplies full arguments and failed-mechanism repairs; results.json has exactly 20 ID keys and separate scope/source/prior/subsumption/novelty/significance/formal gates. READ-INVENTORY.md distinguishes actual passages from acquired files and truncated output. Source versions, journal and companion review materially changed qualification for the coding target. Literature and registry coverage are bounded; incomplete journal/citing/definition review is not clearance.
+
+No CANDIDATE.md: no full ordinary result passes substantive source/novelty/significance gates. No dormant Pi task is proposed for excluded routine/public/correction results. A future qualified candidate would need a separate precise semantic implementation plan and root authorization before Pi execution, then a full endpoint using only propext/Classical.choice/Quot.sound, independent fidelity review, paper and clean safe extracted strict replay before acceptance. Nothing here authorizes that pipeline.
+
+All writes are resolved within r346. Bootstrap receipt retained. Reservation expected SHA a54d007f112d112119dde7418eff022f616e8eb290a5bf1f93f32de60ae8fad2; final verification recorded separately. Resources: every shell invocation installs <=2 available CPUs, CPU120 and AS6GiB before task/source reads, with <=140s outer wall timeout; bootstrap self-caps before reads. Individual receipts preserve one failing substring-read invocation (exit 1), subsequent correction and successful subprocess conversions. No retries on new 403. Self and reaped-child rusage is not a concurrent group/cgroup memory peak; tool-web backend resources are not measured locally. All local subprocesses are synchronous and reaped. Artifact manifest and verification provide byte-level integrity, not proof acceptance.

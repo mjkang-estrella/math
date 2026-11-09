@@ -1,0 +1,3060 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+SOURCE zcurve CHARS 116801
+TERM Conjecture 3.
+                                                  K multiplied
+by n. The constant ΨD  K   is defined by:
+
+                                      ΨD
+                                       K =2
+                                           D(K+1)−1
+                                                    − 2D−1                                       (2)
+This observation leads us to the following conjecture:
+
+Conjecture 3.2. For any subset T ⊂ XD             D
+                                    K with |T| = 2 × n elements, the sum of its elements is
+given by:
+
+                                             S(T) = ΨD
+                                                     K ×n                                        (3)
+
+We have evaluated this conjecture empirically for various values of D and K, with results for
+dimensions 2 and 3 presented in Tables 7 and 8.
+
+ Table 7: Summation results for subsets of size 4 and 8 across different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         6         0
+                                        2       30        60
+                                        3       126       252
+                                        4       510      1020
+                                       ...       ...       ...
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                 15
+
+
+Table 8: Summation results for subsets of size 8, 16, 24, 32, and 48 across different values of K
+when D = 3.
+
+                      K     |T| = 8    |T| = 16     |T| = 24    |T| = 32   |T| = 48
+                       1       28
+                       2      252        504             756
+                       3     2044       4088            6132                12264
+                       4     16380      32760           49140    65520      98280
+                      ...      ...        ...             ...      ...        ...
+
+
+3.1.3   Equivalent Position and the Minimum Number of Knowable Subsets
+Estimating the number of subsets of different sizes withi
+                             ′                             D
+                           (S,B) (T) the resulting subset T does not always exist in XB . Moreover,
+we also observed that even if the resulting subset T′ = ϕ3(S,B) (T) does not exist in X3B , it still holds
+true that S(T′ ) = ΨD                     D
+                    B or a multiple of ΨB . This leads us to the following conjecture:
+
+Conjecture 3.4. For any valid subset T ⊂ XD
+                                          S:
+
+                                                               |T|
+                                       S(ϕD             D
+                                          (S,B) (T)) = ΨB ×
+                                                               2D
+    The following tables show how many subsets T, after applying ϕ, result in valid subsets for
+different subset sizes.
+
+Table 11: This table shows the number of 8-element subsets in X3S that produce a valid 8-element
+subset in X3B after applying the ϕ function.
+
+                  K      B=1     B=2    B=3     B=4     B=5      B=6     B=7      B=8
+                 S=1             1/1    1/1     1/1     1/1      1/1     1/1      1/1
+                 S=2                    2/3     2/3     2/3      3/3     2/3      2/3
+                 S=3                            4/7     5/7      4/7     5/7      4/7
+                 S=4                                    9/16    10/16   10/16    9/16
+                 S=5                                            22/49   23/49    21/49
+
+
+Table 12: This table shows the number of 16-element subsets in X3S that produce a valid 16-element
+subset in X3B after applying the ϕ function.
+
+                 K     B=1     B=2     B=3    B=4     B=5       B=6      B=7       B=8
+                S=1
+                S=2                    0/1     0/1    0/1        1/1      0/1       0/1
+                S=3                            0/3    1/3        0/3      1/3       0/3
+                S=4                                   1/19      2/19     5/19      3/19
+                S=5                                         
+e subsets T as a collection of O
+with 2D elements within the set XD                                  D
+                                     K , which contains a total of ΥK orthotopes, has two important
+consequences:
+
+  1. Sum of Elements in Orthotopes. As stated in Equation 3, the sum of all the elements in
+     T is Ψ or a multiple of Ψ. This observation suggests the following conjecture:
+
+     Conjecture 3.6. For every orthotope O ⊂ T, the sum of its elements satisfies:
+
+                                                S(O) = Ψ
+
+     For example, if we take the elements from the subset of 48 elements plotted in the Figure 19,
+     T = { 7015, 21059, 4130, 22790, 619, 19279, 2350, 16394, 7036, 21080, 4116, 22832, 605,
+     19321, 2357, 16401, 5882, 24542, 5847, 24563, 1182, 19898, 1203, 19863, 12904, 31564, 12869,
+     31585, 8204, 26920, 8225, 26885, 16366, 30410, 13446, 32162, 9935, 28651, 11687, 25731,
+     16373, 30417, 13488, 32148, 9977, 28637, 11708, 25752 } ⊂ X35 , we can organize them into 6
+     different orthotopes where the sum of the elements in each orthotope will equal Ψ35 = 131068:
+
+        – O1 = {605, 4116, 9935, 13446, 19321, 22832, 28651, 32162}, where S(O1 ) = 131068
+        – O2 = {619, 4130, 9977, 13488, 19279, 22790, 28637, 32148}, where S(O2 ) = 131068
+        – O3 = {1182, 5847, 8204, 12869, 19898, 24563, 26920, 31585}, where S(O3 ) = 131068
+        – O4 = {1203, 5882, 8225, 12904, 19863, 24542, 26885, 31564}, where S(O4 ) = 131068
+        – O5 = {2350, 7015, 11708, 16373, 16394, 21059, 25752, 30417}, where S(O5 ) = 131068
+        – O6 = {2357, 7036, 11687, 16366, 16401, 21080, 25731, 30410}, where S(O6 ) = 131068
+
+  2. Behavior Under Transformation ϕD       (S,B) . In 3.1.3, we observed that applying the trans-
+     formation ϕ(S,B) to a subset T in dimension 2 always produces a valid subset in XD
+                 D
+                                                                                            B . In
+     dimension 3, however, this is not always the case. Nonetheless, as stated in Conjecture 3.4,
+     we consistently found 
+ ) = 131068
+
+  2. Behavior Under Transformation ϕD       (S,B) . In 3.1.3, we observed that applying the trans-
+     formation ϕ(S,B) to a subset T in dimension 2 always produces a valid subset in XD
+                 D
+                                                                                            B . In
+     dimension 3, however, this is not always the case. Nonetheless, as stated in Conjecture 3.4,
+     we consistently found that the following holds:
+     For any valid subset T ⊂ XD
+                               S , is satisfied the equation:
+
+                                                           |T|
+                                        S ϕD            D
+                                                    
+                                           (S,B) (T) = ΨB × D
+                                                           2
+     Conjecture 3.7. Interpreting the subset T as a collection of orthotopes O, each with 2D
+     elements, when we apply the transformation ϕD                      D                         D
+                                                       (S,B) to T ⊂ XS , we effectively apply ϕ(S,B)
+     separately to each individual orthotope O. This results in new valid orthotopes O′ in XD        B.
+     While the set of orthotopes {O} ⊂ T in XD      S   belong to the  same   subset T,  after applying
+     ϕD(S,B) , they may exist as parts of the same subset  or as parts of different subsets in XDB.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                               33
+
+
+3.3   Internal Structure of T
+In the previous subsections, we observed that the subsets consistently exhibit a wide variety of
+properties. In this subsection, we will attempt to identify their common factor or internal structure.
+To identify the internal structure of a subset T, we proceed as follows:
+
+  1. Sorting and Decomposition: Sort the elements of T in ascending order, from the smallest
+     to the largest. Then, represent each number in the subset using its Morton coordinates,
+     separating them into their dimensio
+
+     For any valid subset T ⊂ XD
+                               S , is satisfied the equation:
+
+                                                           |T|
+                                        S ϕD            D
+                                                    
+                                           (S,B) (T) = ΨB × D
+                                                           2
+     Conjecture 3.7. Interpreting the subset T as a collection of orthotopes O, each with 2D
+     elements, when we apply the transformation ϕD                      D                         D
+                                                       (S,B) to T ⊂ XS , we effectively apply ϕ(S,B)
+     separately to each individual orthotope O. This results in new valid orthotopes O′ in XD        B.
+     While the set of orthotopes {O} ⊂ T in XD      S   belong to the  same   subset T,  after applying
+     ϕD(S,B) , they may exist as parts of the same subset  or as parts of different subsets in XDB.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                               33
+
+
+3.3   Internal Structure of T
+In the previous subsections, we observed that the subsets consistently exhibit a wide variety of
+properties. In this subsection, we will attempt to identify their common factor or internal structure.
+To identify the internal structure of a subset T, we proceed as follows:
+
+  1. Sorting and Decomposition: Sort the elements of T in ascending order, from the smallest
+     to the largest. Then, represent each number in the subset using its Morton coordinates,
+     separating them into their dimensional components.
+
+  2. Identifying Transition Chains: For each dimensional component and starting in the di-
+     mension X, identify the chain of bits that, subjected to the XOR operation, will generate
+     the corresponding dimensional component of the next number. Repeat this step for each
+     consecutive pair of numbers in T. When the last element is reached, compute the chain of
+     bits that produces the first element.
+
+  3. Constructing the Dictionary: Ea
+         X      11111 (X)            11111111 (X)            1111 (X)            11111 (X)
+         =      00000 (=)            00000000 (=)            0000 (=)            00000 (=)
+
+
+    The dictionaries that satisfy a canonical graph with n-number of variables also exhibit cumula-
+tive XOR with the subset generator with n-number of variables, as shown in the property e of the
+subset generator.
+
+Conjecture 3.9. After substituting the variables from a dictionary that represents a valid solution
+for any of the isomorphic graphs into an SG with the same number of variables, the cumulative
+XOR yields a string of ones across all paths or dimensional components. This property holds
+regardless of the subset size or dimension.
+
+   This conjecture can be illustrated by the following case: given the dictionary variables A : 0101,
+B : 1010, X : 1111, and =: 0000, we substitute these values and perform the cumulative XOR
+operation across three subset generators (SG): two in dimension 3 with subset sizes of 16 and 24,
+and one in dimension 4 with a subset size of 32.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                          44
+
+
+Table 31: Three SG of different sizes with four variables, and two of them in the same dimension.
+
+               SG ∈ |T| = 16 ∈ X3K    SG ∈ |T| = 24 ∈ X3K    SG ∈ |T| = 32 ∈ X4K
+                    A, A, =                =, A, A               A, A, A, A
+                    A, A, X                A, A, =               A, A, A, B
+                    A, A, =                A, =, B               A, A, A, A
+                     A, B, X               =, A, A               A, A, B, B
+                    A, A, =                A, A, =               A, A, A, A
+                    A, A, X                 A, B, X              A, A, A, B
+                    A, A, =                =, A, A               A, A, A, A
+                    X, X, X                A, =, A               A, B, B, B
+                    A, A, =                A, A, X               A, A, A, A
+                    A, A, X                =, A, A               
+TERM Definition
+                    SG        SubsetGenerator
+
+                      Table 2: Notation Guide: Symbols and Their Meanings
+
+This section has two parts. First, we will explain the concept of BitDistance and its relationship
+with the Z-curve. Next, we will use the Morton coordinates and BitDistance to project the numbers
+from an N -dimensional Z-curve onto an N -dimensional sphere.
+
+2.1   BitDistance
+Definition 2.1 (BitDistance). The BitDistance (BD) represents the distance a dimensional com-
+ponent of a number moves, determined by the directions and weights assigned to its bits.
+    In Morton coordinates, each binary number contains D strings of bits, each of length K bits.
+The BitDistance is calculated in each dimension, resulting in D BitDistances. The position of
+each bit in the sequence of each dimension determines the magnitude of the movement, with the
+leftmost bits contributing more heavily to the distance. These contributions are weighted according
+to the inverse powers of 2. Each bit’s weight can be positive or negative, depending on the assigned
+direction, with the values 1 and 0 being arbitrarily assigned positive or negative weights. The
+directions assigned to the bits in up to 3D are as follows:
+
+    • Bit = 1: Positive weights, { Right, Up, Forward }.
+
+    • Bit = 0: Negative weights, { Left, Down, Backward }.
+
+   Given a chain of bits b0 , b1 , b2 , . . . , bK−1 representing the Morton coordinates in the dimension
+D, we calculate the BitDistance for that dimension using the following expression:
+                                                K−1
+                                                X                           
+                                                           1−bi        1
+                                BDD ({bi }) =         (−1)        ·                                  (1)
+                                                                      2i+1
+                                                i=0
+    Here, bi denotes the i-th bit in the binary representation for dimension D, and K is the total
+number of bits. We apply this fu
+ 13
+
+
+
+
+Figure 11: The two images show the values in X33 after being projected into a sphere in different
+perspectives.
+
+
+3     Analysis and Properties
+In this section, we will study the properties of the circular projection of XD
+                                                                             K , focusing mainly on
+dimensions 2 and 3. We will do it through the object called subset.
+
+Definition 3.1 (Subset). A subset T is defined as the set of elements in XD
+                                                                          K that share the same
+radius after being projected onto a D-dimensional sphere.
+
+   In this section, we will study these objects and the subsets by dividing the study into three
+parts, each focusing on a different aspect.
+
+3.1     Numerical Properties of the Elements in T
+3.1.1    The Number of Elements in T
+We observe that the number of elements a subset T contains, denoted by |T|, is always 2D
+or a multiple of it. When K = 1, there exists only one subset containing all the 2D×1 elements.
+As K increases, additional subsets appear, but this emergence follows a non-linear pattern. It means
+that a subset T in a given XD                                   D
+                              K (when K > 1) may contain 2 × n elements without necessarily
+                        D
+exist a subset of size 2 × (n − 1). The observed subset sizes for dimensions D = 2 and D = 3,
+based on computations for values of K up to 11 and 7, respectively, are:
+
+    • For D = 2, the sizes of subsets T ⊂ X2K are |T| ∈ {4, 8}.
+
+    • For D = 3, the sizes of subsets T ⊂ X3K are |T| ∈ {8, 16, 24, 32, 48}.
+
+   Tables 5 and 6 show the number of subsets of various sizes for different values of K in dimensions
+2 and 3.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                             14
+
+
+  Table 5: The number of subsets with 4 and 8 elements for different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         1         0
+                         
+l. For example, the
+values located at the corners of the Z-curve, where is always include the zero. Independently of the
+value of K, these regions consistently constitute a subset with exactly 2D elements. Initially, this
+suggests that when a parent cell divides into 2D new child cells, one of them will always preserve
+its equivalent position, maintaining a subset size consistent with its parent.
+Definition 3.3 (Equivalent Position). The equivalent position is the unique cell among the 2D
+subdivisions of a parent cell that retains the same relative position as the parent cell in its original
+space.
+    To determine the equivalent position of a number in XD   S and map it to its corresponding position
+in XDB , we define a mapping   function ϕ.  In this context, S,”small” K, represents the scaling factor
+                     D                       D
+of the source grid XS . The target grid XB has as scaling factor B, ”big” K, defined as B = S + n,
+where n is the increment in the scaling factor. The function ϕ enables the translation of positions
+between different scaling factors within the same D-dimensional space by mapping elements from
+the smaller grid to their equivalent positions in the larger grid, and it is given by :
+                                                      j x k
+                          ϕD(S,B) (x) = 2 D(B−S+1)
+                                                    ·       + Ω · (x mod 2D ),                      (4)
+                                                       2D
+    where Ω is a number whose binary representation is given by:
+
+                       Ω=         (00 · · · 0)1         repeated (B − S + 1) times.
+                                  | {z }
+                            D−1 zeros followed by a 1
+
+
+          Table 9: Values of Ω for (B − S) ∈ {1, 2, 3, 4} across dimensions D ∈ {1, 2, 3}.
+
+        B−S       Dimension = 1            Dimension = 2                   Dimension = 3
+                 Binary Decimal           Binary    Decimal               Binary      Decimal
+           1       11        3             0101         5     
+able, starting
+     from A. This dictionary is common to all dimensional components. For example, if the entry
+     A = 1011 appears in the dimensional component X, other dimensional components can also
+     utilize the variable A. Before including any new chains of bits, the initial dictionary includes
+     the variables =, representing a chain of K zeros, and X, representing a chain of K ones.
+
+Definition 3.8 (Subset Generator). We define the Subset Generator (SG) as the sequence of
+variables across all dimensional components in a subset, regardless of the specific values assigned
+to that variables in the dictionary.
+
+    The sequence of variables in a single dimension D is called PathD . We use the term SG because
+we can generate every element in the subset using the sequence of variables, the corresponding values
+stored in the dictionary, and the Morton Coordinates of the first number in the subset. We observe
+that all the SG, regardless of the dimension or subset size, share the following properties:
+
+ (a) Common SG Among Same Size Subsets: Each subset has an internal structure that
+     corresponds to one of a limited set of SG determined by the number of elements in the subset
+     and the dimension. This set of possible SG structures remains consistent for all subsets with
+     the same number of elements in the same dimension, regardless of the specific values assigned
+     to the variables. In Appendix A, we present the SG for dimensions 2 and 3 for the subsets
+     of different sizes. We omit the sequences of X that appear at the beginning or end of all the
+     paths of the SG, connecting the last elements back to the first one, as this is common to all
+     of them.
+      In Tables 18 and 19, we show how the size of the dictionary and the number of unique SG
+      vary respect the number of elements in T.
+
+   Table 18: Dictionary size and number of unique SG in dimension 2 for subsets size 4 and 8.
+
+                           |T|   Dictionary Size   Number of Unique SG
+                            4           2                   1
+                     
+TERM Ψ
+ Set of numbers from 0 to 2D×K − 1
+                       T        Subset of numbers in XD  K
+                       O        Subset of numbers in T
+                     S(X )      Sum of all elements in the input object X
+                    S and B     Scaling factors, where S < B
+                     ϕD
+                      (S,B)     Mapping function from XSD to XB    D
+
+                      ΨDK       Constant related to the sum of the elements in T
+                      ΥDK       Total number of orthotopes in XD   K
+                      SG        SubsetGenerator
+
+                      Table 2: Notation Guide: Symbols and Their Meanings
+
+This section has two parts. First, we will explain the concept of BitDistance and its relationship
+with the Z-curve. Next, we will use the Morton coordinates and BitDistance to project the numbers
+from an N -dimensional Z-curve onto an N -dimensional sphere.
+
+2.1   BitDistance
+Definition 2.1 (BitDistance). The BitDistance (BD) represents the distance a dimensional com-
+ponent of a number moves, determined by the directions and weights assigned to its bits.
+    In Morton coordinates, each binary number contains D strings of bits, each of length K bits.
+The BitDistance is calculated in each dimension, resulting in D BitDistances. The position of
+each bit in the sequence of each dimension determines the magnitude of the movement, with the
+leftmost bits contributing more heavily to the distance. These contributions are weighted according
+to the inverse powers of 2. Each bit’s weight can be positive or negative, depending on the assigned
+direction, with the values 1 and 0 being arbitrarily assigned positive or negative weights. The
+directions assigned to the bits in up to 3D are as follows:
+
+    • Bit = 1: Positive weights, { Right, Up, Forward }.
+
+    • Bit = 0: Negative weights, { Left, Down, Backward }.
+
+   Given a chain of bits b0 , b1 , b2 , . . . , bK−1 representing the Morton coordinates in the dimension
+D, we calculate the BitDistance for that dimension using the following expression:
+                                     
+    19           48         11          0         45
+                ...      ...       ...          ...        ...        ...        ...
+
+
+3.1.2   Summation of the Elements in T
+We observe a consistent pattern in the summation of all elements in any subset T ⊂ XD    K . Specif-
+                                                             D
+ically, the total sum S(T) is always equal to a constant ΨK multiplied by a factor determined by
+the size of the subset. If the subset contains |T| = 2D × n elements, then the sum is ΨD
+                                                                                       K multiplied
+by n. The constant ΨD  K   is defined by:
+
+                                      ΨD
+                                       K =2
+                                           D(K+1)−1
+                                                    − 2D−1                                       (2)
+This observation leads us to the following conjecture:
+
+Conjecture 3.2. For any subset T ⊂ XD             D
+                                    K with |T| = 2 × n elements, the sum of its elements is
+given by:
+
+                                             S(T) = ΨD
+                                                     K ×n                                        (3)
+
+We have evaluated this conjecture empirically for various values of D and K, with results for
+dimensions 2 and 3 presented in Tables 7 and 8.
+
+ Table 7: Summation results for subsets of size 4 and 8 across different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         6         0
+                                        2       30        60
+                                        3       126       252
+                                        4       510      1020
+                                       ...       ...       ...
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                 15
+
+
+Table 8: Summation results for subsets of size 8, 16, 24, 32, and 48 across different values of K
+wh
+        ...
+
+
+3.1.2   Summation of the Elements in T
+We observe a consistent pattern in the summation of all elements in any subset T ⊂ XD    K . Specif-
+                                                             D
+ically, the total sum S(T) is always equal to a constant ΨK multiplied by a factor determined by
+the size of the subset. If the subset contains |T| = 2D × n elements, then the sum is ΨD
+                                                                                       K multiplied
+by n. The constant ΨD  K   is defined by:
+
+                                      ΨD
+                                       K =2
+                                           D(K+1)−1
+                                                    − 2D−1                                       (2)
+This observation leads us to the following conjecture:
+
+Conjecture 3.2. For any subset T ⊂ XD             D
+                                    K with |T| = 2 × n elements, the sum of its elements is
+given by:
+
+                                             S(T) = ΨD
+                                                     K ×n                                        (3)
+
+We have evaluated this conjecture empirically for various values of D and K, with results for
+dimensions 2 and 3 presented in Tables 7 and 8.
+
+ Table 7: Summation results for subsets of size 4 and 8 across different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         6         0
+                                        2       30        60
+                                        3       126       252
+                                        4       510      1020
+                                       ...       ...       ...
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                 15
+
+
+Table 8: Summation results for subsets of size 8, 16, 24, 32, and 48 across different values of K
+when D = 3.
+
+                      K     |T| = 8    |T| = 16     |T| = 24    |T| = 32   |T| = 48
+                       1       
+ny subset T ⊂ XD    K . Specif-
+                                                             D
+ically, the total sum S(T) is always equal to a constant ΨK multiplied by a factor determined by
+the size of the subset. If the subset contains |T| = 2D × n elements, then the sum is ΨD
+                                                                                       K multiplied
+by n. The constant ΨD  K   is defined by:
+
+                                      ΨD
+                                       K =2
+                                           D(K+1)−1
+                                                    − 2D−1                                       (2)
+This observation leads us to the following conjecture:
+
+Conjecture 3.2. For any subset T ⊂ XD             D
+                                    K with |T| = 2 × n elements, the sum of its elements is
+given by:
+
+                                             S(T) = ΨD
+                                                     K ×n                                        (3)
+
+We have evaluated this conjecture empirically for various values of D and K, with results for
+dimensions 2 and 3 presented in Tables 7 and 8.
+
+ Table 7: Summation results for subsets of size 4 and 8 across different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         6         0
+                                        2       30        60
+                                        3       126       252
+                                        4       510      1020
+                                       ...       ...       ...
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                 15
+
+
+Table 8: Summation results for subsets of size 8, 16, 24, 32, and 48 across different values of K
+when D = 3.
+
+                      K     |T| = 8    |T| = 16     |T| = 24    |T| = 32   |T| = 48
+                       1       28
+                       2      252        504             756
+                       3     2044       4088            61
+                               D
+ically, the total sum S(T) is always equal to a constant ΨK multiplied by a factor determined by
+the size of the subset. If the subset contains |T| = 2D × n elements, then the sum is ΨD
+                                                                                       K multiplied
+by n. The constant ΨD  K   is defined by:
+
+                                      ΨD
+                                       K =2
+                                           D(K+1)−1
+                                                    − 2D−1                                       (2)
+This observation leads us to the following conjecture:
+
+Conjecture 3.2. For any subset T ⊂ XD             D
+                                    K with |T| = 2 × n elements, the sum of its elements is
+given by:
+
+                                             S(T) = ΨD
+                                                     K ×n                                        (3)
+
+We have evaluated this conjecture empirically for various values of D and K, with results for
+dimensions 2 and 3 presented in Tables 7 and 8.
+
+ Table 7: Summation results for subsets of size 4 and 8 across different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         6         0
+                                        2       30        60
+                                        3       126       252
+                                        4       510      1020
+                                       ...       ...       ...
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                 15
+
+
+Table 8: Summation results for subsets of size 8, 16, 24, 32, and 48 across different values of K
+when D = 3.
+
+                      K     |T| = 8    |T| = 16     |T| = 24    |T| = 32   |T| = 48
+                       1       28
+                       2      252        504             756
+                       3     2044       4088            6132                12264
+                       4     16380    
+                           D(K+1)−1
+                                                    − 2D−1                                       (2)
+This observation leads us to the following conjecture:
+
+Conjecture 3.2. For any subset T ⊂ XD             D
+                                    K with |T| = 2 × n elements, the sum of its elements is
+given by:
+
+                                             S(T) = ΨD
+                                                     K ×n                                        (3)
+
+We have evaluated this conjecture empirically for various values of D and K, with results for
+dimensions 2 and 3 presented in Tables 7 and 8.
+
+ Table 7: Summation results for subsets of size 4 and 8 across different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         6         0
+                                        2       30        60
+                                        3       126       252
+                                        4       510      1020
+                                       ...       ...       ...
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                 15
+
+
+Table 8: Summation results for subsets of size 8, 16, 24, 32, and 48 across different values of K
+when D = 3.
+
+                      K     |T| = 8    |T| = 16     |T| = 24    |T| = 32   |T| = 48
+                       1       28
+                       2      252        504             756
+                       3     2044       4088            6132                12264
+                       4     16380      32760           49140    65520      98280
+                      ...      ...        ...             ...      ...        ...
+
+
+3.1.3   Equivalent Position and the Minimum Number of Knowable Subsets
+Estimating the number of subsets of different sizes within a set XD  K using only the parameters D
+and K is challenging. Specifically, we cannot predict whether there are n subsets of size 2D × A
+or m subsets of size 2D × B after applying the circular projection t
+ in X24   128    149   170    191   192    213     234   255
+
+
+
+
+Figure 12: The left image shows the set of numbers in X22 arranged in the Z-order pattern. In the
+right image, only the positions equivalent to the numbers in X22 are marked in red, highlighting
+where these numbers project in X24 .
+
+    According to Equation 3.2, the sum of all elements within the same subset is always a multiple
+of ΨD                                ′    D                                      ′
+    K . Therefore, when calculating T = ϕ(S,B) (T), the sum of the elements in T should also be a
+multiple of the new ΨD
+                     B value corresponding to the updated K.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                   17
+
+
+    In dimension 2, for every subset T ⊂ XD                           ′     2
+                                             K , when we compute T = ϕ(K,K+1) (T), the resulting
+T′ is always a valid subset in X2K+1 . This has been verified up to K = 8. This suggests that the
+number of subsets of each size in X2K is at least as large as in X2K−1 . This implies that all subsets
+in X2S can generate other valid subsets in any other X2B applying ϕ2(S,B) .
+
+   In dimension 3, as shown in Table 6, the number of subsets of each size is always greater in
+X3K+1 than in X3K . This initially suggests that, as in dimension 2, when we compute ϕD         (S,B) (T),
+                ′                                   D
+the resulting T would also be a valid subset in XB . However, in dimension 3, this pattern breaks
+down. When we compute ϕD                                    ′                             D
+                           (S,B) (T) the resulting subset T does not always exist in XB . Moreover,
+we also observed that even if the resulting subset T′ = ϕ3(S,B) (T) does not exist in X3B , it still holds
+true that S(T′ ) = ΨD                     D
+                    B or a multiple of ΨB . This leads us to the following conjecture:
+
+Conjecture 3.4. For any valid subset T ⊂ XD
+                                          S:
+
+
+ivalent to the numbers in X22 are marked in red, highlighting
+where these numbers project in X24 .
+
+    According to Equation 3.2, the sum of all elements within the same subset is always a multiple
+of ΨD                                ′    D                                      ′
+    K . Therefore, when calculating T = ϕ(S,B) (T), the sum of the elements in T should also be a
+multiple of the new ΨD
+                     B value corresponding to the updated K.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                                   17
+
+
+    In dimension 2, for every subset T ⊂ XD                           ′     2
+                                             K , when we compute T = ϕ(K,K+1) (T), the resulting
+T′ is always a valid subset in X2K+1 . This has been verified up to K = 8. This suggests that the
+number of subsets of each size in X2K is at least as large as in X2K−1 . This implies that all subsets
+in X2S can generate other valid subsets in any other X2B applying ϕ2(S,B) .
+
+   In dimension 3, as shown in Table 6, the number of subsets of each size is always greater in
+X3K+1 than in X3K . This initially suggests that, as in dimension 2, when we compute ϕD         (S,B) (T),
+                ′                                   D
+the resulting T would also be a valid subset in XB . However, in dimension 3, this pattern breaks
+down. When we compute ϕD                                    ′                             D
+                           (S,B) (T) the resulting subset T does not always exist in XB . Moreover,
+we also observed that even if the resulting subset T′ = ϕ3(S,B) (T) does not exist in X3B , it still holds
+true that S(T′ ) = ΨD                     D
+                    B or a multiple of ΨB . This leads us to the following conjecture:
+
+Conjecture 3.4. For any valid subset T ⊂ XD
+                                          S:
+
+                                                               |T|
+                                       S(ϕD             D
+                                          (S,B) (T)) = ΨB ×
+             
+TERM subset
+l Hypersphere: Properties and Analysis                                   4
+
+
+2     Methodology
+
+                    Symbol      Meaning
+                       D        Dimension of the space
+                       K        Scaling factor or resolution level
+                      BD        BitDistance
+                      XDK       Set of numbers from 0 to 2D×K − 1
+                       T        Subset of numbers in XD  K
+                       O        Subset of numbers in T
+                     S(X )      Sum of all elements in the input object X
+                    S and B     Scaling factors, where S < B
+                     ϕD
+                      (S,B)     Mapping function from XSD to XB    D
+
+                      ΨDK       Constant related to the sum of the elements in T
+                      ΥDK       Total number of orthotopes in XD   K
+                      SG        SubsetGenerator
+
+                      Table 2: Notation Guide: Symbols and Their Meanings
+
+This section has two parts. First, we will explain the concept of BitDistance and its relationship
+with the Z-curve. Next, we will use the Morton coordinates and BitDistance to project the numbers
+from an N -dimensional Z-curve onto an N -dimensional sphere.
+
+2.1   BitDistance
+Definition 2.1 (BitDistance). The BitDistance (BD) represents the distance a dimensional com-
+ponent of a number moves, determined by the directions and weights assigned to its bits.
+    In Morton coordinates, each binary number contains D strings of bits, each of length K bits.
+The BitDistance is calculated in each dimension, resulting in D BitDistances. The position of
+each bit in the sequence of each dimension determines the magnitude of the movement, with the
+leftmost bits contributing more heavily to the distance. These contributions are weighted according
+to the inverse powers of 2. Each bit’s weight can be positive or negative, depending on the assigned
+direction, with the values 1 and 0 being arbitrarily assigned positive or negative weights. The
+directions assigned to the bits in up to 3D are as follows:
+
+    • Bit =
+              4
+
+
+2     Methodology
+
+                    Symbol      Meaning
+                       D        Dimension of the space
+                       K        Scaling factor or resolution level
+                      BD        BitDistance
+                      XDK       Set of numbers from 0 to 2D×K − 1
+                       T        Subset of numbers in XD  K
+                       O        Subset of numbers in T
+                     S(X )      Sum of all elements in the input object X
+                    S and B     Scaling factors, where S < B
+                     ϕD
+                      (S,B)     Mapping function from XSD to XB    D
+
+                      ΨDK       Constant related to the sum of the elements in T
+                      ΥDK       Total number of orthotopes in XD   K
+                      SG        SubsetGenerator
+
+                      Table 2: Notation Guide: Symbols and Their Meanings
+
+This section has two parts. First, we will explain the concept of BitDistance and its relationship
+with the Z-curve. Next, we will use the Morton coordinates and BitDistance to project the numbers
+from an N -dimensional Z-curve onto an N -dimensional sphere.
+
+2.1   BitDistance
+Definition 2.1 (BitDistance). The BitDistance (BD) represents the distance a dimensional com-
+ponent of a number moves, determined by the directions and weights assigned to its bits.
+    In Morton coordinates, each binary number contains D strings of bits, each of length K bits.
+The BitDistance is calculated in each dimension, resulting in D BitDistances. The position of
+each bit in the sequence of each dimension determines the magnitude of the movement, with the
+leftmost bits contributing more heavily to the distance. These contributions are weighted according
+to the inverse powers of 2. Each bit’s weight can be positive or negative, depending on the assigned
+direction, with the values 1 and 0 being arbitrarily assigned positive or negative weights. The
+directions assigned to the bits in up to 3D are as follows:
+
+    • Bit = 1: Positive weights, { Right, Up, Forward }.
+
+    • Bit = 
+          S(X )      Sum of all elements in the input object X
+                    S and B     Scaling factors, where S < B
+                     ϕD
+                      (S,B)     Mapping function from XSD to XB    D
+
+                      ΨDK       Constant related to the sum of the elements in T
+                      ΥDK       Total number of orthotopes in XD   K
+                      SG        SubsetGenerator
+
+                      Table 2: Notation Guide: Symbols and Their Meanings
+
+This section has two parts. First, we will explain the concept of BitDistance and its relationship
+with the Z-curve. Next, we will use the Morton coordinates and BitDistance to project the numbers
+from an N -dimensional Z-curve onto an N -dimensional sphere.
+
+2.1   BitDistance
+Definition 2.1 (BitDistance). The BitDistance (BD) represents the distance a dimensional com-
+ponent of a number moves, determined by the directions and weights assigned to its bits.
+    In Morton coordinates, each binary number contains D strings of bits, each of length K bits.
+The BitDistance is calculated in each dimension, resulting in D BitDistances. The position of
+each bit in the sequence of each dimension determines the magnitude of the movement, with the
+leftmost bits contributing more heavily to the distance. These contributions are weighted according
+to the inverse powers of 2. Each bit’s weight can be positive or negative, depending on the assigned
+direction, with the values 1 and 0 being arbitrarily assigned positive or negative weights. The
+directions assigned to the bits in up to 3D are as follows:
+
+    • Bit = 1: Positive weights, { Right, Up, Forward }.
+
+    • Bit = 0: Negative weights, { Left, Down, Backward }.
+
+   Given a chain of bits b0 , b1 , b2 , . . . , bK−1 representing the Morton coordinates in the dimension
+D, we calculate the BitDistance for that dimension using the following expression:
+                                                K−1
+                                                X                           
+                                                           1−bi   
+          13
+
+
+
+
+Figure 11: The two images show the values in X33 after being projected into a sphere in different
+perspectives.
+
+
+3     Analysis and Properties
+In this section, we will study the properties of the circular projection of XD
+                                                                             K , focusing mainly on
+dimensions 2 and 3. We will do it through the object called subset.
+
+Definition 3.1 (Subset). A subset T is defined as the set of elements in XD
+                                                                          K that share the same
+radius after being projected onto a D-dimensional sphere.
+
+   In this section, we will study these objects and the subsets by dividing the study into three
+parts, each focusing on a different aspect.
+
+3.1     Numerical Properties of the Elements in T
+3.1.1    The Number of Elements in T
+We observe that the number of elements a subset T contains, denoted by |T|, is always 2D
+or a multiple of it. When K = 1, there exists only one subset containing all the 2D×1 elements.
+As K increases, additional subsets appear, but this emergence follows a non-linear pattern. It means
+that a subset T in a given XD                                   D
+                              K (when K > 1) may contain 2 × n elements without necessarily
+                        D
+exist a subset of size 2 × (n − 1). The observed subset sizes for dimensions D = 2 and D = 3,
+based on computations for values of K up to 11 and 7, respectively, are:
+
+    • For D = 2, the sizes of subsets T ⊂ X2K are |T| ∈ {4, 8}.
+
+    • For D = 3, the sizes of subsets T ⊂ X3K are |T| ∈ {8, 16, 24, 32, 48}.
+
+   Tables 5 and 6 show the number of subsets of various sizes for different values of K in dimensions
+2 and 3.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                             14
+
+
+  Table 5: The number of subsets with 4 and 8 elements for different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         1         0
+                
+1: The two images show the values in X33 after being projected into a sphere in different
+perspectives.
+
+
+3     Analysis and Properties
+In this section, we will study the properties of the circular projection of XD
+                                                                             K , focusing mainly on
+dimensions 2 and 3. We will do it through the object called subset.
+
+Definition 3.1 (Subset). A subset T is defined as the set of elements in XD
+                                                                          K that share the same
+radius after being projected onto a D-dimensional sphere.
+
+   In this section, we will study these objects and the subsets by dividing the study into three
+parts, each focusing on a different aspect.
+
+3.1     Numerical Properties of the Elements in T
+3.1.1    The Number of Elements in T
+We observe that the number of elements a subset T contains, denoted by |T|, is always 2D
+or a multiple of it. When K = 1, there exists only one subset containing all the 2D×1 elements.
+As K increases, additional subsets appear, but this emergence follows a non-linear pattern. It means
+that a subset T in a given XD                                   D
+                              K (when K > 1) may contain 2 × n elements without necessarily
+                        D
+exist a subset of size 2 × (n − 1). The observed subset sizes for dimensions D = 2 and D = 3,
+based on computations for values of K up to 11 and 7, respectively, are:
+
+    • For D = 2, the sizes of subsets T ⊂ X2K are |T| ∈ {4, 8}.
+
+    • For D = 3, the sizes of subsets T ⊂ X3K are |T| ∈ {8, 16, 24, 32, 48}.
+
+   Tables 5 and 6 show the number of subsets of various sizes for different values of K in dimensions
+2 and 3.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                             14
+
+
+  Table 5: The number of subsets with 4 and 8 elements for different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         1         0
+                                        2
+images show the values in X33 after being projected into a sphere in different
+perspectives.
+
+
+3     Analysis and Properties
+In this section, we will study the properties of the circular projection of XD
+                                                                             K , focusing mainly on
+dimensions 2 and 3. We will do it through the object called subset.
+
+Definition 3.1 (Subset). A subset T is defined as the set of elements in XD
+                                                                          K that share the same
+radius after being projected onto a D-dimensional sphere.
+
+   In this section, we will study these objects and the subsets by dividing the study into three
+parts, each focusing on a different aspect.
+
+3.1     Numerical Properties of the Elements in T
+3.1.1    The Number of Elements in T
+We observe that the number of elements a subset T contains, denoted by |T|, is always 2D
+or a multiple of it. When K = 1, there exists only one subset containing all the 2D×1 elements.
+As K increases, additional subsets appear, but this emergence follows a non-linear pattern. It means
+that a subset T in a given XD                                   D
+                              K (when K > 1) may contain 2 × n elements without necessarily
+                        D
+exist a subset of size 2 × (n − 1). The observed subset sizes for dimensions D = 2 and D = 3,
+based on computations for values of K up to 11 and 7, respectively, are:
+
+    • For D = 2, the sizes of subsets T ⊂ X2K are |T| ∈ {4, 8}.
+
+    • For D = 3, the sizes of subsets T ⊂ X3K are |T| ∈ {8, 16, 24, 32, 48}.
+
+   Tables 5 and 6 show the number of subsets of various sizes for different values of K in dimensions
+2 and 3.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                             14
+
+
+  Table 5: The number of subsets with 4 and 8 elements for different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         1         0
+                                        2         2 
+                     K , focusing mainly on
+dimensions 2 and 3. We will do it through the object called subset.
+
+Definition 3.1 (Subset). A subset T is defined as the set of elements in XD
+                                                                          K that share the same
+radius after being projected onto a D-dimensional sphere.
+
+   In this section, we will study these objects and the subsets by dividing the study into three
+parts, each focusing on a different aspect.
+
+3.1     Numerical Properties of the Elements in T
+3.1.1    The Number of Elements in T
+We observe that the number of elements a subset T contains, denoted by |T|, is always 2D
+or a multiple of it. When K = 1, there exists only one subset containing all the 2D×1 elements.
+As K increases, additional subsets appear, but this emergence follows a non-linear pattern. It means
+that a subset T in a given XD                                   D
+                              K (when K > 1) may contain 2 × n elements without necessarily
+                        D
+exist a subset of size 2 × (n − 1). The observed subset sizes for dimensions D = 2 and D = 3,
+based on computations for values of K up to 11 and 7, respectively, are:
+
+    • For D = 2, the sizes of subsets T ⊂ X2K are |T| ∈ {4, 8}.
+
+    • For D = 3, the sizes of subsets T ⊂ X3K are |T| ∈ {8, 16, 24, 32, 48}.
+
+   Tables 5 and 6 show the number of subsets of various sizes for different values of K in dimensions
+2 and 3.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                             14
+
+
+  Table 5: The number of subsets with 4 and 8 elements for different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         1         0
+                                        2         2         1
+                                        3         4         6
+                                        4         8       28
+                                       ...       ...       ...
+
+
+Table 6: The number of subsets with 8, 16, 24, 32, 40, and 48 
+                                                 K that share the same
+radius after being projected onto a D-dimensional sphere.
+
+   In this section, we will study these objects and the subsets by dividing the study into three
+parts, each focusing on a different aspect.
+
+3.1     Numerical Properties of the Elements in T
+3.1.1    The Number of Elements in T
+We observe that the number of elements a subset T contains, denoted by |T|, is always 2D
+or a multiple of it. When K = 1, there exists only one subset containing all the 2D×1 elements.
+As K increases, additional subsets appear, but this emergence follows a non-linear pattern. It means
+that a subset T in a given XD                                   D
+                              K (when K > 1) may contain 2 × n elements without necessarily
+                        D
+exist a subset of size 2 × (n − 1). The observed subset sizes for dimensions D = 2 and D = 3,
+based on computations for values of K up to 11 and 7, respectively, are:
+
+    • For D = 2, the sizes of subsets T ⊂ X2K are |T| ∈ {4, 8}.
+
+    • For D = 3, the sizes of subsets T ⊂ X3K are |T| ∈ {8, 16, 24, 32, 48}.
+
+   Tables 5 and 6 show the number of subsets of various sizes for different values of K in dimensions
+2 and 3.
+The Z-curve as an n-Dimensional Hypersphere: Properties and Analysis                             14
+
+
+  Table 5: The number of subsets with 4 and 8 elements for different values of K when D = 2.
+
+                                       K      |T| = 4   |T| = 8
+                                        1         1         0
+                                        2         2         1
+                                        3         4         6
+                                        4         8       28
+                                       ...       ...       ...
+
+
+Table 6: The number of subsets with 8, 16, 24, 32, 40, and 48 elements for different values of K
+when D = 3.
+
+                K     |T| = 8   |T| = 16     |T| = 24   |T| = 32   |T| = 40   |T| = 48
+                 1        1         0            0          0          0       
+SOURCE peck CHARS 62834
+                                           Peckness of Edge Posets
+
+                                           David Hemminger · Aaron Landesman · Zijian Yao
+
+
+
+
+arXiv:1501.04540v2 [math.CO] 10 Dec 2017
+                                           Abstract For any graded poset P, we define a new graded poset, E(P), whose elements are the edges in the Hasse
+                                           diagram of P. For any group G acting on the boolean algebra Bn in a rank-preserving fashion we conjecture that
+                                           E(Bn /G) is Peck. We prove that the conjecture holds for “common cover transitive” actions. We give some infinite
+                                           families of common cover transitive actions and show that the common cover transitive actions are closed under
+                                           direct and semidirect products.
+                                           Keywords Boolean Algebra · Edges · Group Actions · Peck Posets · Quotient Posets · Unimodality
+
+
+
+
+                                           D. Hemminger
+                                           Duke University, 6300 Lakeland Dr., Raleigh, NC 27612 E-mail: dhemminger@math.ucla.edu
+                                           A. Landesman
+                                           Harvard University, 323 Eliot Mail Center, Cambridge, MA 02138 E-mail: aaronlandesman@gmail.com
+                                           Z. Yao
+                                           Brown University, 7285 Brown University, Providence, RI 02912 E-mail: zijian.yao.math@gmail.com
+2                                                                                                                 David Hemminger et al.
+
+
+1 Introduction
+
+Let P be a finite graded poset of rank n. In this paper we study the structure of the edges in the Hasse diagram of
+P. To this end, we define an endofunctor E on the category of finite graded posets with rank-preserving morphisms
+as follows.
+Definition 1.1. For P the category of graded posets, define the functor of edges E : P → P as follows. Given
+P ∈ P, the elements of the graded poset E(P) are pairs (x, y) where x, y ∈ P, x ≤P y, and rk(y) = rk(x) + 1. Define
+the covering relation ⋖E on E(P) by (x, y) ⋖E (x′ , y′ ) if x ⋖P x′ and y ⋖P y′ . Then define the relation ≤E on E(P) to
+be the transitive closure of ⋖E .
+     Let Q be a finite graded poset of rank n. Given a morphism f : P → Q, define E( f ) : E(P) → E(Q) by
+E( f )(x, y) = ( f (x), f (y)).
+    We show that E(P) is a well-defined graded poset in Section 3. Note that an edge in the Hasse diagram of P
+can be identified with a pair (x, y) ∈ P × P such that x ⋖ y, and the edges in the Hasse diagram are in bijection with
+elements (x, y) ∈ E(P) via this identification. With this in mind, we will frequently refer to E(P) as the edge poset
+of P.
+Example 1.2. We give an example of an edge poset in Figure 1.1. Note that it is important we declare the relation
+≤E to be the transitive closure of ⋖E . If instead we defined a relation ≤E′ on E(P) by (x, y) ≤ (a, b) if x ≤ a, y ≤ b,
+then E(P) would not necessarily be a graded poset. In Figure 1.1 it is clear that E(P) is a graded poset under
+relation ≤E , with rk(x, y) = rk(x), but the Hasse diagram on the right represents a poset which does not have a
+grading under the relation ≤E′ .
+
+
+                             7
+
+                                               (5,7)                   (6,7)             (5,7)                    (6,7)
+
+                         5       6
+
+                                               (3,5)                   (4,6)             (3,5)                    (4,6)
+
+                         3       4
+
+                                       (1,3)           (2,3)   (2,4)             (1,3)           (2,3)    (2,4)
+
+                 1           2
+
+                                       (0,1)           (0,2)                     (0,1)           (0,2)
+
+                         0
+
+
+
+                         P                             E(P)                    E(P) with relation ≤E′ (not graded)
+
+
+Fig. 1.1 Examples of E
+
+
+
+
+    We observe that when P has a nice structure, E(P) commonly has a nice structure as well. In particular we
+examine the boolean algebra of rank n, denoted Bn , which is defined to be the poset whose elements are subsets of
+{1, . . . , n} with the relation given by containment. That is, for all x, y ∈ Bn , x ≤ y if x is a subset of y.
+    In this paper, we study the property of Peckness, as defined below in Definition 2.4. The name “Peck” was
+coined in Stanley’s paper [7]. However, Peck posets were studied prior to Stanley’s article [7], for example in [5].
+Peckness is a nice property as it enjoys several equivalent definitions. For example, see [5, Lemma 1.1] and [4].
+    Throughout the paper we say that a group G acts on P if it acts on the elements of P and the action is rank-
+preserving and order-preserving. That is, for all g ∈ G we have rk(gx) = rk(x) and x ≤ y ⇔ gx ≤ gy. By a result
+Peckness of Edge Posets                                                                                                            3
+
+
+of Stanley [Theorem 2.8] and the fact that Bn is unitary Peck, if G is any action on Bn , then Bn /G is Peck. We
+conjecture the following.
+Conjecture 1.3. If G ⊆ Aut(Bn ), then E(Bn /G) is Peck.
+    In the rest of the paper we give theoretical evidence for the conjecture. More precisely, we prove that the
+conjecture holds whenever the group action of G on Bn has the common cover transitive property, which we
+introduce in the following definition.
+Definition 1.4. A group action of G on P is common cover transitive (CCT) if whenever x, y, z ∈ P are such that
+x ⋖ z, y ⋖ z, and y ∈ Gx, then there exists some g ∈ Stab(z) such that g · x = y.
+
+Theorem 1.5. If a group action of G on Bn is CCT, then E(Bn /G) is Peck.
+    The theorem trivially implies the following.
+Corollary 1.6. E(Bn ) is Peck.
+Remark 1.7. In fact, it is true that E(Bn ) is unitary Peck. For a proof, see Section 8 of our project report for the
+University of Minnesota at Twin Cities REU. 1
+    We have found many group actions on Bn that have the CCT property. We first prove that some basic group
+actions on Bn are CCT. Throughout the paper we let a subgroup G ⊆ Sn act on Bn by letting it act on the elements
+within subsets of [n] := {1, . . . , n}, i.e. g · x = {g · i : i ∈ x} for all g ∈ G, x ∈ Bn . We also embed the dihedral group
+D2n into Sn by letting it act as rotations and reflections on the vertices of an n-gon.
+Proposition 1.8. Let n be a positive integer and p be a prime. The following actions are CCT.
+1. The action of Sn on Bn .
+2. The action of D2p on B p .
+3. The action of D4p on B2p .
+   We further show that common cover transitivity is preserved under semidirect products, allowing us to describe
+several large families of CCT actions in Subsection 4.2.
+Proposition 1.9. Let G ⊆ Aut(P), H ⊳ G, and K ⊂ G such that G = H ⋊ K. Suppose that the action of H on P is
+CCT and the action of K on P/H is CCT. Then the action of G on P is CCT.
+   The paper is organized as follows. In Section 2 we cover necessary background definitions for posets and
+Peck posets. In Section 3 we show that E is well-defined and prove Theorem 1.5 regarding CCT actions along
+with various other nice properties of E. Section 4 contains the proofs of Propositions 1.8 and 1.9 as well as some
+examples of families of group actions shown to be CCT by these propositions. In Section 5, we obtain a different
+proof of [3, Theorem 1.1], in the case that r = 1.
+
+
+2 Background
+
+In this section we review necessary background definitions for this paper. As references for this material, see [9,
+Chapter 4] and [7].
+    A graded poset P is a poset with a rank function rk : P → Z≥0 satisfying the following conditions.
+1. If x ∈ P and x ⋖ y, then rk(x) + 1 = rk(y).
+2. If x < y, then rk(x) < rk(y).
+Remark 2.1. Note that the second condition follows from the first in the case that the poset P is finite.
+     We denote the ith rank of P by Pi = {x ∈ P : rk(x) = i}. If for all x ∈ P we have 0 ≤ rk(x) ≤ n, and there exist
+y, z with rk(y) = 0 and rk(z) = n, we say that P is a graded poset of rank n.
+Remark 2.2. Throughout the paper we write x ≤P y to denote that x is less than or equal to y under the relation
+defined on the poset P. When the poset is clear we omit the P and simply write x ≤ y.
+  1 See http://www.math.umn.edu/reiner/REU/HemmingerLandesmanYao2014.pdf for the full report. This will be referred to throughout the
+
+paper as “the REU report.”
+4                                                                                                   David Hemminger et al.
+
+
+    Let P, Q ∈ P be two finite graded posets. A map f : P → Q is a morphism from P to Q if it is rank-preserving
+and order-preserving. In other words, f is a morphism if for all x, y ∈ P, rk(x) = rk( f (x)) and x ≤P y implies
+f (x) ≤Q f (y). We say that f is injective/surjective/bijective if it is an injection/surjection/bijection from P to Q as
+sets.
+Remark 2.3. Note that we do not require the implication that f (x) ≤Q f (y) implies x ≤P y in order for f to be
+a morphism. In particular this means that a bijective morphism f need not be an isomorphism, since it will not
+necessarily have a two-sided inverse.
+    In what follows let P be a poset of rank n, and write pi = |Pi |. If we have
+
+                                        p0 ≤ p1 ≤ . . . ≤ pk ≥ pk+1 ≥ . . . ≥ pn
+
+for some 0 ≤ k ≤ n, then P is rank-unimodal. If pi = pn−i for all 1 ≤ i ≤ n, then P is rank-symmetric. An antichain
+in P is a set of elements in P that are pairwise incomparable. If no antichain in P is larger than the largest rank
+of P, then P is Sperner. More generally, P is k-Sperner if no union of k disjoint antichains in P is larger than the
+union of the largest k ranks of P. We say that P is strongly Sperner if it is k-Sperner for all 1 ≤ k ≤ n.
+Definition 2.4. A graded poset P is Peck if P is rank-symmetric, rank-unimodal, and strongly Sperner.
+    Let V (P) and V (Pi ) be the complex vector spaces with bases {x : x ∈ P} and {x : x ∈ Pi } respectively. In
+determining whether P is Peck, it is often useful to consider certain linear transformations on V (P).
+Definition 2.5. A linear map U : V (P) → V (P) is an order-raising operator if U(V (Pn )) = 0 and for all 0 ≤ i ≤
+n − 1, x ∈ Pi we have
+
+                                                   U(x) = ∑ cx,y y
+                                                            y⋗x
+
+for some constants cx,y ∈ C. We say that U is the Lefschetz map if all cx,y on the right hand side are equal to 1.
+We then have the following well-known characterization of Peck posets.
+Lemma 2.6 ([5], Lemma 1.1). A graded poset P is Peck if and only if there exists an order-raising operator U
+such that for all 0 ≤ i < 2n , the map U n−2i : V (Pi ) → V (Pn−i ) is an isomorphism.
+Definition 2.7. If the Lefschetz map satisfies the condition for U in Lemma 2.6, then P is unitary Peck.
+    Note that a group G acts on P if the action defines an embedding G ֒→ Aut(P). We define the quotient poset
+P/G to be the poset whose elements are the orbits of G, with the relation O ≤ O′ if there exist x ∈ O, x′ ∈ O′ such
+that x ≤P x′ . We will use the following result in the paper.
+Theorem 2.8 ([7], Theorem 1). If P is unitary Peck and G ⊆ Aut(P), then P/G is Peck.
+
+
+3 The Edge Poset
+
+In Subsection 3.1 we show that E as described in Definition 1.1 is well-defined and prove some useful properties
+of E. In Subsection 3.2 we prove that E sends self-dual posets to self-dual posets. In Subsection 3.3 we give several
+equivalent definitions for CCT actions, and Subsection 3.4 is devoted to the proof of Theorem 1.5.
+
+
+3.1 Functoriality of E and Group Actions
+
+First we show that E is well-defined in Lemmas 3.2, 3.3, and 3.4. We then define a natural G action on E(P) and
+obtain a surjection E(P)/G → E(P/G), which are key ingredients of the proof of Theorem 1.5.
+Remark 3.1. When the poset P is clear, we will use ≤E and ⋖E to refer to ≤E(P) and ⋖E(P) . Similarly, in Subsec-
+tion 3.4, we define posets H(Bn ), and will use ≤H and ⋖H in place of ≤H(Bn ) and ⋖H(Bn ) .
+Lemma 3.2. The relation ≤E defines a partial order on E(P).
+Peckness of Edge Posets                                                                                                      5
+
+
+Proof. We have that (x, y) ≤E (x, y) and that ≤E is transitive by definition. Suppose (x, y) ≤E (x′ , y′ ) and (x′ , y′ ) ≤E
+(x, y). Then x ≤P x′ ≤P x and y ≤P y′ ≤P y, so x = x′ and y = y′ by antisymmetry of ≤P , hence (x, y) = (x′ , y′ ).
+Lemma 3.3. For P a graded poset, the poset E(P) is graded.
+Proof. To show E(P) is graded, we must show that (x, y) ⋖E (x′ , y′ ) =⇒ rk(x, y) + 1 = rk(x′ , y′ ). This fact follows
+immediately from the definition of ⋖E and the definition rkE (x, y) = rkP (x).
+Lemma 3.4. Let f : P → Q be a morphism of finite graded posets, and define a map E( f ) : E(P) → E(Q) by
+E( f )(x, y) = ( f (x), f (y)) for all (x, y) ∈ E(P). Then
+1. E( f ) is a morphism of finite graded posets,
+2. E(idP ) = idE(P) , and
+3. if g : Q → R is a morphism of finite graded posets, then E(g ◦ f ) = E(g) ◦ E( f ).
+Proof. First, we show (1). Observe that E( f ) is rank-preserving, since for all (x, y) ∈ E(P) we have
+                                rkE(P) (x, y) = rkP (x) = rkQ ( f (x)) = rkE(Q) (E( f )(x, y)).
+Suppose (x, y)⋖E(P) (x′ , y′ ). Then x⋖P x′ and y⋖P y′ , and since f is order-preserving and rank-preserving, it follows
+that f (x) ⋖Q f (x′ ) and f (y) ⋖Q f (y′ ). Hence E( f )(x, y) ⋖E(Q) E( f )(x′ , y′ ). Since ≤E(Q) is the transitive closure of
+⋖E(Q) , we similarly obtain that E( f ) is order-preserving and hence a morphism of finite graded posets.
+    Next, (2) is trivial.
+    Finally, we show (3). For all (x, y) ∈ E(P) we have
+                               E(g ◦ f )(x, y) = (g( f (x)), g( f (y))) = (E(g) ◦ E( f )) (x, y).
+Remark 3.5. By Lemmas 3.2, 3.3, and 3.4, the edge poset construction E defines an endofunctor on the category
+of finite graded posets with rank-preserving morphisms.
+     An action of G on P naturally induces an action of G on E(P). Each element g ∈ G is an automorphism of P,
+so E(g) is an automorphism of E(P). Lemma 3.4 guarantees that this is a well-defined group action.
+Definition 3.6. Given a G-action on P, define a G-action on E(P) by g · (x, y) = E(g)(x, y) = (gx, gy).
+    We then obtain a quotient poset E(P)/G. It is natural to ask whether the operation of quotienting out by G
+commutes with E, that is, whether E(P/G) ∼= E(P)/G. Unfortunately the two posets are rarely isomorphic, but
+there is always a surjection E(P)/G → E(P/G), and this surjection is also an injection precisely when the G-action
+on P is CCT, as will be shown in Lemma 3.15.
+Proposition 3.7. The map q : E(P)/G → E(P/G) defined by q(G(x, y)) = (Gx, Gy) is a surjective morphism.
+Proof. Note that q is well-defined because if (x′ , y′ ) = g(x, y) = (g · x, g · y) for some g ∈ G, then x′ ∈ Gx and
+y′ ∈ Gy. Clearly q is rank-preserving and surjective, so it suffices to show that q is order-preserving. Suppose that
+G(x, y) ⋖E(P)/G G(w, z). Then there exist some (x0 , y0 ) ∈ G(x, y), (w0 , z0 ) ∈ G(w, z) such that x0 ⋖P w0 and y0 ⋖P z0 .
+We then have that (Gx, Gy) ⋖E(P/G) (Gw, Gz) by definition. Since ≤E(P/G) is the transitive closure of ⋖E(P/G) , q is
+order-preserving.
+
+
+3.2 The Opposite Functor and Self-Dual Posets
+
+Next, we discuss the notion of a dual poset, given by applying the opposite functor, op, to a graded poset. We will
+show that op commutes with E. This will imply that E(P) is self-dual if P is, which in turn will imply that E(Bn /G)
+is self-dual for any group action of G on Bn .
+Definition 3.8. Let P be the category of graded posets and let op : P → P be the opposite functor, defined on
+posets as follows. For P a poset, the elements of Pop are the same as those of P with order relation ≤Pop defined by
+x ≤Pop y ⇔ x ≥P y. Induced maps on morphisms are given as follows: for P, Q graded posets with f : P → Q, then
+ f op : Pop → Qop is defined by f op (x) = f (x). The poset Pop is called the dual poset of P. A poset P is self-dual if
+there is an isomorphism of posets P ∼  = Pop .
+6                                                                                                                  David Hemminger et al.
+
+
+Remark 3.9. Note that it is easy to check op : P → P is indeed a covariant functor. In more abstract terms, if
+we view P as a category, then Pop is the opposite category. Additionally, op as defined in this way is actually an
+endofunctor on the category of all finite posets, which restricts to a functor on the subcategory of graded posets.
+
+Lemma 3.10. The functor op : P → P commutes with the functor E : P → P. That is, E(Pop ) ∼
+                                                                                         = E(P)op .
+
+Proof. Define the morphism F : E(Pop ) → E(P)op by sending an edge between two vertices x and y of Pop to the
+edge between same two vertices x and y of P. The inverse to F is given by G : E(P)op → E(Pop ) sending an edge
+between two vertices x and y of P to the edge between the same two vertices x and y of Pop .
+
+Proposition 3.11. If P is a self-dual poset, then E(P) is also self-dual.
+
+Proof. Since P is self-dual, there is an isomorphism f : P → Pop . By the functoriality of E, as shown in Lemma
+3.4, we obtain that E( f ) : E(P) → E(Pop ) is an isomorphism. By Lemma 3.10, there is an isomorphism E(Pop ) ∼
+                                                                                                              =
+E(P)op . Then, let F : E(Pop ) → E(P)op be the same isomorphism defined in the proof of Lemma 3.10, the compo-
+sition F ◦ E( f ) : E(P) → E(P)op defines an isomorphism, so E(P) is self-dual.
+
+Example 3.12. While E(P) is often Peck for known Peck posets P, E(P) need not be Peck in general. Furthermore,
+adding the condition that P be self-dual does not change this fact. In Figure 3.1 we give an example of a poset P
+such that P is unitary Peck and self-dual, but E(P) is not rank-unimodal and hence not Peck.
+
+
+                                                                   (4,6)              (5,6)                (5,7)
+                                     6           7
+
+
+
+                                     4           5
+                                                                   (2,4)                                   (3,5)
+
+
+                                     2           3
+
+
+                                                                   (0,2)              (0,3)                (1,3)
+                                     0           1
+
+                                           P                                          E(P)
+
+Fig. 3.1 P is self-dual and unitary Peck, but E(P) is not Peck.
+
+
+
+Remark 3.13. Whenever there is an action ψ : G × [n] → [n], we obtain an induced action φ : G × Bn → Bn defined
+by
+                                           φ (g, {x1 , . . . , xk }) = {ψ (g, x1 ), . . . , ψ (g, xk )}.
+
+It is easy to see that any action φ : G × Bn → Bn arises in this way. That is, for any action φ of G on Bn there exists
+an action ψ of G on [n] such that φ (g, {x1 , . . . , xk }) = {ψ (g, x1 ), . . . , ψ (g, xk )}. Whenever an action ψ of G on [n]
+is given, we refer to the action φ defined above as the induced action on Bn .
+Corollary 3.14. For any action φ : G × Bn → Bn , we have that
+    – Bn /G,
+    – E(Bn /G), and
+    – E(Bn )/G
+are self-dual. In particular, they are all rank-symmetric
+Peckness of Edge Posets                                                                                                      7
+
+                                                                                                                            op
+Proof. By Remark 3.13, any action φ : G × Bn → Bn is induced by an action ψ : G × [n] → [n]. Define f : Bn → Bn
+to be the map sending a set to its complement. Using this, observe that for any φ , the poset Bn /G is self-dual, as
+there is an isomorphism
+
+                                                 f G : Bn /G → (Bn /G)op
+                                                        G · x 7→ G · ([n] \ x).
+
+This map is well-defined on G-orbits because every action on Bn is induced by an action on [n]. Then, by Proposi-
+tion 3.11, it follows that E(Bn /G) is self-dual.
+    It only remains to prove that E(Bn )/G is self-dual. However, from Proposition 3.11, E(Bn ) is self-dual, with
+the isomorphism given by
+
+                                            E( f ) : E(Bn ) → E(Bop  ∼       op
+                                                                 n ) = E(Bn )
+                                                    (x, y) 7→ ([n] \ y, [n] \ x).
+
+Once again, since the action on Bn is induced by an action on [n], this isomorphism descends to an isomorphism
+E( f )G : E(Bn )/G → (E(Bn )/G)op . Thus, E(Bn )/G is self-dual.
+
+
+3.3 Equivalent Definitions of Common Cover Transitive Actions
+
+We next give four equivalent definitions of CCT actions.
+Lemma 3.15. Let G be a group acting on a graded poset P. The following are equivalent:
+1. The action of G on P is CCT.
+2. Whenever x ⋖ y, x ⋖ z, and y ∈ Gz, there exists some g ∈ Stab(x) with gy = z.
+3. The map q : E(P)/G → E(P/G) defined by q(G(x, y)) = (Gx, Gy) is a bijective morphism (but not necessarily
+   an isomorphism).
+4. For all i there is an equality |(E(P)/G)i | = |(E(P/G))i |.
+
+Proof. First, we show (1) ⇔ (3). By Proposition 3.7 we know that q is a bijection exactly when there do not exist
+distinct orbits G(x, y) 6= G(x′ , y′ ) with x′ ∈ Gx, y′ ∈ Gy. Fix (x, y), (x′ , y′ ) ∈ E(P) such that x′ ∈ Gx and y′ ∈ Gy. Pick
+a g ∈ G such that g · y′ = y. Then (g · x′ , y) ∈ G(x′ , y′ ), so G(x, y) = G(x′ , y′ ) if and only if there exists some g′ ∈ G
+such that g′ · x = g · x′ and g′ · y = y. Hence q is a bijection if and only if the G action is CCT.
+    Second, (2) ⇔ (3) by an analogous argument to (1) ⇔ (3). Finally, we check (3) ⇔ (4). Again using Proposi-
+tion 3.7, the morphism q is always surjective. Since a morphism is always rank-preserving, it must map (E(P)/G)i
+surjectively onto (E(P/G))i . However, since the posets are finite, this surjection is a bijection if and only if the sets
+have the same cardinality.
+
+Remark 3.16. While q is a bijection if and only if the action of G on P is CCT, it is not true that if the action of
+G on P is CCT, then q is an isomorphism. For example, take G = D20 ⊂ S10 acting by reflections and rotations on
+{1, 2, . . . , 10}, and consider the induced action on B10 . By Proposition 1.8, this action is CCT. However, consider
+x = {2, 4}, y = {1, 2, 4}, a = {2, 4, 7}, and b = {2, 4, 6, 7}. We may observe that (x, y), (a, b) ∈ E(B10 ) and Gx <
+Ga, Gy < Gb, so (Gx, Gy) <E(P/G) (Ga, Gb). However, it is not true that G(x, y) <E(P)/G G(a, b).
+
+
+3.4 Proof of Theorem 1.5
+
+In this section we prove Theorem 1.5, which we recall here:
+Theorem 1.5. If a group action of G on Bn is CCT, then E(Bn /G) is Peck.
+    The proof is largely based on the following Lemma.
+Lemma 3.17. Let P, Q be two graded posets with a morphism f : P → Q that is a bijection (but not necessarily an
+isomorphism). If P is Peck, then Q is Peck.
+8                                                                                                     David Hemminger et al.
+
+
+Proof. Let rk(P) = rk(Q) = n. Since P is Peck there exists an order-raising operator U such that U n−2i : V (Pi ) →
+V (Pn−i ) is an isomorphism. Since f is a poset morphism, it follows that the map f ◦ U ◦ f −1 is an order-raising
+                                                                    n−2i
+operator on Q. We then have that f ◦U n−2i ◦ f −1 = f ◦ U ◦ f −1          : V (Qi ) → V (Qn−i ) is an isomorphism since
+U n−2i : V (Pi ) → V (Pn−i ) is an isomorphism and f is a bijection.
+
+
+    By Lemmas 3.15 and 3.17, in order to prove Theorem 1.5 it suffices to prove that E(Bn )/G is Peck. One way
+to do this is to prove that E(Bn ) is unitary Peck and then apply Theorem 2.8. In fact, this approach generalizes to
+an arbitrary poset P.
+Theorem 3.18. If the action of G on P is CCT and E(P) is unitary Peck, then E(P/G) is Peck.
+
+Proof. Since the G-action is CCT, there is a bijection q : E(P)/G → E(P/G) by Lemma 3.15. Since E(P) is unitary
+Peck we have that E(P)/G is Peck by Theorem 2.8, hence E(P/G) is Peck by Lemma 3.17.
+
+    We prove that E(Bn ) is unitary Peck for n > 2 in Section 8 of the REU report, but unfortunately the proof is
+technical and computational. Note that by Theorem 3.18, this immediately implies Theorem 1.5. Fortunately there
+is a cleaner – albeit less direct – route to proving Theorem 1.5. In order to avoid showing that E(Bn ) is unitary
+Peck, we define a graded Peck poset H(Bn ) which injects into E(Bn ).
+Definition 3.19. For P a graded poset, define the graded poset H(P) as follows. Let the elements (x, y) ∈ H(P) be
+pairs (x, y) ∈ P × P such that x ⋖ y. Define (x, y) ⋖H (x′ , y′ ) if x ⋖ x′ , y ⋖ y′ and x′ 6= y. Then define ≤H to be the
+transitive closure of ⋖H , and define rkH (x, y) = rkP (x).
+Example 3.20. We give an example of the poset H(B3 ) in Figure 3.2. Observe that H(B3 ) can be written as a
+disjoint union of three copies of B2 . This is a single case of the more general phenomenon proven in Proposition
+3.26.
+Remark 3.21. Note that by definition, (x, y) ⋖H (x′ , y′ ) precisely when (x, y) ⋖E (x′ , y′ ) and x′ 6= y, hence (x, y) ⋖H
+(x′ , y′ ) ⇒ (x, y) ⋖E (x′ , y′ ). In other words, H(P) has the same elements as E(P) but with a weaker partial order.
+Lemma 3.22. For P a graded poset, the object H(P), as defined in Definition 3.19, is a graded poset.
+
+Proof. This follows immediately from Remark 3.21 and the fact that E(P) is graded.
+
+Remark 3.23. While E : P → P is a functor, H is not a functor. In particular, it is not possible to define H( f )
+for f a morphism. This is illustrated in Figure 3.3. For example, suppose we took f : P → Q defined by f (1) =
+a, f (2) = f (3) = b, and f (4) = c. Then there is no possible morphism H( f ) : H(P) → H(Q) because there are no
+morphisms H(P) → H(Q) whatsoever.
+     Given an action of a group G on P, we define an action of G on H(P) as we did for E(P) by again defining
+g · (x, y) = (gx, gy) for all (x, y) ∈ P. We will then have a well-defined quotient poset H(P)/G with the same
+elements as E(P)/G.
+Lemma 3.24. The automorphism defined by g · (x, y) = (gx, gy) for all g ∈ G, (x, y) ∈ H(P) yields a group action
+of G on H(P).
+
+Proof. Let g ∈ G. Since ≤H is the transitive closure of ⋖H it suffices to show that for all (x, y), (x′ , y′ ) ∈ H(P)
+we have (x, y) ⋖H (x′ , y′ ) ⇔ g(x, y) ⋖H g(x′ , y′ ). Since g is an automorphism of P, we have x ≤P x′ ⇔ gx ≤P gx′ ,
+y ≤P y′ ⇔ gy ≤P gy′ , and y 6= x′ ⇔ gy 6= gx′ , so the result follows from the definition of ≤H .
+
+Lemma 3.25. The map
+
+                                                 f : H(P)/G → E(P)/G
+                                                      G(x, y) 7→ G(x, y)
+
+is a bijective morphism for any group action of G on P.
+Peckness of Edge Posets                                                                                                         9
+
+
+                                                                   {1,2,3}
+
+
+
+
+                                                       {1,2}        {1,3}              {2,3}
+
+
+
+
+                                                       {1}           {2}                {3}
+
+
+
+
+                                                                         /0
+
+                                                                      B3
+
+
+
+
+                          ({2,3},{1,2,3})                      ({1,3},{1,2,3})                         ({1,2},{1,2,3})
+
+
+                   ({2},{1,2})       ({3},{1,3})       ({1},{1,2})            ({3},{2,3})         ({1},{1,3})     ({2},{2,3})
+
+
+                              ( /0,{1})                            ( /0,{2})                               ( /0,{3})
+
+
+                                                                   H(B3 )
+
+Fig. 3.2 B3 and H(B3 )
+
+
+                                                   4                 a
+
+                                                                               (2,4)           (3,4)   (b,c)
+
+                                      2                        3     c
+
+                                                                               (1,2)           (1,3)   (a,b)
+
+                                                   1                 b
+
+                                                   P                 Q                 H(P)            H(Q)
+
+
+Fig. 3.3 A map of posets f : P → Q with no possible map H( f )
+
+
+
+Proof. The elements of H(P)/G and E(P)/G are the same by definition, so it suffices to show that f is a morphism.
+Since f is clearly rank-preserving, it suffices to show f is order-preserving. This is immediate from Remark 3.21.
+
+
+
+   The remaining step in the proof of Theorem 1.5 is to show that H(Bn ) is unitary Peck, which we do by
+generalizing Example 3.20 and showing that H(Bn ) is isomorphic to a disjoint union of boolean algebras.
+
+Proposition 3.26. The graded poset H(Bn ) is isomorphic to n disjoint copies of Bn−1 .
+
+                                                                   (i)                                                   (i)
+Proof. Let the n disjoint copies of Bn−1 be labeled Bn−1 , 1 ≤ i ≤ n, with the elements of Bn−1 labeled x(i) , x ⊆
+{1, . . . , n − 1}. We will show that the map
+10                                                                                                      David Hemminger et al.
+
+
+
+
+                                                                   n
+                                                                   [ (i)
+                                                  f : H(Bn ) −→          Bn−1
+                                                                  i=1
+                                                                   (i)
+                                                    (x, x ∪ i) 7−→ x
+
+is an isomorphism. Suppose we have (x, y), (x′ , y′ ) ∈ H(Bn ) with (x, y) ⋖H (x′ , y′ ). Let j ∈ [n] such that y′ = y ∪ { j},
+and let i ∈ [n] such that x′ = x ∪ {i}. If i 6= j, then x′ = y, contradicting the assumption that (x, y) ⋖H (x′ , y′ ). Thus
+x′ = x ∪ {i} and y′ = y ∪ {i} for some i ∈ [n].
+    Conversely, we can easily check that if i 6∈ y, then (x, y) ⋖H (x ∪ {i}, y ∪ {i}). It follows that for all subsets
+w ⊂ [n] such that |w| = 1, there is an isomorphism
+
+                                           {(x, y) : y \ x = w} → Bn−1
+                                                          (x, y) 7→ (x \ w, y \ w).
+
+Furthermore, if y \ x 6= y′ \ x′ , then (x, y) and (x′ , y′ ) are incomparable, so these subposets indexed by w are pairwise
+disjoint, and H(Bn ) is isomorphic to n copies of Bn .
+
+Corollary 3.27. The graded poset H(Bn ) is unitary Peck for all n ≥ 0.
+
+Proof. This follows immediately from Proposition 3.26 and the fact that Bn−1 is unitary Peck. Indeed, Bn is shown
+to be unitary Peck in [7, Theorem 2a] by noting that Bk = (B1 )k and that B1 is clearly unitary Peck. Note that
+H(B0 ) is the empty poset, so it is vacuously unitary Peck.
+
+Corollary 3.28. The graded poset H(Bn )/G is Peck for any subgroup G ⊂ Aut(Bn ).
+
+Proof. This follows from Corollary 3.27 and Theorem 2.8.
+
+     The next corollary will not be particularly relevant in proving Theorem 1.5, but we note it as an aside.
+Corollary 3.29. Both E(Bn ) and H(Bn ) have symmetric chain decompositions (SCD).
+
+Proof. The graded poset H(Bn ) has an SCD by Proposition 3.26 and the fact that Bn−1 has an SCD, as shown in
+[2]. By Lemma 3.25 there is a bijective morphism f : H(Bn ) → E(Bn ), and since a bijective morphism takes an
+SCD to an SCD it follows that E(Bn ) has an SCD.
+
+Corollary 3.30. The graded poset E(Bn )/G is Peck for any subgroup G ⊂ Aut(Bn ).
+
+Proof. By Corollary 3.28, H(Bn )/G is Peck. By Lemma 3.25, the map
+
+                                                 f : H(Bn )/G → E(Bn )/G
+                                                       G(x, y) 7→ G(x, y)
+
+is a bijective morphism. Then, by Lemma 3.17, it follows that E(Bn )/G is Peck.
+
+     We now deduce Theorem 1.5.
+
+Proof of Theorem 1.5. By Corollary 3.30, E(Bn )/G is Peck for any group action of G on Bn . Since the G-action is
+CCT, there is a bijective morphism from E(Bn )/G to E(Bn /G) by Lemma 3.15. Hence E(Bn /G) is Peck by Lemma
+3.17.
+
+    Note that we have also developed several generalizations of E, for which many similar results hold. For more
+information, see Subsection 3.3 of the REU report.
+Peckness of Edge Posets                                                                                               11
+
+
+4 Common Cover Transitive Actions
+
+In this section, we develop the theory of CCT actions φ where G is a group, P is a poset, and φ : G × P → P
+is an action. Recall Definition 1.4, that φ is CCT if whenever x, y, z ∈ P such that x ⋖ z, y ⋖ z, and x ∈ Gy, then
+there exists g ∈ Stab(z) with gx = y. We show that the CCT property is closed under semidirect products, in the
+appropriate sense. From Proposition 1.8, which will be proven in Subsection 4.2.4, the action of Sn on Bn and the
+action of certain dihedral groups are CCT. We can then use these as building blocks to construct other CCT groups.
+In particular, we shall show in this section that automorphism groups of rooted trees are CCT.
+Example 4.1. Two rather trivial examples of CCT actions are φ : Sn × Bn → Bn and ψ : G × Bn → Bn where G is
+arbitrary, φ is the action induced by Sn permuting the elements of [n], and ψ is the trivial action. In the former case,
+E(Bn /Sn ) is simply a chain with n points, and so is E(Bn )/Sn , since all (x, y) are identified under the Sn action. In
+the latter case, since G acts trivially by φ we have that E(Bn /G) ∼ = E(Bn ) and E(Bn )/G ∼    = E(Bn ). So again, ψ is
+CCT.
+
+
+4.1 Preservation Under Semidirect Products
+
+Lemma 4.2. Let G ⊆ Aut(P), H ⊳ G, and K ⊂ G such that G = H ⋊ K. We then have a well-defined group action
+
+                                                  K × P/H → P/H
+                                                    (k, Hx) 7→ H(k · x).
+
+Proof. Note that if x, x′ ∈ Hx, we have x′ = h · x for some h ∈ H. Since H is normal in G, we have that for all k ∈ G
+there exists h′ ∈ H so that khk−1 = h′ . So
+
+                                       k · x′ = kh · x = k(k−1 h′ k) · x = h′ · (k · x)
+     Hence k · x and k · x′ are in the same H-orbit, so we have a well-defined group action of K on P/H defined by
+k · Hx = H(k · x).
+
+   Recall Proposition 1.9, which says that the CCT property is preserved under semidirect products. We will use
+Proposition 1.9 to construct more examples of CCT group actions, in particular using it to give a simple proof that
+CCT actions are preserved under direct products and wreath products.
+Proposition 1.9. Let G ⊆ Aut(P), H ⊳ G, and K ⊂ G such that G = H ⋊ K. Suppose that the action of H on P is
+CCT and the action of K on P/H is CCT. Then the action of G on P is CCT.
+
+Proof. Since G = H ⋊ K, every element g ∈ G can be written uniquely as a product hk for some h ∈ H, k ∈ K. Let
+x, y, z ∈ P be such that x ⋖ z, y ⋖ z, and such that there exists some h0 k0 ∈ G with h0 k0 · x = y. It suffices to show
+that there exists some g ∈ StabG (z) such that g · x = y.
+     The orbits Hx, Hy, Hz ∈ P/H satisfy Hx ⋖ Hz, Hy ⋖ Hz such that k0 · Hx = Hy. Thus, since the action of K on
+P/H is CCT, there exists some k1 ∈ K such that k1 ∈ StabK (Hz) and k1 · Hx = Hy. It follows that there exists some
+h1 ∈ H such that h1 k1 h0 ∈ StabG (z) and h1 k1 h0 · x ∈ Hy.
+     Write x′ = h1 k1 h0 · x. Since the group action of G must be order-preserving by definition, we have that x′ ⋖ z.
+We already had that y ⋖ z and x′ ∈ Hy, hence there exists some h2 ∈ StabH (z) such that h2 · x′ = y by the fact that the
+action of H on P is CCT. Then we have that h2 h1 k1 h0 · x = h2 · x′ = y and h2 h1 k1 h0 · z = h2 · z = z, as desired.
+
+Proposition 4.3. If φ : G × P → P and ψ : H × Q → Q are two CCT actions, then the direct product action
+
+                                        φ × ψ : (G × H) × (P × Q) → P × Q
+                                                      (g, h) · (x, y) 7→ (gx, hy)
+
+is also CCT.
+12                                                                                                                                  David Hemminger et al.
+
+
+Proof. First note that if either G or H acts trivially, then it can be easily checked that the action of G × H is CCT.
+Next, observe that G × H can be viewed as the semidirect product (G × {e}) ⋊ ({e} × H). Since the action of G on
+P is CCT, the action of G × {e} on P × Q is CCT. Also, since the action of H on Q is CCT, it follows that the action
+of {e} × H on P × Q/(G × {e}) is CCT. Therefore, the action of (G × {e}) ⋊ ({e} × H) satisfies the conditions of
+Proposition 1.9, hence the action of G × H on P × Q is CCT.
+
+   Next, we use Proposition 1.9 to prove in Proposition 4.8 that the CCT property is preserved under wreath
+products with the symmetric group. First, we need the definition of the wreath product.
+Definition 4.4. For G and H groups with H ⊂ Sℓ , the wreath product, denoted by G ≀ H, is the group whose
+elements are pairs (g, h) ∈ Gℓ × H with multiplication defined by
+
+                             ((g′1 , . . . , g′ℓ ), h′ ) · ((g1 , . . . , gℓ ), h) = ((g′h′ (1) g1 , . . . , g′h′ (ℓ) gℓ ), hh′ )
+
+where H acts on [ℓ] via the embedding of H into Sℓ .
+     In other words, G ≀ H can be viewed as a certain semidirect product Gℓ ⋊ H.
+Definition 4.5. For any group G with a given action ψ : G×P → P, we obtain an induced action φ : G≀H ×Pℓ → Pℓ
+defined by
+                        ((g1 , . . . , gℓ ), h)(a1 , . . . , aℓ ) = (gh−1 (1) · ah−1(1) , . . . , gh−1 (ℓ) · ah−1 (ℓ) ).
+Remark 4.6. Heuristically, one may think of the above action as obtained by first having G act separately on the ℓ
+distinct copies of P, and then letting H act by permuting the copies.
+Lemma 4.7. For P a graded poset, the action
+
+                                                        φ : S ℓ × Pℓ → Pℓ
+                                                  (σ , (x1 , . . . , xℓ )) 7→ (xσ (1) , . . . , xσ (ℓ) )
+
+is CCT.
+
+Proof. For a ∈ Pℓ denote a = (a1 , . . . , aℓ ). Suppose x, y, z ∈ Pℓ with x ⋖ z, y ⋖ z, and x ∈ Sℓ y, but x 6= y. This means
+there is a unique i such that xi ⋖ zi and xk = zk for k 6= i. Additionally, there is a unique j for which y j ⋖ z j and
+yk = zk for k 6= j. Since x ∈ Sℓ y, we obtain the equality of multisets {x1 , . . . , xℓ } = {y1 , . . . , yℓ }. But for k 6= i, j we
+have xk = zk = yk , so we also obtain equality of sets {xi , x j } = {yi , y j }. Since y j ⋖ x j , we obtain y j = xi , yi = x j .
+Then, taking the transposition σ = (i j) ∈ Sℓ , it follows that σ ∈ Stab(z) and σ · x = y.
+
+Proposition 4.8. If ψ : G × P → P is CCT, let φ : G ≀ Sℓ × Pℓ → Pℓ be the induced action defined in Definition 4.5.
+Then φ is also CCT.
+
+Proof. Note that the wreath product G ≀ Sℓ can be viewed as a semidirect product Gℓ ⋊ Sℓ . Since the action of G on
+P is CCT, we obtain that the action of Gℓ on Pℓ is CCT by Proposition 4.3. Furthermore, the action
+
+                                                        Sℓ × (P/G)ℓ → (P/G)ℓ
+                                                   (σ , (x1 , . . . , xℓ )) 7→ (xσ (1) . . . , xσ (ℓ) )
+
+for σ ∈ Sℓ and xi ∈ P/G is CCT by Lemma 4.7. Since Pℓ /Gℓ ∼
+                                                          = (P/G)ℓ , it follows that the action φ satisfies the
+conditions of Proposition 1.9, so φ is CCT.
+
+
+4.2 Examples of CCT Actions
+
+In this subsection, we describe several classes of CCT actions. First, we show that the automorphism group of
+any rooted tree is CCT. Second, we show that linear automorphisms of simplices and octahedra are CCT. Third,
+we show that the left multiplication action is CCT if and only if the group is Zk2 , and that any action of Zk2 on
+[n] induces a CCT action on Bn . In the end of this subsection, we prove Proposition 1.8, which shows that certain
+symmetric group and dihedral group actions are CCT.
+Peckness of Edge Posets                                                                                                          13
+
+
+4.2.1 An application to rooted trees
+
+In this subsection, we prove that the automorphism group of a rooted tree is always CCT. To do this we will apply
+Proposition 4.8 and Proposition 4.3, using that the automorphism group of a rooted tree is essentially built from
+direct products and wreath products with a symmetric group. To this aim, we first give definitions relating to rooted
+trees, then characterize their automorphisms, and finally show that such automorphism groups are always CCT.
+
+Definition 4.9. A graded poset P is a rooted tree if there is a unique element z ∈ P of maximal rank, called the
+root, and for all x ∈ P other than the root there exists a unique y ∈ P with y ⋗ x.
+Example 4.10. We give two examples of rooted trees in Figures 4.1 and 4.2.
+
+
+                                                                                      0
+
+                                                                 1                                      2
+
+                                                     3                       4                 5                 6
+
+                                               7         8           9           10       11       12       13       14
+
+Fig. 4.1 An example of a rooted tree with 8 leaves
+
+
+
+
+                                                                                 0
+
+                                             1                       2                                  3
+
+                                         4     5             6           7                8                          9
+
+                                                                                 10       11       12       13       14   15
+
+Fig. 4.2 An example of a rooted tree with 10 leaves
+
+
+
+
+Definition 4.11. For P a rooted tree, an element x ∈ P is a leaf if there is no z ∈ P with x > z. Denote the set of all
+leaves of P by L(P).
+    We next recall a useful, elementary lemma whose proof we omit.
+
+Lemma 4.12. Let P be a rooted tree. Then the action of Aut(P) on P induces an action of Aut(P) on L(P).
+Furthermore, there is also an induced action of Aut(P) on Bn , where n = |L(P)|.
+
+    For the rest of this section only, fix a rooted tree P and denote by G the group of automorphisms Aut(P). Let
+G act on Bn , where n = |L(P)|, by the induced action φ : G × L(P) → L(P) described in the proof of Lemma 4.12.
+For x ∈ P, denote D(x) = {y ∈ P : y ≤ x}, so D(x) is the maximal subposet of P with maximum element x.
+Proposition 4.13. Let P be a rooted tree with root vertex labeled 0. Let {A1 , . . . , Am } denote the set of isomorphism
+classes of {D(x) : x ⋖ 0}, and let ik denote the number of subtrees in {D(x) : x ⋖ 0} in the isomorphism class Ak .
+For Ak ∈ {A1 , . . . , Am }, denote Gk = Aut(Ak ). Then,
+
+                                        Aut(P) ∼
+                                               = (G1 ≀ Si1 ) × (G2 ≀ Si2 ) × · · · × (Gm ≀ Sim )                               (4.1)
+
+In particular, Aut(P) can be expressed as a sequence of direct products and wreath products of symmetric groups.
+14                                                                                                              David Hemminger et al.
+
+
+Proof. We proceed by induction on the rank of P. It is clear that if P is rank 0, then Aut(P) is trivial. If the
+rank of P is greater than 0, label the vertices of P by {0, 1, . . . , s} such that the root is labeled 0 and the vertices
+just below the root are labeled 1, . . . , k. Let A1 , . . . , Am denote the distinct isomorphism classes of trees in the set
+{D(1), . . . , D(k)}. For Ak ∈ {A1 , . . . , Am }, denote Gk = Aut(Ak ). Let T j = {t : t ⋖ 0, D(t) ∼= A j }. Then, letting Q j
+be the subtree of P whose elements lie in the set {0} ∪ (∪t∈Tj D(t)), we have that Aut(Q j ) ∼            = G j ≀ Si j , because
+after choosing a permutation of the elements of T j , we are free to choose any element of G j to permute each
+D(t),t ∈ T j . If t1 ⋖ 0,t2 ⋖ 0, and g · t1 = t2 , then it must be that g · D(t1 ) = D(t2 ). Therefore, Aut(P) must permute
+these isomorphism classes of trees, and the full automorphism groups is simply the direct product,
+
+                                      Aut(P) ∼
+                                             = (G1 ≀ Si1 ) × (G2 ≀ Si2 ) × · · · × (Gm ≀ Sim ),                                   (4.2)
+
+    Since each G j is a sequence of direct products and wreath products with symmetric groups by the inductive
+assumption, it follows from (4.1) that so is Aut(P).
+
+Example 4.14. Let P1 be the rooted tree in Figure 4.1 and P2 be the rooted tree in Figure 4.2. Proposition 4.13 says
+that Aut(P1 ) ∼
+              = (S2 ≀ S2 ) ≀ S2 ; and Aut(P2 ) ∼
+                                               = (S2 ≀ S2 ) × (S3 ≀ S2).
+Corollary 4.15. For P a rooted tree, Aut(P) is CCT.
+
+Proof. Let the rank of P be n. By Proposition 4.8, wreath products with symmetric groups preserve the CCT
+property, and by Proposition 4.3 the direct product of two CCT groups is again CCT. Therefore, by the proof of
+Proposition 4.13, the group Aut(P) can be built up by repeating this pair of observations n − 1 times.
+
+
+4.2.2 Automorphisms of Polytopes
+
+As another class of CCT actions, we describe several linear automorphism groups of polytopes whose induced
+actions on Bn are CCT. In particular, we prove that the linear automorphism groups of simplices and octahedra are
+CCT. Once we prove Proposition 1.8 in Subsection 4.2.4, we will also see that the action of the dihedral group
+on a regular n-gon is CCT for n = p, 2p. Since the dihedral group is the group of all linear automorphisms of the
+regular n-gon, this action gives another example of the linear automorphism group of a polytope being CCT.
+Definition 4.16. Let M be a polytope with a particular embedding in Rn . The group of linear automorphisms of M
+is the subgroup of GLn whose elements are {g ∈ GLn : g · M = M}.
+    First we look at linear automorphisms of simplices. Let G be the group of linear automorphisms of the (n − 1)-
+simplex whose vertices lie at the standard basis vectors in Rn . The action of G on the (n − 1)-simplex induces an
+action on [n], given by identifying [n] with the n vertices of the (n − 1)-simplex. Hence, it induces an action on Bn .
+Example 4.17. The induced action of the group of linear automorphisms of the (n − 1)-simplex on Bn is CCT.
+To see this, observe that the group of linear automorphisms in this case induces the usual action of Sn on Bn ,
+because any permutation matrix defines a linear map on Rn . However, we know the action of Sn on Bn is CCT from
+Example 4.1.
+    Next we look at linear automorphisms of octahedra. Let G be the group of linear automorphisms of the n-
+octahedron whose vertices are located at ±ei , where e1 , . . . en are the standard basis vectors of Rn . Then the action
+of G on the octahedron induces an action of G on the 2n vertices of the octahedron, and hence on B2n .
+Proposition 4.18. The induced action of the group of linear automorphisms of the n-octahedron on B2n is CCT.
+
+Proof. It is simple to see that the group of linear automorphisms of the n-octahedron is the hyperoctahedral group,
+since it is generated by the permutation matrices together with the matrix A, where A1,1 = −1, Ai,i = 1, and A j,k = 0
+for i 6= 1, j 6= k.2 It is well known that the hyperoctahedral group can be written as S2 ≀ Sn . Then, by Proposition 4.8,
+it follows that S2 ≀ Sn is CCT.
+  2 The hyperoctahedral group is commonly denoted by B , since it is the type B Coxeter group. We do not use this notation here to avoid
+                                                      n
+confusing it with the boolean algebra.
+Peckness of Edge Posets                                                                                                        15
+
+
+Remark 4.19. Let us give a brief recap of which linear automorphisms of polytopes are known to induce actions
+on Bn which are CCT. First, by the above lemmas, the induced action is CCT for octahedra and simplices. By
+Proposition 1.8 and Remark 4.21, the linear automorphism group of an n-gon induces a CCT action on Bn if and
+only if n ∈ {1, p, 2p} for p a prime. Additionally, using python code, we have verified that automorphisms of the
+3-cube with vertices at (±1, ±1, ±1) induces a CCT action. It is still unknown whether the linear automorphism
+groups of n-cubes are CCT for n > 3, and also whether the remaining five exceptional regular polytopes (namely
+the dodecahedron and icosahedron in R3 , and the 24-cell, 120-cell, and 600-cell polytopes in R4 ) induce CCT
+actions. These questions are repeated in Question 6.6 and Question 6.7.
+
+4.2.3 CCT Actions of Zk2
+
+In this subsection, we show that any embedding of Zk2 into Sn defines an action on Bn which is CCT. This implies
+that every action of Zk2 on Bn is CCT. However, it turns out that this is the only class of groups for which every
+action on Bn is CCT.
+Proposition 4.20. Recall that G is an elementary abelian 2-group if G ∼ = (Z/2Z)k for some k ∈ N.
+1. For any n ∈ N, and G an elementary abelian 2-group, every G-action φ : G × Bn → Bn is CCT.
+2. For every finite group G which is not an elementary abelian 2-group, there exists at least one G-action which
+   is not CCT, namely the action of G on Bn induced by the left-regular action of G on itself, where n = |G|.
+Proof. First, we show (1) holds. Let x, y, z ∈ Bn such that x ⋖ z, y ⋖ z, and x = gy for some g ∈ G. Since x 6= y
+we have z = x ∪ y. Furthermore, since every element in Zk2 has order 2 we have that gy = g2 x = x and thus gz =
+gx ∪ gy = y ∪ x = z. Hence g ∈ Stab(z) and thus φ is CCT.
+    Next, we show (2) holds. First, let us show G ∼  = Zk2 ⇔ ∀g ∈ G, g2 = e. The forward implication is obvious. To
+see the converse, first note that if ∀g ∈ G, g = e, then G is abelian because aba−1b−1 = abba = a2 = e. Then, G
+                                               2
+
+is an abelian group, all of whose elements have order two. The structure theorem of finite abelian groups tells us
+G∼ = Zk2 .
+    Suppose G 6∼= Zk2 . Then there exists g ∈ G such that g2 6= e. Clearly {e} ⋖ {e∪g}, {g} ⋖{e∪g}, and {g} ∈ G{e}.
+So in order to show that the induced action φ : G × Bn → Bn is not CCT, it suffices to show there is no h ∈ G such
+that h ∈ Stab({e ∪ g}) and h · {e} = {g}. If h ∈ Stab({e ∪ g}) and h · {e} = {g}, then h = g, and it follows that
+g2 = e. Thus there does not exist such an h, and the action induced by left multiplication is not CCT.
+
+4.2.4 The proof of Proposition 1.8
+
+    Let x, y ∈ Bn , and let G act on Bn .
+Proposition 1.8. Let n be a positive integer and p be a prime. The following actions are CCT.
+1. The action of Sn on Bn .
+2. The action of D2p on B p .
+3. The action of D4p on B2p .
+Proof. We have already seen in Example 4.1 that (1) holds trivially. We prove part (2). The proof of part (3) is
+similar.
+     Let x, y be elements of Bn such that x is covered by y. We wish to prove that given σ ∈ D2p such that σ x ⋖ y,
+there exists some τ ∈ D2p such that τ x = σ x and τ y = y. Of course, we may assume σ x 6= x, as we could then take
+τ = id.
+     The action of D2p on B p is induced by the action of D2p on [p], where [p] is identified with vertices of the
+regular p-gon. Note that any element in D2p is either some reflection r by one of the lines of symmetry of the
+polygon or some rotation σ0d , where σ0 is the generator σ0 = (12 · · · p) and d is some integer. Hence we only need
+to show the claim when σ = r or σ = σ0d . It is clear that the claim holds for σ = r: if x ⋖ y and r · x ⋖ y, then r · y = y,
+since r is of order 2, and we are assuming σ x 6= x. Now suppose σ0d · x ⋖ y for some (x, y) ∈ E(B p )i . Then (x, y) is
+of the form x = {s, s + d, ..., s + (i − 1) · d} for some starting point s ∈ [n] and y = {s, s + d, ..., s + (i − 1)d, s + i · d}.
+Now let r0 be the reflection given by x 7→ (2s + i · d) − x for all x ∈ [n], reducing mod n whenever necessary. Then
+r0 x = σ0d x and r0 fixes y by construction. Therefore the action of D2p on B p is CCT.
+16                                                                                                        David Hemminger et al.
+
+
+Remark 4.21. We claim that if n 6= p, n 6= 2p, and n > 8 for any prime p, then the action of D2n on Bn is not CCT.
+To see this, we give an example of a non-CCT pair. Assume n 6= p, 2p. Then n = mk for some m ≥ k ≥ 3. Let us
+consider elements x, y, z, where z = {1, m + 1, 2m + 1, ..., (k − 1)m + 1, 2, m + 2}, x = z\{m + 2}, and y = z\{2}.
+We immediately have that x, y ⋖ z, and x ∈ D2n y since x is sent to y by the permutation (12 · · · n)m ∈ D2n . It is also
+clear from the asymmetry of the element z that there is no g ∈ D2n translating x to y while fixing z. Therefore the
+action of D2n on Bn as described is CCT if and only if n = p or n = 2p for some prime p.
+    Hence a complete list of n for which D2n is CCT is given by n = p, n = 2p, n = 1, and n = 8, where p varies
+over all primes.
+Remark 4.22. There are several other results related to E(Cn ) and E(D2n ), where Cn = Z/nZ, which are proven in
+Section 7 of the REU report. Notably,
+1. For G any group of ordern acting transitively on [n], the induced action of G on Bn defines a quotient poset
+   with |(E(Bn )/G)i | = n−1 i .
+2. For all n, E(Bn /Cn ) is symmetric and unimodal.
+3. For all n, E(Bn /D2n ) is symmetric and unimodal.
+
+
+5 A Unimodality Result
+
+Using Corollary 4.15, we prove a result related to [3, Theorem 1.1] of Pak and Panova. We construct a certain
+sequence which is not only unimodal, but can even be exhibited as the ranks of a Peck poset. This construction
+gives an alternate proof of [3, Theorem 1.1] in the case that r = 1.
+    For this section, fix ℓ, m with n = ℓ · m, and fix G = Sm ≀ Sℓ . Let Sm act on Bm by the permutation representation,
+and then let G act on Bℓm ∼ = Bm·ℓ by the action defined in Definition 4.5.
+
+
+5.1 Restatement of the Unimodality Result
+
+We first review the necessary definitions and then state [3, Theorem 1.1]:
+     A partition λ of n, denoted by λ ⊢ n, is a sequence of numbers λ = (λ1 , . . . , λk ) such that λ1 ≥ λ2 ≥ · · · ≥ λk
+and ∑ki=1 λi = n. Let Pn (ℓ, m) denote the set of partitions λ = (λ1 , . . . , λk ) ⊢ n, such that λ1 ≤ m and k ≤ ℓ. That is,
+Pn (ℓ, m) is the set of partitions which fit inside an ℓ × m rectangle.
+     For λ a partition, let ν (λ ) be the number of distinct nonzero part sizes of λ . Let pk (ℓ, m, r) = ∑λ ∈Pk (ℓ,m) ν (rλ ) ,
+                                                                                                                              
+
+as defined in [3, Section 1].
+     A Young diagram is a finite collection of boxes arranged so that their rows are left-justified and their row
+lengths are weakly increasing from top to bottom.
+Theorem 5.1. [3, Theorem 1.1] The sequence pr (ℓ, m, r), pr+1 (ℓ, m, r), . . . , pℓ·m (ℓ, m, r) is unimodal and symmet-
+ric.
+
+
+5.2 A Proof of Theorem 5.1 for r = 1
+
+Now that we have stated Pak and Panova’s Theorem, we give an alternative proof of Theorem 5.1 in the case of
+r = 1. In fact, we do better, by realizing the pi (ℓ, m, 1) as ranks of a Peck poset.
+Proposition 5.2. There is an equality |(E(Bn )/G)i | = |E(Bn /G)i | = p1+i (ℓ, m, 1). In particular, Theorem 5.1 holds
+in the case r = 1.
+
+Proof. First, observe that Sm ≀ Sℓ can be described as the automorphism group of a rooted tree of rank 2 with ℓ
+elements at rank 1 and m · ℓ elements at rank 2, such that each element at rank 1 is above m elements at rank 2.
+Then it follows from Corollary 4.15 that the action of G on Bm·ℓ is CCT and hence E(Bn /G) is Peck.
+    Next, note that each equivalence class in Bn /G has a unique representative which is a Young diagram. Here, we
+think of Bn = Bℓ·m as subsets of the ℓ · m boxes in an ℓ × m rectangle. The correspondence is then given by sending
+Peckness of Edge Posets                                                                                             17
+
+
+an equivalence class to the representative which is left-justified and bottom-justified. For a complete proof, see, for
+example, Lemma 5.11 of the REU report.
+    Now let Gx and Gy be two G orbits with x̄ the Young diagram corresponding to x and ȳ the Young diagram
+corresponding to y. Suppose Gx ⋖ Gy. Then x̄ must be a subdiagram of ȳ with a single box removed. Since x̄ and ȳ
+are both Young diagrams, the removed box must be one of the corners of ȳ. Observe that the number of corners of
+a partition is precisely the number of distinct part sizes, and so |{Gx : Gx ⋖ Gy}| = ν (ȳ). Thus,
+
+                                        |E(Bn /G)i | =           ∑             1
+                                                         (Gx,Gy)∈E(Bn /G)i
+                                                                                     !
+                                                     =        ∑                ∑ 1
+                                                         Gy∈(Bn /G)i+1       Gx⋖Gy
+
+                                                     =        ∑           ν (ȳ)
+                                                         Gy∈(Bn /G)i+1
+
+                                                     =       ∑           ν (λ ).
+                                                         λ ∈Pi+1 (ℓ,m)
+
+    Therefore         |(E(Bn )/G)i | = |E(Bn /G)i | = p1+i (ℓ, m, 1).               Since    E(Bn )/G    is     Peck,
+p1 (ℓ, m, 1), p2 (ℓ, m, 1), . . . , pℓ·m (ℓ, m, 1) is unimodal and symmetric, and hence Theorem 5.1 holds in the case
+r = 1.
+
+
+6 Final Remarks
+
+In this section, we discuss several related results and list further questions.
+Definition 6.1. Let Bn (q), the q-analog of the boolean algebra, be the graded poset whose elements are linear
+subspaces V ⊂ Fnq with V ≤ W if V ⊂ W .
+    A natural extension of Conjecture 1.3 would be an analogous result for q-analogs. We suspect the method used
+in Section 8 of the REU report to prove E(Bn ) is unitary Peck may solve Question 6.2.
+Question 6.2. Is E(Bn (q)) unitary Peck?
+   Let G be a group acting on Bn . If the answer to Question 6.2 is affirmative, it immediately follows that
+E(Bn (q))/G is Peck. Furthermore, if the action of G is CCT, then this implies that E(Bn (q)/G) is Peck. Hence
+we pose the following question.
+Question 6.3. For G a group with a CCT action on Bn (q), is E(Bn (q)/G) Peck?
+    More generally, we wonder if the q-analog of Conjecture 1.3 holds.
+Question 6.4. For G a group acting on Bn (q), is E(Bn (q)/G) Peck? If not, is E(Bn (q)/G) rank-unimodal?
+     We remark that Stanley was able to answer the rank unimodality question for many cases using hard Lefschetz
+type theorems, by realizing the ranks of the poset as ranks of cohomology groups coming from algebraic geometry
+[6].
+Question 6.5. Can we realize the ranks of E(Bn (q)/G), or even the edge poset itself, geometrically?
+    We found several additional interesting examples of CCT actions. Once such action is the linear automorphism
+of the n-cube. Using python code we wrote, we found that for n ≤ 3, the linear automorphisms of the n-cube
+induces a CCT action on B2n . We wonder if this generalizes.
+Question 6.6. Does the group of linear automorphisms of an n-cube in Rn whose vertices lie at (±1, . . . , ±1)
+                         n
+induce a CCT action on B2 ?
+    There is also the question of which regular polytopes induce CCT actions. We have shown that the n-octahedron
+(respectively the n-simplex) induces a CCT action on B2n (respectively Bn+1 ) in Subsection 4.2.2. We also checked
+                                                                n
+using python code that the n-cube induces a CCT action on B2 for n ≤ 3. We wonder whether the induced action
+is CCT for the five exceptional regular polytopes, which are the only regular polytopes other than simplices,
+octahedra, and cubes.
+18                                                                                                                 David Hemminger et al.
+
+
+Question 6.7. Do the groups of linear automorphisms of the five exceptional regular polytopes (namely the dodec-
+ahedron and icosahedron in R3 and the 24-cell, 120-cell, and 600-cell polytopes in R4 ) induce CCT actions?
+    We found using python code we wrote that the group of invertible linear maps on F32 acting on the the seven
+nonzero points of F32 induces an action on B7 which is CCT. We wonder if this generalizes to other groups of
+invertible linear maps on finite fields.
+Question 6.8. Is the action of GLn (Fq ) on Bqn −1 (induced by the action of GLn (Fq ) on (Fnq )× ) CCT? What about
+the action of PGLn (Fq ) on Bn (q)? If not, what about the action of PGLn (F2 ) on Bn (2)?
+
+Acknowledgements This research was carried out in the 2014 combinatorics REU program at the University of Minnesota, Twin Cities and
+was supported by RTG grant NSF/DMS-1148634. We would like to thank our mentor Victor Reiner for his consistent help and guidance
+throughout the project and our TA Elise DelMas for her helpful feedback on the paper. We would also like to thank Ka Yu Tam for helpful
+comments. In addition, we thank the math department of University of Minnesota, Twin Cities, for its hospitality and Gregg Musiker for
+organizing the program.
+
+     Conflict of Interest: The authors declare that they have no conflict of interest.
+
+
+
+References
+
+1. Eric Babson and Dmitry N. Kozlov. Group actions on posets. J. Algebra, 285:439–450, 2005.
+2. Curtis Greene and Daniel J. Kleitman. Proof techniques in the theory of finite sets. In Studies in combinatorics (MAA Stud. Math.),
+   volume 17, pages 22–79. Math. Assoc. America, Washington, D.C., 1978.
+3. Igor Pak and Greta Panova. Unimodality via Kronecker products. J. Algebraic Combin., 40:1103–1120, 2014.
+4. Robert A. Proctor. Representations of sl(2,C) on posets and the Sperner property. SIAM J. on Algebraic and Discrete Methods, 3:275–280,
+   1982.
+5. Richard P. Stanley. Weyl groups, the hard Lefschetz theorem, and the Sperner property. SIAM J. on Algebraic and Discrete Methods,
+   1:168–184, 1980.
+6. Richard P. Stanley. Combinatorial applications of the hard Lefschetz theorem. In Proceedings of the International Congress of Mathemati-
+   cians, Vol. 1, 2 (Warsaw, 1983), pages 447–453. PWN, Warsaw, 1984.
+7. Richard P. Stanley. Quotients of Peck posets. Order, 1:29–34, 1984.
+8. Richard P. Stanley. Enumerative Combinatorics, volume 1. Cambridge University Press, 2011.
+9. Richard P. Stanley. Algebraic Combinatorics. Undergraduate Texts in Mathematics. Springer, 2013.
+
+SOURCE primitive CHARS 103558
+TERM conjecture
+ve the following classification theorem, similar to the above.
+Theorem 1.3 ([8], Remark 7.5). The covariant functor
+                              L : gr+∨
+                                    S −→ p- LieS , G 7−→ Lie(G),
+defines an equivalence of categories.
+   Two of our main results generalize Theorem 1.1, resp. reduce to Theorem 1.3 via Cartier
+duality (when “q = p”). Moreover, we formulate two conjectures under which they unify.
+   Assume that S is an Fq -scheme for some prime power q = pr . Our group schemes G are
+affine, commutative, flat over S and carry an Fq -action. We require that locally on S, there
+is an embedding G ֒→ GN  a for some set N , which respects the Fq -actions.
+   The category of these group schemes will be denoted by Fq - Gr+    S , and its full subcategory
+of finite group schemes of finite presentation is called Fq - gr+
+                                                                S .
+   On the other hand, we consider left OS [F r ]-modules, which are flat as OS -modules. They
+are called Fq -shtukas over S, and their category is denoted by Fq - ShtS . We write Fq - shtS
+for the full subcategory of Fq - ShtS of locally free modules of finite rank over OS .
+   We study the following generalization of the contravariant functor (1.1),
+                 Mq = M : Fq - gr+
+                                 S −→ Fq - shtS , G 7−→ HomFq - Gr+ (G, Ga ).
+                                                                      S
+
+We also explain the construction of a functor in the other direction,
+                                 Gq = G : Fq - shtS −→ Fq - gr+
+                                                              S,
+which is fully faithful and left-adjoint to M. However, Gq does not define an equivalence
+of categories for q 6= p. Rather, we describe a full subcategory Fq - grS+,b of balanced group
+schemes in Fq - gr+
+                  S , and prove that it is the essential image of G.
+   Namely, let G = Spec(BG ) ∈ Fq - gr+ S . Then we show that the space of primitive elements
+in the affine algebra of G decomposes into eigenspaces for the F×  
+ quasi-balanced. For q 6= 4, the converse holds.
+   Finally, we consider the question whether M : Fq - Gr+,b
+                                                         S  → Fq - ShtS defines an equivalence
+of categories in general. In order to make sense of this, we have to assume the following.
+                                GROUP SCHEMES WITH Fq -ACTION                                       3
+
+
+Conjecture 1.6. For any G ∈ Fq - Gr+
+                                   S , the OS -module M(G) is flat.
+
+   Recall from above that it holds for finite G. Moreover assume the following key statement.
+Conjecture 1.7. For G ∈ Fq - Gr+
+                               S locally of finite presentation, locally on S, there exists an
+embedding G ֒→ GN
+                a , with N ∈ N, such that the morphism M(GN     a ) → M(G) is surjective.
+
+   This follows from Theorem 1.1 if S = Spec(k) is a point. Moreover, it is true in the finite
+case. We obtain the conditional result that M is an equivalence if we restrict ourselves to
+finitely presented group schemes and finitely generated OS [F r ]-modules, respectively.
+   In particular, if S = Spec(k), we obtain the following generalization of Theorem 1.2.
+Theorem 1.8. Let k be a perfect field. Then a balanced group scheme G ∈ Fq - Gr+,b
+                                                                               k   is
+algebraic if and only if it is isomorphic to a product
+                                     G∼= Gn × π0 (G) × H,
+                                                a
+with n ∈ N and H a product of group schemes of the form αqs , and where π0 (G) is an étale
+sheaf of finite Fq -vector spaces. If k is algebraically closed, π0 (G) ∼
+                                                                        = (Fq )m , for some m ∈ N.
+   Theorem 1.4 has an interesting history. In his article [4], §2, Drinfel’d defines the functor
+G : Fq - shtS → Fq - gr+
+                       S and shows that it is fully faithful and exact. Furthermore, he proves
+that the étale group schemes in Fq - gr+ S lie in the essential image of G.
+   In L
+nce
+of categories in general. In order to make sense of this, we have to assume the following.
+                                GROUP SCHEMES WITH Fq -ACTION                                       3
+
+
+Conjecture 1.6. For any G ∈ Fq - Gr+
+                                   S , the OS -module M(G) is flat.
+
+   Recall from above that it holds for finite G. Moreover assume the following key statement.
+Conjecture 1.7. For G ∈ Fq - Gr+
+                               S locally of finite presentation, locally on S, there exists an
+embedding G ֒→ GN
+                a , with N ∈ N, such that the morphism M(GN     a ) → M(G) is surjective.
+
+   This follows from Theorem 1.1 if S = Spec(k) is a point. Moreover, it is true in the finite
+case. We obtain the conditional result that M is an equivalence if we restrict ourselves to
+finitely presented group schemes and finitely generated OS [F r ]-modules, respectively.
+   In particular, if S = Spec(k), we obtain the following generalization of Theorem 1.2.
+Theorem 1.8. Let k be a perfect field. Then a balanced group scheme G ∈ Fq - Gr+,b
+                                                                               k   is
+algebraic if and only if it is isomorphic to a product
+                                     G∼= Gn × π0 (G) × H,
+                                                a
+with n ∈ N and H a product of group schemes of the form αqs , and where π0 (G) is an étale
+sheaf of finite Fq -vector spaces. If k is algebraically closed, π0 (G) ∼
+                                                                        = (Fq )m , for some m ∈ N.
+   Theorem 1.4 has an interesting history. In his article [4], §2, Drinfel’d defines the functor
+G : Fq - shtS → Fq - gr+
+                       S and shows that it is fully faithful and exact. Furthermore, he proves
+that the étale group schemes in Fq - gr+ S lie in the essential image of G.
+   In Laumon’s book [12], App. B, he claims that Fq - shtk is anti-equivalent to Fq - gr+  k , where
+k is a perfect field of characteristic p. However, Fq - gr+k  is not an abelian category  for  q 6= p,
+and
+ by (2.2), we have I p = 0. Thus 1 + I is isomorphic via
+                                                              ord(G)−1
+truncated exp and log to the finite free additive group I ∼
+                                                          = Ga         .                    
+
+Remark 3.3. Over a field A = k, all three conditions in Theorem 3.2 are equivalent, as
+shown in [3], IV, §3, 6.6. We conjecture that this holds over an arbitrary base scheme S.
+Remark 3.4. If condition (ii) in Theorem 3.2 holds, the Hopf algebra BG is also called
+primitively generated, i.e. it is generated as an algebra by its primitive elements.
+Example 3.5. The constant group scheme Fp over the Fp -algebra A embeds into Ga via the
+projection
+                               A[x] ։ A[x]/(xp − x).
+                                                             s
+The same holds for the group schemes αps = Spec A[x]/(xp ), for s ∈ N, since x is primitive
+by definition. That is, they are all of additive type.
+   We now compute the order of a finite group scheme G of additive type. This is the essential
+step towards our main theorem.
+8                                            THOMAS POGUNTKE
+
+
+Proposition 3.6. Let G ∈ gr+                             ∨   ∨
+                              A , and consider its dual B = BG . Locally on Spec A, there
+exists an algebra isomorphism
+                                    B∨ ∼                       p
+                                       = A[t1 , . . . , tn ]/(t1 , . . . , tpn ).
+Moreover, the A-module Prim(BG ) is locally free, and the order of G is given by
+                                          ord(G) = prk(Prim BG ) .
+Proof (cf. [8], §7.4.3 and [12], Lemma B.3.14). Let A be a local ring with residue field k.
+Let I be the augmentation ideal of B ∨ , which is then free of finite rank d. Write Ik := I ⊗ k,
+and choose a basis e1 , . . . , ed such that en+1 , . . . , ed is a basis of Ik2 . Let ti ∈ I be a lift of ei
+for 1 ≤ i ≤ d, so that t1 , . . . , td is an A-basis of I by Nakayama.
+   Now consider the free A-submodule M := spanA (t1 , . . . , tn ) ⊆
+rojection, then (π∗ LD , f ) is a finite Fq -shtuka over OS , where
+                                                                          ′
+                                                                π∗ f
+                         f (q) : FS∗ π∗ LD ∼
+                                           = π∗ (idD ×FS )∗ LD −−−→ π∗ LD .
+Drinfel’d [4] introduced F -sheaves in the proof of the Langlands conjecture for GL2 over a
+global field of characteristic p.
+  Let us remark here a simple dichotomy in the category Fq - shtk , where k is a perfect field.
+We will later use it to generalize Theorem 1.2.
+Lemma 4.4. Let k be a perfect field. For (M, f ) ∈ Fq - shtk , there is a unique decomposition
+                                (M, f ) = (Mss , fss ) ⊕ (Mnil , fnil )
+such that fss = f |Mss is bijective and fnil = f |Mnil is nilpotent.
+Proof (see [12], Lemma B.3.10). Since k is perfect, let us identify f (q) = f . Let
+                              \                          [
+                       Mss =      im(f n ), and Mnil =       ker(f n ).
+                                  n∈N                               n∈N
+
+Then there is some N ∈ N with Mss = im(f ) and Mnil = ker(f N ), so that in particular
+                                                   N
+
+                               dim(M ) = dim(Mss ) + dim(Mnil ).
+Now suppose that m ∈ Mss ∩ Mnil . Then we have m = f N (m′ ) for some m′ ∈ M , and we
+obtain f 2N (m′ ) = f N (m) = 0. But since ker(f 2N ) = ker(f N ), in fact m = f N (m′ ) = 0. 
+                                 GROUP SCHEMES WITH Fq -ACTION                                  11
+
+
+                               5. Fq -actions on group schemes
+Definition 5.1. Let S be an Fq -scheme, and G ∈ GrS . An Fq -action on G is a ring morphism
+                               [−]G : Fq −→ EndGrS (G), α 7−→ [α]G .
+A morphism of group schemes with Fq -action ϕ : (G, [−]G ) → (H, [−]H ) is a morphism of
+group schemes over S such that the diagram
+                                                         ϕ
+                                                G              H
+  
+ such that
+                                   X d
+                                   N X
+                           M ={              λa f a (xi ) | λa ∈ A, d ∈ N}.
+                                   i=1 a=0
+
+We denote by Fq - ShtA,f.g. the full subcategory of Fq - ShtA of locally finitely generated shtukas.
+  Trying to define the functor M in general, the first problem to arise is the following.
+Conjecture 8.2. Let G ∈ Gr+
+                          A . Then the A-module Prim(BG ) is flat.
+
+   Let us provisionally include the condition in the definition, and denote the corresponding
+full subcategories by Gr⊞           ⊞
+                         A , Fq - GrA , and so forth. Then we may define
+                                                                              ⊞
+            Mq = M : Fq - Gr⊞
+                            A −→ Fq - ShtA , and Gq = G : Fq - ShtA −→ Fq - GrA ,
+
+as before. Recall that Mq (G) is flat if Prim(BG ) is, cf. Remark 5.5.
+Remark 8.3. The routine verifications in §6, together with the following, show that the two
+functors are well-defined. Let (M, f ) ∈ Fq - ShtA . We can write M = lim Mi , where the Mi
+                                                                       −→
+are finitely generated`free A-modules, by [13], Théorème 1.2. For each i, choose a basis Ni
+of Mi , and set N := Ni . Denote by γi : Mi ֒→ Sym(Mi ) → lim Sym(Mi ). Then
+                                                               −→
+                 A[xn | n ∈ N ]    lim Sym(Mi ) ∼ = Sym(M )       Sym(M )/f,
+                                   −→
+                       xn             γi (n), when n ∈ Ni ,
+
+yields G(M, f ) ֒→ GN
+                    a , by universality Fq -equivariantly. Thus G(M, f ) is of Fq -additive type.
+
+  The adjunction (cf. [12], Lemma B.3.9) holds in this generality.
+Lemma 8.4. The functors G and M form an adjoint pair (G, M) of Fq -linear functors, that
+is, there exist bifunctorial isomorphisms of Fq -vector spaces
+                   HomFq - GrA (G, G(M, f )) −−∼
+                                               −→ HomFq - ShtA ((M, f ), M(
+e Fq -linearity is trivial, as it reduces to the statement that [α]∗ , for α ∈ Fq , acts on the
+eigenspace Prim1 (−) by scalar multiplication.                                                    
+   In order to show the analogue of Theorem 6.5, we would like to restrict ourselves to group
+schemes which are locally of finite presentation over the base. However, the following question
+remains open.
+Conjecture 8.5. Let G ∈ Gr⊞ A be locally finitely presented over A. Then there exists a closed
+embedding ι : G ֒→ GN
+                    a , N ∈ N, locally on Spec A, such that the induced morphism
+
+                                ι∗ : Mp (GN          N
+                                          a ) = A[F ] −→ Mp (G)
+is surjective.
+Remark 8.6. It seems reasonable to presume that if G satisfies Conjecture 8.5, then indeed
+any embedding G ֒→ GN     a , N ∈ N, induces a surjection on the primitive elements. Certainly,
+if A = k is a field, this is true by exactness of M, cf. Theorem 1.1.
+   Moreover, recall that it holds for finite G over any base A, cf. (5.4).
+Remark 8.7. The restricted functor M : Fq - Gr⊞ A,f.p. → Fq - ShtA,f.g. is well-defined, assuming
+Conjecture 8.5 holds. For this, we have to see that for a surjective morphism as there,
+                             ι∗ : A[x1 , . . . , xN ] −։ BG in Fq - Hopf A ,
+the elements ι∗ (x1 ), . . . , ι∗ (xN ) ∈ Prim1 (BG ) form a system of generators under x 7→ xq . But
+indeed, recall from Proposition 3.9 that
+                                                           a
+                     Prim1 (A[x1 , . . . , xN ]) = spanA (xqi | 1 ≤ i ≤ N, a ∈ N).
+On the other hand, Conjecture 8.5 implies that M(ι) = ι∗ |P1 surjects onto Prim1 (BG ), as in
+the proof of Theorem 5.10.
+Lemma 8.8. Assume Conjecture 8.5. For G ∈ Fq - Gr⊞    A,f.p. , the following are equivalent.
+                                                 p
+    (i) ft : Primp (BG ) → Primpt+1 (BG ), x 7→ x , is bijective, for 0 ≤ t < r − 1.
+                  t
+
+                                                                      r−1
+     (ii) The map f ′ : Prim1 (BG ) → Pr
+en.
+Conjecture 8.5. Let G ∈ Gr⊞ A be locally finitely presented over A. Then there exists a closed
+embedding ι : G ֒→ GN
+                    a , N ∈ N, locally on Spec A, such that the induced morphism
+
+                                ι∗ : Mp (GN          N
+                                          a ) = A[F ] −→ Mp (G)
+is surjective.
+Remark 8.6. It seems reasonable to presume that if G satisfies Conjecture 8.5, then indeed
+any embedding G ֒→ GN     a , N ∈ N, induces a surjection on the primitive elements. Certainly,
+if A = k is a field, this is true by exactness of M, cf. Theorem 1.1.
+   Moreover, recall that it holds for finite G over any base A, cf. (5.4).
+Remark 8.7. The restricted functor M : Fq - Gr⊞ A,f.p. → Fq - ShtA,f.g. is well-defined, assuming
+Conjecture 8.5 holds. For this, we have to see that for a surjective morphism as there,
+                             ι∗ : A[x1 , . . . , xN ] −։ BG in Fq - Hopf A ,
+the elements ι∗ (x1 ), . . . , ι∗ (xN ) ∈ Prim1 (BG ) form a system of generators under x 7→ xq . But
+indeed, recall from Proposition 3.9 that
+                                                           a
+                     Prim1 (A[x1 , . . . , xN ]) = spanA (xqi | 1 ≤ i ≤ N, a ∈ N).
+On the other hand, Conjecture 8.5 implies that M(ι) = ι∗ |P1 surjects onto Prim1 (BG ), as in
+the proof of Theorem 5.10.
+Lemma 8.8. Assume Conjecture 8.5. For G ∈ Fq - Gr⊞    A,f.p. , the following are equivalent.
+                                                 p
+    (i) ft : Primp (BG ) → Primpt+1 (BG ), x 7→ x , is bijective, for 0 ≤ t < r − 1.
+                  t
+
+                                                                      r−1
+     (ii) The map f ′ : Prim1 (BG ) → Primpr−1 (BG ), x 7→ xp               , is injective.
+Proof. The claim tautologically follows from the analogue of Theorem 5.10, the key ingredient
+in the proof of which is precisely Conjecture 8.5.                                         
+Definition 8.9. We say G ∈ Fq - Gr⊞    A,f.p. is balanced if the conditions in Lemma 8.8 hold.
+                    ⊞,b
+We denote by Fq - GrA,f.p. the full su
+TERM flat
+                            GROUP SCHEMES WITH Fq -ACTION
+
+                                                                                   THOMAS POGUNTKE
+
+
+                                                   Abstract. Via a construction due to V. Drinfel’d, we prove an equivalence of categories,
+                                                   generalizing the equivalence between commutative flat group schemes in characteristic p
+                                                   with trivial Verschiebung and their Dieudonné modules to group schemes with Fq -action.
+
+
+
+
+arXiv:1502.02150v3 [math.AG] 10 Jan 2018
+                                                                                        Contents
+                                             1. Introduction                                                                                   1
+                                             2. Preliminaries on group schemes                                                                 4
+                                             3. Group schemes of additive type                                                                 7
+                                             4. The category of Fq -shtukas                                                                   10
+                                             5. Fq -actions on group schemes                                                                  11
+                                             6. The functors G and M                                                                          14
+                                             7. Quasi-balanced group schemes                                                                  17
+                                             8. The infinite case                                                                             21
+                                             References                                                                                       25
+
+
+
+                                                                       
+ 14L15, 14L17.
+                                             Key words and phrases. Group schemes, shtukas, Verschiebung.
+                                                                                              1
+2                                       THOMAS POGUNTKE
+
+
+   On the other hand, let S be a scheme of characteristic p. Consider the category gr+∨     S
+of locally finitely presented flat group schemes over S of height ≤ 1 (i.e. killed by their
+Frobenius). Let p- LieS denote the category of finite locally free OS -p-Lie algebras. Then we
+have the following classification theorem, similar to the above.
+Theorem 1.3 ([8], Remark 7.5). The covariant functor
+                              L : gr+∨
+                                    S −→ p- LieS , G 7−→ Lie(G),
+defines an equivalence of categories.
+   Two of our main results generalize Theorem 1.1, resp. reduce to Theorem 1.3 via Cartier
+duality (when “q = p”). Moreover, we formulate two conjectures under which they unify.
+   Assume that S is an Fq -scheme for some prime power q = pr . Our group schemes G are
+affine, commutative, flat over S and carry an Fq -action. We require that locally on S, there
+is an embedding G ֒→ GN  a for some set N , which respects the Fq -actions.
+   The category of these group schemes will be denoted by Fq - Gr+    S , and its full subcategory
+of finite group schemes of finite presentation is called Fq - gr+
+                                                                S .
+   On the other hand, we consider left OS [F r ]-modules, which are flat as OS -modules. They
+are called Fq -shtukas over S, and their category is denoted by Fq - ShtS . We write Fq - shtS
+for the full subcategory of Fq - ShtS of locally free modules of finite rank over OS .
+   We study the following generalization of the contravariant functor (1.1),
+                 Mq = M : Fq - gr+
+                                 S −→ Fq - shtS , G 7−→ HomFq - Gr+ (G, Ga ).
+                                                                      S
+
+We also explain the construction of a functor in the other direction,
+     
+ L : gr+∨
+                                    S −→ p- LieS , G 7−→ Lie(G),
+defines an equivalence of categories.
+   Two of our main results generalize Theorem 1.1, resp. reduce to Theorem 1.3 via Cartier
+duality (when “q = p”). Moreover, we formulate two conjectures under which they unify.
+   Assume that S is an Fq -scheme for some prime power q = pr . Our group schemes G are
+affine, commutative, flat over S and carry an Fq -action. We require that locally on S, there
+is an embedding G ֒→ GN  a for some set N , which respects the Fq -actions.
+   The category of these group schemes will be denoted by Fq - Gr+    S , and its full subcategory
+of finite group schemes of finite presentation is called Fq - gr+
+                                                                S .
+   On the other hand, we consider left OS [F r ]-modules, which are flat as OS -modules. They
+are called Fq -shtukas over S, and their category is denoted by Fq - ShtS . We write Fq - shtS
+for the full subcategory of Fq - ShtS of locally free modules of finite rank over OS .
+   We study the following generalization of the contravariant functor (1.1),
+                 Mq = M : Fq - gr+
+                                 S −→ Fq - shtS , G 7−→ HomFq - Gr+ (G, Ga ).
+                                                                      S
+
+We also explain the construction of a functor in the other direction,
+                                 Gq = G : Fq - shtS −→ Fq - gr+
+                                                              S,
+which is fully faithful and left-adjoint to M. However, Gq does not define an equivalence
+of categories for q 6= p. Rather, we describe a full subcategory Fq - grS+,b of balanced group
+schemes in Fq - gr+
+                  S , and prove that it is the essential image of G.
+   Namely, let G = Spec(BG ) ∈ Fq - gr+ S . Then we show that the space of primitive elements
+in the affine algebra of G decomposes into eigenspaces for the F×  q -action as
+                                               r−1
+                                               M
+                                
+at locally on S, there
+is an embedding G ֒→ GN  a for some set N , which respects the Fq -actions.
+   The category of these group schemes will be denoted by Fq - Gr+    S , and its full subcategory
+of finite group schemes of finite presentation is called Fq - gr+
+                                                                S .
+   On the other hand, we consider left OS [F r ]-modules, which are flat as OS -modules. They
+are called Fq -shtukas over S, and their category is denoted by Fq - ShtS . We write Fq - shtS
+for the full subcategory of Fq - ShtS of locally free modules of finite rank over OS .
+   We study the following generalization of the contravariant functor (1.1),
+                 Mq = M : Fq - gr+
+                                 S −→ Fq - shtS , G 7−→ HomFq - Gr+ (G, Ga ).
+                                                                      S
+
+We also explain the construction of a functor in the other direction,
+                                 Gq = G : Fq - shtS −→ Fq - gr+
+                                                              S,
+which is fully faithful and left-adjoint to M. However, Gq does not define an equivalence
+of categories for q 6= p. Rather, we describe a full subcategory Fq - grS+,b of balanced group
+schemes in Fq - gr+
+                  S , and prove that it is the essential image of G.
+   Namely, let G = Spec(BG ) ∈ Fq - gr+ S . Then we show that the space of primitive elements
+in the affine algebra of G decomposes into eigenspaces for the F×  q -action as
+                                               r−1
+                                               M
+                                 Prim(BG ) =         Primps (BG ).                          (1.2)
+                                               s=0
+Now G is called balanced, if the p-Frobenii Primpt (BG ) → Primpt+1 (BG ), x 7→ xp , are
+bijective for all 0 ≤ t < r − 1. Note that when q = p, we recover Fp - grS+,b = gr+
+                                                                                  S.
+
+Theorem 1.4. The functor G : Fq - shtS → Fq - gr+,b
+                      
+q - Gr+,b
+                                                         S  → Fq - ShtS defines an equivalence
+of categories in general. In order to make sense of this, we have to assume the following.
+                                GROUP SCHEMES WITH Fq -ACTION                                       3
+
+
+Conjecture 1.6. For any G ∈ Fq - Gr+
+                                   S , the OS -module M(G) is flat.
+
+   Recall from above that it holds for finite G. Moreover assume the following key statement.
+Conjecture 1.7. For G ∈ Fq - Gr+
+                               S locally of finite presentation, locally on S, there exists an
+embedding G ֒→ GN
+                a , with N ∈ N, such that the morphism M(GN     a ) → M(G) is surjective.
+
+   This follows from Theorem 1.1 if S = Spec(k) is a point. Moreover, it is true in the finite
+case. We obtain the conditional result that M is an equivalence if we restrict ourselves to
+finitely presented group schemes and finitely generated OS [F r ]-modules, respectively.
+   In particular, if S = Spec(k), we obtain the following generalization of Theorem 1.2.
+Theorem 1.8. Let k be a perfect field. Then a balanced group scheme G ∈ Fq - Gr+,b
+                                                                               k   is
+algebraic if and only if it is isomorphic to a product
+                                     G∼= Gn × π0 (G) × H,
+                                                a
+with n ∈ N and H a product of group schemes of the form αqs , and where π0 (G) is an étale
+sheaf of finite Fq -vector spaces. If k is algebraically closed, π0 (G) ∼
+                                                                        = (Fq )m , for some m ∈ N.
+   Theorem 1.4 has an interesting history. In his article [4], §2, Drinfel’d defines the functor
+G : Fq - shtS → Fq - gr+
+                       S and shows that it is fully faithful and exact. Furthermore, he proves
+that the étale group schemes in Fq - gr+ S lie in the essential image of G.
+   In Laumon’s book [12], App. B, he claims that Fq - shtk is anti-equivalent to Fq - gr+  k , where
+k is 
+quare.
+
+                                  X
+                                          FX
+
+
+                                               X (p)        S
+                                FrobX               ·y          FrobS
+
+                                                X          S.
+In particular, FX is a morphism of S-schemes.
+Definition 2.2. We denote by GrS the category of affine commutative flat group schemes
+over S, and its full subcategory of finite group schemes locally of finite presentation by grS .
+Convention: All of our considerations take place locally on S. To emphasize when we
+assume S = Spec A, we will write GrA = GrS . We also fix G = Spec BG as a notation.
+Definition 2.3. We write Hopf A , resp. hopf A , for the opposite category of GrA , resp. grA .
+Definition 2.4. Let G = Spec BG ∈ GrA . Consider the symmetrization morphism
+                 ⊗p
+                                                      X
+            s : BG  −→ TSp (BG ), x1 ⊗ . . . ⊗ xp 7−→   xπ(1) ⊗ . . . ⊗ xπ(p) ,             (2.1)
+                                                           π∈Sp
+
+                     ⊗p Sp
+where TSp (BG ) := (BG ) . Since G is flat, x 7→ x⊗p induces an isomorphism
+                                              ∼→ TSp (B )/s(B ⊗p ),
+                        σp∗ BG := BG ⊗A,σp A −−        G     G
+
+see [3], IV, §3, 4.1. Here, σp denotes the Frobenius of A, and so we have G(p) = Spec(σp∗ BG ),
+which is by the above a closed subscheme of Sp G := Spec(TSp (BG )). The Verschiebung of
+G is then defined as the composition
+                                                         mult
+                                  VG : G(p) ֒−→ Sp G −−−→ G,
+where mult is the p-fold multiplication on G, which factors over Sp G, since G is commutative.
+Remark 2.5. We have FG ◦ VG = p · idG , and VG ◦ FG = p · idG(p) , by [3], IV, §3, 4.6. On
+affine algebras, VG∗ acts by taking p-th “copowers”. In this sense, it is dual to the (relative)
+Frobenius, which we make precise below. The name (German for “shift”) comes from the
+Verschiebung on Witt (co-)vectors, where it acts as an i
+ GrA , resp. grA .
+Definition 2.4. Let G = Spec BG ∈ GrA . Consider the symmetrization morphism
+                 ⊗p
+                                                      X
+            s : BG  −→ TSp (BG ), x1 ⊗ . . . ⊗ xp 7−→   xπ(1) ⊗ . . . ⊗ xπ(p) ,             (2.1)
+                                                           π∈Sp
+
+                     ⊗p Sp
+where TSp (BG ) := (BG ) . Since G is flat, x 7→ x⊗p induces an isomorphism
+                                              ∼→ TSp (B )/s(B ⊗p ),
+                        σp∗ BG := BG ⊗A,σp A −−        G     G
+
+see [3], IV, §3, 4.1. Here, σp denotes the Frobenius of A, and so we have G(p) = Spec(σp∗ BG ),
+which is by the above a closed subscheme of Sp G := Spec(TSp (BG )). The Verschiebung of
+G is then defined as the composition
+                                                         mult
+                                  VG : G(p) ֒−→ Sp G −−−→ G,
+where mult is the p-fold multiplication on G, which factors over Sp G, since G is commutative.
+Remark 2.5. We have FG ◦ VG = p · idG , and VG ◦ FG = p · idG(p) , by [3], IV, §3, 4.6. On
+affine algebras, VG∗ acts by taking p-th “copowers”. In this sense, it is dual to the (relative)
+Frobenius, which we make precise below. The name (German for “shift”) comes from the
+Verschiebung on Witt (co-)vectors, where it acts as an index shift (cf. [7], III, §3.1).
+Definition 2.6. For G ∈ GrA , let η : BG → A be the augmentation – or counit – of BG ,
+given by the unit section of G. The augmentation ideal of G is defined by IG = ker(η).
+                                 GROUP SCHEMES WITH Fq -ACTION                                     5
+
+
+Remark 2.7. The short exact sequence
+                                                        η
+                                  0 −→ IG −→ BG −−→ A −→ 0
+is split on the right by the unit ε : A → BG of BG , so that in fact BG = A ⊕ IG . In particular,
+the A-module IG is flat.
+Definition 2.8. Let G ∈ GrA . The space of primitive elements in BG is defined by
+                          Prim(BG ) := {x ∈ IG | ∆(x) = x ⊗ 1 + 1 ⊗ x},
+where ∆ is the comu
+ defined by IG = ker(η).
+                                 GROUP SCHEMES WITH Fq -ACTION                                     5
+
+
+Remark 2.7. The short exact sequence
+                                                        η
+                                  0 −→ IG −→ BG −−→ A −→ 0
+is split on the right by the unit ε : A → BG of BG , so that in fact BG = A ⊕ IG . In particular,
+the A-module IG is flat.
+Definition 2.8. Let G ∈ GrA . The space of primitive elements in BG is defined by
+                          Prim(BG ) := {x ∈ IG | ∆(x) = x ⊗ 1 + 1 ⊗ x},
+where ∆ is the comultiplication on BG , i.e. the map induced by the multiplication of G. The
+subgroup of group-like elements of BG is defined by
+                        Grp(BG ) := {x ∈ BG | ∆(x) = x ⊗ x, η(x) = 1},
+where η : BG → A is the counit of BG .
+Example 2.9. The group structure on Ga = Spec A[x] is defined by x ∈ Prim(BGa ). Hence
+                             Prim(BG ) ∼
+                                       = Hom(G, Ga ),
+for G ∈ GrA , by the universal property of the polynomial algebra.
+Remark 2.10. Let G ∈ GrA and x ∈ IG . Then
+                               ∆(x) ≡ x ⊗ 1 + 1 ⊗ x mod IG ⊗ IG ,
+cf. [20], §2.3. This explains the name “primitive element”.
+Example 2.11. Let x ∈ BG . On x ∈ Prim(BG ), the Verschiebung vanishes,
+                                                                 1
+    VG∗ (x) = x ⊗ 1 ⊗ . . . ⊗ 1 + . . . + 1 ⊗ . . . ⊗ 1 ⊗ x =          s(x ⊗ 1 ⊗ . . . ⊗ 1) ≡ 0,
+                                                              (p − 1)!
+where s is the morphism (2.1). On the other hand, if x ∈ Grp(BG ), then
+                                 V ∗ (x) = x⊗p ∼
+                                       G       = x ⊗σ 1          p
+
+acts identically.
+Proposition 2.12. Let G = Spec B and H = Spec C be affine group schemes over A. Then
+the primitive elements
+                           Prim(B ⊗ C) = Prim(B) ⊗ 1 + 1 ⊗ Prim(C)
+are compatible with tensor products.
+Proof. We have to show that the isomorphism
+Prim(B)×Prim(C) −−  ∼→ Hom(G, G )×Hom(H, G ) −−
+                                              ∼→ 
+TERM Gr+
+                                  21
+                                             References                                                                                       25
+
+
+
+                                                                                    1. Introduction
+                                              Let p be a prime and let k be a field of characteristic p. Denote by Gr+  k the category of
+                                           affine commutative group schemes over k which can be embedded into GN       a for some set N .
+                                           We assign to G ∈ Gr+ k its Dieudonné F p -module M(G)   = Hom    +
+                                                                                                           Grk (G, G a with the obvious
+                                                                                                                      ),
+                                                                                    ∼
+                                           left module structure over EndGr+ (Ga ) = k[F ], the non-commutative polynomial ring with
+                                                                               k
+
+                                                                                   F λ = λp F for λ ∈ k.
+                                           These Dieudonné modules completely classify group schemes of the above type, as follows.
+                                           Theorem 1.1 ([3], IV, §3, 6.7). The contravariant functor M defines an exact anti-equivalence
+                                           of categories
+                                                                              M : Gr+
+                                                                                    k −→ k[F ] -Mod .                             (1.1)
+                                           Under this duality, algebraic group schemes correspond to finitely generated k[F ]-modules,
+                                           and finite group schemes to finite-dim
+                                                1. Introduction
+                                              Let p be a prime and let k be a field of characteristic p. Denote by Gr+  k the category of
+                                           affine commutative group schemes over k which can be embedded into GN       a for some set N .
+                                           We assign to G ∈ Gr+ k its Dieudonné F p -module M(G)   = Hom    +
+                                                                                                           Grk (G, G a with the obvious
+                                                                                                                      ),
+                                                                                    ∼
+                                           left module structure over EndGr+ (Ga ) = k[F ], the non-commutative polynomial ring with
+                                                                               k
+
+                                                                                   F λ = λp F for λ ∈ k.
+                                           These Dieudonné modules completely classify group schemes of the above type, as follows.
+                                           Theorem 1.1 ([3], IV, §3, 6.7). The contravariant functor M defines an exact anti-equivalence
+                                           of categories
+                                                                              M : Gr+
+                                                                                    k −→ k[F ] -Mod .                             (1.1)
+                                           Under this duality, algebraic group schemes correspond to finitely generated k[F ]-modules,
+                                           and finite group schemes to finite-dimensional k-vector spaces.
+                                             The above result allows us to describe the structure of our category over a perfect field,
+                                           and its simple o
+                                                                                           Grk (G, G a with the obvious
+                                                                                                                      ),
+                                                                                    ∼
+                                           left module structure over EndGr+ (Ga ) = k[F ], the non-commutative polynomial ring with
+                                                                               k
+
+                                                                                   F λ = λp F for λ ∈ k.
+                                           These Dieudonné modules completely classify group schemes of the above type, as follows.
+                                           Theorem 1.1 ([3], IV, §3, 6.7). The contravariant functor M defines an exact anti-equivalence
+                                           of categories
+                                                                              M : Gr+
+                                                                                    k −→ k[F ] -Mod .                             (1.1)
+                                           Under this duality, algebraic group schemes correspond to finitely generated k[F ]-modules,
+                                           and finite group schemes to finite-dimensional k-vector spaces.
+                                             The above result allows us to describe the structure of our category over a perfect field,
+                                           and its simple objects if the base is algebraically closed.
+                                           Theorem 1.2 ([3], IV, §3, 6.9). Let k be a perfect field. Then G ∈ Gr+
+                                                                                                                k is algebraic if and
+                                           only if it can be written as a product
+                                                                               G∼ = Gn × π0 (
+                                  These Dieudonné modules completely classify group schemes of the above type, as follows.
+                                           Theorem 1.1 ([3], IV, §3, 6.7). The contravariant functor M defines an exact anti-equivalence
+                                           of categories
+                                                                              M : Gr+
+                                                                                    k −→ k[F ] -Mod .                             (1.1)
+                                           Under this duality, algebraic group schemes correspond to finitely generated k[F ]-modules,
+                                           and finite group schemes to finite-dimensional k-vector spaces.
+                                             The above result allows us to describe the structure of our category over a perfect field,
+                                           and its simple objects if the base is algebraically closed.
+                                           Theorem 1.2 ([3], IV, §3, 6.9). Let k be a perfect field. Then G ∈ Gr+
+                                                                                                                k is algebraic if and
+                                           only if it can be written as a product
+                                                                               G∼ = Gn × π0 (G) × H,
+                                                                                         a
+                                           where n ∈ N, H is a finite product of group schemes of the form αps , and π0 (G) is an étale
+                                           sheaf of finite Fp -vector spaces. If k is algebraically closed, then
+                                                                                π0 (G) ∼= (Fp )m , m ∈ N.
+                                             Date: October 15, 2018.
+                                             2010 Mathematics Subject Classification. 14L15, 14L17.
+                                
+oup schemes to finite-dimensional k-vector spaces.
+                                             The above result allows us to describe the structure of our category over a perfect field,
+                                           and its simple objects if the base is algebraically closed.
+                                           Theorem 1.2 ([3], IV, §3, 6.9). Let k be a perfect field. Then G ∈ Gr+
+                                                                                                                k is algebraic if and
+                                           only if it can be written as a product
+                                                                               G∼ = Gn × π0 (G) × H,
+                                                                                         a
+                                           where n ∈ N, H is a finite product of group schemes of the form αps , and π0 (G) is an étale
+                                           sheaf of finite Fp -vector spaces. If k is algebraically closed, then
+                                                                                π0 (G) ∼= (Fp )m , m ∈ N.
+                                             Date: October 15, 2018.
+                                             2010 Mathematics Subject Classification. 14L15, 14L17.
+                                             Key words and phrases. Group schemes, shtukas, Verschiebung.
+                                                                                              1
+2                                       THOMAS POGUNTKE
+
+
+   On the other hand, let S be a scheme of characteristic p. Consider the category gr+∨     S
+of locally finitely presented flat group schemes over S of height ≤ 1 (i.e. killed by their
+Frobenius). Let p- LieS denote the category of finite locally free OS -p-Lie algebras. Then we
+have the following classification theorem, similar to the above.
+Theorem 1.3 ([8], Remark 7.5). The covariant functor
+                              L : gr+∨
+                                    S −→ p- LieS , G 7−→ Lie(G),
+ 2010 Mathematics Subject Classification. 14L15, 14L17.
+                                             Key words and phrases. Group schemes, shtukas, Verschiebung.
+                                                                                              1
+2                                       THOMAS POGUNTKE
+
+
+   On the other hand, let S be a scheme of characteristic p. Consider the category gr+∨     S
+of locally finitely presented flat group schemes over S of height ≤ 1 (i.e. killed by their
+Frobenius). Let p- LieS denote the category of finite locally free OS -p-Lie algebras. Then we
+have the following classification theorem, similar to the above.
+Theorem 1.3 ([8], Remark 7.5). The covariant functor
+                              L : gr+∨
+                                    S −→ p- LieS , G 7−→ Lie(G),
+defines an equivalence of categories.
+   Two of our main results generalize Theorem 1.1, resp. reduce to Theorem 1.3 via Cartier
+duality (when “q = p”). Moreover, we formulate two conjectures under which they unify.
+   Assume that S is an Fq -scheme for some prime power q = pr . Our group schemes G are
+affine, commutative, flat over S and carry an Fq -action. We require that locally on S, there
+is an embedding G ֒→ GN  a for some set N , which respects the Fq -actions.
+   The category of these group schemes will be denoted by Fq - Gr+    S , and its full subcategory
+of finite group schemes of finite presentation is called Fq - gr+
+                                                                S .
+   On the other hand, we consider left OS [F r ]-modules, which are flat as OS -modules. They
+are called Fq -shtukas over S, and their category is denoted by Fq - ShtS . We write Fq - shtS
+for the full subcategory of Fq - ShtS of locally free modules of finite rank over OS .
+   We study the following generalization of the contravariant functor (1.1),
+                 Mq = M : Fq - gr+
+                                 S −→ Fq - shtS , G 7−→ HomFq - Gr+ (G, Ga ).
+                                                                      S
+
+We also explain the construction o
+scheme of characteristic p. Consider the category gr+∨     S
+of locally finitely presented flat group schemes over S of height ≤ 1 (i.e. killed by their
+Frobenius). Let p- LieS denote the category of finite locally free OS -p-Lie algebras. Then we
+have the following classification theorem, similar to the above.
+Theorem 1.3 ([8], Remark 7.5). The covariant functor
+                              L : gr+∨
+                                    S −→ p- LieS , G 7−→ Lie(G),
+defines an equivalence of categories.
+   Two of our main results generalize Theorem 1.1, resp. reduce to Theorem 1.3 via Cartier
+duality (when “q = p”). Moreover, we formulate two conjectures under which they unify.
+   Assume that S is an Fq -scheme for some prime power q = pr . Our group schemes G are
+affine, commutative, flat over S and carry an Fq -action. We require that locally on S, there
+is an embedding G ֒→ GN  a for some set N , which respects the Fq -actions.
+   The category of these group schemes will be denoted by Fq - Gr+    S , and its full subcategory
+of finite group schemes of finite presentation is called Fq - gr+
+                                                                S .
+   On the other hand, we consider left OS [F r ]-modules, which are flat as OS -modules. They
+are called Fq -shtukas over S, and their category is denoted by Fq - ShtS . We write Fq - shtS
+for the full subcategory of Fq - ShtS of locally free modules of finite rank over OS .
+   We study the following generalization of the contravariant functor (1.1),
+                 Mq = M : Fq - gr+
+                                 S −→ Fq - shtS , G 7−→ HomFq - Gr+ (G, Ga ).
+                                                                      S
+
+We also explain the construction of a functor in the other direction,
+                                 Gq = G : Fq - shtS −→ Fq - gr+
+                                                              S,
+which is fully faithful and left-adjoint to M. However, Gq does not define an equivalence
+of categories for q 6= p. Rather, we describe a full subcategory Fq - grS+,b of balanced group
+
+(when “q = p”). Moreover, we formulate two conjectures under which they unify.
+   Assume that S is an Fq -scheme for some prime power q = pr . Our group schemes G are
+affine, commutative, flat over S and carry an Fq -action. We require that locally on S, there
+is an embedding G ֒→ GN  a for some set N , which respects the Fq -actions.
+   The category of these group schemes will be denoted by Fq - Gr+    S , and its full subcategory
+of finite group schemes of finite presentation is called Fq - gr+
+                                                                S .
+   On the other hand, we consider left OS [F r ]-modules, which are flat as OS -modules. They
+are called Fq -shtukas over S, and their category is denoted by Fq - ShtS . We write Fq - shtS
+for the full subcategory of Fq - ShtS of locally free modules of finite rank over OS .
+   We study the following generalization of the contravariant functor (1.1),
+                 Mq = M : Fq - gr+
+                                 S −→ Fq - shtS , G 7−→ HomFq - Gr+ (G, Ga ).
+                                                                      S
+
+We also explain the construction of a functor in the other direction,
+                                 Gq = G : Fq - shtS −→ Fq - gr+
+                                                              S,
+which is fully faithful and left-adjoint to M. However, Gq does not define an equivalence
+of categories for q 6= p. Rather, we describe a full subcategory Fq - grS+,b of balanced group
+schemes in Fq - gr+
+                  S , and prove that it is the essential image of G.
+   Namely, let G = Spec(BG ) ∈ Fq - gr+ S . Then we show that the space of primitive elements
+in the affine algebra of G decomposes into eigenspaces for the F×  q -action as
+                                               r−1
+                                               M
+                                 Prim(BG ) =         Primps (BG ).                          (1.2)
+                                               s=0
+Now G is called balanced, if the p-Frobenii Primpt (BG ) → Primpt+1 (BG ), x 7→ xp , are
+biject
+TERM infinite
+                                                       11
+                                             6. The functors G and M                                                                          14
+                                             7. Quasi-balanced group schemes                                                                  17
+                                             8. The infinite case                                                                             21
+                                             References                                                                                       25
+
+
+
+                                                                                    1. Introduction
+                                              Let p be a prime and let k be a field of characteristic p. Denote by Gr+  k the category of
+                                           affine commutative group schemes over k which can be embedded into GN       a for some set N .
+                                           We assign to G ∈ Gr+ k its Dieudonné F p -module M(G)   = Hom    +
+                                                                                                           Grk (G, G a with the obvious
+                                                                                                                      ),
+                                                                                    ∼
+                                           left module structure over EndGr+ (Ga ) = k[F ], the non-commutative polynomial ring with
+                                                                               k
+
+                                                                                   F λ = λp F for λ ∈ k.
+                                           These Dieudonné modules completely classify group schemes of the above type, as follows.
+                                           Theorem 1.1 ([3], IV, §3, 6.7). The contravariant functor M defines an exact anti-equivalence
+                                       
+                                   A , respectively, and study their
+internal structure. Section §6 is concerned with the construction of the functors M and G, a
+more detailed analysis of their properties, and the proof of Theorem 1.4.
+   In §7, we introduce quasi-balanced group schemes, and compare the two balance conditions.
+Finally, §8 concerns the question what we can still say in the case of infinite group schemes.
+4                                       THOMAS POGUNTKE
+
+
+                                    Acknowledgements
+   I would like to thank M. Rapoport for suggesting this topic, for his constant interest and
+his suggestions. I thank U. Hartl for granting us access to an early draft of the paper [11] with
+Singh. I am indebted to Lisa Sauermann for her contribution to the penultimate section. I
+would also like to thank M. Raynaud for interesting correspondences on group schemes with
+trivial Verschiebung. G. Faltings pointed out some mistakes in a preliminary version of the
+manuscript; for this I am grateful. Finally, I would like to thank the anonymous referee for
+very helpful suggestions and comments.
+
+                           2. Preliminaries on group schemes
+    Let p be a prime number, and S a scheme of characteristic p.
+Definition 2.1. For an S-scheme X, denote by FrobX : X → X its Frobenius endomorphism.
+Let X (p) = X ×S,FrobS S. The relative Frobenius FX : X → X (p) of X is defined by the
+following diagram with cartesian square.
+
+                                  X
+                                          FX
+
+
+                                               X (p)        S
+                                FrobX               ·y          FrobS
+
+                                                X          S.
+In particular, FX is a morphism of S-schemes.
+Definition 2.2. We denote by GrS the category of affine commutative flat group schemes
+over S, and its full subcategory of finite group schemes locally of finite presentation by grS .
+Convention: All of our considerations take place locally on S. To emphasize when we
+assume S = Spec A, we will write 
+12 hold for G. The full subcategory of Fq - gr+
+                                                                                      A of
+balanced group schemes will be called Fq - gr+,b
+                                             A   .
+
+Remark 5.14. In [19], Taguchi defines Fq - gr+,bA using condition (iv) from Lemma 5.12. The
+first two conditions will be useful to generalize the definition to infinite group schemes.
+
+Remark 5.15. We have Fp - gr+,b   +
+                            A = grA , since the condition on the p-Frobenii is empty.
+14                                       THOMAS POGUNTKE
+
+                                                             s
+Example 5.16. Consider G = αps = Spec A[x]/(xp ) with the usual Fq -action [α]∗ x = αx
+for α ∈ Fq . Then
+                            αps is balanced ⇐⇒ r|s.
+                                              s−1
+Indeed, Prim(Bαps ) = spanA (x, xp , . . . , xp     ) by Proposition 3.9, and therefore
+                                                         a
+                            Prim1 (Bαps ) = spanA (xq | 0 ≤ a < s/r),
+                                s
+since ps ≡ 1 mod q − 1 ⇐⇒ pq−1
+                            −1
+                               ∈ Z ⇐⇒ r|s.
+
+Remark 5.17. Let G ∈ Fq - gr+
+                            S . If S is connected, then
+                    G is balanced ⇐⇒ Gs is balanced for some point s ∈ S,
+because Prim(BG ) is locally free and stable under base change (Remark 3.7). Hence the
+balanced locus of G ∈ Fq - gr+
+                             S in S is a union of connected components. If S is noetherian,
+it is thus closed and open.
+Remark 5.18. If G ∈ Fq - gr+ S is étale, its Frobenius is an isomorphism. Therefore, G is
+balanced by Lemma 5.12, (i).
+Lemma 5.19. Let G, H ∈ Fq - gr+
+                              A . If two of G, H and G × H are balanced, then so is the
+third.
+Proof. Proposition 2.12 implies that
+                    Primps (BG ⊗ BH ) = Primps (BG ) ⊗ 1 + 1 ⊗ Primps (BH )
+for all 0 ≤ s ≤ r − 1. Then it is clear that if two of G, H and G × H satisfy condition (i)
+from Lemma 5.12, 
+                                  1            h                   A
+Therefore, by Proposition 7.9, since H is quasi-balanced, r|si for all 1 ≤ i ≤ h. Thus H is
+balanced, and hence so is G.                                                             
+                                GROUP SCHEMES WITH Fq -ACTION                                     21
+
+
+                                     8. The infinite case
+   In this section, we detail some of the difficulties one encounters when trying to transfer
+the theory from the finite to the infinite case.
+Definition 8.1. The category Fq - ShtA consists of pairs (M, f ) of a flat A-module M together
+with a q-linear endomorphism f of M . Morphisms in Fq - ShtA are defined as in Fq - shtA .
+Note that again Fp - ShtA = ShtA .
+   The shtuka (M, f ) is called locally finitely generated if locally over Spec A, there exist
+some x1 , . . . , xN ∈ M such that
+                                   X d
+                                   N X
+                           M ={              λa f a (xi ) | λa ∈ A, d ∈ N}.
+                                   i=1 a=0
+
+We denote by Fq - ShtA,f.g. the full subcategory of Fq - ShtA of locally finitely generated shtukas.
+  Trying to define the functor M in general, the first problem to arise is the following.
+Conjecture 8.2. Let G ∈ Gr+
+                          A . Then the A-module Prim(BG ) is flat.
+
+   Let us provisionally include the condition in the definition, and denote the corresponding
+full subcategories by Gr⊞           ⊞
+                         A , Fq - GrA , and so forth. Then we may define
+                                                                              ⊞
+            Mq = M : Fq - Gr⊞
+                            A −→ Fq - ShtA , and Gq = G : Fq - ShtA −→ Fq - GrA ,
+
+as before. Recall that Mq (G) is flat if Prim(BG ) is, cf. Remark 5.5.
+Remark 8.3. The routine verifications in §6, together with the following, show that the two
+functors are well-defined. Let (M, f ) ∈ Fq - ShtA . We can write M = lim Mi , where the Mi
+                                                      
+≤ i ≤ h. Thus H is
+balanced, and hence so is G.                                                             
+                                GROUP SCHEMES WITH Fq -ACTION                                     21
+
+
+                                     8. The infinite case
+   In this section, we detail some of the difficulties one encounters when trying to transfer
+the theory from the finite to the infinite case.
+Definition 8.1. The category Fq - ShtA consists of pairs (M, f ) of a flat A-module M together
+with a q-linear endomorphism f of M . Morphisms in Fq - ShtA are defined as in Fq - shtA .
+Note that again Fp - ShtA = ShtA .
+   The shtuka (M, f ) is called locally finitely generated if locally over Spec A, there exist
+some x1 , . . . , xN ∈ M such that
+                                   X d
+                                   N X
+                           M ={              λa f a (xi ) | λa ∈ A, d ∈ N}.
+                                   i=1 a=0
+
+We denote by Fq - ShtA,f.g. the full subcategory of Fq - ShtA of locally finitely generated shtukas.
+  Trying to define the functor M in general, the first problem to arise is the following.
+Conjecture 8.2. Let G ∈ Gr+
+                          A . Then the A-module Prim(BG ) is flat.
+
+   Let us provisionally include the condition in the definition, and denote the corresponding
+full subcategories by Gr⊞           ⊞
+                         A , Fq - GrA , and so forth. Then we may define
+                                                                              ⊞
+            Mq = M : Fq - Gr⊞
+                            A −→ Fq - ShtA , and Gq = G : Fq - ShtA −→ Fq - GrA ,
+
+as before. Recall that Mq (G) is flat if Prim(BG ) is, cf. Remark 5.5.
+Remark 8.3. The routine verifications in §6, together with the following, show that the two
+functors are well-defined. Let (M, f ) ∈ Fq - ShtA . We can write M = lim Mi , where the Mi
+                                                                       −→
+are finitely generated`free A-modules, by [13], Théorème 1.2. For each i, choose a basis Ni
+of Mi , and set N := Ni . De
+l Analysis and Its Applications, 21(2):107–
+     122, 1987.
+ [5] G. Faltings. Group Schemes with Strict O-Action. Moscow Mathematical Journal, 2(2):249–279, 2002.
+ [6] N. J. Fine. Binomial Coefficients Modulo a Prime. The American Mathematical Monthly, 54(10):589–592,
+     1947.
+ [7] J.-M. Fontaine. Groupes p-divisibles sur les corps locaux. Astérisque, 47-48:1–262, 1977.
+ [8] P. Gabriel. Étude infinitésimale des schémas en groupes. In SGA 3, Schémas en
+     Groupes I, Exposé VIIA (new edition), pages 441–499, May 2011. Available online at
+     https://webusers.imj-prg.fr/~ patrick.polo/SGA3/Exp7A-23mai11.pdf.
+ [9] A. Genestier and V. Lafforgue. Théorie de Fontaine en égales caractéristiques. Annales scientifiques de
+     l’ENS, 44(2):263–360, 2011.
+[10] U. Hartl and W. Kim. Local Shtukas, Hodge-Pink Structures and Galois Representations. Preprint, 2015.
+[11] U. Hartl and R. K. Singh. Local Shtukas and Divisible Local Anderson Modules. Preprint, 2015.
+[12] G. Laumon. Cohomology of Drinfeld Modular Varieties, Part I, volume 41 of Cambridge Studies in
+     Advanced Mathematics. Cambridge University Press, 1996.
+[13] D. Lazard. Autour de la platitude. Bulletin de la Société Mathématique de France, 97(1):81–128, 1969.
+[14] J. S. Milne. Basic Theory of Affine Group Schemes. Course notes, University of Michigan. Available
+     online at http://www.jmilne.org/math/CourseNotes/AGS.pdf, March 2012.
+[15] F. Oort and J. Tate. Group schemes of prime order. Annales scientifiques de l’ENS, 3(1):1–21, 1970.
+[16] R. Pink. Finite group schemes. Course notes,                      ETH Zürich. Available online at
+     https://people.math.ethz.ch/~ pink/ftp/FGS/CompleteNotes.pdf , 2005.
+[17] M. Raynaud. Schémas en groupes de type (p, . . . , p). Bulletin de la Société Mathématique de France,
+     102(1):241–280, 1974.
+[18] J. Stix. A course on finite flat group schemes and p-divisible groups. Course notes, Heidelberg University.
+     Available online at http://www.uni-frankfurt.de/52288632/Stix_finflat_Grpschemes.pdf, 2009.
+[19] Y. Taguchi. A duality for finite t-modu

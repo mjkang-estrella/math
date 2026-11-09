@@ -1,0 +1,3 @@
+exec(open(__file__.replace('fetch_more.py','fetch.py')).read().split('urls=')[0])
+urls={'codes-published':'https://admjournal.luguniv.edu.ua/index.php/adm/article/viewFile/1645/pdf','dennis-abstract':'https://digilib.itb.ac.id/assets/files/2023/MjAyMyBCUkFORE9OIERFTk5JUyAtQUJTVFJBSy5wZGY.pdf','2607.28813':'https://arxiv.org/pdf/2607.28813','1910.05675':'https://arxiv.org/pdf/1910.05675','1908.04440':'https://arxiv.org/pdf/1908.04440'}
+exec(open(__file__.replace('fetch_more.py','fetch.py')).read().split('receipts=[]')[1].replace("L/'sources/receipts.json'","L/'sources/more-receipts.json'").join(['receipts=[]','']))

@@ -1,0 +1,19 @@
+# r283 research handback
+
+The fixed 20-record reservation is unchanged. SHA256 before and after:
+`b2b2109891a9b66e2605b2f74ef5e83c9c6c3ed64d8f09c83f345ac1c07bcc7a`.
+`results.json` has exactly the 20 reserved ID keys. Campaign status remains 52/60; this lane awards no credit and requests no Pi execution.
+
+All 20 literal records were read and retained as byte-exact newline-preserving raw lines, parsed records, one-based corpus locations, chunk/raw/statement SHA256s. The original 17 arXiv sources' abstract pages, latest PDFs and every version listed on those pages were downloaded. Text extraction and target-window indexing are retained separately from actual reading. They do NOT establish all-version proof review. Public HTTP receipts record URL, UTC, status, size and hash. No denied API or other access route was retried or bypassed.
+
+The most concrete outcome is an exact **known-source exclusion** for 381186: Lin's 2011 thesis Example 10, printed p.7, Figure 2 already gives the vertex-sum failure. The figure was visually inspected and the graph is described explicitly with a complete ordinary verification in ORDINARY-ATTEMPTS.md. Summands satisfy P=Z=1 and 3; sum satisfies P=3, Z=4. This is the printed construction itself, not a new witness.
+
+358153 is also excluded by the exact public 2026 preprint Theorem 1 of Huang–Liu–Lu–Wu, arXiv2607.02589. Its full truncated-Fano construction proof was read; setting its constant C=100 is an explicit full-scope bridge. 346829's source already gives incomparable same-order trees. 357009's latest source reports confirmation by Matsumoto–Suzuki, whose proof body was not independently acquired. 391585 has a current exact affirmative theorem in arXiv2607.17333v3; only the statement and introduction, not the complete deep proof, were reviewed. These distinctions are preserved in results.json.
+
+362439 and 323504 have serious literal/source mismatches. Empty combinatorial data in an unrelated characteristic formula or classical line-graph recognition would only exploit missing/wrong definitions and are not discovery candidates. 317450 remains held because the stated transported Grossman–Larson formulas were not located with exact definitions in the inspected primary material. 339617 remains held on reconciling the literal maximum bound with a newer source's explicit reference to prior counterexamples; no exact published counterexample bridge was established here.
+
+Sustained ordinary attempts on the tournament path claim 358502 and relative simplicial collapse 329032 yielded precise unproved lemmas, not full solutions. Longest monochromatic path vectors fail on cycles; a relative free-face or acyclic-matching construction onto the particular cyclic boundary is missing. Other broad uniform, complexity or infinite targets have compact reasons for parking. See all 20 keyed entries and ORDINARY-ATTEMPTS.md.
+
+Limits: journal versions/corrections/withdrawals, every version's full target proof, all cited/citing bodies, figures other than Lin's Figure 2, and complete current proof registries have not been audited. The current GitHub HTML heads were captured as OpenAI math `4eaee87548250b2682affda7d05d947c05554bae` and Formal Conjectures `3f4490479b53386e1c18d2cccf4f1164c16655ca`; these are page receipts, not complete current-tree clearance. LeanPool and projects.yml attempted URLs returned 404. Historical md/results/review scans were bounded; incidental numeric hash matches were removed by structured matching. No global novelty claim follows from the lack of a matching assigned-ID entry.
+
+No Lean, solver, numerical witness search, heavy enumeration, children, git, shared/authored edits, browser/account operation, external contact or publication occurred. Synchronous fetch/text jobs ended before handback. See RUN-LOG.md for process/resource limitations and manifest.sha256 for file integrity.

@@ -1,0 +1,9 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc,char**argv){int d=atoi(argv[1]),seed=atoi(argv[2]),n=d*d+1,L=d*(d-1),base=1+d;mt19937 rng(seed);vector<vector<int>> a(n,vector<int>(n));for(int i=0;i<d;i++){a[0][i+1]=a[i+1][0]=1;for(int j=0;j<d-1;j++)a[i+1][base+i*(d-1)+j]=a[base+i*(d-1)+j][i+1]=1;}
+// Initial leaf graph is a randomly relabelled circulant, independent of the source construction.
+vector<int> p(L);iota(p.begin(),p.end(),base);shuffle(p.begin(),p.end(),rng);for(int i=0;i<L;i++){for(int k=1;k<=(d-1)/2;k++)a[p[i]][p[(i+k)%L]]=a[p[(i+k)%L]][p[i]]=1;if((d-1)%2)a[p[i]][p[(i+L/2)%L]]=1;}
+auto score=[&](){int status=0,bad=0;for(int s=0;s<n;s++){vector<int>ds(n,99),q{s};ds[s]=0;for(int k=0;k<(int)q.size();k++)for(int v=0;v<n;v++)if(a[q[k]][v]&&ds[v]==99){ds[v]=ds[q[k]]+1;q.push_back(v);}for(int x:ds){status+=x;bad+=max(0,x-3);}}return pair<int,int>{status-1000*bad,status};};
+auto cur=score();int best=0;long valid=0,attempts=0,accepted=0;auto start=chrono::steady_clock::now();while(chrono::duration<double>(chrono::steady_clock::now()-start).count()<100){attempts++;int u=base+rng()%L,v=base+rng()%L,x=base+rng()%L,y=base+rng()%L;if(u==v||x==y||u==x||u==y||v==x||v==y||!a[u][v]||!a[x][y]||a[u][x]||a[v][y])continue;a[u][v]=a[v][u]=a[x][y]=a[y][x]=0;a[u][x]=a[x][u]=a[v][y]=a[y][v]=1;auto z=score();if(z.first==z.second){valid++;if(z.second>best){best=z.second;cout<<"best "<<best<<" target "<<3*d*d*d*d-4*d*d*d+3*d*d-d<<" attempt "<<attempts<<endl;if(best>3*d*d*d*d-4*d*d*d+3*d*d-d){for(int i=0;i<n;i++)for(int j=i+1;j<n;j++)if(a[i][j])cout<<i<<" "<<j<<"\n";return 0;}}}double t=1.5+10.*(1.-(attempts%200000)/200000.);if(z.first>=cur.first||generate_canonical<double,32>(rng)<exp((z.first-cur.first)/t)){cur=z;accepted++;}else{a[u][v]=a[v][u]=a[x][y]=a[y][x]=1;a[u][x]=a[x][u]=a[v][y]=a[y][v]=0;}}
+cout<<"DONE degree "<<d<<" seed "<<seed<<" attempts "<<attempts<<" accepted "<<accepted<<" valid_evaluations "<<valid<<" best "<<best<<endl;
+}

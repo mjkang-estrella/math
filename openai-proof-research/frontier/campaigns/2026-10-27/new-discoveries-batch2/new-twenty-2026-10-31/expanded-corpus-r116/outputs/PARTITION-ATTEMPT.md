@@ -1,0 +1,11 @@
+# 364480: exact tests and incomplete proof route
+
+Primary source: arXiv:2408.13346, Section 4, Conjecture 1 and its conditional argument from Conjecture 2. Here pre_j(P(n)) is a SET of image partitions, not an input multiset, and distinct refers to distinct OUTPUT parts. Empty output occurs once. Inputs of length j yield singleton products, hence are distinct regardless of repeated input parts.
+
+The corrected script represents the product partition as (value,multiplicity) pairs. For odd images with input length >=j, all input parts must be odd; for length <j the output is empty. For distinct images with input length >j, the input must have distinct parts (a repeated input part yields equal products by selecting one or the other copy and j-1 other positions). Distinct input parts are not sufficient: collisions such as 1*6=2*3 must still be filtered. The initial log logs/partitions.log omitted this last filter and is INVALIDATED. Only logs/partition-corrected.log and outputs/partition-0-70.json are evidence.
+
+Coverage: all qualifying image partitions for every n=0..70, j=2,3, exact integer products. No violation of j=2; no violation of j=3 for n>=21. Below that threshold j=3 fails at n=6,8,10,12,14,16,18, consistently with the source's restricted domain.
+
+A useful ordinary observation for the j=2 injectivity route: equal pre_2 images imply equal Q_r=sum_{i<j}(a_i*a_j)^r. Given equal total sums P_1=n, the identity P_(2r)=P_r^2-2Q_r inductively determines all P_(2^s). These moments determine a finite multiset of positive reals: the 2^s-th root limit gives its largest member, the normalized moment limit gives its multiplicity, remove these and iterate. Thus pre_2 is injective on partitions of a fixed sum. This would close the source's conditional argument for part (i), with Euler's odd/distinct partition theorem. It is not a full solution of 364480 because part (ii), j=3, remains. No separate credit, Lean endpoint, or literature novelty is claimed for this partial route.
+
+For j=3 the corresponding identity 6Q_r=P_r^3-3P_r*P_(2r)+2P_(3r) does not give a closed doubling recurrence from P_1. Distinct-output collisions further complicate a direct injection. Need a uniform odd-image dominance injection/counting argument for all n>=21, or a genuine exact violating n. Numerical positivity supplies neither.

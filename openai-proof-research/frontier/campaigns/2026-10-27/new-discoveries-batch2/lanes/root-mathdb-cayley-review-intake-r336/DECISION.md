@@ -1,0 +1,11 @@
+MathDB 364119: authorize bounded literal formalization; acceptance and novelty remain HOLD. The independent review reports exact mathematics PASS for the n=5 witness, with provisional favorable substantive assessment. Root has reconciled the evidence and source corrections, not supplied a new mathematical proof.
+
+The operative record uses strictly increasing distinct subsequence indices, as in published AJC 94(2) (2026), pages 267–299, definition p.280, Conjecture 8.8 p.296. The arXiv v1 nondecreasing-index text is a version discrepancy. Earlier proposal year 2025 and page 295 are superseded. Corrections receive no credit. Preserve original reports unchanged as history.
+
+The candidate witness is p=1122, q=1112, n=5, both packed length-four patterns with maximum two. The review reports 541 total packed words, 520 avoiding p, and 522 avoiding q. Its independent checker and analytical 21-versus-19 containment certificate replace the candidate's defective controls. Do not cite the original failed validation file, mislabeled 421 total, or unscoped 45,324 sweep count as evidence of success.
+
+Qualification: the review excludes verify.py from its own manifest, beyond the requested two exclusions; this root packet hashes and binds it. The claimed follow-up coverage partly uses fetch_content answer-mode reports, not retained original bodies; one check is explicitly abstract-only. Therefore substantive status is provisionally favorable and novelty remains bounded HOLD. No literature-wide or registry clearance is adopted.
+
+The proposed formal sketch is not a certificate: Fin n → Nat has no finite universal finset; use an explicitly finite alphabet and prove it captures every packed length-n word. native_decide is forbidden. The formal task must prove literal strict-index containment and unconditional negation of the full source claim, with safe total definitions and only Std3 axioms.
+
+Keep r331 tree-depth investigation and r335 fifty-statement breadth screening assigned. Reserve the freed slot for pi-cayley-avoidance-source-formal-r337. Coverage stays 233 reported statements; counts stay 9 additional / 39 total / next 40. Independent formal review, root replay, stronger prior-body coverage, manuscript and PDF gates remain separate.

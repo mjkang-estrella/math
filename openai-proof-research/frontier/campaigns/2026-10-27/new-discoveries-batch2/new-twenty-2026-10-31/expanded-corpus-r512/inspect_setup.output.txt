@@ -1,0 +1,565 @@
+FILE run.py LENGTH 2401
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+FILE write_lane.py LENGTH 681
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE reservation.json LENGTH 18284
+{
+  "utc": "2026-11-08T18:22:44.106880+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    353119,
+    347543,
+    347986,
+    348150,
+    369196,
+    382244,
+    342928,
+    343024,
+    344449,
+    344879,
+    338639,
+    340014,
+    340080,
+    335261,
+    335300,
+    336936,
+    333689,
+    375408,
+    330222,
+    329314
+  ],
+  "rows": [
+    {
+      "mathdb_id": 353119,
+      "canonical_url": "https://mathdb.com/p/353119/tidor-s-conjecture-on-approximately-symmetric-multilinear-fo",
+      "title": "Tidor's conjecture on approximately symmetric multilinear forms",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "multilinear-algebra",
+        "partition-rank"
+      ],
+      "first_stated_year": 2021,
+      "source_url": "https://arxiv.org/abs/2112.14755",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 347543,
+      "canonical_url": "https://mathdb.com/p/347543/the-conjecture-that-every-quintic-graph-has-at-least-two-kem",
+      "title": "The conjecture that every quintic graph has at least two Kempe equivalence classes",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-colouring",
+        "kempe-equivalence",
+        "regular-graphs"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2008.03173",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 347986,
+      "canonical_url": "https://mathdb.com/p/347986/holub-luzar-mihalikova-mockovciakova-sotak-s-cycle-product-e",
+      "title": "Holub\u2013Lu\u017ear\u2013Mihalikov\u00e1\u2013Mockov\u010diakov\u00e1\u2013Sot\u00e1k's cycle product existence conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "cartesian-products",
+        "graph-coloring",
+        "star-edge-coloring"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2009.08017",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 348150,
+      "canonical_url": "https://mathdb.com/p/348150/langerman-s-chessboard-mass-partition-conjecture",
+      "title": "Langerman's chessboard mass partition conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "geometric-combinatorics",
+        "hyperplane-arrangements",
+        "mass-partitions"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2010.00478",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 369196,
+      "canonical_url": "https://mathdb.com/p/369196/milicevic-s-bounded-diameter-conjecture-for-monochromatic-co",
+      "title": "Mili\u0107evi\u0107's bounded-diameter conjecture for monochromatic component covers",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "diameter",
+        "edge-colorings",
+        "graph-theory"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2507.05842",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 382244,
+      "canonical_url": "https://mathdb.com/p/382244/polynomial-chi-boundedness-conjecture-for-path-free-graphs",
+      "title": "Polynomial chi-boundedness conjecture for path-free graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chi-boundedness",
+        "graph-coloring",
+        "induced-subgraphs"
+      ],
+      "first_stated_year": 2020,
+      "source_url": "https://arxiv.org/abs/2310.18452",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 342928,
+      "canonical_url": "https://mathdb.com/p/342928/monotone-coupling-conjecture-for-random-regular-graphs",
+      "title": "Monotone coupling conjecture for random regular graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "couplings",
+        "random-regular-graphs"
+      ],
+      "first_stated_year": 2019,
+      "source_url": "https://arxiv.org/abs/1906.02886",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 343024,
+      "canonical_url": "https://mathdb.com/p/343024/the-planar-poset-standard-example-conjecture",
+      "title": "The planar-poset standard-example conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "dimension-theory",
+        "planar-graphs",
+        "posets"
+      ],
+      "first_stated_year": 2019,
+      "source_url": "https://arxiv.org/abs/1906.08145",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 344449,
+      "canonical_url": "https://mathdb.com/p/344449/existence-of-extremal-graphs-for-every-degeneracy",
+      "title": "Existence of extremal graphs for every degeneracy",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "degenerate-graphs",
+        "graph-theory",
+        "subgraph-query-complexity"
+      ],
+      "first_stated_year": 2019,
+      "source_url": "https://arxiv.org/abs/1911.04413",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 344879,
+      "canonical_url": "https://mathdb.com/p/344879/the-weak-loneliness-spectrum-conjecture-for-one-very-fast-sp",
+      "title": "The weak Loneliness Spectrum Conjecture for one very fast speed",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorial-number-theory",
+        "lonely-runner"
+      ],
+      "first_stated_year": 2019,
+      "source_url": "https://arxiv.org/abs/1912.06034",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 338639,
+      "canonical_url": "https://mathdb.com/p/338639/constant-error-rainbow-tree-embedding-conjecture",
+      "title": "Constant-error rainbow tree embedding conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "edge-colourings",
+        "rainbow-subgraphs",
+        "trees"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1803.03316",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 340014,
+      "canonical_url": "https://mathdb.com/p/340014/the-weak-acyclic-matching-conjecture-for-cyclic-groups-of-pr",
+      "title": "The weak acyclic matching conjecture for cyclic groups of prime order",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "group-theory",
+        "matching-theory"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1808.01376",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 340080,
+      "canonical_url": "https://mathdb.com/p/340080/odd-cycle-saturation-conjecture",
+      "title": "Odd-cycle saturation conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-combinatorics",
+        "graph-theory",
+        "saturation"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1808.03696",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 335261,
+      "canonical_url": "https://mathdb.com/p/335261/cubic-root-of-three-lower-bound-conjecture-for-cycles-in-gra",
+      "title": "Cubic-root-of-three lower-bound conjecture for cycles in graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "cycles",
+        "extremal-combinatorics",
+        "graph-theory"
+      ],
+      "first_stated_year": 2017,
+      "source_url": "https://arxiv.org/abs/1702.02662",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 335300,
+      "canonical_url": "https://mathdb.com/p/335300/chen-lev-strengthened-conjecture-on-explicit-hilbert-cube-pa",
+      "title": "Chen\u2013Lev strengthened conjecture on explicit Hilbert-cube pairs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "hilbert-cubes",
+        "representation-functions"
+      ],
+      "first_stated_year": 2017,
+      "source_url": "https://arxiv.org/abs/1702.04499",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 336936,
+      "canonical_url": "https://mathdb.com/p/336936/the-maximal-energy-concentration-obstruction-to-poissonian-p",
+      "title": "The maximal-energy-concentration obstruction to Poissonian pair correlations",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "equidistribution",
+        "pair-correlations"
+      ],
+      "first_stated_year": 2017,
+      "source_url": "https://arxiv.org/abs/1708.08590",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 333689,
+      "canonical_url": "https://mathdb.com/p/333689/sublinear-distance-conjecture-for-three-to-six-longest-paths",
+      "title": "Sublinear-distance conjecture for three to six longest paths",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "longest-paths"
+      ],
+      "first_stated_year": 2016,
+      "source_url": "https://arxiv.org/abs/1607.08850",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 375408,
+      "canonical_url": "https://mathdb.com/p/375408/alon-s-star-forest-extremal-graph-conjecture",
+      "title": "Alon's star-forest extremal-graph conjecture",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-graph-theory",
+        "subgraph-counts"
+      ],
+      "first_stated_year": 2016,
+      "source_url": "https://arxiv.org/abs/2606.18321",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 330222,
+      "canonical_url": "https://mathdb.com/p/330222/zauner-s-conjecture-on-maximal-complex-equiangular-tight-fra",
+      "title": "Zauner's conjecture on maximal complex equiangular tight frames",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "equiangular-tight-frames",
+        "quantum-information"
+      ],
+      "first_stated_year": 2015,
+      "source_url": "https://arxiv.org/abs/1504.00253",
+      "finite_cue_count": 2
+    },
+    {
+      "mathdb_id": 329314,
+      "canonical_url": "https://mathdb.com/p/329314/linear-chemical-distances-in-scale-free-gilbert-graphs",
+      "title": "Linear chemical distances in scale-free Gilbert graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters",
+        "open_question_formulation"
+      ],
+      "review_priority_score": 31,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chemical-distance",
+        "long-range-percolation",
+        "random-graphs"
+      ],
+      "first_stated_year": 2014,
+      "source_url": "https://arxiv.org/abs/1411.6824",
+      "finite_cue_count": 2
+    }
+  ],
+  "input_hashes": {
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/coverage-delta.json": "014e0d4835ddb95509b956de619aa969568b4e2c8a95dea06518648aa26b2644",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/routing-queue.jsonl": "b0a830b96c47b2b64c46686c318ad16d21a1985d18224fc246b88583e8201a95",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/tags/screening-tags.jsonl": "cfee4e3848c396dc462eff7aa883009c995243d77120d369fa4118f4e96dd45e"
+  },
+  "excluded_ids_count": 20650,
+  "eligible_metadata_rows_after_filters": 64197,
+  "finite_discrete_pool": 2770,
+  "selection": "reserve8 (reserve7 with classic colouring names also penalised; reserve6 with flagship-name conjectures ranked last; finite, kernel-checkable discrete conjectures): same eligibility and exclusions as earlier expanded-corpus reservations; first_stated_year >= 1900, solution_count 0, discrete keyword in MathDB tags or title; asymptotic/probabilistic/analytic language softly ranked later rather than excluded; ranked by finite-instance cue count, absence of hard_structural, few-parameter cue, review score, newer year, then ID.",
+  "limitation": "Unassigned in checked indexes, not globally unreviewed or novelty-cleared; no corpus-wide technical review claimed.",
+  "output_requirement": "Exactly20 ID-keyed dispositions with exact literal provenance, historical checks and actual source/proof review depth; sustain strongest exact mech
+FILE historical-results-allowlist.json LENGTH 215423
+{
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/adverse-manuscript-r1/results.json": "8057644cb91a953dc772c8e88c899a150055d4669be5ede607c4b4f2661e14f1",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-parent-integration-r1.json": "0158fb07c599c2e0c6ee298f632ba25b98c96758aaebdd0695ab2683d4338548",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-review-r1/review.json": "54c90910a3664cf389cc5540347e30f8f0b027a3beaf91453d37fc9dcce27807",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/asep-manuscript-r1/results.json": "1888fbc3dd4b3ff27cc244344ab80364659e69e120a21a8315630aa8b3d6cfa0",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bicores-armstrong-source-parent-integration-r1.json": "19f8aab7593ddcfbf243a446917a3bf88f17718cde2627b22901f6955fa653dc",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bicores-armstrong-source-review-r1/review.json": "13e7ac7921c7318837abd78e38d2737ef88012686bf33ea7cabb4c5d79698a26",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bidding-number-independent-qualification-r2/review.json": "eed05a0b71903aed69813c9e3921a28090d22d998e428edab62b152e52eb2a78",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bidding-number-primary-comparison-r3/review.json": "b0b5bb8868f6672f38fcba5531c214f1d5c54b3fc34adc33bc68ac2acfb1416c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/cassinian-manuscript-r1/results.json": "a009e0432928c25dc1adb85d1aa5b1599bee20143089dfa2083809fee5adaf2f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/central-zonotopal-source-review-r1/review.json": "fccba6dac4d9d8e3b59cfd5c817644e97dc1a19f37924b345878abdb99b4cf31",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/circulant-manuscript-r1/results.json": "6bd44212b267fe6e7fb961675aaf3e0cde512e0b70116219d1ef0178602cdfa3",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/clique-flat-chordal-source-parent-integration-r1.json": "e2073a8fc4d990d1a9443fb4aafd7ceb94ac3a0cd759defe54337a4d8268bf54",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/clutter-characterization-r1/results.json": "3eea27dd81d713ecdc4d0b166f84349d9bf501242788a1ba7b3ccdfddee22819",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/collapsing-manuscript-r1/results.json": "aab14ccb358abe3dd98061b1d9542354def969d8eca767c8ae61bef29f2b64e5",
+  "/home/mj-kang/Documents

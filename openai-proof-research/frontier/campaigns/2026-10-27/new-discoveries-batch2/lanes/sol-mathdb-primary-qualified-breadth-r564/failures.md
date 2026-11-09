@@ -1,0 +1,10 @@
+# Failures, stopped routes and deviations
+
+- First extraction failed: ModuleNotFoundError: No module named 'bs4', guard exit1; preserved as extract-bs4-failed.py. Replaced parser with stdlib HTMLParser under the unchanged guard; no package install or cap change.
+- Initial structural discovery attempted a nonexistent guessed r301 directory (ls exit2). No source inspection from that path. Actual inventory path was obtained from r563 structural verifier text.
+- Structural heads of intake manifest/bindings (hash/path/size fields only) were displayed before initial binding files were written. No scientific summary was displayed then; nevertheless this is a bind-order procedural deviation. All intake files were subsequently bound and independently checked before scientific/admin-summary reading. It is not retroactively described as perfect prebinding.
+- A first statement-display batch exceeded tool output limits. Repeated rows10 onward with source metadata removed; all fifty literal statements were then visible. Row344924 contains literal upstream ellipsization, not output-only truncation. Missing statement scope remains HOLD.
+- Broad search returned a MathDB indexed excerpt and ResearchGate result without opening either. No direct MathDB HTTP request, ResearchGate request, prohibited API, browser or source-route retry. Search snippets were not treated as proof-body evidence. Further searches stopped; source/registry clearance remains HOLD.
+- No closest successor bodies read. Three selected primary bodies have only stated passage/local-proof coverage. No global novelty or source-resolution PASS.
+- Korselt KW undefined; recurrence v1 differs from exact record; sandpile product differs. No wording correction promoted. No substantial hypothesis investment, Lean, manuscript, publication, uploads, git or shared-ledger edits.
+- All helper Python ran via the fixed helper_guard.py with required environment flags and unchanged 512MiB AS/groupRSS, CPU210s, wall230s. No computation-limit failure or retry splitting.

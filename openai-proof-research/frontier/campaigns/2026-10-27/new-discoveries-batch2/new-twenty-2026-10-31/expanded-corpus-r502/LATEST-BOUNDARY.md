@@ -1,0 +1,1 @@
+Root update received during final packaging: r501 completed status is documentary only; its files were not accessed. New protected sibling expanded-corpus-r503 is entirely excluded, including metadata/flat integrations; no ROOT selector/version files accessed. Fixed20 unchanged, no reselection, frozen inputs unchanged. Campaign57/60 unchanged.

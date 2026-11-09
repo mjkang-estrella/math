@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-09T00:56:45.708633+00:00",
+  "name": "corpus-bind",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r532",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nimport glob,json,hashlib,re,subprocess,sys\nlane='/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r532'\nroot='/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/'\nids=json.load(open('reservation.json'))['ids']\nwant=set(ids)\npaths=sorted(glob.glob(root+'mathdb-normalized-chunk-*.jsonl'))\nprint('chunks',len(paths))\nfound={}\nfirst=True\nfor p in paths:\n    data=open(p,'rb').read()\n    chash=hashlib.sha256(data).hexdigest()\n    lines=data.splitlines(keepends=True)\n    for i,raw in enumerate(lines,1):\n        if not raw.strip(): continue\n        o=json.loads(raw)\n        mid=o.get('mathdb_id',o.get('id'))\n        if first:\n            print('KEYS',list(o.keys())); first=False\n        if mid in want:\n            assert mid not in found\n            s=o.get('statement')\n            found[mid]=dict(id=mid,chunk=p,chunk_sha256=chash,line_one_based=i,raw_line_sha256_with_newline=hashlib.sha256(raw).hexdigest(),raw_line_bytes=len(raw),has_trailing_newline=raw.endswith(b'\\n'))\n            m=re.search(rb'\"statement\"\\s*:\\s*(\"(?:[^\"\\\\]|\\\\.)*\")',raw)\n            token=m.group(1)\n            assert json.loads(token)==s\n            found[mid].update(statement_token_sha256=hashlib.sha256(token).hexdigest(),statement_decoded_sha256=hashlib.sha256(s.encode('utf-8')).hexdigest(),statement_decoded_chars=len(s))\n            found[mid]['_rec']={k:o[k] for k in o if k!='statement'}\n            found[mid]['_statement']=s\nprint('found',len(found),'missing',sorted(want-set(found)))\nout={'ids':ids,'rows':[{k:v for k,v in found[i].items() if not k.startswith('_')} for i in ids]}\nr=subprocess.run([sys.executable,'-I','-B',lane+'/write_lane.py','corpus-bindings.json'],input=json.dumps(out,indent=1),text=True,capture_output=True);print(r.returncode,r.stdout,r.stderr)\nlits={str(i):dict(meta=found[i]['_rec'],statement=found[i]['_statement']) for i in ids}\nr=subprocess.run([sys.executable,'-I','-B',lane+'/write_lane.py','literals.json'],input=json.dumps(lits,indent=1,ensure_ascii=False),text=True,capture_output=True);print(r.returncode,r.stdout,r.stderr)\nprint({i:found[i]['statement_decoded_chars'] for i in ids}); print(sum(found[i]['statement_decoded_chars'] for i in ids))\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 0.7656412770156749,
+  "sampled_group_rss_peak_bytes": 61112320,
+  "samples": 9,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 0.763447,
+  "stderr": ""
+}

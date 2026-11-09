@@ -1,0 +1,2 @@
+exec(compile((__import__('pathlib').Path(__file__).parent/'research.py').read_text(),'research.py','exec'))
+key=sys.argv[1]; a=int(sys.argv[2]); b=int(sys.argv[3]); p=P/'sources'/ (key+'.txt'); lines=p.read_text().splitlines(); print('\n'.join(str(i+1)+': '+s for i,s in enumerate(lines) if a<=i+1<=b)); js('slice-'+key+'-'+str(a)+'-'+str(b)+'.json',dict(path=str(p.relative_to(P)),sha256=sha(p.read_bytes()),line_start=a,line_end=b,depth='actual passage read'))

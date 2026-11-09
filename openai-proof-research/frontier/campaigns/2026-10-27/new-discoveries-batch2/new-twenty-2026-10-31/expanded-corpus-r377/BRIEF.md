@@ -1,0 +1,13 @@
+# R377 handback — credit0, count52/60 unchanged
+
+Exactly20 reserved records are preserved with original JSONL newlines, full parsed JSON, chunk/line/raw/statement hashes in raw-provenance.json. Reservation SHA256 e138b8029732f05bf820788c9716326f6615aa60972502371e3663229c7281aa matched before extraction and after handback preparation; all20 original bindings rechecked. No selection or padding occurred.
+
+338791 has a complete ordinary refutation of the intended rectangular central matrix conjecture using A(2),A(3), identical truncated polynomial algebras and different projective invariants. The final2019 journal retains Conjecture16 and its dimension typo. Literal fidelity, specific earlier power-ideal source comparisons, current applicable registry bodies, priority/significance and independent review HOLD. No qualified new candidate, CANDIDATE.md, Pi dispatch, formal execution, paper or acceptance.
+
+339487 is exact public0: Pierson Theorem1 proves both sums for every weak composition; actual source and proof/reduction are in DERIVATIONS.md.339366 sustained three FKM routes but the alpha-suffix equivalence remains unpaid.338527's unrestricted-coloring literal has an injective-coloring correction0; intended finite-color problem untouched. Other exact dispositions and separate gates are in results.json.338437 received raw record preservation only, no protected manuscript investigation.
+
+323739 stays provisionally research-qualified for the first bounded Pi semantic/count foundation, not accepted or fully formal. All earlier TASK holds/exclusions, including381649public0,351646permanent gap,350947closure gap,350715/351388public0,359980unread witness, remain unchanged. Protected active lanes were never read/hash/glob/polled. No worldwide novelty or formal proof claim.
+
+Four current public registry root heads were recorded sequentially in registry-receipts.json; they are not atomic snapshots. Catalogue absence provides no clearance. Exact relevant theorem bodies were not cleared. Search used three bounded batches, primary public GETs only, with access/read depth separated. Source PDF bytes are preserved losslessly as base64 text through the assigned writer; hashes in HTTP receipts refer to decoded PDF bytes.
+
+Operational qualification is INCOMPLETE: see operational-limits.json. Some requested every-reader/descendant RSS telemetry was not achieved. Missing telemetry is disclosed rather than reconstructed. Writer/converter samples and tool true exits are retained where observed. All launched sessions completed and were reaped. A verified artifact manifest excludes itself and final verification/resource receipts explicitly; no circular digest claim.

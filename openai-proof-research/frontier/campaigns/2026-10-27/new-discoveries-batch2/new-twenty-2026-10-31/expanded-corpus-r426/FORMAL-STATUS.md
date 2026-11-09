@@ -1,0 +1,3 @@
+# No formal dispatch
+
+Zero fully qualified novel significant ordinary survivors. No FULLCANDIDATE or executable formal plan is justified. The finite witnesses for327602 and328498 are feasible on Fin5/Fin6 with literal matrix/invariant bridges, but their public status rules out credit. The energy route would require real symmetric spectral decomposition, square roots, nuclear/operator duality or vertex energies and all normalization bridges; its complete prior adaptation rules out dispatch. Davenport already has a full public solution. Square-energy is an exact public corollary. All formal, independent adversarial, fresh replay, paper and root acceptance gates remain NOT RUN, credit0. No Lean code, compiler or formalAPI was executed.

@@ -1,0 +1,17 @@
+# R162aa — PREFREEZE / no nominee
+
+One Source092 family, both confirmed companions. No theorem was frozen and no author-proof nominee is submitted. Parent alone adopts gates and counts; no correctness, contribution or campaign increment is assigned. Prior full scopes and dispositions remain unchanged.
+
+The full diagnostic remains: there exist absolute c>0 and n0 such that for EVERY integer n>=n0 there is a bounded full-dimensional origin-symmetric RATIONAL polytope P_n with at most 2n^2 facets and unrestricted translative covering density theta_T(P_n)>=c n log n. Density uses the SAME actual body volume and the source centered-cube limsup convention, over EVERY locally finite translation covering. No center restriction, favorable dimensions, algorithm or bit-runtime claim is added.
+
+The source already pays the full O(n log n) single-lattice upper theorem for arbitrary convex bodies and the matching unrestricted translative lower theorem for symmetric bodies. Reading its entire operative proofs gives a routine rational finite-description lower witness with exp((n/2)log n+O(n)) facets; that comparison is paid, not nominated. The old r105 maximum-multiplicity direction was identified in actual eligible original history and was not retried.
+
+The sustained notebook develops one sparse Poisson slab model with at most 2n^2 facets, boundedness and volume events, a same-facet rationalization, a radial logarithmic cost budget, exact finite-window periodization, and product comparisons. It also isolates the changing cap-dependence scale, high-intensity residual costs and the mismatch between random-center barriers and universal lower bodies. An empty-process event rigorously prevents transplanting the unchanged unconditional doubly exponential tail to a capped sparse comparison; it does not disprove the diagnostic or rule out conditioning.
+
+The unresolved obligation is to construct ONE such body in every sufficiently large dimension for which EVERY finite cover of EVERY cube Q_L satisfies m vol(P_n)>=c n log n vol(Q_L). This is equivalent to the full density target. A conditional joint witness argument for the sparse model is only one sufficient route. Separate per-pattern bodies, a fractional cover, near-ball facet compression or an independently sampled center process do not close this obligation. No weaker substitute is offered.
+
+Main mathematics: packet/private/prefreeze-mathematics.md. Source mechanism reading: packet/private/source-understanding.md. Actual primary versions/extents and original-history comparisons: packet/private/primary-understanding.md and original-history-understanding.md. Detailed scope/access limits: packet/private/READING-LIMITS.md.
+
+All 27 canonical blobs were authenticated at the stipulated pin; BOTH complete actual source theorem/proof bodies and nested includes were read. Primary ancestry remains incomplete. The single guarded original-history traversal has coarse omissions and possible opaque helper/status false admissions, explicitly disclosed; there is no perfect-isolation, exhaustive-clearance or priority claim. All source/primary/history/search/extract bodies and their metadata remain private/local under original rights.
+
+The final exact selection is sealed once by MANIFEST.json. REPORT.md is outside that selection; ANCHORS.json records detached FINAL/MANIFEST/REPORT hashes. verify_packet.py is read-only and requires all three explicit anchors. Tiny copied own-text controls test integrity behavior only. These checks are not mathematical gates.

@@ -1,0 +1,4192 @@
+
+
+
+Fibers of point cloud persistence
+
+
+
+ 
+
+ // Restore the saved color scheme preference, or
+ // enact the browser preference if "automatic", 
+ // without expecting DOM load to have completed.
+ //
+ // Also restore any saved readingmode and ToC display preferences.
+ function initializeReadingPreferences() {
+ let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+ if (saved_theme === "automatic") {
+ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+ saved_theme = "dark";
+ }
+ }
+ if (saved_theme == "dark") {
+ document.documentElement.setAttribute("data-theme", "dark");
+ } else {
+ document.documentElement.setAttribute("data-theme", "light");
+ }
+
+ const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+ if (tocDisplay) {
+ document.documentElement.setAttribute("data-toc-display", tocDisplay);
+ }
+ const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+ if (readingMode) {
+ document.documentElement.setAttribute("data-reading-mode", readingMode);
+ }
+ }
+ // Run as soon as JS starts, to minimize repainting
+ initializeReadingPreferences();
+
+
+
+
+
+
+
+
+ /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+ the marker's display to know which way to toggle. The marker draws no box. */
+ .arxiv-html-header { display: contents; }
+ html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+ /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+ icon by making its span a block). */
+ .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+ /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+ arXiv's own render as they are (the logo on the bar, the funder logos on their white
+ chips). Important: ar5iv's dark rules are unlayered, as specific as
+ :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+ :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+ .ds-site-header img { background-color: transparent !important; }
+
+ /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+ were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+ header, the paper's bar (no site navigation, the paper's controls), takes the second and
+ stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+ The controls show their names. */
+ @media (min-width: 1280px) {
+ html { scroll-padding-top: 80px; }
+ .arxiv-html-site-chrome { display: contents; }
+ .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+ .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+ .arxiv-html-site-chrome .tool-icon { display: none; }
+ }
+ /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+ readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+ bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+ over the header and the paper: it shows only while open, under the chrome, in its place in
+ the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+ inset; the theme gives it none, so it met the screen edges. */
+ @media (max-width: 1279px) {
+ .arxiv-html-site-chrome .tool-wide { display: none; }
+ .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+ html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+ .ltx_page_navbar { position: absolute; top: auto; }
+ .arxiv-html-footer { padding-inline: 1rem; }
+ }
+
+
+Skip to main content
+
+ 
+ 
+ Report GitHub Issue
+ ×
+ 
+
+ 
+ Title:
+ 
+
+ Content selection saved. Describe the issue below:
+
+
+ Description:
+ 
+ 
+
+
+ 
+ Submit without GitHub
+ Submit in GitHub
+ 
+ 
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ Why HTML?
+ 
+ Report Issue
+ 
+ Back to Abstract
+ 
+ 
+ Download PDF
+ 
+ Contents
+ 
+ 
+ Reading mode
+ 
+ 
+ Colour theme
+ 
+
+
+
+
+
+
+Abstract
+
+1 Introduction
+
+1.1 Related Work
+
+1.2 Plan of the Paper
+
+
+
+2 Preliminaries
+
+2.1 Persistent Homology
+
+2.2 Filtrations for Point Clouds
+
+2.3 Persistence and Minimal Spanning Trees
+
+2.4 Semialgebraic sets, dimension, and genericity
+
+2.5 Enclosing Spheres and Circumspheres
+
+2.6 Rigidity Theory
+
+
+
+3 Semialgebraic Structure
+
+4 An Upper Bound
+
+5 A Lower Bound
+
+6 Vietoris-Rips Persistence Meets Rigidity Theory
+
+7 Circumsphere Rigidity Theory
+
+8 The Rigidity Theory of Čech Persistence
+
+9 Open Questions
+
+A Properties of Degree Zero Persistence
+
+B Lemmas from Real Algebraic Geometry
+
+References
+
+
+
+
+
+ 
+ License: CC BY 4.0
+ 
+ 
+arXiv:2411.08201v1 [math.AT] 12 Nov 2024
+
+
+
+
+Fibers of point cloud persistence
+
+
+
+David Beers
+††thanks: Department of Mathematics, University of California, Los Angeles
+  
+Heather A Harrington
+††thanks: Mathematical Institute, University of Oxford;
+Center of Mathematics, Max Planck Institute of Molecular Cell Biology and Genetics; Center for Systems Biology Dresden; Faculty of Mathematics, Technische Universität Dresden
+  
+Jacob Leygonie
+††thanks: Mathematical Institute, University of Oxford
+  
+Uzu Lim
+††thanks: School of Mathematical Sciences, Queen Mary University of London
+  
+Louis Theran
+††thanks: School of Mathematics and Statistics, University of St Andrews
+
+
+Abstract
+ 
+Persistent homology (PH) studies the topology of data across multiple scales by building nested collections of topological spaces called filtrations, computing homology and returning an algebraic object that can be vizualised as a barcode–a multiset of intervals. The barcode is stable and interpretable, leading to applications within mathematics and data science.
+We study the spaces of point clouds with the same barcode by connecting persistence with real algebraic geometry and rigidity theory. Utilizing a semi-algebraic setup of point cloud persistence,
+we give lower and upper bounds on its dimension and provide combinatorial conditions in terms of the local and global rigidity properties of graphs associated with point clouds and filtrations. We prove that for generic point clouds in $\mathbb{R}^{d}$ ( $d\geq 2$ ), a point cloud is identifiable up to isometry from its VR persistence if the associated graph is globally rigid, and locally identifiable up to isometry from its Čech persistence if the associated hypergraph is rigid.
+
+ 
+
+
+
+1 Introduction
+
+
+
+Persistent homology (PH) provides a multiscale geometric descriptor of data that is functorial, stable to perturbations and interpretable [CSEH05, CCSG+09, BL14], leading to many applications in mathematics [BPP+22, PS16, KS22] and the real-world [GHP+22, LBD+17, Mil15, BBK+24, RB19]. Although this process yields an interesting nontrivial descriptor of the “shape of data”, it is unclear how much information is lost in the mapping that takes point clouds to their barcode assigned by PH. To answer this, we ask the fundamental question: What is the shape of the fibers (i.e. level sets) of the persistent homology map?
+
+
+
+
+The most common set up in topological data analysis (TDA), which we consider here, is point cloud data. Let $P=(p_{1},\ldots,p_{n})$ be a configuration of ordered distinct points in $\mathbb{R}^{d}$ .
+While $P$ itself has no interesting topology, the union of closed balls of radius $r$ centered at each point does. The nerve theorem implies that this union has the same homotopy type as its nerve, known as the Čech complex [CO08]. Another complex, the Vietoris Rips (VR) complex starts with $n$ points and $k-$ simplices are built on tuples of $k+1$ points whenever all pairwise distances in the tuple are within distance $r$ . The key idea of persistent homology is to consider all values of $r$ , instead of a fixed choice, by building a nested sequence of simplicial complexes indexed by $r$ , called a filtration.
+Applying the $i$ th homology with coefficients in a field to a filtration gives a persistence module, a functor $(\mathbb{R},\leq)\to\mathrm{Vect_{\mathbb{F}}}$ .
+Persistence modules considered in this paper decompose uniquely up to isomorphism into a direct sum of indecomposable modules. Indexing this direct sum is a multiset of intervals in the real line called a barcode [ZC04].
+
+
+
+
+Here, we study the spaces of point clouds with the same barcode. Taking either the Čech or Vietoris Rips filtration, the persistence map assigns a point cloud $P$ to its barcode $D_{i}$ in homological degree $i$ . Hence from our filtration of $P$ we get an ordered collection of barcodes $D=[D_{0},D_{1},D_{2},\ldots]$ .
+We define $\mathrm{PH}^{\mathrm{VR}}$ to be the map which assigns to a point cloud $P$ its collection of barcodes $D$ under the Vietoris-Rips filtration. Similarly we define $\mathrm{PH}^{\check{\mathrm{C}}}$ to be the analogous map for the Čech filtration. The dimension of the spaces $(\mathrm{PH}^{\mathrm{VR}})^{-1}(D)$ and $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ can be thought of as the maximal number of independent ways a point cloud can be perturbed without affecting its persistent homology, giving us a lower bound.
+
+
+
+
+In a small neighborhood of any generic11
+ 1
+ 
+ 
+ 
+ The definition of generic in this paper is of an algebraic nature, and will be detailed in Section 2.4. $P$ , the map $\mathrm{PH}^{\mathrm{VR}}$ is a polynomial function and the map $\mathrm{PH}^{\check{\mathrm{C}}}$ is a rational function. We can compute the rank of the Jacobian of these maps at $P$ .
+By genericty of $P$ , the Jacobian test says that the rank is the local dimension of the image around the barcode and by standard dimension theory, this gives
+the local dimension of the fiber. The dimension of the whole fiber has to be larger than the local dimension, which gives a lower bound for the dimension of the whole fiber.
+
+
+
+
+Theorem 1.
+
+Let $\mathrm{PH}$ denote either $\mathrm{PH}^{\check{\mathrm{C}}}$ or $\mathrm{PH}^{\mathrm{VR}}$ . For any generic $P\in\mathrm{PC}_{n,d}$ , if there are exactly $k$ distinct bounded interval endpoints in barcodes in $D=\mathrm{PH}(P)$ , then $\dim\mathrm{PH}^{-1}(D)\geq nd-k+1$ .
+
+
+
+
+
+
+Computing the dimension of the fiber is complicated. The PH map, loosely speaking, behaves as if a bunch of rational maps were glued together, where the codomain changes along the boundaries of glued regions.
+Since the codomain of $\mathrm{PH}^{\check{\mathrm{C}}}$ and $\mathrm{PH}^{\mathrm{VR}}$ is the space of ordered collections of barcodes, not $\mathbb{R}^{n}$ , even showing that the spaces $(\mathrm{PH}^{\mathrm{VR}})^{-1}(D)$ and $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ have a well-behaved notion of dimension requires some work. Following an observation of Carrière et al [CCG+21], we establish that these level sets are semialgebraic sets, which implies that they have a well behaved dimension.
+Even for a generic point cloud, the fiber contains generic and nongeneric points. For this reason, the action of ambient isometries of $\mathbb{R}^{d}$ does not produce a fiber bundle structure on all level sets of the persistence map. It is worth mentioning that this lack of a fiber bundle structure makes calculating the dimension of level sets quotiented by isometry considerably more difficult.
+It can be proven that the local dimension of a level set quotiented by isometry at $P$ is bounded above the local dimension of the unquotiented level set at $P$ minus $\frac{d(d+1)}{2}$ , since $\frac{d(d+1)}{2}$ is the dimension of the isometry group of $\mathbb{R}^{d}$ . Given these challenges, there is no hope to compute even the dimension of the fiber unquotiented by isometry, but we can bound this number from above as well.
+
+
+
+
+Theorem 2.
+
+For any ordered collection of barcodes $D=[D_{0},D_{1},D_{2}\ldots]$ , the dimensions of $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ and $(\mathrm{PH}^{\mathrm{VR}})^{-1}(D)$ are both less than or equal to $nd-n+1$ , where $n$ is the number of intervals in $D_{0}$ (and hence the number of points in any point cloud $P$ in the fiber).
+
+
+
+
+
+
+We next provide a series of combinatorial conditions on $P$ that are sufficient to imply a barcode is most descriptive, i.e. there is only one point cloud up to ambient isometry that can produce that barcode. These results rely on concepts such as identifiability from real and applied algebraic geometry and rigidity theory from algebraic combinatorics and discrete geometry. In applied algebraic geometry, studying the degree of a single map can a difficult problem.
+Central to identifiability is determining when the fiber of a rational map is a singleton, in which case the point in the fiber is called identifiable; or finite, in which case points in the fiber are called locally identifiable [Sul23, HOPY20, DHR18]. There are many situations when such fibers are not even locally identifiable, e.g., point clouds in the plane are not identifiable up to
+ambient isometry under the mapping considered in [BK04]; the problem of nonidentifiability is nontrivial for low rank tensors, where the map is the projection from the abstract secant variety to the secant variety and the fiber is related to the notion of decomposition locus [GS24, BOS24]. We have described identifiability of a point in the domain, in complex algebraic geometry, if the map under consideration is algebraic, and the domain is irreducible either almost all points are identifiable or are not. However, since the persistence map is more complicated, we do not have a general dichotomy of this type.
+Nevertheless, we make progress on when a barcode is most informative by connecting the problem with rigidity theory [CG22a].
+Here, rigidity theory is concerned with identifiability of an unknown set of $n$ labeled points from
+the measurement of some $m$ labeled pairwise distances associated with the edges of a graph $G$ , which
+is naturally determined by the dimension of the image and the degree of the polynomial map
+ $m_{G}$ from sets of $n$ labeled points in $\mathbb{R}^{d}$ to
+ $\mathbb{R}^{m}$ that records the $m$ squared edge lengths of the graph $G$ .
+
+
+
+
+We denote by $\mathrm{PC}_{n,d}$ the space of (ordered) point clouds of $n$ distinct points in $d$ dimensional Euclidean space.
+We are interested in collections of barcodes $D$ that are as descriptive as possible. Such a collection $D$ satisfies that every point cloud in the fiber of $D$ is related by an isometry. We say a point cloud that maps to such a collection $D$ under $\mathrm{PH}^{\mathrm{VR}}$ (resp. $\mathrm{PH}^{\check{\mathrm{C}}}$ ) is identifiable under Vietoris-Rips (resp. Čech) persistence.
+To give a sufficient condition for when this happens in the Vietoris-Rips setting, we use notions arising in the rigidity theory of frameworks [ref], an area of algebraic combinatorics.
+To each point cloud $P$ we associate a graph $G_{P}$ , for the Vietoris–Rips filtration or
+a hypergraph $H_{P}$ , for the Čech filtration. The pair $(G_{\mathrm{VR}},P)$ is called a framework. Intuitively, we should think of an edge in $G_{P}$ between $p_{i}$ and $p_{j}$ as constraining the distance between $p_{i}$ and $p_{j}$ to be constant if we allowed the framework $(G_{\mathrm{VR}},P)$ to move freely. We say that a
+framework is globally rigid $(G_{P},P)$ if, whenever $(G_{P},Q)$ is another framework with the same edge lengths,
+then $P$ and $Q$ are related by a Euclidean isometry that maps $p_{i}$ to $q_{i}$ for all $i$ . A framework is
+locally rigid (or simply rigid) if there is a neighborhood $U\ni P$ so that if $Q\in U$ and
+the frameworks $(G_{P},P)$ and $(G_{P},Q)$ have the same edge lengths, they are similarly related by an isometry. (See
+Sections 2.6 and 6 for rigorous definitions).
+
+
+
+
+We can now state one of our main theorem regarding Vietoris-Rips persistence:
+
+
+
+
+Theorem 3.
+
+Let $n\geq d+2$ and $d\geq 2$ . For generic $P\in\mathrm{PC}_{n,d}$ , if $(G_{P},P)$ is globally rigid then $P$ is identifiable up to isometry under Vietoris-Rips persistence.
+
+
+
+
+
+
+A crucial challenge for proving the above result is that, in general, varying $P$ in the fiber of $D$ changes the graph $G_{P}$ . One of the key steps in our proof of Theorem 3 is showing that this generically does not happen when $G_{P}$ is globally rigid. To show this, we leverage a modern rigidity-theoretic result from [GTT19]. As we will discuss in Section 2.6, for generic $P$ the global rigidity of $(G_{P},P)$ only depends on the combinatorial structure of the graph $G_{P}$ . As such, identifiability of a
+generic point cloud $P$ only depends on the combinatorial properties of the invariant $G_{P}$ .
+
+
+
+
+To analyze Čech persistence, a new theory of rigidity is required. We develop this theory in Section 7, to the point where we can achieve a local, but not global, identifiability result for Čech persistence. Explicitly, we assign to each point cloud $P$ a hypergraph $H_{P}$ and the pair $(H_{P},P)$ will be an example of what we call a circumsphere framework. We say that $(H_{P},P)$ is (locally) rigid if the only way to perturb $P$ without changing the circumradius of any tuple of points corresponding to a hyperedge in $H_{P}$ is via an isometry. We say that $P$ is locally identifiable (under Čech persistence) when there is a neighborhood $U$ of $P$ such that for any $Q$ in $U$ with the same barcodes from Čech persistence, $P$ and $Q$ are isometric.
+
+
+
+
+We have the following theorem for Čech persistence:
+
+
+
+
+Theorem 4.
+
+A generic $P\in\mathrm{PC}_{n,d}$ is locally identifiable up to isometry under Čech persistence if and only if the circumsphere framework $(H_{P},P)$ is rigid.
+
+
+
+
+
+
+We give an analogous definition of local identifiability under Vietoris-Rips persistence, which gives rise to an analogous result for Vietoris-Rips persistence, stated in Theorem 58.
+
+
+
+
+The rigidity of $(G_{P},P)$ and $(H_{P},P)$ in fact only depends on the combinatorial structure of $G_{P}$ or $H_{P}$ for generic point clouds $P$ . For $G_{P}$ this is a well-known fact from rigidity theory that we discuss in Section 2.6. For hypergraphs $H_{P}$ , this fact requires proof, and we establish it in Lemma 64.
+
+
+
+
+1.1 Related Work
+
+
+
+Gameiro, Hiraoka and Obayashi provide one of the first results towards inverse problems; namely, if a collection of barcodes $D$ can arise from a point cloud, they provide a point cloud whose persistent homology is $D$ , provided that $D$ is close to another collection of barcodes known to come from a point cloud $P$ [GHO16]. Oudot and Soloman posed the first problem about level sets of the persistence maps $\mathrm{PH}^{\check{\mathrm{C}}}$ and $\mathrm{PH}^{\mathrm{VR}}$ , they asked when they are empty [OS20]. While this question is still open, in fact very little is known about the structure of these level sets when they are nonempty.
+It is well known that $\mathrm{PH}^{\mathrm{VR}}$ and $\mathrm{PH}^{\check{\mathrm{C}}}$ are never unique due to isometry invariance, i.e. Vietoris-Rips filtrations of any isometric point clouds have the same barcodes, and the same is true for Čech filtrations.
+Beyond this, Smith and Kurlin have given conditions for different point clouds to have identical barcodes for degree 1 homology [SK22]. To our knowledge, this is all that is known about the fibers, i.e., the level sets $(\mathrm{PH}^{\mathrm{VR}})^{-1}(D)$ and $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ , of the persistence map on point clouds. In [LMO24], the authors study to what extent the VR barcode of a compact, connected, smooth manifold $M$ determines the geometry of $M$ . By relating the interval in the VR barcode that corresponds to the fundamental class of M to the filling radius, they obtain various sufficient conditions for the barcode to determine $M$ in the case where $M$ is a sphere. There is also a thread of research studying level sets of persistent homology applied to filtrations arising from functions, not point clouds, see [Cur18, CMW20, MW21, LT22, LB23, LHP24, BL23].
+
+
+
+
+
+
+1.2 Plan of the Paper
+
+
+
+Section 2 reviews the notions from topology, geometry, algebra, combinatorics, graph theory and rigidity theory that we will need throughout the paper. In Section 2.1 we discuss how persistent homology assigns barcodes to arbitrary filtrations of spaces, specializing to filtrations arising from point clouds in Section 11. Then in Section 2.3 we discuss some results in TDA which are well known but which we could not find proven in detail in the literature. After this, we move to the prerequisite notions we need in algebra and geometry. First, we define algebraic and semialgebraic sets, and show how these notions lead to definitions of dimension and genericity in Section 2.4. Then we define circumspheres and enclosing spheres of point clouds and discuss important facts we will need about these kinds of spheres in Section 2.5. This section will in particular be useful for studying Čech persistence. We conclude our section on preliminaries with a review of rigidity theory in Section 2.6.
+
+
+
+
+In Section 3 we give a detailed semialgebraic setup for the PH map. One of the main results in this section is how to chop the domain of the persistence map up into semialgebraic cells on which PH is better behaved. We then establish facts about these cells that we use throughout the paper. Following, Sections 4 and 5 give an upper and lower bound on the dimension of the fiber of the persistence map.
+
+
+
+
+In Section 6 we define the critical graph $G_{P}$ of $P$ as the graph defined by the set of edges that appear in the Vietoris-Rips filtration of $P$ at a value of a barcode endpoint. This leads us to our main identifiability result, Theorem 3, along with our local identifiability result for Vietoris-Rips persistence, Theorem 58. In Section 7 we develop a new rigidity theory. This allows for us to prove our local identifiability result for Čech persistence, Theorem 4, in Section 8.
+
+
+
+
+We conclude with Section 9, where we discuss a few open questions arising from our work.
+
+
+
+
+In the appendix we prove some elementary and well known facts about degree zero persistence for point clouds and provide references for a couple of basic, though somewhat technical, lemmas about semialgebraic sets.
+
+
+
+
+
+
+
+
+2 Preliminaries
+
+
+
+2.1 Persistent Homology
+
+
+
+Persistent homology is an operation which takes as input a nested collection of topological spaces called a filtration:
+
+
+
+
+Definition 5.
+
+A filtration is a collection of topological spaces $\{X_{t}\}_{t\in\mathbb{R}}$ such that $X_{s}\subseteq X_{t}$ whenever $s\leq t$ .
+
+
+
+
+
+
+In this paper, $H_{i}(\bullet)$ will always denote homology in degree $i$ over a field $\mathbb{F}$ . All statements hereafter will be true regardless of the choice of $\mathbb{F}$ . When we apply $H_{i}(\bullet)$ to the spaces in a filtration $\{X_{t}\}_{t\in\mathbb{R}}$ we obtain a collection of vector spaces $\{H_{i}(X_{t})\}_{t\in\mathbb{R}}$ . Moreover, the functoriality of homology implies that we have commuting linear maps $H_{i}(X_{s})\to H_{i}(X_{t})$ whenever $s\leq t$ . This is an example of an algebraic structure called a persistence module.
+
+
+
+
+Definition 6.
+
+A persistence module is a collection of vector spaces $V=\{V_{t}\}_{t\in\mathbb{R}}$ equipped with commuting linear maps $V_{s,t}:V_{s}\to V_{t}$ for all $s\leq t$ satisfying $V_{s,s}=\mathrm{id}$ . Two persistence modules $V$ and $W$ are said to be isomorphic if there are vector space isomorphisms $\phi_{t}:V_{t}\to W_{t}$ such that $\phi_{t}\circ V_{s,t}=W_{s,t}\circ\phi_{s}$ .
+
+
+
+
+The persistence module $V$ is called pointwise finite dimensional (or pfd) if $V_{t}$ is finite for each $t\in\mathbb{R}$ . A number $t\in\mathbb{R}$ is called a critical value of $V$ if there does not exist an $\varepsilon>0$ such that $V_{r,s}$ is an isomorphism for all $t-\varepsilon<r\leq s<t+\varepsilon$ . A persistence module is called tame if it is pfd and has finitely many critical values.
+
+
+
+
+
+
+We are interested in tame persistence modules for two reasons. First, they frequently arise when studying finite point clouds as we will see shortly. Second, they admit decompositions into basic persistence modules called interval modules.
+
+
+
+
+Definition 7.
+
+Given an interval $I\subseteq\mathbb{R}$ , define the persistence module $\chi_{I}$ by
+
+
+
+
+
+
+
+
+ $(\chi_{I})_{t}=\begin{cases}\mathbb{F}&t\in I\\
+0&\textrm{otherwise,}\end{cases}\qquad(\chi_{I})_{s,t}=\begin{cases}\mathrm{id}&s,t\in I\\
+0&\textrm{otherwise,}\end{cases}$ 
+
+
+Such a persistence module is called an interval module.
+
+
+
+
+
+
+For persistence modules $V$ and $W$ , the direct sum $V\oplus W$ is defined by $(V\oplus W)_{t}:=V_{t}\oplus W_{t}$ , with $(V\oplus W)_{s,t}$ being the obvious maps inherited from $V_{s,t}$ and $W_{s,t}$ . The following result, which follows from Theorem 4.6 and Corollary 4.7 of [BS14] for example, shows that any tame persistence module decomposes into a direct sum of interval modules.
+
+
+
+
+Theorem 8.
+
+If $V$ is a tame persistence module, there is a unique multiset of nonempty intervals $\mathcal{I}$ such that $V$ is isomorphic to
+
+
+
+
+
+ $\bigoplus_{I\in\mathcal{I}}\chi_{I},$ 
+
+
+and the multiset $\mathcal{I}$ is finite.
+
+
+
+
+
+
+We remark that this result also follows fairly directly from the classic [ZC04], and the from the more general main result of [CB15]. However the statement of the decomposition theorem given in [BS14] is most convenient for our purposes. The above theorem motivates the following definition.
+
+
+
+
+Definition 9.
+
+A barcode is a multiset of nonempty intervals in the real line. A full barcode is a sequence of barcodes $D=\{D_{i}\}_{i=0}^{\infty}$ .
+
+
+
+
+
+
+Using Theorem 8 we may finally arrive at the definition of persistent homology.
+
+
+
+
+Definition 10.
+
+For a filtration $\mathcal{X}=\{X_{t}\}_{t\in\mathbb{R}}$ , let $H_{i}(\mathcal{X})$ denote the persistence module $\{H_{i}(X_{t})\}_{t\in\mathbb{R}}$ , and suppose this persistence module is tame. The persistent homology in degree $i$ of $\mathcal{X}$ is the barcode $D_{i}$ satisfying
+
+
+
+
+
+ $H_{i}(\mathcal{X})\cong\bigoplus_{I\in D_{i}}\chi_{I}.$ 
+
+
+If $H_{i}(\mathcal{X})$ is tame for each $i\geq 0$ , the persistent homology of $\mathcal{X}$ is the full barcode $D=\{D_{i}\}_{i=1}^{\infty}$ .
+
+
+
+
+
+
+
+
+2.2 Filtrations for Point Clouds
+
+
+
+Point clouds are the central objects of interest to this paper, and we define them as follows.
+
+
+
+
+Definition 11.
+
+We define $\mathrm{PC}_{n,d}$ as
+
+
+
+
+
+ $\mathrm{PC}_{n,d}=\{(p_{1},\ldots,p_{n})\in\mathbb{R}^{nd}:\;p_{i}\in\mathbb{R}^{d}\text{ and }p_{i}\neq p_{j}\;\forall i\neq j\},$ 
+
+
+the configuration space of $n$ points in $\mathbb{R}^{d}$ . Any element of $\mathrm{PC}_{n,d}$ is called a point cloud22
+ 2
+ 
+ 
+ 
+ Strictly speaking $\mathrm{PC}_{n,d}$ is the space of ordered point clouds of $n$ points in $\mathbb{R}^{d}$ . By quotienting by the action of the symmetric group $S_{n}$ , acting on $\mathrm{PC}_{n,d}$ by permuting the order of the $p_{i}$ , we may obtain the space of unordered point clouds of $n$ points in $\mathbb{R}^{d}$ , $\mathrm{PC}_{n,d}/S_{n}$ . (of $n$ points in dimension $d$ ).
+
+
+
+
+
+
+Point clouds give rise to filtrations, and these filtrations allow us to assign barcodes to point clouds. The following is a kind of filtration arising from point clouds.
+
+
+
+
+Definition 12.
+
+For $x\in\mathbb{R}^{d}$ , led $B_{r}(x)$ denote the closed ball of radius $r$ centered at $x$ . Given $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ the Čech filtration of $P$ is the filtration $\{P_{r}\}_{r\in\mathbb{R}}$ , where
+
+
+
+
+
+ $P_{r}=\bigcup_{i=1}^{n}B_{r}(p_{i}).$ 
+
+
+We denote the persistent homology in degree $i$ of this filtration by $\mathrm{PH}^{\check{\mathrm{C}}}_{i}(P)$ , should it be well defined, and the persistent homology of this filtration by $\mathrm{PH}^{\check{\mathrm{C}}}(P)$ , should it well defined.
+
+
+
+
+
+
+We will see that $\mathrm{PH}^{\check{\mathrm{C}}}_{i}(P)$ and $\mathrm{PH}^{\check{\mathrm{C}}}(P)$ always exist by using a combinatorial reformulation of the Čech filtration of a point cloud, but before we introduce it, we need the following definition.
+
+
+
+
+Definition 13.
+
+Let $K_{0}$ be a finite set. An (abstract) simplicial complex $K$ is a set of nonempty subsets $\sigma\subseteq K_{0}$ such that if $\tau\subseteq\sigma$ and $\sigma\in K$ , then $\tau\in K$ . An element $\sigma\in K$ is called a simplex (pl. simplices),
+and it is called a $p$ -simplex if $\sigma$ has $p+1$ elements exactly. The $p$ -skeleton of $K$ , denoted $K_{p}$ 
+is the simplicial complex consisting of all $j$ -simplices of $K$ , for $j\leq p$ . The dimension of $K$ is the
+maximum $d$ such that $K$ contains a $d$ -simplex.
+
+
+
+
+A $d$ -dimensional simplicial complex $K$ has a geometric realization. Let $f:K_{0}\to\mathbb{R}^{2d+1}$ be an injective mapping
+from $K_{0}$ to a point set such that any $2d+2$ of the points in $f(K_{0})$ are affinely independent. The geometric realization of $K$ is
+
+
+
+
+
+ $\|K\|=\bigcup_{\sigma\in K}\operatorname{conv}\{f(v):v\in K_{0}\cap\sigma\}$ 
+
+
+with the subspace topology from the ambient $\mathbb{R}^{2d+1}$ . (All the choices of $f$ give an equivalent space up
+to a PL homeo, for example.)33
+ 3
+ 
+ 
+ 
+ This construction is outlined in detail in [EH22, Chapter 3.1]
+
+
+
+
+
+
+Note that the 1-skeleton of a simplicial complex is a graph. It is well known that at the level of homology, the Čech filtration is a filtration of simplicial complexes. For convenience we will let $[n]$ denote the set $\{1,\ldots,n\}$ throughout. We will also denote by $|K|$ the number of simplices in $K$ . Of particular interest to us will be the simplicial complex whose simplices are the nonempty subsets of $[n]$ . This simplicial complex is called the complete simplicial complex on $n$ vertices. We denote this simplicial complex by $K(n)$ .
+
+
+
+
+Definition 14.
+
+For $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ , let $\check{\mathrm{C}}(P,r)$ denote the simplicial complex
+
+
+
+
+
+ $\{\sigma\subseteq[n]:\text{there exists }q\in\mathbb{R}^{d}\text{ such that }d(p_{i},q)\leq r\text{ for all }i\in\sigma\}.$ 
+
+
+
+
+
+These simplicial complexes define a filtration $\{\check{\mathrm{C}}(P,r)\}_{r\in\mathbb{R}}$ .
+
+
+
+
+
+
+The following, which is a result of [CO08, Section 3.1], shows that indeed the filtration $\{\check{\mathrm{C}}(P,r)\}_{r\in\mathbb{R}}$ of a point cloud has the same persistent homology as its Čech filtration.
+
+
+
+
+Proposition 15.
+
+The persistence modules $\{H_{i}(P_{r})\}_{r\in\mathbb{R}}$ and $\{H_{i}(\check{\mathrm{C}}(P,r))\}_{r\in\mathbb{R}}$ are isomorphic for each $i\geq 0$ .
+
+
+
+
+
+
+It is easily observed that $\{H_{i}(\check{\mathrm{C}}(P,r))\}_{r\in\mathbb{R}}$ is tame, so $\mathrm{PH}^{\check{\mathrm{C}}}_{i}(P)$ and $\mathrm{PH}^{\check{\mathrm{C}}}(P)$ are defined for all $P\in\mathrm{PC}_{n,d}$ by Proposition 15.
+
+
+
+
+The Vietoris-Rips filtration is another commonly used filtration which is also defined simplicially:
+
+
+
+
+Definition 16.
+
+For $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ , let $\mathrm{VR}(P,r)$ denote the simplicial complex
+
+
+
+
+
+ $\{\sigma\subseteq[n]:d(p_{i},p_{j})\leq 2r\text{ for all }i,j\in\sigma\}.$ 
+
+
+We refer to the filtration $\{\mathrm{VR}(P,r)\}_{r\in\mathbb{R}}$ as the Vietoris-Rips filtration of $P$ . We denote the persistent homology in degree $i$ of this filtration by $\mathrm{PH}^{\mathrm{VR}}_{i}(P)$ , and the persistent homology of this filtration by $\mathrm{PH}^{\mathrm{VR}}(P)$ .
+
+
+
+
+
+
+Clearly $\mathrm{PH}^{\mathrm{VR}}_{i}(P)$ and $\mathrm{PH}^{\mathrm{VR}}(P)$ are well defined since $\{H_{i}(\mathrm{VR}(P,r))\}_{r\in\mathbb{R}}$ is tame. It is easily checked that the Čech and Vietoris-Rips filtrations have identical 1-skeletons. For this reason, it is an immediate consequence of the theory of simplicial homology that $\mathrm{PH}^{\check{\mathrm{C}}}_{0}(P)=\mathrm{PH}^{\mathrm{VR}}_{0}(P)$ for any point cloud $P$ . We note that $\mathrm{PH}^{\mathrm{VR}}(P)$ and $\mathrm{PH}^{\check{\mathrm{C}}}(P)$ are in general not identical. The advantage of $\mathrm{PH}^{\check{\mathrm{C}}}$ is that it reflects the changing topology of the spaces $P_{r}$ , whereas the advantage of $\mathrm{PH}^{\mathrm{VR}}$ is that it is easier to compute for high dimensional point clouds [Bau21].
+
+
+
+
+We conclude the subsection with a discussion of how to use a function on a simplicial complex to get a filtration. We will identify maps $f:K\to\mathbb{R}$ with elements of $\mathbb{R}^{|K|}$ , where the $\sigma^{\mathrm{th}}$ coordinate of $f$ when viewed this way, denoted $f_{\sigma}$ , is the number $f(\sigma)$ . If $f$ satisfies that $f_{\tau}\leq f_{\sigma}$ whenever $\tau\subseteq\sigma$ , then it follows that the sets $\{\sigma\in K:f_{\sigma}\leq t\}_{t\in\mathbb{R}}$ are simplicial complexes, motivating the following definition.
+
+
+
+
+Definition 17.
+
+Let $K$ be a simplicial complex with $f\in\mathbb{R}^{|K|}$ such that $f_{\tau}\leq f_{\sigma}$ whenever $\tau\subseteq\sigma$ . Then $f$ is called an order preserving map and we denote by $\mathrm{PH}_{i}(f)$ the persistent homology in degree $i$ of the filtration of simplicial complexes
+
+
+
+
+
+ $\{\sigma\in K:f_{\sigma}\leq t\}_{t\in\mathbb{R}}.$ 
+
+
+We denote by $\mathrm{PH}(f)$ the persistent homology of this filtration.
+
+
+
+
+A map $\Phi:\mathrm{PC}_{n,d}\to\mathbb{R}^{|K|}$ is called an order preserving map parametrized by $\mathrm{PC}_{n,d}$ if $\Phi(P)$ is an order preserving map for each $P$ .
+
+
+
+
+
+
+For example, defining $\Phi^{\mathrm{VR}}:\mathrm{PC}_{n,d}\to\mathbb{R}^{|K(n)|}$ by
+
+
+
+
+
+ $\Phi^{\mathrm{VR}}_{\sigma}(P):=\max_{i,j\in\sigma}\frac{1}{2}d(p_{i},p_{j}),$ 
+
+
+then we have $\mathrm{PH}(\Phi^{\mathrm{VR}}(P))=\mathrm{PH}^{\mathrm{VR}}(P)$ .
+
+
+
+
+Similarly, defining $\Phi^{\check{\mathrm{C}}}:\mathrm{PC}_{n,d}\to\mathbb{R}^{|K(n)|}$ by
+
+
+
+
+
+ $\Phi^{\check{\mathrm{C}}}_{\sigma}(P):=\min\Big\{r\in\mathbb{R}:\text{ there exists }q\in\mathbb{R}^{d}\text{ such that }d(p_{i},q)\leq r\text{ for all }i\in\sigma\Big\},$ 
+
+
+then we have $\mathrm{PH}(\Phi^{\check{\mathrm{C}}}(P))=\mathrm{PH}^{\check{\mathrm{C}}}(P)$ . In Section 3 we will prove a general structure theorem about the following kinds of sets
+
+
+
+
+
+ $\displaystyle(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)$ 
+ $\displaystyle:=\{P\in\mathrm{PC}_{n,d}:\mathrm{PH}_{i}(\Phi(P))=B\}$ 
+
+
+
+ $\displaystyle(\mathrm{PH}\circ\Phi)^{-1}(D)$ 
+ $\displaystyle:=\{P\in\mathrm{PC}_{n,d}:\mathrm{PH}(\Phi(P))=D\},$ 
+
+
+where $\Phi:\mathrm{PC}_{n,d}\to\mathbb{R}^{|K|}$ is an order preserving map on a simplicial complex $K$ parametrized by $\mathrm{PC}_{n,d}$ , $B$ is a barcode, and $D$ is a full barcode.
+
+
+
+
+
+
+2.3 Persistence and Minimal Spanning Trees
+
+
+
+The goal of this section is to state two results in topological data analysis which are fairly elementary, we believe to be widely known to be true, that we will need later. Proofs of results in this subsection are given in the appendix for completeness. First we establish a basic fact about degree zero Čech and Vietoris-Rips barcodes.
+
+
+
+
+Lemma 18.
+
+Let $P=\{p_{1},\ldots,p_{n}\}\in\mathrm{PC}_{n,d}$ . Let $D_{0}=\mathrm{PH}^{\check{\mathrm{C}}}_{0}(P)$ (or equivalently $D_{0}=\mathrm{PH}^{\mathrm{VR}}_{0}(P)$ ). The barcode $D_{0}$ has $n$ intervals, each with a closed left endpoint and open right endpoint. All of these intervals have left endpoint equal to 0. One of these intervals has $\infty$ as its right endpoint. All other intervals in $D_{0}$ have a positive right endpoint.
+
+
+
+
+
+
+The next result discussed here (mentioned in [CdMDES24], and [EK20] in a slightly different context, for example) is widely known, but a little less clear. We will state it using the following language.
+
+
+
+
+Definition 19.
+
+A tree is a connected cycle free graph. Let $P=\{p_{1},\ldots,p_{n}\}\in\mathrm{PC}_{n,d}$ . A minimal spanning tree of $P$ is a tree whose vertex set is $[n]$ and whose edge set $E$ satisfies
+
+
+
+
+
+ $\sum_{\{i,j\}\in E}d(p_{i},p_{j})=\min\Big\{\sum_{\{i,j\}\in E^{\prime}}d(p_{i},p_{j}):[n]\text{ and }E^{\prime}\text{are the vertices and edges of a tree.}\Big\}.$ 
+
+
+
+
+
+
+
+The intuition behind this definition is that a minimal spanning tree has the smallest cumulative length of edges while still spanning the metric space $P$ . The result we need says that the edge lengths of a minimal spanning tree are specified by barcodes arising from $P$ .
+
+
+
+
+Lemma 20.
+
+Let $P=\{p_{1},\ldots,p_{n}\}\in\mathrm{PC}_{n,d}$ . Let $D_{0}=\mathrm{PH}^{\check{\mathrm{C}}}_{0}(P)$ (or equivalently $D_{0}=\mathrm{PH}^{\mathrm{VR}}_{0}(P)$ ). Let $r_{1}<\ldots<r_{m}$ denote the distinct finite right endpoints of intervals in $D_{0}$ and let $\mu_{i}$ denote the multiplicity with which $r_{i}$ appears as a right endpoint in $D_{0}$ . Let $T$ be a minimal spanning tree of $P$ . Then the multiset of edge lengths of $T$ consists of the numbers $2r_{1},\ldots,2r_{m}$ where $2r_{i}$ appears with multiplicity $\mu_{i}$ .
+
+
+
+
+
+
+It is explained how this fact follows from Kruskal’s algorithm in [CdMDES24, Section 2.3]. For completeness, we nevertheless give a detailed proof of the lemma in the appendix.
+
+
+
+
+
+
+2.4 Semialgebraic sets, dimension, and genericity
+
+
+
+Throughout we will consider only polynomials with real coefficients and work with the following kinds of sets.
+
+
+
+
+Definition 21.
+
+A set $S\subseteq\mathbb{R}^{m}$ is called algebraic if $S$ is of the form
+
+
+
+
+
+ $\{x\in\mathbb{R}^{m}:f_{1}(x)=\ldots=f_{k}(x)=0\},$ 
+
+
+where each $f_{i}$ is a polynomial in $x$ .
+
+
+
+
+A set $S\subseteq\mathbb{R}^{m}$ is called semialgebraic if $S$ is a finite of union of sets of the form
+
+
+
+
+
+ $\{x\in\mathbb{R}^{m}:f_{1}(x)=\ldots=f_{k}(x)=0,\;g_{1}(x)>0,\ldots,g_{l}(x)>0\},$ 
+
+(1)
+
+where each $f_{i}$ and $g_{i}$ is a polynomial in $x$ .
+
+
+
+
+If $S\subseteq\mathbb{R}^{m}$ , function $f:S\to\mathbb{R}^{k}$ is called semialgebraic if its graph, viewed as a subset of $\mathbb{R}^{m+k}$ is semialgebraic.
+
+
+
+
+The Zariski closure of a set $S\subseteq\mathbb{R}^{m}$ is the intersection of all algebraic sets containing $S$ .
+
+
+
+
+
+
+One can show that the Zariski closure of any set is algebraic.
+
+
+
+
+It can be checked also that finite unions of sets as in Equation 1, but with any number of the $g_{i}(x)>0$ replaced with $g_{i}(x)\neq 0$ or $g_{i}(x)\geq 0$ , are also semialgebraic. It follows that the intersection of any semialgebraic set with $\mathrm{PC}_{n,d}$ is semialgebraic. We state some basic results about semialgebraic sets, all of which are discussed in detail in [BCR13].
+
+
+
+
+Semialgebraic sets have the following basic properties
+
+
+1. 
+
+Finite unions, finite intersections, and complements of semialgebraic sets are semialgebraic.
+
+
+
+
+2. 
+
+If $A\subseteq\mathbb{R}^{m}$ and $B\subseteq\mathbb{R}^{n}$ are semialgebraic, so is $A\times B\subseteq\mathbb{R}^{m+n}$ .
+
+
+
+
+3. 
+
+If $\pi:\mathbb{R}^{d+1}\to\mathbb{R}^{d}$ is an axis-aligned projection map, $\pi$ sends semialgebraic sets to semialgebraic sets44
+ 4
+ 
+ 
+ 
+ This result is significantly more challenging to show than others in this list and is known as the Tarski-Seidenberg theorem, see for example [BCR13, Proposition 5.2.1].
+
+
+
+
+
+
+
+
+These facts are powerful tools for proving that a set is semialgebraic. Here is a simple but important example of how these facts may be used to show a set is semialgebraic.
+
+
+
+
+Example 22.
+
+Any rational function $f:A\to\mathbb{R}$ is semialgebraic, provided the domain $A$ of $f$ is also semialgebraic. To see this, write $f(x)=g(x)/h(x)$ for $g,h$ polynomials. The graph of $f$ is the set
+
+
+
+
+
+ $\Gamma=\{(x,y)\in A\times\mathbb{R}:yh(x)=g(x)\}.$ 
+
+
+If $A\subseteq\mathbb{R}^{m}$ , then $\Gamma$ is the intersection of semialgebraic sets $A\times\mathbb{R}$ and $\{(x,y)\in\mathbb{R}^{m+1}:yh(x)-g(x)=0\}$ . So $\Gamma$ is semialgebraic and therefore $f$ is semialgebraic as well.
+
+
+
+
+
+
+Whats more, one of the properties that semialgebraic sets enjoy as a consequence of the three above facts is that any set that can defined by a sentence in first order logic with polynomial equalities and inequalities is semialgebraic. The process of constructing the semialgebraic set corresponding to such a sentence is called quantifier elimination. To show the reader why and how this works, we present a simple example of quantifier elimination in action, and refer the reader to [BCR13] for the general details.
+
+
+
+
+Example 23.
+
+Let $f=(f_{1},f_{2}):\mathbb{R}\to\mathbb{R}^{2}$ be a polynomial map. Then the set of points not in the image of $f$ , i.e. the set
+
+
+
+
+
+ $S:=\{(x_{1},x_{2})\in\mathbb{R}^{2}:(\neg\exists\,y:(f_{1}(y)=x_{1}))\wedge(f_{2}(y)=x))\}$ 
+
+
+is semialgebraic.
+
+
+
+
+We can get rid of the ‘not’ symbol $\neg$ in $S$ by taking a complement, i.e. we have $S=\mathbb{R}^{2}-X$ . Where $X:=\{(y_{1},y_{2})\in\mathbb{R}^{2}:(\exists\,y:(f_{1}(x)=y_{1}))\wedge(f_{2}(x)=y_{2}))\}$ . If $X$ is semialgebraic, then so is $S$ , since semialgebraic sets are closed under relative complements. Now we let
+
+
+
+
+
+ $Y:=\{(x,y_{1},y_{2})\in\mathbb{R}^{3}:(f_{1}(x)=y_{1}))\wedge(f_{2}(x)=y_{2}))\}.$ 
+
+
+It suffices to show $Y$ is semialgebraic since $X$ is a projection of $Y$ . Finally, $Y$ is the intersection of $Z_{1}:=\{(x,y_{1},y_{2})\in\mathbb{R}^{3}:f_{1}(x)=y_{1}\}$ and $Z_{2}:=\{(x,y_{1},y_{2})\in\mathbb{R}^{3}:f_{2}(x)=y_{2}\}$ , and so is semialgebraic, since $Z_{1}$ and $Z_{2}$ are semialgebraic (and in fact algebraic). Therefore $S$ is semialgebraic.
+
+
+
+
+
+
+The topological interior, closure, and boundary of a semialgebraic set (with respect to the Euclidean topology) are all semialgebraic. Semialgebraic sets can be partitioned into finitely many sets, each homeomorphic to $(0,1)^{k}$ , for $k$ potentially varying among the sets. In fact, semialgebraic sets admit Whitney stratifications, but we will not need this.
+
+
+
+
+Definition 24.
+
+If $S$ is a semialgebraic set partitioned into $r$ sets $S_{1},\ldots,S_{r}$ , with $S_{i}$ homeomorphic to $(0,1)^{k_{i}}$ , then the dimension of $S$ , denoted $\dim S$ , is defined to be $\max_{i}(k_{i})$ . If $S$ is empty, the dimension of $S$ is defined to be $-\infty$ .
+
+
+
+
+
+
+It turns out that the dimension of $S$ does not depend on the choice of partition. Moreover, if $S$ is also a smooth real manifold of dimension $k$ , then the manifold dimension of $S$ and the dimension of $S$ as a semialgebraic set agree. As such, the dimension of $\mathrm{PC}_{n,d}$ is $nd$ . Furthermore the dimension of $S$ also agrees with its algebraic dimension, i.e. the dimension of its Zariski closure.
+The dimension of a finite union of sets $X_{i}$ is the maximum of the dimension of $X_{i}$ over the finitely many indices $i$ .
+
+
+
+
+Definition 25.
+
+We say that a property $\mathcal{Q}$ is generic
+if there is a proper algebraic subset $A\subset\mathbb{R}^{nd}$ such that
+either the property $\mathcal{Q}$ holds for all $P\in\mathrm{PC}_{n,d}-A$ or the property $\mathcal{Q}$ does not hold for all $P\in\mathrm{PC}_{n,d}-A$ . If we are in the first situation we say $\mathcal{Q}$ is generically true, or that, for generic point clouds $P$ , $\mathcal{Q}$ holds.
+
+
+
+
+
+
+We remark that proper algebraic subsets of $\mathbb{R}^{n}$ in particular are nowhere dense and have measure zero.
+
+
+
+
+To show that a property $\mathcal{Q}$ holds for all generic point clouds it suffices to find a semialgebraic subset $A\subseteq\mathrm{PC}_{n,d}$ of dimension less than $nd$ such that $\mathcal{Q}$ holds for all $P\in\mathrm{PC}_{n,d}-A$ . This is true because the Zariski closure of $A$ is algebraic, contains $A$ , and has dimension less than $nd$ , and therefore is a proper algebraic subset of $\mathbb{R}^{nd}$ . We will use this fact repeatedly throughout the paper.
+
+
+
+
+
+
+2.5 Enclosing Spheres and Circumspheres
+
+
+
+Here we recall well known facts about enclosing spheres and circumspheres of collections of points. These facts will help us establish a rigidity theory related to Čech filtrations in Sections 7-8 and, setting aside Lemma 28, will not be used elsewhere.
+
+
+
+
+For convenience, we will always consider a sphere of radius $0$ centered at $c\in\mathbb{R}^{d}$ to be the set $\{c\}$ .
+
+
+
+
+Definition 26.
+
+Let $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ .
+Let $S$ be a sphere of dimension $d-1$ , with any radius and center. If $S$ intersects every point in $P$ , then $S$ is called a circumsphere of $P$ . If $S$ is a circumsphere of $P$ and no circumsphere of $P$ exists with a smaller radius, then $S$ is called the minimal circumsphere of $P$ . The radius of the smallest circumsphere of $P$ is called the circumradius of $P$ .
+
+
+
+
+A sphere whose associated disk contains $P$ is called an enclosing sphere of $P$ . The smallest sphere that encloses $P$ is called the minimal enclosing sphere of $P$ . We refer to the radius of this sphere as the enclosing radius of $P$ .
+
+
+
+
+
+
+We illustrate these kinds of spheres in Figure 1.
+
+
+
+
+Figure 1: On the left is a circumsphere of a planar point cloud. In fact, since this point cloud has three points, it has at most one circumsphere, so this circumsphere is minimal. On the right is the minimal enclosing sphere of the same point cloud. Note that this enclosing sphere is the minimal circumsphere of a sub-point cloud.
+
+
+The following lemma is a consequence of [Wel05, Lemma 1]55
+ 5
+ 
+ 
+ 
+ While this result is only stated for the $k=2$ . It is pointed out later in the paper that that the same lemma and proof holds for arbitrary $k$ , with every instance of the number 3 replaced by $k+1$ ..
+
+
+
+
+Lemma 27 ([Wel05]).
+
+Let $P\in\mathrm{PC}_{n,d}$ be a point cloud with affine span of dimension $l$ . If a circumsphere of $P$ exists, then the minimal circumsphere exists and is unique.
+
+
+
+
+Regardless of the choice of $P$ , the minimal enclosing sphere of $P$ exists and is unique.
+Moreover there is a set $\tau=\{i_{1},\ldots,i_{k}\}\subseteq[n]$ where $k\leq l+1$ and the following are equal
+
+
+1. 
+
+The minimal enclosing sphere of $P$ ,
+
+
+
+
+2. 
+
+The minimal enclosing sphere of $(p_{i_{1}},\ldots,p_{i_{k}})$ , and
+
+
+
+
+3. 
+
+The minimal circumsphere of $(p_{i_{1}},\ldots,p_{i_{k}})$ ,
+which must have its center in the affine span of
+the sub-configuration.
+
+
+
+
+
+
+
+
+
+
+We will also need that the minimal enclosing radius function is reasonably well behaved.
+
+
+
+
+Lemma 28.
+
+The map $\rho_{\sigma}:\mathrm{PC}_{n,d}\to\mathbb{R}$ , sending $P$ to the minimal enclosing radius of $\{p_{i}:i\in\sigma\}$ is semialgebraic.
+
+
+
+
+
+
+Proof.
+
+Let $\sigma=\{i_{1},\ldots,i_{k}\}$ . The graph of $\rho_{\sigma}$ is the set
+
+
+
+
+
+ $\displaystyle\bigg\{(P,r)\in\mathrm{PC}_{n,d}\times\mathbb{R}:\Big(\exists x:$ 
+ $\displaystyle\big(d(x,p_{i_{1}})\leq r\wedge\ldots\wedge d(x,p_{i_{k}})\leq r\big)\Big)$ 
+
+
+
+
+ $\displaystyle\wedge\Big(\neg\exists r^{\prime}:\exists x:\big(r^{\prime}<r\wedge d(x,p_{i_{1}})\leq r^{\prime}\wedge\ldots\wedge d(x,p_{i_{k}})\leq r^{\prime}\big)\Big)\bigg\}.$ 
+
+
+In the above formula, the first line says that $r$ is large enough furnish an enclosing sphere of $\sigma(P)$ , and the second line says that moreover, no smaller $r^{\prime}<r$ has this property, so that $r$ is the minimal enclosing radius of $\sigma(P)$ . It follows by quantifier elimination that the graph of $\rho_{\sigma}$ , and hence $\rho_{\sigma}$ itself, is semialgebraic.
+∎
+
+
+
+
+
+
+We note that the above result is already known in the TDA community, see for example [CCG+21].
+
+
+
+
+To have a formulaic description of the minimal enclosing radius function we will need two different kinds of matrices.
+
+
+
+
+Definition 29.
+
+Let $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ . The Euclidean distance matrix of $P$ 
+is the $n\times n$ matrix $\Lambda_{P}$ that has entries
+
+
+
+
+
+ $(\Lambda_{P})_{ii}=0\qquad\text{and}\qquad(\Lambda_{P})_{ij}=d(p_{i},p_{j})^{2}\quad(\text{when }i\neq j)$ 
+
+
+The Cayley-Menger matrix of $P$ is the $(n+1)\times(n+1)$ matrix
+ $\Delta_{P}$ 
+
+
+
+
+
+ $\Delta_{P}=\left[\begin{array}[]{cc}0&\theta^{T}\\
+\theta&\Lambda_{P}\end{array}\right],$ 
+
+
+where $\theta$ is a column vector of $n$ ones.
+
+
+
+
+For $\sigma=\{i_{1},\ldots,i_{k}\}\subseteq[n]$ we denote by
+ $\sigma(P)$ the point cloud $\sigma(P)=(p_{i_{1}},\ldots,p_{i_{k}})$ .
+
+
+
+
+
+
+The following result from [Fie11, Theorem 2.1.3] combined with Lemma 27 allows us to compute the radii of enclosing spheres.
+
+
+
+
+Proposition 30.
+
+Let $P\in\mathrm{PC}_{n,d}$ and $\tau\subseteq[n]$ be such that $\tau(P)$ is affinely independent. Then the circumradius of $\tau(P)$ is defined and its square is equal to
+
+
+
+
+
+ $-\frac{\det\Lambda_{\tau(P)}}{2\det\Delta_{\tau(P)}}.$ 
+
+(2)
+
+
+
+
+
+
+
+
+2.6 Rigidity Theory
+
+
+
+We now introduce some background on the rigidity theory of frameworks. For a
+general reference, see, e.g., [CG22b]. The basic objects of study
+are frameworks, which, informally are a placement of a graph into a $d$ -dimensional
+Euclidean space.
+
+
+
+
+Definition 31.
+
+Let $d\in\mathbb{N}$ . A $d$ -dimensional framework $(G,P)$ is a pair $(G,P)$ where
+ $G=(V,E)$ is a simple, undirected graph with vertex set $V=[n]$ and $m$ edges and
+ $P=(p_{1},\ldots,p_{n})$ is a configuration of $n$ points in $\mathbb{R}^{d}$ . We treat $G$ 
+as an ordered graph, using the ordering on $[n]$ for the vertices and any bijection
+ $E\to[m]$ to fix an ordering of the edges.
+
+
+
+
+The squared edge-length measurement map
+
+
+
+
+
+ $f_{G}:\left((\mathbb{R}^{d})^{n}\right)\to\mathbb{R}^{m}\qquad P\mapsto\left(\|p_{i}-p_{j}\|^{2}\right)_{\{i,j\}\in E}$ 
+
+
+maps a framework to its vector of edge lengths. The correspondence between the coordinates
+of $\mathbb{R}^{m}$ is from the ordering of the edges.
+
+
+
+
+
+
+In this paper we will be interested in the following notions of equivalence between point clouds.
+
+
+
+
+Definition 32.
+
+Two point clouds $P=(p_{1},\ldots,p_{n}),Q=(q_{1},\ldots,q_{n})\in\mathrm{PC}_{n,d}$ are congruent if $d(p_{i},p_{j})=d(q_{i},q_{j})$ for all $1\leq i,j\leq n$ . The point clouds $P$ and $Q$ are isometric if $P$ and $Q$ are isometric as finite metric spaces $\mathbb{R}^{d}$ . Equivalently, $P$ and $Q$ are isometric if there is a permutation $f:[n]\to[n]$ such that $d(p_{i},p_{j})=d(q_{f(i)},q_{f(j)})$ for each $i,j\in[n]$ . The point clouds $P$ and $Q$ are weakly homometric if the multiset of pairwise distances $d(p_{i},p_{j})$ in $P$ is equal to the multiset of pairwise distances of $Q$ .
+
+
+
+
+
+
+Note that $P=(p_{1},\ldots,p_{n})$ and $Q=(q_{1},\ldots,q_{n})$ are congruent if and only if the map $\phi$ which sends each $p_{i}$ to $q_{i}$ is an isometry. As such congruent point clouds are necessarily isometric, but the converse is not true. It follows from the classical work of Young and Householder that if $P$ and $Q$ are congruent, there is an isomorphism $\phi$ of $\mathbb{R}^{d}$ sending $p_{i}$ to $q_{i}$ [YH38].
+
+
+
+
+If $P=(p_{1},\ldots,p_{n})$ and $Q=(q_{1},\ldots,q_{n})$ are merely isometric, then there is a bijection $f:[n]\to[n]$ such that $d(p_{i},p_{j})=d(q_{f(i)},q_{f(j)})$ . Hence $P$ is congruent to $\widetilde{Q}=(q_{f(1)},\ldots,q_{f(n)})$ . So by the previous paragraph there is an isometry $\phi$ of $\mathbb{R}^{d}$ sending $p_{i}$ to $q_{f(i)}$ . We thus observe that isometries of point clouds lift to isometries of $\mathbb{R}^{d}$ .
+
+
+
+
+Isomorphic point clouds are weakly homometric, but the converse is not true, as shown by the two non-isomorphic point clouds in Figure 2. The notion of weakly homometric point clouds is not as important to this paper as that of isometry and congruence. Our reason for defining this notion here is to emphasize that, a point cloud is not always recovered up to isometry from its pairwise distances alone.
+
+
+
+
+Figure 2: Two weakly homometric point clouds that are not isometric. This particular example comes from [BK04, Figure 4].
+
+
+Rigidity theory deals in questions about the set of frameworks that have the same
+edge lengths as some fixed $(G,P)$ . Intuitively, we regard
+ $(G,P)$ as a structure made of fixed length bars connected at their endpoints
+by freely rotating (universal) joints and study its allowed motions.
+
+
+
+
+Definition 33.
+
+Let $(G,P)$ and $(G,Q)$ be $d$ -dimensional frameworks. We say that $(G,P)$ and
+ $(G,Q)$ are equivalent if $f_{G}(P)=f_{G}(Q)$ , i.e., they have the
+same edge lengths and that $P$ and $Q$ are congruent if
+
+
+
+
+
+ $\|p_{i}-p_{j}\|^{2}=\|q_{i}-q_{j}\|^{2}\qquad\text{for all $\{i,j\}\in\binom{[n]}{2}$}$ 
+
+
+A framework $(G,P)$ is (locally) rigid if there is a neighborhood $U\ni P$ 
+such that if $Q\in U$ and $(G,P)$ is equivalent to $(G,Q)$ , then $P$ is
+congruent to $Q$ . A framework $(G,P)$ is globally rigid if any framework
+that is equivalent to $(G,P)$ is congruent to it. A framework that is not
+rigid is called flexible.
+
+
+
+
+
+
+In Figure 3 we illustrate examples of flexible, rigid, and globally rigid frameworks.
+
+
+
+
+Figure 3: Examples of frameworks in $\mathbb{R}^{2}$ . The framework on the left is flexible, since it
+can deform in a way that expands one diagonal of the quadrilateral and contracts the other while
+holding the edge lengths fixed. The framework in the middle is rigid. If we pin down a triangle to
+factor out ambient isometries, there are two positions for the remaining unpinned vertex that keep
+the remaining edge lengths fixed, so any equivalent but non-congruent frameworks must be at some
+fixed distance from each other. The framework on the right is complete, so it is globally rigid by definition. We
+can also see that adding the missing edge to the framework in the middle resolves the “flip ambiguity”.
+
+
+Frameworks with the same graph can have different rigidity properties. However,
+for each fixed graph, there is a generic behavior.
+
+
+
+
+Theorem 34 ([AR78, GHT10]).
+
+Rigidity and global rigidity are generic properties. That is, for each
+fixed dimension $d\in\mathbb{N}$ and $n\in\mathbb{N}$ , and every graph $G$ on $n$ 
+vertices, there is a Zariski open subset $U$ of $d$ -dimensional configurations
+so that either every $(G,P)$ with $P$ in $U$ is (globally) rigid or every
+ $(G,P)$ with $P\in U$ is not (globally) rigid.
+
+
+
+
+
+
+The statement for rigidity, which follows from standard differential geometry arguments, is due to
+Asimow and Roth [AR78]. That global rigidity is a generic property of $G$ 
+is a non-trivial result of Gortler–Healy–Thurston [GHT10], building on earlier work
+of Connelly [Con82]. In light of Theorem 34, we can define
+graphs to be rigid.
+
+
+
+
+Definition 35.
+
+A graph $G$ is generically rigid (GLR) in dimension $d$ if every generic $d$ -dimensional framework $(G,P)$ 
+is rigid. A graph $G$ is generically globally rigid (GGR) in dimension $d$ if every generic $d$ -dimensional
+framework $(G,P)$ is globally rigid.
+
+
+
+
+
+
+In Figure 4 we show an example of a graph $G$ which is generically rigid, but for certain point clouds $P$ can have $(G,P)$ flexible, or $(G,P)$ globally rigid.
+
+
+
+
+Figure 4: A GLR, but not GGR, graph $G$ which can non-generically be either flexible or globally rigid. On the left we see a non-generic framework $(G,P)$ that is flexible (one triangle can be rotated around the other). In the center, a generic framework that is rigid but not globally rigid (rotate the inner triangle by 120 degrees counterclockwise). On the right a non-generic framework that is globally rigid, see [CW96].
+
+
+In general, there is no simple combinatorial description of GGR or GLR graphs in three or greater dimensions. More precisely, there is no known deterministic polynomial time checkable description of which graphs are GLR or GGR in $d>2$ dimensions. However, whether a graph is generically rigid or generically globally rigid in dimension $d$ can be tested in randomized
+polynomial time, whereas determining whether a particular framework $(G,P)$ is rigid is co-NP hard. Whether or not a graph is GLR or GGR when $d\leq 2$ can be checked in polynomial time, however. A few graph-theoretic definitions are needed.
+
+
+
+
+Definition 36.
+
+A graph $G$ is $k$ -connnected if any graph $G^{\prime}$ obtained from $G$ by removing $k$ vertices and all edges incident to these vertices is connected. A graph $G$ is redundantly rigid if any graph $G^{\prime}$ obtained from $G$ by removing a single edge is GLR.
+
+
+
+
+
+
+Theorem 37 ([PG27, JJ05]).
+
+A graph $G$ is GLR in dimension 2 if and only if $G$ contains a spanning subgraph $G^{\prime}$ such that
+
+
+1. 
+
+ $|E(G^{\prime})|=2n-3$ , and
+
+
+
+
+2. 
+
+if $X$ is a subset of $[n]$ , the number of edges of $G^{\prime}$ whose endpoints are both in $X$ is less than or equal to $2|X|-3$ .
+
+
+
+
+
+A graph $G$ is GGR in dimension 2 if and only if $G$ is complete or
+
+
+1. 
+
+ $G$ is 3-connected, and
+
+
+
+
+2. 
+
+ $G$ is redundantly rigid in dimension 2.
+
+
+
+
+
+
+
+
+
+
+The characterization of graphs that are GLR in dimension 2 was established in [PG27] and later rediscovered in [Lam70].
+The result for GGR graphs was proven decades later still in [JJ05]. For GGR graphs, the phrase “ $G$ is complete” is only needed in the second part of the above theorem when $G$ has 3 or fewer vertices, as graphs with this many vertices are never redundantly rigid.
+
+
+
+
+Remark 1.
+
+In the rigidity theory literature, theorems about generic frameworks are usually stated in terms
+of $P$ having coordinates that are algebraically independent over $\mathbb{Q}$ . As discussed
+in [GTT19], the theorems we use here hold with the genericity
+assumption of Definition 25.
+
+
+
+
+
+
+In what
+follows, we will need a strengthening of global rigidity to the situation where the know the
+edge lengths of $(G,P)$ but not $G$ . Here is the relevant combinatorial definition.
+
+
+
+
+Definition 38.
+
+Let $G=([n],E)$ and $H=([n],F)$ be ordered graphs with $m$ edges and
+bijections $g:E\to[m]$ and $f:F\to[m]$ giving the edge orderings. We say
+that $G$ and $H$ are isomorphic as ordered graphs if there is a permutations $\sigma\in\operatorname{Sym}([n])$ 
+and $\tau\in\operatorname{Sym}([m])$ so that, so that
+
+
+
+
+
+ $\{\sigma(i),\sigma(j)\}\in F\quad\Longleftrightarrow\quad\{i,j\}\in E\qquad\text{and}\qquad\tau(f(\{i,j\}))=g(\{\sigma(i),\sigma(j)\})\quad\text{(all $\{i,j\}\in E$)}$ 
+
+
+In words, the graph isomorphism $\sigma$ reorders the edges of $G$ according to $\tau^{-1}$ .
+
+
+
+
+
+
+We will use the following result about “unlabeled” generic global rigidity, which says,
+informally, that the unordered multi-set of edge lengths from a generic, globally
+rigid framework determine the graph, up to isomorphism, and the configuration, up
+to congruence.
+
+
+
+
+Theorem 39 ([GTT19]).
+
+Suppose $n\geq d+2$ and $d\geq 2$ . Let $G$ be an ordered GGR graph in dimension $d$ with $n$ vertices and $(G,P)$ a generic
+ $d$ -dimensional framework. If $H$ is any other ordered graph with $n$ vertices and $m$ 
+edges, and there is a $\tau\in\operatorname{Sym}([m])$ so that
+
+
+
+
+
+ $f_{H}(Q)=\tau(f_{G}(P))$ 
+
+
+then there is a $\sigma\in\operatorname{Sym([n])}$ that makes $H$ isomorphic to
+ $G$ with the same $\tau$ and, under the vertex relabeling $\sigma$ ,
+ $Q$ is congruent to $P$ .
+
+
+
+
+
+
+Corollary 40 ([BK04]).
+
+Let $P,Q\in\mathrm{PC}_{n,d}$ and suppose $n\geq d+2$ and $d\geq 2$ . If $P$ is generic and $P$ and $Q$ are weakly homometric then $P$ and $Q$ are isometric.
+
+
+
+
+
+
+Proof.
+
+Take $G$ to be an ordered complete graph, which is GGR, and apply Theorem 39.
+∎
+
+
+
+
+
+
+We note that Corollary 40 was proven by Boutin and Kemper before Theorem 39. The genericity assumption is necessary for Corollary 40, as is shown by Figure 2. Since Corollary 40 is a special case of Theorem 39 we see the genericity assumption is necessary there as well. We remark here that this result of Boutin and Kemper has been used to motivate studying pairwise distances of point clouds in data science settings, for example in [WK21].
+
+
+
+
+
+
+
+
+3 Semialgebraic Structure
+
+
+
+The goal of this section is to show that given a full barcode $D$ , the level sets $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ and $(\mathrm{PH}^{\mathrm{VR}})^{-1}(D)$ in $\mathrm{PC}_{n,d}$ both have a semialgebraic structure, closely following arguments from [CCG+21]. This will establish that the notion of dimension established in Section 2.4 is well defined for fibers of the persistence map. Moreover, the observations we make along the way will help us determine a generic lower bound on the dimensions of the fibers of these two persistence maps, and will be useful later in establishing connections to rigidity theory.
+
+
+
+
+In greater generality, we want to show that persistence arising from any $\Phi$ , an order preserving map parametrized by $\mathrm{PC}_{n,d}$ , has semialgebraic level sets. This is more general since it is straightforward to check that $\Phi^{\mathrm{VR}}:\mathrm{PC}_{n,d}\to\mathbb{R}^{|K|}$ is semialgebraic, since each $\Phi^{\mathrm{VR}}_{\sigma}$ is semialgebraic. Moreover, the following lemma shows that $\Phi^{\check{\mathrm{C}}}$ is also semialgebraic.
+
+
+
+
+Proposition 41.
+
+The map $\Phi^{\check{\mathrm{C}}}$ is semialgebraic.
+
+
+
+
+
+
+Proof.
+
+The coordinate maps of $\Phi_{\sigma}^{\check{\mathrm{C}}}$ are the maps $\rho_{\sigma}$ , which assign to $P$ the enclosing radius of $\sigma(P)$ . These maps are semialgebraic by Lemma 28. Thus $\Phi^{\check{\mathrm{C}}}$ is semialgebraic, since it is coordinate-wise semialgebraic.
+∎
+
+
+
+
+
+
+The main result of this section is the following:
+
+
+
+
+Theorem 42.
+
+Let $K$ be a finite simplicial complex. Suppose that $\Phi:\mathrm{PC}_{n,d}\to\mathbb{R}^{|K|}$ is a semialgebraic order preserving map parametrized by $\mathrm{PC}_{n,d}$ . Then given a barcode $B$ , the set $(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)$ is semialgebraic for all $i\geq 0$ . It follows that the set $(\mathrm{PH}_{i}\circ\Phi)^{-1}(D)$ is semialgebraic for any full barcode $D$ .
+
+
+
+
+
+
+Our method of proof is based on those of [CCG+21], and will involve the following construction.
+
+
+
+
+Definition 43.
+
+Given a set $W$ , a total preorder $\preceq$ on $W$ is a relation such that
+
+
+1. 
+
+For all $x\in W$ , $x\preceq x$ .
+
+
+
+
+2. 
+
+For all $x,y\in W$ , either $x\preceq y$ , $y\preceq x$ , or both.
+
+
+
+
+3. 
+
+If $x\preceq y$ and $y\preceq z$ , then $x\preceq z$ .
+
+
+
+
+
+We denote by $\mathrm{TPO}(W)$ the set of total preorders $\preceq$ of $W$ . If $x\preceq y$ but not $y\preceq x$ we write $x\prec y$ .
+
+
+
+
+
+
+This definition is relevant to the above theorem because, given any $P\in\mathrm{PC}_{n,d}$ , $\Phi$ as stated in the theorem assigns a total preorder to the simplices of $K$ via the rule $\tau\preceq\sigma$ whenever $\Phi_{\tau}(P)\leq\Phi_{\sigma}(P)$ . As such, we get a map from point clouds into the set of total preorders on $K$ .
+
+
+
+
+Definition 44.
+
+Let $K$ be a simplicial complex and $\Phi$ be an order preserving map parametrized by $\mathrm{PC}_{n,d}$ . Define the map $\mathcal{T}:\mathrm{PC}_{n,d}\to\mathrm{TPO}(K)$ such that $\mathcal{T}(P)=\preceq$ where $\preceq$ is the relation satisfying
+
+
+
+
+
+ $\tau\preceq\sigma\iff\Phi_{\tau}(P)\leq\Phi_{\sigma}(P).$ 
+
+
+We let $S_{\preceq}:=\mathcal{T}^{-1}(\preceq)$ .
+
+
+
+
+
+
+As we will observe, the persistence map is well-behaved on the subspaces $S_{\preceq}\subseteq\mathrm{PC}_{n,d}$ . The reason for this is that the sets $S_{\preceq}$ consist of point clouds where simplices appear in the same order, the order determined by $\preceq$ . We illustrate this scenario in Figure 5.
+
+
+
+
+Figure 5: On the left we see the sets $S_{\preceq}$ partition point cloud space. On the right, a particular filtration assiciated to a set $S_{\preceq}$ . The definition of $S_{\preceq}$ forces each point cloud $P\in S_{\preceq}$ to have their simplices appear in the same order in their associated filtration, for example the order in the filtration on the right.
+
+
+Insofar as proving Theorem 42 is concerned, we care about the sets $S_{\preceq}$ since we have that
+
+
+
+
+
+ $(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)=\bigcup_{\preceq\in\mathrm{TPO}(K)}(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)\cap S_{\preceq}.$ 
+
+
+Since there are only finitely many elements in $\mathrm{TPO}(K)$ , this union is finite and so it suffices to prove that each set in this union is semialgebraic to prove that the union itself is semialgebraic. We will need often that persistence is well behaved on the sets $S_{\preceq}$ later, so let us make it a result of its own.
+
+
+
+
+Lemma 45.
+
+Let $K$ be a finite simplicial complex. Suppose that $\Phi:\mathrm{PC}_{n,d}\to\mathbb{R}^{|K|}$ is a semialgebraic order preserving map parametrized by $\mathrm{PC}_{n,d}$ . Then for any total preorder $\preceq\in\mathrm{TPO}(K)$ , $S_{\preceq}$ is semialgebraic. Moreover, $P,Q\in S_{\preceq}$ have $\mathrm{PH}_{i}(\Phi(P))=\mathrm{PH}_{i}(\Phi(Q))=B$ if and only if, for every bounded endpoint $b$ of $B$ and $\sigma\in K$ ,
+
+
+
+
+
+ $\Phi_{\sigma}(P)=b\iff\Phi_{\sigma}(Q)=b.$ 
+
+
+
+
+
+
+
+Proof.
+
+The set $S_{\preceq}$ consists is the set of point clouds $P\in\mathrm{PC}_{n,d}$ such that for all $\sigma,\sigma^{\prime}\in K$ ,
+
+
+
+
+
+ $\Phi_{\sigma}(P)=\Phi_{\sigma^{\prime}}(P)\iff\Phi_{\sigma}(P)-\Phi_{\sigma^{\prime}}(P)=0$ 
+
+
+if both $\sigma\preceq\sigma^{\prime}$ and $\sigma^{\prime}\preceq\sigma$ , and
+
+
+
+
+
+ $\Phi_{\sigma}(P)>\Phi_{\sigma^{\prime}}(P)\iff\Phi_{\sigma}(P)-\Phi_{\sigma^{\prime}}(P)>0$ 
+
+
+if $\sigma^{\prime}\prec\sigma$ .
+Both the above inequalties and equalities each define a semialgebraic set. Since finitely many such equations define $S_{\preceq}$ , it is the intersection of finitely many semialgebraic sets, and so is semialgebraic. Note that these constraints imply that for any $P,Q\in S_{\preceq}$ , there is a strictly increasing map $\psi:\mathbb{R}\to\mathbb{R}$ such that $\psi\circ\Phi_{\sigma}(P)=\Phi_{\sigma}(Q)$ for each $\sigma\in K$ . Let us see how the condition of $P$ and $Q$ having the same barcode further constrains $\psi$ .
+
+
+
+
+Fix $P\in S_{\preceq}$ such that $\mathrm{PH}_{i}(\Phi(P))=B$ . For any $Q\in S_{\preceq}$ there exists a strictly increasing map $\psi:\mathbb{R}\to\mathbb{R}$ such that $\psi\circ\Phi_{\sigma}(P)=\Phi_{\sigma}(Q)$ for all $\sigma\in K$ . If additionally we have $\mathrm{PH}_{i}(\Phi(Q))=B$ , then by [LT22, Lemma 1.5]66
+ 6
+ 
+ 
+ 
+ While this result technically only applies to $\mathrm{PH}$ , by inspecting the proof we see the result also holds for $\mathrm{PH}_{i}$ , for each $i\geq 0$ ., for any value $b$ that is the endpoint of an interval of $B$ , we have $\psi(b)=b$ . Conversely, fix any strictly increasing map $\psi:\mathbb{R}\to\mathbb{R}$ such that $\psi(b)=b$ for every interval endpoint $b$ in $B$ . Given $Q\in\mathrm{PC}_{n,d}$ satisfying $\psi\circ\Phi_{\sigma}(P)=\Phi_{\sigma}(Q)$ for all $\sigma\in K$ , we observe that $\mathcal{T}(P)=\mathcal{T}(Q)$ and, by [LT22, Lemma 1.5], $\mathrm{PH}_{i}(\Phi(P))=\mathrm{PH}_{i}(\Phi(Q))=B$ . In summary, $Q\in S_{\preceq}$ has $\mathrm{PH}_{i}(\Phi(Q))=B$ if and only if there exists a strictly increasing function $\psi$ fixing endpoints of intervals in $B$ such that $\psi\circ\Phi_{\sigma}(P)=\Phi_{\sigma}(Q)$ for all $\sigma\in K$ . This happens for $P,Q\in S_{\preceq}$ if and only if $\Phi_{\sigma}(P)=b\iff\Phi_{\sigma}(Q)=b$ for all $\sigma\in K$ , and all barcode endpoints $b$ of $B$ , as desired.
+∎
+
+
+
+
+
+
+Proof of Theorem 42.
+
+To show that $(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)$ is semialgebraic it suffices to show that, for each $\preceq\in\mathrm{TPO}(K)$ , the set $(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)\cap S_{\preceq}$ is semialgebraic. If this set is empty it is automatically semialgebraic. Otherwise, there exists $P\in(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)\cap S_{\preceq}$ . Let $W\subseteq K$ be the subset of simplices $\sigma$ such that $\Phi_{\sigma}(P)$ is an endpoint value of $B$ . By Lemma 45, $Q\in(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)\cap S_{\preceq}$ if and only if $\Phi_{\sigma}(Q)=\Phi_{\sigma}(P)$ for all $\sigma\in W$ . Define $X\subseteq\mathrm{PC}_{n,d}$ by
+
+
+
+
+
+ $X:=\{Q\in\mathrm{PC}_{n,d}:\Phi_{\sigma}(Q)-\Phi_{\sigma}(P)=0\text{ for all }\sigma\in W\}.$ 
+
+
+Thus we have that $(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)\cap S_{\preceq}=X\cap S_{\preceq}$ . Moreover $X$ is semialgebraic. To see this, note that the graph of the function $\Phi_{\sigma}(Q)-\Phi_{\sigma}(P)$ (as a function of $Q$ with $P$ fixed), which is an element of $\mathrm{PC}_{n,d}\times\mathbb{R}$ , is semialgebraic. Hence its intersection with $\mathrm{PC}_{n,d}\times\{0\}$ is semialgebraic, and so by projecting we see that the set of $Q$ such that $\Phi_{\sigma}(Q)-\Phi_{\sigma}(P)=0$ is semialgebraic. By varying $\sigma$ over $W$ , we see that $X$ is the intersection of finitely many semialgebraic sets, one for each $\sigma\in W$ . So $X$ is indeed semialgebraic.
+
+
+
+
+The set $S_{\preceq}$ is semialgebraic by Lemma 45, so $(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)\cap S_{\preceq}=X\cap S_{\preceq}$ is the intersection of two semialgebraic sets, and so is semialgebraic. This moreover shows that $(\mathrm{PH}_{i}\circ\Phi)^{-1}(B)$ is semialgebraic.
+
+
+
+
+Now all that remains is to show that given a full barcode $D=\{D_{i}\}_{i=0}^{\infty}$ that the set
+
+
+
+
+
+ $(\mathrm{PH}\circ\Phi)^{-1}(D)=\bigcap_{i=0}^{\infty}(\mathrm{PH}_{i}\circ\Phi)^{-1}(D_{i})$ 
+
+
+is semialgebraic. Since $K$ is finite, there is an $N$ such that the dimension of each $\sigma\in K$ is less than $N$ . It follows that if $D_{i}$ is nonempty for some $i\geq N$ then $(\mathrm{PH}_{i}\circ\Phi)^{-1}(D_{i})$ is empty- the homology in degree $i$ of subcomplexes of $K$ is always trivial. In this case it follows $(\mathrm{PH}\circ\Phi)^{-1}(D)$ is empty, and hence semialgebraic. Otherwise, $D_{i}$ is empty for all $i\geq N$ . For such $i$ we have that $(\mathrm{PH}_{i}\circ\Phi)^{-1}(D_{i})=\mathrm{PC}_{n,d}$ , again because the homology in degree $i$ of subcomplexes of $K$ is always trivial. In this case,
+
+
+
+
+
+ $(\mathrm{PH}\circ\Phi)^{-1}(D)=\bigcap_{i=0}^{\infty}(\mathrm{PH}_{i}\circ\Phi)^{-1}(D_{i})=\bigcap_{i=0}^{N-1}(\mathrm{PH}_{i}\circ\Phi)^{-1}(D_{i})$ 
+
+
+Hence $(\mathrm{PH}\circ\Phi)^{-1}(D)$ is a finite intersection of semialgebraic sets, and therefore semialgebraic.
+∎
+
+
+
+
+
+
+Corollary 46.
+
+Let $D=\{D_{i}\}_{i=0}^{\infty}$ be a full barcode. Then the spaces $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ and $(\mathrm{PH}^{\mathrm{VR}})^{-1}(D)$ are both semialgebraic, as are the spaces $(\mathrm{PH}^{\check{\mathrm{C}}}_{i})^{-1}(D_{i})$ and $(\mathrm{PH}^{\mathrm{VR}}_{i})^{-1}(D_{i})$ for each $i\geq 0$ .
+
+
+
+
+
+
+Proof.
+
+Applying Theorem 42, this follows immediately from the facts that $\Phi^{\check{\mathrm{C}}}$ and $\Phi^{\mathrm{VR}}$ are semialgebraic, combined with the fact that $(\mathrm{PH}^{\check{\mathrm{C}}}_{i})^{-1}(D_{i})=(\mathrm{PH}_{i}\circ\Phi^{\check{\mathrm{C}}})^{-1}(D_{i})$ and $(\mathrm{PH}^{\mathrm{VR}}_{i})^{-1}(D_{i})=(\mathrm{PH}_{i}\circ\Phi^{\mathrm{VR}})^{-1}(D_{i})$ .
+∎
+
+
+
+
+
+
+Later we will need to understand the interior and boundary of the sets $S_{\preceq}$ , so we record a basic definition and fact regarding these sets here.
+
+
+
+
+Definition 47.
+
+We say that a point cloud $P$ is interior to $S_{\preceq}$ if there is an open ball $B$ in $\mathrm{PC}_{n,d}$ such that $P\in B\subseteq S_{\preceq}$ .
+
+
+
+
+
+
+The following proposition shows that being interior to a set $S_{\preceq}$ is a generic condition.
+
+
+
+
+Proposition 48.
+
+The set of point clouds that are not interior to any set $S_{\preceq}$ is semialgebraic and has dimension less than $nd$ .
+
+
+
+
+
+
+Proof.
+
+Denote the set of point clouds not interior to any $S_{\preceq}$ by $N$ , and let $N_{\preceq}:=N\cap S_{\preceq}$ . The set of point clouds interior to $S_{\preceq}$ is by definition the interior of $S_{\preceq}$ , when viewed as a subspace of $\mathrm{PC}_{n,d}$ , and hence is semialgebrac. Hence $N$ is the complement of a finite union of semialgebraic sets, and so is semialgebraic, implying that each $N_{\preceq}$ is also semialgebraic. Also, $N_{\preceq}$ contains no points in the interior of $S_{\preceq}$ and so is a subset of the boundary of $S_{\preceq}$ , viewed as a subspace of $\mathbb{R}^{nd}$ . We will denote this boundary by $\mathrm{bd}(S_{\preceq})$ . Using Lemma 73 in the appendix, we have
+
+
+
+
+
+ $\dim N=\max_{\preceq\in\mathrm{TPO}(K(n))}\dim N_{\preceq}\leq\max_{\preceq\in\mathrm{TPO}(K(n))}\dim\mathrm{bd}(S_{\preceq})<nd,$ 
+
+
+giving the result.
+∎
+
+
+
+
+
+
+Lastly, we will need that we have the following generic relationship between isometric and congruent point clouds on the sets $S_{\preceq}$ .
+
+
+
+
+Lemma 49.
+
+Let $\Phi=\Phi^{\check{\mathrm{C}}}$ or $\Phi=\Phi^{\mathrm{VR}}$ , and suppose that $P\in\mathrm{PC}_{n,d}$ is generic. If $P,Q\in S_{\preceq}$ are isometric, then $P$ and $Q$ are congruent.
+
+
+
+
+
+
+Proof.
+
+By genericity of $P$ , we may suppose that the pairwise distances $d(p_{i},p_{j})$ of $P$ are all distinct. Now suppose $P,Q\in S_{\preceq}$ . In $S_{\preceq}$ , the simplices of $K(n)$ always appear in the same order. In particular, the same is true for the pairs $\{i,j\}\in K(n)$ . For either choice of $\Phi$ in the theorem, $\Phi_{\{i,j\}}(P)=\frac{1}{2}d(p_{i},p_{j})$ . Therefore, $d(p_{i},p_{j})$ is the $k^{\mathrm{th}}$ smallest pairwise distance of points in $P$ if and only if the same is true for the distance $d(q_{i},q_{j})$ in $Q$ .
+
+
+
+
+If $\phi:P\to Q$ is an isometry, then $P$ and $Q$ have the same multiset of edge lengths. Since $d(p_{i},p_{j})=d(\phi(p_{i}),\phi(p_{j}))$ , it follows that $d(\phi(p_{i}),\phi(p_{j}))$ is the $k^{\mathrm{th}}$ smallest pairwise distance of points in $Q$ if and only if $d(p_{i},p_{j})$ is the $k^{\mathrm{th}}$ smallest pairwise distance of points in $P$ . The latter happens if and only if $d(q_{i},q_{j})$ is the $k^{\mathrm{th}}$ smallest pairwise distance of points in $Q$ . Hence we have:
+
+
+
+
+
+ $d(p_{i},p_{j})=d(\phi(p_{i}),\phi(p_{j}))=d(q_{i},q_{j}).$ 
+
+
+This is true for all pairs $\{i,j\}$ where $i\neq j$ and so $P$ and $Q$ are congruent.
+∎
+
+
+
+
+
+
+
+
+4 An Upper Bound
+
+
+
+We are now ready to prove our first result about the dimension of level sets of the persistence map. We will make use of the following lemma, which describes the space of point clouds with a particular spanning tree.
+
+
+
+
+Lemma 50.
+
+Let $T$ be a tree with vertex set $[n]$ and edge set $E$ with positive real weights $w_{ij}$ for each $\{i,j\}\in E$ . The space
+
+
+
+
+
+ $S=\{(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}:\text{if }\{i,j\}\in E\text{ then }d(p_{i},p_{j})=w_{ij}\}.$ 
+
+
+is semialgebraic and has dimension less than or equal to $nd-n+1$ 
+
+
+
+
+
+
+In fact, with very little more work it can be shown that the dimension of $S$ is equal to $nd-n+1$ , but we do not need this.
+
+
+
+
+Proof.
+
+The space $S$ is the intersection of a space defined by finitely many polynomial equalities with $\mathrm{PC}_{n,d}$ a semialgebraic set. Hence $S$ is semialgebraic. Moreover, $S$ is a subspace of
+
+
+
+
+
+ $M:=\{(p_{1},\ldots,p_{n})\in\mathbb{R}^{nd}:\text{if }\{i,j\}\in E\text{ then }d(p_{i},p_{j})=w_{ij},\text{for some $k$}\}.$ 
+
+
+The space $M$ is semialgebraic by similar reasoning, and moreover is homeomorphic to
+
+
+
+
+
+ $\mathbb{R}^{d}\times(\mathbb{S}^{d-1})^{n-1},$ 
+
+
+To see this, fix a root $R$ of $T$ . This choice fixes an orientation on the edges of $T$ away from $R$ . Let $E^{\prime}$ denote the set of directed edges $(i,j)$ of $T$ from $i$ to $j$ . For each $(i,j)\in E^{\prime}$ , we have a unit vector $v_{(i,j)}(P)=(p_{j}-p_{i})/\|p_{j}-p_{i}\|$ indicating the direction from $p_{i}$ to $p_{j}$ . Pick an ordering $e_{1},\ldots,e_{n-1}$ of the elements of $E^{\prime}$ . Since a point cloud $P$ in $M$ is specified by
+
+
+1. 
+
+the location of $p_{R}$ , and
+
+
+
+
+2. 
+
+the direction $v_{\{i,j\}}(P)$ for each $\{i,j\}\in E^{\prime}$ ,
+
+
+
+
+
+we have a homeomorphism
+
+
+
+
+
+ $\displaystyle M$ 
+ $\displaystyle\to\mathbb{R}^{d}\times(\mathbb{S}^{d-1})^{n-1}$ 
+
+
+
+ $\displaystyle P$ 
+ $\displaystyle\mapsto(p_{R},v_{e_{1}}(P),\ldots,v_{e_{n-1}}(P))$ 
+
+
+Hence $M$ is homeomorphic to $\mathbb{R}^{d}\times(\mathbb{S}^{d-1})^{n-1}$ , which as a manifold has dimension $nd-n+1$ . So $M$ has the same dimension since the dimension of a semialgebraic set that is a manifold agrees with its manifold dimension. Since $S\subseteq M$ , $\dim S\leq\dim M$ .
+∎
+
+
+
+
+
+
+Now we prove an upper bound for the dimension of fibers of the persistence map.
+
+
+
+
+See 2
+
+
+
+
+Proof.
+
+Fix any point cloud $P=\{p_{1},\ldots,p_{n}\}$ and $D_{0}=\mathrm{PH}^{\check{\mathrm{C}}}_{0}(P)$ (and so $D_{0}=\mathrm{PH}^{\mathrm{VR}}_{0}(P)$ ). Suppose the finite right endpoint values of $D_{0}$ are $r_{1}<\ldots<r_{m}$ . By Lemma 20 there exists a tree $T$ with vertex set $[n]$ and edge set $E$ such that if $\{i,j\}\in E$ , then $d(p_{i},p_{j})=2r_{k}$ for some $1\leq k\leq m$ . Hence $P$ lies in the following subspace of $\mathbb{R}^{nd}$ 
+
+
+
+
+
+ $\{(q_{1},\ldots,q_{n})\in\mathrm{PC}_{n,d}:\text{if }\{i,j\}\in E\text{ then }d(q_{i},q_{j})=2r_{k},\text{for some $k$}\}.$ 
+
+
+
+
+
+The tree $T$ in general depends not only on $D_{0}$ , but also on the geometry of $P$ (and is not necessarily uniquely defined!). However, if we let $\mathcal{S}$ denote the set of trees $T$ with vertex set $[n]$ , and $\mathcal{R}(T)$ the set of maps from the edges of a given spanning tree $T$ on $[n]$ to the set $\{2r_{1},\ldots,2r_{k}\}$ we have for now arbitrary $P$ with $\mathrm{PH}^{\check{\mathrm{C}}}(P)=D_{0}$ that
+
+
+
+
+
+ $P\in\bigcup_{T\in\mathcal{S}}\bigcup_{\phi\in\mathcal{R}(T)}\{(q_{1},\ldots,q_{n})\in\mathrm{PC}_{n,d}:\text{if }\{i,j\}\in E(T)\text{ then }d(q_{i},q_{j})=\phi(\{i,j\})\}.$ 
+
+
+However, each set
+
+
+
+
+
+ $\{(q_{1},\ldots,q_{n})\in\mathrm{PC}_{n,d}:\text{if }\{i,j\}\in E(T)\text{ then }d(q_{i},q_{j})=2\phi(\{i,j\})\}$ 
+
+
+has dimension $nd-n+1$ by the previous lemma. Hence $P$ lies in a finite union of semialgebraic sets of dimension at most $nd-n+1$ . Hence $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ has dimension at most $nd-n+1$ .
+
+
+
+
+Note both $\mathcal{S}$ and the sets $\mathcal{R}(T)$ are all finite. Thus a point cloud $P$ with Čech barcode $D$ lies on a union of finitely many $nd-n+1$ dimensional manifolds. So $\mathrm{PH}^{-1}(D)$ has dimension at most $nd-n+1$ .
+∎
+
+
+
+
+
+
+Using the results of [SK22] we observe that this upper bound is sharp when $d=2$ and we take Čech persistence.
+
+
+
+
+Proposition 51.
+
+Let $D$ be any full barcode with $D_{i}$ empty for all $i>0$ . In the case where $d=2$ , the space $(\mathrm{PH}^{\check{\mathrm{C}}})^{-1}(D)$ has dimension $nd-n+1=n+1$ .
+
+
+
+
+
+
+Proof.
+
+Suppose that the $n-1$ bounded right endpoints of $D_{0}$ are $r_{1},\ldots,r_{n-1}$ . Let $X\subseteq\mathrm{PC}_{n,d}$ denote the subset of point clouds $P=\{p_{1},\ldots,p_{n}\}\in\mathrm{PC}_{n,d}$ such that
+
+
+1. 
+
+ $d(p_{i+1},p_{i})=2r_{i}$ , and
+
+
+
+
+2. 
+
+the angle between the vectors $p_{j}-p_{i}$ and $(1,0)$ is less than $\pi/4$ any $i<j$ .
+
+
+
+
+
+By methods used in the previous proof we can show that $X$ has dimension $n+1$ .
+
+
+
+
+The Čech filtration of any $P\in X$ is a filtration of closed, locally contractible, and proper subsets of the plane, and hence has trivial persistence in degrees greater than 1 by Alexander duality and the universal coefficient theorem. Meanwhile, by combining Proposition 3.3 and Lemma 3.5 from [SK22], $P$ must also have trivial persistence in degree 1. Hence it remains to show that $P$ has barcode $D_{0}$ in degree zero.
+
+
+
+
+Let $T$ be the minimal spanning tree of $P$ with edge set $E$ . Given $i<j<k$ , suppose that $\{i,k\},\{j,k\}\in E$ . Since the vectors $p_{j}-p_{i}$ and $p_{k}-p_{j}$ both make an angle with $(1,0)$ of less than $\pi/4$ , the angle between $p_{i}-p_{j}$ and $p_{k}-p_{j}$ is obtuse. Hence $d(p_{i},p_{j})<d(p_{i},p_{k})$ . Let $E^{\prime}$ denote the set $E$ , but with $\{i,k\}$ replaced by $\{i,j\}$ .
+We have that
+
+
+
+
+
+ $\sum_{\{i,j\}\in E^{\prime}}d(p_{i},p_{j})<\sum_{\{i,j\}\in E}d(p_{i},p_{j}),$ 
+
+
+contradicting that $T$ is a minimal spanning tree. Similarly it cannot be the case that $\{i,k\},\{i,j\}\in E$ . Therefore, $E$ consists of the edges $\{i,i+1\}$ for $1\leq i<n$ . Lemmas 18 and 20 imply that the Čech persistence module of $P$ has barcode $D_{0}$ in degree zero.
+∎
+
+
+
+
+
+
+The reason this proof does not apply to Vietoris-Rips filtrations is that there is no guarantee that Vietoris-Rips filtrations of planar point clouds have trivial homology in degree 2 and greater (see for example the proof of Proposition 5.3 in [CDSEG10]). If it were shown that an analogous construction of $X$ for $d$ greater than 2 consists of point clouds with trivial persistence in every degree greater than zero for Čech and Vietoris-Rips filtrations (we suspect this to be the case), the above proof could be extended to the case $d>2$ , and to the Vietoris-Rips setting.
+
+
+
+
+
+
+5 A Lower Bound
+
+
+
+Now we see how the semialgebraic structure of level sets of the persistence map establishes lower bounds on the generic dimension of fibers of the persistence map for the Čech and Vietoris-Rips filtrations.
+
+
+
+
+See 1
+
+
+
+
+We will prove this by showing that the same result holds on each $S_{\preceq}$ .
+
+
+
+
+Lemma 52.
+
+Let $\mathrm{PH}$ denote either $\mathrm{PH}^{\check{\mathrm{C}}}$ or $\mathrm{PH}^{\mathrm{VR}}$ . Given $\preceq\in\mathrm{TPO}(K(n))$ , there is a semialgebraic subset $A_{\preceq}\subseteq S_{\preceq}$ of dimension less than $nd$ with the following property. For each $P\in S_{\preceq}-A_{\preceq}$ , if there are exactly $k$ distinct bounded interval endpoints in barcodes in $D=\mathrm{PH}(P)$ , then $\dim\mathrm{PH}^{-1}(D)\geq nd-k+1$ .
+
+
+
+
+
+
+Proof.
+
+If $\mathrm{PH}=\mathrm{PH}^{\check{\mathrm{C}}}$ let $\Phi=\Phi^{\check{\mathrm{C}}}$ . Otherwise let $\Phi=\Phi^{\mathrm{VR}}$ . We will make crucial use of the fact that for any $P\in\mathrm{PC}_{n,d}$ , $\Phi_{\sigma}(P)=0$ if and only if $\sigma$ is a singleton. Since for any $P,Q\in S_{\preceq}$ , there exists a strictly increasing $\psi:\mathbb{R}\to\mathbb{R}$ such that $\psi\circ\Phi_{\sigma}(P)=\Phi_{\sigma}(Q)$ for all $\sigma\in K$ , by [LT22, Lemma 1.5] $\mathrm{PH}(P)$ and $\mathrm{PH}(Q)$ have the same number of distinct bounded endpoints $k$ . Hence on $S_{\preceq}$ , $k$ is independent of $P$ .
+
+
+
+
+By Lemma 45, $S_{\preceq}$ is semialgebraic. Pick any $P_{0}\in S_{\preceq}$ and let $D=\mathrm{PH}(P_{0})$ . Let $0=b_{0}<\ldots<b_{k-1}$ be the distinct bounded endpoint values that appear in intervals of $D$ .
+Since the homology of either the Čech or Vietoris-Rips filtration changes at each $b_{i}$ , the simplicial filtration itself must change at each $b_{i}$ , so there must be at least one simplex $\sigma_{i}$ with $\Phi_{\sigma_{i}}(P_{0})=b_{i}$ for each $i$ . In particular, the simplex $\sigma_{0}$ must be a singleton. Define
+
+
+
+
+
+ $\displaystyle f:S_{\preceq}$ 
+ $\displaystyle\to\mathbb{R}^{k-1}$ 
+
+
+
+ $\displaystyle P$ 
+ $\displaystyle\mapsto(\Phi_{\sigma_{1}}(P),\ldots,\Phi_{\sigma_{k-1}}(P)).$ 
+
+
+Since the coordinate maps of $\Phi$ are semialgebraic functions, so is $f$ , as $S_{\preceq}$ is semialgebraic. Given any $P,Q\in S_{\preceq}$ , there exists a strictly increasing map $\psi:\mathbb{R}\to\mathbb{R}$ such that $\psi\circ\Phi_{\sigma}(P)=\Phi_{\sigma}(P_{0})$ for all $\sigma\in K$ .
+Hence, by Lemma 45, $\mathrm{PH}(P)$ = $\mathrm{PH}(Q)$ if and only if
+
+
+
+
+
+ $\Phi_{\sigma}(P)=\psi^{-1}b_{i}\iff\Phi_{\sigma}(Q)=\psi^{-1}b_{i}.$ 
+
+
+
+
+
+From the structure of $S_{\preceq}$ we deduce that this happens if and only if $\Phi_{\sigma_{i}}(P)=\Phi_{\sigma_{i}}(Q)$ for all $i$ . In particular we always have that $\Phi_{\sigma_{0}}(P)=\Phi_{\sigma_{0}}(Q)=0$ , since $\sigma_{0}$ is a singleton. Hence $\mathrm{PH}(P)$ = $\mathrm{PH}(Q)$ if and only if $f(P)=f(Q)$ . Since we assumed $P,Q\subseteq S_{\preceq}$ , if $D=\mathrm{PH}(P)$ and $a=f(P)$ , then $f^{-1}(a)\subseteq\mathrm{PH}^{-1}(D)$ . This is an inclusion and not an equality since $\mathrm{PH}^{-1}(D)$ is a subset of $\mathrm{PC}_{n,d}$ while $f^{-1}(a)$ is only a subset of $S_{\preceq}$ .
+
+
+
+
+Let $S_{f}(l):=\{a\in\mathbb{R}^{k-1}:\dim f^{-1}(a)=l\}$ . For $l<nd-k+1$ we have by Lemma 74 in the appendix that $S_{f}(l)$ and $f^{-1}(S_{f}(l))$ are semialgebraic and
+
+
+
+
+
+ $\displaystyle\dim f^{-1}(S_{f}(l))=\dim S_{f}(l)+l\leq k-1+l<(k-1)+(nd-k+1)=nd.$ 
+
+
+Thus we define
+
+
+
+
+
+ $A_{\preceq}=\bigcup_{l<nd-k+1}f^{-1}(S_{f}(l)).$ 
+
+
+This set is semialgebraic and has dimension less than $nd$ , being a finite union of semialgebraic sets of dimension less than $nd$ . Moreover, for $P\in S_{\preceq}-A_{\preceq}$ ,
+
+
+
+
+
+ $\dim\mathrm{PH}^{-1}(\mathrm{PH}(P))\geq\dim f^{-1}(f(P))\geq nd-k+1.$ 
+
+
+This proves the lemma.
+∎
+
+
+
+
+
+
+With this lemma we can prove the theorem easily.
+
+
+
+
+Proof of Theorem 1.
+
+For each $\preceq\in\mathrm{TPO}(K(n))$ , the result follows immediately from taking $A_{\preceq}$ as in the above lemma and letting
+
+
+
+
+
+ $A=\bigcup_{\preceq\in\mathrm{TPO}(K(n))}A_{\preceq}.$ 
+
+
+Then every point cloud in $\mathrm{PC}_{n,d}-A$ has the desired property and $\dim A<nd$ .
+∎
+
+
+
+
+
+
+
+
+6 Vietoris-Rips Persistence Meets Rigidity Theory
+
+
+
+In this section we only consider Vietoris-Rips persistence and write $\mathrm{PH}(P):=\mathrm{PH}^{\mathrm{VR}}(P)$ as well as $\Phi:=\Phi^{\mathrm{VR}}$ . Here we will look for point clouds that the persistence map describes in a sense as well as possible.
+
+
+
+
+It is well known that $\mathrm{PH}$ is isometry invariant (see [OS20] for example). Therefore, if we have a point cloud $P$ and want that $D=\mathrm{PH}(P)$ differentiates $P$ from other point clouds $Q$ , a best case scenario would be that any other point cloud $Q$ with $\mathrm{PH}(Q)=D$ is in fact isometric to $P$ . Barring this, a second best case scenario would be that this is true for all $Q$ in a neighborhood of $P$ . So we have the following definition.
+
+
+
+
+Definition 53.
+
+Let $P\in\mathrm{PC}_{n,d}$ satisfy $\mathrm{PH}(P)=D$ . We say that $P$ is identifiable up to isometry (under Vietoris-Rips persistence) if for all $Q\in\mathrm{PH}^{-1}(D)$ , $P$ and $Q$ are isometric.
+
+
+
+
+We say $P$ is locally identifiable up to isometry (under Vietoris-Rips persistence) if there exists a neighborhood $U$ of $P$ in $\mathrm{PC}_{n,d}$ such that every point cloud $Q\in U\cap\mathrm{PH}^{-1}(D)$ is isometric to $P$ .
+
+
+
+
+
+
+We illustrate our notion of local identifiability in Figure 6.
+
+
+
+
+Figure 6: A point cloud $P$ in the fiber of the full barcode $D$ , with a neighborhood highlighted. The point cloud $P$ is locally identifiable if every $Q$ inside the fiber of $D$ and the neighborhood is isometric to $P$ .
+
+
+Now we begin to characterize the point clouds that are identifiable up to isometry. It will be convenient to first study point clouds that are locally identifiable up to isometry. The key idea is that Vietoris-Rips persistence only records metric information about pairwise distances between points in a point cloud $P$ . We need a notion of the pairs of points whose distances are indeed recorded by the Vietoris-Rips filtration.
+
+
+
+
+Definition 54.
+
+Let $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ with $D=\mathrm{PH}(P)$ . For $i\neq j$ , we say that $\{i,j\}$ is a critical edge if $D$ has $\frac{1}{2}d(p_{i},p_{j})$ as a bounded endpoint. We denote the set of critical edges of $P$ by $\mathrm{Crit}(P)$ .
+
+
+
+
+
+
+Near a generic point cloud $P$ , another point cloud $Q$ has the same full barcode if and only if they have the same lengths of edges determined by $\mathrm{Crit}(P)$ . To show this we will make use of the following lemma.
+
+
+
+
+Lemma 55.
+
+If $P,Q\in S_{\preceq}$ then $\mathrm{Crit}(P)=\mathrm{Crit}(Q)$ .
+
+
+
+
+
+
+Proof.
+
+Since $P,Q\in S_{\preceq}$ we may pick a strictly increasing map $\psi:\mathbb{R}\to\mathbb{R}$ such that $\psi\circ\Phi_{\sigma}(P)=\Phi_{\sigma}(Q)$ for each simplex $\sigma\in K$ . If $\{i,j\}\in\mathrm{Crit}(P)$ , then $b=\frac{1}{2}d(p_{i},p_{j})$ is a bounded endpoint of $D$ . By [LT22, Lemma 1.5], $\psi(b)$ is a bounded endpoint of $\mathrm{PH}(Q)$ . Moreover $\Phi_{\{i,j\}}(Q)=\psi\circ\Phi_{\{i,j\}}(P)=\psi(b)$ . Hence $\{i,j\}\in\mathrm{Crit}(Q)$ . So $\mathrm{Crit}(P)\subseteq\mathrm{Crit}(Q)$ . Similarly $\mathrm{Crit}(Q)\subseteq\mathrm{Crit}(P)$ .
+∎
+
+
+
+
+
+
+Proposition 56.
+
+Let $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ be interior to $S_{\preceq}$ . There is a neighborhood $U$ of $P$ such that for all $Q=(q_{1},\ldots,q_{n})\in U$ , $\mathrm{PH}(P)=\mathrm{PH}(Q)$ if and only if for all $\{i,j\}\in\mathrm{Crit}(P)$ , $d(p_{i},p_{j})=d(q_{i},q_{j})$ .
+
+
+
+
+
+
+Proof.
+
+Set $U$ to be the interior of $S_{\preceq}$ . It follows that $U$ contains $P$ . Let $D=\mathrm{PH}(P)$ .
+
+
+
+
+( $\implies$ ) Suppose $Q=(q_{1},\ldots,q_{n})\in U$ satisfies $\mathrm{PH}(Q)=D$ . If $\{i,j\}\in\mathrm{Crit}(P)$ , then $\frac{1}{2}d(p_{i},p_{j})=b$ , for some bounded endpoint $b$ of $D$ .
+
+
+
+
+By Lemma 45 we have
+
+
+
+
+
+ $d(p_{i},p_{j})=2\Phi_{\{i,j\}}(P)=2\Phi_{\{i,j\}}(Q)=d(q_{i},q_{j}).$ 
+
+
+
+
+
+( $\impliedby$ ) Suppose $Q=(q_{1},\ldots,q_{n})\in U$ has that for all $\{i,j\}\in\mathrm{Crit}(P)$ , $d(p_{i},p_{j})=d(q_{i},q_{j})$ . Let $b$ be any bounded endpoint of $D$ , and $\sigma$ be a simplex such that $\Phi_{\sigma}(Q)=b$ . The fact that $P,Q\in S_{\preceq}$ implies that the maxima defining $\Phi_{\sigma}(P)$ and $\Phi_{\sigma}(Q)$ are both attained by the same pair of indices $\{i_{0},j_{0}\}$ . Since we have $b=\Phi_{\sigma}(Q)=\frac{1}{2}d(q_{i_{0}},q_{j_{0}})$ , we observe $\{i_{0},j_{0}\}\in\mathrm{Crit}(Q)$ . By Lemma 55, we therefore have $\{i_{0},j_{0}\}\in\mathrm{Crit}(P)$ . Thus,
+
+
+
+
+
+ $\Phi_{\sigma}(P)=\frac{1}{2}d(p_{i_{0}},p_{j_{0}})=\frac{1}{2}d(q_{i_{0}},q_{j_{0}})=\Phi_{\sigma}(Q)=b.$ 
+
+
+The same argument (except that we do not need to invoke Lemma 55) shows that if $b$ is a bounded endpoint of $D$ and $\sigma$ is a simplex such that $\Phi_{\sigma}(P)=b$ , then $\Phi_{\sigma}(Q)=b$ .
+
+
+
+
+Therefore, for all bounded endpoints $b$ of $D$ and $\sigma\in K$ , $\Phi_{\sigma}(P)$ , we have that $\Phi_{\sigma}(P)=b$ if and only if $\Phi_{\sigma}(Q)=b$ . Lemma 45 implies that $\mathrm{PH}(P)=\mathrm{PH}(Q)$ .
+∎
+
+
+
+
+
+
+We now define the critical graph of a point cloud in the obvious way.
+
+
+
+
+Definition 57.
+
+Given $P\in\mathrm{PC}_{n,d}$ , we define the critical graph of $P$ to be the graph $G_{P}$ with $N(G_{P})=[n]$ and $E(G_{P})=\mathrm{Crit}(P)$ .
+
+
+
+
+
+
+We immediately have the following result from Proposition 56.
+
+
+
+
+Theorem 58.
+
+Let $P\in\mathrm{PC}_{n,d}$ be a generic point cloud. $P$ is locally identifiable up to isometry under Vietoris-Rips persistence if and only if $(G_{P},P)$ is rigid.
+
+
+
+
+
+
+Proof.
+
+Let $P=(p_{1},\ldots,p_{n})$ . By genericity of $P$ we may assume $P$ is to some $S_{\preceq}$ , using Proposition 48.
+
+
+
+
+( $\impliedby$ ) Suppose $(G_{P},P)$ is rigid. Let $U$ be the intersection of neighborhoods of $P$ given by Proposition 56 and by the rigidity of $(G_{P},P)$ . Let $Q=(q_{1},\ldots,q_{n})$ be another element of $U$ satisfying $\mathrm{PH}(P)=\mathrm{PH}(Q)$ . Proposition 56 implies that $Q$ satisfies $d(p_{i},p_{j})=d(q_{i},q_{j})$ for all $\{i,j\}\in\mathrm{Crit}(P)$ . The rigidity of $(G_{P},P)$ implies that $Q$ is congruent to $P$ , and hence isometric to $P$ . So $P$ is locally identifiable up to isometry.
+
+
+
+
+( $\implies$ ) Suppose $P$ is locally identifiable up to isometry. Let $U$ be the intersection of the neighborhoods of $P$ given by Proposition 56 and the local identifiablility of $P$ up to isometry. Let $Q=(q_{1},\ldots,q_{n})$ be another element of $U$ , such that $d(p_{i},p_{j})=d(q_{i},q_{j})$ for all $\{i,j\}\in\mathrm{Crit}(P)$ . Proposition 56 implies that $\mathrm{PH}(P)=\mathrm{PH}(Q)$ . Local identifiability of $P$ implies that $P$ and $Q$ are isometric. By genericity of $P$ and Lemma 49, $P$ and $Q$ are congruent.
+∎
+
+
+
+
+
+
+Below we present a couple basic examples of the theorem in action.
+
+
+
+
+Example 59.
+
+Let $P=\{p_{1},p_{2},p_{3}\}$ be a point cloud of three points. Without loss of generality, assume that $d(p_{1},p_{2})$ is the largest of the pairwise distances. By assuming genericity of $P$ , we may take $d(p_{1},p_{2})$ to be the strictly largest of the pairwise distances. It is then straightforward to check that $\{2,3\}$ and $\{1,3\}$ are critical edges of $P$ , corresponding to the two bounded right endpoints of $\mathrm{PH}_{0}(P)$ . However, $\{1,2\}$ is not a critical edge. This is because the inclusion of this edge cannot change degree zero homology as the filtration of $K(3)$ is already connected for values below $d(p_{1},p_{2})$ . The only other possibility is that $\{1,2\}$ changes homology by creating a cycle. However this also cannot happen as $\{1,2\}$ appears at the same time in the Vietoris-Rips filtration as the 2-simplex $\{1,2,3\}$ . Hence, $G_{P}$ is the graph on $[n]$ with edges $\{1,3\}$ and $\{2,3\}$ , and this graph is not rigid. Hence we deduce that generic point clouds with three points are not locally identifiable.
+
+
+
+
+
+
+Example 60.
+
+Let $P=(p_{1},p_{2},p_{3},p_{4})$ be a planar point cloud given by the vertices of a square in clockwise order, perturbed slightly so that $P$ is generic. For convenience we write $d_{1}:=d(p_{1},p_{2})$ , $d_{2}:=d(p_{2},p_{3})$ , $d_{3}:=d(p_{3},p_{4})$ , $d_{4}:=d(p_{4},p_{1})$ and $d_{1}^{\prime}:=d(p_{1},p_{3})$ , $d_{2}^{\prime}:=d(p_{2},p_{4})$ . We show a possible filtration of such a point cloud in Figure 7.
+
+
+
+
+Figure 7: Left: A possible filtration given by a point cloud $P$ as in Example 60. Right: The full barcode arising from this filtration.
+
+
+Assuming the perturbation is sufficiently small we have that $d_{1}$ , $d_{2}$ , $d_{3}$ , and $d_{4}$ are less than both $d_{1}^{\prime}$ and $d_{2}^{\prime}$ . As such we have that the smallest three of $d_{1}$ through $d_{4}$ determine the three bounded right endpoints of $\mathrm{PH}_{0}(P)$ , whereas the inclusion of the edge corresponding to the largest of $d_{1}$ through $d_{4}$ creates a cycle, and hence determines a left endpoint in $\mathrm{PH}_{1}(P)$ . As such, the edges $\{1,2\}$ , $\{2,3\}$ , $\{3,4\}$ , and $\{1,4\}$ are all critical. Without loss of generality, suppose that $d_{1}^{\prime}\leq d_{2}^{\prime}$ . Then $\{1,2,3\}$ and $\{1,3,4\}$ both have filtration value $d_{1}^{\prime}$ since the simplex $\{1,3\}$ appears at this filtration value, and all other subsimplices of these 2-simplices appear earlier. In particular, the cycle given by the first four edges becomes a boundary at filtration value $d_{1}^{\prime}$ . We deduce that $\{1,3\}$ is a critical edge. The point cloud $P$ equipped with the graph $G$ on $[n]$ with edges $\{1,2\}$ , $\{2,3\}$ , $\{3,4\}$ , $\{1,4\}$ , and $\{1,3\}$ is known to be rigid. We deduce that $P$ is locally identifiable.
+
+
+
+
+
+
+As a consequence of Theorem 58, when $d=2$ we have the following characterization of generic point clouds that are locally identifiable up to isometry.
+
+
+
+
+Corollary 61.
+
+Any generic $P\in\mathrm{PC}_{n,2}$ is locally identifiable up to isometry if and only if $G_{P}$ contains a spanning subgraph $G$ satisfying
+
+
+1. 
+
+ $|E(G)|=2n-3$ , and
+
+
+
+
+2. 
+
+if $X$ is a subset of $[n]$ , the number of edges of $G$ whose endpoints are both in $X$ is less than or equal to $2|X|-3$ .
+
+
+
+
+
+
+
+
+
+
+Proof.
+
+This follows immediately from Theorem 58 the first part of Theorem 37.
+∎
+
+
+
+
+
+
+Using Theorem 39 we can also find a criterion for identifiability up to isometry.
+
+
+
+
+See 3
+
+
+
+
+Proof.
+
+Given any full barcode $D$ , let $E(D)$ denote the set of nonzero, non-infinite endpoints appearing in $D$ . Note that $E(D)$ is a set, and so has no repeated entries. We have a map
+
+
+
+
+
+ $\displaystyle\phi_{P}:\mathrm{Crit}(P)$ 
+ $\displaystyle\to E(\mathrm{PH}(P))$ 
+
+
+
+ $\displaystyle\{i,j\}$ 
+ $\displaystyle\mapsto\frac{1}{2}d(p_{i},p_{j}).$ 
+
+
+The structure of the barcode $D$ implies that this map is surjective for any $P$ .
+The condition that for all pairs of critical edges $\{i,j\}\neq\{k,l\}$ , $d(p_{i},p_{j})\neq d(p_{k},p_{l})$ is generically satisfied. By imposing this condition on $P$ we see that $\phi_{P}$ is also injective, and hence bijective.
+
+
+
+
+Now fix $D=\mathrm{PH}(P)$ , and suppose $Q\in\mathrm{PH}^{-1}(D)$ . As a result $\phi_{Q}$ is surjective on $E(D)$ . Therefore we can choose a subgraph $G^{\prime}_{Q}\subseteq G_{Q}$ with the same multiset of edge lengths as $G_{P}$ . It follows from Theorem 39 that $Q$ and $P$ are isometric. Therefore $P$ is identifiable up to isometry.
+∎
+
+
+
+
+
+
+As a consequence of Theorem 3 we have the a generic criterion for identifiability up to isometry when $d=2$ .
+
+
+
+
+Corollary 62.
+
+Let $n\geq 4$ and $P\in\mathrm{PC}_{n,2}$ be a generic point cloud. If
+
+
+1. 
+
+ $G_{P}$ is 3-connected, and
+
+
+
+
+2. 
+
+ $G_{P}$ is redundantly rigid in dimension 2,
+
+
+
+
+
+then $P$ is identifiable up to isometry.
+
+
+
+
+
+
+Proof.
+
+This follows immediately from Theorem 58 and the second part of Theorem 37.
+∎
+
+
+
+
+
+
+
+
+7 Circumsphere Rigidity Theory
+
+
+
+To study identifiability for persistent homology of the Čech filtration,
+we need to replace rigidity theory of Euclidean frameworks with an
+analogue involving circumspheres. The setup we develop follows steps
+that are mostly standard in the rigidity and geometric constraint
+literature, but this specific variant is, to our knowledge, new.
+
+
+
+
+Definition 63.
+
+Let $d\in\mathbb{N}$ be a fixed dimension and $H=([n],E)$ a hypergraph
+in which each hyperedge $\sigma\in E$ has between $2$ and $d+1$ endpoints
+and $P\in\mathrm{PC}_{n,d}$ .
+We call the pair $(H,P)$ a circumsphere framework.
+
+
+
+
+We say that two circumsphere frameworks $(H,P)$ and $(H,Q)$ are
+equivalent if
+
+
+
+
+
+ $\det\Delta_{\sigma(P)}\det\Lambda_{\sigma(Q)}=\det\Delta_{\sigma(Q)}\det\Lambda_{\sigma(P)}\qquad\text{(for all hyperedges $\sigma\in E$)}$ 
+
+
+
+
+
+A circumsphere framework $(H,P)$ is (locally) rigid if there is a
+neighborhood $U\ni P$ such that, if $Q\in U$ and
+ $(H,Q)$ is equivalent to $(H,P)$ , then $Q$ is congruent to $P$ .
+
+
+
+
+A circumsphere framework $(H,P)$ is generic if $P$ 
+is generic.
+
+
+
+
+
+
+As a first step, we verify that circumsphere (local) rigidity is a generic property,
+analogously to the results of [AR78]. The proof is somewhat
+standard, though we need to take a bit of care because the measurement map is a
+rational function.
+
+
+
+
+Lemma 64.
+
+Circumsphere rigidity is a generic property. That is, for every dimension $d\in\mathbb{N}$ 
+and $n\in\mathbb{N}$ , there is a Zariski open, dense subset $V$ of
+ $\mathrm{PC}_{n,d}$ such that for any hypergraph $H$ with $n$ vertices and
+hyperedges consisting of between $2$ and $d+1$ endpoints, either every framework $(H,P)$ with $P\in V$ is circumsphere
+rigid or no $(H,P)$ with $P\in V$ is circumsphere rigid.
+
+
+
+
+
+
+Proof.
+
+Let $d$ and $n$ be given as in the statement. We first observe that circumsphere rigidity is a non-trivial property
+in the sense that there are rigid and non-rigid frameworks. This follows because the minimal circumradius of a $2$ -point
+configuration $\{p_{i},p_{j}\}$ is simply $\frac{1}{2}d(p_{i},p_{j})$ . In particular, if $P$ are $Q$ are congruent in the
+circumsphere sense, they are congruent in the conventional sense as well. We now see that if $H$ has no
+edges, then any circumsphere framework $(H,P)$ must not be rigid and that if $H$ contains every hyperedge with
+two endpoints it must be rigid (because circumradii are invariant under affine isometry).
+
+
+
+
+We first consider the case $n\geq d+1$ , wherein the heart of our argument lies. The case $n<d+1$ is then intuitive, but rather technical. Given a hypergraph $H=([n],E)$ with $n\geq d+1$ vertices
+and $m$ hyper-edges with between $2$ and
+ $d+1$ endpoints. Define a set $U_{0}$ of configurations $P$ of $n$ points so that,
+for all $\sigma\in E$ , the sub-configuration $\sigma(P)$ is affinely independent. Because each
+hyperedge $\sigma$ has at most $d+1$ endpoints, $U_{0}$ is a dense Zariski open subset
+of configuration space. For all $P$ in $U_{0}$ , the polynomial constraint system
+
+
+
+
+
+ $\det\Delta_{\sigma(P)}\det\Lambda_{\sigma(Q)}=\det\Delta_{\sigma(Q)}\det\Lambda_{\sigma(P)}\qquad\text{(for all hyperedges $\sigma\in E$)}$ 
+
+
+with $Q$ as the variable has $P$ as a solution and no trivial equations of the form
+ $0=0$ . Set $U$ to be subset of $U_{0}$ on which the Jacobian of this geometric
+constraint system has its maximum rank, which we denote as $r$ . Becuase $U_{0}$ is
+dense in an (irreducible) affine space, it is also irreducible. Hence $U$ is
+a dense, Zariski open subset of $U_{0}$ (as the rank being less than the maximum is
+defined by determinants).
+
+
+
+
+The constant rank theorem implies that, for $P\in U$ , there is a
+neighborhood $V$ of $P$ so that
+
+
+
+
+
+ $C=V\cap\{Q:\det\Delta_{\sigma(P)}\det\Lambda_{\sigma(Q)}=\det\Delta_{\sigma(Q)}\det\Lambda_{\sigma(P)}\}$ 
+
+
+is a smooth manifold of dimension $dn-r$ . The manifold $C$ 
+consists of the $Q$ in $V$ so that $(H,Q)$ is equivalent to $(H,P)$ .
+
+
+
+
+If $r=nd-\binom{d+1}{2}$ , then
+ $C$ is of dimension $\binom{d+1}{2}$ and otherwise it has higher dimension. These two cases correspond to rigid and flexible, since there is a
+ $\binom{d+1}{2}$ -dimensional space of images of $P$ under affine isometries
+in any neighborhood of $P$ , and all of these are in $C$ .
+If $C$ has dimension $\binom{d+1}{2}$ , then
+ $V$ is the neighborhood in the definition of rigidity; if the dimension is
+larger, then any neighborhood of $P$ will contain an equivalent but
+non-congurent $Q$ in $C$ .
+
+
+
+
+Since $U$ is a dense, Zariski open set, we have shown that, for this
+ $H$ , circumsphere rigidity is a generic property. Since there
+are finitely many $H$ , we can intersect the $U$ for each of
+them, and the lemma follows.
+
+
+
+
+Now we handle the case $n<d+1$ . For $n\leq d+1$ let $\mathrm{Aff}_{n,d}\subseteq\mathrm{PC}_{n,d}$ denote the subspace of affinely independent point clouds. We note that $\mathrm{PC}_{n,d}-\mathrm{Aff}_{n,d}$ is semialgebraic and has dimension less than $nd$ . For every pair $n,d$ such that $n\leq d+1$ we construct continuous semialgebraic maps $\Psi_{n,d}:\mathrm{Aff}_{n,d}\to\mathrm{Aff}_{n,n-1}$ and $\psi_{n,d}:\mathrm{Aff}_{n,d}\to\mathbb{R}^{n-1}$ by induction. For the base case, we set $\Psi_{n,d}=\psi_{n,d}=0$ . Let $\iota_{d}:\mathbb{R}^{d-1}\to\mathbb{R}^{d}$ be the inclusion map sending $(x_{1},\ldots,x_{d-1})$ to $(x_{1},\ldots,x_{d},0)$ . For simplicity we write $\iota=\iota_{d}$ with the value $d$ to be understood from context. We set $\iota(p_{1},\ldots,p_{n})=(\iota p_{1},\ldots,\iota p_{n})$ . Given any $P=(p_{1},\ldots,p_{n})\in\mathrm{Aff}_{n,d}$ , set $P_{-}=(p_{0},\ldots,p_{n-1})$ . Letting $d_{i}=d(p_{n},p_{i})$ , we note that by affine independence of $P$ , there is a unique $p\in\mathbb{R}^{d}$ such that the distance of $p$ from the $i^{\mathrm{th}}$ entry of $\iota\Psi_{n-1,d}(P_{-})$ is $d_{i}$ for each $i<n$ , and such that the $(n-1)^{\mathrm{th}}$ coordinate of $p$ , denoted $\pi_{n-1}(p)$ is positive. Therefore define $\psi_{n,d}(P)=p$ . It follows that $\psi_{n,d}$ is continuous, provided we assume inductively that $\Psi_{n-1,d}$ is continuous. The graph of $\psi_{n,d}$ is the set
+
+
+
+
+
+ $\psi_{n,d}=\{(P,p)\in\mathrm{Aff}_{n,d}\times\mathbb{R}^{d}:\pi_{n-1}(p)>0\,\wedge\,d(p,(\iota\Psi_{n-1,d}(P_{-}))_{i})^{2}=d_{i}^{2}\text{ for }1\leq i<n\},$ 
+
+
+As such, $\psi_{n,d}$ is semialgebraic if we assume $\Psi_{n-1,d}$ is semialgebraic, by quantifier elimination. Now we define $\Psi_{n,d}(P)=(\Psi_{n-1,d},\psi_{n,d})$ , which is therefore also continuous and semialgebraic, again inductively assuming $\Psi_{n-1,d}$ is continuous and semialgebraic. Moreover, by construction, $\Psi_{n,d}(P)$ is congruent to $P$ . In fact, $\Psi_{n,d}$ sends each congruence class to a single point cloud.
+
+
+
+
+Let $Z$ denote the image of $\Psi_{n,d}$ , which is independent of the choice of $n>d$ . There is a homeomorphism:
+
+
+
+
+
+ $\displaystyle h:Z\times O(d)\times\mathbb{R}^{d}$ 
+ $\displaystyle\to\mathrm{Aff}_{n,d}$ 
+
+
+
+ $\displaystyle((p_{1},\ldots,p_{n}),M,v)$ 
+ $\displaystyle\mapsto(Mp_{1}+v,\ldots,Mp_{n}+v).$ 
+
+
+Here, the $Z$ coordinate of $h^{-1}$ is precisely the map $\Psi_{n,n-1}$ . Now fix some hypergraph $H$ as given in the lemma. By the proof of the case $n\geq d+1$ , there exists a dense, Zariski open subset $U\subseteq\mathrm{Aff}_{n,n-1}$ in which every $P$ has that, say, $(H,P)$ circumsphere rigid, with the case of every $P$ being not circumsphere rigid being handled similarly to what follows. We write $U^{\prime}=\Psi_{n,n-1}(U)$ . Since the complement of $U$ in $\mathrm{Aff}_{n,n-1}$ is algebraic, the complement of $U^{\prime}$ in $\Psi_{n,n-1}$ in $Z$ is semialgebraic. Moreover, up to a homeomorphism, $\Psi_{n,n-1}$ is a projection map, and projections of dense sets are dense, so $U^{\prime}$ is dense. Since being circumsphere rigid is a property that is constant along congruence classes in $\mathbb{R}^{n-1}$ , every $P\in U^{\prime}$ is circumsphere rigid.
+
+
+
+
+Now set $U^{\prime\prime}=\Psi_{n,d}^{-1}(U^{\prime})\subseteq\mathrm{Aff}_{n,d}$ . Since the complement of $U^{\prime}$ in $\mathrm{Aff}_{n,n-1}$ is semialgebriac, quantifier elimination shows the complement of $U^{\prime\prime}$ in $\mathrm{Aff}_{n,d}$ is semialgebraic as well. Again, up to a homeomorphism, $\Psi_{n,d}$ is a projection map. Since preimages of dense sets under projections are dense, $U^{\prime\prime}$ is dense. Since $U^{\prime\prime}$ is dense and $\mathrm{Aff}_{n,d}-U^{\prime\prime}$ is semialgebraic, $\mathrm{Aff}_{n,d}-U^{\prime\prime}$ has dimension less than $nd$ , implying that moreover $\mathrm{PC}_{n,d}-U^{\prime\prime}$ is semialgebraic with dimension less than $nd$ . Taking the algebraic closure of this set we get a set $A$ with dimension less than $nd$ . Hence $X:=\mathrm{PC}_{n,d}-A$ is a dense, Zariski open set. Note that $X\subseteq U^{\prime\prime}$ . Given $P\in X$ , we claim $P$ is circumsphere rigid. Otherwise, there exists a sequence $P_{1},P_{2},\ldots$ approaching $P$ of point clouds such that $(P_{i},H)$ is equivalent to $(P,H)$ , but $P_{i}$ is not congruent to $P$ . By continuity of $\Psi_{n,d}$ , the sequence $\{\Psi_{n,d}(P_{i})\}_{i=1}^{\infty}$ approaches $\Psi_{n,d}(P)$ . Moreover, since $\Psi_{n,d}$ is an isometry of point clouds, each $\Psi_{n,d}(P_{i})$ is not congruent to $\Psi_{n,d}(P)$ , while $(H,\Psi_{n,d}(P_{i}))$ is equivalent to $(H,\Psi_{n,d}(P))$ . This contradicts that $\Psi_{n,d}(P)$ is circumsphere rigid, since $P\in U^{\prime\prime}$ . Hence $V$ is a dense, Zariski open set on which every $P$ is circumsphere rigid.
+
+
+
+
+Since $X$ depends on $H$ , we conclude the proof by again setting $V$ to be the intersection of the sets $X$ given by each $H$ . Since there are only finitely many hypergraphs with edges of between $2$ and $d+1$ endpoints on $n$ vertices, $V$ is still dense and Zariski open.
+∎
+
+
+
+
+
+
+This result motivates the following definition.
+
+
+
+
+Definition 65.
+
+A hypergraph $H$ with each hyperedge consisting of hyperedges with between $2$ and $d+1$ endpoints
+is generically rigid (GLR) in dimension $d$ if the circumsphere framework $(H,P)$ is rigid in dimension $d$ for generic $P$ .
+
+
+
+
+
+
+For edges $\sigma=\{i,j\}$ , the condition $\det\Delta_{\sigma(P)}\det\Lambda_{\sigma(Q)}=\det\Delta_{\sigma(Q)}\det\Lambda_{\sigma(P)}$ is the same as $-d(p_{i},p_{j})^{2}=-d(q_{i},q_{j})^{2}$ , which is equivalent to $d(p_{i},p_{j})=d(q_{i},q_{j})$ . As a result, this definition of GLR extends the earlier Definition 35 of the GLR property to hypergraphs.
+
+
+
+
+Remark 2.
+
+The condition on the size of the hyperedges in $H$ is necessary for the
+proof of Lemma 64 to work. When there are larger hyperedges, the configurations
+ $P$ such that the points corresponding to every hyperedge lie on a
+common sphere are a proper algebraic subset of configurations, which may have
+complicated topology or be empty.
+
+
+
+
+
+
+We conjecture the following.
+
+
+
+
+Conjecture 66.
+
+Let $n$ be such that $\binom{n}{d+1}\geq dn-\binom{d+1}{2}$ . Then the complete
+ $(d+1)$ -uniform hypergraph is generically circumsphere rigid in dimension $d$ .
+
+
+
+
+
+
+We have verified this conjecture computationally via the Jacobian test on random point clouds for $d\leq 5$ .
+
+
+
+
+
+
+8 The Rigidity Theory of Čech Persistence
+
+
+
+In this section we investigate how the proposed circumsphere rigidity theory applies to Čech persistence. For convenience, let $\mathrm{PH}(P):=\mathrm{PH}^{\check{\mathrm{C}}}(P)$ and $\Phi:=\Phi^{\check{\mathrm{C}}}$ . Analogously to Section 6, we have the following definitions.
+
+
+
+
+Definition 67.
+
+Let $P\in\mathrm{PC}_{n,d}$ satisfy $\mathrm{PH}(P)=D$ . We say that $P$ is identifiable up to isometry (under Čech persistence) if for all $Q\in\mathrm{PH}^{-1}(D)$ , $P$ and $Q$ are isometric.
+
+
+
+
+We say $P$ is locally identifiable up to isometry (under Čech persistence) if there exists a neighborhood $U$ of $P$ in $\mathrm{PC}_{n,d}$ such that every element $Q\in U\cap\mathrm{PH}^{-1}(D)$ is isometric to $P$ .
+
+
+
+
+
+
+The point of departure from the Vietoris-Rips case is that having a certain barcode no longer only constrains pairwise distances between points, motivating the following definition. Recall that $\Phi_{\sigma}(P)=\rho_{\sigma}(P)$ , the minimal enclosing radius of $\sigma(P)$ .
+
+
+
+
+Definition 68.
+
+Let $P=(p_{1},\ldots,p_{n})\in\mathrm{PC}_{n,d}$ and $D=\mathrm{PH}(P)$ . We say that $\sigma\in K(n)$ is a critical simplex of $P$ if
+
+
+1. 
+
+ $\rho_{\sigma}(P)$ is an endpoint value of $D$ and
+
+
+
+
+2. 
+
+For all strict subsimplices $\tau\subset\sigma$ , $\rho_{\tau}(P)<\rho_{\sigma}(P)$ .
+
+
+
+
+
+We denote the set of critical simplices of $P$ by $H_{P}$ and call this the critical hypergraph of $P$ .
+
+
+
+
+
+
+Note that if we have an inclusion of simplices $\tau\subseteq\sigma$ , then $\rho_{\tau}(P)\leq\rho_{\sigma}(P)$ , so the second condition of a critical simplex really amounts to saying the equality is never attained for strict subsets of $\sigma$ .
+
+
+
+
+Every singleton $\{i\}$ has $\rho_{\{i\}}(P)=0$ for all $P$ , and 0 is necessarily an endpoint of $\mathrm{PH}(P)$ by Lemma 18. In general, it may not be the case that given $\sigma\in\mathrm{CritS}(P)$ we have $\tau\in\mathrm{CritS}(P)$ for all $\tau\subseteq\sigma$ . These two facts imply that we may view $H_{P}$ as a hypergraph $([n],E_{P})$ , which is not guaranteed to be a simplicial complex. Note that this hypergraph does not need to be pure, i.e. the edges in $E_{P}$ may have varying size. However, Lemma 27 and property 2 in the above definition imply that all critical simplices have at most $d+1$ elements. Therefore, $(H_{P},P)$ defines a circumsphere framework.
+
+
+
+
+As before, we will need that the critical hypergraph does not change within the sets $S_{\preceq}$ . The proof is similar to that of the previous section.
+
+
+
+
+Lemma 69.
+
+If $P,Q\in S_{\preceq}$ then $H_{P}=H_{Q}$ .
+
+
+
+
+
+
+Proof.
+
+Let $\sigma\in H_{P}$ . Thus $\rho_{\sigma}(P)$ is an endpoint $b$ of $\mathrm{PH}(P)$ . Since $P,Q\in S_{\preceq}$ , there is a strictly increasing function $\psi$ such that $\rho_{\tau}(Q)=\psi\circ\rho_{\tau}(P)$ for all simplices $\tau\in K(n)$ . It follows from [LT22, Lemma 1.5] that $\psi(b)$ is an endpoint of $\mathrm{PH}(Q)$ . Thus $\sigma$ satisfies the first condition for being a critical simplex. For the second condition, if $\tau$ is a strict subsimplex of $\sigma$ , then $\rho_{\tau}(P)<\rho_{\sigma}(P)$ . Since $P,Q\in S_{\preceq}$ , we therefore have $\rho_{\tau}(Q)<\rho_{\sigma}(Q)$ . Hence $\sigma$ is a critical simplex of $Q$ . Therefore $H_{P}\subseteq H_{Q}$ . The proof of the reverse inclusion is the same with the roles of $P$ and $Q$ switched.
+∎
+
+
+
+
+
+
+Proposition 70.
+
+Let $P$ be interior to $S_{\preceq}$ . There is a neighborhood $U$ of $P$ such that for all $Q$ in $U$ , $\mathrm{PH}(P)=\mathrm{PH}(Q)$ if and only if $\rho_{\sigma}(P)=\rho_{\sigma}(Q)$ for all $\sigma\in H_{P}$ .
+
+
+
+
+
+
+The proof of this proposition is similar to that of Proposition 56.
+
+
+
+
+Proof.
+
+Set $U$ to be the interior of $S_{\preceq}$ . It follows that $U$ contains $P$ . Let $D=\mathrm{PH}(P)$ .
+
+
+
+
+( $\implies$ ) Suppose $Q\in U$ satisfies $\mathrm{PH}(Q)=D$ . If $\sigma\in H_{P}$ , then $\rho_{\sigma}(P)=b$ , for some bounded endpoint $b$ of $D$ .
+By Lemma 45 we have $\rho_{\sigma}(Q)=b$ .
+
+
+
+
+( $\impliedby$ ) Suppose $Q\in U$ has that for all $\sigma\in H_{P}$ , $\rho_{\sigma}(P)=\rho_{\sigma}(Q)$ . If $\tau\in K(n)$ is any simplex such that $\rho_{\tau}(Q)=b$ , where $b$ is an endpoint of $D$ , then let $\sigma$ be a minimal subset of $\tau$ such that $\rho_{\sigma}(Q)=\rho_{\tau}(Q)$ . From Lemma 69 we have that $\sigma\in H_{Q}=H_{P}$ . Thus $\rho_{\sigma}(Q)=\rho_{\sigma}(P)$ . Since $\rho_{\sigma}(Q)=\rho_{\tau}(Q)$ and $P,Q\in S_{\preceq}$ we have that $\rho_{\sigma}(P)=\rho_{\tau}(P)$ . In summary
+
+
+
+
+
+
+
+
+ $\rho_{\tau}(P)=\rho_{\sigma}(P)=\rho_{\sigma}(Q)=\rho_{\tau}(Q)=b.$ 
+
+
+
+
+
+The same argument (without needing Lemma 69) shows that if $\rho_{\tau}(P)=b$ where $b$ is a barcode endpoint of $\mathrm{PH}(P)$ , then $\rho_{\tau}(Q)=b$ . Lemma 45 then implies that $\mathrm{PH}(P)=\mathrm{PH}(Q)$ .
+∎
+
+
+
+
+
+
+Now we use the facts about circumradii and enclosing radii established in the background to write an algebraic formula for $\rho_{\sigma}(P)$ , when $\sigma$ is a critical simplex of $P$ .
+
+
+
+
+Proposition 71.
+
+Let $P\in\mathrm{PC}_{n,d}$ and $\sigma\in H_{P}$ . Then
+
+
+
+
+
+ $\rho_{\sigma}(P)^{2}=-\frac{\det\Lambda_{\sigma(P)}}{2\det\Delta_{\sigma(P)}}.$ 
+
+
+
+
+
+
+
+Proof.
+
+Suppose $\sigma(P)$ is not affinely independent. Then let $k$ be the dimension of the affine span of $\sigma(P)$ . It follows that $\sigma$ has more than $k+1$ elements. Lemma 27 implies that $\sigma$ has a subset of $k+1$ elements with the same enclosing radius. Hence $\sigma$ is not an element of $H_{P}$ , a contradiction.
+
+
+
+
+Given any $\sigma\in H_{P}$ , Lemma 27 also implies that there is a subset $\tau\subseteq\sigma$ of at most $d+1$ points such that the minimal enclosing sphere of $\sigma(P)$ is the minimal enclosing sphere and the minimal circumsphere of $P_{\tau}$ . Since $\rho_{\tau}(P)=\rho_{\sigma}(P)$ we must have that $\tau=\sigma$ since $\sigma\in H_{P}$ . By the first part $\sigma(P)=\tau(P)$ is affinely independent and hence we may compute its circumradius squared via Proposition 30, since the circumradius of $\tau(P)$ is the enclosing radius of $\tau(P)$ . Hence
+
+
+
+
+
+ $\rho_{\sigma}(P)^{2}=-\frac{\det\Lambda_{\sigma(P)}}{2\det\Delta_{\sigma(P)}}.$ 
+
+
+∎
+
+
+
+
+
+
+Now we arrive at our analogue of Theorem 58 for Čech persistence.
+
+
+
+
+See 4
+
+
+
+
+Proof.
+
+By the genericity assumption we may take $P$ to be interior to some $S_{\preceq}$ .
+
+
+
+
+( $\impliedby$ ) If $(H_{P},P)$ is rigid then take a neighborhood $\tilde{U}$ as given in the definition of rigidity of a circumsphere framework. Let $U$ be the intersection of $\tilde{U}$ with the interior of $S_{\preceq}$ . For all $Q\in U$ such that $\mathrm{PH}(P)=\mathrm{PH}(Q)$ , Proposition 70 implies we have that $\rho_{\sigma}(P)=\rho_{\sigma}(Q)$ for all $\sigma\in H_{P}$ . Squaring both sides and multiplying by $-2\det\Delta_{\sigma(P)}\det\Delta_{\sigma(Q)}$ we see by Proposition 71 that $(H_{P},P)$ and $(H_{P},Q)$ are congruent circumsphere frameworks. Hence $P$ and $Q$ are isometric.
+
+
+
+
+( $\implies$ ) Suppose $P$ is locally identifiable. Let $U$ be the interior of $S_{\preceq}$ . Suppose now that
+
+
+
+
+
+ $\det\Delta_{\sigma(P)}\det\Delta_{\sigma(Q)}=\det\Delta_{\sigma(Q)}\det\Delta_{\sigma(P)}$ 
+
+(3)
+
+holds for some $Q\in U$ and all $\sigma\in H_{P}$ . Fixing $\sigma\in H_{P}$ , Proposition 71 implies that $\det\Delta_{\sigma(P)}$ is nonzero. Since $H_{P}=H_{Q}$ by Lemma 69, Proposition 71 also implies that $\det\Delta_{\sigma(Q)}$ is nonzero. Dividing both sides of Equation 3 by $\det\Delta_{\sigma(Q)}\det\Delta_{\sigma(P)}$ we get that $\rho_{\sigma}(P)^{2}=\rho_{\sigma}(Q)^{2}$ , by Proposition 71 again. The numbers $\rho_{\sigma}(P)$ and $\rho_{\sigma}(Q)$ are both positive, so $\rho_{\sigma}(P)=\rho_{\sigma}(Q)$ . As this holds for all $\sigma\in H_{P}$ and $P$ is locally identifiable up to isometry, Proposition 70 implies that $P$ and $Q$ are isometric. Lemma 49 implies that $P$ and $Q$ are therefore congruent, since $P$ is generic.
+∎
+
+
+
+
+
+
+Example 72.
+
+Let $P=(p_{1},p_{2},p_{3})\in\mathrm{PC}_{3,d}$ . If $P$ is generic then the triangle with vertices $p_{1},p_{2}$ , and $p_{3}$ is either acute or obtuse. If this triangle is obtuse, then by reordering points we may assume without loss of generality that the angle between the vectors $p_{2}-p_{1}$ and $p_{3}-p_{1}$ is greater than $\pi/2$ . This implies that $\{1.2\}$ and $\{1,3\}$ appear before $\{2,3\}$ in the induced Čech filtration of $K(3)$ . Meanwhile, the obtuse angle also implies that the enclosing radius of $P$ is $\frac{1}{2}d(p_{2},p_{3})$ , so that $\{1,2,3\}$ appears at the same value as $\{2,3\}$ in the Čech filtration of $K(3)$ . In particular, the filtered complex is contractible for after the appearance of both $\{1,2\}$ and $\{1,3\}$ . Meanwhile, the inclusion of the edges $\{1,2\}$ and $\{1,3\}$ both decrease the number of path components by 1. Hence, $H_{P}$ consists of all vertices of $K(3)$ and the two edges $\{1,2\}$ and $\{1,3\}$ . In particular $H_{P}$ is a graph and the rigidity of $(H_{P},P)$ as a circumsphere framework is equivalent to the rigidity of $(H_{P},P)$ as a classical rigidity framework. The graph $H_{P}$ is not rigid so $P$ is not locally identifiable up to isometry.
+
+
+
+
+If the points of $P$ form the vertices of an acute triangle, then the minimal enclosing sphere of $P$ is the circumsphere of $P$ , and moreover, $\{1,2,3\}$ appears after all pairs in the filtration of $K(3)$ . Therefore, the inclusion of each pair in $K(3)$ corresponds either to a reduction in the number of path components in the filtration or the creation of a cycle. Meanwhile the inclusion of $\{1,2,3\}$ kills this cycle. Hence every simplex in $H_{P}$ is critical. In particular, the graph $G$ of edges $\{i,j\}$ forms a (classically) globally rigid framework $(G,P)$ , and hence $(H_{P},P)$ must be globally rigid as well. We illustrate our conclusions in Figure 8.
+
+
+
+
+Figure 8: An illustration of Example 72. When the three points form the vertices of an obtuse triangle, the critical hypergraph is in fact a graph with two edges on the three points, which is flexible. When the three points form the vertices of an acute triangle, the critical hypergraph is the entire complete simplicial complex on three points, $K(3)$ . In particular, the complete graph on three points is a sub-hypergraph of the critical hypergraph, implying in this case the framework $(H_{P},P)$ is rigid, and in fact globally rigid.
+
+
+
+
+
+
+9 Open Questions
+
+
+
+In this paper we have turned questions of identifiability of the persistence map into questions in rigidity theory. Our research here leaves several natural questions in both persistence theory and rigidity theory unanswered, and we list a few of them here, some with commentary.
+
+
+
+
+
+1. 
+
+For Vietoris-Rips persistence, describe sufficient conditions on a point cloud $P$ for the critical graph $G_{P}$ to be locally or globally rigid.
+
+
+
+
+2. 
+
+For Vietoris-Rips persistence, when $n\geq d+2$ and $d\geq 2$ , is our sufficient condidion for global identifiability in Theorem 3 necessary as well?
+
+
+
+
+The obstruction to proving this is as follows. It could plausibly be the case that $P=(p_{1},\ldots,p_{n})$ (say in the interior of some $S_{\preceq}$ ) is identifiable and yet $G_{P}$ is locally rigid, but not globally rigid. Local rigidity of $G_{P}$ would imply that that $P$ is isometric to any other point cloud in the interior of $S_{\preceq}$ with the same full barcode, by Proposition 56. However non-global rigidity of $G_{P}$ implies there is some $Q=(q_{1},\ldots,q_{n})\in\mathrm{PC}_{n,d}$ that is not isometric to $P$ but has $d(q_{i},q_{j})=d(p_{i},p_{j})$ for all ${i,j}\in\mathrm{Crit}(P)$ . The problem is that $Q$ does not need to be in $S_{\preceq}$ and hence $Q$ may not have the same full barcode as $P$ . Moreover, we have no way of proving in this situation that any $Q\in\mathrm{PC}_{n,d}$ with $\mathrm{PH}(Q)=\mathrm{PH}(P)$ has a graph $G_{Q}$ which makes $(G_{Q},Q)$ globally rigid. In this case we cannot apply [GTT19], as we do to show our condition is sufficient.
+
+
+
+
+3. 
+
+What are combinatorial conditions on a hypergraph $H$ that makes $H$ GLR in $d$ dimensions?
+
+
+
+
+We already know, trivially, that if the edges with two vertices of $H$ form a rigid graph $G$ , then $H$ must be rigid. However beyond this we have established no sufficient combinatorial condition that implies local rigidity of $H$ , other than being complete with $n$ large enough
+in dimensions at most $5$ . (See Conjecture 66, inter alia.)
+
+
+
+
+4. 
+
+Is global rigidity in $d$ dimensions a generic property of circumsphere frameworks $(H,P)$ , for $H$ fixed? If so, the previous question applies just as well to globally rigid frameworks.
+
+
+
+
+5. 
+
+Is there a global identifiability criterion for Čech persistence analogous to Theorem 3? In more generality, when does a filtration $\Phi$ furnish a similar global rigidity criterion? For example, what happens if we take the Vietoris-Rips filtration, but with distance between points is defined using a different norm?
+
+
+
+
+
+
+
+
+
+
+Acknowledgements
+
+
+
+The authors thank Michael Stillman, Jack Southgate, and Steve Oudot for conversations that helped us develop this paper and Ulrike Tillmann for early discussions leading us to study fibers of the persistence map for point clouds. DB, HAH, JL and UL received funding as members of the Center for Topological Data Analysis, Erlangen Programme for AI Hub and Center to Center collaboration between Oxford and Max Planck Institutes, funded by EPSRC grant EP/R018472/1, EP/Y028872/1 and EP/Z531224/1. DB was supported by NSF RTG-2136090. HAH gratefully acknowledges funding from a Royal Society University Research Fellowship and Renewal.
+
+
+
+
+
+
+
+
+Appendix
+
+
+
+A Properties of Degree Zero Persistence
+
+
+
+Here we provide detailed proofs of the lemmas in Section 2.3, both restated here for convenience.
+
+
+
+
+See 18
+
+
+
+
+Proof.
+
+Let $F(r)$ denote either $\check{\mathrm{C}}(P,r)$ or $\mathrm{VR}(P,r)$ . Either way, the following are true
+
+
+1. 
+
+ $F(r)$ contains no elements for $r<0$ 
+
+
+
+
+2. 
+
+For sufficiently large $r$ , $F(r)=K(n)$ ,
+
+
+
+
+3. 
+
+ $F(0)$ consists only of $n$ 0-simplices, and,
+
+
+
+
+4. 
+
+For $r\geq 0$ , the map $H_{0}(F(0))\to H_{0}(F(r))$ induced by inclusion of simplicial complexes is surjective.
+
+
+
+
+
+These facts have the following consequences for the barcode $D_{0}$ 
+
+
+1. 
+
+No interval in $D_{0}$ has left endpoint less than 0,
+
+
+
+
+2. 
+
+Exactly one interval in $D_{0}$ has right endpoint $\infty$ ,
+
+
+
+
+3. 
+
+There are $n$ intervals in $D_{0}$ with closed left endpoint equal to $0$ , and
+
+
+
+
+4. 
+
+No interval in $D_{0}$ has left endpoint greater than 0.
+
+
+
+
+
+The filtration $F$ also has the property that for any $r$ , there exists $\varepsilon$ sufficiently small that $F(r)=F(r+\varepsilon)$ , implying that each right endpoint of $D_{0}$ is open. In particular, this means that the right endpoints of $D_{0}$ are all positive.
+∎
+
+
+
+
+
+
+See 20
+
+
+
+
+Proof.
+
+Fix a point cloud $P=\{p_{1},\ldots,p_{n}\}$ . We have that $\mathrm{PH}^{\check{\mathrm{C}}}_{0}(P)=\mathrm{PH}^{\mathrm{VR}}_{0}(P)$ so let $D_{0}=\mathrm{PH}^{\check{\mathrm{C}}}_{0}(P)$ .
+Let $G(r)$ denote the 1-skeleton of $\check{\mathrm{C}}(P,r)$ and note that the persistence modules $\{H_{0}(G(r))\}_{r\in\mathbb{R}}$ and $\{H_{0}(\check{\mathrm{C}}(P,r))\}_{r\in\mathbb{R}}$ are isomorphic, since $H_{0}$ and its induced maps only depend on $1$ -skeleta. Define $r_{i}$ and $\mu_{i}$ as in the lemma and for our convenience we let $r_{0}:=0$ . We construct the desired kind of minimal spanning tree on the vertex set $[n]$ . First, consider the set $A_{1}$ of pairs $\{i,j\}$ such that $d(p_{i},p_{j})=2r_{1}$ . We fix $W_{1}$ , a maximal cycle free subset of $A_{1}$ , and define $E_{1}:=W_{1}$ . Inductively, suppose we have constructed already $E_{k-1}$ for $k<m$ . Let $A_{k}$ denote the set of pairs $\{i,j\}$ such that $d(p_{i},p_{j})=2r_{k}$ . Let $W_{k}$ be a maximal subset of $A_{k}$ subject to the constraint that $W_{k}\cup E_{k-1}$ is cycle free. We let $E_{k}:=W_{k}\cup E_{k-1}$ .
+
+
+
+
+For each $1\leq k\leq m$ we define a graph $T_{k}$ with vertex set $[n]$ and edge set $E_{k}$ . We let $T_{0}$ denote the edgeless graph with vertices $[n]$ . Since $T_{k}$ is a subgraph of $G(r_{k})$ with the same vertex set, it has at least as many components as $G(r_{k})$ , and moreover each component of $T_{k}$ is a subset of a component of $G(r_{k})$ . We show by induction on $k$ that $T_{k}$ and $G(r_{k})$ in fact have the same number of components, and therefore have the same components, with the base case $k=0$ being obvious. For $k>0$ , if $T_{k}$ has more components than $G(r_{k})$ , let
+
+
+
+
+
+ $c:=\min\;\{d(p_{i},p_{j}):\text{$i$ and $j$ are disconnected in $T_{k}$ but connected in $G(r_{k})$}\}.$ 
+
+
+If $i$ and $j$ are disconnected in $T_{k}$ but connected in $G(r_{k})$ then we can pick a path of edges in $G(r_{k})$ connecting $i$ and $j$ . At least one of these edges must connect different components of $T_{k}$ . Taking $i^{\prime}$ and $j^{\prime}$ to be the incident vertices of one such edge we see that $c\leq 2r_{k}$ . Moreover, by our inductive hypothesis, any $i$ and $j$ such that $d(p_{i},p_{j})\leq 2r_{k-1}$ are connected in $T_{k}$ . Thus $2r_{k-1}<c\leq 2r_{k}$ . If $2r_{k-1}<c<2r_{k}$ , pick some $i$ and $j$ in different components of $T_{k}$ such that $d(p_{i},p_{j})\leq c$ . Hence $i$ and $j$ are connected in $G(c)$ . From the barcode $D_{0}$ we deduce that $i$ and $j$ must also be connected in $G(r_{k-1})$ , and therefore connected in $T_{k-1}$ , a subgraph of $T_{k}$ . This is a contradiction. Thus $c=2r_{k}$ , and so we may pick $i$ and $j$ disconnected in $T_{k}$ but connected in $G(r_{k})$ , such that $d(p_{i},p_{j})=2r_{k}$ . The existence of such a pair implies that $W_{k}$ is not maximal. Hence by contradiction we have shown that $T_{k}$ has the same components as $G(r_{k})$ .
+
+
+
+
+We let $T=T_{m}$ . The graph $T$ is connected since from $D_{0}$ we deduce that $G(r_{m})$ is connected. Further $T$ is cycle free by construction, so $T$ is a tree. Hence $T$ has $n-1$ edges. For each edge $\{i,j\}$ of $T$ we assign a weight $d(p_{i},p_{j})$ . Let $w_{1}\leq\ldots\leq w_{n-1}$ denote these weights in ascending order. In particular, we know that each $w_{i}=2r_{j}$ , for some $j$ , by the construction of $T$ . Moreover, $2r_{k}$ will occur in this sequence with the same multiplicity as the number of elements in $W_{k}$ .
+
+
+
+
+We have already shown that $T_{k}$ has exactly as many components as $G(r_{k})$ for all $k$ . The structure of the barcode $D_{0}$ then implies that $T_{k-1}$ has $\mu_{k}$ more connected components than $T_{k}$ has. Moreover, $T_{k}$ is obtained from $T_{k-1}$ by attaching the edges $W_{k}$ . Since $T_{k}$ is cycle free, this implies that each edge attached to $T_{k-1}$ decreases the number of components of the resulting graph by one. Hence $W_{k}$ has $\mu_{k}$ elements. This shows that $T$ is a spanning tree with multiset of edge lengths identical to the multiset of finite right endpoints in $D_{0}$ .
+
+
+
+
+Now let $T^{\prime}$ be any other spanning tree of $[n]$ , and assign edge weights to $T^{\prime}$ as to $T$ , mapping $\{i,j\}$ to $d(p_{i},p_{j})$ . Ordering the edge weights of $T^{\prime}$ , we obtain another sequence $w^{\prime}_{1}\leq\ldots\leq w^{\prime}_{n-1}$ . We claim $w_{i}\leq w^{\prime}_{i}$ for all $i$ . Suppose otherwise and pick the smallest $l$ such that $w^{\prime}_{l}<w_{l}$ . Define $T(r)$ to be the subgraph of $T$ consisting of the vertex set $[n]$ and the edges of $T$ with weight less than or equal to $2r$ . Note that $T(r_{k})=T_{k}$ . Similarly, define $T^{\prime}(r)$ to be the subgraph of $T^{\prime}$ consisting of the vertex set $[n]$ and the edges of $T^{\prime}$ with weight less than or equal to $2r$ . This makes both $T(r)$ and $T^{\prime}(r)$ subgraphs of $G(r)$ . By assumption, $T^{\prime}(w^{\prime}_{l})$ has more edges than $T(w^{\prime}_{l})$ . Since both are cycle free, this means that $T^{\prime}(w^{\prime}_{l})$ has fewer components than $T(w^{\prime}_{l})$ . Let $r_{k}$ be the largest of the numbers $r_{0}\leq\ldots\leq r_{m}$ that satisfies $r_{k}\leq w^{\prime}_{l}$ . Since $T$ only has edges with weights values $2r_{i}$ , $T(w^{\prime}_{l})=T(r_{k})$ . Moreover, the barcode $D_{0}$ shows that the inclusion $G(r_{k})\to G(w^{\prime}_{l})$ induces an isomorphism on $H_{0}$ , so $G(r_{k})$ has exactly as many components as $G(w^{\prime}_{l})$ . By construction, $T^{\prime}(w^{\prime}_{l})$ is a subgraph of $G(w^{\prime}_{k})$ with the same vertex set, so $T^{\prime}(w^{\prime}_{l})$ has at least as many components as $G(w^{\prime}_{k})$ . Let $C(G)$ denote the number of components of a graph $G$ . The arguments in this paragraph show:
+
+
+
+
+
+ $C(T(w^{\prime}_{l}))=C(T(r_{k}))=C(T_{k})=C(G(r_{k}))=C(G(w^{\prime}_{l}))\leq C(T^{\prime}(w^{\prime}_{l})),$ 
+
+
+and
+
+
+
+
+
+ $C(T(w^{\prime}_{l}))>C(T^{\prime}(w^{\prime}_{l})).$ 
+
+
+These statements are obviously contradictory, so $w_{i}\leq w^{\prime}_{i}$ for all $i$ .
+
+
+
+
+This proves that $T$ is a minimal spanning tree and that any other minimal spanning tree has the same multiset of edge lengths, as desired.
+∎
+
+
+
+
+
+
+
+
+B Lemmas from Real Algebraic Geometry
+
+
+
+Here we state two elementary, though somewhat technical, results we need from real algebraic geometry, and provide citations for the proofs.
+
+
+
+
+Lemma 73.
+
+Let $X\subseteq\mathbb{R}^{m}$ be semialgebraic. Then $\dim\mathrm{bd}(X)<m$ , where $\mathrm{bd}$ is the topological boundary of $X$ in $\mathbb{R}^{m}$ with respect to the Euclidean distance.
+
+
+
+
+
+
+Proof.
+
+This is immediate from [VdD98, Chapter 4, Corollary 1.10].
+∎
+
+
+
+
+
+
+Lemma 74.
+
+Let $X\subseteq\mathbb{R}^{n}$ be semialgebraic and $f:X\to\mathbb{R}^{m}$ be a semialgebraic map. Then for each $d\in\{0,1,\ldots,n\}$ the sets $S_{f}(d):=\{a\in\mathbb{R}^{m}:\dim f^{-1}(a)=d\}$ and $f^{-1}(S_{f}(d))$ are semialgebraic and $\dim f^{-1}(S_{f}(d))=\dim S_{f}(d)+d$ .
+
+
+
+
+
+
+Proof.
+
+This follows immediately from [VdD98, Chapter 4, Corollary 1.6 (ii)] and the fact that preimages of semialgebraic sets under semialgebraic maps are semialgebraic.
+∎
+
+
+
+
+
+
+
+
+
+
+
+
+References
+
+
+
+ 
+[AR78]
+
+Leonard Asimow and Ben Roth.
+
+
+The rigidity of graphs.
+
+
+Transactions of the American Mathematical Society,
+245:279–289, 1978.
+
+
+
+ 
+[Bau21]
+
+Ulrich Bauer.
+
+
+Ripser: efficient computation of vietoris–rips persistence barcodes.
+
+
+Journal of Applied and Computational Topology, 5(3):391–423,
+2021.
+
+
+
+ 
+[BBK+24]
+
+Katherine Benjamin, Aneesha Bhandari, Jessica D Kepple, Rui Qi, Zhouchun Shang,
+Yanan Xing, Yanru An, Nannan Zhang, Yong Hou, Tanya L Crockford, et al.
+
+
+Multiscale topology classifies cells in subcellular spatial
+transcriptomics.
+
+
+Nature, pages 1–7, 2024.
+
+
+
+ 
+[BCR13]
+
+Jacek Bochnak, Michel Coste, and Marie-Françoise Roy.
+
+
+Real algebraic geometry, volume 36.
+
+
+Springer Science & Business Media, 2013.
+
+
+
+ 
+[BK04]
+
+Mireille Boutin and Gregor Kemper.
+
+
+On reconstructing $n$ -point configurations from the distribution of
+distances or areas.
+
+
+Adv. in Appl. Math., 32(4):709–735, 2004.
+
+
+
+ 
+[BL14]
+
+Ulrich Bauer and Michael Lesnick.
+
+
+Induced matchings of barcodes and the algebraic stability of
+persistence.
+
+
+In Proceedings of the thirtieth annual symposium on
+Computational geometry, pages 355–364, 2014.
+
+
+
+ 
+[BL23]
+
+David Beers and Jacob Leygonie.
+
+
+The fiber of persistent homology for trees.
+
+
+arXiv preprint arXiv:2303.16176, 2023.
+
+
+
+ 
+[BOS24]
+
+Alessandra Bernardi, Alessandro Oneto, and Pierpaola Santarsiero.
+
+
+Decomposition loci of tensors.
+
+
+arXiv preprint arXiv:2407.18138, 2024.
+
+
+
+ 
+[BPP+22]
+
+Lev Buhovsky, Jordan Payette, Iosif Polterovich, Leonid Polterovich, Egor
+Shelukhin, and Vukašin Stojisavljević.
+
+
+Coarse nodal count and topological persistence.
+
+
+arXiv preprint arXiv:2206.06347, 2022.
+
+
+
+ 
+[BS14]
+
+Peter Bubenik and Jonathan A Scott.
+
+
+Categorification of persistent homology.
+
+
+Discrete & Computational Geometry, 51(3):600–627, 2014.
+
+
+
+ 
+[CB15]
+
+William Crawley-Boevey.
+
+
+Decomposition of pointwise finite-dimensional persistence modules.
+
+
+Journal of Algebra and its Applications, 14(05):1550066, 2015.
+
+
+
+ 
+[CCG+21]
+
+Mathieu Carriere, Frédéric Chazal, Marc Glisse, Yuichi Ike, Hariprasad
+Kannan, and Yuhei Umeda.
+
+
+Optimizing persistent homology based functions.
+
+
+In International conference on machine learning, pages
+1294–1303. PMLR, 2021.
+
+
+
+ 
+[CCSG+09]
+
+Frédéric Chazal, David Cohen-Steiner, Marc Glisse, Leonidas J Guibas,
+and Steve Y Oudot.
+
+
+Proximity of persistence modules and their diagrams.
+
+
+In Proceedings of the twenty-fifth annual symposium on
+Computational geometry, pages 237–246, 2009.
+
+
+
+ 
+[CdMDES24]
+
+Sebastiano Cultrera di Montesano, Ondrej Draganov, Herbert Edelsbrunner, and
+Morteza Saghafian.
+
+
+Chromatic topological data analysis.
+
+
+arXiv e-prints, pages arXiv–2406, 2024.
+
+
+
+ 
+[CDSEG10]
+
+Erin W Chambers, Vin De Silva, Jeff Erickson, and Robert Ghrist.
+
+
+Vietoris–rips complexes of planar point sets.
+
+
+Discrete & Computational Geometry, 44(1):75–90, 2010.
+
+
+
+ 
+[CG22a]
+
+Robert Connelly and Simon D Guest.
+
+
+Frameworks, tensegrities, and symmetry.
+
+
+Cambridge University Press, 2022.
+
+
+
+ 
+[CG22b]
+
+Robert Connelly and Simon D. Guest.
+
+
+Frameworks, tensegrities, and symmetry.
+
+
+Cambridge University Press, Cambridge, 2022.
+
+
+
+ 
+[CMW20]
+
+Jacek Cyranka, Konstantin Mischaikow, and Charles Weibel.
+
+
+Contractibility of a persistence map preimage.
+
+
+Journal of Applied and Computational Topology, 4(4):509–523,
+2020.
+
+
+
+ 
+[CO08]
+
+Frédéric Chazal and Steve Yann Oudot.
+
+
+Towards persistence-based reconstruction in euclidean spaces.
+
+
+In Proceedings of the twenty-fourth annual symposium on
+Computational geometry, pages 232–241, 2008.
+
+
+
+ 
+[Con82]
+
+Robert Connelly.
+
+
+Rigidity and energy.
+
+
+Invent. Math., 66(1):11–33, 1982.
+
+
+
+ 
+[CSEH05]
+
+David Cohen-Steiner, Herbert Edelsbrunner, and John Harer.
+
+
+Stability of persistence diagrams.
+
+
+In Proceedings of the twenty-first annual symposium on
+Computational geometry, pages 263–271, 2005.
+
+
+
+ 
+[Cur18]
+
+Justin Curry.
+
+
+The fiber of the persistence map for functions on the interval.
+
+
+Journal of Applied and Computational Topology, 2:301–321,
+2018.
+
+
+
+ 
+[CW96]
+
+Robert Connelly and Walter Whiteley.
+
+
+Second-order rigidity and prestress stability for tensegrity
+frameworks.
+
+
+SIAM Journal on Discrete Mathematics, 9(3):453–491, 1996.
+
+
+
+ 
+[DHR18]
+
+E Dufresne, HA Harrington, and DV Raman.
+
+
+The geometry of sloppiness.
+
+
+Journal of Algebraic Statistics, 9(1), 2018.
+
+
+
+ 
+[EH22]
+
+Herbert Edelsbrunner and John L Harer.
+
+
+Computational topology: an introduction.
+
+
+American Mathematical Society, 2022.
+
+
+
+ 
+[EK20]
+
+Yury Elkin and Vitaliy Kurlin.
+
+
+The mergegram of a dendrogram and its stability.
+
+
+arXiv preprint arXiv:2007.11278, 2020.
+
+
+
+ 
+[Fie11]
+
+Miroslav Fiedler.
+
+
+Matrices and graphs in geometry, volume 139 of Encyclopedia of Mathematics and its Applications.
+
+
+Cambridge University Press, Cambridge, 2011.
+
+
+
+ 
+[GHO16]
+
+Marcio Gameiro, Yasuaki Hiraoka, and Ippei Obayashi.
+
+
+Continuation of point clouds via persistence diagrams.
+
+
+Physica D: Nonlinear Phenomena, 334:118–132, 2016.
+
+
+
+ 
+[GHP+22]
+
+Richard J Gardner, Erik Hermansen, Marius Pachitariu, Yoram Burak, Nils A Baas,
+Benjamin A Dunn, May-Britt Moser, and Edvard I Moser.
+
+
+Toroidal topology of population activity in grid cells.
+
+
+Nature, 602(7895):123–128, 2022.
+
+
+
+ 
+[GHT10]
+
+Steven J. Gortler, Alexander D. Healy, and Dylan P. Thurston.
+
+
+Characterizing generic global rigidity.
+
+
+Amer. J. Math., 132(4):897–939, 2010.
+
+
+
+ 
+[GS24]
+
+Vincenzo Galgano and Reynaldo Staffolani.
+
+
+Identifiability and singular locus of secant varieties to
+grassmannians.
+
+
+Collectanea Mathematica, pages 1–23, 2024.
+
+
+
+ 
+[GTT19]
+
+Steven J Gortler, Louis Theran, and Dylan P Thurston.
+
+
+Generic unlabeled global rigidity.
+
+
+In Forum of Mathematics, Sigma, volume 7, page e21. Cambridge
+University Press, 2019.
+
+
+
+ 
+[HOPY20]
+
+Hoon Hong, Alexey Ovchinnikov, Gleb Pogudin, and Chee Yap.
+
+
+Global identifiability of differential models.
+
+
+Communications on Pure and Applied Mathematics,
+73(9):1831–1879, 2020.
+
+
+
+ 
+[JJ05]
+
+Bill Jackson and Tibor Jordán.
+
+
+Connected rigidity matroids and unique realizations of graphs.
+
+
+Journal of Combinatorial Theory, Series B, 94(1):1–29, 2005.
+
+
+
+ 
+[KS22]
+
+Asaf Kislev and Egor Shelukhin.
+
+
+Bounds on spectral norms and barcodes.
+
+
+Geometry & Topology, 25(7):3257–3350, 2022.
+
+
+
+ 
+[Lam70]
+
+Gerard Laman.
+
+
+On graphs and rigidity of plane skeletal structures.
+
+
+Journal of Engineering mathematics, 4(4):331–340, 1970.
+
+
+
+ 
+[LB23]
+
+Jacob Leygonie and David Beers.
+
+
+Fiber of persistent homology on morse functions.
+
+
+Journal of Applied and Computational Topology, 7(1):89–102,
+2023.
+
+
+
+ 
+[LBD+17]
+
+Yongjin Lee, Senja D Barthel, Paweł Dłotko, S Mohamad Moosavi, Kathryn
+Hess, and Berend Smit.
+
+
+Quantifying similarity of pore-geometry in nanoporous materials.
+
+
+Nature communications, 8(1):1–8, 2017.
+
+
+
+ 
+[LHP24]
+
+Jacob Leygonie and Gregory Henselman-Petrusek.
+
+
+Algorithmic reconstruction of the fiber of persistent homology on
+cell complexes.
+
+
+Journal of Applied and Computational Topology, pages 1–35,
+2024.
+
+
+
+ 
+[LMO24]
+
+Sunhyuk Lim, Facundo Mémoli, and Osman Berat Okutan.
+
+
+Vietoris–rips persistent homology, injective metric spaces, and the
+filling radius.
+
+
+Algebraic & Geometric Topology, 24(2):1019–1100, 2024.
+
+
+
+ 
+[LT22]
+
+Jacob Leygonie and Ulrike Tillmann.
+
+
+The fiber of persistent homology for simplicial complexes.
+
+
+Journal of Pure and Applied Algebra, 226(12):107099, 2022.
+
+
+
+ 
+[Mil15]
+
+Ezra Miller.
+
+
+Fruit flies and moduli: interactions between biology and mathematics.
+
+
+Notices of the AMS, 62(10):1178–1184, 2015.
+
+
+
+ 
+[MW21]
+
+Konstantin Mischaikow and Charles Weibel.
+
+
+Persistent homology with non-contractible preimages.
+
+
+arXiv preprint arXiv:2105.08130, 2021.
+
+
+
+ 
+[OS20]
+
+Steve Oudot and Elchanan Solomon.
+
+
+Inverse problems in topological persistence.
+
+
+In Topological Data Analysis: The Abel Symposium 2018, pages
+405–433. Springer, 2020.
+
+
+
+ 
+[PG27]
+
+Hilda Pollaczek-Geiringer.
+
+
+Über die gliederung ebener fachwerke.
+
+
+ZAMM-Journal of Applied Mathematics and Mechanics/Zeitschrift
+für Angewandte Mathematik und Mechanik, 7(1):58–72, 1927.
+
+
+
+ 
+[PS16]
+
+Leonid Polterovich and Egor Shelukhin.
+
+
+Autonomous hamiltonian flows, hofer’s geometry and persistence
+modules.
+
+
+Selecta Mathematica, 22(1):227–296, 2016.
+
+
+
+ 
+[RB19]
+
+Raúl Rabadán and Andrew J Blumberg.
+
+
+Topological data analysis for genomics and evolution: topology
+in biology.
+
+
+Cambridge University Press, 2019.
+
+
+
+ 
+[SK22]
+
+Philip Smith and Vitaliy Kurlin.
+
+
+Families of point sets with identical 1d persistence.
+
+
+arXiv preprint arXiv:2202.00577, 2022.
+
+
+
+ 
+[Sul23]
+
+Seth Sullivant.
+
+
+Algebraic statistics, volume 194.
+
+
+American Mathematical Society, 2023.
+
+
+
+ 
+[VdD98]
+
+Lou Van den Dries.
+
+
+Tame topology and o-minimal structures, volume 248.
+
+
+Cambridge university press, 1998.
+
+
+
+ 
+[Wel05]
+
+Emo Welzl.
+
+
+Smallest enclosing disks (balls and ellipsoids).
+
+
+In New Results and New Trends in Computer Science: Graz,
+Austria, June 20–21, 1991 Proceedings, pages 359–370. Springer, 2005.
+
+
+
+ 
+[WK21]
+
+Daniel Widdowson and Vitaliy Kurlin.
+
+
+Pointwise distance distributions of periodic point sets.
+
+
+arXiv preprint arXiv:2108.04798, 2021.
+
+
+
+ 
+[YH38]
+
+Gale Young and Aiston S Householder.
+
+
+Discussion of a set of points in terms of their mutual distances.
+
+
+Psychometrika, 3(1):19–22, 1938.
+
+
+
+ 
+[ZC04]
+
+Afra Zomorodian and Gunnar Carlsson.
+
+
+Computing persistent homology.
+
+
+In Proceedings of the twentieth annual symposium on
+Computational geometry, pages 347–356, 2004.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+ Experimental support, please
+ view the build logs
+ for errors. Generated by
+ 
+ 
+ L
+ A
+ T
+ E
+ 
+ xml
+ 
+ .
+ 
+
+ 
+ Instructions for reporting errors
+
+ We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+ support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+ methods listed below:
+
+ 
+ Click the "Report Issue" (
+ 
+ ) button, located in the page header.
+
+ 
+ Tip: You can select the relevant text first, to include it in your report.
+
+ Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+ may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+ should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+ all.
+
+ Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+
+ 
+
+
+ 
+ 
+ 
+ We gratefully acknowledge support from our major funders,
+ member institutions, ,
+ and all contributors.
+ 
+
+ 
+ About ·
+ Help ·
+ Contact ·
+ Subscribe ·
+ Copyright ·
+ Privacy ·
+ Accessibility ·
+ Operational Status (opens in new tab)
+ 
+ 
+
+ 
+
+
+ 
+ 
+ 
+ 
+ 
+
+
+

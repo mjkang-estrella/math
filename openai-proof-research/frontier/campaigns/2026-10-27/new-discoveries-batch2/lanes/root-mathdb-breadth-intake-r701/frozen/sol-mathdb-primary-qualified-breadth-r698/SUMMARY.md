@@ -1,0 +1,11 @@
+# r698 bounded breadth screening
+
+Fifty assigned literal records reviewed; no replacements, proposals or credit. Classification counts: 17 complete, 19 definition-dependent, 9 incomplete, 5 scope-ambiguous. The baseline is 8,333 reported literal reviews; this lane contributes fifty only after root reconciliation (baseline-relative 8,383, without counting concurrent r696). Routing's 10,000 metadata rows are not coverage. Claude r628 and Sol r696 reservations are untouched. Counts remain 9 additional / 39 total / next40.
+
+All20 original corpus chunks and8 frozen inputs checked in place before scientific reading; exact r697 payload and42 direct original/copy pairs checked without running upstream verify.py. Flat bindings retain originals without copying historical trees. All50 exact statements, chunk/line, statement hashes and canonical record hashes accompany individual scope reasons/quantifiers.
+
+Three primary works/four PDFs fetched and bound before extraction; derivatives bound before search. Selected passages only: Keith1306.0136v1/v2 retains the mod12 conjecture; its mod3 theorem does not settle it. Cooper1312.2195v1 proves substantial subfamilies but leaves no established all-m p=3 route here. Cycle-maximal1310.5172v1 uses global cycle maximization, whereas the literal substitutes edge saturation: C5 is only an uncredited wording correction. Exact finite partition and binomial checks are diagnostics, not proofs. No substantial hypothesis investment or new result.
+
+Whole bodies, full dependencies, successor-literature bodies and current proof registries remain uncleared. No novelty PASS or absence-of-hits inference. Source-reported resolutions325923/326769 are not independently body-audited. Existing stops including r578, r642TLS, r684 two404s, OEIS403 and OUP403 preserved without retry. No new HTTP failures. Oversized/truncated displays and bounded rereading are disclosed in failures.json.
+
+Run ./verify.sh for independent read-only integrity checks. Manifest excludes only itself and final-verification-receipt.json; receipt binds exact manifest SHA256+size. Bounded negative tests exercise hash,size,extra-file rejection without touching originals. Integrity PASS is not mathematical/novelty PASS.

@@ -1,0 +1,5 @@
+import pathlib
+D=pathlib.Path(__file__).resolve().parents[1]
+p=D/'SUMMARY.md';s=p.read_text().replace('found no violation through order 25; the standalone order-26 run and its exact completion status are retained in `logs/threshold26.*`.','found no violation through order 26 (4,117,117 in-scope sequences at order 26); the completed standalone order-26 run is retained in `logs/threshold26.*`.');p.write_text(s)
+p=D/'scripts/report.py';s=p.read_text().replace('completed n=17,...,25 and later n=26 if its standalone log completes.','completed n=17,...,26, with 4117117 in-scope sequences at order26.');p.write_text(s)
+(D/'logs/environment-failures.txt').write_text('g++ was not available: subprocess.Popen raised FileNotFoundError before a compiler child could start. No binary was built and the attempted binary run also raised FileNotFoundError. Replaced by isolated Python implementations. Initial trees.py run failed because the local checker exec scope lacked __file__; corrected scope and reran under a fresh log name. These failed attempts are not numerical coverage.\n')

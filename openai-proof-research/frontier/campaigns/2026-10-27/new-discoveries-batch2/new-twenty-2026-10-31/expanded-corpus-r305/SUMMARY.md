@@ -1,0 +1,17 @@
+# Expanded corpus r305
+
+Accepted campaign state remains **52/60**. This lane claims **0 new credit** and has **no qualified new ordinary endpoint**. Exactly the 20 immutable reserved IDs were reviewed; no reselection or padding occurred.
+
+`results.json` is keyed by those 20 IDs and includes every literal statement and full corpus record. `literal-provenance.json` binds each record to its original chunk, one-based line, chunk/raw/UTF-8 statement hashes, and an exact raw line file retaining its newline. `verification.json` and `artifact-manifest.json` record the final checks.
+
+Seven entries are excluded for public exact results/reported resolutions or literal scope corrections: 370011, 370647, 371712, 374612, 374615, 374667, 375383. The remaining thirteen are parked with explicit gaps. Public report depth is distinguished from complete proof-body review; notably 370647's companion is downloaded but not fully read. No absent source or registry entry was treated as novelty clearance.
+
+Sustained mechanisms are in `ORDINARY-ATTEMPTS.md`: binary avalanche homology 375591 (exact translate-complex reduction, sparse-input bound, least-vertex collapse, unpaid global acyclic matching), cograph zombie damage 376099 (public upper bound, failure of the different-component reservoir, unpaid adaptive module strategy), and two-row Schur injectivity 375429 (maximal-product reconstruction, moment recovery obstruction, complement-route scope gap). A fourth matroid route 374615 was terminated after reading Ferroni–Vecchi's complete public word formula and proof; its coefficientwise truncation reduction is explicit. Rank-one truncation conventions are a zero-credit endpoint correction.
+
+Important source distinctions: 375429's earlier elementary-symmetric refutation is not a refutation of its surviving two-row question. 375591's nonbinary witness is not a binary witness, and source P_n counts n non-sink vertices plus a sink. The survey's weak-scaling counterexample for 375699 does not alone refute its distinct blow-up equivalence. No helper, printed numerical example, restricted case or easy scope correction has been promoted.
+
+Current arXiv bodies and abstract/version pages were retrieved for all 20. Review depths are specified per ID in `source-read-inventory.json`; relevant companion proof bodies were read for matroid and ternary exclusions. Journal/correction/citing coverage, all-version comparisons and visual inspection of printed figures are incomplete. Current LeanPool repository/candidate/import evidence was read, but the old projects.yml path returned 404. Palomar's official bounded recent.json returned 403; access was stopped. No complete current or immutable theorem-registry novelty clearance is claimed.
+
+Only the exact refreshed 263-file history allowlist was scanned, with parsed source-family matches reconciled separately from incidental substring hits. No protected active crown or other active lane was inspected. No shared records, authors or ledgers were changed.
+
+No `CANDIDATE.md` or Pi execution request is warranted: no new source-qualified full proof survived. There was no Lean, solver, mathematical enumeration, numerical search, child, git, browser, publication or contact action. All launched jobs were collected. First-command affinity and early logging deviations are disclosed in `RESOURCE-AND-ACCESS.md`; later capped processing receipts are in `process-log.jsonl`.

@@ -1,0 +1,15 @@
+# r322 standalone research brief
+
+Accepted campaign count remains 52/60 beyond 39 prior. This lane claims 0 credit and supplies exactly 20 ID-keyed records in results.json. No eligible source-qualified full ordinary endpoint survived, so no CANDIDATE.md or dormant Pi execution plan is issued. No formal execution is requested.
+
+The strongest sustained routes were 375371 (square-rectair exact mex), 375373 (nonhook Conway-pair converse), and 375626 (Hawkes sign identifiability). ATTEMPTS.md gives their actual definitions, algebraic/inductive mechanisms, failed shortcuts and precise remaining gaps. The first two have substantive unproved directions; the third obstructs full-support recovery but not every possible meaning of dominant graph. Empty-terminal/r=1 corrections receive no credit.
+
+Public source resolutions exclude 375025 (explicit flip3 counterexample), 375296 (latest paper explicitly corrects/refutes exact old S1 pattern set), 375625 (Shallit/base4 set), and 375578 (source degree theorem). 375422 also has explicit public refutation evidence but simplified-record replacement/universe semantics remain a hold. These are source/public exclusions, not new discoveries. Remaining records are parked with specific gaps rather than invented computational plans.
+
+Immutable reservation SHA is verified before/after. literal-provenance.json preserves original chunk path, one-based line, whole-chunk SHA, exact raw SHA including newline, UTF-8 statement SHA and full parsed record. The20 .raw.jsonl files preserve original bytes. No records were added or exchanged.
+
+Current registry landing heads: OpenAI/math4eaee87548250b2682affda7d05d947c05554bae; Omega9e6f3c06e0224a7443b7a384ab14b423f287ad85; Vilin97/lean-pool01db1d7049cf9668bda1e9e106875ee1278b43e6. LeanPool imports AND projects.yml were screened for reserved IDs and focused source names. This is routing evidence only; no global proof-body or literature clearance. Pinned OpenAI snapshot and completed allowlisted history were reconciled. Protected concurrent/crown bodies were not read, hashed, globbed or polled.
+
+Read depth and chronology are explicit in source-read-inventory.json,http-receipts.json,registry-screen.json and history-read-inventory.json. CRIM has one listed arXiv version; its thesis predecessor was inspected only as landing metadata. Mesh v1 and corrected v2 were fetched; current correction body was read. Hawkes sole version and proof10.2 read. Polar v1/v2 theorem overlap checked. Not all companions, journal versions, figures or dependency proofs were reviewed; no missing access is treated as clearance.
+
+All writes are in this lane. No Lean, solver, CAS, enumeration, child agent, git, browser, account/contact/upload/publication or shared/dependency/author edits. Local Python jobs had explicit resource caps; measured self high-water versus unavailable group/sample telemetry is distinguished in resource-report.json. All started sessions have exited; no live jobs remain at handback. The shared campaign remains 52/60, not 53.

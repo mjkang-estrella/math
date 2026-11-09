@@ -1,0 +1,1 @@
+Own-text fixture report.

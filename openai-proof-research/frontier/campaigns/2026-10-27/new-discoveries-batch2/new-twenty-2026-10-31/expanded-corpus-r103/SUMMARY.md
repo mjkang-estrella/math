@@ -1,0 +1,40 @@
+# r103 research handback — incomplete formal endpoint, zero credit
+
+The strongest lead is an ordinary exact counterexample to MathDB 342414 / Pirot–Sereni Conjecture 2: a six-cycle with pendant vertices attached at the two endpoints of its root edge. It has eight vertices, girth 6, and constraint vector (2/5,14/5,4/5). The strictly positive rational separator (1/1000,7/27,1/3) evaluates to 67027/67500<1 on this graph, whereas its value on every depth-2 cubic tree constraint is at least 1. Thus no convex combination of those tree constraints can satisfy the conjectured implication.
+
+**Status: ordinary candidate only.** The complete literal Lean endpoint is missing. In particular, a kernel-checked universal tree-classification/isomorphism bridge has not been written. No bounded diagnostic or canonical-tuple theorem is presented as that endpoint. No Lean packet, accepted solution, publication, independent review or campaign credit is claimed. Root must adjudicate source fidelity, novelty and significance.
+
+Read [EDGE-PROOF.md](EDGE-PROOF.md) for the full ordinary proof, all five graph maxima, all six half-tree types, the complete 6-by-6 expectation table, source-own-results check, primary-body comparisons, and precise formalization dependencies. Exact certificate files are outputs/edge-certificate.json, outputs/edge-analytic-table.json and outputs/edge-graph-check.json. The original LP discovery is independently checked by brute-force enumeration of all 256 graph subsets and all81 labelled tree forms. The source's checked optimal weight remains valid on this graph (value119/110); the candidate refutes the stronger all-weight convex-domination claim. It does not contradict the source's computational bound. Separate d4 and d5 sweeps ran600 seeded trials each without finding an obstruction, but only trials having added leaf edges produce an LP test; these totals are not600 tested patterns each.
+
+## Other sustained searches
+
+- 344168: exact cycle-count DP agrees on all1048575 nonempty subsets of[20], beyond the source's[12] permutation-count verification. Full[20] count1109652905. No full identity or bijection proved.
+- 346436: exhaustive small uniform-polymatroid compatibility/hierarchy checks at m2,g0<=8; m3,g0<=7; m4,g0<=5. A further m5,g0<=3 pass sampled1000 monotone families, giving3939 compatible instances and2743 signature/Delta classes. No hierarchy discrepancy. Larger participant blocks and general m remain unproved.
+- 338677: exhaustive265720 nodes per root through depth11, followed by20000 seeded paths per root through depth100, with1740000 comparisons at depths14..100 per root. Corrected root2 and root3 agree with implemented Euclid throughout; Matlab equivalence is unproved. A short classical-uniqueness bridge may make this a routine result rather than a qualifying discovery.
+- 340117: exhaustive connected unit-capacity labelled networks on4(38) and5(728) vertices; seeded weighted samples on6(1635),7(897),8(474) vertices. All floating capacity-decomposition LPs feasible. No exact certificate theorem inferred.
+- 341392: exact integer product expansions through degree5000, checking4001 g2 and3001 h2 specified signs. No violation. Undefined h3 in the source's final sign line retained as a gap, not a credit opportunity.
+- 342060: all graph complexes on3,4,5 vertices (8,64,1024 cases), minimal Inc continuations and two finite-field exterior-shift specializations. No stable violation. Genericity, higher faces and symmetric shifting remain open in this pass.
+- 343442: exact source correction matters: Proposition5.1 already gives the lower bound, but its refined Conjecture5.2 concerns equality at harmonic jumps. m4(3)=4 refutes only the earlier unrestricted guess. Searches over7770 unordered N3 integer-row arrays and20000 seeded N4 arrays found no jump violation.
+- 355258: exact Paley Hadamard verification and eight-column witnesses for all listed prime q=3 mod8,11<=q<=499. These are finite parameter constructions, not a full conjecture solution. The source Theorem6 assumes m>=3; m1 is not used as a correction-based counterexample.
+- 352164:1000000 cardinality pairs in dimensions1001..1100 were checked against two necessary divisibility conditions. This is not a search of actual spherical designs and does not extend the source's full design verification theorem.
+- 350360: initial20000 primes (last224737) give all19999 leading differences1 and trace19999. This is well within classical verification, not an extension or solution of Gilbreath.
+
+## Coverage limitations
+
+Every reserved literal statement was extracted and preserved with raw newline, chunk path/hash, one-based line number and statement hash. All20 primary PDFs were retrieved with dated status/hash receipts. Actual source review depth and remaining lemmas are recorded separately in exactly20 ID-keyed results.json entries. Some source proof sections and some cited bodies remain unread; statement review is not proof review.
+
+Faithful finite checkers were NOT completed for the W-graph field/bilinear-form problem340079, general fixed-alternative construction347554, fullerene cospectrality343991, or arbitrary good Fibonacci colorings355642. These gaps are explicit, not negative findings. Fullgen source was found in an older lane, but no generator build was performed in this environment with missing standard C headers. The related older fullerene heat-trace Conjecture3 work was read and retained as a distinct historical-family warning. Analytic/asymptotic targets338343,343062,346507,349569,351961 were parked with source-backed gaps as instructed.
+
+Therefore this handback does not claim complete fulfillment of every requested finite search, a several-hour exhaustive deep pass, or a qualifying Lean solution. It does provide a concrete exact ordinary candidate and reproducible searches for continuation. The four finite-checker gaps and full342414 Lean endpoint are unfinished work.
+
+## Registry and prior-art limits
+
+Current public heads were fetched only via /commits/HEAD. OpenAI/math:4eaee87548250b2682affda7d05d947c05554bae. Omega:e26965e84ef74f66ce64631e23f293569195a4c1. Complete untruncated D5/Problems and OpenAI preprints path trees were retrieved. Path screens do not clear proof bodies. An Omega GilbreathExtension filename is a lead only; its body was not read.
+
+For342414, OpenAlex queries provided bounded navigation and seven citing records. Actual retrieved bodies included the 2023 thesis tel-04259639, Hurley–Pirot2109.15215, and Martinsson–Steiner2025; relevant theorem/proof passages were compared in EDGE-PROOF.md. No full prior subsumption was established. This does not clear all citing works, the published SIAM version, current MathDB comments, or unindexed proofs. No denied route was retried. Inherited arXiv search/Crossref/ScienceDirect and other denied routes were not requested. OpenAlex requests succeeded; no account was created and no external message sent.
+
+## Reproduction and execution
+
+Scripts are in scripts/, outputs in outputs/, primary sources and receipts in sources/, and per-process full stdout/stderr with resource receipts in logs/. Re-run each search through scripts/limited.py NAME python -B scripts/SCRIPT.py (with source-relative arguments as needed). The limiter uses at most2 CPU affinities,120 CPU seconds,140 wall seconds and a sampled6GiB RSS bound; it is not an aggregate cgroup/transient-peak proof. Resource receipts list actual completion and peaks. All completed experiments stayed far below6GiB. C cycle counts were compiled as a small shared library using the existing Lean clang after ordinary g++/standard-header attempts failed; no packages were installed. Later limiter revisions explicitly force temporary files and Python bytecode settings inside the lane. No dependency was edited.
+
+No child agents, git operations, shared-index/ledger edits, browser tabs, uploads or publications were performed. All created artifacts are inside this lane. No research jobs remain running at final audit. MANIFEST.json binds delivered artifact bytes; dependency caches were not rebuilt and no Lean trust claim is made.

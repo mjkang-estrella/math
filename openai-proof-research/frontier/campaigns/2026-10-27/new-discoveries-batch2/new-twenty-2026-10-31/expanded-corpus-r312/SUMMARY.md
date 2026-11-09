@@ -1,0 +1,15 @@
+# newr312 research handback
+
+Exactly20 fixed reservations reviewed. Credit0; accepted campaign count remains52/60. Reservation before/after SHA256 is ff02ffe0faa58cd4418ca51f680576fb3008ad0db184c7b15f6fd03fef720123. No reselection or padding.
+
+The strongest ordinary endpoint is370296: all-n matching/poset/Dyck height equidistribution follows by a complete classical FIFO -> breadth-first plane tree -> contour bridge and the source Omega bijection. The full proof and the reason for zero credit are in ATTEMPTS.md. No new-to-literature claim or formalization request. The journal was403 and remains unread.
+
+366750 is already publicly refuted through Mandel -> Las Vergnas and existing mutation-free-element examples.371249 has a complete public Section2 proof of the exact graph-invariant identity.370747 has a material product-versus-individual size transcription error; correcting it leaves the log-rank-equivalent question. These yield no credit.
+
+Sustained weighted-sum ideation for368228 produces a precise cumulant sign gap, not a solution; the denominator-free game theorem is insufficient. Finite-overlap367942 remains on source/scope hold, with an explicit omitted-hypothesis reversal test that is not credited.368386 has published fixed-h ranges but an uncovered uniform middle band. Remaining analytic/infinite/class-quantified targets were parked with concrete reasons, not cleared by metadata.
+
+results.json has exactly20 ID keys and full literal statements, per-ID dispositions, attempts, review depths, and provenance. literal/ preserves every raw JSONL newline and full parsed record; provenance.json binds original chunk/line/chunk hash/raw hash/statement UTF8 hash. source-version-metadata.json records all20 current arXiv version metadata. Actual source/proof depth is per-ID; downloaded files are not claimed fully read. Source journal/citing/correction completeness is not established, and no new endpoint is qualified. REGISTRIES.md gives current public heads, bounded scopes and missing projects.yml. All historical access was limited to the exact allowlist; no active/protected lane reads.
+
+HTTP receipts and read/process inventories disclose errors, actual limits, available telemetry and missing measurements. A final-inventory script also failed at Python parse time before its resource setters or reads; this uncapped short failure is disclosed in process-inventory.json and was reaped. The corrected inventory script completed. The failed bs4 import was reaped; standard-library parsing replaced it. Some early tool outputs were truncated by output limits; the bootstrap was fully read and not truncated, and literal statements were subsequently emitted in bounded selections. Bootstrap was not rerun. No Lean, child agents, mathematical enumeration, solvers, numerical search, git, shared changes, browser/account actions, contacts, publication or upload. No processes left running at handback.
+
+No CANDIDATE.md: no significant, source-qualified new ordinary proof survives. No Pi execution or paper was started. Root alone decides subsequent work.

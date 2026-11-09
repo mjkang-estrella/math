@@ -1,0 +1,8 @@
+# Failures retained
+
+- Initial prepare.py assumed every inherited report row carried a raw-record path. r362 rows did not, causing IsADirectoryError before completion. `prepare.initial-failure.log` retained. Fixed by exact-ID scanning the normalized chunks, checking all20 chunk hashes against the original inventory manifest and preserving only the reserved40 raw lines.
+- Initial result builder assumed every old row supplied a literal hash; r364 instead supplied literal text. KeyError retained in `build-results.initial-failure.log`. Corrected to compare supplied hash or exact supplied literal text. No mismatch was suppressed.
+- Two version-only Lean children under the result builder's512MiB address-space limit aborted on thread creation, including the second with-j1. Full failure logs retained. No formal proof ran. Environment records the version observed in an earlier successful version-only invocation plus actual binary and mathlib-manifest hashes. No raised-cap rebuild or replay is claimed. The earlier version-only call itself was not under an explicit resource wrapper; this minor environment-inspection omission is recorded, and no expensive computation used that invocation.
+- Current campaign ledger hash differs from reservation. Recorded as drift; no shared repair or count change.
+- Incorrect record-minimum-block shortcut and two lattice exchanges were falsified by diagnostics; see full scripts/logs and mathematical-attempts.md. No false endpoint promoted.
+- Source PDFs fetched successfully; no403/429/challenge, no denied route retries. No MathDB/Palomar requests. Published-version and predecessor bodies remain unread; no novelty clearance.

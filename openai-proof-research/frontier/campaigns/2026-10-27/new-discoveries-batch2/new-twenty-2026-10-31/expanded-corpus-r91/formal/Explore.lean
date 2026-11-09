@@ -1,0 +1,13 @@
+import Mathlib.GroupTheory.Sylow
+import Mathlib.GroupTheory.Perm.Fin
+import Mathlib.Tactic
+#check Equiv.Perm.card
+#check Fintype.card_perm
+#check Finset.card_image_of_injective
+#check Set.ncard_coe_finset
+#check Subgroup.card_carrier
+#check Sylow.card_eq_multiplicity
+#check Nat.card_eq_fintype_card
+#check IsPGroup.iff_orderOf
+#check Equiv.Perm.orderOf_dvd_iff_pow_eq_one
+#check Finset.card_le_card

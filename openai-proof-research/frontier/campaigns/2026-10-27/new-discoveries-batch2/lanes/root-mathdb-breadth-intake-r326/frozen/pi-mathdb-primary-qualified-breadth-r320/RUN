@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""RUN — reproduce the r320 lane deliverables end to end.
+
+All compute steps run under the pinned helper guard:
+  ../sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py
+with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1, python3 -B,
+fixed 512 MiB AS / group RSS, CPU 210 / wall 230, no raises.
+
+Usage: python3 -B RUN
+Steps:
+  1. freeze_inputs.py   (bind+hash admin inputs and all 20 corpus chunks BEFORE reads)
+  2. extract_reserved.py(guarded; extract the 50 reserved statements)
+  3. decisive.py        (guarded; 347483 + 327474 calculations)
+  4. decisive_trees.py  (guarded; 338062 calculation)
+  5. make_manifest.py   (hash all payloads; manifest.json)
+  6. verify.py          (independent comparison; nonzero exit on any mismatch)
+"""
+import subprocess, sys, os, json
+
+LANE = os.path.dirname(os.path.abspath(__file__))
+GUARD = os.path.join(LANE, "..", "sol-edge-irregulator-manuscript-packet-r1", "packet", "helper_guard.py")
+ENV = dict(os.environ,
+           OPENBLAS_NUM_THREADS="1", OMP_NUM_THREADS="1",
+           PYTHONDONTWRITEBYTECODE="1")
+
+def run(cmd, guarded=False):
+    print("+", " ".join(cmd), flush=True)
+    full = ([sys.executable, "-B", GUARD] + cmd) if guarded else ([sys.executable, "-B"] + cmd)
+    r = subprocess.run(full, env=ENV, cwd=LANE)
+    if r.returncode != 0:
+        print(f"FAILED: {' '.join(cmd)} (exit {r.returncode})", file=sys.stderr)
+        sys.exit(r.returncode if r.returncode > 0 else 1)
+
+def main():
+    run(["scripts/freeze_inputs.py"])
+    run(["scripts/extract_reserved.py"], guarded=True)
+    run(["scripts/decisive.py"], guarded=True)
+    run(["scripts/decisive_trees.py"], guarded=True)
+    run(["scripts/make_manifest.py"])
+    run(["scripts/verify.py"])
+    print("RUN complete: all steps green.")
+
+if __name__ == "__main__":
+    main()

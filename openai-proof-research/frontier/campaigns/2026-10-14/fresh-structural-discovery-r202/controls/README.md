@@ -1,0 +1,1 @@
+Three tiny copied controls exercise the same read-only verifier: valid bytes/modes, altered payload bytes, and altered mode. They are synthetic artifact controls, not source material, inherited manifests, or mathematical gates. Original evidence and frozen statement are untouched.

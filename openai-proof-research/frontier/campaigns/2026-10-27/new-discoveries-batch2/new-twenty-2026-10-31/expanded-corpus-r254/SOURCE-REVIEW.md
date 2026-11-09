@@ -1,0 +1,42 @@
+# Source review and limits
+
+Every literal normalized record was read. `literal-records.json` stores the complete record, original chunk path, one-based line, full chunk SHA256, exact raw-line SHA256 including the preserved newline, and UTF-8 statement SHA256. The twenty `.raw.jsonl` files preserve original bytes. The existing root-issued reserve8 reservation was retained. Other lane reservations are disjoint (`reservation-validation.json`); eligibility indexes alone do not establish novelty. Shared ledgers were read/copied, not modified. The project/batch/campaign AGENTS.md and STATUS.md were read. The current count remains 52/60.
+
+Historical review includes the complete two current ledgers and prior-campaign-context.json, with targeted historical title/ID scans. `relevant-history.json` contains the Bordeaux duplicate 328365 and the related Stirling positivity exclusion 346486. Ledger routine-annihilator exclusion 343057 and source-corollary exclusions 364079/334207 constrain the UFD route; source-own examples and minor modifications are not creditable. Queen, polynomial positivity, accepted graph families, current holds and accepted results are not reopened. No inference that an unread held source has been cleared is made. The raw broad `history-matches.txt` includes irrelevant numeric substring collisions; it is not evidence of actual mathematical review of those false matches. `qualification-passages.txt` records compact structured ledger context. These scans are bounded and do not certify an exhaustive semantic search of every historical note.
+
+## Primary sources
+
+All seventeen distinct arXiv source PDFs and abstract/version pages returned HTTP 200. All older versions listed by those pages were also downloaded and converted to text. The latest bodies supplied definitions and conjecture loci listed per ID in results.json. Acquisition/text extraction of an earlier version is not a full mathematical proof audit. `source-passages.txt` records target passages and version histories. `finalprep.txt` records journal references and DOIs when supplied by arXiv. These metadata do not certify absence of errata/retractions.
+
+Additional primary bodies:
+
+* Original Albert–Bousquet-Mélou arXiv:1312.4487: Section 6.3 P2 and all N1-N3 negative examples inspected, in addition to the secondary peak-count paper. Later Elvey Price arXiv:1912.00056 discusses equality of growth rates, which does not establish P2 coefficientwise positivity. No later full P2 proof was verified. Original DOI access returned a short body, not a complete journal manuscript. Journal/citing-work clearance remains incomplete.
+* Yan–Zhou, DMTCS 2017 journal PDF from https://dmtcs.episciences.org/3937/pdf: exact Conjecture 1.2 matches source Conjecture 4.14. Section 6, including the closing proof on printed pages 19–20 and its type B linked-partition decomposition, inspected. This is an actual later proof body supporting exclusion of 331825. The original source journal PDF from https://dmtcs.episciences.org/1408/pdf was also obtained and matches the cached latest source PDF byte-for-byte.
+* Hou arXiv:1510.00437 explicitly proves its own Conjecture 1.2. Theorem 1.4 reduces fixed prime r to r|(q+1); Theorem 1.5 covers this range. Its proof structure in Section 4 is finite characteristics, then infinite-q elimination outside 2,3,5, then treatment of 2,3,5. This suffices for exclusion; no novel proof or formalization is claimed.
+* Touching strings: source itself states Fox–Pach's resolution and reproduces the bound as a theorem. The original 2012 manuscript is not acquired; the exclusion is carefully described as reported known, not independently verified Fox–Pach proof.
+
+Live public search also identified the 2026 Strong Bordeaux publication DOI 10.1016/j.disc.2025.114818. Its subject is adjacent triangles and improper coloring; the weak Bordeaux record requires **no intersecting triangles**. No resolution of that exact record is inferred from an abstract. The recent Wendt-determinant permutation-binomial search result is not needed to exclude Hou's already proved conjecture and was not treated as a verified proof body. Other famous analytic, topological and structural targets were parked rather than granted clearance from abstracts.
+
+Complete inventory of every figure in every cited work, complete journal-body comparisons, all citing works, errata and retractions are **not finished** for surviving candidates. This is a material open gate, not an implicit pass. No proposed finite witness relies on an uninspected figure. ATTEMPTS.md distinguishes the textual example inventory actually read from figure-level review still missing.
+
+## Fresh public proof registries
+
+Fetched `/commits/HEAD`, not main, with time/status/hash receipts:
+
+* OpenAI math: 4eaee87548250b2682affda7d05d947c05554bae.
+* Omega trureturing: **5ea4a91606667fb2800faa9bec1dbd36976a251f**, newer than both 1c3e222 and c12f610 supplied in the task.
+* Vilin97/lean-pool: 01db1d7049cf9668bda1e9e106875ee1278b43e6.
+
+All raw URLs are pinned to the corresponding returned head. Receipts retain full URL, UTC time, status, byte count and SHA256. OpenAI root recursive tree is truncated; **complete preprints subtree** was fetched (13,578 entries, truncated=false). Lean root subtree remains truncated and cannot clear all formal developments. Omega root recursive tree is truncated; complete D5 subtree (truncated=false) and complete Blueprint subtree (truncated=false) were obtained. LeanPool complete returned tree, raw candidate indexes (including discovered.yml, provenance.jsonl, decisions.jsonl, manual/shortlist/queues), **and LeanPool/projects.yml** were acquired and searched. No candidate registry metadata alone was taken as a theorem proof.
+
+Actual matched bodies read for disambiguation: Omega ArrowWilfCharacterization/Defs/Equivalence and the corresponding finite counting files concern Foata fixed points and arrow patterns, not generalized-Euler consecutive pattern equivalence. Omega FiniteDifferences/GilbreathExtension defines adjacent absolute differences over integer lists and finite extension-component counts; it is not the prime-valuation triangle or multiplicative Gilbreath conjecture. OpenAI lexical collisions concern chromatic quasisymmetric elementary positivity and noncommutative group-algebra zero divisors, not Roberts's basis or quotient UFD compressed graphs. Their manuscript main files and section bodies were fetched; no claim of auditing their unrelated theorems is made.
+
+Public GitHub search used exact peak-count/Lean, soliton/Lean and two-step quasisymmetric/Lean terms. It found no relevant exact proof in the returned results. This is a **bounded nonfinding**, not a novelty proof. Broad irrelevant hits were not promoted to mathematical evidence. No acceptance or global-priority claim follows. Complete live public semantic screening is still a gate for any actual witness.
+
+## Execution and reproducibility
+
+Only public HTTP/search, source extraction, hashing and ordinary mathematical reasoning were used. No git, Lean build, large finite search, external message, account/browser action or publication. Python scripts were invoked by actual paths with `python -I -B`. Fetch scripts use two network workers and explicit timeouts, CPU 120-second and address-space 6-GiB limits; each fetch invocation has wall timeout 140 seconds. There was no large computational process requiring sampled RSS; no heavy mathematical execution was performed. Two local script errors (a mistyped lane path and treating a historical .md directory as a file) were corrected inside this lane. No denied host was retried or bypassed. All fetches are complete before handback.
+
+`fetch.py` plus each `*-jobs.json` reproduces the exact HTTP requests; `extract.py` reproduces literal provenance; `deliver.py` builds the twenty ID-keyed results. Hashes are in `SHA256SUMS` (excluding itself). These scripts do not establish mathematical novelty or source clearance.
+
+Final registry supplement: the truncated OpenAI Lean root was followed through its nonrecursive OAI tree. Complete AlgebraicTopology (644 entries), Combinatorics (16,844), Dynamics (680), NumberTheory (29,617), Topology (1,311) and Algebra subtrees returned truncated=false. `final-branch-screen.txt` records the bounded exact-topic filename screen. No matching exact-topic filenames were returned in these final five branches. The untouched truncated root is not used as complete clearance. Filename nonfindings still do not establish semantic novelty.

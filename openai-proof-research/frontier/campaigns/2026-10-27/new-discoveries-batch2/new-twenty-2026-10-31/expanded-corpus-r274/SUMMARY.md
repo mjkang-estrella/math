@@ -1,0 +1,13 @@
+# r274 handoff
+
+Exactly the fixed twenty records were extracted and dispositioned. Six have published-resolution/refutation exclusions: 317030, 317561, 378270, 378610 (source singular-metric class), 376256 and 321114. Fourteen remain parked; this does not assert that they remain open in the literature. No candidate qualifies for Pi execution, independent review or acceptance. No credit change is proposed; campaign context remains 52/60.
+
+Three ordinary mechanisms were sustained: cycle saturation core/block constructions (360924), the concrete graded K5 integer presentation (379886), and composition-preserving packed-word recurrences/bijections (317236). None closes the full statement or yields a source-eligible witness. ORDINARY-ATTEMPTS.md gives specific failed constructions, the cochain presentation and exact unpaid lemmas. The realizable-cut interpretation of 318839 is covered by a complete classical/source edge-ascent bridge; the broader abstract reading remains unresolved.
+
+Two status traps matter. Král–Pikhurko explicitly resolve the 64-symbol inflation conjecture in stronger form; the original inflation formulas were later corrected. Conversely, Keith proves only k=2 of Song's identity: neither title nor abstract settles the all-k MathDB statement. The K5 formula was visually checked on the original page, including its parity/exceptional cases.
+
+Reservation SHA256 was verified before extraction and after report assembly; see reservation-before.json and reservation-after.json. The immutable expected hash is 21a334a1f47a230756a4d6f63e6c6b7227bd91afaaf7ba5a652d0a3c9f8b18b5. Raw lines preserve newlines, chunk path and one-based line, chunk/raw hashes, statement UTF-8 hashes and full parsed records. results.json has exactly twenty ID keys.
+
+Read depth is bounded: nineteen distinct assigned arXiv sources and all thirty-three listed versions were fetched; selected actual definitions/target/proof passages were read, with selected version comparisons. Full every-version target/proof, all journal/correction/citing-body audits and printed-object reconstruction were not completed. The 2025 cycle-saturation journal body returned 403 and was not bypassed. Source inventory explicitly separates reading from retrieval. Current public registry catalogue/HEAD routing was refreshed, without current-tree completeness or all theorem-body review. No worldwide novelty or source eligibility clearance.
+
+No children, git, shared edits, Lean, solver, numerical search, heavy enumeration, publication, uploads, browser or account operations. All launched jobs have ended. Scripts and receipts remain in this lane. No CANDIDATE.md is warranted. Root alone may assign later execution or acceptance work.

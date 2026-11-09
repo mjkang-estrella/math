@@ -1,0 +1,2 @@
+Initial root build and subsequent verification both failed closed on child exact-payload membership: inherited code assumed final-receipt.json was the receipt name. No coverage or manifest was produced. Investigated exact exclusion schema before correction. The redundant verification after failed build is preserved here.
+Inspection showed the receipt name was correct; the actual difference was the extra verification.log exclusion. Root now asserts exactly the three declared exclusions and explicitly requires the independently hash-bound log. Child files remain unchanged.

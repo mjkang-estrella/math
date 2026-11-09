@@ -1,0 +1,244 @@
+2212.12401 0 123046
+0
+2101.05911 0 115403
+0
+2512.18090 0 30742
+0
+compact 96630
+  BAKRY-ÉMERY CURVATURE SHARPNESS AND CURVATURE FLOW IN
+  FINITE WEIGHTED GRAPHS. II. IMPLEMENTATION
+
+  DAVID CUSHING, SUPANAT KAMTUE, SHIPING LIU, FLORENTIN MÜNCH, NORBERT PEYERIMHOFF,
+  AND BEN SNODGRASS
+
+
+
+
+arXiv:2212.12401v1 [math.CA] 23 Dec 2022
+  Abstract. In this second part of a sequence of two papers, we discuss the implementation of a
+  curvature flow on weighted graphs based on the Bakry-Émery calculus. This flow can be adapted to
+  preserve the Markovian property and its limits as time goes to infinity turn out to be curvature sharp
+  weighted graphs. After reviewing some of the main results of the first paper concerned with the
+  theoretical aspects, we present various examples (random graphs, paths, cycles, complete graphs,
+  wedge sums and Cartesian products of complete graphs, hypercubes) and exhibit further properties
+  of this flow. One particular aspect in our investigations is asymptotic stability and instability of
+  curvature flow equilibria. The paper ends with a description of the available Python functions and
+  routines available in the ancillary file. We hope that the explanations of the Python implementation
+  via examples will help users to carry out their own curvature flow experiments.
+
+
+
+
+  Contents
+  1. Introduction  2
+  1.1. Bakry-Émery curvature and curvature sharpness  2
+  1.2. Reformulation of curvature via a Schur complement  3
+  1.3. Curvature flow  5
+  2. Curvature flow examples  6
+  2.1. Random graphs  6
+  2.2. Paths and cycles  11
+  2.3. Complete graphs  14
+  2.4. Wedge sums of complete graphs  15
+  2.5. Cartesian products of complete graphs  18
+  2.6. Totally degenerate flow limits  20
+  3. Asymptotically stable and unstable curvature sharp Markovian weighting schemes  22
+  3.1. Linearization of the curvature flow equations at equilibria  22
+  3.2. Examples of asymptotically stable and unstable equilibria  24
+  4. Implementation of the curvature flow and useful tools  28
+  4.1. Functions related to graphs and their adjacency matrices  28
+  4.2. Functions related to weighting schemes  29
+  4.3. Functions testing combinational and weighted graphs  30
+  4.4. Curvature flow computation routines  30
+  4.5. Curvature computation routines  32
+  4.6. Display routines  32
+  References  33
+
+
+  Date: December 26, 2022.
+  1
+2  CUSHING, KAMTUE, LIU, MÜNCH, PEYERIMHOFF, AND SNODGRASS
+
+  1. Introduction
+This paper is concerned with computational aspects of a curvature flow on weighted graphs based
+on the Bakry-Émery calculus. This curvature flow was intoduced in our first paper [CKL+ 22a].
+A weighted graph in this paper is a finite simple mixed combinatorial graph G = (V, E) with vertex
+set V and edge set E = E 1 ∪ E 2 of one- and two-sided edges, together with a weighting scheme
+of transition rates pxy ≥ 0 for x, y ∈ V (which can be represened by a generally non-symmetric
+matrix P after an enumeration of the vertices). Transition rates pxy can only be positive if x = y
+or if there is a one- oder two-sided edge from x to y. One-sided edges are denoted by ordered
+pairs (x, y) ∈ E 1 ⊂ V 2 , and two-sided edges are denoted by sets {x, y} ∈ E 2 . One- or two-sided
+edges (x, y) ∈ E 1 or {x, y} ∈ E 2 with vanishing transition rates pxy = 0 are called degenerate
+and a weighted graph (G, P ) is called non-degenerate P  if it does not have degenerate edges. A
+weighted graph (G, P ) is called Markovian, if we have y∈V pxy = 1 for all x ∈ V . In this case,
+P is a stochastic matrix and we can view the transition rates pxy as transition probabilities of
+a lazy random walk (with non-zero laziness if there exists a vertex x ∈ V with pxx > 0). Our
+curvature flow does not affect the underlying combinatorial graph G, but it changes the weighting
+scheme. We will focus on a version of our flow which preserves the Markovian property. In other
+words, starting with an initial Markovian weighted graph (G, P0 ), this flow will provide a family of
+Markovian weighting schemes {P (t)}t≥0 with P (0) = P0 , depending smoothly on the continuous
+time parameter t.
+Before we introduce our curvature flow, we need to briefly discuss the relevant Bakry-Émery cur-
+vature background. This curvature notion is based on the weighted Laplacian ∆ = ∆P , acting on
+functions f : V → R as follows:
+  X
+  ∆P f (x) =  pxy (f (y) − f (x)).
+  y∈V
+
+The Laplacian gives rise to the following symmetric bilinear “carré du champ operators” Γ and Γ2 :
+  2Γ(f, g) = ∆(f g) − f ∆g − g∆f,
+  2Γ2 (f, g) = ∆Γ(f, g) − Γ(f, ∆g) − Γ(g, ∆f ).
+
+1.1. Bakry-Émery curvature and curvature sharpness. Bakry-Emery curvature depends on
+a dimension parameter N and is well-defined at every vertex x ∈ V which is not isolated, that is,
+there exists another vertex y ∈ V with pxy > 0. For isolated vertices, there is some ambiguity
+how to define its curvature, and we decided to assign to such a vertex the curvature value 0.1 The
+definition of Bakry-Émery curvature reads as follows:
+Definition 1.1 (Bakry-Émery curvature). The Bakry-Émery curvature of a non-isolated vertex
+x ∈ V for a fixed dimension N ∈ (0, ∞] is the supremum of all values K ∈ R, satisfying the
+curvature-dimension inequality
+  1
+(1)  (∆f (x))2 + K Γ(f )(x)
+  Γ2 (f )(x) ≥
+  N
+for all functions f : V → R. We use the simplified notation Γ(f ) = Γ(f, f ) and Γ2 (f ) = Γ2 (f, f ).
+We denote the curvature at x ∈ V by KN (x) = KP,N (x). If x ∈ V is isolated, that is, we have
+pxy = 0 for all y ∈ V \ {x}, we set KN (x) = KP,N (x) = 0 for all N ∈ (0, ∞].
+
+  1Another natural choice of curvature for an isolated vertex x ∈ V would be K (x) = ∞ for all N ∈ (0, ∞]. An
+  N
+argument for that choice is that an isolated vertex can be viewed as a discrete analogue of a limit of round spheres
+with radii shrinking to 0, whose curvatures would diverge to infinity.
+  CURVATURE SHARPNESS AND FLOW IN WEIGHTED GRAPHS – IMPLEMENTATION  3
+
+This curvature notion is motivated by Bochner’s identity (see, e.g., [GHL04, Prop. 4.15]), a funda-
+mental pointwise formula in the smooth setting of n-dimensional Riemannian manifolds involving
+gradients, Laplacians, Hessians and Ricci curvature. We refer readers to [BE85,Elw91,Sch99,LY10]
+for the Bakry-Émery calculus and its application in the graph theoretic setting.
+By the definition, the inequality
+  1
+(2)  Γ2 (f )(x) ≥ (∆f (x))2 + KN (x) Γ(f )(x)
+  N
+holds for every function f , and therefore also for the combinatorial distance function d(x, ·). Here,
+d(x, y) is the length of a shortest directed path from x to y (if there is no such path, we set
+d(x, y) = ∞). If we have equality at x in (2) for this particular function f = d(x, ·), we say that
+the vertex x ∈ V is N -curvature sharp. Curvature sharpness will be particularly important in
+our considerations. Curvature sharpness was originally introduced in [CLP20, Definition 1.4]. The
+(equivalent) definition given in this paper is inspired by [KKRT16, Proof of Theorem 1.2]. For
+more details about relations between different curvature sharpness definitions see Section 3 of our
+first paper [CKL+ 22a].
+Definition 1.2 (Curvature sharpness). Let (G, P ) be a weighted graph and N ∈ (0, ∞]. A vertex
+x ∈ V is called N -curvature sharp if we have
+  1
+(3)  Γ2 (f )(x) =(∆f (x))2 + KN (x) Γ(f )(x)
+  N
+for the distance function f = d(x, ·). Moreover, a vertex x ∈ V is curvature sharp if it is curvature
+sharp for some dimension N ∈ (0, ∞]. A weighted graph (G, P ) is called curvature sharp, if every
+vertex of G is curvature sharp.
+Note that each function f : V → R with Γ(f )(x) 6= 0 gives rise to an upper curvature bound
+  f
+KP,N (x) via the inequality (2). Namely, we have
+    
+  f  1  1  2
+(4)  KN (x) ≤ KP,N (x) :=  Γ2 (f )(x) − (∆f (x)) .
+  Γ(f )(x)  N
+A vertex x ∈ V is therefore N -curvature sharp if its Bakry-Émery curvature KN (x) agrees with
+  d(x,·)
+the specific upper curvature bound KP,N (x). We also like to mention the following monotonicity
+property of curvature sharpness: If x ∈ V is N -curvature sharp that this vertex is also curvature
+sharp for any dimension ≤ N (see [CKL+ 22a, Prop. 3.1]).
+In the next subsection, we present an important reformulation of Bakry-Émery curvature at x ∈ V
+using a specific matrix Q(x), which will be important in the definition of the curvature flow.
+
+1.2. Reformulation of curvature via a Schur complement. The combinatorial distance func-
+tion allows us to define distance spheres and distance balls,
+  Sr (x) = {z ∈ V : d(x, z) = r},
+  Br (x) = {z ∈ V : d(x, z) ≤ r}.
+Let x ∈ V be a non-isolated vertex. It turns out that the Bakry-Émery curvature KN (x) is
+determined locally, that is, can be derived solely from the information about the 2-ball
+  B2 (x) = {x} ∪ S1 (x) ∪ S2 (x).
+More precisely, denoting S1 (x) = {y1 , . . . , ym } and S2 (x) = {z1 , . . . , zn }, there exist a column vector
+∆(x) and a symmetric matrix Γ(x) of size m and a symmetric matrix Γ2 (x) of size m + n such
+4  CUSHING, KAMTUE, LIU, MÜNCH, PEYERIMHOFF, AND SNODGRASS
+
+that, for functions f, g : V → R with f (x) = g(x) = 0,
+
+  ∆f (x) = ∆(x)> f~m ,
+  Γ(f, g)(x) = f~> Γ(x)~gm ,
+  m
+  >
+  Γ2 (f, g)(x) = f~m+n Γ2 (x)~gm+n ,
+
+where f~m = (f (y1 ), . . . , f (ym ))> and
+
+  f~m+n = (f (y1 ), . . . , f (ym ), f (z1 ), . . . , f (zn ))> ,
+and ~gn , ~gm+n , accordingly. Using the (n + m)-block decomposition
+    
+  Γ2 (x)S1  Γ2 (x)S1 ,S2
+  Γ2 (x) =
+  Γ2 (x)S2 ,S1  Γ2 (x)S2
+and employing the Schur complement
+
+  Q(x) = Γ2 (x)S1 − Γ2 (x)S1 ,S2 Γ2 (x)†S2 Γ2 (x)S2 ,S1
+
+for matrices Γ2 (x) with positive semidefinite Γ2 (x)S2 -blocks with A† the pseudoinverse2 of A, we
+can reformulate Bakry-Émery curvature at x ∈ V for dimension N ∈ (0, ∞] as follows (see Section
+2.4 in [CKL+ 22a]):
+
+Let x ∈ V be a non-isolated vertex. KN (x) is then the maximum of all K ∈ R such that
+  1
+  Q(x) − ∆(x)∆(x)> − KΓ(x)  0,
+  N
+where A  B means that A − B is positive semidefinite.
+
+This curvature translation was motivated originally by the aim to reformulate the computation of
+Bakry-Émery curvature as an eigenvalue problem (see [Sic20, Sic21] and [CKLP22]).
+The symmetric matrix Q(x) of a non-isolated vertex x ∈ V is of size m and is – in the non-
+degenerate case – closely related to another symmetric matrix A∞ (x) which, in turn, can be viewed
+as a discrete counterpart of the Ricci curvature tensor at a point x ∈ M of a Riemannian manifold
+(M, g) (see formula (1.2) and Section 7 in [CKLP22]). In the case of a Markovian weighted graph,
+curvature sharpness at a vertex x ∈ V can also be alternatively expressed with the help of the
+matrix Q(x) as follows.
+Theorem 1.3 (see Theorem 1.3 in [CKL+ 22a]). Let (G, P ) be a Markovian weighted graph and
+x ∈ V be a non-isolated vertex with S1 (x) = {y1 , . . . , ym }. Then the following statements are
+equivalent:
+  (1) x is curvature sharp,
+  (2) x is curvature sharp for dimension N = 2,
+  (3) We have
+  1 d(x,·)
+(5)  Q(x)1m = KP,∞ (x)px ,
+  2
+  where px = (pxy1 , . . . , pxym )> and 1m is the all-one column vector of size m.
+
+  2For a given matrix A ∈ RN ×M , its pseudoinverse A† ∈ RM ×N is defined by the following conditions: AA† A = A,
+A AA† = A† , and AA† ∈ RN ×N and AA† ∈ RM ×M are both symmetric matrices.
+  †
+  CURVATURE SHARPNESS AND FLOW IN WEIGHTED GRAPHS – IMPLEMENTATION  5
+
+  d(x,·)
+Note that the term K∞  (x) in (5) is the upper curvature bound introduced in (4) (in the special
+case N = ∞), that is,
+  d(x,·)  Γ2 (d(x, ·))(x)
+  KP,∞ (x) =  .
+  Γ(d(x, ·))(x)
+
+1.3. Curvature flow. Let (G, P0 ) be a fixed initial weighted graph with N = |V |. For every non-
+isolated vertex x ∈ V , the size of the corresponding symmetric matrix Q(x) agrees with the degree
+of the vertex x, that is, the number of one- and two-sided edges emanating from x, and the entries
+of Q(x) are determined by the transition rates of edges of the 2-ball B2 (x). Our curvature flow
+associates to this initial data a smooth matrix valued function P : [0, ∞) → RN ×N with P (0) = P0 .
+The corresponding symmetric Q-matrices at time t ∈ [0, ∞) depend on the weighting schemes P (t),
+and we denote them henceforth by Qx (t) for all x ∈ V . Our curvature flow is now defined as follows.
+Definition 1.4 (Curvature flow). Let (G, P0 ) be a finite weighted graph. The associated curvature
+flow is given by the following differential equations for all non-isolated vertices x ∈ V and all t ≥ 0:
+(6)  p0xx (t) = 0,
+(7)  p0x (t) = −4Qx (t)1m + 2Cx (t)px (t),
+where S1 (x) = {y1 , . . . , ym } and
+  px (t) = (pxy1 (t), . . . , pxym (t))> .
+In the case of an isolated vertex x ∈ V , its curvature flow is given by the simple equation p0xx (t) = 0,
+that is pxx (t) is a constant function in t.
+We note that the curvature flow equation (6) guarantees that the diagonal entries of the weighting
+scheme do not change. The functions Cx (t) in the curvature flow equation (7) play the role of a
+normalisation since, for the choice Cx ≡ 0, various transition rates will be unbounded as the time
+parameter t ≥ 0 increases. Note that in the smooth case of closed Riemannian manifolds (M, g0 ), a
+suitable normalization leads to volume pr
+c3.5 at 71591

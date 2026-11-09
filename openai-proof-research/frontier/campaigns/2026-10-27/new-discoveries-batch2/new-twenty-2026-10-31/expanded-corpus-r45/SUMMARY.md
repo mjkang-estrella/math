@@ -1,0 +1,29 @@
+# expanded-corpus-r45 — research handback
+
+**One full Lean refutation candidate: MathDB352038. Zero accepted credit. Campaign count remains3/20 beyond39.**
+
+For delta=(55+sqrt3049)/2, an irrational algebraic integer satisfying delta²-55delta-6=0, the literal real continued fraction is purely periodic with an85-term block. Its seventh-largest distinct coefficient is8, exceeding55/7. This refutes Lachmann–Wiart2021 AppendixA ConjectureA.5 in the exact MathDB scope. It is not a multiplicity, rotation, domain or endpoint correction. See [PROOF.md](PROOF.md) for the ordinary proof, exact block and semantic explanation.
+
+`Candidate.lean` proves `MathDB352038.source_refutation : ¬MathDB352038.SourceConjecture`. It includes integrality, irrationality, exact floor inequalities, cyclic complete-quotient recurrence, induction for **every** natural index of mathlib's actual real continued-fraction stream, and the distinct-value rank contradiction. The finite certificate is a sound ingredient, not the endpoint.
+
+Fresh extracted strict rebuild PASS; sanitized environment; warningAsError=true. Every31 local declarations, including generated declarations, audited. Only propext/Classical.choice/Quot.sound occur transitively; no unsafe/partial/axiom flags. Lean4.34.1 binary and mathlibd13f23b723b8a846827a245b89c10fc7d3f11612 recorded in replay-receipt.json, with actual binary/manifest/source/packet/log hashes. Prebuilt upstream oleans are trusted; no full upstream rebuild or source-to-olean attestation is claimed.
+
+- [proof-packet.zip](proof-packet.zip): Candidate.lean, Audit.lean and standalone replay.py, with no cached local oleans in the archive.
+- [replay-receipt.json](replay-receipt.json), [replay-full.log](replay-full.log), fresh-extracted/strict-build.log and fresh-extracted/all-declaration-audit.log: fresh verification evidence. The main build took about4 seconds. Initial failed startup/compile attempts are retained in lean-01..08 logs; they are not verification successes.
+- [results.json](results.json): exactly40 ID-keyed entries, every literal statement, one-based chunk line, chunk/raw/statement hashes, source review depth, inherited matches, attempts/outcomes/remaining gaps.
+- [ATTEMPTS.md](ATTEMPTS.md): sustained352038,352443 and352413 routes.
+- [PRIOR-ART.md](PRIOR-ART.md), receipts.jsonl, registry-screen.json and title-history.json: current registries, primary bodies, inherited scope limits and bounded novelty limitations.
+
+Review depth: all40 exact cached statements read;6 selected primary contexts newly read at the explicitly stated partial/full depths;34 received no new primary-body review. The40 are **not** all primary-reviewed. Outcomes:1 formal candidate pending review,3 excluded known full-scope results (351726,352031,352134),36 held without a solution. Selected primary claims are never declared solved merely from metadata/open labels.
+
+Other sustained routes: domination-mode DP tested1600 random/structured trees and4782 leaf pairs; separate hub-selection formula checked6400 double-star pairs. Neither found a gap above1; neither proves the all-tree conjecture. For realizability, elementary one/two-cover constructions and a sharper three-cover integer discriminant obstruction leave the essential gap of all nonmaximal minimum covers. No misleading maximal-cover-only counterexample is claimed.
+
+Historical matching found the adjacent Omega pseudo-Paley two-dimensional classification for352239/352240/352241. Its dossier explicitly excludes the general conjectures needed for these full claims; scope limits are retained, no route duplicated or credit requested. All accepted/held/rejected protected families, including the latest347913 significance exclusion and separate324342 review, remain untouched.
+
+Live OpenAI/math HEAD4eaee87548250b2682affda7d05d947c05554bae and Omega HEADcc684e6326490f9173bfefcadb0294ee6ccbb0b5 were verified unchanged. OpenAI complete preprint tree3f56f68a176b4494c346091ea0a319651bc217ec was reused by actual hash. Omega's root cache and1000-entry Problems response are incomplete; three relevant continued-fraction proof bodies were newly fetched/read. No exact prior352038 resolution was located by these bounded searches. This is **not** complete registry/literature clearance or a worldwide novelty claim. MathDB/Palomar inherited403 is not clearance. Primary published-version authentication and specialist citing-literature review remain limitations.
+
+This assignment is beyond the entire old10000 routing queue and9133 historical coverage entries, not beyond the whole corpus. Accessible inventory context remains95675 historical IDs,87990 retrieved records and7685 stubs. Reservation establishes only absence from checked assignment indexes. Raw40 lines are retained verbatim including newline in raw/. Ancestor20-chunk corpus is referenced, never copied recursively. Reservation and ledgers were not edited.
+
+Reproduction: run extract.py to rebind raw records; diagnostics.py cf/trees and double-stars.py reproduce diagnostics. `cf` stops on the first violation; `short-witness.py` is a separate completed finite search, not the final witness. `generate_lean.py` preserves the initial attempted generator and is superseded by the checked Candidate.lean. To replay the proof, extract proof-packet.zip into a new directory and run its replay.py there. Dependencies are read-only. Managed computations use at most2 CPUs with finite memory/CPU/wall caps; successful Lean replay used32GiB virtual-address cap,4096MiB Lean cap and100-second wall per process. No background computation remains.
+
+**Next action for root:** commission independent exact-statement fidelity and adversarial significance/primary-prior review of352038, preserving all source-access and trust limits. Paper and acceptance are separate. Do not increment any counter from this handback.

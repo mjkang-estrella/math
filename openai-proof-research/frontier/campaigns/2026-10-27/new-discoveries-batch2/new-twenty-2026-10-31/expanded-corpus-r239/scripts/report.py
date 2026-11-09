@@ -1,0 +1,42 @@
+import pathlib,json,hashlib,datetime,collections,itertools,math
+D=pathlib.Path(__file__).resolve().parents[1];src=D/'sources';o=json.loads((D/'extracted.json').read_text());ver=json.loads((D/'versions.json').read_text())
+notes={
+345957:('parked_unresolved','Primary current conjecture and surrounding partial results','Uniform control of all associated eigenfunctions for every negative lambda_0q, beyond q=4 and sufficiently negative h.','No numerical nodal search: it would not certify the quantified analytic statement.'),
+345989:('parked_unresolved','Source Theorem 3.7 and Conjecture 4.1; finite heuristic','A valid 3-page layout at n=7, or a lower-bound theorem for every spine order.','book-search.json; best packet independently rescored.'),
+346024:('parked_unresolved','Source Conjecture 3, Theorem 9 arithmetic regimes and Lemma 22; exact-cover search','Uniform factorization rigidity beyond the source arithmetic hypotheses, or an explicit A+B unique tiling with incomplete residues.','cyclic-search.json and cyclic-exhaustive-prefix.json and cyclic-prefix-*.json; individual timeouts are indeterminate.'),
+346037:('parked_unresolved','Current Conjecture 8.10 and Example 3.3','A full continuum eigenfunction/extremum argument not merely a source-ingredient bridge.','No heavy numerical search; no eligible finite certificate route recovered.'),
+346057:('parked_unresolved','Conjecture 4.9, Definitions 2.9 and Theorem 2.10; Green-function covariance formula; rational search','An abstract-tree covariance collision with literal semantics, or a general reconstruction theorem.','covariance-search.json and covariance-extended-search.json. Plane/root-only coincidences discarded.'),
+346148:('parked_unresolved','Current source Conjecture 2 and PGL2 special-case theorem','A homotopy-type certificate for a subgroup interval outside published cases, or a full structural proof.','No group census run; no tractable eligible obstruction isolated.'),
+346193:('parked_unresolved','Source general-graph rainbow statement and primary neighboring literature','The exact 2n matching threshold and 2n-1 odd threshold in general graphs.','No family census repeated; general famous target parked after literature screen.'),
+346206:('excluded_known_result','Source Conjecture 2.2, Section 4 counterexample construction and argument','None for novelty: the reserved universal statement is already refuted by the source.','No search; source construction and r=5,6 restrictions cannot earn credit.'),
+346257:('excluded_known_result','Follow-up arXiv:2103.00618 Theorem 3.9 and induction proof','None: theorem already proves the precise unicyclic transition statement.','No duplicate finite search.'),
+346309:('parked_unresolved','Source definition of perfect matching index, Conjectures 5.2/6.1 and conditional Proposition 5.3','The intended perfect-matching-index equivalence, not a Vizing-based paraphrase correction.','No snark census; printed Petersen/treelike families not reused as candidates.'),
+346384:('parked_unresolved','Current Proposition 5.11, Conjecture 5.12 and Section 6.4','A global coloring of all R^3, or a finite exact pinned-color unit-triangle obstruction.','No arbitrary-coordinate finite sample presented as a global solution.'),
+346440:('blocked_prior_announcement','Current Conjecture 1.5 plus 2510.00139 introduction','Prior claimed definability counterexample proof is expressly withheld pending a structural theorem.','No new result claim: prior announcement blocks novelty; completed proof not independently certified.'),
+346477:('excluded_known_result','Source Theorems 3(i),6 and proof; Schroeder 2024 correction Theorem 3.1','None: the odd-cycle statement is explicitly retained as proved, despite the broader classification erratum.','No duplicate Hamiltonian-cycle sweep.'),
+346524:('parked_unresolved','Source Conjecture 1.1, reduction Theorem 3.3, types (a)-(h), proved type (e); completion searches','All remaining reduced types for all k, or a certified noncompletion above order 8.','latin-search.json and latin-reduced-search.json; biased samples only, exact successful completions checked.'),
+346567:('parked_unresolved','Source full statement; 2609.30888 current Conjecture 1.1; 2607.23926; current GitHub README','Full 1/3-2/3 bound. Current public Lean attempt admits a main-path sorry.','No repeat of published census through order 14; no claimed proof from incomplete repository.'),
+346642:('parked_unresolved','Source Conjecture 1.5; 2205.05329 primary theorem context; 2605.04859 scope','Uniform linear comparison over all fields; polynomial or perfect-infinite-field results do not alone give that scope.','No bounded-rank test can settle existence of a uniform degree-dependent constant.'),
+346643:('parked_unresolved','Source Conjecture 1.7; current ITCS2026-90 primary discussion','Uniform linear bound over arbitrary finite fields, beyond a logarithmic loss or sufficiently large field conditions.','No inference of a counterexample from a search-snippet footnote missing the word if.'),
+346708:('excluded_known_result','Source Theorem 2.3 and generalized-Sturm recurrence proof','None: source explicitly proves exact real-rootedness.','No redundant polynomial computation.'),
+346735:('excluded_known_result','2404.10521 Theorem 1.1(i), definitions and Section 3.1 proof','None: finite-ring theorem subsumes Z/NZ irreducible solutions.','No bounded-length irreducibility enumeration repeated.'),
+346857:('parked_unresolved','Source Conjecture 3, Theorems 9 and 11, global positivity requirement','Full all-depth propagation theorem beyond q=1/half-half settings, or a globally positive infinite counterexample.','No finite patch claimed to refute an infinite positivity condition.')}
+follow={346257:['2103.00618'],346440:['2510.00139'],346477:['Schroeder-correction'],346567:['2609.30888','2607.23926','one-third-repo-readme'],346642:['2205.05329','2605.04859'],346643:['itcs2026-90'],346735:['2404.10521']}
+results={}
+for key,v in o.items():
+ i=int(key);status,depth,gap,attempt=notes[i];a=v['source_url'].rsplit('/',1)[-1];families=[a]+follow.get(i,[])
+ recs=[]
+ for p in sorted(src.glob('*.receipt.json')):
+  if any(p.name.startswith(f) for f in families):recs.append({'receipt':str(p.relative_to(D)),'receipt_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),**json.loads(p.read_text())})
+ results[key]={**v,'outcome':status,'accepted_credit':0,'review_depth':depth,'remaining_lemma_or_objection':gap,'mathematical_attempt':attempt,'source_versions_listed':ver[a]['versions'],'source_receipts':recs,'historical_check':'history-matches.txt; numeric substring false positives retained; no substantive prior exclusion of these exact IDs identified. Full ledgers and inherited exclusions read; parameter variants are not claimed.','registry_check':'Current heads and trees in registry-screen.json, Lean Pool projects plus candidates; OpenAI full preprints subtree also fetched. Main OpenAI and Omega recursive trees truncated, so no exhaustive proof-content clearance. No candidate advanced. Source Definition 4.1 includes a holding coin; covariance diagnostics are twice the source matrices, which preserves equality checks.','novelty_limit':'Bounded web and citation-neighborhood search, not global novelty clearance. See RESEARCH.md and receipts/web-*.json.','lean_endpoint':None}
+assert set(results)=={str(i) for i in json.loads((D/'reservation.json').read_text())['ids']}
+(D/'results.json').write_text(json.dumps(results,indent=2,ensure_ascii=False)+'\n')
+counts=collections.Counter(x['outcome'] for x in results.values());print('outcomes',dict(counts))
+# Aggregate all search output coverage without rounding up unfinished iterations.
+coverage={}
+for name in ['cyclic-search.json','cyclic-exhaustive-prefix.json','cyclic-prefix-part1.json','cyclic-prefix-final.json','latin-search.json','latin-reduced-search.json','covariance-search.json','covariance-extended-search.json','book-search.json']:
+ p=D/name
+ if p.exists():coverage[name]=json.loads(p.read_text())
+(D/'search-coverage.json').write_text(json.dumps(coverage,indent=2)+'\n')
+manifest={str(p.relative_to(D)):hashlib.sha256(p.read_bytes()).hexdigest() for folder in ['raw','sources','receipts','scripts','logs'] for p in sorted((D/folder).rglob('*')) if p.is_file()}
+(D/'manifest.json').write_text(json.dumps({'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'sha256':manifest},indent=2)+'\n')

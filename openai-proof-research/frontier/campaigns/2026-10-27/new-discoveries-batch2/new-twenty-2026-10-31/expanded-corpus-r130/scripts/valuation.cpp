@@ -1,0 +1,3 @@
+#include <bits/stdc++.h>
+using namespace std;
+int main(int argc,char**argv){int lo=atoi(argv[1]),hi=atoi(argv[2]),N=atoi(argv[3]);for(int m=lo;m<=hi;m++){vector<uint64_t>a(4*N+1);a[0]=1;for(int j=0;j<m;j++)for(int n=1;n<=4*N;n++)a[n]+=a[n-1];for(int p=1;p<=4*N;p*=2)for(int j=0;j<m;j++)for(int n=p;n<=4*N;n++)a[n]+=a[n-p];map<int,int> hist;int fails=0;for(int n=1;n<=N;n++){auto d=a[4*n]-a[n];int v=d?__builtin_ctzll(d):64;int goal=__builtin_ctz((unsigned)n)+(m%2==0?2*__builtin_ctz((unsigned)(m/2))+3:(m%4==1?3:6));hist[v-goal]++;if((m%2==0&&v!=goal)||(m%2&&v<goal)){if(fails++<5)cout<<"FAIL m="<<m<<" n="<<n<<" v="<<v<<" goal="<<goal<<endl;}}cout<<"m="<<m<<" n=1.."<<N<<" failures="<<fails<<" excessHistogram=";for(auto [v,c]:hist)cout<<v<<":"<<c<<",";cout<<endl;}}

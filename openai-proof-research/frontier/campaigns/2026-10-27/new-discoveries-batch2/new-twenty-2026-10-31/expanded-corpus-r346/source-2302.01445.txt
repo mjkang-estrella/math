@@ -1,0 +1,633 @@
+
+Partitioning into common independent setsvia relaxing strongly base orderability
+ // Restore the saved color scheme preference, or
+ // enact the browser preference if "automatic", 
+ // without expecting DOM load to have completed.
+ //
+ // Also restore any saved readingmode and ToC display preferences.
+ function initializeReadingPreferences() {
+ let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+ if (saved_theme === "automatic") {
+ if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+ saved_theme = "dark";
+ }
+ }
+ if (saved_theme == "dark") {
+ document.documentElement.setAttribute("data-theme", "dark");
+ } else {
+ document.documentElement.setAttribute("data-theme", "light");
+ }
+ const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+ if (tocDisplay) {
+ document.documentElement.setAttribute("data-toc-display", tocDisplay);
+ }
+ const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+ if (readingMode) {
+ document.documentElement.setAttribute("data-reading-mode", readingMode);
+ }
+ }
+ // Run as soon as JS starts, to minimize repainting
+ initializeReadingPreferences();
+ /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+ the marker's display to know which way to toggle. The marker draws no box. */
+ .arxiv-html-header { display: contents; }
+ html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+ /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+ icon by making its span a block). */
+ .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+ /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+ arXiv's own render as they are (the logo on the bar, the funder logos on their white
+ chips). Important: ar5iv's dark rules are unlayered, as specific as
+ :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+ :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+ .ds-site-header img { background-color: transparent !important; }
+ /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+ were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+ header, the paper's bar (no site navigation, the paper's controls), takes the second and
+ stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+ The controls show their names. */
+ @media (min-width: 1280px) {
+ html { scroll-padding-top: 80px; }
+ .arxiv-html-site-chrome { display: contents; }
+ .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+ .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+ .arxiv-html-site-chrome .tool-icon { display: none; }
+ }
+ /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+ readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+ bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+ over the header and the paper: it shows only while open, under the chrome, in its place in
+ the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+ inset; the theme gives it none, so it met the screen edges. */
+ @media (max-width: 1279px) {
+ .arxiv-html-site-chrome .tool-wide { display: none; }
+ .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+ html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+ .ltx_page_navbar { position: absolute; top: auto; }
+ .arxiv-html-footer { padding-inline: 1rem; }
+ }
+Skip to main content
+ Report GitHub Issue
+ ×
+ Title:
+Content selection saved. Describe the issue below:
+ Description:
+ Submit without GitHub
+ Submit in GitHub
+ [FIGURE archive] 
+ Why HTML?
+ Report Issue
+ Back to Abstract
+ Download PDF
+ Contents
+ Reading mode
+ Colour theme
+Abstract
+1 Introduction
+Our contribution.
+2 Relaxing the fixed bases: strongly base reorderable matroids
+2.1 Completeness and intersection
+2.2 Binary and ternary SBRO matroids
+3 Relaxing the bijection: covering the circuits by a 2-factor
+3.1 Covering fundamental circuits
+3.2 Graphic matroids, paving matroids and spikes
+3.3 Applications for covering problems
+3.4 Applications for exchange sequences
+3.5 Covering circuits with few edges
+4 Conclusions
+Acknowledgement.
+References
+ License: CC BY 4.0
+arXiv:2302.01445v1 [math.CO] 02 Feb 2023
+Partitioning into common independent sets
+via relaxing strongly base orderability
+Kristóf Bérczi
+††thanks: MTA-ELTE Momentum Matroid Optimization Research Group and ELKH-ELTE Egerváry Research Group, Department of Operations Research, Eötvös Loránd University, Budapest, Hungary. Email: kristof.berczi@ttk.elte.hu, tamas.schwarcz@ttk.elte.hu.
+Tamás Schwarcz11footnotemark: 
+ 1
+Abstract
+The problem of covering the ground set of two matroids by a minimum number of common independent sets is notoriously hard even in very restricted settings, i.e. when the goal is to decide if two common independent sets suffice or not. Nevertheless, as the problem generalizes several long-standing open questions, identifying tractable cases is of particular interest. Strongly base orderable matroids form a class for which a basis-exchange condition that is much stronger than the standard axiom is met. As a result, several problems that are open for arbitrary matroids can be solved for this class. In particular, Davies and McDiarmid showed that if both matroids are strongly base orderable, then the covering number of their intersection coincides with the maximum of their covering numbers.
+Motivated by their result, we propose relaxations of strongly base orderability in two directions. First we weaken the basis-exchange condition, which leads to the definition of a new, complete class of matroids with distinguished algorithmic properties. Second, we introduce the notion of covering the circuits of a matroid by a graph, and consider the cases when the graph is ought to be 2-regular or a path. We give an extensive list of results explaining how the proposed relaxations compare to existing conjectures and theorems on coverings by common independent sets.
+Keywords: Coverings, Excluded minors, Matroid intersection, Matroidally $k$ -colorability, Strongly base orderable matroids
+1 Introduction
+For basic definitions and notation of matroid theory, the interested reader is referred to [33]. Throughout the paper, we denote the ground set of a matroid $M$ by $E$ while the sets of independent sets, bases and circuits are denoted by $\mathcal{I}$ , $\mathcal{B}$ and $\mathcal{C}$ , respectively. The covering number $\beta(M)$ of a matroid $M$ is the minimum number of independent sets needed to cover its ground set. A matroid is then called $k$ -coverable if $\beta(M)\leq k$ . Whenever investigating the covering number, we assume the matroid to be loopless as otherwise the ground set obviously cannot be covered by independent sets. The value of $\beta(M)$ can be determined using the rank formula of the union of matroids due to Edmonds and Fulkerson [17].
+It is quite natural to consider an analogous notion for the intersection of two matroids. Given two matroids $M_{1}$ and $M_{2}$ on the same ground set, the covering number $\beta(M_{1}\cap M_{2})$ of their intersection is the minimum number of common independent sets needed to cover the common ground set. Determining the exact value of $\beta(M_{1}\cap M_{2})$ has been the center of attention for a long time since it generalizes a wide list of fundamental questions from both graph and matroid theory, including Woodall’s conjecture [39] on the maximum number of pairwise disjoint dijoins in directed graphs, or Rota’s basis conjecture [24] on packing transversal bases. Nevertheless, apart from partial results such as Kőnig’s $1$ -factorization theorem [27] or Edmonds’ disjoint arborescences theorem [16], the problem remained open until recently, when the authors settled the complexity of the problem by showing hardness under the rank oracle model [6].
+As determining the exact value of $\beta(M_{1}\cap M_{2})$ is hard in general, the need for good lower and upper bounds arises. A lower bound is easy to give as $\beta(M_{1}\cap M_{2})\geq\min\{\beta(M_{1}),\beta(M_{2})\}$ always holds. Nevertheless, the equality $\beta(M_{1}\cap M_{2})=\max\{\beta(M_{1}),\beta(M_{2})\}$ does not necessarily hold for general matroids, as shown by the well-known example where $M_{1}$ is the graphic matroid of a complete graph on four vertices and $M_{2}$ is the partition matroid11
+ 1
+ All partition matroids considered in the paper have all-ones upper bounds on the partition classes without explicitly mentioning it. defined by the partition of its edges into three matchings, see [35] for details. As for the upper bound, Aharoni and Berger [3] showed by using techniques from topology that $\beta(M_{1}\cap M_{2})\leq 2\max\{\beta(M_{1}),\beta(M_{2})\}$ . Furthermore, they verified the slightly stronger statement that $\beta(M_{1}\cap M_{2})\leq\beta(M_{1})+\beta(M_{2})$ holds whenever one of $\beta(M_{1})$ and $\beta(M_{2})$ divides the other. Nevertheless, no example is known for which the true value would be close to the upper bound. In fact, Aharoni and Berger [4] conjectured the following, originally attributed to [3].
+Conjecture 1.
+(Aharoni and Berger)
+Let $M_{1}$ and $M_{2}$ be matroids on the same ground set.
+(1) 
+If $\beta(M_{1})\neq\beta(M_{2})$ , then $\beta(M_{1}\cap M_{2})=\max\{\beta(M_{1}),\beta(M_{2})\}$ .
+(2) 
+If $\beta(M_{1})=\beta(M_{2})$ , then $\beta(M_{1}\cap M_{2})\leq\max\{\beta(M_{1}),\beta(M_{2})\}+1$ .
+The conjecture was verified only for $\beta(M_{1})=\beta(M_{2})=2$ by Aharoni, Berger and Ziv [4]. In the same paper, the authors also showed that if $\beta(M_{1})=2$ and $\beta(M_{2})=3$ , then $\beta(M_{1}\cap M_{2})\leq 4$ holds. For $\beta(M_{1})=2$ and $\beta(M_{2})=k\geq 4$ , the current best bound follows from the result of Aharoni and Berger [3] mentioned above: $\beta(M_{1}\cap M_{2})\leq k+2$ if $k$ is even, and $\beta(M_{1}\cap M_{2})\leq k+3$ if $k$ is odd.
+Among the results related to Conjecture 1, the probably most important one is due to Davies and McDiarmid [14], who studied the class of strongly base orderable matroids. A matroid is called strongly base orderable if
+() 
+for any pair $A,B$ of bases, there exists a bijection $\varphi\colon A\setminus B\to B\setminus A$ such that $(A\setminus X)\cup\varphi(X)$ is a basis for every $X\subseteq A\setminus B$ .
+It is worth mentioning that this implies $(B\cup X)\setminus\varphi(X)$ being a basis as well. Strongly base orderable matroids are interesting and important because we have a fairly good global understanding of their structure, while frustratingly little is known about the general case. In particular, Davies and McDiarmid showed that the covering number of the intersection of two strongly base orderable matroids coincides with the obvious lower bound.
+Theorem 1.
+(Davies and McDiarmid)
+Let $M_{1}$ and $M_{2}$ be strongly base orderable matroids on the same ground set. Then $\beta(M_{1}\cap M_{2})=\max\{\beta(M_{1}),\beta(M_{2})\}$ .
+As many matroid classes that naturally appear in combinatorial and graph optimization problems, e.g. gammoids, are strongly base orderable, Theorem 1 was a milestone result in the research on packing common independent sets. Recently, the theorem received a renewed interest when Abdi, Cornuéjols and Zlatin [1] successfully attacked special cases of Woodall’s conjecture with its help. However, there are basic matroid classes that do not satisfy strongly base orderability, e.g. graphic or paving matroids.
+Our contribution.
+Our research was motivated by the following question: can strongly base orderability in Theorem 1 replaced with some weaker assumption so that the statement remains true? Or more generally, can we verify Conjecture 1 for some reasonably broad class of matroids? As partial answers to these problems, we propose two relaxations of strongly base orderability that weaken the original definition in different aspects.
+First, in Section 2 we omit the condition for the bijection to go between $A\setminus B$ and $B\setminus A$ , and allow repartitioning the multiset $A\cup B$ into two new bases $A^{\prime}$ and $B^{\prime}$ satisfying $A^{\prime}\cap B^{\prime}=A\cap B$ and $A^{\prime}\cup B^{\prime}=A\cup B$ . We show that matroids satisfying the relaxed condition form a complete class. We also prove that Theorem 1 remains true when both matroids are from the proposed class, and thus we identify new scenarios when packing problems are tractable. Finally, we explain how the new class fits in the hierarchy of existing matroid classes.
+Second, in Section 3 we relax the condition of finding a bijection between $A\setminus B$ and $B\setminus A$ . Instead, we seek for a graph whose vertex set coincides with the symmetric difference of the bases, and the graph represents the matroid locally in the sense that every stable set in it corresponds to an independent set of the original matroid. In particular, we prove that the the graph in question can be chosen to be a path for graphic matroids, paving matroids, and spikes. We conjecture that an analogous statement hold for arbitrary matroids, and discuss a series of corollaries that would follows from such a result.
+2 Relaxing the fixed bases: strongly base reorderable matroids
+When considering the extendability of Theorem 1 to a broader class of matroids, some natural candidates are immediate. For subsets $X,Y\subseteq E$ , their symmetric difference is defined as $X\triangle Y\coloneqq(X\setminus Y)\cup(Y\setminus X)$ . When $Y$ consist of a single element $y$ , then $X\setminus\{y\}$ and $X\cup\{y\}$ are abbreviated as $X-y$ and $X+y$ , respectively. A matroid is called base orderable if
+() 
+for any pair $A,B$ of bases, there exists a bijection $\varphi\colon A\setminus B\to B\setminus A$ such that $A-x+\varphi(x)$ and $B+x-\varphi(x)$ are bases for every $x\in A\setminus B$ .
+Clearly, strongly base orderable matroids are also base orderable since the bijection appearing in () ‣ 1 satisfies () ‣ 2 as well. It is known that $M(K_{4})$ , the graphic matroid of a complete graph on four vertices is a forbidden minor for base orderability. Hence every base orderable matroid is contained in the class $\exx(M(K_{4}))$ of $M(K_{4})$ -minor-free matroids. In fact, these inclusions are known to be strict, hence $\sbo\subsetneq\bo\subsetneq\exx(M(K_{4}))$ hold.
+Davies and McDiarmid [14] posed the problem of whether Theorem 1 remains true if strongly base orderability is replaced with the weaker assumption that both matroids are base orderable. Though this specific question remains open, the following example shows that both matroids being in $\exx(M(K_{4}))$ does not suffice. The examples uses $J$ , a self-dual rank- $4$ matroid introduced by Oxley [34].
+Remark 2.
+We show that there exists a partition matroid $M$ for which $\beta(J)=\beta(M)=2$ and $\beta(J\cap M)=3$ . Consider the geometric representation of the matroid $J$ on Figure 1; for the definition, see also [33, page 650]. Let $M$ be the partition matroid defined by partition classes $\{a,h\},\{b,g\},\{c,e\},\{d,f\}$ , implying $\beta(J)=\beta(M)=2$ .
+To see that $\beta(J\cap M)>2$ , suppose to the contrary that $E=B_{1}\cup B_{2}$ is a decomposition into two common bases of $J$ and $M$ . Without loss of generality, we may assume that $h\in B_{1}$ . As $B_{1}$ is a common basis, it contains exactly one element from each of the pairs $\{b,g\}$ , $\{c,e\}$ , $\{d,f\}$ and at most one element from each of the pairs $\{b,c\}$ , $\{d,g\}$ , $\{e,f\}$ , hence $B_{1}=\{b,d,e,h\}$ or $B_{1}=\{c,f,g,h\}$ . In either case, $B_{2}$ is not a basis of $J$ , a contradiction. Therefore $\beta(J\cap M)>2$ , and so $\beta(J\cap M)=3$ by the result of Aharoni, Berger and Ziv mentioned earlier.
+Figure 1: Geometric representation of the matroid $J$ : bases are the sets of size four which do not lie on a plane. If $M_{1}=J$ and $M_{2}$ is the partition matroid defined by partition classes $\{a,h\},\{b,g\},\{c,e\},\{d,f\}$ with upper bounds one, then $\beta(M_{1})=\beta(M_{2})=2$ and $\beta(M_{1}\cap M_{2})=3$ .
+Motivated by the proof of Theorem 1, we call a matroid strongly base reorderable (or SBRO for short) if
+() 
+for any pair $A,B$ of bases, there exists bases $A^{\prime}$ , $B^{\prime}$ and a bijection $\varphi\colon A^{\prime}\setminus B^{\prime}\to B^{\prime}\setminus A^{\prime}$ such that $A^{\prime}\cap B^{\prime}=A\cap B$ , $A^{\prime}\cup B^{\prime}=A\cup B$ , and $(A^{\prime}\setminus X)\cup\varphi(X)$ is a basis for every $X\subseteq A^{\prime}\setminus B^{\prime}$ .
+In other words, () ‣ 2 differs from () ‣ 1 in that it allows the repartitioning of the multiunion of the bases before asking for the bijection $\varphi$ . It immediately follows from the definition that strongly base orderable matroids are strongly base reorderable as well.
+2.1 Completeness and intersection
+Ingleton [25] defined a class of matroids to be complete if it is closed under taking minors, duals, direct sums, truncations and induction by directed graphs. A complete class is also closed under many other matroid operations, such as series and parallel connections, 2-sums, unions and principal extensions, see e.g. [11]. It was already noted by Ingleton [25] that the classes of base orderable and strongly base orderable matroids are complete, while Sims [36] verified that $\exx(M(K_{4}))$ is complete as well.
+A $k$ -exchange-ordering for a pair $A,B$ of bases is a bijection $\varphi\colon A\setminus B\to B\setminus A$ such that both $(A\setminus X)\cup\varphi(X)$ and $(B\setminus\varphi(X))\cup X$ are bases for each subset $X\subseteq A\setminus B$ with $|X|\leq k$ . A matroid is called $k$ -base-orderable if each pair of its bases has a $k$ -exchange-ordering. Note that $k$ -base-orderability corresponds to base orderability for $k=1$ and to strongly base orderability if $k$ is the rank of the matroid. Bonin and Savitsky [11] showed that the class of $k$ -base-orderable matroids is complete for any fixed $k\geq 1$ . Relying on their proof, we verify that the class $\sbro$ of strongly base reorderable matroids is complete as well. Following the notation of [33], the contraction and deletion of a set $X$ in a matroid $M$ are denoted by $M/X$ and $M\backslash X$ , respectively.
+Theorem 3.
+ $\sbro$ is a complete class.
+Proof.
+Bonin and Savitsky [11] verified that a class of matroids is complete if it is closed under taking minors, duals, direct sums and principal extensions into flats. For a flat $F$ of a matroid $M$ over ground set $E$ and an element $e$ not in $E$ , the principal extension $M+_{F}e$ is a matroid on ground set $E+e$ with family of bases
+ $\{B+e-f\mid B\text{ is a basis of $M$, }f\in(B\cap F)+e\}.$ 
+The following statement was implicitly showed in [11] in the proof that the class of $k$ -base-orderable matroids is closed under principal extensions.
+Lemma 4.
+Let $k$ be a positive integer, $F$ be a flat of a matroid $M$ over ground set $E$ , and $e$ be an element not in $E$ . If $\varphi_{0}$ is a $k$ -exchange-ordering for bases $A_{0}$ and $B_{0}$ of $M$ , then for each $x\in(A_{0}\cap F)+e$ and $y\in(B_{0}\cap F)+e$ , there exists a $k$ -exchange-ordering for bases $A_{0}+e-x$ and $B_{0}+e-y$ of $M+_{F}e$ .
+We prove Theorem 3 by showing that $\sbro$ is closed under taking direct sums, duals, minors and principal extensions. Closedness under taking direct sums is straightforward to verify.
+To prove closedness under taking duals, let $A^{*}$ and $B^{*}$ be bases of the dual $M^{*}$ of an SBRO matroid $M$ . Since $A\coloneqq E\setminus A^{*}$ and $B\coloneqq E\setminus B^{*}$ are bases of $M$ , there exist bases $A^{\prime},B^{\prime}$ and a bijection $\varphi\colon A^{\prime}\setminus B^{\prime}\to B^{\prime}\setminus A^{\prime}$ such that $A^{\prime}\cap B^{\prime}=A\cap B$ , $A^{\prime}\cup B^{\prime}=A\cup B$ , and $(A^{\prime}\setminus X)\cup\varphi(X)$ is a basis of $M$ for every $X\subseteq A^{\prime}\setminus B^{\prime}$ . Then $A^{\prime*}\coloneqq E\setminus A^{\prime}$ and $B^{\prime*}\coloneqq E\setminus B^{\prime}$ are bases of $M^{*}$ such that $A^{\prime*}\cap B^{\prime*}=A^{*}\cap B^{*}$ , $A^{\prime*}\cup B^{\prime*}=A\cup B$ , and $\varphi^{-1}$ is a bijection from $B^{\prime}\setminus A^{\prime}=A^{\prime*}\setminus B^{\prime*}$ to $A^{\prime}\setminus B^{\prime}=B^{\prime*}\setminus A^{\prime*}$ such that for every $Y\subseteq B^{\prime}\setminus A^{\prime}$ the set $(A^{\prime*}\setminus Y)\cup\varphi^{-1}(Y)$ is a basis of $M$ since $E\setminus\left((A^{\prime*}\setminus Y)\cup\varphi^{-1}(Y)\right)=(A^{\prime}\cup Y)\setminus\varphi^{-1}(Y)=(A^{\prime}\setminus\varphi^{-1}(Y))\cup\varphi\left(\varphi^{-1}(Y)\right)$ is a basis of $M$ .
+Next we show closedness under taking minors. Observe that the matroid $M\backslash x$ obtained from an SBRO matroid $M$ by deleting an element $x$ is SBRO. This follows from the fact that if $x$ is not a coloop of $M$ , then each basis of $M\backslash x$ is a basis of $M$ , while if $x$ is a coloop of $M$ , then $B+x$ is a basis of $M$ for every basis $B$ of $M\backslash x$ . As we have already seen that $\sbro$ is closed under taking duals, it follows that the contraction $M/x=(M^{*}\backslash x)^{*}$ is SBRO as well.
+Finally, we show closedness under principal extensions. Let $F$ be a flat of an SBRO matroid $M$ , and consider a pair $A,B$ of bases of $M+_{F}e$ . By the definition of the principal extension there exist $x\in F\cap A+e$ and $y\in F\cap B+e$ such that $A+x-e$ and $B+y-e$ are bases of $M$ . Since $M$ is SBRO, there exist a pair $A_{0},B_{0}$ and a bijection $\varphi_{0}\colon A_{0}\setminus B_{0}\to B_{0}\setminus A_{0}$ such that $A_{0}\cap B_{0}=(A+x-e)\cap(B+y-e)$ , $A_{0}\cup B_{0}=(A+x-e)\cup(B+y-e)$ and $(A_{0}\setminus X)\cup\varphi(X)$ is a basis of $M$ for every $X\subseteq A_{0}\setminus B_{0}$ . Since $\varphi_{0}$ is a $k$ -exchange ordering for $k$ being the rank of $M$ , there exists a $k$ -exchange ordering $\varphi$ for the bases of $A^{\prime}\coloneqq A_{0}+e-x$ and $B^{\prime}\coloneqq B_{0}+e-y$ of $M+_{F}e$ by Lemma 4. As $A^{\prime}\cap B^{\prime}=A\cap B$ and $A^{\prime}\cup B^{\prime}=A\cup B$ hold, the pair $A^{\prime},B^{\prime}$ and the bijection $\varphi$ satisfies the requirements of () ‣ 2.
+∎
+With the help of Theorem 3, we are ready to prove the next theorem which shows the importance of the proposed class. Though the proof is analogous to that of Theorem 1 appearing in [35, Theorem 42.13], we include it to make the paper self-contained.
+Theorem 5.
+Let $M_{1}$ and $M_{2}$ be strongly base reorderable matroids on the same ground set. Then $\beta(M_{1}\cap M_{2})=\max\{\beta(M_{1}),\beta(M_{2})\}$ .
+Proof.
+Let $k=\max\{\beta(M_{1}),\beta(M_{2})\}$ and $r=\max\{r(M_{1}),r(M_{2})\}$ . We may assume that the common ground set $E$ of the matroids decomposes into $k$ disjoint bases in each of the matroids $M_{1}$ and $M_{2}$ . Indeed, for $i=1,2$ , consider the matroid $M^{\prime}_{i}$ obtained as the $r$ -truncation of the direct sum of $M_{i}$ and the free matroid on $k\cdot r-|E|$ elements. Then $M^{\prime}_{i}$ is SBRO by Theorem 3 and its ground set decomposes into $k$ disjoint bases for $i=1,2$ , and $\beta(M^{\prime}_{1}\cap M^{\prime}_{2})=\beta(M_{1}\cap M_{2})$ holds as well.
+Let $\mathcal{X}=\{X_{1},\dots,X_{k}\}$ and $\mathcal{Y}=\{Y_{1},\dots,Y_{k}\}$ be partitions of $E$ into bases of $M_{1}$ and $M_{2}$ , respectively, such that $\sum_{i=1}^{k}|X_{i}\cap Y_{i}|$ is as large as possible. If it has value $|E|$ , then $\mathcal{X}=\mathcal{Y}$ is a decomposition of $E$ into $k$ common bases of $M_{1}$ and $M_{2}$ . Otherwise, there exist distinct indices $i$ and $j$ such that $X_{i}\cap Y_{j}\neq\emptyset$ .
+Let $X^{\prime}_{i}$ and $X^{\prime}_{j}$ be bases of $M_{1}$ and $\varphi_{1}\colon X^{\prime}_{i}\to X^{\prime}_{j}$ be a bijection guaranteed by () ‣ 2 for the disjoint bases $X_{i}$ and $X_{j}$ of $M_{1}$ . Similarly, let $Y^{\prime}_{i}$ and $Y^{\prime}_{j}$ be bases of $M_{2}$ and $\varphi_{2}\colon Y^{\prime}_{i}\to Y^{\prime}_{j}$ be a bijection guaranteed by () ‣ 2 for the disjoint bases $Y_{i}$ and $Y_{j}$ of $M_{2}$ . Consider the graph $G$ on $X_{i}\cup X_{j}\cup Y_{i}\cup Y_{j}$ with edge set $\{e\varphi_{1}(e)\mid e\in X^{\prime}_{i}\}\cup\{e\varphi_{2}(e)\mid e\in Y^{\prime}_{i}\}$ . Since $G$ is the union of two matchings, it is bipartite. Let $S$ and $T$ denote the color classes of a 2-coloring of the vertices of $G$ . As $(X^{\prime}_{i}\setminus Z)\cup\varphi_{1}(Z)$ is a basis of $M_{1}$ for every $Z\subseteq X^{\prime}_{i}$ and $(Y^{\prime}_{i}\setminus Z)\cup\varphi_{2}(Z)$ is a basis of $M_{2}$ for every $Z\subseteq Y^{\prime}_{i}$ , $X^{\prime\prime}_{i}\coloneqq S\cap(X_{i}\cup X_{j})$ and $X^{\prime\prime}_{j}\coloneqq T\cap(X_{i}\cup X_{j})$ are bases of $M_{1}$ , while $Y^{\prime\prime}_{i}\coloneqq S\cap(Y_{i}\cup Y_{j})$ and $Y^{\prime\prime}_{j}\coloneqq T\cap(Y_{i}\cup Y_{j})$ are bases of $M_{2}$ . Consider the partition $\mathcal{X}^{\prime}$ obtained from $\mathcal{X}$ by replacing $X_{i}$ and $X_{j}$ by $X^{\prime\prime}_{i}$ and $X^{\prime\prime}_{j}$ , respectively, and the partition $\mathcal{Y}^{\prime}$ obtained from $\mathcal{Y}$ by replacing $Y_{i}$ and $Y_{j}$ by $Y^{\prime\prime}_{i}$ and $Y^{\prime\prime}_{j}$ , respectively. Then $|X^{\prime\prime}_{i}\cap Y^{\prime\prime}_{i}|+|X^{\prime\prime}_{j}\cap Y^{\prime\prime}_{j}|=|(X_{i}\cup X_{j})\cap(Y_{i}\cup Y_{j})|>|X_{i}\cap Y_{i}|+|X_{j}\cap Y_{j}|$ , hence $\mathcal{X}^{\prime}$ and $\mathcal{Y}$ ’ contradict the maximality of $\sum_{i=1}^{k}|X_{i}\cap Y_{i}|$ .
+∎
+2.2 Binary and ternary SBRO matroids
+In general, knowing the excluded minors for a minor-closed matroid class provides a powerful tool that then can be used in various applications. Based on the characterization of $M(K_{4})$ -minor-free binary matroids by Brylawski [12] and of $M(K_{4})$ -minor-free ternary matroids by Oxley [34], we give a characterization of binary and of ternary SBRO matroids. For the latter we will use that the matroid $S(5,6,12)$ is SBRO. The Steiner system $S(5,6,12)$ is a family of 6-element subsets of a 12-element ground set such that each 5-element subset of the ground set is contained in exactly one member of the family. By slight abuse of notation, the matroid whose family of hyperplanes is identical with such a system is denoted by $S(5,6,12)$ as well.
+Lemma 6.
+ $S(5,6,12)$ is SBRO.
+Proof.
+As a preparation for the proof, we discuss representations of some minors of $S(5,6,12)$ over the field $GF(3)$ . We denote the columns of an $r\times n$ matrix $A$ by $a_{1},\dots,a_{n}$ , and the matroid represented by $A$ over the field $GF(3)$ by $M[A]$ . All the computations of the proof are meant over the field $GF(3)$ .
+Oxley [34] (see also [33, page 658]) gives the following $GF(3)$ -representation of $S(5,6,12)$ :
+ $S\coloneqq\left[\begin{array}[]{*{6}r|*{6}r}1&~~0&~~0&~~0&~~0&~~0&0&1&1&1&1&1\\
+0&1&0&0&0&0&1&0&1&-1&-1&1\\
+0&0&1&0&0&0&1&1&0&1&-1&-1\\
+0&0&0&1&0&0&1&-1&1&0&1&-1\\
+0&0&0&0&1&0&1&-1&-1&1&0&1\\
+0&0&0&0&0&1&1&1&-1&-1&1&0\end{array}\right].$ 
+A matrix $T$ representing the matroid $M[S]/s_{6}\backslash s_{12}$ 
+can be obtained by deleting the 6th and 12th columns and the 6th row of $S$ (see [33, Proposition 3.2.6]):
+ $T\coloneqq\left[\begin{array}[]{*{5}r|*{5}r}1&~~0&~~0&~~0&~~0&0&1&1&1&1\\
+0&1&0&0&0&1&0&1&-1&-1\\
+0&0&1&0&0&1&1&0&1&-1\\
+0&0&0&1&0&1&-1&1&0&1\\
+0&0&0&0&1&1&-1&-1&1&0\end{array}\right].$ 
+However, it will be more convenient to work with the following matrix:
+ $T^{\prime}\coloneqq\left[\begin{array}[]{*{5}r|*{5}r}1&~~0&~~0&~~0&~~0&1&1&1&1&~~1\\
+0&1&0&0&0&0&-1&-1&1&1\\
+0&0&1&0&0&-1&0&1&-1&1\\
+0&0&0&1&0&1&-1&0&-1&1\\
+0&0&0&0&1&-1&1&-1&0&1\\
+\end{array}\right].$ 
+The matroids $M[T]$ and $M[T^{\prime}]$ are isomorphic. Indeed, multiplying $T$ by any $5\times 5$ invertible matrix from the left does not change $M[T]$ . In particular, the matroid represented by
+ $\left[\begin{array}[]{*{5}r}t^{\prime}_{4}&t^{\prime}_{2}&t^{\prime}_{1}&t^{\prime}_{3}&t^{\prime}_{6}\end{array}\right]\cdot T=\left[\begin{array}[]{*{10}r}t^{\prime}_{4}&t^{\prime}_{2}&t^{\prime}_{1}&t^{\prime}_{3}&t^{\prime}_{6}&-t^{\prime}_{7}&t^{\prime}_{5}&-t^{\prime}_{8}&-t^{\prime}_{10}&-t^{\prime}_{9}\end{array}\right]$ 
+is $M[T]$ , while it is isomorphic to $M[T^{\prime}]$ . Finally, it is not difficult to check that $M[T^{\prime}]/t^{\prime}_{5}\backslash t^{\prime}_{10}$ is represented by
+ $P\coloneqq\left[\begin{array}[]{*{4}r |*{4}r}1&~~0&~~0&~~0&1&1&1&1\\
+0&1&0&0&0&-1&-1&1\\
+0&0&1&0&-1&0&1&-1\\
+0&0&0&1&1&-1&0&-1\end{array}\right].$ 
+Besides these matrix representations, we rely on several properties of the matroid $S(5,6,12)$ from [33, page 658].
+We turn to the proof of the lemma, that is, we show that () ‣ 2 holds for $S(5,6,12)$ . This property is equivalent to the following: for each pair $A,B$ of bases of $M[S]$ there exists a pair $A^{\prime},B^{\prime}$ of disjoint bases of the matroid $N\coloneqq M/(A\cap B)\backslash(E\setminus(A\cap B))$ , and a bijection $\varphi\colon A^{\prime}\to B^{\prime}$ such that $(A^{\prime}\setminus X)\cup\varphi(X)$ is a basis of $N$ for every $X\subseteq A$ . We distinguish several cases based on the size of $A\cap B$ .
+If $|A\cap B|\geq 3$ , then $N$ has rank at most three. In this case $N$ is strongly base orderable, as $S(5,6,12)$ contains $M(K_{4})$ as a minor, and $M(K_{4})$ -minor-free matroids of rank at most three are strongly base orderable.
+If $|A\cap B|=2$ , then we use the fact that the matroid obtained from $S(5,6,12)$ by deleting two elements and contracting two elements is unique up to isomorphism22
+ 2
+ Note that the matroid in question is the matroid denoted by $P_{8}$ in [33]., which follows from the automorphism group of $S(5,6,12)$ being 5-transitive. Therefore, $N$ is isomorphic to $M[P]$ . Setting $A_{1}\coloneqq\{p_{1},p_{2},p_{3},p_{4}\}$ , $B_{1}\coloneqq\{p_{5},p_{6},p_{7},p_{8}\}$ and $\varphi_{1}\colon A_{1}\to B_{1}$ , $\varphi_{1}(p_{i})=p_{i+4}$ for $i=1,\dots,4$ , it is not difficult to check that $(A_{1}\setminus X)\cup\varphi_{1}(X)$ is a basis of $M[P]$ for every $X\subseteq A_{1}$ .
+If $|A\cap B|=1$ , then $N$ is isomorphic to $M[T^{\prime}]$ by a similar reasoning as in the previous case. Let $A_{2}\coloneqq\{t^{\prime}_{1},\dots,t^{\prime}_{5}\}$ , $B_{2}\coloneqq\{t^{\prime}_{6},\dots,t^{\prime}_{10}\}$ and $\varphi_{2}\colon A_{2}\to B_{2},\varphi_{2}(t^{\prime}_{i})=t^{\prime}_{i+5}$ for $i=1,\dots,5$ . We claim that $(A_{2}\setminus X)\cup\varphi_{2}(X)$ is a basis of $M[T^{\prime}]$ for every $X\subseteq A_{2}$ . If $t^{\prime}_{5}\not\in X$ , then this follows from $((A_{2}-t^{\prime}_{5})\setminus Z)\cup\varphi_{2}(Z)$ being a basis of $M[T^{\prime}]/t^{\prime}_{5}\backslash t^{\prime}_{10}$ for every $Z\subseteq A_{2}-t^{\prime}_{5}$ , which we have already seen in the previous case. If $t^{\prime}_{5}\in X$ , then we need to show that $((A_{2}-t^{\prime}_{5})\setminus Z)\cup\varphi_{2}(Z)$ is a basis of $M[T^{\prime}]/t^{\prime}_{10}\backslash t^{\prime}_{5}$ for every $Z\subseteq A^{\prime}-t^{\prime}_{5}$ . We obtain the following matrix $P^{\prime}$ representing $M[T^{\prime}]/t^{\prime}_{10}\backslash t^{\prime}_{5}$ from $T^{\prime}$ by pivoting on the 10th element of the 5th row, deleting the 5th and 10th columns and deleting the 5th row:
+ $P^{\prime}\coloneqq\left[\begin{array}[]{*{4}r|*{4}r}1&~~0&~~0&~~0&-1&0&-1&1\\
+0&1&0&0&1&1&0&1\\
+0&0&1&0&0&-1&-1&-1\\
+0&0&0&1&-1&1&1&-1\end{array}\right].$ 
+We need to show that for $A_{3}\coloneqq\{p^{\prime}_{1},p^{\prime}_{2},p^{\prime}_{3},p^{\prime}_{4}\}$ , $B_{3}\coloneqq\{p^{\prime}_{5},p^{\prime}_{6},p^{\prime}_{7},p^{\prime}_{8}\}$ and $\varphi_{3}\colon A_{3}\to B_{3}$ , $\varphi_{3}(p^{\prime}_{i})=\varphi_{3}(p^{\prime}_{i+4})$ for $i=1,\dots,4$ , the set $(A_{3}\setminus Z)\cup\varphi_{3}(Z)$ is a basis of $M[P^{\prime}]$ for every $Z\subseteq A_{3}$ . As
+ $\left[\begin{array}[]{*{4}r}p_{5}&p_{6}&p_{3}&-p_{8}\end{array}\right]\cdot P^{\prime}=\left[\begin{array}[]{*{8}r}p_{5}&p_{6}&p_{3}&-p_{8}&p_{1}&p_{2}&p_{7}&-p_{4}\end{array}\right]$ 
+represents the same matroid as $P^{\prime}$ , the function $f\colon(p^{\prime}_{1},\dots,p^{\prime}_{8})\mapsto(p_{5},p_{6},p_{3},p_{8},p_{1},p_{2},p_{7},p_{4})$ is an isomorphism from $M[P^{\prime}]$ to $M[P]$ . Since $f(\{p^{\prime}_{i},p^{\prime}_{i+4}\})=\{p_{i},p_{i+4}\}$ for $i=1,\dots,4$ , $f$ maps the family $\{(A_{3}\setminus Z)\cup\varphi_{3}(Z)\mid Z\subseteq A_{3}\}$ to $\{(A_{1}\setminus X)\cup\varphi_{1}(X)\mid X\subseteq A_{1}\}$ . As we have already seen that each member of the latter family is a basis of $M[P]$ , it follows that each set of the form $(A_{3}\setminus Z)\cup\varphi_{3}(Z)$ is a basis of $M[P^{\prime}]$ .
+Finally, consider the case $A\cap B=\emptyset$ . As the matroids $M[S]/s_{6}\backslash s_{12}=M[T]$ and $M[T^{\prime}]$ are isomorphic, there exists a pair $A_{4},B_{4}$ and a bijection $\varphi_{4}\colon A_{4}\to B_{4}$ such that $(A_{4}\setminus X)\cup\varphi_{4}(X)$ is a basis of $M[S]/s_{6}\backslash s_{12}$ for every $X\subseteq A_{4}$ . Extend $\varphi_{4}$ to a bijection $\hat{\varphi}_{4}\colon A_{4}+s_{6}\to B_{4}+s_{12}$ by letting $\hat{\varphi}_{4}(s_{6})=s_{12}$ . We claim that $((A_{4}+s_{6})\setminus X)\cup\hat{\varphi}_{4}(X)$ is a basis of $M[S]$ for every $X\subseteq A_{4}+s_{6}$ . If $s_{6}\not\in X$ , this follows from $(A_{4}\setminus X)\cup\varphi_{4}(X)$ being a basis of $M[S]/s_{6}\backslash s_{12}$ . If $s_{6}\in X$ , then we use that $(X-s_{6})\cup\varphi_{4}((A_{4}+s_{6})\setminus X)$ is a basis of $M[S]/s_{6}\backslash s_{12}$ , hence $X\cup\varphi_{4}((A_{4}+s_{6})\setminus X)$ is a basis of $M[S]$ . This implies its complement $((A_{4}+s_{6})\setminus X)\cup\varphi_{4}(X)$ being a basis as well, since $M[S]$ is known to be identically self-dual.
+∎
+Theorem 7.
+The matroids $M(K_{4})$ and $J$ are excluded minors for $\sbro$ . Furthermore,
+(a) 
+a binary matroid is SBRO if and only if it does not contain $M(K_{4})$ as a minor, and
+(b) 
+a ternary matroid is SBRO if and only if it does not contain $M(K_{4})$ or $J$ as a minor.
+Proof.
+First we show that neither $M(K_{4})$ nor $J$ is SBRO. This follows from Theorem 5 as each $M_{1}\in\{M(K_{4}),J\}$ is 2-coverable and there exists a 2-coverable partition matroid $M_{2}$ on the same ground set such that $\beta(M_{1}\cap M_{2})=3$ . Indeed, for $M_{1}=M(K_{4})$ , let the three partition classes defining $M_{2}$ be the matchings of size two of $K_{4}$ , see [35]. For $M_{1}=J$ , the statement follows by Remark 2.
+ $M(K_{4})$ -minor-free binary matroids are SBRO, as they coincide with the graphic matroids of series-parallel graphs [12] which are strongly base orderable, see also [37]. As $M(K_{4})$ is not SBRO, it follows that $M(K_{4})$ is the unique binary excluded minor for $\sbro$ .
+Finally, we show that if $M$ is a ternary excluded minor of $\sbro$ distinct from $M(K_{4})$ , then $M$ is isomorphic to $J$ . As $\sbro$ is closed under direct sums and 2-sums by Theorem 3, it follows that $M$ is 3-connected. Oxley [34] showed that a 3-connected $M(K_{4})$ -minor-free ternary matroid is isomorphic either to the rank- $r$ whirl $\mathcal{W}^{r}$ for some $r\geq 2$ , to $J$ , or to a minor of the matroid $S(5,6,12)$ . Since $\mathcal{W}^{r}$ is a transversal matroid, it is strongly base orderable. By Lemma 6, $S(5,6,12)$ is SBRO. Therefore, $M$ is isomorphic to $J$ . As $J$ is not SBRO and does not contain $M(K_{4})$ as a minor, it follows that $J$ is the unique ternary excluded minor for $\sbro$ apart from $M(K_{4})$ .
+∎
+As $M(K_{4})$ is the only binary, and $M(K_{4})$ and $J$ are the only ternary excluded minors for base orderability [34], Theorem 7 immediately implies the following.
+Corollary 8.
+A binary or ternary matroid is SBRO if and only if it is base orderable.
+Consider a matroid $M=(E,\mathcal{C})$ on ground set $E$ with set of circuits $\mathcal{C}$ . Furthermore, assume that $G=(E,F)$ is a graph with vertex set $E$ and edge set $F$ . For a subset $X\subseteq E$ , let $\mathcal{C}[X]$ denote the set of circuits of $M$ that lie in $X$ , that is, $\mathcal{C}[X]\coloneqq\{C\in\mathcal{C}\mid C\subseteq X\}$ , and let $F[X]$ denote the set of edges of $G$ induced by $X$ . We say that $G$ covers a subset $\mathcal{C}^{\prime}\subseteq\mathcal{C}$ of circuits if $F[C]\neq\emptyset$ for every $C\in\mathcal{C}^{\prime}$ . In other words, every stable subset of $E$ in $G$ is such that it contains no circuit from $\mathcal{C}^{\prime}$ .
+Let us now return to the open problem of Davies and McDiarmid on replacing strongly base orderability with base orderability in Theorem 1. Theorem 5 and Corollary 8 together imply an affirmative answer in the special case when the matroids are ternary – for binary matroids, this was already known as the classes of base orderable binary matroids and strongly base orderable binary matroids coincide. Motivated by this observation, it is natural to ask whether all base orderable matroids are SBRO. Unfortunately, the next example shows that this is not the case.
+Figure 2: The rank-4 matroid $AG(3,2)$ in which each set of size three is independent, and the dependent sets of size four are the six faces of the cube, the six diagonal planes and the two twisted planes $\{1,3,6,8\}$ and $\{2,4,5,7\}$ .
+Remark 9.
+We construct a rank-5 matroid $X_{10}$ on 10 elements that is base orderable but not SBRO. Recall the construction of the the binary affine cube $AG(3,2)$ from [33, page 645] using faces, diagonal planes and twisted planes, see Figure 2. We define $X_{10}$ on the ground set $\{1,2,\dots,8\}\cup\{a,b\}$ such that each set of size four is independent, and the family of dependent sets of size five is
+ $\mathcal{H}\coloneqq\left\{F\cup\{a\}\mid\text{$F$ is a face}\right\}\cup\left\{F\cup\{b\}\mid\text{$F$ is a diagonal plane or a twisted plane}\right\}.$ 
+By the construction of paving matroids, see e.g. [21, Theorem 5.3.5], $X_{10}$ is a paving matroid of rank $5$ as $|H_{1}\cap H_{2}|\leq 3$ for each $H_{1},H_{2}\in\mathcal{H}$ , $H_{1}\neq H_{2}$ . It is not difficult to check that $X_{10}$ does not contain $M(K_{4})$ as a minor, hence it is base orderable since $M(K_{4})$ -minor-free paving matroids are base orderable [11].
+It remains to show that $X_{10}$ is not SBRO. Assume for contradiction that $X_{10}$ is SBRO and consider a pair $A,B$ of disjoint bases, e.g. $A=\{1,2,3,5,a\}$ and $B=\{4,6,7,8,b\}$ . By () ‣ 2, there exists a pair $A^{\prime},B^{\prime}$ of disjoint bases and a bijection $\varphi\colon A^{\prime}\to B^{\prime}$ such that $(A^{\prime}\setminus X)\cup\varphi(X)$ is a basis for $X\subseteq A^{\prime}$ , or equivalently, $P\coloneqq\{e\varphi(e)\mid e\in A^{\prime}\}$ covers each circuit of $X_{10}$ . Then we define a bijection $\hat{\varphi}\colon A^{\prime}\cup B^{\prime}\to A^{\prime}\cup B^{\prime}$ by setting $\hat{\varphi}(z)\coloneqq\varphi(z)$ if $z\in A^{\prime}$ and $\varphi^{-1}(z)$ otherwise.
+Since $P$ covers both $\{1,3,6,8,b\}$ and $\{2,4,5,7,b\}$ , at least one of the twisted planes $\{1,3,6,8\}$ and $\{2,4,5,7\}$ contains an edge of $P$ . We may assume by symmetry that $13\in P$ . Consider the case first when $\hat{\varphi}(5)\in\{2,4,6,7,8\}$ . Observe that $P^{\prime}\coloneqq P\setminus\{13,5\hat{\varphi}(5)\}$ covers each member of the family
+ $\mathcal{H}^{\prime}\coloneqq\{H\setminus\{1,3,5,\hat{\varphi}(5)\}\mid H^{\prime}\in\mathcal{H},|H^{\prime}\cap\{1,3\}|=|H^{\prime}\cap\{5,\hat{\varphi}(5)\}|=1\}.$ 
+We claim that $\mathcal{H}^{\prime}$ is the family of circuits of a matroid isomorphic to $M(K_{4})$ . Indeed,
+ $\mathcal{H}^{\prime}=\begin{cases}\{\{4,8,a\},\{4,6,b\},\{6,7,a\},\{7,8,b\}\}&\text{if $\hat{\varphi}(5)=2$,}\\
+\{\{2,7,a\},\{2,8,b\},\{4,7,b\},\{4,8,a\}\}&\text{if $\hat{\varphi}(5)=6$,}\\
+\{\{2,6,a\},\{2,8,b\},\{4,6,b\},\{4,8,a\}\}&\text{if $\hat{\varphi}(5)=7$,}\end{cases}$ 
+and the cases $\hat{\varphi}(5)=4$ and $\hat{\varphi}(5)=8$ are symmetric to the cases $\hat{\varphi}(5)=2$ and $\hat{\varphi}(5)=6$ , respectively. This is a contradiction as the circuits of $M(K_{4})$ cannot be covered by a matching.
+We proved that $\hat{\varphi}(5)\in\{a,b\}$ and thus by symmetry $\hat{\varphi}(7)\in\{a,b\}$ holds as well. We may assume that $\hat{\varphi}(5)=a$ and $\hat{\varphi}(7)=b$ . Since $P$ covers each of $\{3,4,7,8,a\}$ , $\{2,3,6,7,a\}$ , $\{3,4,5,6,b\}$ and $\{2,3,5,8,b\}$ , the two edges of $P\setminus\{13,5a,7b\}$ cover each of $\{4,8\}$ , $\{2,6\}$ , $\{4,6\}$ and $\{2,8\}$ which is not possible, leading to a contradiction.
+Figure 3 summarizes the relation of the matroid classes discussed in the current section. Here $M_{\alpha}$ denotes the matroid described in [11, Section 8] with parameters $r=5$ , $|A|=|D|=1$ , and $|B|=|C|=|E|=|F|=2$ . That is, let $A=\{a\}$ , $B=\{b_{1},b_{2}\}$ , $C=\{c_{1},c_{2}\}$ , $D=\{d\}$ , $E=\{e_{1},e_{2}\}$ , and $F=\{f_{1},f_{2}\}$ . Then the proper nonempty cyclic flats of $M_{\alpha}$ are $C\cup B\cup E$ , $C\cup A\cup D$ , $F\cup E\cup A$ and $F\cup D\cup B$ with ranks $r(C\cup B\cup E)=|C|+|B|=4$ , $r(C\cup A\cup D)=|C|+|A|=3$ , $r(F\cup E\cup A)=|F|+|E|=4$ , and $r(F\cup D\cup B)=|F|+|D|=3$ . Let $X$ and $Y$ be arbitrary bases of $M_{\alpha}$ . It was shown in [11] that $M_{\alpha}$ is a forbidden minor for strongly base orderability, hence if $X\cap Y\neq\emptyset$ then even () ‣ 1 holds for the pair $X,Y$ . On the other hand, if $X$ and $Y$ are disjoint, then it is not difficult to check that the bijection $\varphi\colon(a,b_{1},c_{1},e_{1},f_{1})\mapsto(d,b_{2},c_{2},e_{2},f_{2})$ satisfies () ‣ 2.
+Figure 3: The inclusion relationship between the matroid classes discussed in Section 2, with examples showing strict containment.
+3 Relaxing the bijection: covering the circuits by a 2-factor
+In this section, we propose another relaxation of strongly base orderability. In order to do so, first we give a new interpretation of property () ‣ 1. Recall that for a matroid $M=(E,\mathcal{C})$ , a graph $G=(E,F)$ is said to cover $\mathcal{C}^{\prime}\subseteq\mathcal{C}$ if $F[C]\neq\emptyset$ for every $C\in\mathcal{C}^{\prime}$ . Using this terminology, () ‣ 1 is equivalent to saying that for any pair $A,B$ of bases of a strongly base orderable matroid $M=(E,\mathcal{C})$ , there exists a graph $G$ consisting of a matching between the elements of $A\setminus B$ and $B\setminus A$ that covers $\mathcal{C}[A\cup B]$ . Similarly, property () ‣ 2 discussed in Section 2 translates into the existence of a matching on $A\triangle B$ that covers $\mathcal{C}[A\cup B]$ . Observe the small but crucial difference between the two definitions: while the former asks for matching edges going between the elements of $A$ and $B$ , the latter allows the end vertices of any matching edge to fall in the same set, i.e. $A$ or $B$ .
+We conjecture that a similar statement holds for arbitrary matroids where $G$ is a $2$ -regular graph or a path instead of a matching, where a graph is $2$ -regular if each vertex has degree exactly two. More precisely, we propose four relaxations of different strengths, and say that a matroid $M=(E,\mathcal{C})$ has property
+() 
+if for any pair $A,B$ of bases, there exists a $2$ -regular graph on $A\triangle B$ that covers $\mathcal{C}[A\cup B]$ ,
+() 
+if for any pair $A,B$ of bases, there exists a $2$ -regular graph that consists of cycles alternating between $A\setminus B$ and $B\setminus A$ and covers $\mathcal{C}[A\cup B]$ ,
+() 
+if for any pair $A,B$ of bases, there exists a path on $A\triangle B$ that covers $\mathcal{C}[A\cup B]$ ,
+() 
+if for any pair $A,B$ of bases, there exists a path that alternates between $A\setminus B$ and $B\setminus A$ and covers $\mathcal{C}[A\cup B]$ .
+In all cases, the condition that the graph in question covers $\mathcal{C}[A\cup B]$ is equivalent to requiring that the union of $A\cap B$ and any stable set of $A\triangle B$ in the graph is independent in $M$ .
+Since any path can be extended to a single cycle by adding an edge between its end vertices, property () ‣ 3 implies all the others, while property () ‣ 3 is a special case of any of them. As for properties () ‣ 3 and () ‣ 3, we could not show any connection between them. As a matching between $A\setminus B$ and $B\setminus A$ can always be extended to an alternating path between them, strongly base orderable matroids satisfy () ‣ 3, and an analogous reasoning shows that SBRO matroids satisfy () ‣ 3.
+3.1 Covering fundamental circuits
+Observe that in all of properties () ‣ 3 – () ‣ 3, the number of edges used to cover the circuits in question is bounded by $|A\triangle B|$ . At this point, it is not even clear why those circuits could be covered by a small number of graph edges. As a first step towards understanding the general case, instead of covering every circuit, we concentrate on covering fundamental circuits only. Given a basis $B$ of a matroid and an element $a$ outside of $B$ , we denote by $C_{B}(a)$ the fundamental circuit of $a$ with respect to $B$ , that is, the unique circuit in $B+a$ . We extend this notation to sets as well, that is, for a set $X$ disjoint from $B$ we use $\mathcal{C}_{B}(X)\coloneqq\{C_{B}(x)\mid x\in X\}$ .
+Theorem 10.
+Let $A,B$ be bases of a matroid $M$ .
+(a) 
+There exists a 2-regular graph that consists of cycles alternating between $A\setminus B$ and $B\setminus A$ and covers $\mathcal{C}_{A}(B)\cup\mathcal{C}_{B}(A)$ .
+(b) 
+There exists a tree that consists of edges between $A\setminus B$ and $B\setminus A$ and covers $\mathcal{C}_{A}(B)\cup\mathcal{C}_{B}(A)$ .
+Proof.
+The basis exchange axiom implies that there exists a bijection $\varphi_{A}\colon A\setminus B\to B\setminus A$ such that $A-a+\varphi_{A}(a)$ is a basis for each $a\in A\setminus B$ , or equivalently, $a\in C_{A}(\varphi_{A}(a))$ (see e.g. [21, Theorem 5.3.4]). Similarly, there exists a bijection $\varphi_{B}\colon B\setminus A\to A\setminus B$ such that $B-b+\varphi_{B}(b)$ is a basis for each $b\in B\setminus A$ , or equivalently, $b\in C_{B}(\varphi_{B}(b))$ . Therefore the graph consisting of edges $\{a\varphi_{A}(a)\mid a\in A\setminus B\}\cup\{b\varphi_{B}(b)\mid b\in B\setminus A\}$ is a $2$ -regular graph that covers $\mathcal{C}_{A}(B)\cup\mathcal{C}_{B}(A)$ , proving (a).
+By the symmetric exchange axiom, there exists a mapping – not necessarily a bijection – $\phi_{A}\colon A\setminus B\to B\setminus A$ such that both $A-a+\phi_{A}(a)$ and $B+a-\phi_{A}(a)$ are bases for each $a\in A\setminus B$ , or equivalently, the edge $a\phi_{A}(a)$ covers both $C_{A}(\phi_{A}(a))$ and $C_{B}(a)$ . Similarly, there exists a mapping $\phi_{B}\colon B\setminus A\to A\setminus B$ such that both $B-b+\phi_{B}(b)$ and $A+b-\phi_{B}(b)$ are bases for each $b\in B\setminus A$ , or equivalently, the edge $b\phi_{B}(b)$ covers both $C_{B}(\phi_{B}(b))$ and $C_{A}(b)$ . Consider the graph consisting of edges $\{a\phi_{A}(a)\mid a\in A\setminus B\}\cup\{b\phi_{B}(b)\mid b\in B\setminus A\}$ . Note that the graph may not be connected, but each vertex in $A\triangle B$ has degree at least one in it. Hence any maximum forest in this graph covers $\mathcal{C}_{A}(B)\cup\mathcal{C}_{B}(A)$ . As extending the forest to a tree by adding edges connecting the components maintains this property, (b) follows.
+∎
+Theorem 10 shows that the fundamental circuits corresponding to the basis pair can be covered by a 2-regular graph. However, the same question remains open when the graph is required to be a path, and this seemingly simple task already appears to be highly non-trivial. The essence of part (b) of the theorem is that, instead of a path, the covering can always be realized by a tree.
+3.2 Graphic matroids, paving matroids and spikes
+We could not identify any matroid for which () ‣ 3 would fail, hence we propose the following, probably overly optimistic conjecture.
+Conjecture 2.
+Let $A,B$ be bases of a matroid $M$ . Then there exists a path that alternates between $A\setminus B$ and $B\setminus A$ and covers $\mathcal{C}[A\cup B]$ .
+To validate the conjecture somewhat, we show that the statement holds for graphic matroids, paving matroids, and spikes.
+We start with a technical lemma.
+Lemma 11.
+Let $\mathcal{M}$ be a minor-closed class of matroids and ${(X)\in\{\ref{prop:r},\ref{prop:rp},\ref{prop:p},\ref{prop:pp}\}}$ . To verify that $(X)$ holds for each $M\in\mathcal{M}$ , it suffices to show that the property holds when the ground set is the disjoint union of $A$ and $B$ .
+Proof.
+Let $A$ and $B$ be bases of the matroid $M=(E,\mathcal{C})$ where $M\in\mathcal{M}$ . If $A\cap B\neq\emptyset$ or $A\cup B\neq E$ , then define $A^{\prime}\coloneqq A\setminus B$ , $B^{\prime}\coloneqq B\setminus A$ , $E^{\prime}\coloneqq A^{\prime}\cup B^{\prime}$ , and let $M^{\prime}=(E^{\prime},\mathcal{C}^{\prime})$ denote the matroid obtained from $M$ by deleting $E\setminus(A\cup B)$ and contracting $A\cap B$ . Note that $A^{\prime}$ and $B^{\prime}$ are disjoint bases of $M^{\prime}$ whose union is $E^{\prime}$ . Furthermore, for any circuit $C\in\mathcal{C}[A\cup B]$ , there exists a circuit $C^{\prime}\in\mathcal{C}^{\prime}[A^{\prime}\cup B^{\prime}]$ such that $C^{\prime}\subseteq C$ . Therefore, any graph proving $(X)$ for the pair $A^{\prime},B^{\prime}$ in $M^{\prime}$ also proves $(X)$ for the pair $A,B$ in $M$ .
+∎
+With the help of Lemma 11, we first verify the graphic case. It may be confusing that () ‣ 3 states the existence of a certain path and we are working with graphs, so let us emphasize that the path is defined on the elements of the ground set, i.e. the edges of the underlying graph, and it does not appear in the graph itself in any sense.
+Theorem 12.
+Graphic matroids have property () ‣ 3.
+Proof.
+Let $G=(V,E)$ be a graph with graphic matroid $M(G)$ . We prove the theorem by induction on $|E|$ . Note that () ‣ 3 clearly holds when $E=\emptyset$ . Take a pair of bases $A,B$ . As the class of graphic matroids is closed under taking minors, Lemma 11 applies, hence we may assume that $E$ is the disjoint union of $A$ and $B$ . Furthermore, we may assume that $G$ is connected as otherwise we can pick a vertex in each connected component and identify those, thus obtaining a connected graph with the same graphic matroid as the original one.
+By the above, we have $|E|=|A|+|B|=2(|V|-1)$ , hence $G$ has a vertex $v$ of degree at most three. If $v$ has degree two, then $G$ has an edge $a\in A$ and an edge $b\in B$ incident to $v$ . Since $G^{\prime}\coloneqq G-v$ is the union of disjoint spanning trees $A-a$ and $B-b$ , there exists a path $P^{\prime}$ covering the circuits of $M(G^{\prime})$ by the induction hypothesis. As every cycle of $G$ passing through $v$ uses the edges $a$ and $b$ , adding an extra edge to $P^{\prime}\cup\{ab\}$ between $a$ and the endpoint of $P^{\prime}$ in $B$ results in an alternating path between $A$ and $B$ covering the circuits of $M(G)$ .
+If $v$ has degree three, then we may assume that edges $a_{1},a_{2}\in A$ and $b\in B$ are incident to $v$ . Consider the graph $G^{\prime}$ obtained by contracting $a_{2}$ and deleting $b$ , let $A^{\prime}$ denote the spanning tree of $G^{\prime}$ obtained from $A$ by contracting $a_{2}$ , and define $B^{\prime}\coloneqq B-b$ . By the induction hypothesis, there exists a path $P^{\prime}$ alternating between $A^{\prime}$ and $B^{\prime}$ that covers the circuits of $M(G^{\prime})$ . Let $c$ be a neighbour of $a_{1}$ in $P^{\prime}$ and consider the path $P\coloneqq(P^{\prime}-a_{1}c)\cup\{a_{1}b,ba_{2},a_{2}c\}$ . We claim that $P$ covers every circuit $C$ of $M(G)$ . If $C$ corresponds to a cycle of $G$ that does not pass through $v$ , then it is also a circuit of $M(G^{\prime})$ , and therefore it is covered by $P^{\prime}-a_{1}c$ . If $b\in C$ , then either $a_{1}\in C$ or $a_{2}\in C$ , hence $C$ is covered either by $a_{1}b$ or $ba_{2}$ . The only remaining case is when $a_{1},a_{2}\in C$ . Let $C^{\prime}$ denote the cycle of $G^{\prime}$ obtained by contracting $a_{2}$ in $C$ . Then $C^{\prime}$ is covered by an edge of $P^{\prime}$ . If $c\not\in C$ , then this is an edge of $P^{\prime}-a_{1}c$ as well, otherwise $C$ is covered by the edge $a_{2}c$ . This proves that $P$ covers all circuits of $M(G)$ .
+∎
+Remark 13.
+The fact that the path in () ‣ 3 is defined on the edges of the graph might be confusing, hence let us rephrase Theorem 12 using graph terminology as it might be of independent combinatorial interest. The theorem is equivalent to the following: For any graph that is the union of two spanning trees $A$ and $B$ , its edges can be ordered in such a way that the elements of $A$ and $B$ appear alternately, and every cycle of $G$ contains two consecutive elements.
+A rank- $r$ matroid is called paving if each set of size at most $r-1$ is independent, or in other words, each circuit has size $r$ or $r+1$ .
+Theorem 14.
+Paving matroids have property () ‣ 3.
+Proof.
+We prove the theorem by induction on $|E|$ . Note that () ‣ 3 clearly holds when $E=\emptyset$ . Take a pair of bases $A,B$ . As the class of graphic matroids is closed under taking minors, Lemma 11 applies, hence we may assume that $E$ is the disjoint union of $A$ and $B$ .
+Let $a_{r}\in A$ and $b_{r}\in B$ such that $A-a_{r}+b_{r}$ is a basis. Then $A-a_{r}$ and $B-b_{r}$ are bases of the paving matroid $M^{\prime}$ obtained from $M$ by contracting $b_{r}$ and deleting $a_{r}$ . By the induction hypothesis, there exist orderings $a_{1},\dots,a_{r-1}$ of $A-a_{r}$ and $b_{1},\dots,b_{r-1}$ of $B-b_{r}$ such that the path $P^{\prime}=a_{1},b_{1},\dots,a_{r-1},b_{r-1}$ covers the circuits of $M^{\prime}$ . We claim that the path $P=a_{1},b_{1},\dots,a_{r},b_{r}$ covers each circuit of $M$ . Since $M$ is paving, we only need to consider circuits $C$ of size $r$ as circuits of size $r+1$ are clearly covered. If $a_{r}\not\in C$ , then $C-b_{r}$ contains a circuit of $M^{\prime}$ which is covered by $P^{\prime}$ . If $a_{r}\in C$ , then $C$ is covered by $P$ as $A$ is the only stable set of size $r$ containing $a_{r}$ . Therefore, $P$ covers every circuit of $M$ .
+∎
+A rank- $r$ spike with tip $t$ and legs $\{t,x_{1},y_{1}\},\dots,\{t,x_{r},y_{r}\}$ is a rank- $r$ matroid on the ground set $E=\{t,x_{1},y_{1},\dots,x_{r},y_{r}\}$ such that each leg is a circuit and, for $1\leq k\leq r-1$ , the union of any $k$ legs has rank $k+1$ . Equivalently, the family of the non-spanning circuits of a spike consists of the legs, all sets of the form $\{x_{i},y_{i},x_{j},y_{j}\}$ with $1\leq i<j\leq r$ , and a subset $\mathcal{H}\subseteq\{Z\subseteq E\mid|Z|=r,\ |Z\cap\{x_{i},y_{i}\}|=1\ \text{for $i=1,\dots,r$}\}$ such that the intersection of any two members of $\mathcal{H}$ has size at most $r-2$ .
+Theorem 15.
+Spikes have property () ‣ 3.
+Proof.
+Let $M$ be a spike defined as above. Observe that a set $Z\subseteq E$ is a basis if and only if one of the following holds.
+1. 
+ $t\in Z$ , $\{x_{\ell},y_{\ell}\}\cap Z=\emptyset$ for an index $1\leq\ell\leq r$ , and $|\{x_{i},y_{i}\}\cap Z|=1$ for all $i\in\{1,\dots,r\}\setminus\{\ell\}$ .
+2. 
+ $t\not\in Z$ and there exist distinct indices $k$ and $\ell$ such that $\{x_{k},y_{k}\}\subseteq Z$ , $\{x_{\ell},y_{\ell}\}\cap Z=\emptyset$ and $|\{x_{i},y_{i}\}\cap Z|=1$ for all $i\in\{1,\dots,r\}\setminus\{k,\ell\}$ .
+3. 
+ $t\not\in Z$ , $|\{x_{i},y_{i}\}\cap Z|=1$ for all $1\leq i\leq r$ , and $Z\not\in\mathcal{H}$ .
+We show by induction on $r$ that each pair $A,B$ of bases of $M$ has the property required by () ‣ 3. The statement clearly holds for $r\leq 2$ , hence we assume that $r\geq 3$ .
+First consider the case when $A\cap B\neq\emptyset$ . If $t\in A\cap B$ , then the statement follows by applying () ‣ 3 to the pair $A-t,B-t$ of bases of the matroid $M/t$ . Note that $M/t$ is a laminar, thus strongly base orderable matroid with family of bases $\{Z\subseteq E-t\mid|Z|=r-1,|\{x_{i},y_{i}\}\cap Z|=1\text{ for all $1\leq i\leq r$}\}$ . If $t\not\in A\cap B$ , then we may assume that $x_{r}\in A\cap B$ . If $t\not\in A\cup B$ , then the statement follows by applying the induction hypothesis to the pair of bases $A-x_{r},B-x_{r}$ of the matroid $M/x_{r}\backslash t$ which is a spike with tip $y_{r}$ and legs $\{x_{1},y_{1}\},\dots,\{x_{r-1},y_{r-1}\}$ . Similarly, if $y_{r}\not\in A\cup B$ , then we can apply the induction hypothesis to the pair of bases $A-x_{r},B-x_{r}$ of $M/x_{r}\backslash y_{r}$ which is a spike with tip $t$ and legs $\{x_{1},y_{1}\},\dots,\{x_{r-1},y_{r-1}\}$ . It remains to consider the case $t\in A\triangle B$ , $x_{r}\in A\cap B$ and $y_{r}\in A\cup B$ , when we may assume that $t\in A\setminus B$ and $y_{r}\in B\setminus A$ . As $z$ and $y_{r}$ are parallel in $M/x_{r}$ , the matroids $M/\{x_{r},t\}\backslash\{y_{r}\}$ and $M/\{y_{r},x_{r}\}\backslash\{t\}$ are the same. Let us denote this matroid by $M^{\prime}$ – note that $M^{\prime}$ is strongly base orderable as it is the minor of the laminar matroid $M/t$ . Let $P^{\prime}$ denote a path obtained by applying () ‣ 3 to the pair of bases $A-x_{r}-t$ and $B-x_{r}-y_{r}$ of $M^{\prime}$ . Then $P^{\prime}+y_{r}t$ 
+satisfies the requirements of () ‣ 3 for the basis pair $A,B$ in $M$ , as the union of any independent set of $M^{\prime}$ and either $\{x_{r},t\}$ or $\{x_{r},y_{r}\}$ is independent in $M$ .
+In the remaining cases $A\cap B=\emptyset$ . Suppose first that $t\in A\cup B$ . We may assume that $A=\{t,x_{1},\dots,x_{r-1}\}$ , and either $B=\{y_{2},\dots,y_{r},x_{r}\}$ or $B=\{y_{1},\dots,y_{r}\}$ . If $B=\{y_{2},\dots,y_{r},x_{r}\}$ , then the path $P=x_{2},y_{2},\dots,x_{r-1},y_{r-1},t,x_{r},x_{1},y_{r}$ alternating between $A$ and $B$ covers each circuit of $M\backslash y_{1}$ . Indeed, $x_{i}y_{i}\in P$ for each $2\leq i\leq r-1$ , it covers the leg $\{t,x_{r},y_{r}\}$ and it has no stable set $Z$ with $|\{x_{1},y_{1}\}\cap Z|=\dots=|\{x_{r},y_{r}\}\cap Z|=1$ . If $B=\{y_{1},\dots,y_{r}\}$ , then the path $P=t,y_{r},x_{1},y_{1},\dots,x_{r-1},y_{r-1}$ covers each circuit of $M\backslash x_{r}$ . Indeed, $x_{i}y_{i}\in P$ for each $1\leq i\leq r-1$ and the only stable set $Z$ of $P$ with $|\{x_{1},y_{1}\}\cap Z|=\dots=|\{x_{r},y_{r}\}\cap Z|=1$ is the basis $Z=\{y_{1},\dots,y_{r}\}=B$ .
+It remains to consider cases with $A\cap B=\emptyset$ and $A\cup B=E-t$ . If $A$ contains a pair $\{x_{i},y_{i}\}$ , then we may assume that $A=\{x_{1},y_{1},x_{3},x_{4},\dots,x_{r}\}$ and $B=\{x_{2},y_{2},y_{3},y_{4},\dots,y_{r}\}$ . Consider the paths $P_{1}=x_{1},y_{2},y_{1},x_{2},x_{3},y_{3},\dots,x_{r},y_{r}$ and $P_{2}=x_{1},x_{2},y_{1},y_{2},x_{3},y_{3},\dots,x_{r},y_{r}$ . Each of $P_{1}$ and $P_{2}$ covers the circuits of the form $\{x_{i},y_{i},x_{j},y_{j}\}$ for $1\leq i<j\leq r$ , since both of them contains the edges $x_{3}y_{3},\dots,x_{r}y_{r}$ and covers $\{x_{1},y_{1},x_{2},y_{2}\}$ . The only set $Z$ with $|\{x_{1},y_{1}\}\cap Z|=\dots=|\{x_{r},y_{r}\}\cap Z|=1$ which is a stable set of $P_{1}$ or $P_{2}$ is $Z_{1}=\{x_{1},x_{2},y_{3},y_{4},\dots,y_{r}\}$ and $Z_{2}=\{x_{1},y_{2},y_{3},\dots,y_{r}\}$ , respectively. Since $|Z_{1}\cap Z_{2}|=r-1$ , at least one of $Z_{1}$ and $Z_{2}$ is not in $\mathcal{H}$ and thus at least one of $P_{1}$ and $P_{2}$ covers every circuit of $M\backslash t$ .
+In the only remaining case we may assume that $A=\{x_{1},\dots,x_{r}\}$ and $B=\{y_{1},\dots,y_{r}\}$ . We claim that the path $P=y_{r},x_{1},y_{1},\dots,x_{r-1},y_{r-1},x_{r}$ covers each circuit of $M\backslash t$ . Indeed, $x_{i}y_{i}\in P$ for each $1\leq i\leq r-1$ and the only stable sets $Z$ of $P$ with $|\{x_{1},y_{1}\}\cap Z|=\dots=|\{x_{r},y_{r}\}\cap Z|=1$ are the bases $Z=\{x_{1},\dots,x_{r}\}=A$ and $Z=\{y_{1},\dots,y_{r}\}=B$ .
+∎
+3.3 Applications for covering problems
+Motivated by a conjecture of Du, Hsu and Hwang [15], Erdős [18] popularized the so-called cycle plus triangles problem which asked whether every 4-regular graph that is the edge-disjoint union of a Hamiltonian cycle and pairwise vertex-disjoint triangles is 3-colorable. Fleischner and Stiebitz [19] answered this question in the affirmative. In the past decades, their work was followed by a series of papers that studied related problems, summarized below.
+Theorem 16.
+(Fleischner and Stiebitz, McDonald and Puleo, Haxell)
+(a) 
+If a graph $G$ is the edge-disjoint union of a Hamiltonian cycle and some pairwise vertex-disjoint triangles, then $G$ is 3-colorable.
+(b) 
+If $k\geq 4$ and a graph $G$ is the edge-disjoint union of a Hamiltonian cycle and some pairwise vertex-disjoint complete subgraphs each on at most $k$ vertices, then $G$ is $k$ -colorable.
+(c) 
+If $k\geq 4$ and a graph $G$ is the edge-disjoint union of a 2-regular bipartite graph and some pairwise disjoint cliques each on at most $k$ vertices, then $G$ is $k$ -colorable.
+(d) 
+If $k\geq 5$ and a graph $G$ is the edge-disjoint union of a 2-regular graph and some pairwise vertex-disjoint complete subgraphs each on at most $k$ vertices, then $G$ is $k$ -colorable.
+Statement (b) was proven by Fleischner and Stiebitz [20]. McDonald and Puleo [32] verified for $k\geq 4$ that if a graph is decomposable into cliques on exactly $k$ vertices and a 2-regular graph with at most one odd cycle of length exceeding three, then it is $k$ -colorable. This implies statement (c), as we can extend the cliques having less than $k$ vertices and the 2-regular bipartite graph by adding extra vertices and edges to ensure that each clique has exactly $k$ vertices. Finally, statement (d) follows from the result of Haxell [23] that a graph is $k$ -colorable if it is decomposable into cliques on $k$ vertices and a graph $H$ such that $k\geq 3\Delta(H)-1$ . Note that the complete graph on four vertices shows that statements (b) and (c) do not hold for $k=3$ , while it is open whether (d) holds for $k=4$ .
+Theorem 17.
+Let $M_{1}=(E,\mathcal{I}_{1})$ be a 2-coverable matroid and $M_{2}=(E,\mathcal{I}_{2})$ be a $k$ -coverable partition matroid.
+(a) 
+If $k\geq 3$ and $M_{1}$ satisfies () ‣ 3, then $\beta(M_{1}\cap M_{2})\leq k$ .
+(b) 
+If $k\geq 4$ and $M_{1}$ satisfies () ‣ 3, then $\beta(M_{1}\cap M_{2})\leq k$ .
+(c) 
+If $k\geq 5$ and $M_{1}$ satisfies () ‣ 3, then $\beta(M_{1}\cap M_{2})\leq k$ .
+Proof.
+To prove (a), let $E=A\cup B$ be a decomposition of $M_{1}$ into two bases and $P$ be a path on $A\triangle B$ covering the circuits of $M_{1}$ . Let $E_{1},\dots,E_{q}$ denote the partition classes of $M_{2}$ and let $Q$ denote the graph obtained by taking the union of complete graphs on $E_{i}$ for $i=1,\dots,q$ . We claim that the graph $G\coloneqq P\cup Q$ is $k$ -colorable. Indeed, if $k=3$ , then $G$ is a subgraph of a graph appearing in Theorem 16(a), while for $k\geq 4$ we can apply Theorem 16(b) after adding an extra edge to $G$ between the end vertices of $P$ . As each stable set of $P$ is independent in $M_{1}$ and each stable set of $Q$ is independent in $M_{2}$ , the $k$ -colorability of $G$ implies that $\beta(M_{1}\cap M_{2})\leq k$ .
+Parts (b) and (c) can be proved analogously using Theorem 16(c) and (d), respectively.
+∎
+One of the main consequences of the results discussed so far is that we confirm Conjecture 1 for instances that were not settled before.
+Corollary 18.
+Conjecture 1 holds if $M_{1}$ is either a graphic matroid, a paving matroid or a spike with $\beta(M_{1})=2$ , and $M_{2}$ is a partition matroid.
+Proof.
+The conjecture was settled for $\beta(M_{2})\leq 2$ in [4]. For $\beta(M_{2})\geq 3$ , the statement follows by combining Theorems 12 – 15 and Theorem 17(a).
+∎
+Kotlar and Ziv [29] defined an element $e$ of a matroid $M$ to be $(k+1)$ -spanned if there exist $k+1$ pairwise disjoint sets such that $e$ is spanned by each of them in $M$ . This condition is equivalent to the existence of $k$ pairwise disjoint sets not containing $e$ but spanning it, as one of the sets can be chosen to be $\{e\}$ . If a matroid does not contain any $(k+1)$ -spanned element, then it is not difficult to show that it is $k$ -coverable. Kotlar and Ziv conjectured that if no element is $(k+1)$ -spanned in either $M_{1}$ or $M_{2}$ , then $\beta(M_{1}\cap M_{2})\leq k$ . They verified the conjecture if $k=2$ or the ground set decomposes into $k$ bases in each of $M_{1}$ and $M_{2}$ . Next we show how the absence of $(k+1)$ -spanned elements can be combined with () ‣ 3 or () ‣ 3.
+Theorem 19.
+Let $M_{1}=(E,\mathcal{I}_{1})$ be a 2-coverable matroid and $M_{2}=(E,\mathcal{I}_{2})$ be a matroid with no $(k+1)$ -spanned elements.
+(a) 
+If $M_{1}$ satisfies () ‣ 3, then $\beta(M_{1}\cap M_{2})\leq k+1$ .
+(b) 
+If $M_{1}$ satisfies () ‣ 3, then $\beta(M_{1}\cap M_{2})\leq k+2$ .
+Proof.
+To prove (a), let $E=\{e_{1},\dots,e_{n}\}$ be such that every stable set of the path defined by the ordering $e_{1},\dots,e_{n}$ is independent in $M_{1}$ . Color the elements in the order $e_{1},\dots,e_{n}$ greedily with positive integers such that an element $e_{i}$ receives the smallest color $c$ which is distinct from the color of $e_{i-1}$ , and the set of elements already having color $c$ does not span $e_{i}$ in $M_{2}$ . This procedure results in a coloring such that each color class is independent in $M_{2}$ and form a stable set of the path, thus it is independent in $M_{1}$ as well. As $M_{2}$ contains no $(k+1)$ -spanned elements, the number of colors used is at most $k+1$ . This proves that $\beta(M_{1}\cap M_{2})\leq k+1$ .
+Statement (b) follows by a similar greedy argument.
+∎
+Aharoni and Berger [3] defined a graph $G$ to be matroidally $k$ -colorable if for every $k$ -coverable matroid $M$ on the vertex set of $G$ , the ground set can be decomposed into $k$ stable sets of $G$ which are independent in $M$ . The following facts are not difficult to show for matroidally $k$ -colorable graphs.
+Lemma 20.
+(a) 
+A subgraph of a matroidally $k$ -colorable graph is matroidally $k$ -colorable.
+(b) 
+A matroidally $k$ -colorable graph is matroidally $(k+1)$ -colorable.
+Proof.
+The proof of (a) is straightforward. To prove (b), let $G$ be a matroidally $k$ -colorable graph on vertex set $V$ and $M$ be a $(k+1)$ -coverable matroid on $V$ . Let $V=I_{1}\cup\dots\cup I_{k+1}$ be a partition of $V$ into independent sets of $M$ . As the graph $G[I_{1}\cup\dots I_{k}]$ is matroidally $k$ -coverable by (a) and $M\backslash I_{k+1}$ is a $k$ -coverable matroid on its vertex set, there exist stable sets $S_{1},\dots,S_{k}$ of $G$ which are independent in $M\backslash I_{k+1}$ such that $S_{1}\cup\dots\cup S_{k}=I_{1}\cup\dots\cup I_{k}$ . Since $G[S_{2}\cup\dots\cup S_{k}\cup I_{k+1}]$ is matroidally $k$ -coverable by (a) and $M\backslash S_{1}$ is a $k$ -coverable matroid on its vertex set, there exist stable sets $S^{\prime}_{2},\dots,S^{\prime}_{k+1}$ of $G$ which are independent in $M\backslash S_{1}$ such that $S^{\prime}_{2}\cup\dots\cup S^{\prime}_{k+1}=S_{2}\cup\dots\cup S_{k}\cup I_{k+1}$ . Then $V=S_{1}\cup S^{\prime}_{2}\cup\dots\cup S^{\prime}_{k+1}$ is a partition of $V$ into stable sets of $G$ which are independent in $M$ .
+∎
+As a generalization of Theorem 16(a), Aharoni and Berger [3] conjectured that the cycle $C_{3\ell}$ is matroidally 3-colorable for every $\ell\geq 1$ . Their conjecture, when combined with Lemma 20(a), would imply the following.
+Conjecture 3.
+Every path is matroidally 3-colorable.
+Remark 21.
+It is reasonable to ask whether there is a connection between Conjectures 1 and 3. It turns out that the latter implies the former when $M_{1}$ is $2$ -coverable matroid satisfying () ‣ 3.
+Indeed, let $P$ be a path on vertex set $E$ such that every stable set of $P$ is independent in $M_{1}$ , and let $M_{2}=(E,\mathcal{I}_{2})$ be an arbitrary $k$ -coverable matroid. If $k=2$ , then $\beta(M_{1}\cap M_{2})\leq 3$ holds by the results of Aharoni, Berger and Ziv [4]. If $k\geq 3$ and Conjecture 3 holds, then $P$ is matroidally $k$ -colorable by Lemma 20(b), hence $E$ can be decomposed into $k$ stable sets of $P$ which are independent set in $M_{2}$ . This gives a decomposition of $E$ into $k$ common independent sets of $M_{1}$ and $M_{2}$ .
+By the above reasoning, Conjectures 2 and 3 together would imply Conjecture 1 when $M_{1}$ is $2$ -coverable.
+Finally, let us mention an interesting result on the intersection of $q$ matroids satisfying () ‣ 3. Let $M_{1},\dots,M_{q}$ be $2$ -coverable matroids over the same ground set. In general, not much is known about the minimum number of common independent sets $\beta(M_{1}\cap\dots,\cap M_{q})$ needed to cover their ground set. An obvious upper bound is the product of their individual covering numbers, that is, $\beta(M_{1}\cap\dots\cap M_{q})\leq\prod_{i=1}^{q}\beta(M_{i})=2^{q}$ . Nevertheless, a much stronger upper bound follows if each $M_{i}$ satisfies () ‣ 3.
+Theorem 22.
+Let $M_{1},\dots,M_{q}$ be 2-coverable matroids satisfying () ‣ 3. Then $\beta(M_{1}\cap\dots\cap M_{q})\leq 2q+1$ .
+Proof.
+Let $G_{i}$ be a 2-regular graph covering the circuits of $M_{i}$ for $1\leq i\leq q$ . Since the graph $G\coloneqq G_{1}\cup\dots\cup G_{q}$ has maximum degree at most $2q$ , it is $(2q+1)$ -colorable. Since every stable set of $G$ is stable in each $G_{i}$ , this coloring gives a decomposition of the ground set into $2q+1$ common independent sets of the matroids.
+∎
+3.4 Applications for exchange sequences
+While studying the structure of symmetric exchanges in matroids, Gabow [22] formulated a beautiful conjecture on cyclic orderings of matroids. The question was later raised again by Wiedemann [38] and by Cordovil and Moreira [13].
+Conjecture 4.
+(Gabow) 
+Let $A$ and $B$ be bases of a rank- $r$ matroid $M$ . Then there exist orderings $(a_{1},\dots,a_{r})$ and $(b_{1},\dots,b_{r})$ of the elements of $A$ and $B$ , respectively, such that their concatenation $(a_{1},\dots,a_{r},b_{1},\dots,b_{r})$ is a cyclic ordering in which any interval of length $r$ forms a basis.
+An easy reasoning shows that the statement holds for strongly base orderable matroids. Apart from this, the conjecture was settled for graphic matroids [26, 13, 38], sparse paving matroids [10], matroids of rank at most $4$  [30] and $5$  [28], split matroids [7], and spikes [5]. In what follows, we show that () ‣ 3 implies a slightly weakened version of the conjecture.
+Theorem 23.
+Let $A$ and $B$ bases of a rank- $r$ matroid $M$ satisfying () ‣ 3. Then there exist orderings $(a_{1},\dots,a_{r})$ and $(b_{1},\dots,b_{r})$ of the elements of $A$ and $B$ , respectively, such that their concatenation $(a_{1},\dots,a_{r},b_{1},\dots,b_{r})$ is a cyclic ordering in which any interval $\{a_{i},\dots,a_{r},b_{1},\dots,b_{i-1}\}$ forms a basis for $i=1,\dots,r$ , and any interval $\{b_{i},\dots,b_{r},a_{1},\dots,a_{i-1}\}$ has rank at least $r-1$ for $i=1,\dots,r$ .
+Proof.
+Let $k=|A\setminus B|=|B\setminus A|$ . By property () ‣ 3, there exists a path $P$ that alternates between $A\setminus B$ and $B\setminus A$ such that the union of $A\cap B$ and any stable set in the path is independent in $M$ . Let the elements along this path be denoted by $b_{1},a_{1},\dots,b_{k},a_{k}$ , where $a_{i}\in A\setminus B$ and $b_{i}\in B\setminus A$ for $i=1,\dots,k$ . Furthermore, take two copies of each element in $A\cap B$ and denote those by $a_{j}$ and $b_{j}$ for $j=k+1,\dots,r$ . We claim that the ordering $(a_{1},\dots,a_{r},b_{1},\dots,b_{r})$ satisfies the conditions of the theorem. To see this, observe that, for $1\leq i\leq r$ , the interval $\{a_{i},\dots,a_{r},b_{1},\dots,b_{i-1}\}$ is the union of $A\cap B$ and a set that is stable on the path $P$ . Similarly, for $1\leq i\leq r$ , the interval $\{b_{i},\dots,b_{r},a_{1},\dots,a_{i-1}\}$ is the union of a copy of $A\cap B$ and a set that spans at most a single edge of the path, i.e. $a_{i-1}b_{i}$ . However, deleting either $a_{i-1}$ or $b_{i}$ from the set, we get an independent set, concluding the proof.
+∎
+3.5 Covering circuits with few edges
+Each of properties () ‣ 3 – () ‣ 3, and hence Conjecture 2 states that the circuits of a matroid $M$ of rank $r(M)$ with $\beta(M)=2$ can be covered by $O\left(2\cdot r(M)\right)$ edges. This rightly raises the question of whether a similar statement could hold for higher values of the covering number, e.g. whether all circuits of a matroid $M$ can be covered by a small number of edges. The next lower bound only uses the fact that each independent set of $M$ has size at most $r(M)$ .
+Theorem 24.
+Let $M$ be a matroid such that its ground decomposes into disjoint bases. Then every graph covering the circuits of $M$ has at least $\Theta\left(\beta(M)^{2}\cdot r(M)\right)$ edges.
+Proof.
+Let $G=(E,F)$ be a graph covering the circuits of $M$ and let $\alpha(G)$ denote the size of the largest stable set of $G$ . As each stable set of $G$ is independent in $M$ , $\alpha(G)\leq r(M)$ holds. It is known (see e.g. [9, Theorem 13.5])
+that $\alpha(G)\geq\frac{n^{2}}{n+2m}$ holds for each graph with $n$ vertices and $m$ edges. Therefore,
+ $r(M)\geq\alpha(G)\geq\frac{|E|^{2}}{|E|+2|F|}=\frac{\beta(M)^{2}\cdot r(M)^{2}}{\beta(M)\cdot r(M)+2|F|},$ 
+which implies
+ $|F|\geq\frac{\beta(M)^{2}\cdot r(M)-\beta(M)\cdot r(M)}{2}=\Theta\left(\beta(M)^{2}\cdot r(M)\right).$ 
+∎
+The lower bound of Theorem 24 is consistent with a conjecture that was suggested by the authors and Yamaguchi [8], stating that any matroid $M$ of rank $r(M)$ has a so-called reduction to a partition matroid with partition classes of size at most $2\cdot\beta(M)$ . Indeed, taking a complete graph on the elements of each partition class would result in a graph of at most ${2\cdot\beta(M)\choose 2}\cdot r(M)$ edges that covers every circuit of the matroid. The conjecture was disproved in [2] and independently in [31], and their proofs also show a lower bound of $\Theta\left(\beta(M)^{2}\cdot\log\beta(M)\cdot r(M)\right)$ .
+For any matroid $M$ the size of the ground set is bounded by $\beta(M)\cdot r(M)$ , hence $O(\beta(M)^{2}\cdot r(M)^{2})$ edges always suffice to cover all the circuits – just take a complete graph on $E$ . It remains an open problem whether there exists a function $f$ such that for any matroid $M$ , the circuits can be covered using $O(f(\beta(M))\cdot r(M))$ edges.
+4 Conclusions
+In this paper, we studied relaxations of strongly base orderability of matroids, and showed that the combination of the proposed relaxations with existing results and conjectures leads to interesting observations. Our hopes are that this new approach will serve as a useful tool in matroid optimization problems, especially when working with disjoint common independent sets of two or more matroids.
+Conjecture 2 remains an intriguing open problem even for special classes of matroids. While Theorem 12 settles the conjecture for graphic matroids, an analogous result is missing for the co-graphic case. Similarly to Remark 13, it is worth rephrasing the question using graph terminology.
+Question 1.
+Given a graph that is the union of two spanning trees $A$ and $B$ , is it always possible to order the edges in such a way that the elements of $A$ and $B$ appear alternately, and every cut of $G$ contains two consecutive elements?
+Another interesting question is to characterize the forbidden minors of SBRO matroids. We have seen that $M(K_{4})$ and $J$ are forbidden minors, and one can also verify that the matroid $X_{10}$ described in Remark 9 is also a forbidden minor for this class. However, we are not aware of any further examples, though the cases of $\sbo$ and $\bo$ matroids suggests that one should expect an infinite number of forbidden minors, see [11].
+Question 2.
+What are the forbidden minors of the class $\sbro$ ? Is there an infinite sequence of them?
+Finally, let us repeat the question raised in Section 3.5.
+Question 3.
+Is there a function $f$ such that the circuits of any matroid $M$ can be covered by $O(f(\beta(M))\cdot r(M))$ edges?
+Acknowledgement.
+Tamás Schwarcz was supported by the ÚNKP-22-3 New National Excellence Program of the Ministry for Culture and Innovation from the source of the National Research, Development and Innovation Fund. The work was supported by the Lendület Programme of the Hungarian Academy of Sciences – grant number LP2021-1/2021 and by the Hungarian National Research, Development and Innovation Office – NKFIH, grant number FK128673.
+References
+[1]
+A. Abdi, G. Cornuéjols, and M. Zlatin.
+On packing dijoins in digraphs and weighted digraphs.
+arXiv preprint arXiv:2202.00392, 2022.
+[2]
+D. Abdolazimi, A. R. Karlin, N. Klein, and S. O. Gharan.
+Matroid partition property and the secretary problem.
+arXiv preprint arXiv 2111.12436, 2021.
+[3]
+R. Aharoni and E. Berger.
+The intersection of a matroid and a simplicial complex.
+Transactions of the American Mathematical Society,
+358(11):4895–4917, 2006.
+[4]
+R. Aharoni, E. Berger, and R. Ziv.
+The edge covering number of the intersection of two matroids.
+Discrete Mathematics, 312(1):81–85, 2012.
+[5]
+K. Bérczi, B. Mátravölgyi, and T. Schwarcz.
+Weighted exchange distance of basis pairs.
+arXiv preprint arXiv:2211.12750, 2022.
+[6]
+K. Bérczi and T. Schwarcz.
+Complexity of packing common bases in matroids.
+Mathematical Programming, 188(1):1–18, 2021.
+[7]
+K. Bérczi and T. Schwarcz.
+Exchange distance of basis pairs in split matroids.
+arXiv preprint arXiv:2203.01779, 2022.
+[8]
+K. Bérczi, T. Schwarcz, and Y. Yamaguchi.
+List colouring of two matroids through reduction to partition
+matroids.
+SIAM Journal on Discrete Mathematics, 35(3):2192–2209, 2021.
+[9]
+C. Berge.
+Graphes et hypergraphes.
+Dunod, Paris, 1970.
+[10]
+J. E. Bonin.
+Basis-exchange properties of sparse paving matroids.
+Advances in Applied Mathematics, 50(1):6–15, 2013.
+[11]
+J. E. Bonin and T. J. Savitsky.
+An infinite family of excluded minors for strong base-orderability.
+Linear Algebra and its Applications, 488:396–429, 2016.
+[12]
+T. H. Brylawski.
+A combinatorial model for series-parallel networks.
+Transactions of the American Mathematical Society, 154:1–22,
+1971.
+[13]
+R. Cordovil and M. L. Moreira.
+Bases-cobases graphs and polytopes of matroids.
+Combinatorica, 13(2):157–165, 1993.
+[14]
+J. Davies and C. McDiarmid.
+Disjoint common transversals and exchange structures.
+Journal of the London Mathematical Society, 2(1):55–62, 1976.
+[15]
+D. Du, D. Hsu, and F. Hwang.
+The Hamiltonian property of consecutive- $d$ digraphs.
+Mathematical and Computer Modelling, 17(11):61–63, 1993.
+[16]
+J. Edmonds.
+Edge-disjoint branchings.
+In Combinatorial Algorithms. Academic Press, New York, 1973.
+[17]
+J. Edmonds and D. R. Fulkerson.
+Transversals and matroid partition.
+Journal of Research of the National Bureau of Standards (B),
+69:147–153, 1965.
+[18]
+P. Erdős.
+On some of my favourite problems in graph theory and block designs.
+Le Matematiche, 45(1):61–74, 1990.
+[19]
+H. Fleischner and M. Stiebitz.
+A solution to a colouring problem of P. Erdős.
+Discrete Mathematics, 101(1-3):39–48, 1992.
+[20]
+H. Fleischner and M. Stiebitz.
+Some remarks on the cycle plus triangles problem.
+In The Mathematics of Paul Erdös II, pages 136–142. Springer,
+Berlin, 1997.
+[21]
+A. Frank.
+Connections in Combinatorial Optimization, volume 38 of Oxford Lecture Series in Mathematics and its Applications.
+Oxford University Press, Oxford, 2011.
+[22]
+H. Gabow.
+Decomposing symmetric exchanges in matroid bases.
+Mathematical Programming, 10(1):271–276, 1976.
+[23]
+P. E. Haxell.
+On the strong chromatic number.
+Combinatorics, Probability and Computing, 13(6):857–865, 2004.
+[24]
+R. Huang and G.-C. Rota.
+On the relations of various conjectures on Latin squares and
+straightening coefficients.
+Discrete Mathematics, 128(1-3):225–236, 1994.
+[25]
+A. W. Ingleton.
+Transversal matroids and related structures.
+In Higher Combinatorics, pages 117–131. Springer Netherlands,
+1977.
+[26]
+Y. Kajitani, S. Ueno, and H. Miyano.
+Ordering of the elements of a matroid such that its consecutive w
+elements are independent.
+Discrete Mathematics, 72(1-3):187–194, 1988.
+[27]
+D. König.
+Über Graphen und ihre Anwendung auf Determinantentheorie
+und Mengenlehre.
+Mathematische Annalen, 77(4):453–465, 1916.
+[28]
+D. Kotlar.
+On circuits and serial symmetric basis-exchange in matroids.
+SIAM Journal on Discrete Mathematics, 27(3):1274–1286, 2013.
+[29]
+D. Kotlar and R. Ziv.
+On partitioning two matroids into common independent subsets.
+Discrete Mathematics, 300(1-3):239–244, 2005.
+[30]
+D. Kotlar and R. Ziv.
+On serial symmetric exchanges of matroid bases.
+Journal of Graph Theory, 73(3):296–304, 2013.
+[31]
+M. Leichter, B. Moseley, and K. Pruhs.
+On the impossibility of decomposing binary matroids.
+Operations Research Letters, 50(5):623–625, 2022.
+[32]
+J. McDonald and G. J. Puleo.
+Strong coloring 2-regular graphs: Cycle restrictions and partial
+colorings.
+Journal of Graph Theory, 100(4):653–670, 2022.
+[33]
+J. Oxley.
+Matroid Theory, volume 21 of Oxford Graduate Texts in
+Mathematics.
+Oxford University Press, Oxford, second edition, 2011.
+[34]
+J. G. Oxley.
+A characterization of the ternary matroids with no $M(K_{4})$ -minor.
+Journal of Combinatorial Theory, Series B, 42(2):212–249,
+1987.
+[35]
+A. Schrijver.
+Combinatorial Optimization: Polyhedra and Efficiency.
+Springer, Berlin, 2003.
+[36]
+J. A. Sims.
+A complete class of matroids.
+The Quartefrly Journal of Mathematics, 28(4):449–451, 1977.
+[37]
+D. J. A. Welsh.
+Matroid Theory.
+Academic Press, London, 1976.
+[38]
+D. Wiedemann.
+Cyclic base orders of matroids.
+Manuscript, 1984.
+[39]
+D. R. Woodall.
+Menger and Kőnig systems.
+In Theory and Applications of Graphs, pages 620–635. Springer,
+Berlin, 1978.
+ Experimental support, please
+ view the build logs
+ for errors. Generated by
+ L
+ A
+ T
+ E
+ xml
+ [FIGURE [LOGO]] 
+ .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+ support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+ methods listed below:
+Click the "Report Issue" (
+ ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+ may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+ should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+ all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+ We gratefully acknowledge support from our major funders,
+ member institutions, ,
+ and all contributors.
+ About ·
+ Help ·
+ Contact ·
+ Subscribe ·
+ Copyright ·
+ Privacy ·
+ Accessibility ·
+ Operational Status (opens in new tab)

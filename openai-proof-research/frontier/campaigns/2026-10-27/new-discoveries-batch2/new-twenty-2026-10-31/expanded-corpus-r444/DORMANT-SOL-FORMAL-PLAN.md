@@ -1,0 +1,3 @@
+# DORMANT — NO DISPATCH
+
+No qualified full candidate exists. No ACTUAL full survivor is asserted and no formalization is authorized by this handoff. Ordinary routes have precise universal gaps in ORDINARY-ROUTES.md. Any later root-authorized formal lane would first require full exact-literal/source qualification, complete proof, current applicable prior bodies, and independent adversarial review. Eventual endpoint must include all literal definitions and bridges with pinned Lean/mathlib, only propext/Classical.choice/Quot.sound, no sorry/admit/added axioms/unsafe/native_decide, source-only extracted strict replay and paper. These requirements are unpaid. Zero credit; campaign remains57/60 beyond39 prior,96total.

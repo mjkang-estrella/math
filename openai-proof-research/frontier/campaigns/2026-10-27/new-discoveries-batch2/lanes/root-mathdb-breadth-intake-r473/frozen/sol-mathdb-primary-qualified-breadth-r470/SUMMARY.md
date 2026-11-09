@@ -1,0 +1,15 @@
+# r470 breadth screening — zero proposals
+
+Read all fifty assigned literal statements and quantifiers. Retained 49 distinct arXiv PDF bodies (two records share one source), with UTC, embedded versions where extractable, and byte hashes. Inspected selected question/result/discussion passages; retained bodies and keyword locators are not whole-body reads or dependency audits. Every record has its exact literal statement, UTF-8 statement hash, canonical record hash, and original chunk/line in dispositions.json.
+
+The independent preflight checked 819 manifest/original bindings with zero mismatches, including all twenty inventory chunks IN PLACE and all EIGHT separately listed frozen_inputs. The intake's 3,083 statement reviews are reported baseline only. The exact fifty are disjoint from coverage, the r466 active reservation list, accepted associations, historical record-ID associations and the five explicit exclusions. No substitutions; 372627 was not investigated. Flat references only, no recursive corpus/history copies; upstream verifiers/receipts were not executed or rewritten.
+
+Source-internal exclusions include the OFDM retraction (329410), the cube reconstruction counterexample (330034), the degenerate-Ramsey implication (330515), the one-edge power-hypergraph exception (330690), and the printed packing counterexample (331133). Literal low-k zero-sum scope and the omitted even requirement in the core-partition question are no-credit issues. Kari's stronger-rank refutation does not settle 330653; representability counterexamples do not automatically refute 331030; the solved weak-separation quote does not settle 331343.
+
+Two bounded checks executed: all six pairs in C2 x C2 for the literal low-k inconsistency; all 792 five-subsets of the printed 4K3 packing example, confirming no independent five-set and arithmetic 26 <= 29. These are existing-source/scope diagnostics, not new results. All other bounded checks are explicitly not executed. The initial tensor-list diagnostic is withdrawn and preserved in failures.json.
+
+No candidate survived into a hypothesis brief. Exact definition, dependency, closest-successor and current-registry gaps remain HOLD; they are not claims of mathematical hardness. Zero proposals, zero novelty clearances, zero discovery credit. No MathDB requests (429 HOLD), forbidden routes, retries, browsers, accounts, uploads or public mutations. Counts remain 9 additional / 39 total / next 40. Root alone accepts; no shared coverage/count files changed.
+
+Payload manifest excludes ONLY manifest.json and final-receipt.json by exact relative path. All stored logs, including preserved diagnostics, are payload members. The independent verifier rechecks actual originals, manifests, assignment, statements, retained sources and exact payload; its negative test must fail nonzero. Integrity PASS is neither mathematics PASS nor novelty PASS.
+
+Disposition counts: {"EXCLUDE_LITERAL_SCOPE": 2, "EXCLUDE_SOURCE": 5, "HOLD_DEPENDENCIES": 4, "HOLD_PRIMARY_ORIGIN": 1, "HOLD_SOURCE_SCOPE": 4, "PARK": 31, "PARK_SCOPE_CONFLATION": 3}

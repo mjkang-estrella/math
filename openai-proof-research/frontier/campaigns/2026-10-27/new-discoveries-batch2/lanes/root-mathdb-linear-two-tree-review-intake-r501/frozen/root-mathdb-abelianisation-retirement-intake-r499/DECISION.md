@@ -1,0 +1,9 @@
+# MathDB 339564 retired by positive published evidence
+
+Adopt r496's recommendation: RETIRE MathDB 339564 from discovery investment. The independent reviewer retained the published Noferini–Williams paper, Linear Algebra and its Applications 708 (2025), 372–404, DOI 10.1016/j.laa.2024.12.003, and read Theorem 4.10, Lemma 4.11, the relevant proof and Corollary 4.12. The corollary expressly identifies Mohamed–Williams Conjecture 4.4; the stronger abelian-group decomposition covers every target n>=8 with gcd(n,6)=2. The review spells out equality of presentations and nontrivial factor/prime-quotient checks, including the target's lower bound so that small-n wording is not silently inherited.
+
+This is positive published subsumption, not absence-of-hits novelty reasoning. No exhaustive priority or current-registry clearance is claimed. Root adopts the independent applicability finding and does not replay mathematics. The author's alternative proof was not fully audited after the decisive prior screen; it is not marked PASS. Source order-formula typo is uncredited.
+
+Preserve reviewer failure: initial author-manifest exclusion-key mismatch, corrected with failed script retained. All original artifacts and source bindings remain unchanged. Root independently checks the review payload, actual input refs and retained/original/copy bindings; separate final verification follows build. Integrity is not mathematical certification.
+
+Coverage unchanged at 3,683 reported literal reviews. Claude r494 reviews 338290 and Sol r498 reviews 337963; both remain HOLD. Return the free Sol slot to fifty disjoint breadth records in queue.json/reserved-ids.json, assigned to r500. There are no other active breadth reservations. Existing 372627 exclusion carries forward. Counts remain 9 additional / 39 total / next 40. No MathDB or public changes.

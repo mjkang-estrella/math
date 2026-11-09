@@ -1,0 +1,13 @@
+# R295 research handback
+
+Twenty immutable reserved IDs reviewed at the literal-statement level; twenty ID-keyed dispositions in results.json. Reservation SHA256 before/after:9717b7600f4ba33ab67626dfb42ca3e5c1647ae64c11abd8458d32387d9784db, unchanged. Exact raw newline records, parsed full records and chunk/line/raw/statement hashes are preserved. No reselect or padding.
+
+Credit0; accepted campaign count remains52/60. No qualified full new ordinary endpoint and no Pi execution recommendation.369163 formal implementation and Sol journal comparison untouched.
+
+Three public-proof exclusions:339902 is source Theorem3.1 with exact rectangular-staircase substitution;325559 is the established full KLR theorem (survey4.4 and later direct proof);381617 clause(iii) is explicitly disproved by its own source Theorem1.3. Two literal-domain exclusions:336023 at epsilon=1, and367412 missing gamma<=alpha,beta. The latter has a complete exact360-per-part H7 blow-up with density3/20 versus asserted1/6; it is a printed-construction/domain bridge, not a significant new resolution. These are explicit proof/scope reasons, not ease-only exclusions.
+
+Two ordinary HOLD routes sustained beyond initial shortcuts:364196 suited Wordle history-polynomial independence plus a specific missing inhomogeneous colored-descent filtration lemma;329383 product-law polarization plus the missing cone-orbit rigidity/reconstruction lemma. Ordinary monochrome Wordle was proved publicly in September2026, but its successor Section7 explicitly leaves multicolor optimality conjectural. Do not conflate those endpoints. ATTEMPTS.md gives deductions, failures, hypotheses and stopping points. Remaining13 records are parked with concrete full-scope obstacles; no asymptotic or flagship route is passed to execution.
+
+Current registry root heads and chronology checked:OpenAI4eaee87548250b2682affda7d05d947c05554bae;Omega7ea046b3d52f31406af9e637e396c5b65d2edd7c;LeanPool6814773d2f980caadeb58ea33cae432cf824b60c. Registry read scope is bounded catalogue/README/candidate routing only, not full proof-body coverage. projects.yml404 and predecessor journal403 are unresolved and were not retried. Index absence, metadata openness and inaccessible journals are never novelty clearance.
+
+Actual read inventory, HTTP receipts, history reconciliation, attempts and hash manifest accompany this report. Journal/correction/all-version/citing coverage is incomplete, explicitly held. First two navigation commands violated the first-command resource envelope; disclosed in PROCESS-LOG.md. Subsequent processes were bounded and reaped. No live jobs, children, Lean, numerical/solver/enumeration searches, git or shared/author changes.

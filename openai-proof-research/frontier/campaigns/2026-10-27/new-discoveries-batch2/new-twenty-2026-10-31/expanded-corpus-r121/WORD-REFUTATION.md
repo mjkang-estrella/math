@@ -1,0 +1,21 @@
+# MathDB 350350: literal refutation, classical-construction objection
+
+No acceptance or discovery credit is claimed. Root decides. The exact mathematical refutation is complete, but the terminal is the cited paper's shortest extremal word. The brief's cited-construction/routine-bridge exclusion is a strong objection, and this lane recommends zero discovery credit.
+
+The primary source arXiv:2104.04841v1, Conjecture 4, states that an initial square-free word with internal square-free potential greater than 2 has an infinite nonchalant trajectory. The published Journal of Integer Sequences 24 (2021), Article 21.8.7, Conjecture 11, p.9, retains the same statement. Section 2.1 defines the rule: choose the rightmost position admitting a square-free insertion, then the earliest letter in the fixed ordered alphabet. Section 3.1 defines the internal potential as the number of distinct square-free words obtained by insertion strictly inside the original word. Neither source imposes an extra seed-length or reachability assumption.
+
+Take the ordered ternary alphabet 1 < 2 < 3 and seed 3123. Its distinct internal square-free extensions are 31213, 31323, and 32123, so its potential is exactly 3. The independent script word-certificate.py tests every square at every start and length, unlike the search script's local insertion check. It verifies that all 21 subsequent moves are appends, yielding the prefixes of
+
+    3123132123121312313212312.
+
+At every prefix, every smaller appended letter creates a square. Since an append is the rightmost position, no comparison with an interior insertion is needed to establish greediness. At the terminal word all 26 positions and three letters produce squares. outputs/word-certificate.json supplies a start, length, and repeated block for each of these 78 obstructions, all intermediate words, all valid insertions, and the initial potential. Thus no infinite sequence can satisfy the deterministic rule from this seed.
+
+Lean represents words as lists of Fin 3, with numbers 0,1,2 encoding the source letters 1,2,3. SquareFree is a finite predicate on every possible start and positive block length; squareFree_iff proves equivalence to the unbounded usual quantifier. Step is the actual minimal suffix-length then minimal letter relation, quantified over all positions and letters. The step_unique theorem proves determinism. There are 21 kernel-decided move proofs, a terminal obstruction theorem, and a proof that any infinite functional trajectory would agree with this path and require an impossible 22nd move. internalExtensions removes duplicate resulting words before counting. SourceConjecture is the full ternary specialization of the source universal claim, not a bounded conjecture; its negation suffices to refute the universal alphabet claim. The endpoint Nonchalant.source_refutation uses no surrogate predicates and has no residual semantic lemmas. It does not assert that the source's seed-1 conjecture is false.
+
+The source's cited Grytczuk–Kordulewski–Niewiadomski, Extremal Square-free Words, EJC 27(1) (2020), #P1.48, p.2, already prints
+
+    H = abcabacbcabcbabcabacbcabc
+
+as the shortest extremal ternary word. The letter map a→3, b→1, c→2 gives our terminal exactly. Consequently the obstruction is a deterministic greedy-prefix bridge to an explicitly printed cited construction. The 2020 paper does not print the later potential conjecture or this trajectory, but it supplies the entire terminal obstruction. This is the precise exclusion objection; we do not claim a located prior publication explicitly announcing the final refutation.
+
+Fresh extracted strict build, leanchecker and the full module-origin audit passed (outputs/replay.json; logs/fresh-*). All 68 declarations, including generated ones, have bodies, are safe/nonpartial, and have transitive axioms contained in propext, Classical.choice, Quot.sound. The endpoint itself uses propext and Quot.sound only. Prebuilt pinned dependency oleans are trusted; there is no full upstream rebuild or independent review claim. The source ZIP is nonchalant-source.zip. The initial unthreaded Lean attempt failed to create a thread; the successful runs use -j1 and -M3500.

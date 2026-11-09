@@ -1,0 +1,13 @@
+# r702 breadth screening
+
+Exactly 50 assigned literal records reviewed, no replacements, zero proposals and zero credit. Classification counts: {'definition-dependent': 15, 'scope-ambiguous': 6, 'complete': 17, 'incomplete': 12}. The baseline remains 8,433 reported literal reviews; 10,000 routing rows are metadata, not coverage. Integration of this lane alone would yield 8,483; sibling reservations remain untouched. Campaign counts remain 9 additional /39 total /next40.
+
+Independent integrity checks cover the intake exact payload and all direct original/copy pairs, all20 original r301 chunks and all8 frozen inputs, the bound inventory manifest, assignment/reservation, coverage and pairwise/protected disjointness. All scientific reads followed the 28 inventory checks. Semantic reservation checking was later than first literal reading; this and oversized/truncated early prints are disclosed in failures.json. No upstream verifier executed.
+
+335749 is defeated for discovery by Hamaker–Pechenik–Speyer–Weigandt arXiv1812.00321v1 Theorem2, with actual proof bodies read and exact normalization bridge checked. 336787 is already addressed by its own primary arXiv1708.01849v1 Theorems7,9,23; selected proof bodies read, full dependencies not replayed. 339244 has k<=4 quotient1 already explicit in primary arXiv1805.05207v1 Table3: a domain defect, no credit. These are three primary-passage reviews, not whole-body or dependency clearance. The remaining47 primary bodies are unread.
+
+Every disposition retains exact UTF8 statement, corpus chunk/line, canonical record SHA256, independent scope classification/reason, quantifiers and individual technical obstruction. No complete new full-scope mechanism survived. Finite certificates for instances, known theorems and wording repairs were not promoted. Primary PDF bytes were hashed before extraction and derivatives bound before search/read. No PDF visual review.
+
+Current proof registry remains unavailable/HOLD. Four versioned arXiv PDFs fetched successfully with generic headers. Web search returned unrequested indexed MathDB/ResearchGate snippets despite site terms; no direct request/open to those sites, no use as proof. All inherited stopped routes remain parked, including r578 failures, r642 TLS and both r684 v2 404s. See failures.json for exact inherited evidence and deviations. Integrity PASS is neither mathematical nor novelty PASS.
+
+Run ./verify.sh for independent read-only verification; final-verification-receipt.json binds manifest.json. No shared files, reservations, Lean, manuscripts, indexes, ledgers or credit changed.

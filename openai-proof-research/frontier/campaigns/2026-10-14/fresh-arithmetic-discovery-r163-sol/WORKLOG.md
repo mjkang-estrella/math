@@ -1,0 +1,18 @@
+# R163-Sol research log
+
+Provenance: T3 Code / Codex / GPT-6.1-Sol / high / ultrafast, as explicitly assigned. Research sub-agent, no nested agents. Parent alone grades/counts; context 19/20, latest R041. All writes and command workdirs follow the assigned bounds. Pin fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb accepted as mathematical truth, without audit.
+
+Direct complete standing brief and scope/disposition constraints read. AGENTS.md and sources/upstream.json read fully. Journal read ONLY binary [4801,6347); catalogue ONLY binary [287105,288176). Complete nontruncated preprints-tree read and SHA256 checked. Exact Source183 root selected, all 12 blobs fetched and Git authenticated. Initial selection listed 14 descendants, plus root tree makes 15 entries. Full eleven source texts (111708 bytes), all inputs and both TikZ figures and bibliography read semantically. Source PDF authenticated only. Full nonquantitative halving/all-rank/k-sensitive results, stronger activity packing, rank/measure/three-foliation and spatial/boundary operations are paid.
+
+Isolation serialized before any optional traversal. Conservative extra wildcard twins included. Zero optional original-history traversals planned/performed. Five exact completed files copied with initial full modes; first combined display had a short COMPARISON truncation, recovery below required. No links, inherited manifests or namespaces followed. No exhaustive-clearance or priority claim.
+
+Prefreeze exploration: general matroid extension is obstructed by the actual known sharp lower construction, so not selected. Investigating graphic-matroid parametric spanning trees as a distinct full-scope operation. Actual primary Dey, AACS, Eppstein older geometric lower construction and newer graphic lower construction to be read before any nominee. Nothing frozen. PDF skill used read-only, all PDF derivatives remain private under own root.
+
+
+The completed comparison truncation was recovered by rereading own-copy bytes[14000,end); the five exceptions are now fully read. Source bindings were completed with the explicit root-tree entry (15 total). No optional history traversal was performed.
+
+Actual primary reading completed at66 distinct pages across6 PDF versions: Dey conference6 and published10, Eppstein older14 and newer16 all complete; AACS1–11 and FSE1–9 partial. Two rendered pages checked. Dey journal recovered a stronger/different primal proof; all full polygon, matroid, multiple-level, segment and triangle operations credited. Newer primary triangle/bottleneck and dense packing read before conclusion. Full transitive ancestry not read; Pinchasi URL404, old OSU link failure and initial Dey page timeout recorded. No mathematical conclusion uses inaccessible bodies.
+
+The exact active-minor reduction preserves all labels, coefficients and every forest over one interval. Dual token chains transfer. Cactus endpoint exchange is only a diagonal matching; literal three-strip extension fails even after a generic rational perturbation. Source rank-shift/complete-bipartite and common separating-threshold requirements do not follow from basis exchange. The full graphic power bound and rank-sensitive dense assembly remain unproved. No nominee or diagnostic frozen. No grade/count.
+
+One bounded9-vertex12-edge sanity check completed; no general algorithm or large enumeration run. Private modes tightened only at final preflight. The final single seal uses the same read-only verification functions for membership, bytes, lengths, full modes, source Git bindings, pin and exact five originals/copies; tiny controls are artifact checks only. No writes are planned after the seal.

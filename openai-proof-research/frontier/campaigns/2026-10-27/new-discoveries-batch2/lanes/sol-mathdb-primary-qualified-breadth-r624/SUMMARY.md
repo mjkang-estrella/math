@@ -1,0 +1,11 @@
+# Breadth screening
+
+Reviewed all 50 literal records assigned by r623 queue-r624.json and reserved-ids-r624.json. Technical scope: 10 complete, 22 incomplete, 18 scope-ambiguous; 49 definition-dependent flags. No replacements and no incomplete rows counted as complete. dispositions.json preserves exact UTF-8 statements, quantifiers, corpus lines, literal-line and canonical-record hashes, and individual reasons.
+
+Zero proposals; zero accepted credit. The most concrete lead, 385797, encounters Ingram's existing critical-height theorem with a short multiplicity bridge. Selected theorem and concluding proof read; no complete dependency/chronology audit. For 386319 the cached RBM review explicitly leaves the small case open; the 19-vs-15 parameter count is inconclusive. No full-scope novel mechanism survived. Other routes are parked for missing scope, inaccessible primary AIM definitions or substantial dependencies; see primary-notes.md.
+
+Coverage: 50 literal statements, zero original primary question passages, two selected prior-source bodies, one concluding local proof, zero whole bodies/dependency audits. All primary AIM and current registry gates remain HOLD. Neither metadata routing nor PDF retention earns technical review or novelty clearance.
+
+Independently checked exact intake payload, direct original/copy pairs, all 20 original r301 corpus chunks and all eight separately inventoried frozen inputs. Original r301 manifest matches the intake's bound copy. All reservations disjoint from 6,533 reported reviews, each other and protected IDs; r622 remains untouched. Read r304 exclusions/history and r363 Cayley decision plus r623 adjudications/focused assignment. Counts remain 9 additional /39 total /next40. Baseline does not mean full technical corpus coverage.
+
+Run `sh verify.sh` for independent read-only verification under the unchanged guard. Manifest covers every payload including verifier/scripts, excluding only manifest.json and final-verification-receipt.json. Negative tests reject hash/size/extra-file corruption. Final receipt binds manifest SHA256+size. Integrity PASS is not mathematics or novelty PASS. Two binding-timing deviations and all stopped routes are recorded in failures.md.

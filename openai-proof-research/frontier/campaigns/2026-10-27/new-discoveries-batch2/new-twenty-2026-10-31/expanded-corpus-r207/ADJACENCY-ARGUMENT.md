@@ -1,0 +1,19 @@
+# MathDB 374367: unformalized finite-state argument
+
+Status: ordinary argument proposed for review, zero accepted credit. This may be a routine source-ingredient bridge and must not be treated as a significant discovery without root review. It uses the source's maximum decomposition, not its erroneous or correct numerical formulas. No Lean endpoint is claimed.
+
+Fix m >= 1. For a nonempty permutation pi on [n], write d_i = n - pi_i. Remember its first min(n,m) deficits, each truncated by c(d)=min(d,m), and its last deficit similarly truncated; also remember min(n,m+1). This gives finitely many states, with m fixed. Include a separate empty state.
+
+Delete the maximum n from a valid permutation. Pattern avoidance is preserved by deletion. If the maximum was internal, its left and right neighbours are both in [n-m,n-1]; hence their difference is at most m-1. The deletion therefore preserves the adjacency bound. Thus every valid permutation has a unique valid parent obtained by deleting its maximum.
+
+Conversely, insert n+1 into a valid permutation on [n]. An internal gap after a entries preserves 132-avoidance precisely when every prefix entry exceeds every suffix entry, equivalently the first a entries are the a largest entries. Indeed, a 132-pattern newly created by the maximum would consist of a smaller prefix entry, the maximum, and a larger suffix entry. An insertion at either end cannot create such a pattern.
+
+For an internal insertion preserving avoidance, the suffix maximum is n-a. Its first entry is at most n-a, so the new adjacency bound forces a+1 <= m. Consequently 1 <= a <= m-1. For such a, the prefix-largest test reads only the first a deficits: they must be exactly {0,...,a-1}. The two new edges meet the adjacency bound precisely when the deficits of both gap neighbours are at most m-1. All these tests are determined by the stored first m deficits. The beginning insertion uses only the first deficit <= m-1; the end insertion uses only the last deficit <= m-1. Cases with n<m are distinguished by the stored length, so internal gaps never duplicate end gaps.
+
+After insertion, each old deficit increases by one, truncated at m. Insert a zero deficit at the selected position; keep the first m entries. The last stored deficit becomes zero for an end insertion, and otherwise increases by one and is truncated. The clipped length updates deterministically. Thus each legal gap gives a state transition determined entirely by the old state and gap label (beginning, end, or a in {1,...,m-1}). Different gap labels may give the same state; keep their integer multiplicity.
+
+Starting from the empty state, paths in this finite directed multigraph are in bijection with the desired permutations, because insertion histories are uniquely recovered by deleting maxima. If T_m is its finite integer transition matrix, then A_n^(m) is the sum of length-n path counts from the empty state, so its generating function is an entry-sum of (I-x T_m)^(-1), and is rational. Cayley-Hamilton gives a constant-coefficient recurrence.
+
+Unresolved qualification: the source asks for states near the beginning, while this construction also records the last deficit, needed for end insertion. A reviewer must decide whether this finite endpoint marker meets the intended structural formulation; the rational generating function consequence is the precise claim supported here. A literal formalization would need all permutation insertion/deletion and state-sufficiency bridges, not just Cayley-Hamilton. No bounded count proves the general assertion. No proof of monotone growth constants or their limiting value is asserted.
+
+This is a compact extension of the source's maximum decomposition and a standard finite-memory construction. Under the campaign's exclusion of short source-ingredient bridges, it has high zero-credit risk. Do not invest Lean capacity before scope and significance adjudication.

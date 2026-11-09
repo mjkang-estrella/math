@@ -1,0 +1,7 @@
+# Retained failures and limits
+
+1. Initial extraction succeeded for all 40 raw records, but the historical rg output included very long registry/dependency JSON lines and the Python capture exceeded its explicitly managed 2GiB address-space cap. Tool result was MemoryError at subprocess.communicate. No raw corpus input was modified. Added rg --max-columns1200 --max-columns-preview; rerun completed (extract.log). The original error was in the tool transcript, not a captured file; no fabricated original log is supplied.
+2. Initial structural diagnostic completed its mathematical calculations but JSON serialization rejected NumPy's boolean scalar. Original full failure retained in structural-diagnostics-first-failure.log. Conversion to Python bool fixed output; deterministic rerun succeeded in structural-diagnostics.log.
+3. pdftotext issued path warnings for a downloaded source; fetch.log retains them. Text extraction is not a visual fidelity audit. No PDF render/typographical verification or full-paper independent checking claimed.
+4. Several unrestricted MILP runs timed out, with weak incumbents. Exact values were not inferred from floating solver statuses. Both bounded models omit the global quantifier required by the conjecture.
+5. Current Omega baseline remains incomplete. Live HEAD receipt alone does not repair historical capped retrieval. No source-access denial was retried or bypassed.

@@ -1,0 +1,483 @@
+{
+  "utc": "2026-11-09T01:22:11.734867+00:00",
+  "lane": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r533",
+  "ids": [
+    367898,
+    353539,
+    381964,
+    352303,
+    352404,
+    343272,
+    329857,
+    329858,
+    324777,
+    317448,
+    379439,
+    345503,
+    346227,
+    318604,
+    363473,
+    349418,
+    346406,
+    381534,
+    347063,
+    372171
+  ],
+  "sources": [
+    "https://arxiv.org/abs/2504.05116",
+    "https://arxiv.org/abs/2202.02756",
+    "https://arxiv.org/abs/2212.12401",
+    "https://arxiv.org/abs/2110.09931",
+    "https://arxiv.org/abs/2110.15429",
+    "https://arxiv.org/abs/1907.08479",
+    "https://arxiv.org/abs/1502.02433",
+    "https://arxiv.org/abs/1502.02433",
+    "https://arxiv.org/abs/1301.0282",
+    "https://arxiv.org/abs/0806.2224",
+    "https://arxiv.org/abs/math/0512291",
+    "https://arxiv.org/abs/2002.05250",
+    "https://arxiv.org/abs/2004.09207",
+    "https://arxiv.org/abs/0906.0827",
+    "https://arxiv.org/abs/2406.06421",
+    "https://arxiv.org/abs/2101.05911",
+    "https://arxiv.org/abs/2005.02864",
+    "https://arxiv.org/abs/2004.14094",
+    "https://arxiv.org/abs/2006.16457",
+    "https://arxiv.org/abs/2512.18090"
+  ],
+  "reservation_sha256": "1e8c0ba324ea59e161a857f3b7dcc74204f7500faf39ed8a855647824448c30d",
+  "selector_sha256": "aac470435f5dac62bc321fc234ff2a1daccb495f04d52f186995ab9b95278a45",
+  "task_sha256": "f5a071e8be7a398204c30f84fef86d84df83c3aaa5dc332370c7825e5d544bcb",
+  "frozen_bindings": 13,
+  "history_files": 933,
+  "metadata_only": true,
+  "active_peers": [
+    "transitive-bunkbed-manuscript-deepseek-r1",
+    "regular-palm-locating-primary-qualification-claude-r1"
+  ],
+  "peer_ID_source_disjoint_asserted": true,
+  "accepted_new": 57,
+  "credit": 0,
+  "latest_denials": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/root-intake-r60/inherited-denials-r567.json",
+  "model": "claude-opus-5-5",
+  "reasoning_effort": "high",
+  "service_tier": "default",
+  "children": false
+}
+
+{
+  "calls_used": 0,
+  "queries_used": 0,
+  "maximum_calls": 3,
+  "maximum_queries": 9,
+  "charged_before_call": true
+}
+
+{
+  "urls": [
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures"
+  ],
+  "scope": "Only these4 explicit registry roots, optional fresh metadata. This is not an instruction to traverse another access/history file. Each helper GET charges every reserved ID."
+}
+
+{
+  "utc": "2026-11-08T03:52:29.173754+00:00",
+  "user_instruction": "Do not use GLM5.3 for subagents now; only GPT6.1Sol",
+  "provider": "codex",
+  "model": "gpt-6.1-sol",
+  "options": {
+    "reasoningEffort": "high",
+    "serviceTier": "default"
+  },
+  "supersedes": "Prior2026-11-05PiGLMexecution/formalizationrouting; appliesallfutureandcontinuingsubagentsincludingexecution/replay/audit",
+  "preserve_existing_artifacts": true,
+  "accepted": 55
+}
+
+"""One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+18461
+{
+  "utc": "2026-11-09T01:22:14.420126+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    367898,
+    353539,
+    381964,
+    352303,
+    352404,
+    343272,
+    329857,
+    329858,
+    324777,
+    317448,
+    379439,
+    345503,
+    346227,
+    318604,
+    363473,
+    349418,
+    346406,
+    381534,
+    347063,
+    372171
+  ],
+  "rows": [
+    {
+      "mathdb_id": 367898,
+      "canonical_url": "https://mathdb.com/p/367898/simonovits-s-supersaturation-conjecture-for-bipartite-graphs",
+      "title": "Simonovits's supersaturation conjecture for bipartite graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "bipartite-graphs",
+        "extremal-combinatorics",
+        "supersaturation"
+      ],
+      "first_stated_year": 2025,
+      "source_url": "https://arxiv.org/abs/2504.05116",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 353539,
+      "canonical_url": "https://mathdb.com/p/353539/collapsibility-number-conjecture-for-vietoris-rips-complexes",
+      "title": "Collapsibility-number conjecture for Vietoris\u2013Rips complexes of hypercube graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "collapsibility",
+        "hypercube-graphs",
+        "vietoris-rips-complexes"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2202.02756",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 381964,
+      "canonical_url": "https://mathdb.com/p/381964/spectral-stability-conjecture-for-simple-random-walks-on-com",
+      "title": "Spectral stability conjecture for simple random walks on complete graphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "complete-graphs",
+        "curvature-flow",
+        "spectral-graph-theory"
+      ],
+      "first_stated_year": 2022,
+      "source_url": "https://arxiv.org/abs/2212.12401",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 352303,
+      "canonical_url": "https://mathdb.com/p/352303/the-extremal-biharmonic-index-conjecture-for-trees",
+      "title": "The extremal biharmonic index conjecture for trees",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-invariants",
+        "spectral-graph-theory",
+        "trees"
+      ],
+      "first_stated_year": 2021,
+      "source_url": "https://arxiv.org/abs/2110.09931",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 352404,
+      "canonical_url": "https://mathdb.com/p/352404/sharp-discrepancy-conjecture-for-arithmetic-progressions-in",
+      "title": "Sharp discrepancy conjecture for arithmetic progressions in grids",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "arithmetic-progressions",
+        "combinatorics",
+        "discrepancy-theory"
+      ],
+      "first_stated_year": 2021,
+      "source_url": "https://arxiv.org/abs/2110.15429",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 343272,
+      "canonical_url": "https://mathdb.com/p/343272/approximate-hamilton-packing-conjecture-for-regular-triparti",
+      "title": "Approximate Hamilton packing conjecture for regular tripartite digraphs",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-decompositions",
+        "hamilton-cycles",
+        "tripartite-digraphs"
+      ],
+      "first_stated_year": 2019,
+      "source_url": "https://arxiv.org/abs/1907.08479",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 329857,
+      "canonical_url": "https://mathdb.com/p/329857/tournament-forest-conjecture-for-transitive-tournaments",
+      "title": "Tournament-forest conjecture for transitive tournaments",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "extremal-combinatorics",
+        "tournaments"
+      ],
+      "first_stated_year": 2015,
+      "source_url": "https://arxiv.org/abs/1502.02433",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 329858,
+      "canonical_url": "https://mathdb.com/p/329858/pach-tardos-conjecture-for-forest-matrices",
+      "title": "Pach\u2013Tardos conjecture for forest matrices",
+      "status": "open",
+      "post_type": "con

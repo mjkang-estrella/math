@@ -1,0 +1,7 @@
+# Root r725 reconciliation
+
+Reconciled Sol r722: fifty disjoint literal record reviews, no replacements, zero proposals or credit. Cumulative 9,033 literal record reviews. Reported classifications: 11 complete, 27 definition-dependent, 10 scope-ambiguous, 2 incomplete. Preserve restoration flags; literal coverage is not whole-body or full-statement coverage. Worker baseline-relative totals are superseded by root reconciliation including r720.
+
+Selected primary passages cover 381364, 381674 and 382479. The 169-line calculation for 381364 applies a published construction and earns no discovery credit. For the cubic, factorization at c=m^3 does not establish all-iterate irreducibility; rigid-divisibility, modular-table and external integral-point dependencies were not replayed. The antenna route retains unresolved star/top and companion-literature overlap. Whole-body, successor, full-dependency and registry clearance remain HOLD. Preparation failures and display limitations persist. Root checks integrity, corpus identity and reservations only, with no mathematical replay.
+
+Counts 9 additional / 39 total / next 40 unchanged. Sol r724 continues; fresh Sol r726 receives queue-r726.json and reserved-ids-r726.json. Claude r628 remains rate-limit held with its exact reservation. Three disjoint reserved sets; no focused hypothesis or pending user input. Routing 10,000 metadata rows is byte-identical and uncredited. All previous adjudications and access/privacy stops persist.

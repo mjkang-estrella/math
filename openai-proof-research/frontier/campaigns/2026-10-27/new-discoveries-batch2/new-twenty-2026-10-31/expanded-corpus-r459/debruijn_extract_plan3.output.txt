@@ -1,0 +1,647 @@
+                                         Efficient constructions of the Prefer-same and
+                                         Prefer-opposite de Bruijn sequences
+                                         Evan Sala
+                                         School of Computer Science, University of Guelph, Canada
+
+                                         Joe Sawada
+                                         School of Computer Science, University of Guelph, Canada
+
+                                         Abbas Alhakim
+                                         Department of Mathematics, American University of Beirut, Lebanon
+
+                                                 Abstract
+
+
+
+
+arXiv:2010.07960v2 [cs.DM] 14 Jun 2023
+                                         The greedy Prefer-same de Bruijn sequence construction was first presented by Eldert et al. [AIEE Transactions
+                                         77 (1958)]. As a greedy algorithm, it has one major downside: it requires an exponential amount of space to
+                                         store the length 2n de Bruijn sequence. Though de Bruijn sequences have been heavily studied over the last 60
+                                         years, finding an efficient construction for the Prefer-same de Bruijn sequence has remained a tantalizing open
+                                         problem. In this paper, we unveil the underlying structure of the Prefer-same de Bruijn sequence and solve the
+                                         open problem by presenting an efficient algorithm to construct it using O(n) time per bit and only O(n) space.
+                                         Following a similar approach, we also present an efficient algorithm to construct the Prefer-opposite de Bruijn
+                                         sequence.
+
+
+                                          1       Introduction
+
+                                         Greedy algorithms often provide some of the nicest algorithms to exhaustively generate combinatorial
+                                         objects, especially in terms of the simplicity of their descriptions. An excellent discussion of such
+                                         algorithms is given by Williams [32] with examples given for a wide range of combinatorial objects
+                                         including permutations, set partitions, binary trees, and de Bruijn sequences. A downside to greedy
+                                         constructions is that they generally require exponential space to keep track of which objects have
+                                         already been visited. Fortunately, most greedy constructions can also be constructed efficiently by
+                                         either an iterative successor-rule approach, or by applying a recursive technique. Such efficient
+                                         constructions often provide extra underlying insight into both the combinatorial objects and the actual
+                                         listing of the object being generated.
+                                              A de Bruijn sequence of order n is a sequence of bits that when considered cyclicly contains
+                                         every length n binary string as a substring exactly once; each such sequence has length 2n . They have
+                                         been studied as far back as 1894 with the work by Flye Sainte-Marie [13], receiving more significant
+                                         attention starting in 1946 with the work of de Bruijn [7]. Since then, many different de Bruijn
+                                         sequence constructions have been presented in the literature (see surveys in [15] and [20]). Generally,
+                                         they fall into one of the following categories: (i) greedy approaches (ii) iterative successor-rule based
+                                         approaches which includes linear (and non-linear) feedback shift registers (iii) string concatenation
+                                         approaches (iv) recursive approaches. Underlying all of these algorithms is the fact that every de
+                                         Bruijn sequence is in 1-1 correspondence with an Euler cycle in a related de Bruijn graph.
+                                              Perhaps the most well-known de Bruijn sequence is the one that is the lexicographically largest.
+                                         It has the following greedy Prefer-1 construction [27].
+
+
+                                              Prefer-1 construction
+
+                                              1. Seed with 0n−1
+                                              2. Repeat until no new bit is added: Append 1 if it does not create a duplicate length n substring; otherwise
+                                                 append 0 if it does not create a duplicate length n substring
+                                              3. Remove the seed
+
+
+                                                      © Evan Sala, Joe Sawada and Abbas Alhakim;
+                                                      licensed under Creative Commons License CC-BY
+                                                               Leibniz International Proceedings in Informatics
+                                                               Schloss Dagstuhl – Leibniz-Zentrum für Informatik, Dagstuhl Publishing, Germany
+XX:2   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+       For example, applying this construction for n = 4 we obtain the string: 000 1111011001010000.
+       Like all greedy de Bruijn sequence constructions, this algorithm has a major downside: it requires an
+       exponential amount of space to remember which substrings have already been visited. Fortunately, the
+       resulting sequence can also be constructed efficiently by applying an O(n) time per bit successor-rule
+       which requires O(n) space [14]. By applying a necklace concatenation approach, it can even be
+       generated in amortized O(1) time per bit and O(n) space [17].
+           Two other interesting greedy constructions take into account the last bit generated. They are known
+       as the Prefer-same and Prefer-opposite constructions and their resulting sequences are, respectively,
+       the lexicographically largest an
+PASSAGE 9367 refer-opposite construction is 000 0101001101111000.
+       The run-length encoding of this sequence is given by 111122143.
+          To simplify our discussion, let:
+
+             Sn = the de Bruijn sequence of order n generated by the Prefer-same construction, and
+             On = the de Bruijn sequence of order n generated by the Prefer-opposite construction.
+
+
+       1
+           The run-length encoding of a string is discussed formally in Section 3.
+E. Sala, J. Sawada and A. Alhakim                                                                          XX:3
+
+
+Unlike the Prefer-1 sequence, and despite the vast research on de Bruijn sequences, Sn and On have
+no known efficient construction. For Sn , finding an efficient construction has remained an elusive
+open problem for over 60 years. The closest attempt came in 1977 when Fredricksen and Kessler
+devised a construction based on lexicographic compositions [16] that we discuss further in Section 8.
+   The main results of this paper are to solve these open problems by providing successor-rule based
+constructions for Sn and On . They generate the respective sequences in O(n) time per bit using only
+O(n) space. The discovery of these efficient constructions hinged on the following idea:
+
+   Most interesting de Bruijn sequence are the result of joining together smaller cycles induced
+   by simple feedback shift registers.
+
+The initial challenge was to find such a simple underlying feedback function. After careful study, the
+following function was revealed:
+
+   f (w1 w2 · · · wn ) = w1 ⊕ w2 ⊕ wn ,
+
+where ⊕ denotes addition modulo 2. We demonstrate this feedback function has nice run-length
+properties when used to partition the set of all binary strings of length n in Section 4.3. The next
+challenge was to find appropriate representatives for each cycle induced by f in order to apply the
+framework from [20] to join the cycles together.
+Outline of paper. Before introducing our main results, we first provide an insight into greedy
+constructions for de Bruijn sequences that we feel has not been properly emphasized in the recent
+literature. In particular, we demonstrate how all such constructions, which are generalized by the
+notion of preference or look-up tables [2, 33], are in fact just special cases of a standard Euler cycle
+algorithm on the de Bruijn graph. This discussion is found in Section 2 which also outlines a second
+Euler cycle algorithm underlying the cycle joining approach applied in our main result. In Section 3,
+we present background on run-length encodings. In Section 4, we discuss feedback functions and
+de Bruijn successors and introduce the function f (w1 w2 · · · wn ) = w1 ⊕ w2 ⊕ wn critical to our
+main results. In Section 5, we present two generic de Bruijn successors based on the framework
+from [20]. In Section 6 we present our first main result: an efficient successor-rule to ge
+PASSAGE 11500 cular, we demonstrate how all such constructions, which are generalized by the
+notion of preference or look-up tables [2, 33], are in fact just special cases of a standard Euler cycle
+algorithm on the de Bruijn graph. This discussion is found in Section 2 which also outlines a second
+Euler cycle algorithm underlying the cycle joining approach applied in our main result. In Section 3,
+we present background on run-length encodings. In Section 4, we discuss feedback functions and
+de Bruijn successors and introduce the function f (w1 w2 · · · wn ) = w1 ⊕ w2 ⊕ wn critical to our
+main results. In Section 5, we present two generic de Bruijn successors based on the framework
+from [20]. In Section 6 we present our first main result: an efficient successor-rule to generate
+Sn . In Section 7 we present our second main result: an efficient successor-rule to generate On . In
+Section 8 we discuss the lexicographic composition algorithm from [16] and a related open problem.
+In Section 9 we discuss implementation details and analyze the efficiency of our algorithms. In
+Section 10 and Section 11 we detail the technical aspects required to prove our main results. We
+conclude by presenting directions for future research in Section 12. Implementation of our algorithms,
+written in C, presented in this paper can be found in the appendices and are available for download
+at http://debruijnsequence.org.
+Applications. One of the first instances of de Bruijn sequences is found in works of Sanskrit
+prosody by the ancient mathematician Pingala dating back to the 2nd century BCE. Since then,
+de Bruijn sequences and their related theory have a rich history of application. One of their more
+prominent applications, due to their random-like properties [22], is in the generation of pseudo-
+random bit sequences which are used in stream ciphers [26]. In particular, linear feedback shift
+register constructions (that omit the string of all 0s) allow for efficient hardware embeddings which
+have been classically applied to represent different maps in video games including Pitfall [4]. Another
+application uses de Bruijn sequences to crack cipher locks in an efficient manner [15]. More recently,
+the related de Bruijn graph has been applied to genome assembly [6, 28]. Given the vast literature on
+de Bruijn sequences and their various methods of construction, the more interesting new results may
+relate to sequences with specific properties. This makes the de Bruijn sequences Sn and On of special
+interest since they are, respectively, the lexicographically largest and smallest sequences with respect
+XX:4   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+       to a run-length encoding [3]. Moreover, recently it was noted they have a relatively small discrepancy,
+       which is the maximum absolute difference between the number of 0s and 1s in any substrin
+PASSAGE 21039 ings, we require knowledge of the starting symbol to
+       obtain a given binary string from its RLE. As a further example:
+            S5 = 11111000001110110011010001001010 has RLE 5531222113121111.
+
+       The following facts are proved in [3].
+
+       ▶ Proposition 1. The sequence Sn is the de Bruijn sequence of order n starting with 1 that has the
+       lexicographically largest RLE.
+
+       ▶ Proposition 2. The sequence On is the de Bruijn sequence of order n starting with 1 that has
+       the lexicographically smallest RLE.
+
+       Let alt(n) denote the alternating sequence of 0s and 1s of length n that ends with 0: For example,
+       alt(6) = 101010. The following facts are also immediate from [3].
+
+       ▶ Proposition 3. Sn has prefix 1n and has suffix alt(n−1).
+
+       ▶ Proposition 4. On has length n prefix 010101 · · · and has suffix 10n−1 .
+
+       The sequence based on lexicographic compositions [16] also has run-length properties: it is con-
+       structed by concatenating lexicographic compositions which are represented using a RLE. Further
+       discussion of this sequence is provided in Section 8.
+
+        4       Feedback functions and de Bruijn successors
+       Let B(n) denote the set of all binary strings of length n. We call a function f : B(n) → {0, 1} a
+       feedback function. Let ω = w1 w2 · · · wn be a string in B(n). A feedback shift register is a function
+       F : B(n) → B(n) that takes the form F (ω) = w2 w3 · · · wn f (w1 w2 · · · wn ) for a given feedback
+       function f .
+           A feedback function g : B(n) → {0, 1} is a de Bruijn successor if there exists a de Bruijn
+       sequence of order n such that each substring ω ∈ B(n) is followed by g(ω) in the given de Bruijn
+E. Sala, J. Sawada and A. Alhakim                                                                                  XX:7
+
+
+sequence. Given a de Bruijn successor g and a seed string ω = w1 w2 · · · wn , the following function
+DB(g, ω) will return a de Bruijn sequence of order n with suffix ω:
+
+
+      1: function DB(g, ω)
+      2:      for i ← 1 to 2n do
+      3:          xi ← g(ω)
+      4:          ω ← w2 w3 · · · wn xi
+      5:      return x1 x2 · · · x2n
+
+A linearized de Bruijn sequence is a linear string that contains every string in B(n) as a substring
+exactly once. Such a string has length 2n + n − 1. Note that the length n suffix of a de Bruijn sequence
+Dn = DB(g, w1 · · · wn ) is w1 · · · wn . Thus, w2 · · · wn Dn is a linearized de Bruijn sequence.
+    For each of the upcoming feedback functions, selecting appropriate representatives for the cycles
+they induce is an important step to developing efficient de Bruijn successors for Sn and On . In
+particular, consider two representatives for a given cycle based on their RLE.
+    RL-rep: The string with the lexicographically largest RLE; if there are two such strings, it is the
+    
+PASSAGE 21147 further example:
+            S5 = 11111000001110110011010001001010 has RLE 5531222113121111.
+
+       The following facts are proved in [3].
+
+       ▶ Proposition 1. The sequence Sn is the de Bruijn sequence of order n starting with 1 that has the
+       lexicographically largest RLE.
+
+       ▶ Proposition 2. The sequence On is the de Bruijn sequence of order n starting with 1 that has
+       the lexicographically smallest RLE.
+
+       Let alt(n) denote the alternating sequence of 0s and 1s of length n that ends with 0: For example,
+       alt(6) = 101010. The following facts are also immediate from [3].
+
+       ▶ Proposition 3. Sn has prefix 1n and has suffix alt(n−1).
+
+       ▶ Proposition 4. On has length n prefix 010101 · · · and has suffix 10n−1 .
+
+       The sequence based on lexicographic compositions [16] also has run-length properties: it is con-
+       structed by concatenating lexicographic compositions which are represented using a RLE. Further
+       discussion of this sequence is provided in Section 8.
+
+        4       Feedback functions and de Bruijn successors
+       Let B(n) denote the set of all binary strings of length n. We call a function f : B(n) → {0, 1} a
+       feedback function. Let ω = w1 w2 · · · wn be a string in B(n). A feedback shift register is a function
+       F : B(n) → B(n) that takes the form F (ω) = w2 w3 · · · wn f (w1 w2 · · · wn ) for a given feedback
+       function f .
+           A feedback function g : B(n) → {0, 1} is a de Bruijn successor if there exists a de Bruijn
+       sequence of order n such that each substring ω ∈ B(n) is followed by g(ω) in the given de Bruijn
+E. Sala, J. Sawada and A. Alhakim                                                                                  XX:7
+
+
+sequence. Given a de Bruijn successor g and a seed string ω = w1 w2 · · · wn , the following function
+DB(g, ω) will return a de Bruijn sequence of order n with suffix ω:
+
+
+      1: function DB(g, ω)
+      2:      for i ← 1 to 2n do
+      3:          xi ← g(ω)
+      4:          ω ← w2 w3 · · · wn xi
+      5:      return x1 x2 · · · x2n
+
+A linearized de Bruijn sequence is a linear string that contains every string in B(n) as a substring
+exactly once. Such a string has length 2n + n − 1. Note that the length n suffix of a de Bruijn sequence
+Dn = DB(g, w1 · · · wn ) is w1 · · · wn . Thus, w2 · · · wn Dn is a linearized de Bruijn sequence.
+    For each of the upcoming feedback functions, selecting appropriate representatives for the cycles
+they induce is an important step to developing efficient de Bruijn successors for Sn and On . In
+particular, consider two representatives for a given cycle based on their RLE.
+    RL-rep: The string with the lexicographically largest RLE; if there are two such strings, it is the
+    one beginning with 1.
+    RL2-rep: The string with the lexicographically smallest RLE; if there are two such
+PASSAGE 49034 m 14 and Observation 15 apply more generally to any non-singular feedback function f .
+XX:14   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+             When Theorem 16 and Theorem 17 are applied naïvely, the resulting de Bruijn successors are not
+        efficient since storing the set {α2 , α3 , . . . , αt } requires exponential space. However, if a membership
+        tester for the set can be defined efficiently, then there is no need for the set to be stored. Such sets of
+        representatives are presented in the next two sections.
+
+         6      A de Bruijn successor for Sn
+        In this section we define a de Bruijn successor for Sn . Recall the partition R1 , R2 , . . . , Rt of B(n)
+        induced by the PRR. In addition to the RL-rep, we define a new representative for each cycle, called
+        the LC-rep, where the LC stands for Lexicographic Compositions which are further discussed in
+        Section 8. Then, considering these two representatives along with a small set of special strings, we
+        define a third representative, called the same-rep. For each representative, we can apply Theorem 16
+        to produce a new de Bruijn successor. The definitions for these three representatives are as follows:
+            RL-rep: The string with the lexicographically largest RLE; if there are two such strings, it is the
+            one beginning with 1.
+            LC-rep: The RL-rep for cycles with run length 1 and n. For all other classes, it is the string ω
+                          i−1                                                    i+1
+            with RLE 21  ri+1 · · · rℓ where i = ℓ or ri+1 ̸= 1 such that PRR (ω) is the RL-rep.
+                           RL-rep      if the RL-rep is same-special
+            same-rep:
+                           LC-rep      otherwise.
+        We say an RL-rep is same-special if it belongs to the set SP(n) defined as follows:
+             SP(n) is the set of length n binary strings that begin and end with 0 and have RLE of the
+             form (212x )y 1z , where x ≥ 0, y ≥ 2, and z ≥ 2.
+        The RL-reps have already been illustrated in Section 4. There are relatively few strings in SP(n) and
+        they all have odd run length since they begin and end with 0; they belong to PCR-related cycles. The
+        need for identifying same-special strings is revealed in the proof for the upcoming Proposition 20.
+
+          Example 6       The RLE of the strings in SP(n) for n = 10, 11, 12, 13.
+          n = 10:   2221111
+          n = 11:   2222111, 221111111, 211211111
+          n = 12:   2222211, 222111111
+          n = 13:   222211111, 22111111111, 21121111111
+
+
+            To illustrate an LC-rep, consider the string ω = 110101111011 with RLE 2111412. The string ω
+        is an LC-rep since P RR5 (ω) = 111101110101 which is an RL-rep with RLE 4131111
+PASSAGE 62597 first two bits of β are the same. Thus, the run length of β is one less than
+    the run length of β̂. Thus the claim holds by Proposition 24.
+    If yt ̸= f (β), then either β or β̂ are in OPP(n). Let β = b1 b2 · · · bn . Then PRR(β) = b2 · · · bn ot
+    and PRR(β̂) = b2 · · · bn yt . Since f (β) ̸= bn , b1 ̸= b2 , which implies β̂ is not in OPP(n) since
+    the case when β ̸= 01n−1 was already handled. Thus β is an opp-rep and the claim holds by
+    Observation 15 (item 1).
+Since β̂ appears before β in Yn′ then β̂ must be a substring of 0n−1 y1 · · · yt−2 . Thus, either
+yt−n+1 · · · yt−1 yt or yt−n+1 · · · yt−1 ot must be in 0n−1 y1 · · · yt−1 which contradicts the fact that
+both Yn and On are de Bruijn sequences. Thus, there is no n < t ≤ 2n such that ot ̸= yt and hence
+On = Yn .                                                                                                 ◀
+
+ 8     Lexicographic compositions
+As mentioned earlier, Fredricksen and Kessler devised a construction based on lexicographic compo-
+sitions [16]. Let Ln denote the de Bruijn sequence of order n that results from this construction. The
+sequences Sn and Ln first differ at n = 7 (as noted below), and for n ≥ 7 they were conjectured to
+match for a significant prefix [15, 16]:
+                1111111000000011111011110011110100000100001100001011100011100100
+         S7 =
+                0110111011000100111010110011001011011010011010100010100100101010,
+                1111111000000011111011110011110100000100001100001011100011100100
+         L7 =
+                0110111011000100111010110011001011011010100010100110100100101010.
+
+    After discovering the de Bruijn successor for Sn , we observed that the de Bruijn sequence
+resulting from the de Bruijn successor LC(ω) corresponded to Ln for small values of n. Recall that
+alt(n) denotes the alternating sequence of 0s and 1s of length n that ends with 0. Let LC n be the de
+Bruijn sequence returned by DB(LC, 0alt(n−1)).
+▶ Conjecture 26. The de Bruijn sequences LC n and Ln are the same.
+    We verified that LC n is the same as Ln for all n < 30. However, as the description of the
+algorithm to construct Ln is rather detailed [16], we did not attempt to prove this conjecture.
+XX:18   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+         9      Efficient implementation
+
+        Given a membership tester for RL(n), testing whether or not a string is an LC-rep or a same-rep can
+        easily be done in O(n) time and O(n) space. Similarly, given the membership tester for RL2(n),
+        testing whether or not a string is an LC2-rep or a opp-rep can easily be done in O(n) time and O(n)
+        space. Thus, by applying Proposition 12 and Proposition 13, we can implement each of our six de
+        Bruijn successors in O(n) time using O(n) space.
+
+        ▶ Theorem 27. The six de Bruijn successors RL(ω), 
+PASSAGE 95261 f Algorithms, 4(4):363–381, 1983.
+        10    C. Eldert, H. Gray, H. Gurk, and M. Rubinoff. Shifting counters. AIEE Trans., 77:70–74, 1958.
+        11    T. Etzion. Self-dual sequences. Journal of Combinatorial Theory, Series A, 44(2):288 – 298, 1987.
+E. Sala, J. Sawada and A. Alhakim                                                                                 XX:27
+
+
+12   M. Fleury. Deux problemes de geometrie de situation. Journal de mathematiques elementaires, 42:257–
+     261, 1883.
+13   C. Flye Sainte-Marie. Solution to question nr. 48. L’intermédiaire des Mathématiciens, 1:107–110, 1894.
+14   H. Fredricksen. Generation of the Ford sequence of length 2n , n large. J. Combin. Theory Ser. A,
+     12(1):153–154, 1972.
+15   H. Fredricksen. A survey of full length nonlinear shift register cycle algorithms. Siam Review, 24(2):195–
+     221, 1982.
+16   H. Fredricksen and I. Kessler. Lexicographic compositions and de Bruijn sequences. J. Combin. Theory
+     Ser. A, 22(1):17 – 30, 1977.
+17   H. Fredricksen and J. Maiorana. Necklaces of beads in k colors and k-ary de Bruijn sequences. Discrete
+     Math., 23:207–210, 1978.
+18   D. Gabric and J. Sawada. Constructing de Bruijn sequences by concatenating smaller universal cycles.
+     Theoretical Computer Science, 743:12 – 22, 2018.
+19   D. Gabric and J. Sawada. Investigating the discrepancy property of de Bruijn sequences. Submitted
+     manuscript, 2020.
+20   D. Gabric, J. Sawada, A. Williams, and D. Wong. A framework for constructing de Bruijn sequences via
+     simple successor rules. Discrete Mathematics, 341(11):2977 – 2987, 2018.
+21   D. Gabric, J. Sawada, A. Williams, and D. Wong. A successor rule framework for constructing k -ary de
+     Bruijn sequences and universal cycles. IEEE Transactions on Information Theory, 66(1):679–687, 2020.
+22   S. W. Golomb. Shift Register Sequences. Aegean Park Press, Laguna Hills, CA, USA, 1981.
+23   C. Hierholzer. Deux problemes de geometrie de situation. Journal de mathematiques elementaires,
+     42:257–261, 1873.
+24   Y. Huang. A new algorithm for the generation of binary de Bruijn sequences. J. Algorithms, 11(1):44–51,
+     1990.
+25   Y. Jiang. A relation between sequences generated by Golomb’s preference algorithm. Designs, Codes and
+     Cryptography, 91(1):285–291, Jan 2023.
+26   A. Klein. Stream Ciphers. Springer-Verlag London, 2013.
+27   M. H. Martin. A problem in arrangements. Bull. Amer. Math. Soc., 40(12):859–864, 1934.
+28   P. A. Pevzner, H. Tang, and M. S. Waterman. An Eulerian path approach to DNA fragment assembly.
+     Proceedings of the National Academy of Sciences, 98(17):9748–9753, 2001.
+29   A. Rubin and G. Weiss. Mapping prefer-opposite to prefer-one de Bruijn sequences. Designs, Codes and
+     Cryptography, 85(3):547–555, Dec 2017.
+30   E. Sala. Exploring the greedy constructions of de Bruijn sequences. Master’s thesis, University of G
+PASSAGE 62910 b2 , which implies β̂ is not in OPP(n) since
+    the case when β ̸= 01n−1 was already handled. Thus β is an opp-rep and the claim holds by
+    Observation 15 (item 1).
+Since β̂ appears before β in Yn′ then β̂ must be a substring of 0n−1 y1 · · · yt−2 . Thus, either
+yt−n+1 · · · yt−1 yt or yt−n+1 · · · yt−1 ot must be in 0n−1 y1 · · · yt−1 which contradicts the fact that
+both Yn and On are de Bruijn sequences. Thus, there is no n < t ≤ 2n such that ot ̸= yt and hence
+On = Yn .                                                                                                 ◀
+
+ 8     Lexicographic compositions
+As mentioned earlier, Fredricksen and Kessler devised a construction based on lexicographic compo-
+sitions [16]. Let Ln denote the de Bruijn sequence of order n that results from this construction. The
+sequences Sn and Ln first differ at n = 7 (as noted below), and for n ≥ 7 they were conjectured to
+match for a significant prefix [15, 16]:
+                1111111000000011111011110011110100000100001100001011100011100100
+         S7 =
+                0110111011000100111010110011001011011010011010100010100100101010,
+                1111111000000011111011110011110100000100001100001011100011100100
+         L7 =
+                0110111011000100111010110011001011011010100010100110100100101010.
+
+    After discovering the de Bruijn successor for Sn , we observed that the de Bruijn sequence
+resulting from the de Bruijn successor LC(ω) corresponded to Ln for small values of n. Recall that
+alt(n) denotes the alternating sequence of 0s and 1s of length n that ends with 0. Let LC n be the de
+Bruijn sequence returned by DB(LC, 0alt(n−1)).
+▶ Conjecture 26. The de Bruijn sequences LC n and Ln are the same.
+    We verified that LC n is the same as Ln for all n < 30. However, as the description of the
+algorithm to construct Ln is rather detailed [16], we did not attempt to prove this conjecture.
+XX:18   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+         9      Efficient implementation
+
+        Given a membership tester for RL(n), testing whether or not a string is an LC-rep or a same-rep can
+        easily be done in O(n) time and O(n) space. Similarly, given the membership tester for RL2(n),
+        testing whether or not a string is an LC2-rep or a opp-rep can easily be done in O(n) time and O(n)
+        space. Thus, by applying Proposition 12 and Proposition 13, we can implement each of our six de
+        Bruijn successors in O(n) time using O(n) space.
+
+        ▶ Theorem 27. The six de Bruijn successors RL(ω), LC(ω), S(ω) , RL2(ω), LC2(ω) and O(ω)
+        can be implemented in O(n) time using O(n) space.
+
+
+         10       Proof of Proposition 20
+
+        Recall that Xn = DB(S, 0alt(n−1)) and Xn′ = alt(n−1)Xn . We begin by restating Proposition 20
+        by reversing the roles of β and β̂ in the original statement f
+PASSAGE 63666 equence of order n that results from this construction. The
+sequences Sn and Ln first differ at n = 7 (as noted below), and for n ≥ 7 they were conjectured to
+match for a significant prefix [15, 16]:
+                1111111000000011111011110011110100000100001100001011100011100100
+         S7 =
+                0110111011000100111010110011001011011010011010100010100100101010,
+                1111111000000011111011110011110100000100001100001011100011100100
+         L7 =
+                0110111011000100111010110011001011011010100010100110100100101010.
+
+    After discovering the de Bruijn successor for Sn , we observed that the de Bruijn sequence
+resulting from the de Bruijn successor LC(ω) corresponded to Ln for small values of n. Recall that
+alt(n) denotes the alternating sequence of 0s and 1s of length n that ends with 0. Let LC n be the de
+Bruijn sequence returned by DB(LC, 0alt(n−1)).
+▶ Conjecture 26. The de Bruijn sequences LC n and Ln are the same.
+    We verified that LC n is the same as Ln for all n < 30. However, as the description of the
+algorithm to construct Ln is rather detailed [16], we did not attempt to prove this conjecture.
+XX:18   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+         9      Efficient implementation
+
+        Given a membership tester for RL(n), testing whether or not a string is an LC-rep or a same-rep can
+        easily be done in O(n) time and O(n) space. Similarly, given the membership tester for RL2(n),
+        testing whether or not a string is an LC2-rep or a opp-rep can easily be done in O(n) time and O(n)
+        space. Thus, by applying Proposition 12 and Proposition 13, we can implement each of our six de
+        Bruijn successors in O(n) time using O(n) space.
+
+        ▶ Theorem 27. The six de Bruijn successors RL(ω), LC(ω), S(ω) , RL2(ω), LC2(ω) and O(ω)
+        can be implemented in O(n) time using O(n) space.
+
+
+         10       Proof of Proposition 20
+
+        Recall that Xn = DB(S, 0alt(n−1)) and Xn′ = alt(n−1)Xn . We begin by restating Proposition 20
+        by reversing the roles of β and β̂ in the original statement for convenience:
+
+             If β is a string in B(n) such that the run length of β is one less than the run length of β̂ and
+             neither β nor β̂ are same-reps, then β appears before β̂ in Xn′ .
+
+        The first step is to further refine the ordering of the cycles R1 , R2 , . . . , Rt used in the proof of
+        Theorem 18 to prove that S(ω) was a de Bruijn successor. In particular, let R1 , R2 , . . . , Rt be the
+        cycles of B(n) induced by the PRR ordered in non-increasing order with respect to the run lengths of
+        each cycle, additionally refined so the cycles with the same run lengths are ordered in decreasing
+        order with respect to the RLE of the RL-rep. If two RL-reps have the same RLE, then the cycle
+      
+PASSAGE 63910 110100000100001100001011100011100100
+         S7 =
+                0110111011000100111010110011001011011010011010100010100100101010,
+                1111111000000011111011110011110100000100001100001011100011100100
+         L7 =
+                0110111011000100111010110011001011011010100010100110100100101010.
+
+    After discovering the de Bruijn successor for Sn , we observed that the de Bruijn sequence
+resulting from the de Bruijn successor LC(ω) corresponded to Ln for small values of n. Recall that
+alt(n) denotes the alternating sequence of 0s and 1s of length n that ends with 0. Let LC n be the de
+Bruijn sequence returned by DB(LC, 0alt(n−1)).
+▶ Conjecture 26. The de Bruijn sequences LC n and Ln are the same.
+    We verified that LC n is the same as Ln for all n < 30. However, as the description of the
+algorithm to construct Ln is rather detailed [16], we did not attempt to prove this conjecture.
+XX:18   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+         9      Efficient implementation
+
+        Given a membership tester for RL(n), testing whether or not a string is an LC-rep or a same-rep can
+        easily be done in O(n) time and O(n) space. Similarly, given the membership tester for RL2(n),
+        testing whether or not a string is an LC2-rep or a opp-rep can easily be done in O(n) time and O(n)
+        space. Thus, by applying Proposition 12 and Proposition 13, we can implement each of our six de
+        Bruijn successors in O(n) time using O(n) space.
+
+        ▶ Theorem 27. The six de Bruijn successors RL(ω), LC(ω), S(ω) , RL2(ω), LC2(ω) and O(ω)
+        can be implemented in O(n) time using O(n) space.
+
+
+         10       Proof of Proposition 20
+
+        Recall that Xn = DB(S, 0alt(n−1)) and Xn′ = alt(n−1)Xn . We begin by restating Proposition 20
+        by reversing the roles of β and β̂ in the original statement for convenience:
+
+             If β is a string in B(n) such that the run length of β is one less than the run length of β̂ and
+             neither β nor β̂ are same-reps, then β appears before β̂ in Xn′ .
+
+        The first step is to further refine the ordering of the cycles R1 , R2 , . . . , Rt used in the proof of
+        Theorem 18 to prove that S(ω) was a de Bruijn successor. In particular, let R1 , R2 , . . . , Rt be the
+        cycles of B(n) induced by the PRR ordered in non-increasing order with respect to the run lengths of
+        each cycle, additionally refined so the cycles with the same run lengths are ordered in decreasing
+        order with respect to the RLE of the RL-rep. If two RL-reps have the same RLE, then the cycle
+        with RL-rep starting with 1 comes first. Let σi , γi , αi denote the RL-rep, LC-rep, and same-rep,
+        respectively, for Ri , where 1 ≤ i ≤ t; let Ri denote the RLE of σi .
+            Assume the run length of β is one less than the run l
+PASSAGE 92912 trings
+        from Ri including β will appear in Yn′ before all strings from Rk including β̂.
+
+
+         12      Future work
+        The following questions provide avenues for future research.
+
+        P1. Can Sn , On , or Ln be generated via a concatenation approach, and if so, can they be generated
+        in O(1) time per symbol using polynomial space?
+        P2. The (greedy) prefer-same and prefer-opposite de Bruijn sequences for alphabets of size k > 2
+        are described at http://debruijnsequence.org. Are there simple de Bruijn successors for
+        these generalized sequences?
+        P3. Does there exist an efficient decoding algorithm for the sequences Sn , On , or Ln ? That is,
+        without generating the sequence, at what position r do we find a given string ω (unranking)? And,
+        given a string ω, at what position r does it appear (ranking)?
+        P4. Answer Conjecture 26.
+        P5. Can Fredricksen and Kessler’s de Bruijn sequence construction Ln [16] be generalized to larger
+        alphabets?
+
+
+
+
+              References
+         1    A. Alhakim. A simple combinatorial algorithm for de Bruijn sequences. The American Mathematical
+              Monthly, 117(8):728–732, 2010.
+         2    A. Alhakim. Spans of preference functions for de Bruijn sequences. Discrete Applied Mathematics,
+              160(7-8):992 – 998, 2012.
+         3    A. Alhakim, E. Sala, and J. Sawada. Revisiting the prefer-same and prefer-opposite de Bruijn sequence
+              constructions. Theoretical Computer Science, 852:73–77, 2021.
+         4    J. Aycock. Retrogame Archeology. Springer International Publishing, 2016.
+         5    K. S. Booth. Lexicographically least circular substrings. Inform. Process. Lett., 10(4/5):240–242, 1980.
+         6    P. E. C. Compeau, P. A. Pevzner, and G. Tesler. How to apply de Bruijn graphs to genome assembly.
+              Nature Biotechnology, 29(11):987–991, 2011.
+         7    N. G. de Bruijn. A combinatorial problem. Indagationes Mathematicae, 8:461–467, 1946.
+         8    P. B. Dragon, O. I. Hernandez, J. Sawada, A. Williams, and D. Wong. Constructing de Bruijn sequences
+              with co-lexicographic order: the k-ary Grandmama sequence. European J. Combin., 72:1–11, 2018.
+         9    J. P. Duval. Factorizing words over an ordered alphabet. Journal of Algorithms, 4(4):363–381, 1983.
+        10    C. Eldert, H. Gray, H. Gurk, and M. Rubinoff. Shifting counters. AIEE Trans., 77:70–74, 1958.
+        11    T. Etzion. Self-dual sequences. Journal of Combinatorial Theory, Series A, 44(2):288 – 298, 1987.
+E. Sala, J. Sawada and A. Alhakim                                                                                 XX:27
+
+
+12   M. Fleury. Deux problemes de geometrie de situation. Journal de mathematiques elementaires, 42:257–
+     261, 1883.
+13   C. Flye Sainte-Marie. Solution to question nr. 4
+PASSAGE 63764 = 7 (as noted below), and for n ≥ 7 they were conjectured to
+match for a significant prefix [15, 16]:
+                1111111000000011111011110011110100000100001100001011100011100100
+         S7 =
+                0110111011000100111010110011001011011010011010100010100100101010,
+                1111111000000011111011110011110100000100001100001011100011100100
+         L7 =
+                0110111011000100111010110011001011011010100010100110100100101010.
+
+    After discovering the de Bruijn successor for Sn , we observed that the de Bruijn sequence
+resulting from the de Bruijn successor LC(ω) corresponded to Ln for small values of n. Recall that
+alt(n) denotes the alternating sequence of 0s and 1s of length n that ends with 0. Let LC n be the de
+Bruijn sequence returned by DB(LC, 0alt(n−1)).
+▶ Conjecture 26. The de Bruijn sequences LC n and Ln are the same.
+    We verified that LC n is the same as Ln for all n < 30. However, as the description of the
+algorithm to construct Ln is rather detailed [16], we did not attempt to prove this conjecture.
+XX:18   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+         9      Efficient implementation
+
+        Given a membership tester for RL(n), testing whether or not a string is an LC-rep or a same-rep can
+        easily be done in O(n) time and O(n) space. Similarly, given the membership tester for RL2(n),
+        testing whether or not a string is an LC2-rep or a opp-rep can easily be done in O(n) time and O(n)
+        space. Thus, by applying Proposition 12 and Proposition 13, we can implement each of our six de
+        Bruijn successors in O(n) time using O(n) space.
+
+        ▶ Theorem 27. The six de Bruijn successors RL(ω), LC(ω), S(ω) , RL2(ω), LC2(ω) and O(ω)
+        can be implemented in O(n) time using O(n) space.
+
+
+         10       Proof of Proposition 20
+
+        Recall that Xn = DB(S, 0alt(n−1)) and Xn′ = alt(n−1)Xn . We begin by restating Proposition 20
+        by reversing the roles of β and β̂ in the original statement for convenience:
+
+             If β is a string in B(n) such that the run length of β is one less than the run length of β̂ and
+             neither β nor β̂ are same-reps, then β appears before β̂ in Xn′ .
+
+        The first step is to further refine the ordering of the cycles R1 , R2 , . . . , Rt used in the proof of
+        Theorem 18 to prove that S(ω) was a de Bruijn successor. In particular, let R1 , R2 , . . . , Rt be the
+        cycles of B(n) induced by the PRR ordered in non-increasing order with respect to the run lengths of
+        each cycle, additionally refined so the cycles with the same run lengths are ordered in decreasing
+        order with respect to the RLE of the RL-rep. If two RL-reps have the same RLE, then the cycle
+        with RL-rep starting with 1 comes first. Let σi , γi , αi denote the RL-rep, LC-rep, and same-re
+PASSAGE 75278     with
+    Rk    = rs′ · · · rs−1 (j+1)(rs −j−1)rs+1 · · · rm 1v−1 r1 · · · rs′ −1 1.
+
+Clearly Rj > Rk unless rs′ · · · rs−1 (j+1) = r1 · · · rm−1 (rm −1) and (rs −j−1)rs+1 · · · rm 1v−1 r1 · · · rs′ −1 1 =
+1v+1 . Thus, s = m, s′ = 1, and j = rm − 2. This implies β = γi (same-rep) or β = γi .
+
+    Suppose Rk has the form in (3). Since σi is an RL-rep,
+
+    r1 · · · rm 1v ≥ rs′ · · · rm 1v−1 r1 · · · rs−1 rs rs+1 · · · rs′ −1 1.
+
+We want to compare
+
+    Rj    = r1 r2 · · · rm−1 (rm −1)1v+1                  with
+                                    v−1
+    Rk    = rs′ · · · rm 1                r1 · · · rs−1 (j+1)(rs −j−1)rs+1 · · · rs′ −1 1.
+
+Clearly Rj ≥ Rk based on the RLEs described before this claim. Suppose Rj = Rk . Then s′ −s ≤ v,
+and the suffix (rs −j−1)rs+1 · · · rs′ −1 1 must be all 1s with (j + 1) = rm − 1. Thus j = rs − 2
+and rs = rm . If s′ − s = v, then the RLE for β is the same as Ri . Since σi is an RL-rep, this
+implies that r1 r2 · · · rm is periodic. This is easily deduced since a proper suffix of r1 r2 · · · rm is
+equal to a prefix. If r1 r2 · · · rm is not of the form (21p )q for p ≥ 0 and q > 1, then Rk < Rj ,
+contradiction. This means β = γi (same-rep), or β = γi (already handled). If s′ − s < v then
+clearly rs = rm = 2, since both (j+1) and (rs −j−1) must be 1. Suppose s ̸= 1. Note that
+rm−s+2 · · · rm−1 (rm − 1)1v+1 = r1 · · · rs−1 11rs+1 · · · rs′ −1 1. However since s′ − s < v, this
+implies that r1 · · · rs−1 < rm−s+2 · · · rm which contradicts the fact that σi is the RL-rep (applying
+XX:22   Efficient constructions of the Prefer-same and Prefer-opposite de Bruijn sequences
+
+
+        Lemma 11). Thus s = 1 and r1 = 2. Again comparing Rj and Rk :
+
+            Rj   =    (r1 · · · rs′ −1 ) (rs′ · · · r2s′ −1 ) · · · (rm−s′ · · · rm−1 )1v+2   and
+                                                                         v−1 s′ +1
+           Rk    =    (rs′ · · · r2s′ −1 ) · · · (rm−s′ · · · rm−1 )rm 1     1       .
+                                   ′
+        Since r1 · · · rs′ −1 = 21s −2 and rm = 2, β has RLE of the form (21p )q 1u where: (i) p ≥ 0 since
+        p = s′ − 2; (ii) q > 1 since m > 1; and (iii) u > 1 since u = (v + 2) − (2 + s′ − 2) = v − s′ + 2
+        and s′ − 1 < v. Thus:
+           αi = γi has RLE 21u+p−1 (21p )q−1 1,
+           α̂i has RLE 1u+p+1 (21p )q−1 1,
+           PRRu−1 (α̂i ) is β̂ or β̂ , and
+           d = m − (p + 1) and m − d + 1 = p + 2.
+
+            Suppose Ri is PCR-related. Then Rj is CCR-related cycle and thus αj = γj . If β begins with 1,
+        then β = σi and a = u − 1, and b = (2n − 2) − (p + 2). Clearly a < b. If β begins with 0 and p is
+        odd, then β = σi , a = u − 1, and b = (n − 1) − (p + 2) from (1). Clearly a < b. If β begins with 0
+        and p is even, then if u > 1, σi ∈ SP(n), contradiction.
+            Suppose Ri is CCR-related. Then b = (n − 1) − (p + 2) from (1). Suppo

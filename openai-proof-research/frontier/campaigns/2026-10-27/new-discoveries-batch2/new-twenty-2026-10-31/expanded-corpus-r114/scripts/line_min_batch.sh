@@ -1,0 +1,1 @@
+for n in 10 11 12 13 14 15 16 17 18; do for c in 2 3 4 5 6 7; do m=$((n-1+c)); python3 scripts/line_local.py $n $m 2500 $((n*10+c)) 2 > outputs/line-min/n$n-m$m.json; python3 -c "import json;d=json.load(open('outputs/line-min/n$n-m$m.json'));print(d['n'],d['m'],d['max_excess'])" | grep -v ' -' ; done; done

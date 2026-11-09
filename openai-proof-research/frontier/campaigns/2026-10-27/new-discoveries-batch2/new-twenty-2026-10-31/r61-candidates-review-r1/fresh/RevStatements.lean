@@ -1,0 +1,26 @@
+import CaterpillarCenter
+import OrdinalLine
+set_option pp.funBinderTypes true
+#print Caterpillar366834.IsCaterpillar
+#print Caterpillar366834.starSize
+#print Caterpillar366834.IsMaxCenter
+#print Caterpillar366834.CaterpillarCenterConjecture
+#print Caterpillar366834.CaterpillarCenterConjectureWeak
+#check @Caterpillar366834.not_caterpillarCenterConjecture
+#check @Caterpillar366834.not_caterpillarCenterConjectureWeak
+#check @Caterpillar366834.witness
+#print Caterpillar366834.W
+#print Caterpillar366834.edges
+#print OrdinalSpaces366371.IsOrdinalSpace
+#print OrdinalSpaces366371.EmbeddableInLine
+#print OrdinalSpaces366371.Prec
+#print OrdinalSpaces366371.Sim
+#print OrdinalSpaces366371.HasMajorization
+#print OrdinalSpaces366371.MajorizationConjecture
+#check @OrdinalSpaces366371.not_majorizationConjecture
+#check @OrdinalSpaces366371.witness
+#print OrdinalSpaces366371.D
+#print OrdinalSpaces366371.δW
+#print axioms Caterpillar366834.not_caterpillarCenterConjecture
+#print axioms Caterpillar366834.not_caterpillarCenterConjectureWeak
+#print axioms OrdinalSpaces366371.not_majorizationConjecture

@@ -1,0 +1,22 @@
+#!/bin/bash
+set -u
+D=$(cd "$(dirname "$0")/.." && pwd)
+name=$1; shift
+export TMPDIR="$D/tmp" XDG_CACHE_HOME="$D/cache" PYTHONPYCACHEPREFIX="$D/cache/pycache" MALLOC_ARENA_MAX=2 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=2
+cpus=$(awk '/Cpus_allowed_list/ {print $2}' /proc/self/status)
+first=$(taskset -pc $$ | sed 's/.*: //' | awk -F '[-,]' '{print $1}')
+last=$((first+1))
+start=$SECONDS
+setsid timeout --kill-after=2 140 taskset -c "$first,$last" prlimit --cpu=120:120 --as=68719476736:68719476736 -- "$@" > "$D/logs/$name.log" 2>&1 &
+p=$!
+peak=0
+while kill -0 "$p" 2>/dev/null; do
+ rss=$(ps -eo pgid=,rss= | awk -v p="$p" '$1==p{s+=$2}END{print s+0}')
+ ((rss>peak)) && peak=$rss
+ if ((rss>6291456)); then echo RSS_CAP >> "$D/logs/$name.log"; kill -KILL -- -"$p" 2>/dev/null; fi
+ sleep .1
+done
+wait "$p"; rc=$?
+printf '{"exit":%s,"wall_seconds":%s,"peak_group_rss_kib":%s,"cpu_s":120,"wall_cap_s":140,"rss_cap_kib":6291456,"cpus":"%s,%s"}\n' "$rc" "$((SECONDS-start))" "$peak" "$first" "$last" > "$D/logs/$name.receipt.json"
+cat "$D/logs/$name.receipt.json"
+exit "$rc"

@@ -1,0 +1,603 @@
+
+Analysis of misère Sprouts game with reduced canonical trees
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+  /* Reading mode hides the chrome and the empty .arxiv-html-header marker: the pinned JS reads
+     the marker's display to know which way to toggle. The marker draws no box. */
+  .arxiv-html-header { display: contents; }
+  html[data-reading-mode="enabled"] :is(.arxiv-html-site-chrome, .arxiv-html-header, .ds-site-footer) { display: none; }
+  /* The paper controls' icons are blocks, so they sit centred (the pinned JS shows the theme
+     icon by making its span a block). */
+  .arxiv-html-site-chrome .ds-site-header-tools svg { display: block; width: 18px; height: 18px; flex-shrink: 0; fill: currentColor; }
+  /* ar5iv dims every image in dark mode and puts it on a white wash, for paper figures;
+     arXiv's own render as they are (the logo on the bar, the funder logos on their white
+     chips). Important: ar5iv's dark rules are unlayered, as specific as
+     :root:not([data-theme]) img:not(.ltx_no_dark_filter). */
+  :is(.ds-site-header, .ds-site-footer) img { filter: none !important; }
+  .ds-site-header img { background-color: transparent !important; }
+  /* Wide (the theme's 1280px): the theme lays the body out as a grid whose full-width top rows
+     were the band's and its sticky reader bar's. The band takes the first and scrolls away; the
+     header, the paper's bar (no site navigation, the paper's controls), takes the second and
+     stays in view, the one sticky bar, with the anchor clearance that requires (DESIGN-POLICIES).
+     The controls show their names. */
+  @media (min-width: 1280px) {
+    html { scroll-padding-top: 80px; }
+    .arxiv-html-site-chrome { display: contents; }
+    .arxiv-html-site-chrome > #ds-announcement { grid-area: announce; }
+    .arxiv-html-site-chrome > .ds-site-header { grid-area: header; position: sticky; top: 0; z-index: 3; }
+    .arxiv-html-site-chrome .tool-icon { display: none; }
+  }
+  /* Narrow: the header scrolls away, and the controls show icons (names kept for screen
+     readers; Why HTML? goes). The theme's contents panel is fixed below where its old sticky
+     bar was, and hidden only once the reader has closed it, so until then it is an invisible box
+     over the header and the paper: it shows only while open, under the chrome, in its place in
+     the page. The paper's footer (build logs, reporting instructions) keeps the text's side
+     inset; the theme gives it none, so it met the screen edges. */
+  @media (max-width: 1279px) {
+    .arxiv-html-site-chrome .tool-wide { display: none; }
+    .arxiv-html-site-chrome .tool-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    html:not([data-toc-display="block"]) .ltx_page_navbar { display: none; }
+    .ltx_page_navbar { position: absolute; top: auto; }
+    .arxiv-html-footer { padding-inline: 1rem; }
+  }
+Skip to main content
+      Report GitHub Issue
+      ×
+      Title:
+Content selection saved. Describe the issue below:
+      Description:
+      Submit without GitHub
+      Submit in GitHub
+    Why HTML?
+      Report Issue
+      Back to Abstract
+      Download PDF
+      Contents
+      Reading mode
+      Colour theme
+Abstract.
+1 Introduction
+2 Theory
+2.1 Indistinguishability
+2.2 Indistinguishability in the normal version
+2.3 Game tree
+2.4 Canonical trees
+2.5 Reversible moves
+2.5.1 Reversible moves
+2.5.2 Particular case of the empty tree
+2.6 Reduced canonical trees
+2.6.1 Reducers
+2.6.2 Reduced canonical trees
+2.7 Indistinguishability in misère version
+2.8 Count
+2.9 Nim-heaps
+2.10 Recovery with reversible moves
+2.11 Factoring by  \nim{1} 
+3 Computation of reduced canonical trees
+3.1 Representation and storage
+3.1.1 String representation
+3.1.2 Link representation
+3.1.3 Dependence on the order of computation
+3.2 Computation of the reduced canonical tree obtained from a given position
+3.2.1 Reduction in the case of Nim-heaps
+3.2.2 Reduction to  \nim{0} 
+3.2.3 Other reducers
+3.3 Factoring by  \nim{1} 
+3.3.1 Representation of a position factorizable by  \nim{1} 
+3.3.2 Detection of a position factorizable by  \nim{1} 
+4 Misère computation algorithm using RCTs
+4.1 Simplification of the positions with RCTs
+4.2 Computation of the children of a node
+4.3 Interest of RCTs
+4.4 Criterion to replace a position by its RCT
+4.5 Sums of positions
+5 Results
+5.1 Phase of preliminary computations
+5.2 Computation of  S_{17}^{-} 
+6 Conclusion
+References
+    License: arXiv.org perpetual non-exclusive license
+arXiv:0908.4407v1 [math.CO] 30 Aug 2009
+Analysis of misère Sprouts game with reduced canonical trees
+Julien Lemoine - Simon Viennot
+Abstract.
+Sprouts is a two-player topological game, invented in 1967 by Michael Paterson and John Conway. The game starts with  p  spots, lasts at most  3p-1  moves, and the player who makes the last move wins. In the misère version of Sprouts, on the contrary, the player who makes the last move loses.
+Sprouts is a very intricate game, and the first computer analysis in 1991 reached only  p=11 . New results were made possible in 2007 up to  p=32  by using combinatorial game theory: when a position is a sum of independant games, it is possible to replace some of these games by a natural number, called the nimber, without changing the winning or losing outcome of the complete position.
+However, this reduction does not apply to the misère version, making the analysis of Sprouts (and more generally of any game) more difficult in the misère version. In 1991, only  p=9  was reached in misère Sprouts, and we describe in this paper how we obtained up to  p=17 .
+First, we describe a theoretical tool, the reduced canonical tree, which plays a role similar to the nimber in the normal version. Then, we describe the way we have implemented it in our program, and detail the results it allowed us to obtain on misère Sprouts.
+1. Introduction
+Sprouts is a two-player game, which needs only a sheet of paper and a pen to play, with extremely simple rules: for example, Martin Gardner’s article of 1967 [4] (when the game was invented) is a good introduction to start the study of the game.
+Sprouts is a combinatorial game: two players play alternately, knowing all the possible information to choose their next move. There is no room for chance in the game. Moreover, Sprouts is an impartial combinatorial game: from any position, the same moves are available to either player.
+In the normal version of the game, the winner is determined by the following rule: a player who cannot make a move loses. Draws are not possible, and since a game beginning with  p  spots is finite (with at most  3p-1  moves), there must be a winning strategy for one of the player (but for that, of course, he needs to play perfectly).
+Definition 1.
+ S_{p}^{+}  denotes the normal version of the Sprouts game starting with  p  spots (and  S_{p}^{-}  the misère version).
+Finding which player has a winning strategy is difficult because of the game complexity. The first manual analysis only achieved to solve  S_{6}^{+} , and it required to consider a lot of cases through many pages of reasoning. In 1991, the first program of Sprouts enabled Applegate, Jacobson and Sleator [1] to extend this analysis up to  S_{11}^{+} , and to formulate the following conjecture:
+Conjecture 1.
+The first player has a winning strategy in  S_{p}^{+}  if and only if  p  is  3 ,  4  or  5  modulo  6 .
+Later computation [6] in 2007 proved this conjecture to be true up to  S_{32}^{+} .
+In the misère version of the game, the last player able to move is this time the loser. Games in misère version are almost always more difficult to analyze. For example, in the normal version, a disjunctive sum of two losing positions is losing. But in the misère version, the sum can be losing or winning, depending on the case. Detailed explanations about the difficulty of misère games are given in the Theory section.
+Because of this difficulty, Applegate et al. in 1991 only reached  S_{9}^{-}  in the misère version, upon which they formulated the following conjecture:
+Conjecture 2.
+(false) The first player has a winning strategy in  S_{p}^{-}  if and only if  p  is equal to  0  or  1  modulo  5 .
+This conjecture was invalidated by Josh Purinton (unpublished work), who computed first that the winning strategy for  S_{12}^{-}  is actually for the first player11
+            1
+          see http://www.wgosa.org/confirmation12.htm – Josh Purinton has also solved the misère version up to  S_{16}^{-} .. In fact, we observe that above  S_{5}^{-} , we get back to a pattern of period 6, just as in the normal version, but with a shift: known values up to now are shown in the table of figure 1.
+ p 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+ S_{p}^{-} 
+W
+L
+L
+L
+W
+W
+L
+L
+L
+W
+W
+W
+L
+L
+L
+W
+W
+Figure 1. Computed Win/Loss state of  S_{p}^{-} .
+We can formulate the following conjecture:
+Conjecture 3.
+The first player has a winning strategy in  S_{p}^{-}  if and only if  p  is equal to  0 ,  4  or  5  modulo  6  – except if  p=1  or  4 .
+We describe in this article how we achieved to analyze the game up  S_{17}^{-} , beginning first with some well-known notions of combinatorial game theory. Then, we explain how we implemented them in a program, and finally, we will give details on the computed results.
+In this article, we use the notation of Sprouts positions described in [6], which is derived from the notation of [1].
+2. Theory
+In this section, we give an overview of some well known results of the theory of misère games, without proving again all of them. A good entry point for this theory is On Numbers And Games [3], a book from Conway (chapter 12, pp. 136–152), or the famous Winning Ways [2] from Berkelamp, Conway and Guy (chapter 13, pp. 413–452).
+2.1. Indistinguishability
+We give first some standard definitions from the theory of impartial combinatorial games. A game in a given state will be called a position. The outcome of a position is W (win) or L (loss), depending on the existence of a winning strategy from this position. The sum of two positions  \mathscr{P}_{1}  and  \mathscr{P}_{2}  is the position obtained by grouping them, so that at each move, the player can choose to move in the first or the second one. This sum will be denoted  \mathscr{P}_{1}+\mathscr{P}_{2} .
+Following [7], we say that two positions  \mathscr{P}_{1}  and  \mathscr{P}_{2}  are indistinguishable, and we note  \mathscr{P}_{1}\sim\mathscr{P}_{2} , if for any other position  \mathscr{T} , the positions  \mathscr{P}_{1}+\mathscr{T}  and  \mathscr{P}_{2}+\mathscr{T}  have the same outcome. This notion is of practical interest because if two Sprouts positions are known to be indistinguishable, it is possible to replace the biggest one by the smallest one in order to accelerate computation.
+Indistinguishability depends on the considered game, and also on its version: two positions can be indistinguishable in the normal version, but not in the misère one. For example, in the case of Sprouts, the start positions with 1 and 2 spots  S_{1}  and  S_{2}  are indistinguishable in the normal version (let us denote  S_{1}\sim_{+}S_{2} ). But in the misère version the empty position  \mathscr{T}  distinguish them, since  S_{1}  is a Win and  S_{2}  a Loss ( S_{1}\not\sim_{-}S_{2} ).
+2.2. Indistinguishability in the normal version
+Indistinguishability allows us to simplify considerably any impartial game in the normal version (when the player who cannot move is the loser). But, first, we need to go back to a very simple and essential game: the game of Nim.
+Definition 2.
+A position  \mathscr{P}  is entirely defined by the set of possible moves from it. We note  \mathscr{P}=\{\mathscr{P}_{1},\mathscr{P}_{2},\mathscr{P}_{3},...\} , where  \mathscr{P}_{i}  are the children of  \mathscr{P} .
+Definition 3.
+Let  \nim{n}  denote the Nim-heap with  n  matchsticks22
+                  2
+                Children should never play with matchsticks or any other source of fire..
+• 
+ \nim{0}  is a void heap. This is a terminal position, where no move is possible:  \nim{0}=\{\} .
+• 
+ \nim{1}  is a heap of only one matchstick. The only possible move is to remove this matchstick, so  \nim{0}  is the only option:  \nim{1}=\{\nim{0}\} .
+• 
+ \nim{2}  is a heap of two matchsticks: it is possible to remove one or the two matchsticks, and  \nim{2}=\{\nim{0};\nim{1}\} .
+• 
+The general rule, for any positive number  n  is  \nim{n}=\{\nim{0};\nim{1};...;\nim{n-1}\} .
+The importance of Nim comes from the following result:
+Theorem 1.
+(of Sprague-Grundy) For any impartial combinatorial game, all the positions are indistinguishable from some Nim-heap, called the nimber of the position.
+In the case of Sprouts,  S_{2}\sim_{+}\nim{0}  and ABCD.}AB.}CD.}]!  \sim_{+}\nim{3} , which means that the nimber of  S_{2}  is  \nim{0}  and the one of ABCD.}AB.}CD.}]! is  \nim{3} .
+Indistinguishability is an equivalence relation, and the corresponding equivalence classes are called indistinguishability classes. The Sprague-Grundy theorem then states that, in the normal version of impartial games, there are very few and particularly simple indistinguishability classes. This greatly simplifies the analysis of games where positions appear as the sum of smaller ones.
+Unfortunately, this theorem does not apply to the misère version. There are many more indistinguishability classes, and John Conway proves in [3] that instead of the nimber, we need the concept of reduced canonical tree to analyze the classes of the misère version. We describe it in the following sections.
+2.3. Game tree
+We call game tree obtained from a position  \mathscr{P}  the tree where the vertices are all the positions that can be reached by playing moves from  \mathscr{P} , and where two positions  \mathscr{P}_{1}  and  \mathscr{P}_{2}  are linked by an edge if  \mathscr{P}_{2}  is obtained from  \mathscr{P}_{1}  in only one move.
+In order to construct the game tree  \mathscr{A}  obtained from a position  \mathscr{P} , we need of course to know the rules of the game, so that we can compute the children of  \mathscr{P} , but it is important to note that it is then possible to study directly the game tree  \mathscr{A} , without refering anymore to the underlying position, or even the underlying game.
+2.4. Canonical trees
+When two branches of a game tree are perfectly identical, it means that the player can choose between two moves leading exactly to the same situation. Choosing one move or the other will not make any difference in the game, so redundant branches in a game tree are useless. We call canonical tree the game tree where all redundant branches have been deleted.
+Figure 2. Game tree obtained from a given position and corresponding canonical tree
+Figure 2 shows on the left a game tree obtained from a given Sprouts position. The two branches on the right lead to similar games, so we can merge them into a single branch to obtain the canonical tree (on the right). The canonical tree, as well as the game tree, is of height 2, because the longest possible game ends in 2 moves.
+The canonical tree corresponding to a given game tree  \mathscr{A}  can be defined recursively:
+• 
+compute the canonical tree of each child of  \mathscr{A} .
+• 
+in these canonical children, delete all the redundant ones.
+Figure 3. Canonization of a game tree
+This notion of canonical tree allows us to keep only the necessary and sufficient information of a game tree needed to describe a position: if two positions have the same canonical tree, then they are indistinguishable whatever the version of the game is (normal, misère, or any other rule where the result depends only on the number of played moves).
+Figure 3 shows the canonization of the game tree resulting from the Sprouts position 0.AB.}AB.}]! (this position comes from  S_{2} , after linking a spot to itself), obtained with our program.
+2.5. Reversible moves
+2.5.1. Reversible moves
+Definition 4.
+Let  \mathscr{G}=\{\mathscr{G}_{1},\mathscr{G}_{2},\mathscr{G}_{3},...\}  be a non-empty canonical tree. Then, we say that a canonical tree  \mathscr{H}  is obtained from  \mathscr{G}  by adding reversible moves if  \mathscr{H}=\{\mathscr{G}_{1},\mathscr{G}_{2},\mathscr{G}_{3},...,\mathscr{R}_{1},\mathscr{R}_{2},\mathscr{R}_{3},...\}  and each tree  \mathscr{R}_{j}  has  \mathscr{G}  in its children (the moves  \mathscr{R}_{j}  are said reversible).
+ \mathscr{G}  and  \mathscr{H}  have the same outcome: if  \mathscr{G}  is a Win, it means one of its children  \mathscr{G}_{i}  is a Loss. Since  \mathscr{G}_{i}  is also a child of  \mathscr{H} , it implies that  \mathscr{H}  is a Win. Conversely, if  \mathscr{G}  is a Loss, it means all children  \mathscr{G}_{i}  are wins. Moreover, each  \mathscr{R}_{i}  is a Win, since it has  \mathscr{G}  as a child, so all children of  \mathscr{H}  are wins, and  \mathscr{H}  is a Loss.
+But in fact, there is a stronger result, which states that  \mathscr{G}  and  \mathscr{H}  are indistinguishable in the misère version. Indeed, if a player has a winning strategy for the sum  \mathscr{G}+\mathscr{T} , then he can win  \mathscr{H}+\mathscr{T} , by playing the same moves, and extending the strategy to the following case:
+• 
+if the opponent plays one of the move  \mathscr{R}_{j} , he should answer by playing the move  \mathscr{G}  for this component (he “reverses” the move  \mathscr{R}_{j} , hence the name reversible move).
+Figure 4. Example of reversible move
+Figure 4 shows an example of reversible move:  \mathscr{H}  is the tree on the left, and  \mathscr{G}  the one on the right. There is a reversible move  \mathscr{R}_{1} , from which two moves are possible, and one of them is  \mathscr{G} .
+2.5.2. Particular case of the empty tree
+If  \mathscr{G}  is the empty tree, the above definition holds, but we need an additional clause to ensure that  \mathscr{G}  and  \mathscr{H}  are indistinguishable in the misère version:  \mathscr{H}  must be a Win in the misère version.
+The reason is that when the two players play the game  \mathscr{H}+\mathscr{T}  as described above, a particular case arises when  \mathscr{T}  is finished before playing any move in  \mathscr{H} . If  \mathscr{G}  is not empty, the strategy for playing  \mathscr{H}  is described above.
+But if  \mathscr{G}  is empty, the game on  \mathscr{G}+\mathscr{T}  is supposed to be finished, and the player to play should be the winner. However, he finds himself forced to play one of the reversible moves  \mathscr{R}_{j} , and of course, he can win in this case only if  \mathscr{H}  is a Win in the misère version. The clause (also known as the proviso) ensures that  \mathscr{G}  and  \mathscr{H}  have the same outcome even in this particular case.
+2.6. Reduced canonical trees
+2.6.1. Reducers
+The previous section shows that if  \mathscr{H}  is obtained from  \mathscr{G}  by adding reversible moves, then  \mathscr{G}  and  \mathscr{H}  are indistinguishable in the misère version, but what interests us is the reverse way: given a tree  \mathscr{H} , we try to simplify it by reducing it to a given tree  \mathscr{G}\subset{\mathscr{H}} , obtained by pruning reversible moves. This kind of tree  \mathscr{G}  will be called a reducer of  \mathscr{H} .
+Let us remark that  \mathscr{G}  is not necessarily unique, which seems at first to be a problem when there are several possible reducers. However, the reversible moves  \mathscr{R}_{1},\mathscr{R}_{2},\mathscr{R}_{3},...  must all include  \mathscr{G}  strictly, so their height is at least the height of  \mathscr{G}  plus 1. It follows that:
+• 
+A reducer is always of the form: {children of  \mathscr{H}  with a height less than a given value}.
+• 
+Two reducers are always comparable for the inclusion. If there are two different reducers, the smallest one is included in the biggest one, and moreover it is a reducer of the biggest one.
+• 
+There exists a (unique) smallest reducer.
+2.6.2. Reduced canonical trees
+We can then define the reduced canonical tree of a canonical tree, by pruning all the possible reversible moves. This reduced canonical tree is constructed recursively:
+• 
+compute the reduced canonical tree of each child.
+• 
+in this reduced canonical children, delete the redundant ones.
+• 
+reduce the resulting tree with the smallest possible reducer.
+2.7. Indistinguishability in misère version
+The main interest of these reduced canonical trees is that if two positions have the same reduced canonical tree, then they are indistinguishable in misère version. It is natural to ask for the converse.
+The converse is true for combinatorial games in normal version: we know that if two positions have a different nimber, then they are distinguishable. Indeed, if  \mathscr{P}_{1}  and  \mathscr{P}_{2}  have different nimbers, then  \mathscr{P}_{1}  distinguish them, because  \mathscr{P}_{1}+\mathscr{P}_{1}  is a Loss, while  \mathscr{P}_{2}+\mathscr{P}_{1}  is a Win.
+In the case of a misère game, a result proved in [3] (p. 149) seems at first to answer the question: given two different reduced canonical trees  \mathscr{G}  and  \mathscr{H} , there exists a reduced canonical tree  \mathscr{T}  such that  \mathscr{G}+\mathscr{T}  and  \mathscr{H}+\mathscr{T}  have different misère outcomes, which means that  \mathscr{T}  distinguish  \mathscr{G}  and  \mathscr{H} .
+From the above result, we could conclude that in the misère version, indistinguishability classes are exactly the reduced canonical trees. However, when studying a game in particular, it is possible that some positions with different reduced canonical trees are in fact indistinguishable. Let us give an example.
+We consider the misère game of Nim, restricted to heaps of size  \leq 2 . Since  \nim{1}+\nim{1}\sim_{-}\nim{0} , indistinguishability classes are of the form  n\times\nim{2}  or  n\times\nim{2}+\nim{1}  ( n\geq 0 ). The possible moves from this kind of positions are as follows:
+• 
+from  n\times\nim{2}  ( n\geq 1 ), we can move to  (n-1)\times\nim{2}+\nim{1}  or  (n-1)\times\nim{2} .
+• 
+from  n\times\nim{2}+\nim{1}  ( n\geq 1 ), we can move to  n\times\nim{2} ,  (n-1)\times\nim{2}+\nim{1}  or  (n-1)\times\nim{2} .
+It enables us to determine recursively that the only losing positions are  \nim{1} , and  2n\times\nim{2}  ( n\geq 1 ), and then that the only indistinguishability classes are  \nim{0}  ;  \nim{1}  ;  \nim{2}  ;  \nim{2}+\nim{1}  ;  \nim{2}+\nim{2}  ;  \nim{2}+\nim{2}+\nim{1} . Indeed, when a position includes at least 3 times  \nim{2} , deleting a pair of  \nim{2}  does not change the outcome.
+It implies that even if the reduced canonical trees of  \nim{2}  and  \nim{2}+\nim{2}+\nim{2}  are different, since no reduced canonical tree appearing in the game distinguish them, then they are indistinguishable33
+              3
+            This example is detailed in [8].. Actually, this simplification can happen as soon as all the possible reduced canonical trees do not appear in a given game. The new indistinguishability classes, bigger and less numerous, are the root of Thane Plambeck’s work (see for example [7]) on misère quotients.
+Unfortunately, this theory seems difficult to apply to Sprouts, where a lot of different reduced canonical trees appear. Trying to find less numerous indistinguishability classes may still be an option for Sprouts, but we restrained our work to the analysis of reduced canonical trees.
+Going back to our example,  \nim{2}  and  \nim{2}+\nim{2}+\nim{2}  are on the contrary distinguishable within Sprouts: the position ABCD.}ABEF.}CDFE.}]!, whose reduced canonical tree is  \{\nim{1};\{\nim{2}\}\} , distinguish them, since  \nim{2}+\{\nim{1};\{\nim{2}\}\}  is a Win, while  \nim{2}+\nim{2}+\nim{2}+\{\nim{1};\{\nim{2}\}\}  is a Loss.
+2.8. Count
+It is interesting to count the canonical trees and the reduced canonical trees, in order to evaluate their practical interest.
+First, we can count the exact number of canonical trees of a given height, as on figure 5, which shows the 16 canonical trees of height  \leq 3 .
+Figure 5. Canonical trees of height  \leq 3 
+Proposition 1.
+There is  2^{(2^{(...^{(2^{0})})})}  (with  h+1  times the number 2) canonical trees of height  \leq h .
+This can be proved by recursion. Let  \mathscr{C}_{h}  denote the set of all canonical trees of height  \leq h  and  c_{h}  its cardinal number. The above formula can then be written  c_{h+1}=2^{c_{h}} . This comes from the fact that a canonical tree of height  \leq{h+1}  can be defined as the set of canonical trees of its children, which are of height  \leq h . It means that there is bijection between the set  \mathscr{C}_{h+1}  of all canonical trees of height  \leq{h+1}  and  \mathscr{P}(\mathscr{C}_{h}) , the power set of  \mathscr{C}_{h} .
+It implies that the number of canonical trees of height  \leq n  is, for increasing  n : 1;2;4;16;65536; 2^{65536} … which should be compared with the number of nimbers corresponding to trees of height  \leq n : 1;2;3;4;5;6…
+Figure 6. Reduced canonical trees of height  \leq 3 :  \nim{0}  ;  \nim{1}  ;  \nim{2}  ;  \nim{3}  and  \{\nim{2}\} 
+Unfortunately, the number of reduced canonical trees is more similar to the first case: 1;2;3;5;22;4171780… (see [5]). In fact, there is a lot of reductions for small values, but they rarefy quickly and we come back to a growth of the form  c_{n+1}=2^{c_{n}} . For example,  2^{22}=4194304  is very close to 4171780, and the next term is more than 99,99% of  2^{4171780}  (the exact value is given in [3] p. 140).
+2.9. Nim-heaps
+The previous paragraph shows that reduced canonical trees appearing in the misère version of Sprouts are much more numerous and complex than the nimbers of the normal version. However, almost-terminal positions frequently have a very simple reduced canonical tree, namely the tree of a Nim-heap. We detail in the following the properties explaining this fact.
+Definition 5.
+The Mex (minimum excluded) of a set of natural numbers is defined as the least natural number which is not included in the set.
+Example:  Mex(0;1;4;3;1;7)=2 .
+The canonical trees corresponding to Nim-heaps cannot be simplified with reversible moves, but on the contrary, it is possible to simplify a position whose children are Nim-heaps (this result, as well as the following one, are proved in [3] p.139):
+Theorem 2.
+A position whose children are all Nim-heaps is itself indistinguishable from a Nim-heap, except if all the children have size at least 2. The position is then indistinguishable from the Mex of the children.
+For example,  \mathscr{P}_{1}=\{\nim{0};\nim{1};\nim{3};\nim{5}\}  (a position whose children are Nim-heaps of size 0;1;3;5) is indistinguishable from a Nim-heap of size 2:  \mathscr{P}_{1}=\{\nim{0};\nim{1};\nim{3};\nim{5}\}\sim\nim{2} .
+On the contrary,  \mathscr{P}_{2}=\{\nim{2};\nim{3}\}  (a position whose children are Nim-heaps of size 2 and 3) cannot be reduced.
+Moreover, Nim-heaps have another interesting property, which means that it is sometimes possible to reduce a position constituted of a sum of Nim-heaps:
+Theorem 3.
+If at least one of the number  m  or  n  is equal to 0 or 1, then  \nim{m}+\nim{n}\sim\nim{q} , where  q=m\oplus n .
+“ \oplus ” is the Nim-sum, which is done by a bitwise “exclusive or” on the two numbers. For example,  \nim{3}+\nim{1}\sim\nim{2} , or  \nim{4}+\nim{1}\sim\nim{5} .
+Reduction is not possible if  m  and  n  are  \geq 2 . In that case,  \nim{m}+\nim{n}  is not indistinguishable from a given Nim-heap. For example,  \nim{2}+\nim{2}=\{\nim{2}+\nim{0};\nim{2}+\nim{1}\}\sim\{\nim{2};\nim{3}\} , and it has already been described above as a position impossible to reduce.
+Let us give an example for Sprouts. We consider the game tree obtained from  S_{3} . The positions contained in this game tree correspond to 55 different canonical trees, and only 2 of them are not reducible to a Nim-heap:
+• 
+ S_{2}= 0.0.}]!, which has two children, both indistinguishable from  \nim{2} . Its reduced canonical tree is then  \{\nim{2}\} .
+• 
+0.0.AB.}AB.}]!, which is “contaminated” by its child  S_{2} . Its reduced canonical tree is  \{\nim{1};\{\nim{2}\}\} .
+The other 53 positions are all reducible to Nim-heaps, which shows the importance of this concept when analyzing small positions of misère Sprouts.
+2.10. Recovery with reversible moves
+We have seen in the previous paragraph that the position 0.0.AB.}AB.}]! is “contaminated” by one of its children. But when going back up the tree, it can happen that some positions are not, i.e. they are indistinguishable from a given Nim-heap, even though some positions of their subtree are not.
+For example, this is the case of  S_{3} . It has three children, two of them reducible to  \nim{0} , and the other being 0.0.AB.}AB.}]!.  S_{3}  is then indistinguishable from  \{\nim{0};\{\nim{1};\{\nim{2}\}\}\} , but this is reducible to  \nim{1} , because it can be obtained from  \nim{1}  by adding the reversible move  \{\nim{1};\{\nim{2}\}\} . It means that  S_{3}  is indistinguishable from a Nim-heap, even though it was not the case of one of its children.
+Figure 7. Reduced canonical tree obtained from  S_{3} 
+This property of “recovery” with reversible moves increases the number of Nim-heaps in almost-terminal positions. Of course, it also applies to reduced canonical trees more complicated than Nim-heaps: because of reducible moves, the reduced canonical tree of a position can effectively be less complicated that the reduced canonical trees of its children. For example, this is the case for the tree of figure 4, corresponding to the Sprouts position 0.0.A.}1A.}]!.
+2.11. Factoring by  \nim{1} 
+Some reduced canonical trees can be written in the form:  \mathscr{G}+\nim{1} . It becomes interesting when we consider sums of this kind of tree, because we can use the property  \nim{1}+\nim{1}\sim\nim{0}  to reduce the size of the trees.
+For example, by using that  \nim{3}\sim\nim{2}+\nim{1}  and that  \{\nim{3};\{\nim{2}\}\}\sim\nim{1}+\{\nim{2}\} , we obtain:  \nim{3}+\{\nim{3};\{\nim{2}\}\}\sim\nim{2}+\nim{1}+\nim{1}+\{\nim{2}\}\sim\nim{2}+\{\nim{2}\} . It means that the sum of two trees of height 3 and 4 has been reduced to the sum of two trees of height 2 and 3.
+Some other sums enable to reduce the size of the trees. Conway notes for example that  \{\nim{0};\{\nim{2}\};\{\nim{3};\{\nim{2}\}\}\}+\nim{2}\sim\{\nim{2}\}  in [3] p. 151. But such sums are much too rare to be useful and in our program we used only:  \nim{1}+\nim{1}\sim\nim{0} .
+3. Computation of reduced canonical trees
+3.1. Representation and storage
+3.1.1. String representation
+The intuitive way of representing RCTs44
+                4
+              In the following of this article, reduced canonical tree will be shortened RCT. is to recursively define strings, in which each RCT is represented by the set of its children.
+For example, the RCT of  S_{4}  would be represented by:  \{\nim{3};\{\nim{1};\nim{2};\{\nim{3};\{\nim{2}\}\}\}\} 55
+                5
+              this is a compact form. With a string representation even for Nim-heaps, we should replace  \nim{0}  with  \{\} ,  \nim{1}  with  \{\{\}\} ,  \nim{2}  with  \{\{\};\{\{\}\}\}  and  \nim{3}  with  \{\{\};\{\{\}\};\{\{\};\{\{\}\}\}\} . But this string representation quickly becomes inefficient when the RCTs grow. If the same RCT occurs in several places of a bigger one, its representation is stored as many times as it occurs, whereas it is clear that it would suffice to store this information only once. This defect is even more important when we store many RCTs in the database.
+3.1.2. Link representation
+To avoid the problem of redundancy in string representations, we implemented a representation by link, where each RCT has an identifier (a number). An RCT is still represented by the set of its children, but this time, we only store the set of their identifiers instead of their complete representation. This allows us to store only once each RCT in the database, while we can still refer to them several times by using their identifiers.
+But during computations using the RCTs, we frequently need some information about a given RCT: its height, and its outcome. Of course, it is possible to compute them recursively, but the search of identifiers in the databases would cost much running time.
+Consequently, we choose a representation that contains the main information needed about an RCT, and the identifier is made of three parameters:
+• 
+the height of the RCT.
+• 
+a number to distinguish RCTs of same height.
+• 
+the character “W” or “L” according to the misère outcome of the RCT.
+By convention, the number is 0 if the RCT is a Nim-heap. Otherwise, the number 1 is given to the first RCT of a given height that we meet, 2 to the second one…
+The character that describes the outcome of the RCT is useful during the reduction process: a tree is reducible to  \nim{0}  only if it is a Win in misère version (cf paragraph 3.2.2).
+let us give an example with the RCT of figure 8, which arises from Sprouts position: 1ABC.}BCDE.}ADE.}]!. The string representation of this RCT is:
+ \{\nim{0};\nim{2};\{\nim{3}\};\{\nim{1};\nim{3};\{\nim{2}\}\}\} .
+Figure 8. Reduced canonical tree of height 5
+In the following table, for each subtree of this RCT, we give its identifier as well as the set of identifiers of its children.
+RCT
+identifier
+set of children
+ \nim{0} 
+0-0-W
+-
+ \nim{1} 
+1-0-L
+0-0-W
+ \nim{2} 
+2-0-W
+0-0-W 1-0-L
+ \nim{3} 
+3-0-W
+0-0-W 1-0-L 2-0-W
+ \{\nim{2}\} 
+3-1-L
+2-0-W
+ \{\nim{3}\} 
+4-1-L
+3-0-W
+ \{\nim{1};\nim{3};\{\nim{2}\}\} 
+4-2-W
+1-0-L 3-0-W 3-1-L
+ \{\nim{0};\nim{2};\{\nim{3}\};\{\nim{1};\nim{3};\{\nim{2}\}\}\} 
+5-1-W
+0-0-W 2-0-W 4-1-L 4-2-W
+The RCTs met during the computation are stored in a database similar to the last two columns of this table, as ( RCT ; set of children of the RCT ) couples.
+3.1.3. Dependence on the order of computation
+However, this link representation presents a disadvantage: the number in the identifier depends only on the order in which the RCTs have been met, so the same RCT can have different identifiers in different computations. As a consequence, RCT databases produced in different computations are incompatible.
+We explain in paragraph 4.4 that in our computations, we produced an RCT database once and for all to circumvent this problem.
+3.2. Computation of the reduced canonical tree obtained from a given position
+The definition of paragraph 2.6 provides immediately a recursive algorithm to compute the RCT of a given position:
+• 
+compute (recursively) the RCT of each child of the position.
+• 
+delete the duplicates amongst these RCTs.
+• 
+reduce the obtained tree, using the smallest possible reducer.
+There is no difficulty in the first two steps, but the programming of the reduction should be detailed.
+3.2.1. Reduction in the case of Nim-heaps
+The first reduction to be considered is the one corresponding to the theorem 2: if all the RCTs obtained from the children of the position are Nim-heaps, and if at least one is  \nim{0}  or  \nim{1} , then the RCT of the position is itself a Nim-heap that we can determine with the  Mex  rule.
+3.2.2. Reduction to  \nim{0} 
+Next, we test whether the RCT of the position is reducible to  \nim{0} . We have seen in paragraph 2.5.2 that it is possible only if the position is a Win in misère version.
+We must therefore start by checking if a child is a Loss in misère version, which is immediate, because the results are stored in the identifiers (without this, we should determine the outcome of the position through a computation on the entire tree, which would be much more expensive in running time).
+Then, we check if every child is a reversible move, ie if it has  \nim{0}  as a child.
+3.2.3. Other reducers
+If none of the previous reductions have worked, we have to see if it is possible to find another reducer. So, imagine that we are computing the RCT of a position, and that after having removed the duplicates amongst the RCTs of its children, we have obtained the set:  \{\mathscr{A}_{1};\mathscr{A}_{2};\mathscr{A}_{3}...\} . Let  h_{i}  denote the height of  \mathscr{A}_{i} . We sort the RCTs  \mathscr{A}_{i}  so that  (h_{i})  is an increasing sequence. Then the observation of paragraph 2.6.1 implies that it suffices to test the reducers of the form  \{\mathscr{A}_{1};\mathscr{A}_{2};...;\mathscr{A}_{i}\} , where  h_{i+1}\geq h_{i}+2 .
+Coming back to the example of paragraph 3.1.2, let us imagine that we want to reduce: {0-0-W 2-0-W 4-1-L 4-2-W 5-0-W 7-0-W}. We then only need to test the following potential reducers:
+• 
+{0-0-W}
+• 
+{0-0-W 2-0-W}
+• 
+{0-0-W 2-0-W 4-1-L 4-2-W 5-0-W}
+To be sure of finding the smallest possible reducer, our algorithm examines first the smallest potential reducers.
+{0-0-W}=1-0-L is not a correct reducer, because even if 1-0-L is a child of 2-0-W, it is not a child of 4-1-L.
+Then, our algorithm examines the potential reducer {0-0-W 2-0-W}. It starts by looking in the database for the identifier of the RCT that has these two children, but it does not find it. For a good reason: {0-0-W 2-0-W} is reducible to 1-0-L (see paragraph 3.2.1). As the smallest possible reducer must be an RCT, and that this RCT must be the son of at least one child of the position, the recursive nature of the algorithm implies that this RCT has already been stored in the database. So, when our algorithm cannot find a potential reducer in the database, it means that this potential reducer is itself reducible, and there is no need to try it.
+It remains to test the potential reducer {0-0-W 2-0-W 4-1-L 4-2-W 5-0-W}, which is not suitable, since the only children of 7-0-W are Nim-heaps. So it is impossible to reduce {0-0-W 2-0-W 4-1-L 4-2-W 5-0-W 7-0-W}. Since it is a new RCT, our program generates a new identifier of the form 8-n-W (this new RCT is a Win in misère version because the child 4-1-L is a Loss).
+3.3. Factoring by  \nim{1} 
+We have seen in paragraph 2.11 that it is useful to determine which RCTs could be written as a sum of another RCT and of the Nim-heap  \nim{1} . We present here the implementation of this factorization. The factorization step must take place just after the various reductions in the recursive algorithm.
+3.3.1. Representation of a position factorizable by  \nim{1} 
+If two RCTs  \mathscr{G}  and  \mathscr{H}  conform to  \mathscr{G}\sim\mathscr{H}+\nim{1} , then the difference between their heights is 1. In order to store this relation in our database, we express the identifier of the biggest RCT as function of the smallest one, with the following notation.
+We know that  \nim{3}\sim\nim{2}+\nim{1}  (or, symetrically, that  \nim{2}\sim\nim{3}+\nim{1} ). The smallest of these two trees is  \nim{2} . Consequently,  \nim{2}  keeps the same identifier, 2-0-W, while the identifier of  \nim{3}  will be 2-0+1-W.
+We have also seen that  \{\nim{3};\{\nim{2}\}\}\sim\nim{1}+\{\nim{2}\} . As the identifier of  \{\nim{2}\}  is 3-1-L, the identifier of  \{\nim{3};\{\nim{2}\}\}  will be 3-1+1-W (the outcome character “W” corresponds to 3-1+1, not to 3-1).
+3.3.2. Detection of a position factorizable by  \nim{1} 
+We come back to the example of paragraph 3.1.2. Using the new identifier described in the previous paragraph, we get: 4-2-W = {0-0+1-L 2-0+1-W 3-1-L}. Now, let us compute the children of 4-2-W+ \nim{1} . To get a child, either we play a move in 4-2-W or in  \nim{1} . So we have: 4-2-W+ \nim{1} ={0-0-W 2-0-W 3-1+1-W 4-2-W}.
+In this example, we can observe a more general result: if  \mathscr{G}  is an RCT that cannot be factorized by  \nim{1} , then  \mathscr{G}+\nim{1}=\{ (child of  \mathscr{G} ) +\nim{1}  ;  \mathscr{G}\} . So, to determine whether the set of the RCTs of the children of a position corresponds to a position factorizable by  \nim{1} , it suffices to check whether the previous set is of the correct form. In particular,  \mathscr{G}  is the only RCT of maximal height that cannot be factorized by  \nim{1} .
+4. Misère computation algorithm using RCTs
+When we compute the outcome of a position with our program, we explore the game tree obtained from this position in order to determine the outcome of the root. Details on how we carry out this exploration are available in [6]. What changes compared to the normal version is the nature of the nodes of the explored tree.
+4.1. Simplification of the positions with RCTs
+We detail the nature of these nodes on an example. Consider the Sprouts position:
+0.0.0.0.0.0.0.0.}]22.}]2ab2ba.}]0.0.A.}2A.}]!
+This position has 4 independent positions, more or less complex:
+• 
+0.0.0.0.0.0.0.0.}] is too big to compute its RCT.
+• 
+22.}] \sim\nim{1} .
+• 
+2ab2ba.}] \sim\nim{3}\sim\nim{1}+\nim{2}\sim\nim{1}+ 2-0-W.
+• 
+0.0.A.}2A.}] \sim\nim{1}+ 3-1-L.
+Finally, using  \nim{1}+\nim{1}+\nim{1}\sim\nim{1} , we obtain that this position is indistinguishable of 0.0.0.0.0.0.0.0.}]! +\nim{1}+ {2-0-W + 3-1-L}.
+Broadly speaking, a node of the game tree is composed of three parts:
+• 
+the position part, which includes one or more independent positions, too big to compute their RCT.
+• 
+the  \nim{0}/\nim{1}  part, which is  \nim{0}  or  \nim{1}  according to the parity of the number of  \nim{1} .
+• 
+the RCT part, which contains a list of RCTs.
+4.2. Computation of the children of a node
+The children of a node are computed by taking into account 3 types of possible moves. A move is done in one of the node part, leaving the other two unaltered :
+• 
+a normal Sprouts move in the position part
+• 
+a move in the  \nim{0}/\nim{1}  part, which consists to replace  \nim{1}  by  \nim{0} .
+• 
+a move in the RCT part, which consists to replace an RCT by one of its children
+4.3. Interest of RCTs
+Replacing independent positions by their RCT when they are known has several advantages. Many almost-terminal positions have the same RCT, so replacing them by their RCT can simplify the game tree, by reducing the number of nodes stored and explored (and therefore, it reduces memory consumption and improves the running time).
+For bigger positions, we found that RCTs provide relatively few simplifications. First, it is rather rare that complex Sprouts positions have the same RCT, and second, our canonization of Sprouts positions is already quite good: there are very few duplicates amongst the computed children of a given position, so the RCT of this position has more or less the same number of children as this position. But even so, the RCT proves its usefulness, because computing the children of a Sprouts position is complex and expensive in running time, and so the database of ( RCT ; set of children of the RCT ) couples provides a cache that avoids making unnecessarily the same computations of children several times.
+4.4. Criterion to replace a position by its RCT
+Unfortunately, computing the RCT of a position requires the exploration of its whole game tree. This limits the size of the positions that can be replaced by their RCT. Indeed, the size of the game tree obtained from a position increases rapidly with the size of the position. It can be seen in the following table where we counted the number of canonical trees obtained from different starting positions of Sprouts.
+starting spots
+number of canonical trees
+2
+10
+3
+55
+4
+713
+5
+10461
+6
+150147
+Figure 9. Number of different canonical trees in game trees obtained from a starting position
+We considered two different criteria to decide when to compute the RCT of a position. The first is to compute the RCT of all positions below a certain limit number of lives. This method has the advantage to adapt to the current computation, because we compute only the RCTs of positions actually encountered. But it has the disadvantage of changing the RCT databases during the computation. Above all, this criterion is not well adapted to the structure of Sprouts: two positions with the same number of lives can lead to trees of completely different complexity. For example, there are 55 different canonical trees in the game tree obtained from  S_{3}  (ie 9 lives), whereas there are 478 in the tree resulting from the position 1abcde2edcba.2.}]! (which also has 9 lives).
+We have therefore chosen another criterion. The starting positions with  p  spots, and their descendants, quickly appear in the computation of positions with a higher number of spots. We therefore computed the RCT of  S_{6} . Once this RCT computed, we do not compute any other, and we thus have a fixed RCTs database.
+For example, from  S_{12}^{-} , we play the move 0.0.0.0.0.0.0.0.AB.}0.0.0.AB.}]!, and then the move 0.0.0.0.0.0.0.0.}]0.0.A.}0.A.}]!. At this time, our algorithm modifies the node, because we can read in the database obtained from  S_{6}  that 0.0.A.}0.A.}]! \sim 3-1+1-W. On the other side, the rest of the position does not appear in this database. Thus the new node is 0.0.0.0.0.0.0.0.}]! +\nim{1}+ 3-1-L.
+4.5. Sums of positions
+To simplify the nodes, we could consider merging the  \nim{0}/\nim{1}  part and the list of RCTs in a single RCT, by computing their sum. In the case of paragraph 4.1, we would replace  \nim{1}+ {2-0-W + 3-1-L} by a single RCT of height 6, 5-1+1-W. The interest of this approach is twofold: in addition to writing simpler nodes, it would detect the simplifications described at the end of paragraph 2.11.
+However, this method is not practical, because the computation of the sum of RCTs requires the storage of too many additional RCTs. For example, after the storage of the RCT of  S_{6} , let us suppose that we want to calculate the result of the position 0.0.0.0.0.}]0.0.0.0.}]!. The RCTs of these two independent positions are known (and their respective heights are 13 and 6).
+The algorithm described above would replace each of these two positions by its RCT, and thus start the computation on the node: ! +\nim{0}+ {13-7-W+6-208-L}. Then, the classical Win/Loss algorithm we used allows us to find the result of this position by storing only 10 losing positions, while in contrast, the computation of the RCT of 13-7-W+6-208-L needs to store more than 35,000 new RCTs, ie more than for the computation of the RCT of  S_{6} .
+During a misère computation, we frequently need to consider such sums (and even more complex ones), so it is not possible to compute the resulting RCTs. Finally, the simplifications expected at the end of paragraph 2.11 do not compensate for this problem: during the tests we conducted, we have observed none.
+5. Results
+5.1. Phase of preliminary computations
+The following table summarizes the number of RCTs involved in game trees obtained from starting positions, and allows us to imagine the memory needed to take  S_{7}  as the basis of our computations instead of  S_{6}  (we have not computed it due to memory limitations, but it may be accessible: only 45 MB of RAM are needed to store  S_{6} ).
+starting spots
+number of RCTs
+number of positions stored
+2
+5
+18
+3
+7
+157
+4
+35
+1796
+5
+1204
+24784
+6
+25459
+393103
+These numbers of RCTs are an objective data of the Sprouts game, which should be checkable by other programmers. In contrast, the number of positions encountered in the game trees obtained from starting positions depends on our Sprouts positions canonization. This number is an indicator of the quality of our canonization. As our canonization only uses simplifications that preserve the canonical trees, it is wise to compare this column with table 9.
+While many almost-terminal positions are indistinguishable from Nim-heaps, some quite complex positions are indistinguishable from Nim-heaps as well. For example, 0.0.0.0.2.}]! \sim\nim{0} . Conversely, the position with a minimum number of lives that is not a Nim-heap is ABC.}ABD.}CE.}DE.}]! \sim\{\nim{2}\} .
+5.2. Computation of  S_{17}^{-} 
+The implementation of the techniques described in this article allowed us to compute that  S_{17}^{-}  is a Win. The computation required the storage of approximately 170,000 nodes. Of these nodes, about half had an empty position part, which shows that we can explore the game tree so that the position is dismantled rather quickly into several independent positions small enough for their RCT to be in the game tree of  S_{6} .
+The exploration of the game tree was performed in the same way as what we described in [6]: a depth-first algorithm, in which we track the exploration, and manually choose to explore the branches that seem the most hopeful. We also used a check algorithm : when a computation is finished, this algorithm only keeps the positions needed to demonstrate the outcome. It reduces significantly the sizes of the databases: for example, amongst the 170,000 positions computed, less than 18,000 are necessary to demonstrate  S_{17}^{-} .
+The computation time was only twenty hours on a 1.8 GHz processor, and RAM consumption less than 100 MB, so we can reasonably expect to improve this record. Figure 10 shows the number of positions needed to demonstrate  S_{p}^{-}  (after having used a check algorithm). This number gives a good idea of the complexity of  S_{p}^{-} , so that we could imagine the difficulty of computing higher values of  p .
+ p 
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+Outcome of  S_{p}^{-} 
+L
+L
+L
+W
+W
+W
+L
+L
+L
+W
+W
+Positions
+7
+24
+44
+114
+79
+983
+1082
+3517
+6906
+8981
+17583
+Figure 10. Number of positions needed to demonstrate  S_{p}^{-} .
+It is worthwhile to be aware that this number is the number of positions we need in addition to the game tree of  S_{6}  to compute the outcome of  S_{p}^{-} . Of course, we can’t find the outcome of  S_{7}^{-}  with only 7 positions…
+The programming methods described in this article will probably help to determine the outcome of  S_{18}^{-}  or  S_{19}^{-}  fast enough, but it is unlikely that the study of the misère game will give results equivalent to the normal version. Indeed, because of theoretical difficulties related to the misère version, many more nodes must be explored to demonstrate a result. Also, unlike in the case of normal Sprouts game, in which the complexity of  S_{p}  does not increase strictly with  p  (e.g. it is faster to compute  S_{17}^{+}  than  S_{15}^{+} , and we were able to compute  S_{47}^{+}  but not  S_{33}^{+} ), the difficulty seems to increase more regularly for the misère version.
+6. Conclusion
+The theory of reduced canonical trees and the algorithm that results for misère impartial games were particularly effective in the case of Sprouts, by using efficiently the divisions in sums of independent positions. The same algorithm could be used for computing other impartial games in misère version, provided that such divisions in sums of independent position occur in these games.
+The potential improvements may relate to various areas: in addition to purely theoretical improvements, and of course to improvements due to the increasing performance of computers, we may hope for improvements in the game trees exploration.
+The program we used for computation is available with its source code on our web site http://sprouts.tuxfamily.org/ under a GNU licence, together with several databases used during our computations.
+References
+[1]
+D. Applegate, G. Jacobson, and D. Sleator, Computer Analysis of
+Sprouts, Tech. Report CMU-CS-91-144, Carnegie Mellon University Computer
+Science Technical Report, 1991.
+[2]
+Edwyn Berkelamp, John Conway, and Richard Guy, Winning ways for your
+mathematical plays, A K Peters, 2001.
+[3]
+John H. Conway, On numbers and games (second edition), A K Peters, 2001.
+[4]
+Martin Gardner, Mathematical games : of sprouts and brussels sprouts,
+games with a topological flavor, Scientific American 217 (July
+1967), 112–115.
+[5]
+P.M. Grundy and C.A.B. Smith, Disjunctive games with the last player
+losing, Mathematical Proceedings of the Cambridge Philosophical Society
+52 (1956), no. 3, 527–533.
+[6]
+Julien Lemoine and Simon Viennot, A further computer analysis of
+sprouts,
+http://download.tuxfamily.org/sprouts/sprouts-lemoine-viennot-070407.pd%f, 2007.
+[7]
+Thane E. Plambeck, Taming the wild in impartial combinatorial games,
+INTEGERS: Electronic Journal of Combinatorial Number Theory 5
+(2005), G5.
+[8]
+Aaron N. Siegel, Misère games and misère quotients, (2006),
+http://arxiv.org/abs/math.CO/0612616.
+    Experimental support, please
+    view the build logs
+    for errors. Generated by
+        L
+        A
+        T
+        E
+      xml
+    .
+Instructions for reporting errors
+We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:
+Click the "Report Issue" (
+          ) button, located in the page header.
+Tip: You can select the relevant text first, to include it in your report.
+Our team has already identified the following issues. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.
+Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a list of packages that need conversion, and welcome developer contributions.
+        We gratefully acknowledge support from our major funders,
+        member institutions, ,
+        and all contributors.
+        About ·
+        Help ·
+        Contact ·
+        Subscribe ·
+        Copyright ·
+        Privacy ·
+        Accessibility ·
+        Operational Status (opens in new tab)

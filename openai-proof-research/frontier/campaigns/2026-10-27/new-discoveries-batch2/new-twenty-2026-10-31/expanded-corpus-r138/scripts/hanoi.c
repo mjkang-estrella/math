@@ -1,0 +1,4 @@
+extern int printf(const char*,...);extern int fflush(void*);extern void*malloc(unsigned long);extern void free(void*);
+int p,n,N,powp[16];
+void bfs(int source,int*d){int*q=malloc(N*4),head=0,tail=0;for(int i=0;i<N;i++)d[i]=-1;d[source]=0;q[tail++]=source;while(head<tail){int u=q[head++],v=u,top[12];for(int j=0;j<p;j++)top[j]=n;for(int i=0;i<n;i++){int j=v%p;v/=p;if(top[j]==n)top[j]=i;}for(int j=0;j<p;j++)if(top[j]<n)for(int k=0;k<p;k++)if(top[k]>top[j]){int w=u+(k-j)*powp[top[j]];if(d[w]<0){d[w]=d[u]+1;q[tail++]=w;}}}free(q);}
+int main(){for(p=3;p<=8;p++)for(n=2;n<=12;n++){powp[0]=1;for(int i=0;i<n;i++)powp[i+1]=powp[i]*p;if(powp[n]>2500000)break;N=powp[n];int*d=malloc(N*4),*e=malloc(N*4),B=(N-1)/(p-1);bfs(0,d);bfs(B,e);int best=100000,bi=0;for(int i=1;i<n;i++){int s=2*(powp[i]-1)/(p-1),v=d[s]+e[s];if(v<best){best=v;bi=i;}}printf("p=%d n=%d states=%d distance=%d via_special=%d i=%d PASS=%d\n",p,n,N,d[B],best,bi,d[B]==best);fflush(0);free(d);free(e);}}

@@ -1,0 +1,11 @@
+# Dormant only: 352259
+
+No Lean, compiler, checker, formal API or child has run. No dispatch is requested here. This is an unqualified ordinary proposal, subject first to independent source-fidelity, proof, family and significance adjudication.
+
+A literal endpoint must quantify every fixed finite k>=2, strictly positive finite alpha vector, the actual iid Dirichlet samples and logit-inner-product weights, and conclude existence of one fixed t in (1/2,1/sqrt2) with probability of the actual Theorem3.4 hypothesis tending to one (hence nonvanishing). Retain the unedited MathDB literal separately and adjudicate Theorem2/Theorem3.4 numbering and k1 finite-weight domain before choosing a formal statement. Do not replace the model by affine weights, deterministic points, an arbitrary law without the Dirichlet bridge, or mere PSD.
+
+Finite algebra: define selected vertices, negative incidence U and witness S, prove logit monotonicity and both scalar lower bounds, then a finite sum bound for every u,s. Real analysis: continuity/left limit eta(t) at 1/sqrt2 and positive log27/23; obtain t after pi>0. Probability: establish actual Dirichlet measure on the simplex, interior support and strictly positive cap measure for every coordinate; iid indicator count, expectation/variance, Markov-square bound and finite union tending to zero. Every distribution/measurability/normalization bridge is required, including finite logit weights almost surely. These are substantial library infrastructure debts, not presumed declarations already available. A general-law lemma is permissible only with the actual Dirichlet instantiation proved in full.
+
+If the PSD corollary is included, formalize the standalone energy proof; do not trust a sign-garbled extraction of the source matrix proof. The literal combinatorial-hypothesis endpoint itself requires no imported PSD theorem or SDP implementation.
+
+Only propext, Classical.choice and Quot.sound may occur in an eventual accepted transitive axiom audit. No sorry/admit/new axioms/unsafe/native_decide. Independent adversarial fidelity/significance/deep-body audit, paper and fresh source-only strict replay remain entirely unpaid. No acceptance or credit from this plan.

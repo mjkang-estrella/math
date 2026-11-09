@@ -1,0 +1,13 @@
+# r405 persisted research handoff
+
+ZERO accepted credit; campaign remains55/60 beyond39 (94 total). All20 fixed records and newline bytes preserved and rechecked against original chunk lines; no reselection. Exactly20 separate-gate entries: results.json.
+
+One full ordinary candidate: **342387**, refuting the source-defined internal semidirect-product conjecture with connected G=K3,3, H=C6, f=id. An explicit fiber-dependent lift is outside barA*hatB; indeed hatB is trivial. Full proof: FULLCANDIDATE.md. Dormant GPT-6.1 Sol plan: DORMANT-SOL-FORMAL-PLAN.md. No mathematical lemma remains unpaid in that ordinary proof. Precise HOLD: final journal definitions/counterpart of Conj3.28 not read after403; bounded novelty, significance, independent review, literal Lean bridge and replay are not done. No dispatch or acceptance requested by this lane.
+
+342293/342294 have complete literal proofs from the printed positive q-integer sums plus common denominators and multiplication of numerator/denominator by1+q. This makes a(-1)=0; absent reduced-form constraints these are routine formulation corrections, zero credit. 341875 is a public theorem in the original source-defined matroid Chow-ring scope; the actual later theorem and proof passage were read with simplification bridge. No recounting.
+
+Sustained attempts and exact unpaid lemmas: SUSTAINED-DERIVATIONS.md (graph factorization, both rationality formulas, circular aligned subsequences, edge-partition reconstruction and forcing-packing boundary). The other12 primary bodies remain unread and parked explicitly. Search snippets/open labels do not qualify them. The Petr–Soukup public orthogonal-cut result is not a verified refutation of the all-cut341635 target.
+
+Access:12 guarded GET hops:11 successes, one403 final-journal reproduction; no retry/alternate-delivery made. Three actual native search calls/nine strings, all precharged, exact plans and full responses persisted. Current four registry roots saved with heads, metadata-only review. No native CPU/RSS telemetry is available. No mathematical programs, enumeration, experiments, CAS, solver, formal tooling, children or fallback models. Own runner failures preserved (initial search-plan writer asserted on preexisting initial budget after writing its new immutable plan; budget read then updated without reset; no search ran before charge).
+
+See provenance.json, source-read-inventory.json, registry-inventory.json, access-inventory.json, search-inventory.json, resource-inventory.json, SHA256SUMS.json and frozen-after.json. The terminal manifest names its unavoidable self-exclusions; resource samples do not certify unsampled transients. Initial/final frozen checks are supplied standalone exceptions. Root alone adjudicates all gates.

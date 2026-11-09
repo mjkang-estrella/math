@@ -1,0 +1,582 @@
+FILE run.py import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+FILE write_lane.py import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE reservation.json {
+  "utc": "2026-11-08T16:48:13.465288+00:00",
+  "kind": "expanded_cached_corpus_outside_old_10000_routing_queue",
+  "ids": [
+    390751,
+    391084,
+    390671,
+    390737,
+    391340,
+    391048,
+    391467,
+    391230,
+    391077,
+    391252,
+    391275,
+    391085,
+    391008,
+    391367,
+    391075,
+    391112,
+    390663,
+    391135,
+    391147,
+    391080
+  ],
+  "rows": [
+    {
+      "mathdb_id": 390751,
+      "canonical_url": "https://mathdb.com/p/390751/erdos-problem-159-there-exists-some-constant-c-0-such-that",
+      "title": "Erd\u0151s Problem #159 \u2014 There exists some constant $c>0$ such that \u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 1978,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391084,
+      "canonical_url": "https://mathdb.com/p/391084/erdos-problem-571-show-that-for-any-rational-alpha-in-1-2-th",
+      "title": "Erd\u0151s Problem #571 \u2014 Show that for any rational $\\alpha \\in [1,2)$ there exists a bipartite graph $G$ such that $ \\mathrm{ex}(n;G)\\asymp n^{\\alpha}. $",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "turan-number"
+      ],
+      "first_stated_year": 1978,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 390671,
+      "canonical_url": "https://mathdb.com/p/390671/erdos-problem-61-for-any-graph-h-is-there-some-c-c-h-0-such",
+      "title": "Erd\u0151s Problem #61 \u2014 For any graph $H$ is there some $c=c(H)>0$ such that every graph $G$ on $n$ vertices that does not contain $H$ as an induced subgraph contains either a complete graph or independent set on $\\geq n^c$\u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory"
+      ],
+      "first_stated_year": 1977,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 390737,
+      "canonical_url": "https://mathdb.com/p/390737/erdos-problem-141-let-k-geq-3-are-there-k-consecutive-primes",
+      "title": "Erd\u0151s Problem #141 \u2014 Let $k\\geq 3$. Are there $k$ consecutive primes in arithmetic progression?",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "arithmetic-progressions",
+        "prime-numbers"
+      ],
+      "first_stated_year": 1975,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391340,
+      "canonical_url": "https://mathdb.com/p/391340/erdos-problem-866-let-k-geq-3-and-g-k-n-be-minimal-such-that",
+      "title": "Erd\u0151s Problem #866 \u2014 Let $k\\geq 3$ and $g_k(N)$ be minimal such that if $A\\subseteq \\{1,\\ldots,2N\\}$ has $\\lvert A\\rvert \\geq N+g_k(N)$ then there exist integers $b_1,\\ldots,b_k$ such that all $\\binom{k}{2}$ pairwise sums\u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "number-theory"
+      ],
+      "first_stated_year": 1975,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391048,
+      "canonical_url": "https://mathdb.com/p/391048/erdos-problem-531-let-f-k-be-the-minimal-n-such-that-if-we-t",
+      "title": "Erd\u0151s Problem #531 \u2014 Let $F(k)$ be the minimal $N$ such that if we two-colour $\\{1,\\ldots,N\\}$ there is a set $A$ of size $k$ such that all subset sums $\\sum_{a\\in S}a$ (for $\\emptyset\\neq S\\subseteq A$) are monochromatic\u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "number-theory",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 1973,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391467,
+      "canonical_url": "https://mathdb.com/p/391467/erdos-problem-1017-let-f-n-k-be-such-that-every-graph-on-n-v",
+      "title": "Erd\u0151s Problem #1017 \u2014 Let $f(n,k)$ be such that every graph on $n$ vertices and $k$ edges can be partitioned into at most $f(n,k)$ edge-disjoint complete graphs.",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory"
+      ],
+      "first_stated_year": 1971,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391230,
+      "canonical_url": "https://mathdb.com/p/391230/erdos-problem-740-let-mathfrak-m-be-an-infinite-cardinal-and",
+      "title": "Erd\u0151s Problem #740 \u2014 Let $\\mathfrak{m}$ be an infinite cardinal and $G$ be a graph with chromatic number $\\mathfrak{m}$.",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chromatic-number",
+        "graph-theory"
+      ],
+      "first_stated_year": 1969,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391077,
+      "canonical_url": "https://mathdb.com/p/391077/erdos-problem-564-let-r-3-n-be-the-minimal-m-such-that-if-th",
+      "title": "Erd\u0151s Problem #564 \u2014 Let $R_3(n)$ be the minimal $m$ such that if the edges of the $3$-uniform hypergraph on $m$ vertices are $2$-coloured then there is a monochromatic copy of the complete $3$-uniform hypergraph on $n$ v\u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "hypergraphs",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 1965,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391252,
+      "canonical_url": "https://mathdb.com/p/391252/erdos-problem-766-let-f-n-k-l-min-mathrm-ex-n-g-where-g-rang",
+      "title": "Erd\u0151s Problem #766 \u2014 Let $f(n;k,l)=\\min \\mathrm{ex}(n;G)$, where $G$ ranges over all graphs with $k$ vertices and $l$ edges.",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "turan-number"
+      ],
+      "first_stated_year": 1965,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391275,
+      "canonical_url": "https://mathdb.com/p/391275/erdos-problem-792-let-f-n-be-maximal-such-that-in-any-a-subs",
+      "title": "Erd\u0151s Problem #792 \u2014 Let $f(n)$ be maximal such that in any $A\\subset \\mathbb{Z}$ with $\\lvert A\\rvert=n$ there exists some sum-free subset $B\\subseteq A$ with $\\lvert B\\rvert \\geq f(n)$, so that there are no solutions to\u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics"
+      ],
+      "first_stated_year": 1965,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391085,
+      "canonical_url": "https://mathdb.com/p/391085/erdos-problem-572-show-that-for-k-geq-3-mathrm-ex-n-c-2k-gg",
+      "title": "Erd\u0151s Problem #572 \u2014 Show that for $k\\geq 3$ $ \\mathrm{ex}(n;C_{2k})\\gg n^{1+\\frac{1}{k}}. $",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "turan-number"
+      ],
+      "first_stated_year": 1964,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391008,
+      "canonical_url": "https://mathdb.com/p/391008/erdos-problem-483-let-f-k-be-the-minimal-n-such-that-if-1-ld",
+      "title": "Erd\u0151s Problem #483 \u2014 Let $f(k)$ be the minimal $N$ such that if $\\{1,\\ldots,N\\}$ is $k$-coloured then there is a monochromatic solution to $a+b=c$.",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "number-theory",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 1961,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391367,
+      "canonical_url": "https://mathdb.com/p/391367/erdos-problem-901-let-m-n-be-minimal-such-that-there-is-an-n",
+      "title": "Erd\u0151s Problem #901 \u2014 Let $m(n)$ be minimal such that there is an $n$-uniform hypergraph with $m(n)$ edges which is $3$-chromatic.",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "hypergraphs"
+      ],
+      "first_stated_year": 1961,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391075,
+      "canonical_url": "https://mathdb.com/p/391075/erdos-problem-562-let-r-r-n-denote-the-r-uniform-hypergraph",
+      "title": "Erd\u0151s Problem #562 \u2014 Let $R_r(n)$ denote the $r$-uniform hypergraph Ramsey number: the minimal $m$ such that if we $2$-colour all edges of the complete $r$-uniform hypergraph on $m$ vertices then there must be some monoch\u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "hypergraphs",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 1965,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 1
+    },
+    {
+      "mathdb_id": 391112,
+      "canonical_url": "https://mathdb.com/p/391112/erdos-problem-602-let-a-i-be-a-family-of-sets-with-lvert-a-i",
+      "title": "Erd\u0151s Problem #602 \u2014 Let $(A_i)$ be a family of sets with $\\lvert A_i\\rvert=\\aleph_0$ for all $i$, such that for any $i\\neq j$ we have $\\lvert A_i\\cap A_j\\rvert$ finite and $\\neq 1$.",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters"
+      ],
+      "review_priority_score": 36,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "combinatorics",
+        "set-theory"
+      ],
+      "first_stated_year": 1987,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 390663,
+      "canonical_url": "https://mathdb.com/p/390663/erdos-problem-52-let-a-be-a-finite-set-of-integers",
+      "title": "Erd\u0151s Problem #52 \u2014 Let $A$ be a finite set of integers.",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "few_quantified_parameters"
+      ],
+      "review_priority_score": 36,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "additive-combinatorics",
+        "number-theory"
+      ],
+      "first_stated_year": 1977,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 391135,
+      "canonical_url": "https://mathdb.com/p/391135/erdos-problem-629-the-list-chromatic-number-chi-l-g-is-defin",
+      "title": "Erd\u0151s Problem #629 \u2014 The list chromatic number $\\chi_L(G)$ is defined to be the minimal $k$ such that for any assignment of a list of $k$ colours to each vertex of $G$ (perhaps different lists for different vertices) a co\u2026",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "explicit_construction_or_example_request"
+      ],
+      "review_priority_score": 38,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chromatic-number",
+        "graph-theory"
+      ],
+      "first_stated_year": 1979,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 391147,
+      "canonical_url": "https://mathdb.com/p/391147/erdos-problem-642-let-f-n-be-the-maximal-number-of-edges-in",
+      "title": "Erd\u0151s Problem #642 \u2014 Let $f(n)$ be the maximal number of edges in a graph on $n$ vertices such that all cycles have more vertices than diagonals. Is it true that $f(n)\\ll n$?",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "cycles",
+        "graph-theory"
+      ],
+      "first_stated_year": 1997,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 391080,
+      "canonical_url": "https://mathdb.com/p/391080/erdos-problem-567-let-g-be-either-q-3-or-k-3-3-or-h-5-the-la",
+      "title": "Erd\u0151s Problem #567 \u2014 Let $G$ be either $Q_3$ or $K_{3,3}$ or $H_5$ (the last formed by adding two vertex-disjoint chords to $C_5$).",
+      "status": "open",
+      "post_type": "open_problem",
+      "statement_completeness": "full",
+      "screening_tags": [],
+      "review_priority_score": 28,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "graph-theory",
+        "ramsey-theory"
+      ],
+      "first_stated_year": 1993,
+      "source_url": "https://huggingface.co/datasets/ulamai/UnsolvedMath/blob/b9437975f3c873f635a13c48f8b022f5ba80898a/problems.json",
+      "finite_cue_count": 0
+    }
+  ],
+  "input_hashes": {
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/coverage-delta.json": "014e0d4835ddb95509b956de619aa969568b4e2c8a95dea06518648aa26b2644",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/root-mathdb-breadth-intake-r729/routing-queue.jsonl": "b0a830b96c47b2b64c46686c318ad16d21a1985d18224fc246b88583e8201a95",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/tags/screening-tags.jsonl": "cfee4e3848c396dc462eff7aa883009c995243d77120d369fa4118f4e96dd45e"
+  },
+  "excluded_ids_count": 20470,
+  "eligible_metadata_rows_after_filters": 64377,
+  "finite_discrete_pool": 2950,
+  "selection": "reserve8 (reserve7 with classic colouring names also penalised; reserve6 with flagship-name conjectures ranked last; finite, kernel-checkable discrete conjectures): same eligibility and exclusions as earlier expanded-corpus reservations; first_stated_year >= 1900, solution_count 0, discrete keyword in MathDB tags or title; asymptotic/probabilistic/analytic language softly ranked later rather than excluded; ranked by finite-instance cue count, absence of hard_structural, few-parameter cue, review score, newer year, then ID.",
+  "limitation": "Unassigned in checked indexes, not globally unreviewed or novelty-cleared; no corpus-wide technical review claimed.",
+  "output_requirement": "Exactly20 ID-keyed dispositions with exact literal provenance, historical checks and actual source/proof review depth; sustain strongest exact mechanisms and finish full Lean endpoint if justified.",
+  "root_routing_note": "Metadata only, scientific clearance absent. Active formal peer directories filtered BEFORE reservation stat/open; target IDs/sourceURLs excluded using retained root metadata, no active-child file access."
+}
+
+FILE historical-results-allowlist.json {
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/adverse-manuscript-r1/results.json": "8057644cb91a953dc772c8e88c899a150055d4669be5ede607c4b4f2661e14f1",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-parent-integration-r1.json": "0158fb07c599c2e0c6ee298f632ba25b98c96758aaebdd0695ab2683d4338548",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/annihilation-circuit-source-review-r1/review.json": "54c90910a3664cf389cc5540347e30f8f0b027a3beaf91453d37fc9dcce27807",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/asep-manuscript-r1/results.json": "1888fbc3dd4b3ff27cc244344ab80364659e69e120a21a8315630aa8b3d6cfa0",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bicores-armstrong-source-parent-integration-r1.json": "19f8aab7593ddcfbf243a446917a3bf88f17718cde2627b22901f6955fa653dc",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bicores-armstrong-source-review-r1/review.json": "13e7ac7921c7318837abd78e38d2737ef88012686bf33ea7cabb4c5d79698a26",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bidding-number-independent-qualification-r2/review.json": "eed05a0b71903aed69813c9e3921a28090d22d998e428edab62b152e52eb2a78",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/bidding-number-primary-comparison-r3/review.json": "b0b5bb8868f6672f38fcba5531c214f1d5c54b3fc34adc33bc68ac2acfb1416c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/cassinian-manuscript-r1/results.json": "a009e0432928c25dc1adb85d1aa5b1599bee20143089dfa2083809fee5adaf2f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/central-zonotopal-source-review-r1/review.json": "fccba6dac4d9d8e3b59cfd5c817644e97dc1a19f37924b345878abdb99b4cf31",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/circulant-manuscript-r1/results.json": "6bd44212b267fe6e7fb961675aaf3e0cde512e0b70116219d1ef0178602cdfa3",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/clique-flat-chordal-source-parent-integration-r1.json": "e2073a8fc4d990d1a9443fb4aafd7ceb94ac3a0cd759defe54337a4d8268bf54",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/clutter-characterization-r1/results.json": "3eea27dd81d713ecdc4d0b166f84349d9bf501242788a1ba7b3ccdfddee22819",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/collapsing-manuscript-r1/results.json": "aab14ccb358abe3dd98061b1d9542354def969d8eca767c8ae61bef29f2b64e5",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/common-basis-final-replay-pi-r1/results.json": "bff71cc17824e553cb558c4889a6d2930aa0f3dce6227dd2f872147d98054b76",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/common-basis-manuscript-pi-r2/results.json": "6ce80209ec457f52e69603a292b07b57109c68fdb305795b6e26158fa0784b05",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/conference-mds-resume-r4/results.json": "771b25586f34947d5aab4f266119b485d750e9822dae81c7146579270cd05f01",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/contact-manuscript-r1/results.json": "d24665736c4317b2a7eda01dd8755ed4623469ce031cd3b3fccee0e2548dd195",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coupon-variance-source-ideation-r1/results.json": "1a151c94942765170b4fc3acf0c34e1516243b523b250ee298b02d6e1a46782d",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coxeter-manuscript-r1/results.json": "d489d18247bda28d232a12c45dc9f9357bea25b9081bd60fdd1b51a88254ced4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coxeter-normal-form-r3/results.json": "2cfdaaedbd116bc578060b3ebe69ee44e02f2785cc6ad6e043371ab46339f1cb",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/coxeter-spectral-r2/results.json": "fc08bf2dd51bfd189f3d098391a2e2a50f2b5047999de7ff6e2aa1a186f9ef67",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/cyclic-exchange-source-qualification-r1/365645review.json": "b67036d465d95fdcd406c3aa653b80a4057f1ecb47439203f9d2413012de826e",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/derived-matroid-genericity-source-ideation-r1/keyed355016results.json": "a0d8094228b878369b3d67c9238b9665935d2c5c94668defa8d25fe1856e314f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/digits-manuscript-r1/results.json": "4f582cf3840b22b09989365b693ec241bae305c10fdfdc40c22420920cbf4af6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/discrete-fresh-r1/results.json": "f43ce73302ede96e8ee1de5950cdaa14f6aea77f3f9cbcad5ee558ec563b257c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/double-interval-piercing-source-review-r1/review.json": "8e81fbd1940ead8d712431c56b2f0536b203e01b0158ddebf126b21ec1a223fa",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/edgepattern-manuscript-r1/results.json": "62b6cb71298d33b32c12410f3b575a717e6047d6919ae7a8e4345a33035ef6e0",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r100/results.json": "06a0eff56fd4314483d8ecac2898dc86616a283968ddba12143df4b1848b4ada",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r101/results.json": "9290c40a695ff3a90117be565b0f674491838c732b9642cba613f4fdc760da0f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r102/results.json": "dd20c6e021563602274538ab4dd57edc1697c86e4c963738ed7e2ec85e3b68d8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r103/results.json": "6356edb2f11fd00c8f7ee79db131b99a5398848f60b5b53b3bad47a2164b15c6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r104/results.json": "17924a0d6299ed84a5cf774b64958850bdbd0371a003b08a72e7149833cdfa55",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r105/results.json": "2c785f76777e2defdd7f67d7ad8ee6da0ba9e13688bc67d333c3136e9b3760fa",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r106/results.json": "852ca713316d52f717fa11305b5d604c397f9273ba7bdcacb8be77bc32b4f1e8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r107/results.json": "9b530f999c05af9ed7b84a841e2070a813af2821148d4a937b72d5d50ff96d6b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r108/results.json": "63223ac3a188add255b232184053b950f8b7de82c56c89ff1670099074a04c70",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r109/results.json": "39080745091c72d9701db1f3323f23ee8a6c9f25726476e2567ebded6d605a23",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r110/results.json": "e4e34c456a8cc823306af44a0c34e714fa2817355229f0df4583a9ecb8adcd63",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r111/results.json": "f0c6427a5da06081d505aa1f3236e4b0331fe1f78b2f62cba2de5449ba1cb55b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r112/results.json": "f66c1f265e7b705cfaff2c37952daf2a1a92c8014aa39af0a1197a3388b8e6f4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r113/results.json": "d225b859dd059d4561fc2ffb7d83375ef1f2aebd9475aad526995a7e4171bf7c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r114/results.json": "e10de90cc11f95e60a5fa630f80fb248ae1319f6f841a6845a89a76e5eaaba54",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r115/results.json": "bcf6ff25106b65566694ac2ce4446868643178a13b0fcb4a5d45c130cfc40109",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r116/results.json": "83589d25423c22cd6374d66460489c70cfa9b8d9bef1d26a2183adb62a11d1dc",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r117/results.json": "ce01bff4ef2bd70214da0bbba0add55ab1530988b2a80e82fa45ef2f07f7c2fc",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r118/results.json": "ce5af2e1146de91c3896894b81eed29a5b1f5f0b33d2cc01adbc820af05645c9",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r252/results.json": "b52ceaeecb02bce5a53331deb0ba0fdf3b32827251cfb558ad66f09e29d93124",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r253/results.json": "b83eba63ef0bc1dfaa4b9ee7cdaa3334c3f1e88b5756b7e07661c1f6352071ca",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r254/results.json": "5c561b841b325f8070e6f66031980765b6011d90c3a612052d72e4672b7b65f2",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r255/results.json": "66cd0afb79f1fce358ccdf3e808fdd43e4425f043a406e7fb35004941b06f11f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r256/results.json": "fc798d98f6b8ce095d8f5fe562d2d88ab7d9c0ac5e12b4da6d39dfc89eefecb5",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r257/results.json": "4615b3eb0a48c15a5edd829c6bb2e1b0fe2d1b828f6b10ced1a9680486445695",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r258/results.json": "9084de9b3fb10f51135d52883b7419ce6346f925d0b5eb3677a8f867f23aa637",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r259/results.json": "90e21e4e82037d6b7b57ddc7d8d63e3ccb11df050ab4cd7f081182368f89ffe2",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r260/results.json": "f9ef1974510e65c2162fccf442e29dacd4c810fa34c44dfa59f25f064aeebd6f",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r261/results.json": "ef79d48f1d7374745f3374fdafda6ea1211fef297f383988b4a1eee664a4fb0b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r262/results.json": "f78eaddab38a4f123317356b84f92e4e6e53adf405c3cf69f78de12efda3fdcd",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r263/results.json": "fea0e23f5c245e8d4ef2bed3102615b4fd6fbd013c71a3ed0421e6eb77e487b8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r264/results.json": "00c6976430c2bce995da1b8b00f6e361a77613851a88d63f34a5ba594d768ed4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r265/results.json": "a47d9ee44f56eacb9c4a9be40f99e284bfaeb684eac2a2f48eb58da97dbbe468",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r266/results.json": "fe38a80f4c56d99d98d46f84369dba18b81e4b0e4400ced7253da643cbae80e1",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r267/results.json": "58ed20a1b32acac6411a2facbbe0af0a595f71140c8f4b221e2bf75e3c4d2c05",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r268/results.json": "64aca07e2868b6ec8976dcc604728dbf08fcbcde343953df36b5e0c7ecef96e9",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r269/results.json": "112a6d3f1df67c5fcd0be030ca726e5b9e30ba708e4a792693bcdefeacbf0685",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r270/results.json": "8a520c17fb0df724231ad96317ec07efa3158651fe81f0c62917544c5b341b27",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r271/results.json": "eee91f6630a89720fb40d33c68dc19524ed086e54bdaddfbea4143654ea8fd46",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r272/results.json": "c3b65253108d423a8f5b27c800d17bef3b819f0c853394ec76a65045ba7ef78a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r273/results.json": "25d7847646ba758dfb4cbc3969a69e036ee2cfb490d0cb82a89bc00c10f8735d",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r274/results.json": "58bdcd43aa39dabe794c3bffc2729376fac812f1dbc605d6396d9dafbbb5e90b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r275/results.json": "42132ec1cc8d502a0e2efe9e9621ac8cd3f251a3192a48b6e312359dfb7e0e07",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r276/results.json": "2332b907946a994e77b610d271e1f1bb1f5caa2b4fb484a92649feb7a3a67725",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r277/results.json": "a5aa5a81df0baf649602132320ea48d9171cdb6cfab59729206f0305b1eafc98",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r278/results.json": "e868ed1399401d0cf8af70401a5ca38f40f758906b9479bb97f33ffe3fc2a256",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r279/results.json": "3d0c92492cecc7a0880bf637f2973e689838acc49d5a2f5bee02a09f97f37d6c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r280/results.json": "79d587c16cad91349eb572364339640ff0e19189ba11c5a0d785f64373f819a6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r281/results.json": "dbc3a249e73956c0c6f5c4552d4d20bb96341b32b86d8e14fe250c218bb9f824",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r282/results.json": "c82726947876d34d94e178b8f42cc56ad406cdb68e5c43d32bc1f0d08cc4a13c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r283/results.json": "a51f76715a92638f567ff9ab5c52b7fef5c1f2530df8cc6c5df61260d6c1abc4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r284/results.json": "1a259b3f42d44ccdb2e3bb3ce19e8f4b32541a344f4fc664ca04a31d2ad23e28",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r285/results.json": "9877fb6f748478ba5318c23b8e24df7a1ce01a8e52bb7bd31820e47e91941cd4",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r286/results.json": "28a5d4e11fab4e4733d48767d3f73f29c0eed076b0036a92bd5d6823a56ba46e",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r287/results.json": "81fbc1fcec0026be90ee4c73128bfdbffa000aadb36807b1ffa4c6ebda3b96db",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r288/results.json": "dee03e046871db9358c09327afad507e756b2d28ec69b7d472ff9a54d11301bd",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r289/results.json": "0e8ddf5afc4ab2317f357c0849a40fbacac840872df742c261eb27cff40c15cf",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r290/results.json": "f148987560435b8af7a69f2a2c8e0c0553d0cbdeabf3632c1543ec6f97baf33a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r291/results.json": "333d4ae7d45dc10b406513a2febd4ab7ace17ba03b4aeed73efa34c5e90b66fd",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r292/results.json": "24731a376c176439006b56827eefaa6aae87f802af5e6760af2e7908182d595c",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r293/results.json": "60c26b78df7696943de2ce8ec27a2bf2caa1cae5b5aa9e4e67d4c15032bb9c5a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r294/results.json": "c2e44c96871d38baadb4e3d0319817c01b3e7bd37fe635501a908185b1a8928b",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r295/results.json": "51516cc4ae8ca5be096cc968a3541dc569e66b06f1625bc9a1e9f74403a1762a",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r296/results.json": "5376689a01ba26e4d51f2740d73910f1c9a20009bc32c4755e21da037323b1f8",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r297/results.json": "69bd970b41ac409a3dbcf87443918836f781d697c70acd24974201c2597ca887",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r298/results.json": "e9d6277cd4af511cb3f8ead22d3cd92448b3fb9b85bcb09e211b1bf4ea64d925",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r299/results.json": "4d3b5f66febe9ad4559ae71b7aa395673d00e27486ec3d131d95f1a8262912aa",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r300/results.json": "281673e26988b96bc8432fcfaf1b2f9c93d2ff8efae0c9127422095fd0967a40",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r301/results.json": "a47ce7773ea45be40b86985af486e878036ef5f23687e092930b884c3f411ad6",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r302/results.json": "faa29992aa1592dacb47e2aa5203e290197682bdb07bc1b4cbd63125471cbf08",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r303/results.json": "2e6ae793982716ba503d2d5812d9d9fbb36345d4b24ed542c8f77b8a076c61ff",
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r304/results.json": "935457b9d1a3bf4fbbe696ac741fa5ed0666491b59aa2f09f225dab36e3f2f37",
+  "/home/mj-kang/Docu
+OWN NAMES ['reservation.json', 'reservation.sha256', 'bootstrap.py', 'run.py', 'write_lane.py', 'verify_frozen.py', 'registry-roots.json', 'source_get_guard.py', 'model-policy-sol-only.json', 'charge_search.py', 'inherited-denials.json', 'historical-results-allowlist.json', 'search-budget.json', 'TASK.txt', 'frozen-inputs.json', 'ROOT-PREP.json', 'bootstrap-receipt.json', 'frozen-before.json']

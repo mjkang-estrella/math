@@ -1,0 +1,54 @@
+# Builds results.json: exactly 20 ID-keyed dispositions with provenance from extracted.json.
+import json, pathlib
+D=pathlib.Path(__file__).resolve().parents[1]
+ex=json.loads((D/'extracted.json').read_text()); absr=json.loads((D/'sources/abs-receipts.json').read_text())
+R={}
+def put(i,**kw):
+    i=str(i); e=ex[i]
+    R[i]={'mathdb_id':int(i),'title':e['title'],'source_url':e['source_url'],'provenance':e['provenance'],
+          'source_abs_receipt':{k:absr[i][k] for k in ('arxiv','http','sha256','utc','title','authors','journal_ref')},**kw}
+put(355217, outcome='CANDIDATE: explicit counterexample (connected, 8 vertices, 11 edges) refuting source Conjecture 7.1; zero credit until root acceptance',
+ review_depth='primary body read (definitions 1.2-1.3, Section 4 theorems 4.1-4.13, Section 7 open problems); exhaustive search over all connected graphs n<=8; independent set-based verifier; hand proof; infinite family with hand proof; bounded prior-art and registry screen',
+ claim='G8 = triangles {0,1,6},{2,3,7}, hub edge 67, twins 4,5 adjacent to 6 and 7: gamma~c(G8) = 4 = gamma~c(M(G8)), so gamma~c(G) < gamma~c(M(G)) fails. Infinite family G_{a,b} (a,b>=1, n=2a+2b+4) with equality. Lemma: for even n, gamma~c(M(G)) = n/2 iff G has a perfect matching F with G-F connected.',
+ search_coverage='all connected graphs of order 2..8 (1,1,2,6,21,112,853,11117 graphs; canonical generation counts match OEIS A000088/A001349). No counterexample for n<=7; G8 is the unique connected counterexample at n=8 (equality case).',
+ domain_note='Literal statement also fails trivially for the edgeless graph on 2 vertices (M(G)=G); that domain defect is NOT claimed. G8 is connected, so it refutes the intended connected form.',
+ source_checks='Only arXiv v1 (2022-06-20). Every family the source computes (trees, K_n, W_n, F_n, K_{n1,n2}, C_n) satisfies the strict inequality, so there is no source-internal conflict. Follow-up arXiv:2308.02127 (same group, 2023) does not discuss 7.1. Sibling MathDB 355218 (source Conjecture 7.6, line vs middle graph) is related, outside this reservation, and was not examined.',
+ prior_art='Web searches 2026-11-03 (3 queries) found no refutation or published version. Omega trureturing live HEAD e73ca9e3ea14ce3adf84a6ec9d0a7fd5fcd3dd66: full D5 (13787), Problems (1700) and Reg (3619) recursive trees screened, no middle-graph or outer-connected entry. openai/math HEAD 4eaee87548250b2682affda7d05d947c05554bae unchanged; cached preprints listing has no match. Not done: Scholar/MathSciNet/zbMATH citation search.',
+ credited_family_check='Not a parameter variant of a credited family (355140 Staller is a Maker-Breaker domination game; different invariant).',
+ lean='work355217/lean/MiddleOCD.lean UNCOMPILED draft with literal definitions (IsOCD via Preconnected and via Connected, middle graph on W ⊕ G.edgeSet) and endpoints conjecture71_false, conjecture71\'_false, conjecture71Connected_false; needs compile/repair by root or Sol (PERF-marked decide steps).',
+ files=['work355217/PROOF.md','work355217/ocd.py','work355217/verify_witness.py','work355217/family.py','work355217/lean/MiddleOCD.lean','logs/ocd8.log','logs/verify355217.log','logs/family355217.log'])
+put(357110, outcome='SETTLED (published disproof): Hu, Lou, Huang, arXiv:2307.15605 (v1 2023-07-28) disprove Liu-Li(-Xie) Conjecture 5.5 and determine the unique minimizer for odd n. Literal statement also fails at n=7 because P_7 has gamma=3=floor(7/2) (boundary coincidence with the source gamma=ceil(n/3) case).',
+ review_depth='primary body read (Theorem 2.3, Section 5, Conjecture 5.5); independent exhaustive search over all free trees of odd order 5..15 (DP for gamma validated against brute force on all 2287 trees n<=13); prior-art receipt',
+ search_coverage='odd n=5..15, all free trees with gamma=(n-1)/2: smaller spectral radius than H\' found for every odd n>=7 (n=9: spider T(1,2,5), rho=2 < rho(H\')=2.1120).',
+ prior_art='arXiv:2307.15605 abstract receipt in sources/abs-2307.15605.html', files=['work357110/trees.py','work357110/validate_gamma.py','work357110/enumeration-n5-15.jsonl'])
+put(325257, outcome='LITERAL DEFECT FROM SOURCE DATA (zero credit) + extended verification: part (a) as printed (j <= 2^k) fails at n=6,k=2,j=4,i=1 using the source\'s own Table 4 (<z^1>P_6=0, <z^1>P_10=-1), and at every j=2^k thereafter. The corrected range j<2^k and parts (b),(c),(e),(f) verified far beyond the authors\' 1<n<200; (d) irreducibility not checked (no CAS in lane).',
+ review_depth='primary body and LaTeX source read (Theorem 1 formula, Theorem 3, Conjecture 2 exact text from VDimers.tex lines 1341-1346); exact P_n implementation validated against Table 4, P_n(1), deg P_n and the printed P_n(-1) and abs-sum lists for n<=28',
+ search_coverage='n=2..285: (e) P_n(-1) equals GF coefficient; (f) even n>=20 abs-sum equals P_n(-1); (c) even n>=20 Descartes count 0 on P(-x) (all real roots are negative because VH_n, D_n have positive coefficients) hence no real root; (b) odd n>=21 Descartes count 1 so exactly one real root, P(-1)<0<=P(-1/2) bracket for all odd n<=285, monotone decreasing alpha_n certified by exact rational separators for every consecutive odd pair 3..285. Corrected (a) (1<=j<2^k): all n<=235 complete; n in 236..257 and 263..285 with n+j<=300; n in 258..262 with n+j<=275. n<=19 Descartes inconclusive (authors\' own range).',
+ remaining='Irreducibility (d) for all n is out of reach; no independent (non-defect) violation found, so parked.',
+ files=['work325257/tatami.py','work325257/sweep.py','work325257/alpha.py','work325257/sweep-*.jsonl','logs/tat_*.log','logs/alpha_*.log','sources/eprint-1304.0070/VDimers.tex'])
+put(324534, outcome='PARKED (open; special case of the Wong-Zhu (2,2)-total-weight-choosability conjecture). Weights {1,2} by products are equivalent to {0,1} total weights by sums. No counterexample on all graphs with n<=9.',
+ review_depth='survey statement read (Seamone arXiv:1211.5122 Conjecture 4.3); web status search; exhaustive backtracking check',
+ search_coverage='all 288266 graphs on 1..9 vertices (canonical generation, OEIS counts): every graph has a {1,2} total weighting proper by products.',
+ files=['work324534/prod2.py','work324534/prod2_chunk.py','logs/prod2.log','logs/prod2_9_*.log'])
+put(369136, outcome='PARKED (famous open: Beaudou-Brewster-Foucaud). Known for mp(G)<=4 (BBF, arXiv:1803.02550), so any counterexample has mp>=5 and gamma_b>=11, beyond exhaustive small-graph search; source proves the hypercube case.',
+ review_depth='abstract and status search; exhaustive check of connected graphs n<=8 (exact set-cover DP for gamma_b, brute-force mp)',
+ search_coverage='all 12113 connected graphs with 2<=n<=8: gamma_b<=2mp holds (3360 equality cases); the n=1 line in the log is a radius-cap artifact (gamma_b(K1)=1=mp(K1)).',
+ files=['work369136/bm.py','logs/bm8.log'])
+put(367811, outcome='SETTLED (source refutes): the source itself (Norin-Steiner, arXiv:2504.01548 v1) disproves the Guo-Kang-Zwaneveld conjecture with graphs where chi(G) >= (30/29) chi^d(G ⊠ K_{d+1}).', review_depth='abstract (current and only version)')
+put(368875, outcome='SETTLED (source proves): Kontogeorgiou, Pavez-Signé, Stein, Taruni, Trujillo-Negrete, arXiv:2506.14011, confirm the Botler-Naia conjecture for every H.', review_depth='abstract')
+put(326684, outcome='SETTLED by source: Guo-Chen-Yu arXiv:1311.3096 Remark 1.3 shows Conjecture 1.1 fails for 2<=n<=4 (e.g. K2, K3) and holds for n=5 by calculation; Theorem 1.2 (n>=6) gives it for n>=6 (for m<(n-1)(n-2)/2 the bound is negative).', review_depth='primary body read (Conjecture 1.1, Theorem 1.2, Remark 1.3, Section 3 start)')
+put(373604, outcome='SETTLED (known): 1-2-3 Conjecture proved by Keusch, arXiv:2303.02611, J. Combin. Theory Ser. B 166 (2024).', review_depth='abstract receipt', prior_art='sources/abs-2303.02611.html')
+put(336640, outcome='SETTLED (known): Ferber-Krivelevich, arXiv:2009.05495 (Adv. Math. 2022), every graph without isolated vertices has an odd induced subgraph of order >= n/10000.', review_depth='abstract receipt', prior_art='sources/abs-2009.05495.html')
+put(358688, outcome='SETTLED (known): Hyunwoo Lee, arXiv:2306.06627 (latest v 2025-03-26), proves the digraph form with minimum semi-degree (1/2+eps)n and n>=Cm, settling the Pavez-Signé conjecture in a stronger form (orient each edge both ways).', review_depth='abstract receipt', prior_art='sources/abs-2306.06627.html')
+put(327276, outcome='PARKED (open in general). The source (Gan-Korándi-Sudakov) proves the K_{2,3} case and the bound up to an additive constant; Chakraborti-Chen-Hasabnis arXiv:2009.07651 prove s=t-1. The statement is asymptotic in n (n>=n0), so a finite certificate cannot refute it.', review_depth='abstracts plus status search')
+put(323205, outcome='PARKED (open). The source proves nonexistence for d=6,7 and uniqueness for d=5. The first open case d=8 has order 2(d^2-d+1)-4=110 with degree 8, beyond the lane\'s python-only limits (no SAT allowed). No later resolution found.', review_depth='abstract plus status search')
+put(351642, outcome='PARKED (famous open: Bárány-Larman colorful Tverberg). Known for r+1 prime (Blagojević-Matschke-Ziegler) and for d<=2; continuous geometry, no finite certificate. The supplied source disproves only Karasev\'s hyperplane variant.', review_depth='abstract')
+put(331992, outcome='PARKED (open; structural). The source proves a linear-size deletion to boxicity 5 and boxicity 3 for locally planar graphs; no resolution found.', review_depth='abstract plus status search')
+put(337246, outcome='PARKED (open). Keusch (source) proves (2-c)Delta for Delta >= C log v(G); no resolution for all graphs found.', review_depth='abstract plus status search')
+put(340252, outcome='PARKED (open; Conjecture 3.1 of the source). "Exists c" forms are not finitely refutable; K_n and Sidon-set extremal questions in every abelian group of order about n^2 make the problem deep.', review_depth='primary body read (Conjecture 3.1, Observation 2.3, Corollary 2.7 noted)')
+put(347086, outcome='PARKED (open; structural clustered-coloring constant). No resolution found.', review_depth='abstract plus status search')
+put(353843, outcome='PARKED (open). Source v4 (Combinatorica 2024) conjectures the girth analogue and proves only the odd-girth version; no resolution found.', review_depth='abstract plus status search')
+put(359723, outcome='PARKED (open). Source Conjecture 6.5 (Bradshaw-Clow-Xu). Clow-Stacho arXiv:2304.09320 is linear in chi_2 only when degeneracy t >= log2 chi_2, which does not give a constant c(d). No resolution found.', review_depth='primary statement read (Conjecture 6.5) plus related abstracts')
+assert len(R)==20 and set(R)==set(map(str,json.loads((D/'reservation.json').read_text())['ids']))
+(D/'results.json').write_text(json.dumps(R,indent=1,ensure_ascii=False)+'\n')
+print('wrote',len(R))

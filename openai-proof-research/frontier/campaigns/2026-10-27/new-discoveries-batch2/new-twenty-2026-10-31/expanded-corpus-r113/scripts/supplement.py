@@ -1,0 +1,2 @@
+from fetch import get
+for key,url in [('partition-generatingfunctions.txt','https://www.rimosco.it/generatingfunctions.txt'),('openai-root.json','https://api.github.com/repos/openai/math/git/trees/71e8eaa37259d11418fe4ee382a0f82b91ea973e'),('omega-root.json','https://api.github.com/repos/the-omega-institute/trureturing/git/trees/9e3ab1a59e8348e55bab44ad2ba01f0f3874001f')]:print(get((key,url)),flush=True)

@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-09T00:31:13.158559+00:00",
+  "name": "extract_literals",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r530",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nimport json,glob,hashlib,subprocess,sys,json.decoder as jd\nL='/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r530/'\nC='/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/'\nr=json.load(open(L+'reservation.json',encoding='utf-8'))\nids=set(r['ids'])\nprint('reservation row keys:',list(r['rows'][0].keys()))\nfiles=sorted(glob.glob(C+'mathdb-normalized-chunk-*.jsonl'))\nprint('nchunks',len(files))\ndef h(b): return hashlib.sha256(b).hexdigest()\ndec=json.JSONDecoder()\ndef tokens(s):\n    # top-level key->raw value token map\n    i=s.index('{')+1; out={}\n    while True:\n        while s[i] in ' \\t\\r\\n,': i+=1\n        if s[i]=='}': break\n        assert s[i]=='\"'\n        k,e=jd.scanstring(s,i+1)\n        i=e\n        while s[i] in ' \\t\\r\\n:': i+=1\n        v,e2=dec.raw_decode(s,i)\n        out[k]=(i,e2)\n        i=e2\n    return out\nfound={}\nkeysshown=False\nfor f in files:\n    bs=open(f,'rb').read()\n    fh=h(bs)\n    start=0; ln=0\n    while start<len(bs):\n        nl=bs.find(b'\\n',start)\n        if nl<0: raw=bs[start:]; has=False; nxt=len(bs)\n        else: raw=bs[start:nl]; has=True; nxt=nl+1\n        ln+=1\n        # quick filter\n        hit=None\n        for i in ids:\n            if (b'\"mathdb_id\":%d'%i in raw) or (b'\"mathdb_id\": %d'%i in raw) or (b'\"id\":%d'%i in raw) or (b'\"id\": %d'%i in raw) or (b'/p/%d/'%i in raw):\n                hit=True;break\n        if hit:\n            txt=raw.decode('utf-8')\n            o=json.loads(txt)\n            if not keysshown:\n                print('corpus keys:',list(o.keys())); keysshown=True\n            mid=o.get('mathdb_id',o.get('id'))\n            if mid in ids:\n                found.setdefault(mid,[]).append(dict(chunk=f,chunk_sha256=fh,line=ln,newline=has,raw=txt,raw_sha256=h(raw)))\n        start=nxt\nprint('found',{k:len(v) for k,v in found.items()})\nprint('missing',sorted(ids-set(found)))\nout={}\nfor mid in r['ids']:\n    assert len(found[mid])==1,(mid,len(found[mid]))\n    x=found[mid][0]; t=x['raw']; tk=tokens(t); o=json.loads(t)\n    field=[k for k in ('statement','statement_md','problem_statement','body') if k in o][0]\n    a,b=tk[field]; rawtok=t[a:b]\n    stmt=o[field]\n    out[str(mid)]=dict(chunk=x['chunk'],chunk_sha256=x['chunk_sha256'],line=x['line'],newline=x['newline'],raw_line_sha256=x['raw_sha256'],raw_line=x['raw'],statement_field=field,raw_statement_token_sha256=h(rawtok.encode('utf-8')),decoded_statement_sha256=h(stmt.encode('utf-8')),decoded_statement=stmt)\ntxt=json.dumps(out,indent=1,sort_keys=True,ensure_ascii=False)+'\\n'\np=subprocess.run([sys.executable,'-I','-B',L+'write_lane.py','literal-bindings.json'],input=txt,text=True,capture_output=True)\nprint('write',p.returncode,p.stdout,p.stderr)\nprint('total len',len(txt))\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 4.908312056970317,
+  "sampled_group_rss_peak_bytes": 40251392,
+  "samples": 56,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 4.890649,
+  "stderr": ""
+}

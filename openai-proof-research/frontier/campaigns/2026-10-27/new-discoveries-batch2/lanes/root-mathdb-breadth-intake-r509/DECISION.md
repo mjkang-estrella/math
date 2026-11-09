@@ -1,0 +1,5 @@
+# Root r509 reconciliation
+
+Reconcile r506: exactly fifty new literal statement reviews, zero proposals or credit. Reported coverage is 3,783, not complete scientific/novelty review. Five public-source eligibility exclusions (334876,359457,382481,405498,405202) remain selected-passage findings, not root proof audits. Forty-five rows remain HOLD. Eight primary sources were read selectively; source 366907 has an unverified public-certificate lead, not a qualified discovery. Preserve extraction-dependency failure and access/coverage limits. Integrity does not establish mathematics or novelty.
+
+Claude r504 failed from API rate limiting; its fifty IDs remain reserved and unreviewed. No retry or provider substitution. Sol r508 continues. Reserve a new disjoint fifty for Sol r510. Root only orchestrates. Counts unchanged: 9 additional /39 total /next40. Prior r503 adjudications preserved. No upstream verifier or mathematical checker executed; root checks immutable references, assignment, exact statements and file sets only.

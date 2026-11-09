@@ -1,0 +1,63 @@
+import pathlib,json,hashlib,itertools,datetime
+D=pathlib.Path(__file__).resolve().parent;L=D.parent;I=L/'root-mathdb-breadth-intake-r567';rows=json.loads((D/'literal-records.json').read_text())
+notes={
+357738:('PARK_DEEP','Universal classification of unital separable nuclear real-rank-zero stable-rank-one C*-algebras; distinguishing one counterexample does not classify all extensions. No short complete invariant bridge.'),
+357838:('PARK_DEEP','All n asymptotic upper bound for forbidding the prism requires a uniform extremal mechanism; finite graph witnesses do not settle Theta(n^(3/2)).'),
+358295:('PARK_DEEP','Exact Mahler/L-derivative identity needs regulator and functional-equation normalization; numerical agreement is insufficient and no short full identity route established.'),
+358431:('PARK_DEEP','Every symplectic automorphism, including infinite order and all projective K3 surfaces; listed finite-order/elliptic cases cannot settle full scope.'),
+358762:('EXCLUDE_PUBLIC_RESOLUTION_REPORTED_IN_PRIMARY','arXiv2306.08457v1 introduction Conjecture B and Theorem1.1 explicitly state false for n>=12, citing Giovenzana et al. Actual counterexample dependency body not audited; primary printed resolution blocks discovery eligibility.'),
+358778:('HOLD_DEFINITIONS','All monomial complete intersections and all k; quasi-Betti definition and coefficient convention absent from literal record. Reciprocity may explain antisymmetry but is not a checked proof.'),
+358830:('HOLD_SCOPE','Z, F, beta and negative modes are only referred to, not defined; n denominator also needs n>0 and hbar localization. Smaller-subspace result is not all zeta.'),
+358835:('HOLD_DEFINITIONS_RESOURCE','w5 and base characteristic not defined in record; both universal nilpotence upper bound and sharpness required. Reported days-long calculation not replayed and inappropriate for cap.'),
+358838:('HOLD_DEFINITIONS_RESOURCE','w7^(3) and characteristic need restoration; universal ternary multiplication length13 vanishing plus sharpness is not binary-case evidence.'),
+358840:('HOLD_SCOPE','Universal k includes k=1 making congruence modulo k-1 problematic; operad, field and admissible d ranges need exact source definitions. No credit for domain correction.'),
+359046:('EXCLUDE_REPORTED_KNOWN','Literal record itself reports subsequent Ding proof of all-positive-n identity. Hprime not defined here; no independent proof-body clearance, and desirable bijection is a different task.'),
+359154:('PARK_DEEP','All finite-type orders and virtual transverse knot pairs with two common invariants; ordinary-knot theorem has no checked virtual extension. No full-scope mechanism.'),
+359220:('HOLD_SCOPE_DEEP','Graph-sequence size tending to infinity and lazy/continuous-time versus periodic simple walk need source restoration. Bipartite periodicity correction would earn no credit; transitive expander cutoff remains deep.'),
+359459:('PARK_DEEP','For each dimension3..7 a uniform sstar controls every stable cone; classical local limit alone does not supply uniform compactness and regularity. No bounded certificate route.'),
+359478:('HOLD_PRIMARY_MISMATCH','Literal all-graph inequality fails on 2K2: v4, Delta1, alpha2 < ceil(2sqrt4)-1=3. Fetched2308.06670v1 full text search finds no AGX passage; selected body is degree-equivalent graphs. No source-faithful conjecture refutation or novelty claimed.'),
+359479:('HOLD_PRIMARY_MISMATCH','Literal all-graph inequality fails on 2K2: alpha2 < (4-1)/1=3. Delta0 also undefined. Same primary mismatch as359478; disconnected example is a scope diagnostic, no credit.'),
+359593:('HOLD_SCOPE','Formula says all integral r but n,k range and generalized binomial conventions for negative n-j are missing. Recurrence proof would need definitions and endpoint control; no value substitution promoted.'),
+359748:('PARK_DEEP','Every generic realization must have two real equivalent configurations in its shared stress kernel, with generic q and changed uv distance. Complex algebraic alternatives do not guarantee real witnesses.'),
+359827:('HOLD_DEFINITIONS','All finite Weyl groups and iff separability needs W/U quotient convention and separability definition. Enumerating ranks or using symmetric-group case is not full-scope proof.'),
+359994:('PARK_DEEP','Uniform chromatic bound for every C4-free graph; small critical graphs may be tested but no obstruction or inductive coloring mechanism covers all Delta. No finite sweep undertaken.'),
+360158:('HOLD_DEFINITIONS','Finite-type double flag varieties, Y and projection depend on symmetric-pair setup absent in record. Known case propositions cannot be assumed to imply all finite types.'),
+360254:('HOLD_DEFINITIONS','Directed clique invariant not defined in record. Requires infinitely many pairwise nonisomorphic critical tournaments for every k>=3, not one construction at k3.'),
+360571:('PARK_DEEP','Threshold n depends only on K,epsilon across all locally compact groups; Haar-side and noncommutativity defeat naive additive covering. No full-scale growth argument established.'),
+360731:('HOLD_SCOPE','Condition2 says some s without s>1, hence is tautologically condition1 if s1 allowed. Definition of higher Pythagoras sums needs source; arbitrary rings not reduced to fields by assertion.'),
+361067:('PARK_DEEP','High-probability statement is simultaneous over every weighting, not a typical weighted matrix. Standard random-matrix inertia does not control adversarial weighting.'),
+361131:('EXCLUDE_REPORTED_KNOWN','Literal record explicitly reports primary counterexample to positive lower density for all k. No new construction claimed; source proof body not read.'),
+361132:('PARK_DEEP','Weaker nonempty intersection is not refuted by zero lower density. Need stable positive-density set missing a fixed run entirely, or general proof; no such route established.'),
+361473:('HOLD_DEFINITIONS','Link detector h and homology coefficient conventions missing. Equality of all reduced homology groups requires a uniform collapse/acyclic-fiber proof; experimental stronger cases insufficient.'),
+361543:('PARK_DEEP','Every integer n must have O(log n)-size realizing poset. Multiplicative/ordinal-sum gadgets do not remove the loglog loss for arbitrary primes. No constructive route established.'),
+361570:('HOLD_SCOPE_CORRECTION','Primary2401.11496v1 conjecture and preceding n3 proof selected. Literal M invertibility condition mismatches determinant (b-a)^(n-1)(b+(n-1)a). E.g.char3,n4,a1,b0 passes listed restrictions but is singular. Domain correction earns zero credit; alternating-polynomial adaptation is not a new result.'),
+361585:('PARK_DEEP','All finite graphs and all independent edge probabilities; FKG alone controls conjunction of connection events but union-to-A/minimum factor needs extra correlation argument. No valid full-scope bridge.'),
+361663:('PARK_DEEP','All closed almost complex4-manifolds with only homological positivity; dropping pointwise semipositivity is precisely the analytic obstruction, not removable by linear algebra alone.'),
+361685:('PARK_DEEP','Every finite group, prime and element with all commutators constrained; Sylow/small-group instances not full Baer-Suzuki variation. No bounded universal reduction.'),
+361714:('PARK_DEEP','One exact continued-fraction evaluation is numerically accessible but needs exact modular equation and branch isolation. No proven auxiliary algebraic value or short certificate derived.'),
+361950:('HOLD_REPORTED_PRIOR_SCOPE','Record reports Ford-Luca-Moree negativity. A single negative conductor does not by itself defeat sufficiently-large-m asymptotics; exact unbounded negative family and prime/composite scope must be read. No fresh result claimed.'),
+362031:('EXCLUDE_REPORTED_KNOWN','Record reports a counterexample to Davenport closeness in the cited source. Public proof body not read; cannot earn new refutation credit.'),
+362232:('HOLD_SCOPE_DEEP','All projective toric surfaces, Cox generation multiplicity convention and whether three indices must be distinct need restoration. Checking lattice ideals of small fans cannot settle converse.'),
+362336:('PARK_DEEP','Every outerplanar H and every graph at exact minimum-degree threshold. A finite H family or known subclass minor theorem cannot establish universal threshold.'),
+362337:('PARK_DEEP','Every planar maximal3-degenerate H, and internally disjoint subdivision paths in every host; minor models alone insufficient. No uniform constructive embedding.'),
+362509:('HOLD_DEFINITIONS','Relevant local base change, representation hypotheses and constant normalization missing; every place including archimedean needs exact scope. Cannot infer all local identities from global formula.'),
+362626:('HOLD_SCOPE_CORRECTION','Record defines thin as width<=1, contradicting motivation about thin width>=2; technical thin is not safely identified. Full-dimensionality also needed for width>0. No tautological width correction promoted.'),
+363197:('HOLD_DEFINITIONS','Higher connected automorphism group and Morita equivalence model depend on A-infinity/dg choices; vanishing positive Hom alone is not a concrete invariant construction. No short full-scope route.'),
+363199:('PARK_DEEP','Every prime p3mod4 and associated Laurent series; evidence for3,7,11 cannot control all p. Need uniform number-wall/continued-fraction obstruction, not finite sweep.'),
+363745:('HOLD_MISSING_STATEMENT','Literal record replaces target equality with word equation; no exact trace identity is present. Cannot count as a complete mathematical statement, even though metadata says full.'),
+363879:('EXCLUDE_PRIMARY_THEOREM_SCOPE_HOLD','2407.07553v1 Proposition18 states exactly all m,T upper bound and limit, proof in A.5. Selected A.5 proof passage read, not accepted as independently audited: its bilinear eigenvalue step needs justification. Record lacks system matrices, so match to intended example remains a source-scope gate; no discovery eligibility.'),
+363956:('HOLD_MISSING_FORMAL_TARGET','Honest matrix, h,hprime,f1,H245 and formal meaning of cannot prove are unspecified. Epistemic limitation is not a quantified theorem or refutable equality; no completeness credit.'),
+364030:('HOLD_DEFINITIONS','All spherical pairs and b need normalization of minors, Ub and epsilon. Changing sign conventions can change statement; no sign-independent route inferred from finite examples.'),
+364066:('PARK_DEEP','Every rational elliptic curve, not average or torsion families; exact Mordell-Weil rank and modular degree require major arithmetic dependencies. No small parameter certificate settles full universal bound.'),
+364280:('HOLD_SOURCE_SCOPE','Primary2408.03921v1 Conjecture4.5 repeats inconsistent2k versus k regions, and places existential r before measure data (record places it after). Source correction required; preceding Theorem4.1 allows permutation and inequality, not fixed labels. No repaired theorem promoted.'),
+364578:('PARK_DEEP','One absolute C for every maximum degree with excluded isolated vertices/edges; constant-size examples cannot refute unspecified C. Need asymptotic obstruction or uniform coloring recursion; none established.')}
+assert len(notes)==50
+out=[]
+for e in rows:
+ r=e['record'];status,note=notes[r['mathdb_id']];out.append({k:e[k] for k in ['mathdb_id','chunk','line','statement_utf8_sha256','canonical_record_sha256']}|{'statement':r['statement'],'source_url':r['source_url'],'title':r['title'],'disposition':status,'technical_review':note,'literal_record_read':True,'complete_self_contained_statement':False if status.startswith('HOLD') else True,'primary_passage_read':r['mathdb_id'] in [358762,359478,359479,361570,363879,364280],'whole_primary_body_read':False,'full_dependency_audit':False,'successor_body_cleared':False,'current_registry_cleared':False,'accepted_credit':0})
+(D/'dispositions.json').write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n');(D/'proposals.json').write_text('[]\n')
+# Actual exact finite scope diagnostics, not scientific proposals.
+edges={(0,1),(2,3)};alpha=max(len(s) for n in range(5) for s in itertools.combinations(range(4),n) if not any(a in s and b in s for a,b in edges));assert alpha==2
+n=4;p=3;a=1;b=0;matrix=[[(b if i==j else a)%p for j in range(n)] for i in range(n)];assert all(sum(row)%p==0 for row in matrix)
+(D/'bounded-checks.json').write_text(json.dumps({'executed':True,'graph':{'edges':sorted(edges),'subsets_checked':16,'alpha':alpha,'v':4,'Delta':1,'both_literal_rhs':3,'credit':0},'matrix':{'field':'F9 characteristic3','n':n,'a':a,'b':b,'q':9,'r':7,'kernel_vector':[1]*4,'matrix':matrix,'credit':0}},indent=2)+'\n')
+print('50 individual dispositions; zero proposals; finite scope diagnostics passed')

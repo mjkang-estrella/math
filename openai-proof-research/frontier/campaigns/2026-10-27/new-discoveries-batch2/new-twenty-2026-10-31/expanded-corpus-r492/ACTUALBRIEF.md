@@ -1,0 +1,15 @@
+# Actual handoff — expanded-corpus-r492
+
+Zero qualified full-scope survivors. Exactly twenty fixed originals are preserved in originals/ with complete newline JSONL and raw/token/decoded provenance. All literals were read before prioritization. results.json contains twenty separate ID-keyed literal, source, ordinary, prior, novelty, significance, formal, independent and acceptance gates.
+
+Three sustained source-led investigations (320902 eventual coprime uniqueness,321197 group/list edge equality,317859 switching-equivalent decks) produced structural reductions and precise unresolved lemmas, not full endpoints. See ORDINARY-DERIVATIONS.md for three routes each, full deductions and failures. No mathematical programs, enumeration, numerical experiments, CAS or formal execution occurred.
+
+319787 has a full elementary literal negation at f3, but actual source itself conflates labelled and invariant algebras. This is a source/wording correction, zero credit. 329458 has an actual matching public all-forest theorem in2610.07943v1; pp1–6 and conditional derivation read, deep analytic/finite-check dependencies unaudited. It remains a specific public-proof HOLD. 316525 has a specific earlier public d4-refutation claim, actual body unread after timeout, no authenticated theorem bridge here. Sixteen assigned original bodies remain unread. Acquisition of the forest follow-up does not pay its assigned original body gate.
+
+826 exact allowlisted historical files passed pre-access protected-name filtering of every path component and were hashed. No protected peers, quarantined packets or embedded historical paths were accessed. Source-neighbor conclusions were not transferred. Two actual native searches/six exact strings were charged by immutable charge_search.py with live continuity; full responses saved. Four denied shared registry root artifacts were not retried or indirectly restored. Current registry/proof/chronology clearance is not claimed.
+
+Six guarded GET attempts: five PDF successes, one connection timeout. NEW ENTIRE-WORK delivery restriction: Lovett–Meshulam–Samorodnitsky, Inverse Conjecture for the Gowers Norm is False, arxiv0711.3388, ToC7(2011)131–145, DOI10.4086/toc.2011.v007a009. theoryofcomputing.org/articles/v007a009/v007a009.pdf timed out. ALL NEW alternate hosts, versions, arxiv, author, cache, mirror, DOI/API/body/metadata deliveries of this identified work are unavailable. Guard history remains unchanged (mechanical artifacts array empty); this manual identity notice supplies the broader binding. No alternate attempted.
+
+No FULLCANDIDATE or dormant formal plan is warranted; no formal dispatch, acceptance, self-credit or new family count. Campaign remains57/60 beyond39,96total. Root must independently adjudicate any future target; this packet certifies no mathematical acceptance.
+
+Read-depth/access/resource and procedural qualifications are in PROCEDURE.md and source-inventory.json. Manifest includes all completed receipts, helpers, frozen-after and handoff files except its precisely named terminal self-exclusions.

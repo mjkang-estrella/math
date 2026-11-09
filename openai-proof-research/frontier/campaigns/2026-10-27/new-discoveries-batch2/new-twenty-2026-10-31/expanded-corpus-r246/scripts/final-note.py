@@ -1,0 +1,2 @@
+import pathlib,json
+D=pathlib.Path(__file__).resolve().parents[1];p=D/'outputs/registry-screen.json';o=json.loads(p.read_text());o['index_hit_review']='Eight keyword hits: Kenny Lau/AxiomMath algebra/number-theory projects and an unrelated McClure-Shiu region problem. None concerns local antimagic Mobius ladders, any reserved ID, or reserved arXiv source. No relevant hit identified.';p.write_text(json.dumps(o,indent=2))
