@@ -1,0 +1,43 @@
+# Exact routes investigated
+
+No acceptance or campaign credit is assigned here. Campaign count remains 4/20 beyond 39. All primary-body review below is new in r58, not inherited.
+
+## 364095: set palettes, strongest route
+
+Read the complete five-page arXiv 2407.19050v1 body, including the definitions on page 2, Theorem 1 and its proof, Theorem 3 and its proof, Conjectures 4 and 5, and Figure 1. The source distinguishes sets from multisets explicitly. Conjecture 5 is literally tau_s(n) = n - 1 for all n at least 4. Figure 1 gives orders 4 and 6, not order 5. The source-author publication page still lists the work as this preprint. No publisher version was identified in that page or the bounded search; this is not an exhaustive publication or erratum search.
+
+A four-color K5 coloring has ten independent edge values, in lexicographic order 01, 02, 03, 04, 12, 13, 14, 23, 24, 34. Its ten triangle palettes are sets on edge triples
+014, 025, 036, 127, 138, 239, 457, 468, 569, 789,
+where each digit is an edge index (not a vertex). The necessary and sufficient property is pairwise inequality of these ten sets.
+
+The SMT model finds UNSAT at order 5 with four colors. It finds SAT at orders 4 and 6 with n - 1 colors; these witnesses are independently checked by Python sets. Orders 7 through 10 time out and say nothing. An independent exhaustive search without color or vertex symmetry reductions also finds no valid leaf. It branches over all four colors on the next edge and prunes only on an equality between two completed triangle palettes. A collision persists under all extensions because all three edges of each involved triangle have already been fixed. Induction on the number of remaining edges therefore proves the pruning rule sound; exhaustive branching covers every coloring. The reproducible exact node and prune counts are in palette-independent.log. This is an ordinary finite exhaustive argument; the scripts themselves remain diagnostics until their semantics are certified in Lean.
+
+The direct quantified Finset Lean proof exceeded the managed RSS cap. A fixed-prefix probe passed but is not an endpoint. Subsequent attempts and exact status are recorded in SUMMARY.md; do not mistake any partial module for the source claim.
+
+Why this is potentially substantive: the failed order 5 is inside the stated range, uses the source's exact set interpretation, and falsifies the proposed universal minimum, rather than merely exploiting a missing domain definition. Whether this is sufficiently significant or a previously known small exception requires independent source/significance review. No self-clearance is asserted. Conjecture 4 for multisets is separate and is not refuted by this argument.
+
+## 363759: signed complete graphs
+
+Read Definitions 2.1, 4.1, 4.3, Theorem 4.4 and its complete inclusion-exclusion proof, Corollaries 4.5 and 4.6 and the latter proof, and the exact Conjecture 4.16 with its surrounding scope. The source E is the EVEN BIVARIATE chromatic polynomial, not an ordinary univariate polynomial. B is a pair (E,O). Thus switching-equivalent nonisomorphic signed graphs are not an automatic answer. The authors report verification through seven vertices; that report is not independently replayed here.
+
+Derived an exact alternative coefficient mechanism. Let H be the graph of positive edges. In an even color set with p paired absolute colors and u unpaired colors, vertices using one paired absolute color must induce in H a complete bipartite graph, including the empty-side case. There are exactly two orientations of that bipartition. Vertices using one unpaired color must induce no positive edge. Partition the vertex set into blocks. If a blocks induce nonempty complete bipartite positive graphs and b blocks induce edgeless positive graphs, the contribution is
+
+2^a sum_{j=0}^b binom(b,j) 2^j (p)_(a+j) (u)_(b-j).
+
+All other partitions contribute zero. The formula follows by choosing which of the b blocks receive paired colors, assigning distinct paired and unpaired labels, and orienting each paired block. Because the underlying graph is complete, zero can color at most one vertex. Odd-color counts in coordinates (p,u) consequently equal even-color counts plus the sum of the even-color counts of vertex-deleted graphs. Care is needed to substitute p=(lambda-u-1)/2 in the odd polynomial, rather than (lambda-u)/2.
+
+This yields a finite subset dynamic program recording partition histograms (a,b) and summed vertex-deletion histograms. Equality of both histograms is a sufficient, potentially stronger condition than equality of B. A seeded sample of 800 graphs of order 9 produced only isomorphic histogram collisions, independently tested by NetworkX. Full output retained. The initially attempted C++ compilation failed because g++ was unavailable; that failure is retained. The Python version completed within the cap. Neither the sample nor the histogram strength proves the conjecture or excludes other polynomial collisions.
+
+Second mechanism considered: twin expansions and joins might preserve an underlying collision, but no base nonisomorphic full-B collision was obtained. Switching only preserves the u=0 specialization and fails the source requirement. Remaining lemma: construct nonisomorphic graphs with equal full even polynomial and equal vertex-deletion sum, or prove enough coefficient reconstruction for all positive-edge graphs. No feasible general reconstruction proof survives this pass. Park unresolved, not a known/routine exclusion.
+
+## 364118: Cayley equivalence
+
+Read the published 2026 Australasian Journal of Combinatorics body, Section 8, including the exact definitions, Lemma 8.2 and its proof, Propositions 8.3 and 8.4 and their proofs, and Conjectures 8.5 through 8.8. The exact target is Conjecture 8.7, for patterns of equal length. A Cayley word uses every positive integer up to its maximum; pattern containment is scattered subsequence order-isomorphism, preserving equalities as well as inequalities.
+
+The source proves that max-preserving equivalence is the same as word-equivalence via binomial inversion; its argument distinguishing different maxima applies to the REFINED count, not to the sum over all maxima. It cannot be imported as a proof of the target. Attempt 1: recover refined counts from unrestricted counts using Lemma 8.2. This fails: the observed sum over maxima at each length is only one scalar, and the lemma requires counts on every alphabet. Attempt 2: extract the maximum from first nontrivial insertion coefficients of the avoidance sequence. At the pattern's own length all patterns exclude exactly themselves, so this coefficient carries no maximum information. Insertions at larger lengths depend on repeated-letter runs and order positions, not just the maximum. A finite exact check of all length-3 and length-4 patterns at lengths m through m+2 separates different maxima, but is not a uniform coefficient formula or proof for all m. No infinite-equivalence counterexample is established by finite matches. Remaining lemma: a uniform invariant of the full unrestricted avoidance sequence determining the alphabet maximum. No such theorem proved. Park unresolved.
+
+## 364087: realizable bases
+
+Read arXiv Sections 3.2 and 5.1/5.6, the matrix/inverse definitions (29), (33), Theorems 3.3 through 3.5 statements, Section 5's positive-length realizability definition, and Conjecture 5.12. Retrieved the 2026 Springer journal PDF lawfully and read the corresponding definitions and Conjecture 5.12, which remains the same. Did not read the old Boros–Prekopa or Prekopa proof bodies; no routine consequence or novelty exclusion follows from their theorem labels.
+
+The basis is k/2 consecutive pairs together with n; feasibility is B(I)^(-1)d(p) >= 0 on a positive-length interval, not at an isolated p. Attempted lifting a feasible n basis to n+1 using Bin(n+1,p)=Bin(n,p)+Bernoulli(p). The induced measure has the right moments but generally doubles the support into overlapping shifted pairs. It does not certify a single dual-feasible k+1-column basis with at least the original spread. Convex decomposition into optimal bases would additionally have to preserve spread, which is not linear in the measure. A continuity-in-n argument likewise does not bridge the integer step with sign control on all basic weights. Remaining lemma: an n-to-n+1 realization/optimal-support transfer preserving at least the maximum spread, or a certified exact finite reversal with full interval signs. No such lemma established; no unjustified numerical LP sweep or parameter-only endpoint is supplied.

@@ -1,0 +1,192 @@
+\documentclass[10pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{hyperref}
+\begin{document}
+\section*{A Lean-checked obstruction to four-color triangle set palettes on K5}
+DRAFT - research manuscript, 1 November 2026. No human authorship or affiliation is asserted. Prepared with AI assistance. Zero accepted campaign credit; root adjudication, final replay and paper review remain pending.
+
+
+\subsection*{Abstract}
+Every assignment of four available color labels to the ten edges of the complete graph K5 gives two distinct triangles with the same set of edge colors. We present a finite exhaustion proof and a Lean certificate connecting that computation to arbitrary undirected edge colorings. The obstruction refutes Conjecture 5 of Pilsniak and Wozniak [1, p. 4], which asserts that the minimum number of labels for triangle set distinction is n - 1 for every n >= 4. Repetitions and unused labels are allowed throughout. The argument does not determine the exact minimum at five and does not refute the separate multiset conjecture.
+
+
+\subsection*{1. The source assertion and the result}
+Let V = \{0,...,n-1\}, let E be its two-element subsets, and let T be its three-element subsets. For a map c: E -> \{0,...,k-1\}, define P\_c(t) = \{c(e): e is a two-element subset of t\}. These are sets: a color occurring twice contributes only one element. Call c distinguishing if P\_c is injective on T. No properness or surjectivity condition is imposed.
+
+
+Write A(n,k) for the existence of such a distinguishing coloring. The source invariant tau\_s(n) is the least k for which A(n,k) holds. This minimum exists at the orders considered: giving each edge a different color distinguishes triangles, since their sets of edge labels determine their edge sets. Relabeling the source labels 1,...,k by 0,...,k-1 changes no palette equality.
+
+
+\subsection*{Theorem. Four labels do not suffice at order five.}
+For every c: E(K5) -> \{0,1,2,3\}, there exist distinct t,u in T(K5) with P\_c(t) = P\_c(u). Equivalently, A(5,4) is false.
+
+
+Corollary. The assertion "for every n >= 4, tau\_s(n) = n - 1" in [1, Conjecture 5] is false. Indeed its instance n = 5 would supply A(5,4), contrary to the theorem. A coloring using fewer labels embeds into four labels, so allowing unused labels introduces no loophole. No exact value of tau\_s(5) is claimed here.
+
+
+\clearpage
+\section*{2. A finite problem with full coverage}
+Order the undirected edges as 01,02,03,04,12,13,14,23,24,34 and denote their colors by a,b,c,d,e,f,g,h,i,j. Increasing pairs represent each undirected edge exactly once. Similarly increasing triples represent exactly the ten triangles. Their palettes are as follows; braces erase repetitions.
+
+
+\begin{tabular}{llll}
+Triangle & Palette & Triangle & Palette \\
+012 & \{a,b,e\} & 013 & \{a,c,f\} \\
+014 & \{a,d,g\} & 023 & \{b,c,h\} \\
+024 & \{b,d,i\} & 034 & \{c,d,j\} \\
+123 & \{e,f,h\} & 124 & \{e,g,i\} \\
+134 & \{f,g,j\} & 234 & \{h,i,j\} \\
+\end{tabular}\par\medskip
+Thus arbitrary colorings are in bijection with all 4^10 = 1,048,576 words of length ten over four labels. There is no quotient by symmetry, no exclusion of adjacent equal colors, and no requirement to use all labels. The incidence table follows by taking the three two-subsets of each triple. A word distinguishes precisely when the ten displayed sets are pairwise different.
+
+
+\subsection*{Direct exhaustion algorithm}
+\begin{verbatim}
+for w in CartesianProduct({0,1,2,3}, repeat=10):
+    palettes = [set(w[e] for e in edges(t))
+                for t in increasing_triples(5)]
+    if number_of_distinct(palettes) == 10:
+        return w
+return NO_WITNESS
+\end{verbatim}
+The independent source reviewer used this unpruned algorithm with actual sets and independently generated incidence. It visited every full word and found no witness; the maximum observed number of distinct palettes was nine. The technical reviewer separately regenerated incidence and repeated an unpruned scan. Their preserved programs and full summary outputs are corroboration, not numeric premises imported into Lean.
+
+
+Coverage is elementary: each of the ten coordinates is independently free to be any of four values, so the Cartesian product lists every map exactly once. The predicate in the loop is equivalent to palette injectivity by the table. Consequently a correct execution returning NO\_WITNESS proves the theorem. The kernel certificate below verifies a more efficient collision-pruned form of this same finite obstruction; no million-line case printout is needed.
+
+
+A simple count of available sets cannot establish the result. Four labels allow 4 singleton, 6 two-element and 4 three-element palettes, totaling 14 > 10. The obstruction concerns compatibility of palettes on shared edges, rather than an insufficiency of abstract palette names.
+
+
+\clearpage
+\section*{3. Collision pruning and a checked finite lemma}
+For labels x,y,z in \{0,1,2,3\}, put B(x,y,z) = 2^x OR 2^y OR 2^z, where OR is bitwise inclusive disjunction. The bit in position q is present exactly when q belongs to \{x,y,z\}. Repetitions have no effect. In particular equality of codes implies equality of palettes. The formal lemma code\_sound verifies this implication on the finite label type; its proof is by kernel decide, with no external computation premise.
+
+
+The checker processes a,...,j in edge order. A triangle is complete once its three coordinates are assigned. Each unordered pair of triangles is tested at the first depth where both are complete. If a collision is found, every extension of that prefix already fails injectivity, so the checker returns true on that branch. Otherwise it conjoins the results of all four assignments to the next coordinate. A complete word with no collision returns false.
+
+
+\begin{verbatim}
+check(prefix):
+    if any newly completed pair has equal codes:
+        return true
+    if length(prefix) == 10:
+        return false
+    return AND(check(prefix + [q]) for q in {0,1,2,3})
+\end{verbatim}
+No pair can cease to collide: subsequent assignments affect neither completed triangle. Conversely, a hypothetical collision-free word can be followed through every conjunction, and none of its collision branches is taken. It would reach false. This is the direction of soundness required to rule out witnesses.
+
+
+\begin{tabular}{llllll}
+Depth assigned & 6 & 7 & 8 & 9 & 10 \\
+New pair tests & 1 & 2 & 7 & 11 & 24 \\
+\end{tabular}\par\medskip
+Depths zero through five only branch. The 45 tests at depths six through ten are exactly the 45 unordered pairs of ten triangles, each once. For example depth six compares \{a,b,e\} with \{a,c,f\}; depth seven adds comparisons of \{a,d,g\} with each of these. The remaining tests are obtained mechanically from the incidence table and the maximum coordinate index in each pair. The reviewer checked this complete pair coverage separately.
+
+
+The literal checker has definitions check10 through check0 and all4(f) = f(0) AND f(1) AND f(2) AND f(3). Its theorem check\_pass states check0 = true and is proved by decide. all4\_spec identifies this Boolean conjunction with universal truth over Fin 4. In code\_no, assuming all 45 code inequalities, successive applications of all4\_spec follow an arbitrary word; the inequalities remove every conditional collision exit and yield false = true. Thus the finite calculation and its mathematical use are both kernel checked.
+
+
+\clearpage
+\section*{4. Formal correspondence to the graph assertion}
+The four immutable mathematical modules are Defs.lean, BoolProbe.lean, Checker.lean and Endpoint.lean. The last defines Edge n as the subtype of Fin n x Fin n with first coordinate less than second, and Triangle n as increasing triples. trianglePalette c t is the Finset of colors on its three actual edges. The long edge inequality follows by transitivity. No directed duplicate, loop or phantom triangle is introduced.
+
+
+\begin{tabular}{ll}
+Formal identifier (namespace Palette) & Mathematical role \\
+pal; code; code\_sound & Set triple; OR code; code equality implies set equality \\
+all4; all4\_spec & Four branches; exhaustive specialization \\
+check0; check\_pass & Collision search; kernel-verified true result \\
+code\_no & All 45 code inequalities are impossible \\
+Edge; Triangle; trianglePalette & Undirected edges, triangles, actual palettes \\
+no\_four & Every four-label K5 coloring fails injectivity \\
+Achievable; SourceClaim & Existence and universal minimum assertion \\
+source\_refutation & Negation of the named universal assertion \\
+\end{tabular}\par\medskip
+The theorem no\_four starts from a hypothetical injective palette map. Each two different concrete increasing triples t0,...,t9 must have different palettes. If their codes were equal, code\_sound would give equal palettes and injectivity would identify the triples, contradicting their explicit inequality. These 45 code inequalities contradict code\_no. This bridge rules out actual arbitrary graph colorings, not merely an independently defined Boolean surrogate.
+
+
+\begin{verbatim}
+Achievable n k :=
+  exists c : Edge n -> Fin k,
+    Function.Injective (trianglePalette c)
+SourceClaim := forall n, 4 <= n ->
+  IsLeast {k : Nat | Achievable n k} (n - 1)
+source_refutation : not SourceClaim
+\end{verbatim}
+IsLeast S m means both m belongs to S and m <= k for every k in S. Membership at n = 5 alone supplies a four-label coloring; no minimization algorithm or unproved numerical bound is required. The Lean endpoint obtains this membership, extracts c and its injectivity, and applies no\_four. Natural subtraction agrees with ordinary subtraction in the stated range.
+
+
+The definitions preserve the source distinction between arbitrary colorings and proper colorings, and between sets and multisets. For instance pal 0 0 1 equals pal 0 1 1. Separate reviewer sanity examples kernel-check this equality, cardinalities ten for both Edge 5 and Triangle 5, and the constant coloring palette \{0\}. The helpers and the formalization receive no separate mathematical credit.
+
+
+\clearpage
+\section*{5. Source context and bounded significance}
+The primary source [1] is the five-page arXiv:2407.19050v1 dated 26 July 2024. Its page 2 distinguishes the proper invariant tau-prime, the unrestricted multiset invariant tau\_m and the unrestricted set invariant tau\_s. Conjecture 5 on page 4 quantifies every n >= 4. Figure 1 on page 5 supplies examples at orders four and six, placing five strictly between the supporting examples. The obstruction is a refutation of a named universal mathematical assertion at an admissible interior order.
+
+
+Theorem 1 of [1] determines the proper-coloring minimum as n for odd n and n+1 for even n. Its rainbow-palette lower bound requires properness, which is absent here. It cannot exclude all arbitrary four-label colorings of K5. Theorem 3 proves tau\_m(n) >= n-1 for n >= 4. At five this gives only a lower bound of four, and the displayed inequality tau\_m <= tau\_s <= tau-prime supplies no strictness at four. Neither theorem yields the present obstruction. Conjecture 4 for multisets is unaffected: unequal multiplicities can distinguish triangles whose sets coincide.
+
+
+The independent source review also read selected relevant primary bodies of nearby work. Theorem 6 of [2] concerns color-blind vertex palettes: sorted incident multiplicities with color names forgotten. Its K5 concerns five vertex objects, not ten named triangle sets. The total-coloring work [3] uses vertex/edge contributions to sums at adjacent vertices. Theorem 4.3 of [4], with Lemmas 4.1 and 4.2, provides quasi-majority neighbor sum distinction. Its additive vertex data do not imply an impossibility theorem for injective triangle sets. These are substantive object distinctions, not a claim that titles alone exclude subsumption.
+
+
+The retained review records a 1 November 2026 current served arXiv page listing only v1 and a matching author preprint list, with no identified material changed statement or correction. This supports a version-bounded conclusion, not the nonexistence of every possible publisher version or erratum. Selected current OpenAI and Omega registry bodies and local protected-history comparisons did not identify a same-object prior proof. Their exact coverage, dates, hashes and limitations are in the source-review evidence.
+
+
+This manuscript inherits that bounded qualification; it conducts no new literature search. Denied or limited routes (web 401, MathDB 403, Crossref and Semantic Scholar 429) are not retried. Index nonfinding and the open MathDB label are not novelty proofs. No worldwide priority or exhaustive bibliography claim is made. A concrete later or earlier same-object theorem would require comparison before acceptance.
+
+
+The mathematical significance is one narrow conjecture refutation. The dossier asserts no smallest-counterexample result, exact tau\_s(5), asymptotic obstruction, infinite family, corrected formula or multiset refutation. The finite helpers do not enlarge that contribution.
+
+
+\clearpage
+\section*{6. Reproduction and trust boundary}
+The source-only archive includes the literal four modules, ordinary proof, exact MathDB raw record, cached primary PDF and receipt, corrected reviewer supplements, pins, manifest and portable replay driver. It contains no local oleans or upstream cache. In a fresh safe extraction, set LEAN\_BIN to the pinned binary directory and LEAN\_PACKAGES to the pinned package cache, then run python3 replay.py. REPRODUCE.md gives exact commands and dependency details. Generated outputs remain in that extraction.
+
+
+Lean is 4.34.1, commit 5045d0056413266e57c625dcd7c365b10e377c52; mathlib is d13f23b723b8a846827a245b89c10fc7d3f11612. The driver verifies binary and source hashes, uses the actual HOME and a minimal environment, and pins the binary directory on PATH. Every mathematical module is built with -j1 and warningAsError=true, then separately checked by leanchecker from the same installation.
+
+
+The module-origin audit includes generated declarations: 66 local declarations have full types, bodies, safe and nonpartial status. It rejects added axioms and checks transitive axioms against exactly propext, Classical.choice and Quot.sound. These are the allowed dependencies, not external numeric premises. The author Audit textual use of value? without its true argument omitted opaque theorem bodies. ReviewAudit explicitly uses value? true and leanchecker checks the compiled bodies. The frozen mathematical sources are unchanged.
+
+
+Three negative controls require rejection: a True term as a proof of False; the refutation as a proof of SourceClaim; and an invalid certificate header. The last tests header rejection only, not rejection of a forged well-formed proof body. Full unabridged types, body-presence evidence and kernel checking suffice; no huge expanded term dump is claimed.
+
+
+Each call is restricted to at most two CPUs, CPU 120 seconds, wall 140 seconds, sampled process-group RSS 6 GiB, address space 64 GiB and MALLOC\_ARENA\_MAX=2. RSS is sampled every 50 ms and is not a cgroup or transient-peak guarantee. Exact commands, sanitized environment, exits, elapsed times and peak samples are retained. The source ZIP is tested by fresh extraction; final receipt status is recorded separately in results.json.
+
+
+Trust limits are explicit: lean and leanchecker share one installation; prebuilt upstream oleans are external, trusted and user-writable. No full upstream rebuild or source-to-olean attestation is supplied. No cache permission or cache repair operation is performed. Historical unsuccessful author experiments and reviewer setup failures remain described in ATTEMPTS and review evidence; unused Case experiments and failure oleans are excluded. The mathematical source is self-contained relative to the pinned upstream dependencies, not a standalone Lean distribution.
+
+
+The full dossier additionally includes both independent reviews, historical receipts, manuscript source, rendered-page QA and new replay evidence. All 376 frozen bindings are checked before and after assembly. This is a draft submission for root review, with zero accepted credit; the campaign count remains 4/20 beyond the previous 39.
+
+
+\clearpage
+\section*{References and artifact provenance}
+[1] Monika Pilsniak and Mariusz Wozniak. A note on edge colorings distinguishing all triangles in a graph. arXiv:2407.19050v1, 26 July 2024. https://arxiv.org/abs/2407.19050v1. Definitions p. 2; Theorem 1 pp. 2-3; Theorem 3 pp. 3-4; Conjectures 4 and 5 p. 4; Figure 1 p. 5. Names are transliterated here; original diacritics are preserved in the cached primary PDF.
+
+
+[2] Rafal Kalinowski, Monika Pilsniak, Jakub Przybylo and Mariusz Wozniak. Can colour-blind distinguish colour palettes? Electronic Journal of Combinatorics 20(3) (2013), P23. Published 23 August 2013. Relevant comparison: definitions and Theorem 6. Original author accents are retained in the cached source-review bodies.
+
+
+[3] Olivier Baudon, Herve Hocquard, Antoni Marczyk, Monika Pilsniak, Jakub Przybylo and Mariusz Wozniak. On a total version of 1-2-3 conjecture. Discussiones Mathematicae Graph Theory 40 (2020), 1175-1186. DOI: 10.7151/dmgt.2223. The review records that the author-page link labeled Full neighbor distinguishing index serves this differently titled paper; the comparison uses the served body, not that link label.
+
+
+[4] Rafal Kalinowski, Monika Pilsniak, Elzbieta Sidorowicz and Elzbieta Turowska. Quasi-majority neighbor sum distinguishing edge-colorings. Discrete Mathematics 349 (2026), 115171. Relevant comparison: Section 4.1, Lemmas 4.1/4.2 and Theorem 4.3. Bibliographic details follow the cached primary body and independent source review.
+
+
+\subsection*{Provenance and evidence map}
+The original author proof packet has SHA256 2a47240b21c89a5cbc65e6a323a9a59dc3097c3479e15301b7fbdd01f1cd46cd. The cached five-page primary PDF has SHA256 00a734e940a4fb20d5ce42c2e35a589f160f9aa2684a0a6e3391843e4e888839. The exact raw MathDB 364095 line has SHA256 690278cd94e13ce8478c0e035823efebda1c1ad69c7acea6d257a9444495c10e. The package manifests bind the actual bytes; line wrapping here is typographical only.
+
+
+evidence/author holds the original explanation, attempts and replay summaries. evidence/source holds the qualified source, novelty and significance review and its access receipts. evidence/technical holds the four-gate technical PASS, all historical receipts, inventory and pins. The new replay-receipts are distinct from these copied historical reviews. ReviewAudit and ReviewSanity are separately labeled reviewer supplements, outside the four mathematical module origins.
+
+
+No publication, upload, external messaging or author/reviewer modification accompanies this dossier. No human author or institution is invented. The final acceptance decision and any subsequent dissemination belong to the root investigator. The supplied paper source and PDF are draft artifacts for review.
+
+
+\end{document}
