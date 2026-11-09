@@ -1,0 +1,11 @@
+# Solo progress and failures — 29 October 2026 UTC / 28 October Pacific
+
+- Read ancestor/campaign AGENTS, ledger, NEXT, prior-campaign-context, and relevant previous matrix/geometric lane summaries/progress. Reports preserve exclusions and credit rules; shared count 3/30 and 33/60 unchanged.
+- Reused sol-fresh-analysis-discovery-r7 complete registry/head receipts at their recorded 04:39 UTC date; no new GitHub API call. Queried current public NLA source index/RESOLVED and targeted public search before deeper work.
+- Initial recent reverse Liu–Cheng lead: ScienceDirect direct HTTP returned 403 at 06:15:51.954584 UTC. Stopped that host; no repeated request or access bypass. Primary public successor arXiv:2607.01263v1 actual Theorem 5.1/Corollary 5.2 already settle/refute the proposed range, so excluded, zero credit.
+- Selected fresh chord Conjecture 2.2 after reading actual Vígh source §§2–5. Retrieved closest Hong proof and actual published Fodor–Grundbacher body; read precise theorem scopes and proof sections, not only abstracts.
+- Tested the continuous vertex-reduction route analytically. Source already supplies qualitative discontinuity. Produced independently replayable exact rational support enumeration and a full one-parameter truncation obstruction in discovery.md. No full conjecture proof/refutation.
+- Failure preserved: first extraction command using `from bs4 import BeautifulSoup` exited 1 with `ModuleNotFoundError: No module named 'bs4'`. No package installed. Standard-library HTMLParser replaced the attempt. An intermediate regex text extraction could swallow literal '<' in TeX; source HTML was never changed and final .txt files use HTMLParser with alttext instead.
+- Ancillary read failures: initial attempt to read SUMMARY.md in astra-algebra-matrix-r1 and pi-algebra-matrix-r1 returned 'No such file or directory'. Inspected their actual progress.md files instead.
+- check.py exact replay PASS; no diagnostic resource failure, numerical optimizer, search grid, Lean build or increased cap. It enforces RLIMIT_AS=536870912 bytes, RLIMIT_CPU=50 seconds, BLAS/OMP thread counts=1.
+- Final status: no eligible discovery, credit0, no acceptance requested. No other-lane/shared files edited, children, git operations, browser tabs, account changes, contacts, uploads or public posting.
