@@ -1,0 +1,7 @@
+# Preserved failures and limitations
+
+attempt01.guard.json: importing all Mathlib hit groupRSS2800MiB; killed at sampled 2961219584 bytes, 2.95s. No cap raise. Replaced broad import by focused imports.
+attempt02.log: deriving Fintype triggered an upstream tactic transparency error; Fintype Sign is unnecessary and was removed (only DecidableEq derived). An unavailable Finset lemma was replaced with a direct eq_univ argument. Two instance binder lint errors were fixed explicitly.
+witness01.log: ZeroDiagonal lacked a Decidable instance; unfolded that definition before kernel decide. All other witness proof commands had succeeded. No failed theorem is used as a premise.
+All failed build logs and guard records remain outside the source archive but inside the final lane manifest. Older failures and denied accesses remain in frozen scout/preliminary-review HTTP/provenance/review records and immutable freeze references. No inaccessible historical interval was re-probed. No API/raw/codeload/diff/patch, ScienceDirect, Google challenge, proxy, disabled TLS, browser or retry bypass was attempted.
+The compiler/package pin check was first executed after exploratory builds and before the final strict build; it is repeated after fresh replay. Scientific sources were frozen and verified before scientific reading. This timing is disclosed rather than described as a pre-exploratory compiler check.

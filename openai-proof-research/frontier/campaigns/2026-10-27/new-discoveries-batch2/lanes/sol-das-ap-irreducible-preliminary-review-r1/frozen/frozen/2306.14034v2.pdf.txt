@@ -1,0 +1,1799 @@
+                                                                 On the seeds and the great-grandchildren
+                                                                        of a numerical semigroup
+                                                                                      Maria Bras-Amorós⋆
+
+
+
+
+arXiv:2306.14034v2 [math.CO] 10 Aug 2023
+                                           ⋆
+                                               Universitat Rovira i Virgili, Av. Paı̈sos Catalans 26, 43007, Tarragona, Catalonia, Spain.
+                                                                                E-mail adress: maria.bras@urv.cat
+
+
+                                                                                         August 11, 2023
+
+
+                                                                                              Abstract
+                                                      We present a revisit of the seeds algorithm to explore the semigroup tree. First, an equivalent
+                                                  definition of seed is presented, which seems easier to manage. Second, we determine the seeds
+                                                  of semigroups with at most three left elements. And third, we find the great-grandchildren of
+                                                  any numerical semigroup in terms of its seeds.
+                                                      The RGD algorithm is the fastest known algorithm at the moment. But if one compares
+                                                  the originary seeds algorithm with the RGD algorithm, one observes that the seeds algorithm
+                                                  uses more elaborated mathematical tools while the RGD algorithm uses data structures that are
+                                                  better adapted to the final C implementations. For genera up to around one half of the maximum
+                                                  size of native integers, the newly defined seeds algorithm performs significantly better than the
+                                                  RGD algorithm. For future compilators allowing larger native sized integers this may constitute
+                                                  a powerful tool to explore the semigroup tree up to genera never explored before. The new
+                                                  seeds algorithm uses bitwise integer operations, the knowledge of the seeds of semigroups with
+                                                  at most three left elements and of the great-grandchildren of any numerical semigroup, apart
+                                                  from techniques such as parallelization and depth first search as wisely introduced in this context
+                                                  by Fromentin and Hivert.
+                                                      The algorithm has been used to prove that there are no Eliahou semigroups of genus 66,
+                                                  hence proving the Wilf conjecture for genus up to 66. We also found three Eliahou semigroups
+                                                  of genus 67. One of these semigroups is neither of Eliahou-Fromentin type, nor of Delgado’s
+                                                  type. However, it is a member of a new family suggested by Shalom Eliahou.
+
+                                                MSC (2010): Primary 06F05, 20M14; Secondary 05A99, 68W30
+
+
+                                           1      Introduction
+                                           A numerical semigroup is a cofinite submonoid of N. The elements in its complement in N are
+                                           denoted the gaps of the semigroup and the genus of the semigroup is the number of its gaps. There
+                                           is a finite number of semigroups of each given genus. A major problem in the theory of numerical
+                                           semigroups is the exhaustive listing of all numerical semigroups for increasing values of the genus.
+                                           See [15] for a general reference on numerical semigroups.
+                                               The primitive elements (or minimal generators) of a numerical semigroup are those elements of
+                                           the semigroup that can not be obtained as a sum of two smaller semigroup elements. If we take
+
+
+                                                                                                  1
+away a primitive element from a numerical semigroup we obtain another semigroup with genus
+increased by one. The elements of the semigroup that are smaller than some gap are denoted the
+left elements of the semigroup. The primitive elements that are larger than the largest gap are
+called right generators. We can organize all numerical semigroups in an infinite tree rooted at N
+and such that the children of a node are the semigroups obtained taking away one by one its right
+generators.
+     The tree of semigroups was first extensively explored in [1], in this case using brute force to find
+right generators. In [2] it was noticed that the search of right generators of a child can be restricted
+to the right generators of its parent and to one further element. Indeed, suppose that λ1 is the
+smallest nonzero non-gap (i.e. the multiplicity) of a numerical semigroup Λ. If the gaps of Λ are
+not all in a row (i.e. if Λ is not ordinary), when we take away one right generator λ of Λ, the right
+generators of the new semigroup Λ \ {λ} all belong to the set of right generators of Λ except the
+element λ+λ1 , should it be a primitive element of the new semigroup. If λ+λ1 is a primitive element
+of the child, then λ is called a strong generator of Λ. Otherwise it is called a weak generator of Λ.
+Fromentin and Hivert presented in [14, 13] a very efficient algorithm using parallel computation
+and depth first search, representing semigroups by their decomposition numbers. Suppose that
+the numerical semigroup Λ isl {λ0 = 0 < λ1 m< . . . }. The sequence of decomposition numbers
+                                   #{λj ∈Λ:λi −λj ∈Λ}
+of Λ can be defined by di =                2          . See its relationship with the ν sequence in [15,
+Exercise 2.16] and references therein. In [5] an algorithm was presented using the notion of seed.
+An element λs larger than the largest gap is a p-th order seed of Λ if λs + λp 6= λi + λj for all
+p < i ⩽ j < s. Now, right generators are order-0 seeds and they are strong generators if and
+only if they are order-1 seeds. From another perspective, in [6, 4] a very simple but very efficient
+algorithm was presented, using the idea of right-generators descendant of a numerical semigroup.
+The right-generators descendant of a numerical semigroup Λ is the semigroup obtained by taking
+away from Λ all its right generators. The so-called RGD algorithm is at the moment the most
+efficient algorithm.
+     We present a revisit of the seeds algorithm to explore the semigroup tree. First, an equivalent
+definition of seed is presented, which seems easier to manage. Second, we determine the seeds of
+semigroups with at most three left elements. And third, we find the great-grandchildren of any
+numerical semigroup in terms of its seeds. For genera around one half of the maximum size of native
+integers, the newly defined seeds algorithm performs significantly better than the RGD algorithm.
+For future compilators allowing larger native sized integers this may constitute a powerful tool
+to explore the semigroup tree up to genera never explored before. The new seeds algorithm uses
+bitwise integer operations apart from techniques such as parallelization and depth first search as
+wisely introduced in this context by Fromentin and Hivert.
+     Using 128-bit integers, as is the current bit length limitation in C, one can explore semigroups
+up to genus 64, search for Eliahou semigroups and check the Wilf conjecture for genus up to 66 and
+count semigroups of genus up to 69. In an eventual 2b-bit integer limitation scenario, our algorithm
+will be able to efficiently explore semigroups up to genus b, search for Eliahou semigroups and
+check the Wilf conjecture for genus up to b + 2 and count semigroups of genus up to b + 5. In
+particular, the algorithm has been used to prove that there are no Eliahou semigroups of genus 66,
+hence proving the Wilf conjecture for genus up to 66.
+     In Section 2 we revisit the definition of the gap bitstream and the seed bitstream of a numerical
+semigroup, this time using an alternative approach to the definition of seed with respect to the one
+in [5]. In Section 3 we determine these bitstreams for semigroups of small rank. In Section 4 we
+
+
+                                                   2
+revisit how the seed bistream of a semigroup can be computed from the seed bitstrem of its parent
+from the new perspective. In Section 5 we characterize new generators, new strong generators and
+newly strong generators from an analysis of the seed bitsream. In Section 6 we explain how the
+bitstreams can be used to determine the great-grandchildren of a numerical semigroup. All the
+previous results can be used to build a revisited version of the seeds algorithm and in Section 7
+we present empiric performance results. In Section 8 we recall the Wilf conjecture, and Eliahou
+and Delgado’s related results and use our algorithm to check the Wilf conjecture for genus 66
+and to find three new Eliahou semigroups of genus 67, one is of Eliahou-Fromentin type, another
+one is of Delgado’s type and the third one is neither of Eliahou-Fromentin type, nor of Delgado’s
+type. However, we will show that it is a member of a new family suggested by Shalom Eliahou.
+In Section 9 we analyze the limits of our algorithm in terms of the integer bit size bound of the
+compilator in which the algorithm is implemented. In particular it is analyzed the limit of our
+experimental results in a C compilator with a bound of 128 bits per integer.
+
+
+2    The bitstream of gaps and the bitstream of seeds of a numerical
+     semigroup
+If a numerical semigroup Λ is {λ0 = 0 < λ1 < . . . }, define its multiplicity as m(Λ) = λ1 , its
+Frobenius number, F (Λ), as its largest gap and its conductor, c(Λ), as its largest gap plus one. Let
+L(Λ) be the set of left elements of Λ. A numerical semigroup is called ordinary if c(Λ) = m(Λ) = λ1
+and pseudo-ordinary if c(Λ) = λ2 . We say that the rank of Λ is
+
+                                                k(Λ) := c(Λ) − g(Λ).
+
+This way, λk(Λ) = c(Λ) and so the rank of Λ coincides with the cardinal of L(Λ). Now, the unique
+semigroup of rank 0 is N, the semigroups of rank 1 are the non-trivial ordinary semigroups, and
+the semigroups of rank 2 are pseudo-ordinary semigroups. Define the jump function as
+
+                                        u : N −→ N
+                                            j 7→ uj          := λj+1 − λj
+                                                     Pk(Λ)−1
+Observe that uj = 1 for all j ⩾ k(Λ), and that j=0 uj = c(Λ). Furthermore, the multiplicity
+coincides with u0 and uj ⩽ u0 for all j ∈ N.
+    A bitstream is a finite sequence a = a0 . . . aℓ where ai is either 0 or 1 for every i. For our
+                                                                                                       . . 0} for
+purposes, we can indistinctly use a for a0 . . . aℓ and for any bitstream of the form a0 . . . aℓ |0 .{z
+                                                                                                         t
+any positive integer t. The weight of a bitstream is the number of its nonzero elements. The weight
+of a bitstream a will be denoted w(a). The weight of the substream ai . . . aj of a will be denoted
+wij (a). If n ∈ N we denote (n)b its binary representation. That is, (n)b = a0 . . . aℓ where a0 , . . . , aℓ
+are the unique values in {0, 1} such that n = a0 + 2a1 + 22 a2 + · · · + 2ℓ aℓ . For instance,
+
+                             (2i )b = |0 .{z
+                                           . . 0} 1,          (2i − 1)b = |1 .{z
+                                                                               . . 1} .
+                                            i                                    i
+
+On the contray, for a bitstream a = a0 , . . . , aℓ we denote int(a) the integer a0 +2a1 +22 a2 +· · ·+2ℓ aℓ .
+
+
+
+                                                         3
+   Suppose a semigroup Λ has conductor c. From now on, whenever the context is clear, we will
+omit Λ in c(Λ), k(Λ) . . . . We encode its gaps as the bitstream
+
+                                           G(Λ) = g0 . . . gc−1
+
+with gi = 0 if i + 1 ∈ Λ and gi = 1 otherwise. Notice that
+                                                                 
+                                                       k(Λ)−1
+                                        1  c(Λ)        X
+                                G(Λ) =      2    −1−          2λj  .
+                                        2
+                                                            j=0
+                                                                       b
+
+    Recall that for p < k(Λ), an element λs larger than or equal to c is an order-p seed of Λ if
+λs + λp 6= λi + λj for all p < i ⩽ j < s. One can check that any order-p seed is at most c + up − 1.
+In particular, the number of order-p seeds is at most up ([5, Lemma 1.2.]).
+    In [5], the table of seeds of a semigroup Λ was defined as the binary table whose rows are indexed
+in 0 ⩽ i ⩽ k(Λ) − 1, the ith row has ui entries, and the jth entry in the ith row (with 0 ⩽ j < ui )
+is 1 if c + j is an order-i seed of Λ, and 0 otherwise.
+
+Example 1. The table of seeds of the semigroup Λ = {0, 3, 6, 8, 9, 10, . . . }, with conductor c = 8,
+is
+                                          1 0 1
+                                          1 0 1
+                                          1 1
+   We can also encode the seeds of Λ as the bitstream
+
+                                           S(Λ) = S0 . . . Sc−1
+
+with Si = 1 if c + i − λj is a j-th order seed of Λ where j is the unique non-negative integer such
+that λj ⩽ i < λj+1 . In fact, the seed bitstream is nothing else but the concatenation of the rows of
+the table of seeds.
+
+Example 2. The same semigroup Λ = {0, 3, 6, 8, 9, 10, . . . } has G(Λ) = 11011010 and S(Λ) =
+10110111.
+
+    In Figure 1 one can see the sequences G and S for the lowest genus semigroups organized in
+the semigroup tree. To make it easier to read, we represented each 1 in the sequences with a dark
+circle with its position written inside, and each 0 in the sequence with a light gray circle with its
+position also written inside.
+
+Lemma 3. Given an integer λ with c ⩽ λ < 2c, let j ∈ {0, . . . , k−1} be such that λj ⩽ λ−c < λj+1 .
+Then,
+
+(a) λ − λj is an order-j seed of Λ if and only if λ is not the sum of two elements in L(Λ).
+
+(b) λ−λj is an order-j seed of Λ if and only if λ is not the sum of two elements in {λj+1 , . . . , λk−1 }.
+
+Proof. Note that λ = λs with s = λ − c + k(Λ). The non-gap λ − λj is not an order-j seed of Λ if
+and only if λ = (λ − λj ) + λj is the sum of two elements in {λj+1 , . . . , λs−1 }. As λ can not be the
+
+
+
+                                                    4
+                                                                                                                                                0                       6   7   8   9 10 11 . . .
+                                                                                                                                                    0   1   2   3   4   5
+                                                                                                                                                    0   1   2   3   4   5
+
+                                                                                                                                                0                   5       7   8   9 10 11 . . .
+                                                                                                                                                    0   1   2   3   4   5   6
+                                                                                                                                                    0   1   2   3   4   5   6
+
+                                                                                                    0                   5   6   7   8   9 ...   0                   5   6       8   9 10 11 . . .
+                                                                                                        0   1   2   3   4                           0   1   2   3   4   5   6   7
+                                                                                                        0   1   2   3   4                           0   1   2   3   4   5   6   7
+
+                                                                                                                                                0                   5   6   7       9 10 11 . . .
+                                                                                                                                                    0   1   2   3   4   5   6   7   8
+                                                                                                                                                    0   1   2   3   4   5   6   7   8
+
+                                                                                                                                                0                   5   6   7   8       10 11 . . .
+                                                                                                                                                    0   1   2   3   4   5   6   7   8   9
+                                                                                                                                                    0   1   2   3   4   5   6   7   8   9
+
+                                                                                                                                                0               4           7   8   9 10 11 . . .
+                                                                                                                                                    0   1   2   3   4   5   6
+                                                                0               4   5   6   7 ...                                                   0   1   2   3   4   5   6
+                                                                    0   1   2   3
+                                                                    0   1   2   3                   0               4       6   7   8   9 ...   0               4       6       8   9 10 11 . . .
+                                                                                                        0   1   2   3   4   5                       0   1   2   3   4   5   6   7
+                                                                                                        0   1   2   3   4   5                       0   1   2   3   4   5   6   7
+
+                                                                                                                                                0               4       6   7   8       10 11 . . .
+                                                                                                                                                    0   1   2   3   4   5   6   7   8   9
+                                                                                                                                                    0   1   2   3   4   5   6   7   8   9
+
+                                                                                                    0               4   5       7   8   9 ...   0               4   5           8   9 10 11 . . .
+                                                                                                        0   1   2   3   4   5   6                   0   1   2   3   4   5   6   7
+                                                                                                        0   1   2   3   4   5   6                   0   1   2   3   4   5   6   7
+
+                                                                                                    0               4   5   6       8 9 ...
+                                    0           3   4   5 ...                                           0   1   2   3   4   5   6   7
+                                        0   1   2                                                       0   1   2   3   4   5   6   7
+                                        0   1   2
+                                                                                                                                                0           3           6       8   9 10 11 . . .
+                                                                                                                                                    0   1   2   3   4   5   6   7
+                                                                                                    0           3           6   7   8   9 ...       0   1   2   3   4   5   6   7
+                                                                                                        0   1   2   3   4   5
+                                                                                                        0   1   2   3   4   5                   0           3           6   7       9 10 11 . . .
+                                                                0           3       5   6   7 ...                                                   0   1   2   3   4   5   6   7   8
+0   1   2 ...   0       2   3 ...                                   0   1   2   3   4                                                               0   1   2   3   4   5   6   7   8
+                                                                    0   1   2   3   4
+                    0   1                                                                           0           3       5   6       8   9 ...
+                    0   1
+                                                                                                        0   1   2   3   4   5   6   7
+                                                                                                        0   1   2   3   4   5   6   7
+
+                                                                0           3   4       6   7 ...
+                                                                    0   1   2   3   4   5
+                                                                    0   1   2   3   4   5
+
+                                    0       2       4   5 ...   0       2       4       6   7 ...   0       2       4       6       8   9 ...   0       2       4       6       8       10 11 . . .
+                                        0   1   2   3               0   1   2   3   4   5               0   1   2   3   4   5   6   7               0   1   2   3   4   5   6   7   8   9
+                                        0   1   2   3               0   1   2   3   4   5               0   1   2   3   4   5   6   7               0   1   2   3   4   5   6   7   8   9
+
+
+
+
+Figure 1: Lowest depth nodes of the semigroup tree. Each node is represented by its gap and its
+seed sequences.
+
+
+
+
+                                                                                               5
+sum λu + λv with λu > 0 and v ⩾ s, we obtain that λ − λj is not an order-j seed of Λ if and only
+if λ is the sum of two elements in {λj+1 , λj+2 , . . . }. In this case
+
+                                        λ = λj+1+ℓ1 + λj+1+ℓ2
+
+for some non-negative integers ℓ1 and ℓ2 . Each of the two summands can now be bounded as
+follows.
+
+   • λj+1+ℓ1 < c since λj+1+ℓ1 = λ − λj+1+ℓ2 ⩽ λ − λj+1 < c.
+
+   • λj+1+ℓ2 < c since λj+1+ℓ2 = λ − λj+1+ℓ1 ⩽ λ − λj+1 < c.
+
+
+
+    Next corollary gives an alternative definition of the seed bitstream, and hence, an alternative
+definition of the notion of seed.
+
+Corollary 4. Let Σ(Λ) be the bitstream Σ0 Σ1 . . . Σ2c−1 , with Σi = 0 if i belongs to L(Λ) + L(Λ)
+and Σi = 1 otherwise, then
+
+                             G0 G1 . . . Gc−2 = Σ1 . . . Σc−1 ,          Gc−1 = 0
+
+                                  S0 S1 . . . Sc−1 = Σc Σc+1 . . . Σ2c−1 ,
+Hence,
+                                     G = ((int(Σ) mod 2c )//2)b ,
+                                           S = (int(Σ)//2c )b ,
+where a//b and a mod b denote the quotient and the remainder of the division of a by b, respectively.
+
+Example 5. Following the same example Λ = {0, 3, 6, 8, 9, 10, . . . }, we have L(Λ) = {0, 3, 6} and
+L(Λ) + L(Λ) = {0, 3, 6, 9, 12}, that is Σ = 0110110110110111.
+                                                     Σ(Λ)
+                                       z              }|                 {
+                                               1 1 0 1} 1| 0 1 1{z0 1 1 1}
+                                       0 1| 1 0{z
+                                         G(Λ)0,...,(c−2)      S(Λ)
+
+
+   As a consequence of this alternative definition of S(Λ) together with the fact that max(L(Λ) +
+L(Λ)) = 2λk−1 = 2c−2uk−1 we derive that Σ2λk−1 = 0 and Σ2λk−1 +1 = Σ2λk−1 +2 = · · · = Σ2c−1 = 1.
+That is,
+                                  S = S0 . . . S2λk−1 −1 0 1| ·{z
+                                                                · · 1}
+                                                                   2uk−1 −1
+
+Corollary 6. The elements c, c + 1, . . . , c + uk−1 − 1 are order-(k − 1) seeds of Λ.
+
+
+
+
+                                                       6
+3    The gap and the seed bitstreams of semigroups with small rank
+Next lemma states the gap bitstream and the seed bitstream for semigroups of rank k at most 3.
+We will call u := u1 and v := u2 .
+Lemma 7. The gap and the seed bitsreams of semigroups of rank k between 1 and 3 are given by
+the following formulas.
+    • For semigroups of rank k = 1,
+
+                                      G({0, m, . . . }) = (2m−1 − 1)b
+                                      S({0, m, . . . }) = (2m − 1)b
+
+    • For semigroups of rank k = 2 (in which case 1 < u ⩽ m),
+
+                           G({0, m, m + u, . . . }) = (2m+u−1 − 1 − 2m−1 )b
+                            S({0, m, m + u, . . . }) = (2m+u − 1 − 2m−u )b
+
+    • For semigroups of rank k = 3,
+         – If 1 ⩽ u < m, then 2 ⩽ v ⩽ m − u and
+
+               G({0, m, m + u, m + u + v, . . . }) = (2m+u+v−1 − 1 − 2m−1 − 2m+u−1 )b
+               S({0, m, m + u, m + u + v, . . . }) = (2m+u+v − 1 − 2m−u−v − 2m−v − 2m+u−v )b
+
+         – If u = m, then 2 ⩽ v ⩽ m and
+
+                   G({0, m, m + u, m + u + v, . . . }) = (2m+u+v−1 − 1 − 2m−1 − 2m+u−1 )b
+                   S({0, m, m + u, m + u + v, . . . }) = (2m+u+v − 1 − 2m−v − 2m+u−v )b
+
+Proof.      • For the rank-1 case L(Λ) + L(Λ) = {0} and so,
+
+                                         Σ = (22c − 2)b = 0 |1 .{z
+                                                                 . . 1} .
+                                                                 2c−1
+
+      Then the result follows from Corollary 4.
+    • For the rank-2 case, L(Λ) + L(Λ) = {0, m, 2m} and so,
+
+                               Σ = (22c − 2 − 2m − 22m )b
+                                  = (2c (2c − 22m−c − 1) + (2c − 2m − 2))b .
+
+      Hence, by Corollary 4,
+
+                                      G = (2c−1 − 2m−1 − 1)b
+                                          = (2m+u−1 − 2m−1 − 1)b ,
+
+      and
+
+                                       S = (2c − 22m−c − 1)b
+                                            = (2m+u − 2m−u − 1)b .
+
+                                                    7
+    • For the rank-3 case suppose Λ = {0, m, m + u, m + u + v, . . . } with v > 1. Then the conductor
+      of Λ is c = m + u + v.
+      If u < m then m + u < 2m and since 2m ∈ Λ, we have 2m ⩾ c and so v ⩽ m − u. Then
+      L(Λ) + L(Λ) = {0, m, m + u, 2m, 2m + u, 2m + 2u} with m + u < c ⩽ 2m. So,
+
+              Σ = (22c − 2 − 2m − 2m+u − 22m − 22m+u − 22m+2u )b
+                  = (2c (2c − 22m+2u−c − 22m+u−c − 22m−c − 1) + (2c − 2m+u − 2m − 2))b
+
+      and, by Corollary 4,
+
+                                G = (2c−1 − 2m+u−1 − 2m−1 − 1)b
+                                     = (2m+u+v−1 − 2m+u−1 − 2m−1 − 1)b
+
+      and
+
+                             S = (2c − 22m+2u−c − 22m+u−c − 22m−c − 1)b
+                                = (2m+u+v − 2m+u−v − 2m−v − 2m−u−v − 1)b .
+
+      Otherwise, u = m and L(Λ) + L(Λ) = {0, m, 2m, 3m, 4m} and so,
+
+                      Σ = (22c − 2 − 2m − 22m − 23m − 24m )b
+                          = (2c (2c − 24m−c − 23m−c − 1) + (2c − 22m − 2m − 2))b .
+
+      Hence, by Corollary 4,
+
+                                G = (2c−1 − 22m−1 − 2m−1 − 1)b
+                                    = (2m+u+v−1 − 2m+u−1 − 2m−1 − 1)b ,
+
+      and
+
+                                 S = (2c − 24m−c − 23m−c − 1)b
+                                     = (2m+u+v − 2m+u−v − 2m−v − 1)b .
+
+
+
+
+4    Updating the bitstream of seeds from parents to children
+Suppose that Λ is a semigroup of rank k and conductor c and let Λ̃ = Λ \ {λs } with s ⩾ k. We will
+denote Σ̃ = Σ(Λ̃), G̃ = G(Λ̃), S̃ = S(Λ̃), c̃ = c(Λ̃) = λs + 1, k̃ the rank of Λ̃, ũj the jth jump of
+Λ̃ and λ̃j the jth element of Λ̃. Let us denote L = L(Λ), L̃ = L(Λ̃), and Is the interval [c, λs − 1],
+which may be empty. We have L̃ = L ∪ Is . Hence,
+
+                                L̃ + L̃ = (L + L) ∪ (L + Is ) ∪ (Is + Is )
+
+with L+Is = {λi + j : 1 ⩽ i < k and c ⩽ j < λs } and Is +Is = {ℓ : 2c ⩽ ℓ ⩽ 2λs −2}. In particular,
+
+
+
+                                                    8
+                                        
+                                        
+                                         0       if ℓ < 2c and ℓ ∈ L + Is
+                                        
+                                          Σℓ      if ℓ < 2c and ℓ 6∈ L + Is
+                                  Σ̃ℓ =
+                                        
+                                         0       if 2c ⩽ ℓ ⩽ 2λs − 2
+                                        
+                                          1       if 2λs − 1 ⩽ ℓ ⩽ 2λs + 1
+    And so,
+
+
+           S̃ℓ = Σ̃ℓ+λs +1
+                 
+                 
+                   0                               if ℓ + λs + 1 < 2c and ℓ + λs + 1 ∈ L + Is
+                 
+                    Σℓ+λs +1 = Sℓ+λs −c+1           if ℓ + λs + 1 < 2c and ℓ + λs + 1 6∈ L + Is
+               =                                                                                               (1)
+                 
+                   0                               if 2c ⩽ ℓ + λs + 1 ⩽ 2λs − 2
+                 
+                    1                               if 2λs − 1 ⩽ ℓ + λs + 1 ⩽ 2λs + 1
+
+   From this formula we can derive Algorithm 1 to obtain G̃ and S̃ from G, S, c, k, s. An inter-
+mediate bitstream variable auxS is introduced which can be defined so that S̃ℓ = auxSℓ+λs −c+1
+except for the case 2λs − 1 ⩽ ℓ + λs + 1 ⩽ 2λs + 1. That is
+                                      
+                                         Sι if ι < c and ι + c 6∈ L + Is
+                          auxSι =
+                                         0   otherwise.
+It can be easily computed since
+              
+                 0   if ι + c = λj + ĩ for some λj ∈ L(Λ) and some ĩ with c ⩽ ĩ ⩽ c + s − k − 1
+  auxSι =
+                 Sι otherwise,
+or, equivalently,
+                      
+                          0    if ι = λj + i for some λj ∈ Λ and some ĩ with 0 ⩽ i ⩽ s − k − 1
+        auxSι =
+                          Sι   otherwise.
+This is what is done in the for loop of the algorithm.
+    This algorithm to update G and S is the keystone of the seeds algorithm. In fact, it may seem
+more natural to compute Σ̃ from Σ, but the restriction on the length of integers in implementations
+makes it more useful to split Σ into G and S and Σ̃ into G̃ and S̃. We assume that integers are
+represented from the least significant bit to the most significant bit. For instance, (1)b = 100000 . . . .
+                                                    . . 0} a0 . . . aℓ and a ≪ t the bitstream at . . . aℓ . Notice
+If a = a0 . . . aℓ we call a ≫ t the bitstream |0 .{z
+                                                     t
+that (n)b ≫ t = (2t n)b and (n)b ≪ t is (n//2t )b , which is equivalent to discarding the first t
+positions. If a = a0 . . . aℓ and a′ = a′0 . . . a′ℓ′ , then the operations a ∧ a′ and a ∨ a′ are defined as
+usual,
+                                                               
+                         ′                                        1 if ai = 1 and a′i = 1
+                  a ∧ a = r0 . . . rmax {ℓ,ℓ′ } , where ri =
+                                                                  0 otherwise
+                                                                
+                                                                   1 if ai = 1 or a′i = 1
+                   a ∨ a′ = r0 . . . rmax {ℓ,ℓ′ } , where ri =
+                                                                   0 otherwise
+    Now we will analyze the seeds of Λ̃ depending on whether their order is an old order, i.e. at
+most k −1 or a new order, i.e., at least k. The result that we will obtain at the end of this analysis is
+Theorem 8. This theorem was already proved in [5] from the perspective of the originary definition
+of seed introduced there.
+
+                                                         9
+Algorithm 1 Obtain G̃ and S̃ from G, S, c, k, s.
+Input: G = G(Λ), S = S(Λ), c = c(Λ), k = k(Λ), s
+  A=G
+  auxS = S
+  for i from 0 to s − k − 1 do
+      A=A≫1
+      auxS = auxS ∧ A
+  end for
+  G̃ = G ∨ (1 ≫ (c + s − 1))
+  S̃ = (auxS ≪ (s − k + 1)) ∨ (7 ≫ (c + s − 2))
+
+
+Old-order seeds
+Suppose p < k − 1 and let ρ < ũp = up . We want to analyze whether λs + 1 + ρ is an order-p
+seed of Λ̃, that is, we want to determine whether S̃ℓ = 1, for ℓ = λp + ρ. Since p < k − 1, we have
+ℓ + λs + 1 ⩽ λp + up + λs = λp+1 + λs ⩽ λk−1 + λs ⩽ c − 2 + λs ⩽ 2λs − 2. Hence, we are in one of
+the first three hypotheses of equation (1).
+    First case. Suppose 0 ⩽ ρ < up − (λs − c + 1). In this case ℓ + λs + 1 < λp+1 + c. On one hand
+this implies that ℓ + λs + 1 < 2c and so, we are in one of the first two hypothesis of equation (1).
+On the other hand the same inequality implies that
+
+                               λp + (λs + 1) ⩽ ℓ + λs + 1 < λp+1 + c
+
+and so ℓ + λs + 1 6∈ L + Is . Hence, S̃ℓ = 1 if and only if Σℓ+λs +1 = 1, which is equivalent to
+Sℓ+λs −c+1 = 1. In this case we say we have an old-order recycled seed since this order-p seed of Λ̃ is
+originated by an order-p seed of Λ. Indeed, λp ⩽ ℓ + λs − c + 1 < λp+1 . Notice that if λt = λs + 1 + ρ
+is an old-order recycled seed then λt < c̃ + up − 1.
+    Second case. Suppose up − (λs − c + 1) ⩽ ρ ⩽ up − 2. In this case ℓ + λs + 1 lies between λp+1 + c
+and λp+1 + λs − 1. Hence, ℓ + λs + 1 ∈ L + Is and so S̃ℓ = 0.
+   Third case. Suppose ρ = up − 1. In this case ℓ + λs + 1 = λp+1 + λs .
+   • If up+1 ⩽ λs − c then we need to distinguish whether p = k − 2 or p < k − 2.
+
+        – If p = k − 2, then ℓ + λs + 1 = λk−1 + λs ⩾ λk−1 + uk−1 + c = 2c while ℓ + λs + 1 =
+          λk−1 + λs ⩽ 2λs − 2, hence we are in the third hypothesis of equation (1) and, hence,
+          S̃ℓ = 0.
+        – If p < k − 2, then ℓ + λs + 1 = λp+2 + (λs − up+1 ) with c ⩽ (λs − up+1 ) ⩽ λs − 1, hence
+          ℓ + λs + 1 ∈ L + Is and we are in the first hypothesis of equation (1). Then S̃ℓ = 0.
+
+   • If up+1 > λs − c then λp+1 + λs < λp+2 + c, which implies that ℓ + λs + 1 < 2c and so we are in
+     the first or second hypothesis of equation (1). If p = k − 2 then ℓ + λs + 1 = λk−1 + λs 6∈ L + Is .
+     If p < k − 2 then by the previous inequality ℓ + λs + 1 = λp+1 + λs < λp+2 + c which implies,
+     again, ℓ + λs + 1 6∈ L + Is . Hence, S̃ℓ = 1 if and only if Σℓ+λs +1 = 1, which is equivalent to
+     Sℓ+λs −c+1 = 1. In this case we say we have an old-order new seed since this order-p seed of Λ̃
+     is originated by an order-(p + 1) seed of Λ. Indeed, λp+1 ⩽ ℓ + λs − c + 1 < λp+2 .
+
+
+
+                                                  10
+    Suppose now p = k − 1 and let ρ < ũk−1 . Notice that ũk−1 = uk−1 if and only λs 6= c and
+ũk−1 = uk−1 + 1 if λs = c.
+    First case. Suppose 0 ⩽ ρ < uk−1 − (λs − c + 1). In this case ℓ + λs + 1 < λk + c. On one hand
+this implies that ℓ + λs + 1 < 2c and on the other hand, since ℓ + λs + 1 ⩾ λk−1 + λs + 1, we have
+ℓ + λs + 1 6∈ L + Is . Hence, S̃ℓ = 1 if and only if Σℓ+λs +1 = 1, which is equivalent to Sℓ+λs −c+1 = 1.
+In this case we have again an old-order recycled seed.
+    Second case. Suppose uk−1 −(λs −c+1) ⩽ ρ < ũk−1 . In this case ℓ+λs +1 is at least λk +c = 2c.
+Hence, S̃ℓ = 1 if and only if ℓ + λs + 1 ⩾ 2λs − 1, that is, if and only if ρ ⩾ λs − λk−1 − 2, and so,
+
+                                    λs − λk−1 − 2 ⩽ ρ ⩽ ũk−1 − 1.
+
+This may occur only if ũk−1 − 1 ⩾ λs − λk−1 − 2, which is equivalent to λs ⩽ λ̃k + 1 and which in
+turn is only possible if
+
+   • λs = c + 1 and λ̃k = λk = c, in which case ũk−1 = uk−1 and uk−1 − 1 ⩽ ρ ⩽ uk−1 − 1.
+
+   • λs = c and λ̃k = λk + 1, in which case ũk−1 = uk−1 + 1 and uk−1 − 1 ⩽ ρ ⩽ uk−1 .
+
+So, there are only old-order new-seeds λs + 1 + ρ of order k − 1 if and only if either λs = c + 1 and
+ρ = uk−1 − 1 or λs = c and ρ = uk−1 − 1 or ρ = uk−1 .
+
+New-order seeds
+If λs = c then all the possible seed orders of Λ̃ are already seed orders of Λ and so, there are no
+new-order seeds.
+    Thus, we can assume that λs 6= c. Then ũs−1 = 2 and ũi = 1 for any other new seed order i.
+    For p = s − 1, since ρ < ũp = ũs−1 = 2 we only need to consider the cases ρ = 0 and ρ = 1. But
+either for ρ = 0 and for ρ = 1 the non-gaps λs + 1 + ρ correspond to order-(s − 1) seeds. Indeed
+the corresponding ℓ is ℓ = λs−1 + ρ = λs + ρ − 1 and hence, ℓ + λs + 1 = 2λs + ρ, which in both
+cases lies between 2λs − 1 and 2λs + 1. There are no more order-(s − 1) seeds since ũs−1 = 2.
+    For p = s − 2, if p is indeed a new seed order, then ũs−2 = 1. Then ρ can only be 0 Now,
+ℓ + λs + 1 = λs−2 + λs + 1 = 2λs − 1 and by equation (1), S̃ℓ = 1 and, so, λs + 1 is the unique
+order-(s − 2) seed.
+    For k ⩽ p < s − 2, necessarily ũp = 1 and, so, the unique possible seed would be ρ = 0. In
+this case ℓ = λp and ℓ + λs + 1 = λp + λs + 1 < 2λs − 1. Hence, by equation (1), S̃ℓ = 0 and, so,
+λs + 1 + ρ is not an order-(s − 2) seed.
+    The previous results can be summarized in the next theorem.
+
+Theorem 8. Suppose that Λ is a semigroup of rank k and conductor c and let Λ̃ = Λ \ {λs } with
+s ⩾ k. The seeds of Λ̃ of order p are exactly the ones in the next list.
+
+  1. If p < k (Old-order seeds):
+
+         • Old-order recycled seeds:
+             – Any order-p seed λt of Λ with t > s (necessarily with λt − c(Λ \ {λs }) < up − 1)
+         • Old-order new seeds:
+             – λt = λs + u p                            if p < k − 1 and λs is an order-(p + 1) seed of Λ
+
+
+                                                   11
+             – λt = λs + up and λt = λs + up + 1 if p = k − 1 and λs = c
+             – λt = λs + u p                     if p = k − 1 and λs = c + 1
+
+    2. If p ⩾ k (New-order seeds)
+
+         • λs + 1 if p = s − 2
+         • λs + 1 and λs + 2 if p = s − 1
+
+
+5     New generators, new strong generators and newly strong gen-
+      erators
+Let Λ be a numerical semigroup with c(Λ) ⩾ λ1 . A new generator of Λ is a generator of Λ that is
+not a generator of Λ ∪ F (Λ). A new strong generator of Λ is a strong generator of Λ that is not a
+generator of Λ ∪ F (Λ). A newly strong generator of Λ is a generator of Λ and also a generator of
+Λ ∪ F (Λ), that is weak in Λ ∪ F (Λ) and strong in Λ.
+    Recall that order-i seeds are elements between c(Λ) and c(Λ)+ui (Λ)−1 and they are represented
+by 1’s in the corresponding positions of S(Λ) between positions λi and λi + ui (Λ) − 1 = λi+1 − 1.
+Recall also that right generators of Λ are exactly the order-0 seeds of Λ and that a right generator
+is strong if and only if it is an order-1 seed. In particular, right generators lie between c(Λ) and
+c(Λ) + m(Λ) − 1 while strong generators lie between c(Λ) and c(Λ) + u(Λ) − 1, where u(Λ) = u1 (Λ).
+    For ordinary semigroups (i.e. semigroups of rank k = 1), the notion of strong generator is
+not defined. But we can define the ordinarily strong generators of an ordinary semigroup as those
+generators than when are taken away, the obtained semigroup has new generators. One can check
+that the ordinary semigroup Λm of multiplicity m has exactly two ordinarily strong generators:
+m and m + 1. The semigroup Λm \ {m} has two new generators, 2m and 2m + 1; the semigroup
+Λm \ {m + 1} has one new generator, 2m + 1.
+    Let Λ be a numerical semigroup with S = S(Λ), c = c(Λ), m = m(Λ), u = u(Λ) = u( Λ), and
+v = v(Λ) = u2 (Λ).
+
+(1) Existence of right generators. The element µ ⩾ c is a right generator of Λ if and only if
+    Sµ−c = 1. The number of right generators of Λ is w0m−1 (S). By Lemma 7, in the particular case
+    k(Λ) = 1, we have w0m−1 (S) = m and in the particular case k(Λ) = 2, we have w0m−1 (S) = m−1
+
+(2) Existence of strong generators. If k(Λ) = 1 there are no strong generators by definition
+    but there are two ordinarily strong generators. If k(Λ) > 1, the element µ ⩾ c is a strong
+    generator of Λ if and only if Sµ−c = Sµ+m−c = 1. The number of strong generators of Λ is
+      u−1                                                                 u−1
+    w
+    0 (S ∧ (S ≪ m)). In the particular case k(Λ) = 2, by Lemma 7, w0 (S ∧ (S ≪ m)) =
+       u − 1 if m − u < u
+       u      otherwise.
+
+(3) Existence of new generators. Suppose µ1 is a right generator of Λ.
+
+        • Suppose k(Λ) = 1 then Λ is ordinary and, as discussed above, Λ \ {µ1 } has exactly two
+          new generators if µ1 = m, one new generator if µ1 = m + 1 and zero new generators
+          otherwise.
+
+
+
+                                                12
+       • If k(Λ) > 1, by Theorem 8 (old-order new seeds, p < k − 1) there is at most one new
+         generator of Λ \ {µ1 }, which must be µ1 + m. Indeed, µ1 + m is a new generator if and
+         only µ1 is a strong generator of Λ and so, if and only if Sµ1 −c = Sµ1 +m−c = 1. This
+         situation occurs w0u−1 (S ∧ (S ≪ m)) times.
+
+(4) Existence of new strong generators. Suppose µ1 is a right generator of Λ.
+
+       • Suppose k(Λ) = 1.
+           – If µ1 = c then k(Λ \ {µ1 }) = 1 and Λ \ {µ1 } has no strong generators since in this
+             case there are no order-1 seeds.
+           – If µ1 = c + 1, we just saw that there is one new generator of Λ \ {µ1 }, which is µ1 + m.
+             By Theorem 8 (new-order new seeds, p = s − 1) the new generator is strong if and
+             only if µ1 + m = µ1 + 1 or µ1 + m = µ1 + 2. In the first case we have a contradiction
+             with k(Λ) = 1. So, there exists one new strong generator if m = 2 for µ1 = 3, and
+             zero new strong generators otherwise.
+           – If µ1 > c + 1, we already saw that there are no new generators of Λ \ {µ1 }.
+       • If k(Λ) = 2 we already saw that there is one new generator of Λ\{µ1 }, which is µ2 = µ1 +m,
+         only if µ1 is a strong generator of Λ. By Lemma 7 for the case of rank k = 2, this is
+         equivalent to µ1 ⩽ c+ u− 1. Now, µ2 may be strong in Λ\{µ1 } if and only if it is a seed of
+         order 1 of Λ \ {µ1 }. We know that order-1 seeds of Λ \ {µ1 } are at most µ1 + u1 (Λ \ {µ1 }).
+         In particular, we need µ2 = µ1 + m ⩽ µ1 + u1 (Λ \ {µ1 }) and so u1 (Λ \ {µ1 }) ⩾ m which
+         implies u1 (Λ \ {µ1 }) = m. This in turn implies that either u = m − 1 and µ1 = c or
+         u = m and µ1 > c. Now, since µ2 = µ1 + m, it can not be an (old-)order-1 recycled
+         seed of Λ \ {µ1 }. Then it needs to be an (old-)order-1 new seed of Λ \ {µ1 }. Then, by
+         Theorem 8 (for old-order new seeds with p = k − 1), µ2 is a strong generator of Λ \ {µ1 }
+         if and only if either
+           – u = m − 1 and µ1 = c
+           – u = m and µ1 = c + 1.
+         So, there exists one new strong generator if u = m − 1 for µ1 = c and there exists one
+         new strong generator if u = m for µ1 = c + 1. There exist zero new strong generators
+         otherwise.
+       • Suppose k(Λ) ⩾ 3. A new generator µ2 of Λ \ {µ1 } may only be strong if u = m.
+         Indeed, first of all, u0 (Λ) = u0 (Λ \ {µ1 }) and u1 (Λ) = u1 (Λ \ {µ1 }). Second, in order
+         for µ2 to be a new generator, µ2 = µ1 + m. Third, for µ2 to be strong in Λ \ {µ1 }
+         it must be an order-1 seed of Λ \ {µ1 }. Since the conductor of Λ \ {µ1 } is µ1 + 1, an
+         order-1 seed of Λ \ {µ1 } is at most µ1 + u. Hence µ1 + m ⩽ µ1 + u and this is only
+         possible if u = m. Now, since µ2 = µ1 + m, it can not be an (old-)order-1 recycled seed
+         of Λ \ {µ1 }. Then it needs to be an (old-)order-1 new seed of Λ \ {µ1 }. In this case,
+         by Theorem 8 (old-order new seeds with p < k − 1), µ1 needs to be an order-2 seed
+         of Λ and so, Sµ1 −c+λ2 = Sµ1 −c+2m = 1. Hence, there exists one new strong generator
+         of Λ \ {µ1 } if u = m and Sµ1 −c = Sµ1 −c+m = Sµ1 −c+2m = 1. This situations occurs
+         w0v−1 (S ∧ (S ≪ u) ∧ (S ≪ (m + u))) times whenever u = m. Otherwise there exist no
+         new strong generators.
+
+
+
+                                                 13
+(5) Existence of newly strong generators. If µ2 is a newly strong generator of Λ\{µ1 }, then, on one
+    hand c ⩽ µ1 < µ2 < c + m and so µ2 − µ1 < m and, on the other hand µ2 is an (old-)order-1
+    new seed of Λ \ {µ1 }.
+
+       • If k(Λ) = 1, by Lemma 7 µ1 , µ2 with µ1 < µ2 are right generators if and only if m ⩽
+         µ1 < µ2 < 2m. By Theorem 8 (new-order new seeds with p = k), µ2 is a newly strong
+         generator of Λ \ {µ1 } if and only if one of the following options holds.
+           – µ1 = λ3 = m + 2 and µ2 = µ1 + 1 = m + 3 and m ⩾ 4
+           – µ1 = λ2 = m + 1 and µ2 = µ1 + 1 = m + 2 and m ⩾ 3
+           – µ1 = λ2 = m + 1 and µ2 = µ1 + 2 = m + 3 and m ⩾ 4
+         So, if m ⩽ 2 there exist zero newly strong generators for any µ1 ; if m = 3 there exists
+         one newly strong generator for µ1 = m + 1 and zero newly strong generators otherwise; if
+         m ⩾ 4 there exist two newly strong generators for µ1 = m + 1, one newly strong generator
+         for µ1 = m + 2, and zero newly strong generators otherwise.
+         We add that there exists one newly ordinarily strong generator for µ1 = m, which is
+         m + 2.
+       • If k(Λ) = 2, by Theorem 8 (old-order new seeds with p = k − 1), one of the following
+         options must hold.
+           – µ1 = c = m + u and µ2 = µ1 + u = m + 2u with µ1 , µ2 right generators of Λ. That is,
+             by Lemma 7, µ1 − c 6= m − u and µ2 − c 6= m − u, i.e., u 6= m and m 6= 2u. Conversely,
+             one can check that if u < m and m 6= 2u then m + 2u is a newly strong generator of
+             Λ \ {m + u} = {0, m, m + u + 1, m + u + 2, . . . }.
+           – µ1 = c = m + u and µ2 = µ1 + u + 1 = m + 2u + 1 with µ1 , µ2 right generators of Λ.
+             That is, by Lemma 7, µ1 − c 6= m − u and µ2 − c 6= m − u, i.e., u 6= m and m 6= 2u + 1,
+             which together with the condition µ2 < c + m results in the conditions u < m − 1
+             and m 6= 2u + 1. Conversely, one can check that if u < m − 1 and m 6= 2u + 1 then
+             m+2u+1 is a newly strong generator of Λ\{m+u} = {0, m, m+u+1, m+u+2, . . . }.
+           – µ1 = c+ 1 = m + u+ 1 and µ2 = µ1 + u = m + 2u+ 1 with µ1 , µ2 right generators of Λ.
+             That is, by Lemma 7, µ1 −c 6= m−u and µ2 −c 6= m−u, i.e., u 6= m−1 and m 6= 2u+1,
+             which together with the condition µ2 −µ1 < m results in the conditions u < m−1 and
+             m 6= 2u+1. Conversely, one can check that if u < m−1 and m 6= 2u+1 then m+2u+1
+             is a newly strong generator of Λ\{m+u+1} = {0, m, m+u, m+u+2, m+u+3, . . . }.
+         So, if u < m and m 6= 2u there exists one newly strong generator for µ1 = m + u, while
+         if u < m − 1 and m 6= 2u + 1 there exists one newly strong generator for µ1 = m + u
+         (different than the one just mentioned) and a newly strong generator for µ1 = m + u + 1.
+         There exist zero newly strong generators otherwise.
+       • If k(Λ) ⩾ 3, by Theorem 8 (old-order new seeds with p < k − 1), µ2 = µ1 + u and µ1
+         needs to be an order-2 seed of Λ and so, Sµ1 −c+λ2 = Sµ1 −c+m+u = 1. Furthermore, since
+         µ2 − µ1 < m and µ2 = µ1 + u, it follows that u < m. Hence, there exists one newly strong
+         generator of Λ \ {µ1 } if u < m and Sµ1 −c = Sµ1 −c+u = Sµ1 −c+u+m = 1. This situation
+         occurs w0v−1 (S ∧ (S ≪ u) ∧ (S ≪ (m + u))) times whenever u < m. Otherwise there exist
+         no newly strong generators.
+
+
+
+                                                14
+6    The great-grandchildren of a numerical semigroup
+We explain now how to obtain the set of all great-grandchildren of a semigroup in the semigroup
+tree just from its seeds, and the parameters m, u, v.
+    Each particular case of the lemma is illustrated with an example at the appendix. In those
+examples we represent the tree of descendants of semigroups with different characteristics. Each
+semigroup in the tree is represented by its table of seeds.
+
+Theorem 9. Let S = S(Λ), m = m(Λ), u = u(Λ), v = v(Λ).
+   The number nc of children, the number ngc of grandchildren, and the number nggc of great-
+grandchildren of Λ is, respectively,
+
+           
+           
+            1             if k(Λ) = 0, (see Fig. 2)
+           
+             m             if k(Λ) = 1, (see Fig. 2)
+  nc (Λ) =
+           
+            m−1           if k(Λ) = 2, (see Fig. 2)
+            m−1
+             w0 (S) if k(Λ) ⩾ 3, (see Fig. 3-Fig. 7)
+           
+            2                                  if k(Λ) = 0, (see Fig. 2)
+              m
+ ngc (Λ) =         + 3                           if k(Λ) = 1, (see Fig. 3-Fig. 5)
+            n2c (Λ)     u−1
+                 2    + w0 (S ∧ (S ≪ m)) if k(Λ) > 1, (see Fig. 6-Fig. 7)
+           
+           
+            4                                                  if k(Λ) = 0,             (see Fig. 2)
+             m
+               3 + 3m + 1                                        if k(Λ) = 1, m = 2, 3,   (see Fig. 3 and Fig 4)
+           
+           
+           
+            m + 3m + 3
+           
+                                                                 if k(Λ) = 1, m ⩾ 4,      (see Fig. 5)
+               3
+nggc (Λ) =    m−1
+           
+                3   + (u −   δa )(m − 2) + δb + 2δ c + δd       if k(Λ) = 2,             (see Fig. 6)
+             nc (Λ)     u−1
+           
+           
+                3    + w0 (S ∧ (S ≪ m))(nc (Λ) − 1)
+           
+                     + w0v−1 (S ∧ (S ≪ u) ∧ (S ≪ (u + m))) if k(Λ) ⩾ 3,                  (see Fig. 7)
+
+
+where
+                                  
+                                      1   if m < 2u
+                          δa =
+                                      0   otherwise
+                                  
+                                      1   if u = m or 2u 6= m
+                          δb =
+                                      0   otherwise
+                                  
+                                      1   if u < m − 1 and 2u + 1 6= m
+                          δc =
+                                      0   otherwise
+                                  
+                                      1   if u = m − 1
+                          δd =
+                                      0   otherwise
+
+
+Proof. The unique child of N is N \ {1}, while for a semigroup Λ 6= N the number of children is the
+number of its right generators. Then the formula for nc follows from (1).
+    Let us prove now the formula for ngc (Λ). The number of grandchildren of N is 2 since this is
+the number of semigroups of genus 2.
+    If Λ 6= N, then a grandchild of Λ is a semigroup of the form Λ \ {µ1 , µ2 } with c ⩽ µ1 < µ2 and
+either
+
+
+                                                15
+(a) µ1 , µ2 are right generators of Λ,
+
+(b) µ1 is a right generators of Λ, and µ2 is a new generator of Λ \ {µ1 }.
+                                        
+    Case (a) can be obtained in nc2(Λ) different ways. Case (b), for k(Λ) = 1 can be obtained in
+three different ways, taking µ1 as one of the two ordinarily strong generators and µ2 as one of the
+new generators corresponding to µ1 ((3)). Case (b), for k(Λ) ⩾ 2 can be done as many times as
+the number of strong generators of Λ, which is w0u−1 (S ∧ (S ≪ m)) ((2)).
+    Let us prove now the formula for nggc . If Λ = N then we know that the number of its great-
+grandchildren is 4. It can be just observed in Figure 1.
+    If Λ 6= N, then a great-grandchild of Λ is a semigroup of the form Λ \ {µ1 , µ2 , µ3 } with c ⩽ µ1 <
+µ2 < µ3 and either
+
+ (a) µ1 , µ2 , µ3 are right generators of Λ,
+
+ (b) µ1 , µ2 are right generators of Λ, and µ3 is a new generator of Λ \ {µ1 } or a new generator of
+     Λ \ {µ2 },
+
+  (c) µ1 is a right generator of Λ and µ2 , µ3 are new generators of Λ \ {µ1 },
+
+ (d) µ1 , µ2 are right generators of Λ, µ3 is not a right generator of Λ, nor a right generator of
+     Λ \ {µ1 }, nor a right generator of Λ \ {µ2 }, but it is a new generator of Λ \ {µ1 , µ2 },
+
+  (e) µ1 is a right generator of Λ, µ2 is a new generator of Λ \ {µ1 } and µ3 is a new generator of
+      Λ \ {µ1 , µ2 }.
+
+   Now we are going to analyze each case separately.
+                                                                                               
+   • The situation (a) is counted by nc3(Λ) . In particular, for k(Λ) = 1 this equals       m
+                                                                                            3       and for
+                               
+     k(Λ) = 2 this equals m−13  .
+
+                                         k(Λ) = 1   k(Λ) = 2   k(Λ) ⩾ 3
+                                            m        m−1       nc (Λ)
+                                            3            3         3
+
+   • Suppose now situation (b). For k(Λ) = 1, considering the two ordinarily strong generatrors,
+     this may occur in the following cases:
+
+        – µ1 = m, µ2 = m + 1, µ3 = 2m
+        – µ1 = m, µ2 = m + 1, µ3 = 2m + 1
+        – µ1 = m, µ2 ∈ {m + 2, . . . , 2m − 1}, µ3 = 2m
+        – µ1 = m, µ2 ∈ {m + 2, . . . , 2m − 1}, µ3 = 2m + 1
+        – µ1 = m + 1, µ2 ∈ {m + 2, . . . , 2m − 1}, µ3 = 2m + 1
+
+      So, this situation occurs 2 + 3(m − 2) = 3m − 4 times. For k(Λ) ⩾ 2, the situation in (b)
+      corresponds to the number of strong generators multiplied by the number of right generators
+      minus one. By (1) and (2), this equals w0u−1 (S ∧(S ≪ m))(nc (Λ)−1), which for the particular
+      case k(Λ) = 2 is (u − δa )(m − 2).
+
+
+
+                                                    16
+                    k(Λ) = 1       k(Λ) = 2                              k(Λ) ⩾ 3
+                     3m − 4     (u − δa )(m − 2)              w0u−1 (S ∧ (S ≪ m))(nc (Λ) − 1)
+
+• Situation (c) only occurs once for k(Λ) = 1, for µ1 = m, µ2 = 2m, µ3 = 2m + 1.
+
+                                       k(Λ) = 1          k(Λ) = 2    k(Λ) ⩾ 3
+                                          1
+
+• Situation (d) for k(Λ) > 1 or for k(Λ) = 1 with µ1 > m, is equivalent to µ1 , µ2 being right
+  generators of Λ, µ2 being a newly strong generator of Λ \ {µ1 } and µ3 being the unique new
+  generator of Λ \ {µ1 , µ2 }. According to (5) this occurs as many times as indicated in the
+  table
+
+                k(Λ) = 1      k(Λ) = 2                                k(Λ) ⩾ 3
+               0 if m ⩽ 2     δb′ + 2δc          (1 − δb′′ )w0v−1 (S ∧ (S ≪ u) ∧ (S ≪ (u + m)))
+               1 if m = 3
+               3 if m ⩾ 4
+
+  where
+                                                 
+                                                     1   if u < m and 2u 6= m
+                                 δb′     =
+                                                     0   otherwise
+
+                                                         
+                                                             1   if u = m
+                                          δb′′       =
+                                                             0   otherwise
+
+
+  Situation (d) for k(Λ) = 1 and µ1 = m may only occur for µ2 equal to one of the ordinarily
+  strong generators of Λ \ {m}, which are m + 1 and m + 2. For m = 2, the cases in which this
+  occurs are excatly when either (µ1 , µ2 , µ3 ) = (2, 3, 6) or (µ1 , µ2 , µ3 ) = (2, 3, 7). For m > 2,
+  the cases in which this occurs are excatly when either (µ1 , µ2 , µ3 ) = (m, m + 1, 2m + 2),
+  (µ1 , µ2 , µ3 ) = (m, m + 1, 2m + 3), or (µ1 , µ2 , µ3 ) = (m, m + 2, 2m + 2). So, we need to add to
+  the previous table these cases.
+
+                                        k(Λ) = 1         k(Λ) = 2     k(Λ) ⩾ 3
+                                       2 if m = 2
+                                       3 if m ⩾ 3
+
+• Situation (e) is equivalent to µ1 being a right generator of Λ, µ2 being a new strong generator
+  of Λ \ {µ1 } and µ3 being a new generator of Λ \ {µ1 , µ2 }. For m = 2 this occurs exactly for
+  (µ1 , µ2 , µ3 ) = (2, 4, 7) and for (µ1 , µ2 , µ3 ) = (3, 5, 7). Otherwise, according to (4) this occurs
+  as many times as indicated in the table.
+
+                  k(Λ) = 1      k(Λ) = 2                              k(Λ) ⩾ 3
+                 2 if m = 2     δb′′ + δd            δb′′ · w0v−1 (S ∧ (S ≪ u) ∧ (S ≪ (u + m)))
+                 0 if m ⩾ 3
+
+                                                         17
+    The result follows from the fact that δb = δb′ + δb′′ .
+
+
+Example 10. For instance, the semigroup Λ = {0, 3, 6, 8, 9, 10, . . . } (with S(Λ) = 10110111) sat-
+isfies
+
+    • nc (Λ) = 2, since w0m−1 (S) = w02 (S) = w(101) = 2.
+                               
+    • ngc (Λ) = 3, since nc2(Λ) + w0u−1 (S ∧ (S ≪ m)) = 1 + w03 (101 ∧ 101) = 1 + 2 = 3.
+
+    • nggc (Λ) = 3, since m = u = 3, v = 2, w02 (S ∧ (S ≪ m)) = w(101 ∧ 101) = 2, and
+      w01 (S ∧(S ≪ u)∧(S ≪ (u+m)) = w(10∧10∧11) = 1, the formula gives 23 +2(2−1)+1 = 3.
+
+
+7    The seeds algorithm revisited
+The previous results can be used to define a revisited version of the seeds algorithm whose imple-
+mentation in C++ can be seen in the appendix. The bit count required by Lemma 9 is performed
+using Brian Kernighan’s algorithm. Parallelizing the implementation gives very good computation
+times. A parallel implementation of the algorithm can be found in
+                   https://github.com/mbrasamoros/seeds-algorithm.
+The performance of the algorithm is next compared to that of the Fromentin-Hivert algorithm
+[14, 13] and to that of the RGD algorithm [6, 4]. Using 8 workers in all algorithms we obtain the
+following table, where computation time is measured in seconds.
+
+                  genus      40    42    44    46    48     50    52     54     56      58
+                  FH          1     3    10    28    75    207   537   1410   3977   10620
+                  RGD         2     4     9    23    62    158   403   1064   2892    7462
+                  Seeds       1     2     6    15    41    107   284    758   1962    5257
+
+Using 12 workers in all algorithms we obtain the next table.
+               genus    40    42    44    46    48     50       52    54     56     58      60
+               FH        1     2     7    19    53    145      372   978   2760   7398   21880
+               RGD       1     3     6    18    45    121      291   799   2101   5292   13785
+               Seeds     1     2     4    11    27     73      195   503   1329   3556    9459
+And using 24 workers we obtain this other table.
+               genus    40    42    44    46    48     50       52    54     56     58      60
+               FH        1     2     6    17    45    126      332   876   2494   6600   19090
+               RGD       1     2     5    13    38     88      244   625   1551   4458   10382
+               Seeds     1     1     4     9    25     67      179   462   1226   3307    8586
+
+8    Computation of Eliahou semigroups
+Fix a numerical semigroup Λ. Let k = rank(Λ), let p be the number of primitive elements of Λ,
+and let rl the number
+                 m    of right generators of Λ. The Wilf conjecture states that c(Λ) ⩽ kp [16].
+            c(Λ)
+Let q = m(Λ) and ρ = qm(Λ) − c(Λ). We say that Λ is an Eliahou semigroup if the constant
+
+                                                          18
+E(Λ) = k(p − r) − q(m − r) + ρ is negative. Shalom Eliahou proved that if the Wilf conjecture does
+not hold for a semigroup, then it must be an Eliahou semigroup [11]. Hence, verifying that the
+Eliahou semigroups up to a certain genus satisfy the Wilf conjecture proves the Wilf conjecture for
+all semigroups up to this genus. Eliahou semigroups are very rare. Let ha, b, ci |κ be the minimum
+semigroup containing a, b, c and all integers larger than or equal to κ. Jean Fromentin found that
+the unique Eliahou semigroups of genus g ⩽ 60 are exactly
+
+                                          ε1 = h14, 22, 23i |56 ,
+                                          ε2 = h16, 25, 26i |64 ,
+                                          ε3 = h17, 26, 28i |68 ,
+                                          ε4 = h17, 27, 28i |68 ,
+                                          ε5 = h18, 28, 29i |72 ,
+
+
+which have genus 43, 51, 55, 55 and 59, respectively. In [7] it was computed that the unique Eliahou
+semigroups with genus between 61 and 65 are exactly
+
+                                          ε6 = h19, 29, 31i |76 ,
+                                          ε7 = h19, 30, 31i |76 ,
+
+both of genus 63.
+    Shalom Eliahou and Jean Fromentin found in [12] numerical semigroups with arbitrarily small
+Eliahou constant. In particular, they proved [12, Proposition 3.1.] that for positive integers m, a, b
+with (3m+1)/2 ⩽ a < b ⩽ (5m−1)/3 and for which the elements a, b, 2a, a+b, 2b, 3a, 2a+b, a+2b, 3b
+are all different modulo m, it holds that EF (m, a, b) := hm, a, bi |4m has Eliahou constant equal
+to −1. Manuel Delgado constructed in [8], for each integer number, infinite families of numerical
+semigroups having Eliahou constant equal to that number. In particular, he constructed infinite
+families of semigroups with negative Eliahou constant. The semigroups constructed by Delgado are
+
+                             D (i,j) (p, τ ) = hm(i,j) , g (i,j) , g(i,j) + 1i |c(i,j) ,
+
+for p an even positive integer and τ, i, j non-negative integers, where
+
+                                p2       τ            p
+                   m(i,j) =         + p( + 2) + 2 + j
+                                4        2            2
+                                p 2          7
+                    g(i,j) =        + p(τ + ) − τ + j(p − 1) + im(i,j)
+                                2            2
+                                p3         τ                p2   p       
+                    c(i,j) =        + p2 ( + 2) + 2p − τ + j + i       + 1 m(i,j)
+                                4          2                2       2
+The Eliahou semigroups in these families found by Eliahou and Formentin and by Delgado still
+
+
+
+
+                                                        19
+satisfy the Wilf conjecture [12, 8]. It holds that
+
+                                 ε1 = EF (14, 22, 23) = D (0,0) (4, 0)
+                                 ε2 = EF (16, 25, 26) = D (0,1) (4, 0)
+                                 ε3 = EF (17, 26, 28)
+                                 ε4 = EF (17, 27, 28)
+                                 ε5 = EF (18, 28, 29) = D (0,2) (4, 0)
+                                 ε6 = EF (19, 29, 31)
+                                 ε7 = EF (19, 30, 31)
+
+
+Consequently, the Wilf conjecture holds for all semigroups of genus up to 65.
+   Now suppose that Λ is not ordinary and let Λ′ be a child of Λ obtained by taking away c + s
+with s ⩾ 0. Let p′ , r ′ , k′ , q ′ , m′ , ρ′ be the parameters involved in the computation of the Eliahou
+constant for the semigroup Λ′ . If we define
+                                            
+                                               1 if c + s is a weak generator of Λ
+                             δw =
+                                               0 otherwise
+                                            
+                                               1 if ρ ⩽ s
+                              δρ =
+                                               0 otherwise,
+
+
+then m′ = m, p′ = p − δw , k′ = k + s, q ′ = q + δρ , and ρ′ = ρ − s − 1 + δρ m. Let the preceding
+sibling Λ′0 of Λ′ be defined as follows. If c + s is the smallest right generator of Λ, then Λ′0 = Λ.
+Otherwise, let s0 be such that c + s0 is the largest right generator of Λ smaller than c + s. Then
+Λ′0 = Λ \ {c + s0 }. Let now r0′ be the number of right generators of the semigroup Λ′0 . Then the
+number of right generators of Λ′ is r ′ = r0′ −δw . This enables us to use our exploration of semigroups
+up to genus g for finding all Eliahou semigroups of genus up to g + 1. In fact, our algorithm only
+checks the Eliahou inequality for semigroups with k ⩾ 3. But as proved in [11, Section 7.2] this
+covers all possible counterexamples.
+    With the new algorithm we found three further Eliahou semigroups of genus 67. They are
+
+                                         ε8 = h20, 31, 32i |80
+                                         ε9 = h20, 32, 33i |80
+                                        ε10 = h19, 26, 27i |90
+
+
+The three semigroups ε8 , ε9 , ε10 , have Eliahou constant equal to −1. The parameters involved in
+the computation of the Eliahou constant of the semigroups ε8 and ε9 coincide and they are
+
+                       c = 80, m = 20, q = 4, ρ = 0, p = 13, r = 10, k = 13.
+
+The parameters involved in the computation of the Eliahou constant of the semigroup ε10 are
+
+                        c = 90, m = 19, q = 5, ρ = 5, p = 7, r = 4, k = 23.
+
+
+                                                     20
+The semigroups ε8 and ε9 are of the type described by Eliahou and Fromentin in [12]. Furthermore,
+the semigroup ε8 is the Delgado semigroup D (0,3) (4, 0). That is,
+
+                                  ε8 = EF (20, 31, 32) = D (0,3) (4, 0)
+                                  ε9 = EF (20, 32, 33)
+
+
+The semigroup ε10 is neither of Eliahou-Fromentin type nor of Delgado’s type.
+    Shalom Eliahou noticed that, indeed, ε10 is a member of a new family of Eliahou semigroups,
+defined as
+                                 BEFt = h2t + 1, 3t − 1, 3ti |10t ,
+for t ⩾ 9. All the semigroups in this family satisfy
+
+                                   c = 10t, m = 2t + 1, q = 5, ρ = 5,
+
+and, since
+
+BEF t = {0, 2t + 1, 3t − 1, 3t, 4t + 2, 5t, 5t + 1, 6t − 2, 6t − 1, 6t, 6t + 3,
+             7t + 1, 7t + 2, 8t − 1, 8t, 8t + 1, 8t + 4, 9t − 3, 9t − 2, 9t − 1, 9t, 9t + 2, 9t + 3, 10t, . . . },
+
+the rank is k = 23 whenever t ⩾ 8. In particular, their genus is 10t − 23. The elements between
+the conductor c and c + m − 1 that are not generators are
+
+10t, 10t+1, 10t+2, 10t+5, 11t−2, 11t−1, 11t, 11t+1, 11t+3, 11t+4, 12t−4, 12t−3, 12t−2, 12t−1, 12t.
+
+For t ⩾ 9 this list contains exactly 15 elements, and so the number of right generators is r =
+2t + 1 − 15 = 2t − 14. For t = 8, the list contains 14 elements and so r = 2t − 13. Hence,
+E(BEF8 ) = 4 while E(BEFt ) = −1 for all t ⩾ 9. This shows that the family BEFt for t ⩾ 9 is
+indeed a family of Eliahou semigroups and that the condition t ⩾ 9 is necessary. It is easy to check
+that the Wilf conjecture holds for these semigroups since c = 10t, k = 23, p = 2t − 11. One can
+check that
+
+                                              ε10 = BEF9 .
+
+   We can not ensure a priori that the three Eliahou semigroups ε8 , ε9 , ε10 are all Eliahou semi-
+groups of genus between 66 and 67 because we have the integer bit length limitation. We will
+analyze it in next section.
+
+
+9    How far can we get using 128 bit integers?
+Let ng be the number of semigroups of genus g. Let Eg be the set of Eliahou counterexamples
+of genus smaller than or equal to g. As a consequence of the previous sections, if we obtain the
+parameters G and S of all semigroups of genus up to g, then we can also deduce ng+3 and Eg+1 .
+The limitation of our algorithm comes from the fact that the variables G and S allocate values in
+positions 0 to c − 1. If we use 128 bit integers, this means that we explore correctly the semigroups
+of conductor up to 128.
+
+
+                                                     21
+9.1   Exploring up to genus 64
+Since c ⩽ 2g, if we use 128 bit integers, this guarantees that the algorithm will proceed correctly
+to explore the tree up to genus 64, thus guaranteeing the correct computation of n67 and E65 .
+
+9.2   Exploring up to genus 65
+If we use the algorithm to explore up to genus 65, we will missexplore semigroups of genus 65 and
+conductor 129 or 130, that is, we will be missexploring exactly the symmetric (i.e. rank equal to g)
+and pseudo-symmetric (i.e. rank equal to g − 1) semigroups of genus 65. The error in these cases
+will be that we will not be able to write
+   • Sc−1 = 1 when c ⩾ 129
+
+   • Sc−2 = 1 and Gc−2 = 1 when c ⩾ 130
+But the parameters such as the genus, conductor, multiplicity, first jump and second jump, or the
+number of right generators will be correctly computed.
+
+Computation of n68
+To analyze this case we need the next lemmas which are consequences of results one can find in [3].
+Lemma 11. [3, Lemma 3] Non-hyperelliptic symmetric semigroups have no children.
+Lemma 12. Pseudo-symmetric semigroups have no grandchildren.
+Proof. From [3, Lemma 4] we deduce that there is a unique pseudo-semigroup of genus g with only
+one interval of non-gaps between 0 and the conductor. If g ⩾ 5 then this semigroup has only one
+child and no grandchildren. From [3, Lemma 5] we deduce that pseudo-semigroups with λ1 = 3 have
+one child and no grandchildren. Finally, [3, Lemma 6] says that each pseudo-symmetric semigroup
+with λ1 6= 3 and with more than one interval of non-gaps between 0 and the conductor is a leaf in
+the semigroup tree.
+
+   From these lemmas we deduce that the missexplored symmetric and pseudo-symmetric semi-
+groups of genus 65 do not interfere in the computation of n68 . Indeed, these semigroups have at
+most one child and no grandchildren. Hence they do not contribute to n68 .
+
+Computation of E66
+As a consequence of [3, Lemma 4], [3, Lemma 5], and [3, Lemma 6], we can state the following
+lemma.
+Lemma 13. The unique semigroups that are children of symmetric or pseudo-symmetric semi-
+groups of a given genus g ⩾ 5 are:
+  1. The hyperelliptic semigroup of genus g + 1
+
+  2. The semigroup {0, g, g + 1, . . . , 2g − 3} ∪ [2g, ∞)
+
+  3. The semigroup {0, 3, 6, . . . , 3t, 3(t + 1) − 1, 3(t + 1), 3(t + 2) − 1, 3(t + 2), . . . , 3(2t − 1) − 1, 3(2t −
+     1)} ∪ {3(2t − 1) + 2, 3(2t − 1) + 3} ∪ [3(2t − 1) + 5, ∞) for an adequate t
+
+                                                         22
+   4. The semigroup {0, 3, 6, . . . , 3t, 3(t + 1), 3(t + 1) + 1, 3(t + 2), 3(t + 2) + 1, . . . , 3(2t), 3(2t) + 1} ∪
+      {3(2t) + 3, 3(2t) + 4} ∪ [3(2t) + 6, ∞) for an adequate t.
+
+    Now we can check that all semigroups in the previous lemma have non-negative Eliahou con-
+stant, thus proving that our algorithm using 128-bit integers guarantees the computation of E66 .
+Indeed,
+
+   1. The hyperelliptic semigroup of genus g + 1 has parameters m = 2, p = 2, k = g + 1, r = 1,
+      q = g + 1, and ρ = 0. Hence, the Eliahou constant is (g + 1) − (g + 1) = 0.
+
+   2. The semigroup {0, g, g + 1, . . . , 2g − 3} ∪ [2g, ∞) has parameters m = g, p = g − 2, k = g − 1,
+      r = 0, q = 2, and ρ = 0. Hence, the Eliahou constant is k(p − r) − q(m − r) + ρ =
+      (g − 1)(g − 2) − 2g = g 2 − 5g + 2, which is positive for g ⩾ 5.
+
+   3. The semigroup {0, 3, 6, . . . , 3t, 3(t + 1) − 1, 3(t + 1), 3(t + 2) − 1, 3(t + 2), . . . , 3(2t − 1) −
+      1, 3(2t − 1)} ∪ {3(2t − 1) + 2, 3(2t − 1) + 3} ∪ [3(2t − 1) + 5, ∞) for an adequate t has parameters
+      m = 3, p = 2, k = 3t + 1, r = 0, q = 2t + 1, and ρ = 1. Hence, the Eliahou constant is
+      k(p − r) − q(m − r) + ρ = (3t + 1)2 − (2t + 1)3 + 1 = 0.
+
+   4. The semigroup {0, 3, 6, . . . , 3t, 3(t + 1), 3(t + 1) + 1, 3(t + 2), 3(t + 2) + 1, . . . , 3(2t), 3(2t) +
+      1} ∪ {3(2t) + 3, 3(2t) + 4} ∪ [3(2t) + 6, ∞) for an adequate t. has parameters m = 3, p = 2,
+      k = 3t+3, r = 0, q = 2t+2, and ρ = 0. Hence, the Eliahou constant is k(p−r)−q(m−r)+ρ =
+      (3t + 3)2 − (2t + 2)3 = 0.
+
+   These results allow us to conclude with the next lemmas.
+
+Proposition 14. The unique Eliahou semigroups of genus up to 66 are exactly ε1 , ε2 , ε3 , ε4 , ε5 , ε6 , ε7 .
+
+Corollary 15. The Wilf conjecture holds for all semigroups of genus up to 66.
+
+9.3    Exploring up to genus 66
+At this point we can say that we found all semigroups of E67 except the elements of E67 that have
+genus 67 and are children of semigroups of genus 66 of rank g, g − 1, g − 2, g − 3, should they exist.
+The children of rank-g and rank-(g−1) semigroups can be discarded from the results in the previous
+section. It remains as an open question to see whether there may be children of rank-(g − 2) and
+rank-(g − 3) semigroups with negative Eliahou constant.
+
+
+Acknowledgment
+The author would like to thank Julio Fernández-González for many helpful insights and comments
+and César Marı́n Rodrı́guez for his ideas and his contribution to the implementation of the al-
+gorithm. She would also like to thank Manuel Delgado and Shalom Eliahou for their comments
+and for noticing that two of the Eliahou semigroups of genus 67 are, in fact, Eliahou-Fromentin
+semigroups. Also, as mentioned above, Shalom Eliahou observed that a new family of semigroups
+could be defined with Eliahou constant equal to −1, containing the semigroup h19, 26, 27i |90 . The
+author would also like to thank Paul Shin for his careful reading of the manuscript and for his
+interesting observations as well as the referee that helped improving the proof of Lemma 3.
+
+
+                                                         23
+   All the graphs have been drawn using the drawsgtree tool, which can be downloaded from
+https://github.com/mbrasamoros/drawsgtree.
+   The author was supported by the Spanish government under grant PID2021-124928NB-I00, and
+by the Catalan government under grant 2021 SGR 00115.
+
+
+References
+ [1] M. Bras-Amorós. Fibonacci-like behavior of the number of numerical semigroups of a given
+     genus. Semigroup Forum, 76(2):379–384, 2008.
+
+ [2] M. Bras-Amorós. Bounds on the number of numerical semigroups of a given genus. J. Pure
+     Appl. Algebra, 213(6):997–1001, 2009.
+
+ [3] M. Bras-Amorós and S. Bulygin. Towards a better understanding of the semigroup tree.
+     Semigroup Forum, 79(3):561–574, 2009.
+
+ [4] M. Bras-Amorós and J. Fernández-González. https://github.com/mbrasamoros/RGD-algorithm.
+
+ [5] M. Bras-Amorós and J. Fernández-González. Computation of numerical semigroups by means
+     of seeds. Math. Comp., 87(313):2539–2550, 2018.
+
+ [6] M. Bras-Amorós and J. Fernández-González. The right-generators descendant of a numerical
+     semigroup. Math. Comp., 89(324):2017–2030, 2020.
+
+ [7] M. Bras-Amorós and C. Marı́n Rodrı́guez. New Eliahou semigroups and verification of the
+     Wilf conjecture for genus up to 65. In Torra and Narukawa, editors, Modeling Decisions for
+     Artificial Intelligence, volume 12898 of Lect. Notes Comput. Sci., pages 17–27. Springer, 2021.
+
+ [8] M. Delgado. On a question of Eliahou and a conjecture of Wilf. Math.Z., 288(1-2):595–627,
+     2018.
+
+ [9] M. Delgado. Trimming the numerical semigroups tree to probe Wilf’s conjecture to higher
+     genus, 2019.
+
+[10] M. Delgado. Conjecture of Wilf: a survey, volume 40 of Springer INdAM Series, pages 39–62.
+     Springer International Publishing, 2020.
+
+[11] S. Eliahou. Wilf’s conjecture and Macaulay’s theorem. J. Eur. Math. Soc. (JEMS), 20(9):2105–
+     2129, 2018.
+
+[12] S. Eliahou and J. Fromentin. Near-misses in Wilf’s conjecture. Semigroup Forum, 98(2):285–
+     298, 2019.
+
+[13] J. Fromentin and F. Hivert. https://github.com/hivert/NumericMonoid.
+
+[14] J. Fromentin and F. Hivert. Exploring the tree of numerical semigroups. Math. Comp.,
+     85(301):2553–2568, 2016.
+
+[15] J. C. Rosales and P. A. Garcı́a-Sánchez. Numerical semigroups, volume 20 of Developments
+     in Mathematics. Springer, New York, 2009.
+
+
+                                                24
+[16] H. S. Wilf. A circle-of-lights algorithm for the “money-changing problem”. Amer. Math.
+     Monthly, 85(7):562–565, 1978.
+
+
+
+
+                                            25
+A    Illustrative examples
+The examples in this appendix are included in order to illustrate all cases considered in Lemma 9.
+
+                                                                 •
+
+
+
+                                                                1 1
+
+
+
+
+                                                 1 1 1                       0 1
+                                                                             1 1
+
+
+
+
+                                1 1 1 1          1 0 1         0 0 0         0 1
+                                                 1 1           1             0 1
+                                                               1 1           1 1
+
+
+
+
+    Figure 2: Seed tables of the children, grandchildren, and great grandchildren of {0, 1, . . . }
+
+
+                                                                                 1 1
+
+
+
+
+                                                              1 1 1                            0 1
+                                                                                               1 1
+
+
+
+
+                                 1 1 1 1                                 1 0 1         0 0 0   0 1
+                                                                         1 1           1       0 1
+                                                                                       1 1     1 1
+
+
+
+
+                1 1 1 1 1   1 1 0 1    1 0 0 0      0 0 0 0          0 1 1   0 0 0             0   1
+                            1 1        1            0                1 1 1   0 0               0   1
+                                       1 1          1                        1                 0   1
+                                                    1 1                      1 1               1   1
+
+
+
+
+    Figure 3: Seed tables of the children, grandchildren, and great grandchildren of {0, 2, . . . }
+
+
+
+
+                                                         26
+                                                                                                        1 1 1
+
+
+
+
+                                                                1 1 1 1                                                        1 0 1           0 0 0
+                                                                                                                               1 1             1
+                                                                                                                                               1 1
+
+
+
+
+                          1 1 1 1 1                                       1 1 0 1             1 0 0 0    0 0 0 0       0 1 1           0 0 0
+                                                                          1 1                 1          0             1 1 1           0 0
+                                                                                              1 1        1                             1
+                                                                                                         1 1                           1 1
+
+
+
+
+1 1 1 1 1 1   1 1 1 0 1   1 1 0 0 0   1 0 0 0 0   0 0 0 0 0   1 0 1 1     0 1 0 1   0 0 0 0   0 0 0 1              1 0 1   0 0 1
+              1 1         1           0           0           1 1 1       0 1       0 0       1                    1 0 1   0 0 0
+                          1 1         1           0                       1 1       0         1 1 1                1 1     1
+                                      1 1         1                                 1                                      1 1
+                                                  1 1                               1 1
+
+
+
+
+     Figure 4: Seed tables of the children, grandchildren, and great grandchildren of {0, 3, . . . }
+
+
+
+
+                                                                        27
+                                                                         1 1 1 1 1 1 1
+
+
+                                                                          1 1 1 1 0 1
+                                                                          1 1
+
+
+                                                                          1 1 1 0 0 0
+                                                                          1
+                                                                          1 1
+
+
+                                                                          1 1 0 0 0 0
+                                                1 1 1 1 1 1               0
+                                                                          1
+                                                                          1 1
+
+
+                                                                          1 0 0 0 0 0
+                                                                          0
+                                                                          0
+                                                                          1
+                                                                          1 1
+
+
+                                                                          0 0 0 0 0 0
+                                                                          0
+                                                                          0
+                                                                          0
+                                                                          1
+                                                                          1 1
+
+
+                                                                           1 1 0 1 1
+                                                                           1 1 1
+
+
+                                                                           1 0 1 0 1
+                                                                           0 1
+                                                                           1 1
+                                                   1 1 1 0 1
+                                                   1 1                     0 1 0 0 0
+                             1 1 1 1 1                                     0 0
+                                                                           1
+                                                                           1 1
+
+
+                                                                           0 0 0 0 0
+                                                                           0 0
+                                                                           0
+                                                                           0
+                                                                           1
+                                                                           1 1
+
+
+                                                                           1 0 0 0 1
+                                                                           1
+                                                   1 1 0 0 0               1 1 1
+                                                   1
+                                                   1 1                     0 0 0 0 0
+                                                                           1
+                                                                           0 1
+                                                                           1 1
+
+
+                                                   1 0 0 0 0               0 0 0 0 0
+                                                   0                       1
+                                                   1                       1
+                                                   1 1                     1 1 1
+
+
+                                                   0 0 0 0 0
+                                                   0
+                                                   0
+                                                   1
+                                                   1 1
+
+
+                                                                            0 1 1 1
+                                                                            1 1 1 1
+
+
+                                                                            1 0 0 1
+              1 1 1 1
+                                                    1 0 1 1                 0 0 0
+                                                    1 1 1                   1
+                                                                            1 1
+
+
+                                                                            0 0 0 0
+                                                                            0 0 0
+                                                                            0
+                                                                            1
+                                                                            1 1
+
+
+                                                                            0   1 0 1
+                              1 1 0 1                                       0   1
+                              1 1                                           0   1
+                                                    0 1 0 1                 1   1
+                                                    0 1
+                                                    1 1
+                                                                            0   0 0 0
+                                                                            0   0
+                                                                            0   0
+                                                                            0
+                                                                            1
+                                                                            1   1
+
+
+                                                    0 0 0 0
+                                                    0 0
+                                                    0
+                                                    1
+                                                    1 1
+
+
+                              1 0 0 0               0 0 0 1                 0 0 0 0
+                              1                     1                       0
+                              1 1                   1 1 1                   0 0 0
+                                                                            0
+                                                                            1
+                                                                            1 1
+
+
+                              0 0 0 0         28
+                              0
+                              1
+                              1 1
+
+
+
+
+Figure 5: Seed tables of the children, grandchildren, and great grandchildren of {0, 4, . . . }
+                                                                   1 0 1 1
+                                                                   1 1 1
+
+
+
+
+                                   0 1 1 1                                         1 0 0 1           0 0 0 0
+                                   1 1 1 1                                         0 0 0             0 0 0
+                                                                                   1                 0
+                                                                                   1 1               1
+                                                                                                     1 1
+
+
+
+
+           1 1 0 1                       1 0 0 1           0 0 0 1       0 0 1 0         0   0 0 0
+           1 1 0 1                       1 0 0 0           0 0 0 0       0 0 1           0   0 0
+           1 1                           1                 0             1               0
+                                         1 1               1             1 1 1           0   0
+                                                           1 1                           0
+                                                                                         1
+                                                                                         1   1
+
+
+
+
+1 0 1 1    0   1 0 1   0   0 0 1   0 0 1 1     0   0 0 0   0   0 0 0     0   0 0 1
+1 0 1 1    0   1 0 1   0   0 0 0   0 0 0 1     0   0 0 0   0   0 0 0     0   0 0
+1 1 1      0   1       0   0       1           0           0             1
+           1   1       0           1 1 1       0   0       0             0   0 0
+                       1                       0           0   0         1
+                       1   1                   1           0             1   1
+                                               1   1       1
+                                                           1   1
+
+
+
+
+  Figure 6: Seed tables of the children, grandchildren, and great grandchildren of {0, 4, 7, . . . }
+
+
+
+
+                                                   29
+                                                                                               1   1 0 1 0 0 0 0
+                                                                                               0   1 0 1 0 0 0 0
+                                                                                               0   1
+                                                                                               0
+                                                                                               1   0 0 0 0
+                                                                                               0   1
+                                                                                               1
+                                                                                               1   1 1
+
+
+
+
+                                    1   0 1 0 0 0 0 0                                                              0   1 0 0 0 0 0 1                       0   0 0 0 0 0 0 1
+                                    1   0 1 0 0 0 0 0                                                              0   1 0 0 0 0 0 1                       0   0 0 0 0 0 0 0
+                                    1   0                                                                          0   0                                   0   0
+                                    1                                                                              0                                       0
+                                    0   0 0 0 0                                                                    0   0 0 0 1                             0   0 0 0 0
+                                    1   1                                                                          0   0                                   0   0
+                                    1                                                                              1                                       0
+                                    1   1 1 1                                                                      1   0 1                                 0   0 0
+                                                                                                                   1   1                                   0
+                                                                                                                                                           1
+                                                                                                                                                           1   1
+
+
+
+
+              0   1 0 0 0 0 0 1                         0   0 0 0 0 0 0 1                  0   0 0 0 0 1 0 1                           0   0 0 0 0 0 0 1   0   0 0 0 0 0 0 0
+              0   1 0 0 0 0 0 1                         0   0 0 0 0 0 0 0                  0   0 0 0 0 1 0 0                           0   0 0 0 0 0 0 0   0   0 0 0 0 0 0 0
+              0   1                                     0   0                              0   0                                       0   0               0   0
+              0                                         0                                  0                                           0                   0
+              0   0 0 0 1                               0   0 0 0 0                        0   0 1 0 0                                 0   0 0 0 0         0   0 0 0 0
+              1   1                                     0   0                              0   0                                       0   0               0   0
+              1                                         1                                  0                                           0                   0
+              1   1 1 1 1                               1   0 0 0                          1   0 1                                     0   0 0             0   0 0
+                                                        1                                  0   1                                       0   0               0
+                                                        1   1                              1   1                                       0                   0
+                                                                                                                                       0                   0   0
+                                                                                                                                       0                   0
+                                                                                                                                       0                   0
+                                                                                                                                       0                   0
+                                                                                                                                       1                   0
+                                                                                                                                       1   1               0
+                                                                                                                                                           1
+                                                                                                                                                           1   1
+
+0   0 0 0 0 1 0 1           0   0 0 0 0 0 0 1           0   0 0 0 0 0 0 0   0   1 0 0 0 0 0 1            0   0 0 0 0 0 0 0             0   0 0 0 0 0 0 0
+0   0 0 0 0 1 0 1           0   0 0 0 0 0 0 0           0   0 0 0 0 0 0 0   0   0 0 0 0 0 0 0            0   0 0 0 0 0 0 0             0   0 0 0 0 0 0 0
+0   0                       0   0                       0   0               0   0                        0   0                         0   0
+0                           0                           0                   0                            0                             0
+0   0 1 0 1                 0   0 0 0 0                 0   0 0 0 0         0   0 0 0 0                  0   0 0 0 0                   0   0 0 0 0
+0   0                       0   0                       0   0               0   0                        0   0                         0   0
+1                           0                           0                   0                            0                             0
+1   1 1 0 1                 0   0 0 0 0                 0   0 0 0           0   0 0                      0   0 0                       0   0 0
+1   1                       0                           0                   0   0                        0   0                         0   0
+                            0                           0   0               0   0                        0   0                         0
+                            0                           0                   0                            0                             0
+                            0                           0                   0                            0                             0
+                            0                           0                   0                            0                             0
+                            1                           0                   1                            0                             0
+                            1   1                       0                   1   1                        0                             0
+                                                        1                                                1                             0   0
+                                                        1   1                                            1   1                         0
+                                                                                                                                       0
+                                                                                                                                       0
+                                                                                                                                       0
+                                                                                                                                       0
+                                                                                                                                       1
+                                                                                                                                       1   1
+
+
+
+
+Figure 7:        Seed tables of the children,                                             grandchildren,                     and great grandchildren of
+{0, 8, 16, 18, 19, 24, 26, 27, 30, . . . }
+
+
+
+
+                                                                                      30
+     B       Implementation of the improved seeds algorithm
+ 1   #include <stdio.h>
+ 2   #include <stdlib.h>
+ 3   #include <time.h>
+ 4   typedef unsigned int128 bbint;
+ 5   int gamma;
+ 6   long long int Sdesc(const bbint G, bbint S, const int c, const int m, const int u, const int v, int r, int gd) {
+ 7     int newc, s = 1, sold = 0;
+ 8     bbint A;
+ 9     long long int ng = 0;
+10     if (gd) {
+11        −−gd;
+12        A = G;
+13        if (S & (bbint)1) {
+14           if (S & ((bbint)1 << m))
+15              ng += Sdesc(G | ((bbint)1 << (c − 1)), (S >> 1) | ((bbint)3 << (c − 1)), c + 1, m, u, v, r−−, gd);
+16           else
+17              ng += Sdesc(G | ((bbint)1 << (c − 1)), (S >> 1) | ((bbint)3 << (c − 1)), c + 1, m, u, v, −−r, gd);
+18        }
+19        while (r) {
+20           if (S & (bbint)1 << s) {
+21              newc = c + s + 1;
+22              for (int i = sold; i < s; i++) {
+23                 A <<= 1;
+24                 S &= A;
+25              }
+26              if (S & ((bbint)1 << (m + s)))
+27                 ng += Sdesc(G | ((bbint)1 << (newc − 2)), S >> (s + 1) | ((bbint)7 << (newc − 3)), newc, m, u, v, r−−, gd);
+28              else
+29                 ng += Sdesc(G | ((bbint)1 << (newc − 2)), S >> (s + 1) | ((bbint)7 << (newc − 3)), newc, m, u, v, −−r, gd);
+30              sold = s;
+31           }
+32           s++;
+33        }
+34     } else {
+35        A = S & (S >> m) & (((bbint)1 << u) − 1);
+36        s = 0;
+37        while (A) {
+38           s++;
+39           A &= A − 1;
+40        }
+41        ng += s ∗ (r − 1);
+42        ng += r ∗ (r − 1) ∗ (r − 2) / 6;
+43        if (c > m + u) {
+44           A = (((bbint)1 << v) − 1) & S & (S >> u) & (S >> (m + u));
+45           while (A) {
+46              ng++;
+47              A &= A − 1;
+48           }
+49        }
+50     }
+51     return ng;
+52   }
+53   long long int lowrank(const int m, const int u, const int gamma) {
+54     int gd, min, mu, c;
+55     bbint G, S;
+56     long long int ng = 0;
+57     mu = m + u;
+58     if (u == m) {
+59        gd = gamma − mu;
+60        if (m < gd)
+61           min = m;
+62        else
+63           min = gd;
+64        c = mu;
+65        for (int v = 1; v < min; v++) {
+66           gd−−;
+67           G = ((bbint)1 << c) − 1;
+68           c++;
+69           G −= ((bbint)1 << (m − 1));
+70           G −= ((bbint)1 << (mu − 1));
+71           S = ((bbint)1 << c) − 1;
+72           S −= ((bbint)1 << (m − v));
+73           S −= ((bbint)1 << (mu − v));
+74           ng += Sdesc(G, S − 1, c, m, u, v, m − 2, gd);
+75        }
+76        gd−−;
+77        G = ((bbint)1 << c) − 1;
+78        c++;
+79        G −= ((bbint)1 << (m − 1));
+80        G −= ((bbint)1 << (mu − 1));
+81        S = ((bbint)1 << c) − 1;
+82        S −= ((bbint)1 << (m − min));
+83        S −= ((bbint)1 << (mu − min));
+84        ng += Sdesc(G, S, c, m, u, min, m − 1, gd);
+85     } else {
+86        if (m − u < gamma − mu)
+87           min = m − u;
+88        else
+89           min = gamma − mu;                                            31
+90        c = mu;
+91        gd = gamma − m − u;
+92        for (int v = 1; v < min; v++) {
+ 93        gd−−;
+ 94        G = ((bbint)1 << c) − 1;
+ 95        c++;
+ 96        G −= ((bbint)1 << (m − 1));
+ 97        G −= ((bbint)1 << (mu − 1));
+ 98        S = ((bbint)1 << c) − 1;
+ 99        S −= ((bbint)1 << (m − u − v));
+100        S −= ((bbint)1 << (m − v));
+101        S −= ((bbint)1 << (mu − v));
+102        if (u < v)
+103           ng += Sdesc(G, S − 1, c, m, u, v, m − 4, gd);
+104        else
+105           ng += Sdesc(G, S − 1, c, m, u, v, m − 3, gd);
+106      }
+107      gd−−;
+108      G = ((bbint)1 << c) − 1;
+109      c++;
+110      G −= ((bbint)1 << (m − 1));
+111      G −= ((bbint)1 << (mu − 1));
+112      S = ((bbint)1 << c) − 1;
+113      S −= ((bbint)1 << (m − u − min));
+114      S −= ((bbint)1 << (m − min));
+115      S −= ((bbint)1 << (mu − min));
+116      if (u < min)
+117         ng += Sdesc(G, S, c, m, u, min, m − 3, gd);
+118      else
+119         ng += Sdesc(G, S, c, m, u, min, m − 2, gd);
+120    }
+121    return ng;
+122   }
+123   int main(int numvars, char ∗∗vars) {
+124     long long int ng = 0;
+125     bbint G, S;
+126     int x, min;
+127     time t seconds, secondsafter;
+128     gamma = (int)atoi(vars[1]);
+129     seconds = time(NULL);
+130     ng = (gamma − 4) ∗ (gamma − 5) ∗ (gamma − 6) / 6 + (gamma − 2) ∗ (gamma − 3) + 8; // case m=gamma−2 and the hyperelliptic;
+131     for (int m = 3; m < gamma − 2; m++) {
+132       x = gamma − m − 1;
+133       if (m − 1 < x)
+134          min = m − 1;
+135       else
+136          min = x;
+137       ng += Sdesc(((bbint)1 << (m − 1)) − 1, ((bbint)1 << m) − 8, m, m, 1, 1, m − 3, x − 1);
+138       for (int v = 2; v < min; v++) {
+139          G = ((bbint)1 << (m + v)) − 1;
+140          G −= ((bbint)3 << (m − 1));
+141          S = ((bbint)1 << (m + v + 1)) − 1;
+142          S −= ((bbint)7 << (m − v − 1));
+143          ng += Sdesc(G, S − 1, m + v + 1, m, 1, v, m − 4, x − v);
+144       }
+145       G = ((bbint)1 << (m + min)) − 1;
+146       G −= ((bbint)3 << (m − 1));
+147       S = ((bbint)1 << (m + min + 1)) − 1;
+148       S −= ((bbint)7 << (m − min − 1));
+149       ng += Sdesc(G, S, m + min + 1, m, 1, min, m − 3, x − min);
+150       if (x > m) {
+151          for (int u = 2; u <= m; u++)
+152             ng += lowrank(m, u, gamma);
+153       } else {
+154          for (int u = 2; u < x; u++) {
+155             ng += lowrank(m, u, gamma);
+156          }
+157          ng += (m − 1) ∗ (m − 2) ∗ (m − 3) / 6;
+158          if (m < 2 ∗ x)
+159             ng += (x − 1) ∗ (m − 2);
+160          else
+161             ng += x ∗ (m − 2);
+162          if (x == m || 2 ∗ x != m)
+163             ng++;
+164          if (x == m − 1)
+165             ng++;
+166          if (x < m − 1 && 2 ∗ x != m − 1)
+167             ng += 2;
+168       }
+169     }
+170     secondsafter = time(NULL);
+171     printf(”n%d=%lld (without parallelization) time taken %d\n”, (int)gamma, ng, (int)(secondsafter − seconds));
+172     return 0;
+173   }
+
+
+
+
+                                                                      32
+
