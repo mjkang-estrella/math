@@ -1,0 +1,185 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[hidelinks]{hyperref}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Q}{\mathbb Q}
+\title{Weight preservation for modular Fibonacci recurrence periods\\
+\large A formal verification of the orbit-counting argument}
+\author{Implementation and verification note}
+\date{25 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+For positive integers $d\mid m$, reduction modulo $d$ preserves the total normalized
+weight of every period of the Fibonacci recurrence and its parity transform.
+We give the complete finite-orbit counting proof, including fixed points, and
+formalize it in Lean. The argument is already present in a MathDB proof posted by
+Shivam Patel; no novelty or priority is claimed. The formal theorem applies more
+generally to $a_{n+2}=a_n+\varepsilon a_{n+1}$ for every integer $\varepsilon$.
+\end{abstract}
+
+\section{Statement and attribution}
+Pudelko's Conjecture 17 in version 2 of \emph{Modular Periodicity of Random
+Initialized Recurrences} \cite{pudelko} defines the weight of a period of length
+$\ell$ modulo $s$ as $\ell/s^2$ and asserts conservation of weight under reduction
+from a composite modulus to a divisor. Periods are considered up to cyclic shift,
+as in the introduction of that source. In particular the constant zero sequence
+is a period of length one. The theorem below includes every positive modulus,
+so it implies the conjecture's composite-modulus case.
+
+The orbit-fiber proof used here is due to the existing MathDB post by
+\textbf{Shivam Patel}, dated 20 August 2026, solution
+\texttt{b64f2547-2755-408d-8ca3-997917a47b33} to problem 371201 \cite{patel}.
+This note supplies a checked implementation of that argument, including its
+identification of actual recurrence periods and their lifts. It makes no
+new-to-literature claim. It does not address other conjectures in Pudelko's paper.
+
+Fix $\varepsilon\in\Z$ and a positive integer $s$. On
+$X_s=(\Z/s\Z)^2$ put
+\[
+T_s(a,b)=(b,a+\varepsilon b).
+\]
+Let $\mathcal P_s$ be the set of its permutation orbits, including singleton
+orbits. Write $\ell(p)=|p|$ and $w_s(p)=\ell(p)/s^2$. For $d\mid m$ let
+$\pi:X_m\to X_d$ be coordinatewise reduction.
+
+\begin{theorem}\label{thm:main}
+For every positive $m,d$ with $d\mid m$, every $\varepsilon\in\Z$, and every
+$q\in\mathcal P_d$,
+\[
+ \sum_{\substack{p\in\mathcal P_m\\\pi(p)=q}}
+       \frac{\ell(p)}{m^2}
+   =\frac{\ell(q)}{d^2}.
+\]
+In particular this holds for the Fibonacci recurrence ($\varepsilon=1$) and
+its parity transform ($\varepsilon=-1$).
+\end{theorem}
+
+\section{A finite equivariant counting lemma}
+The group structure below is used only to establish uniform fibers.
+The permutations need not preserve the group operations.
+
+\begin{lemma}\label{lem:general}
+Let $G,H$ be finite additive groups, let $f:G\to H$ be a surjective
+homomorphism, and let $T$ and $S$ be permutations of $G$ and $H$ satisfying
+$fT=Sf$. If $\mathcal P(T),\mathcal P(S)$ are their sets of orbits, then $f$
+induces a map $\bar f:\mathcal P(T)\to\mathcal P(S)$ and, for every
+$q\in\mathcal P(S)$,
+\[
+ \sum_{\substack{p\in\mathcal P(T)\\\bar f(p)=q}}
+ \frac{|p|}{|G|}=\frac{|q|}{|H|}.
+\]
+\end{lemma}
+\begin{proof}
+Induction gives $f(T^n x)=S^n f(x)$ for every nonnegative integer $n$.
+On a finite permutation orbit, every orbit element is a nonnegative iterate.
+Consequently, $f$ maps each $T$-orbit into a single $S$-orbit, so $\bar f$ is
+well defined. In fact its image is that entire orbit: if $y=S^n f(x)$ then
+$T^n x$ lies in the orbit of $x$ and maps to $y$.
+
+Let $k=|f^{-1}(0)|$. Surjectivity and translation in the group identify each
+fiber $f^{-1}(y)$ with $f^{-1}(0)$; thus all fibers have cardinality $k$.
+Counting the fibers over all of $H$ gives $|G|=|H|k$. Counting the fibers over
+the subset $q$ gives $|f^{-1}(q)|=|q|k$.
+
+The preimage $f^{-1}(q)$ is a disjoint union of exactly the $T$-orbits whose
+image under $\bar f$ is $q$. To see both directions, a point in $f^{-1}(q)$
+has its orbit mapped into $q$ by equivariance, whereas every point of an orbit
+mapped to $q$ is in $f^{-1}(q)$. The quotient projection partitions this set
+without omitting or duplicating any orbit. Hence
+\[
+ \sum_{\bar f(p)=q}|p|=|f^{-1}(q)|=|q|k.
+\]
+The groups are nonempty, so their orders are positive. Divide by
+$|G|=|H|k$ to obtain the stated identity.
+\end{proof}
+
+\section{Application to the recurrence}
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+The map $T_s$ is a permutation for every $\varepsilon$, with inverse
+\[
+ T_s^{-1}(a,b)=(b-\varepsilon a,a).
+\]
+Both compositions are the identity by direct substitution. In particular no
+coprimality hypothesis on $\varepsilon$ is required. A sequence satisfying
+$a_{n+2}=a_n+\varepsilon a_{n+1}$ has state $(a_n,a_{n+1})=T_s^n(a_0,a_1)$.
+A return of the state is equivalent to a period of the scalar sequence: a
+period returns the consecutive pair, and a returned pair determines the
+entire sequence by the recurrence and its inverse. Thus cyclic equivalence
+of sequences is exactly membership in one $T_s$-orbit. The orbit's cardinality
+is its least positive return time. This also covers fixed points, whose
+cardinality and period are both one.
+
+Coordinatewise reduction $\pi$ is a surjective homomorphism because $d\mid m$.
+Reduction preserves addition, multiplication, and the integer coefficient, so
+\[
+ \pi\bigl(T_m(a,b)\bigr)
+   =\bigl(\bar b,\bar a+\varepsilon\bar b\bigr)
+   =T_d\bigl(\pi(a,b)\bigr).
+\]
+Lemma~\ref{lem:general} applies with $G=X_m$ and $H=X_d$. Their cardinalities
+are $m^2$ and $d^2$, which gives the theorem. Equivalently, each fiber has
+$(m/d)^2$ elements, so the total length of all orbits lifting $q$ is
+$\ell(q)(m/d)^2$.
+\end{proof}
+
+\section{Formal implementation and audit}
+The self-contained Lean source is \texttt{formal/FibonacciWeight.lean}.
+The period type is the quotient by
+\texttt{Equiv.Perm.SameCycle.setoid}, not a list of nontrivial cycles or a
+permutation's support. The main theorem is
+\texttt{FibonacciWeight.fibonacci\_weight\_preservation}.
+Its only inputs are $m,d$ with instances asserting they are nonzero, a proof
+of $d\mid m$, an integer coefficient, and a downstairs quotient class.
+In particular it does not assume the necessary orbit or fiber facts.
+
+The following declarations provide the principal bridges:
+\begin{itemize}
+\item \texttt{period\_eq\_iff\_iterate} identifies quotient equality with time shift;
+\texttt{orbitSize\_eq\_minimalPeriod} identifies orbit cardinality with the least
+positive return time.
+\item \texttt{periodMap} constructs the induced quotient map;
+\texttt{orbit\_maps\_onto} proves that every upstairs orbit maps onto its target.
+\item \texttt{orbit\_sum\_eq\_preimage} partitions the actual preimage into
+upstairs quotient classes. Its proof uses the finite fiberwise cardinal sum.
+\item \texttt{uniform\_fibers}, \texttt{preimage\_card}, and \texttt{total\_card}
+prove the counting identities from a surjective group homomorphism.
+\item \texttt{reduction\_surjective} and \texttt{reduction\_commutes} prove the
+hypotheses for the concrete maps; \texttt{reduction\_fiber\_card} derives the
+explicit square fiber cardinality.
+\item \texttt{zero\_period\_length} verifies that the zero fixed point has
+length one.
+\end{itemize}
+
+The pinned compiler is Lean 4.34.1 and the mathlib revision is
+\texttt{d13f23b723b8a846827a245b89c10fc7d3f11612}.
+The local rebuild script checks the dependency revisions and their tracked
+cleanliness, removes the local proof objects, compiles both the proof and
+its declaration checks with warnings treated as errors, and audits all
+printed dependencies against the allowlist
+\texttt{propext}, \texttt{Classical.choice}, and \texttt{Quot.sound}.
+The final receipt and logs are under \texttt{formal/build/}.
+No unchecked proof shortcut or additional axiom is used.
+
+The review accompanying this note is implementation self-review;
+it does not purport to be independent peer review. The formalization here
+covers the quadratic integer-coefficient recurrence family above, not the
+additional general matrix assertion in the posted proof.
+
+\begin{thebibliography}{9}
+\bibitem{pudelko}
+Marc T. Pudelko.
+\emph{Modular Periodicity of Random Initialized Recurrences}.
+arXiv:2510.24882v2, 3 November 2025, Conjecture 17, equation (19).
+\url{https://arxiv.org/html/2510.24882v2}.
+\bibitem{patel}
+Shivam Patel.
+Proof posted to MathDB problem 371201, \emph{Weight preservation for Fibonacci
+recurrences}, 20 August 2026.
+Solution identifier \texttt{b64f2547-2755-408d-8ca3-997917a47b33}.
+Local source snapshot: \texttt{sources/mathdb-371201.json}.
+\end{thebibliography}
+\end{document}
