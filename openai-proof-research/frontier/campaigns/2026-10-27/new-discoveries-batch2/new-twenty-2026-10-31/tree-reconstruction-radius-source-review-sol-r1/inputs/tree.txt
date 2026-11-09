@@ -1,0 +1,1698 @@
+                                            Network Tomography Based on Additive Metrics
+
+
+
+
+arXiv:0809.0158v1 [cs.NI] 31 Aug 2008
+                                                                 Jian Ni Sekhar Tatikonda
+                                         Department of Electrical Engineering, Yale University, New Haven, CT, USA
+
+                                                                       October 30, 2018
+
+
+                                                                            Abstract
+                                                  Inference of the network structure (e.g., routing topology) and dy-
+                                              namics (e.g., link performance) is an essential component in many net-
+                                              work design and management tasks. In this paper we propose a new,
+                                              general framework for analyzing and designing routing topology and
+                                              link performance inference algorithms using ideas and tools from phy-
+                                              logenetic inference in evolutionary biology. The framework is applica-
+                                              ble to a variety of measurement techniques. Based on the framework
+                                              we introduce and develop several polynomial-time distance-based in-
+                                              ference algorithms with provable performance. We provide sufficient
+                                              conditions for the correctness of the algorithms. We show that the al-
+                                              gorithms are consistent (return correct topology and link performance
+                                              with an increasing sample size) and robust (can tolerate a certain level
+                                              of measurement errors). In addition, we establish certain optimality
+                                              properties of the algorithms (i.e., they achieve the optimal l∞ -radius)
+                                              and demonstrate their effectiveness via model simulation.
+
+                                           etwork tomography, routing topology inference, link performance esti-
+                                        mation, additive metrics, neighbor-joining.
+
+
+                                        1    Introduction
+                                        Network tomography (network inference) [7, 11, 29] is an emerging field in
+                                        communication networks which studies the estimation and inference of the
+                                        network structure and dynamics (e.g., routing topology, link performance,
+                                        traffic demands) based on indirect measurements when direct measurements
+                                        are unavailable or difficult to collect. As modern communication networks
+                                        (e.g., the Internet, wireless communication networks) continue to grow in
+                                        size, complexity, and diversity, scalable and accurate network inference al-
+                                        gorithms and tools will become increasingly important for many network
+
+                                                                                 1
+design and management tasks. These include service provision and resource
+allocation, traffic engineering, network monitoring, application design, etc.
+    In network monitoring, such tools can help a network operator obtain
+routing information and network internal characteristics (e.g., loss rate, de-
+lay, utilization) from its network to a set of other collaborating networks
+that are separated by non-participating autonomous networks. If the per-
+formance of a certain portion of the network experiences sudden, dramatic
+changes, it can be an indication of failures or anomalies occurred in that
+portion of the network.
+    In application design, such tools can be particularly useful for peer-to-
+peer (P2P) style applications where a node communicates with a set of other
+nodes (called peers) for file sharing and multimedia streaming. For example,
+a node may want to know the routing topology to other nodes so that it
+can select peers with low or no route overlap to improve resilience against
+network failures (e.g., [1]). As another example, a streaming node using
+multi-path may want to know both the routing topology and link loss rates
+so that the selected paths have low loss correlation (e.g., [2]).
+    So far there are two primary approaches to infer the routing topology
+and link performance of a communication network. An internal-assisted
+approach uses tools based on measurements or feedback messages of the
+internal nodes (e.g., routers). Such an approach is limited as today’s com-
+munication networks are evolving towards more decentralized and private
+adminstration. For example, a common approach to infer the routing topol-
+ogy in the Internet is to use traceroute. However, an increasing number of
+routers in the Internet will block traceroute requests due to privacy and
+security concerns. These routers are known as anonymous routers [30] and
+their existence makes the routing topology inferred by traceroute inaccurate.
+In addition, administrators of different networks normally will not reveal or
+share their link-level measurement data for us (e.g., end hosts) to derive the
+link performance.
+    Not depending on extra cooperation from the internal nodes (except
+the basic packet forwarding functionality), a network tomography approach
+utilizes end-to-end packet probing measurements (such as packet loss and
+delay measurements) conducted by the end hosts to infer the routing topol-
+ogy and link performance. Under a network tomography approach, a source
+node will send probes to a set of destination nodes. The basic idea is to
+utilize the correlations among the observed losses and delays of the probes
+at the destination nodes to infer the routing topology and link performance
+from the source node to the destination nodes. Due to its flexibility and
+reliability, network tomography has attracted many recent studies. Both
+
+                                      2
+multicast probing based approaches (e.g., [6], [13], [19], [22], [23]) and uni-
+cast probing based approaches (e.g., [10], [12], [14], [26], [28]) have been
+investigated.
+    The main challenges of existing approaches and techniques include
+
+   • computational complexity;
+
+   • information fusion: how to fuse information from different measure-
+     ments to achieve the best estimation accuracy;
+
+   • probing scalability (especially under unicast probing);
+
+   • node dynamics: how to handle dynamic node joining and leaving
+     efficiently.
+
+     In this paper we propose a new, general framework for designing and an-
+alyzing topology and link performance inference algorithms using ideas and
+tools from phylogenetic inference in evolutionary biology. The framework is
+built upon additive metrics. Under an additive metric the path metric (path
+length) is expressed as the summation of the link metrics (link lengths) along
+the path. The basic idea is to use (estimated) distances between the ter-
+minal nodes (end hosts) to infer the routing tree topology and link metrics.
+Based on the framework we introduce and develop several computationally
+efficient inference algorithms with provable performance.
+     The advantages of our framework are summarized as follows.
+
+   • The framework is applicable to a variety of measurement techniques,
+     including multicast probing, unicast probing, and traceroute probing.
+     Since a linear combination of different additive metrics is still an addi-
+     tive metric, the framework can flexibly fuse information available from
+     different measurements to achieve better estimation accuracy.
+
+   • Based on the framework we can design, analyze, and develop distance-
+     based inference algorithms that are computationally efficient (polynomial-
+     time), consistent (return correct topology and link performance with
+     an increasing sample size), and robust (can tolerate a certain level of
+     measurement errors).
+
+   We organize the paper as follows. In Section 2 we describe the net-
+work model and the inference problem. In Section 3 we introduce additive
+metrics on trees, and we discuss how to construct additive metrics and com-
+pute/estimate the distances between the terminal nodes from end-to-end
+
+
+                                      3
+measurements. In Section 4 we introduce the neighbor-joining (NJ) algo-
+rithm for constructing binary trees from distances. In Section 5 we propose
+a rooted version of the NJ algorithm and extend it to general trees. In
+Section 6 we demonstrate the effectiveness of the inference algorithms via
+model simulation. In Section 7 we extend our framework to infer the rout-
+ing topology and link performance from multiple source nodes to a single
+destination node. We summarize the paper in Section 8.
+
+
+2    Network Model and Inference Problem
+Let G = (V, E) denote the topology of the network, which is a directed
+graph with node set V (end hosts, internal switches and routers, etc.) and
+link set E (communication links that join the nodes). For any nodes i and
+j in the network, if the underlying routing algorithm returns a sequence of
+links that connect j to i, we say j is reachable from i. We call this sequence
+of links a path from i to j, denoted by P(i, j). We assume that during the
+measurement period, the underlying routing algorithm determines a unique
+path from a node to another node that is reachable from it.
+    Hence the physical routing topology from a source node to a set of des-
+tination nodes is a (directed) tree. From the physical routing topology, we
+can derive a logical routing tree which consists of the source node, the des-
+tination nodes, and the branching nodes (internal nodes with at least two
+outgoing links) of the physical routing tree (e.g., [6], [13], [23]). Notice that
+a logical link may comprise more than one consecutive physical links, and
+the degree of an internal node on the logical routing tree is at least three.
+An example is shown in Fig. 1. For simplicity we use routing tree to express
+logical routing tree unless otherwise noted.
+    Suppose s is a source node in the network, and D is a set of destination
+nodes that are reachable from s. Let T (s, D) = (V, E) denote the routing
+tree from s to nodes in D, with node set V and link set E. Let U = s ∪ D
+be the set of terminal nodes, which are nodes of degree one (e.g., end hosts).
+    Every node k ∈ V has a parent f (k) ∈ V such that (f (k), k) ∈ E, and a
+set of children c(k) = {j ∈ V : f (j) = k}, except that the source node (root
+of the tree) has no parent and the destination nodes (leaves of the tree) have
+no children. For notational simplification, we use ek to denote link (f (k), k).
+    Each link e ∈ E is associated with a performance parameter θe (e.g.,
+success rate, delay distribution, utilization, etc.). The network inference
+problem involves using measurements taken at the terminal nodes to infer
+
+ (1) the topology of the (logical) routing tree;
+
+                                       4
+                           source
+                                                                          Source Node
+                                                                                  s
+                             router
+                    X
+                                              router                              1
+                           router     X
+   router
+              X                                  X
+                                                       destination        2               3
+
+                  router              X router
+destination
+                  X                                                  4        5       6        7
+
+                                router    X                      Destination Nodes D = {4, 5, 6, 7}
+                                              destination
+
+              destination
+
+       (a) The physical routing topology.                            (b) The logical routing tree.
+
+
+Figure 1: The physical routing topology and the associated logical routing
+tree with a single source node and multiple destination nodes.
+
+
+ (2) link performance parameters θe of the links on the routing tree.
+
+    We want to point out that the network inference problem is similar to
+the phylogenetic inference problem in evolutionary biology. The phyloge-
+netic inference problem is to determine the evolutionary relationship among
+a set of species. Such relationship is often represented by a phylogenetic
+tree, in which the terminal nodes represent extant species and the inter-
+nal nodes represent extinct common ancestors of the extant species. Many
+methods have been developed to reconstruct phylogenetic trees from biolog-
+ical information (e.g., biomolecular sequence data) observed at the terminal
+nodes (e.g., [15], [25]). The mathematical models of the two problems are
+very similar, except that in the network inference problem we can control
+and observe the source node, while in the phylogenetic inference problem
+the information of the source node (the common ancestor of all species) is
+lost. We will use ideas and tools from phylogenetic inference to analyze and
+solve the network inference problem.
+
+
+
+                                                       5
+3    Additive Metrics on Trees
+The tool that we will use to analyze and solve the network inference prob-
+lem is the so-called additive tree metric [25], or additive metric for short.
+We consider trees with internal node degree at least three. Notice that all
+(logical) routing trees have such property.
+
+Definition 1 d : V × V → R+ is an additive metric on T = (V, E) if
+
+           (a)   0 < d(e) < ∞,      ∀e = (i, j) ∈ E;
+                                      P
+                                          e∈P(i,j) d(e), i 6= j;
+           (b)   d(i, j) = d(j, i) =
+                                       0,                i = j.
+
+    d(e) can be viewed as the length of link e, and d(i, j) can be viewed as
+the distance between nodes i and j. Basically, an additive metric associates
+each link on the tree with a finite positive link length, and the distance
+between two nodes on the tree is the summation of the link lengths along
+the path that connects the two nodes.
+    Suppose T (s, D) = (V, E) is a routing tree with source node s and des-
+tination nodes D. Let
+                                    n              o
+                         d(E) =       d(e) : e ∈ E
+
+denote the link lengths of T (s, D) under additive metric d.
+   Remember U = s ∪ D is the set of terminal nodes on the tree. Let
+                                    n                    o
+                       d(U 2 ) =      d(i, j) : i, j ∈ U
+
+denote the distances between the terminal nodes.
+   Buneman [5] showed that the topology and link lengths of a tree are
+uniquely determined by the distances between the terminal nodes under an
+additive metric.
+
+Theorem 1 There is a one-to-one mapping between (T (s, D), d(E)) and
+(U, d(U 2 )) under any additive metric d on T (s, D).
+
+    From Theorem 1, we know that we can recover the topology and link
+lengths of a routing tree if we know d(U 2 ). In addition, if there is a one-
+to-one mapping between the link performance parameters and link lengths
+(which will be clear in Section 3.1), then we can recover the link performance
+parameters from the link lengths. The challenges are:
+
+                                       6
+ (1) Constructing an additive metric for which we can derive/estimate
+     d(U 2 ) from measurements taken at the terminal nodes. We will ad-
+     dress this issue in this section.
+
+ (2) Developing efficient and effective algorithms to recover the topology
+     and link lengths from the (estimated) distances between the terminal
+     nodes. We will address this issue in Sections 4, 5.
+
+3.1   Construct Additive Metrics
+A source node can employ different probing techniques, e.g., multicast prob-
+ing and unicast probing, to send probes (packets) to a set of destination
+nodes. For multicast probing, when an internal node on the routing tree
+receives an packet from its parent, it will duplicate the packet and send
+a copy of the packet to all its children on the tree. Therefore, the pack-
+ets received by different destination nodes have exactly the same network
+experience (loss, delay, etc.) in the shared links.
+    For a (multicast) probe sent by source node s to the destination nodes
+in D, we define a set of link state variables Ze for all links e ∈ E on the
+routing tree T (s, D). Ze takes value in a state set Z. The distribution of Ze
+is parameterized by θe , e.g.,
+
+                      P(Ze = z) = θe (z),      ∀z ∈ Z.                    (1)
+
+    The transmission of a probe from s to nodes in D will induce a set of
+outcome variables on the routing tree. For each node k ∈ V , we use Xk to
+denote the (random) outcome of the probe at node k. Xk takes value in
+an outcome set X . By causality the outcome of the probe at node k (i.e.,
+Xk ) is determined by the outcome of the probe at node k’s parent f (k) (i.e.,
+Xf (k) ) and the link state of ek (i.e., Zek ):
+
+                           Xk = g(Xf (k) , Zek ).                         (2)
+
+Assumption 1 The link states are independent from link to link (spatial
+independence assumption) and are stationary during the measurement period
+(stationarity assumption).
+
+Proposition 1 Under the spatial independence assumption that the link
+states are independent from link to link,
+                                 ∆
+                           XV    = (Xk : k ∈ V )                          (3)
+
+
+                                      7
+is a Markov random field (MRF) on T (s, D). Specifically, for each node
+k ∈ V , the conditional distribution of Xk given other random variables (Xj :
+j 6= k) on T (s, D) is the same as the conditional distribution of Xk given
+just its neighboring random variables (Xj : j ∈ f (k) ∪ c(k)) on T (s, D).
+
+
+Proof For notational simplification, we use p(xA ) to represent P(Xk = xk :
+k ∈ A) for any subset A ⊆ V . First we prove by induction that
+                                      Y
+                    p(xV ) = p(xs )       p(xk |xf (k) ).               (4)
+                                            k∈V \s
+
+Equation (4) is clearly true for any tree with |V | = 1 or |V | = 2. Assume (4)
+is true for any tree with |V | ≤ n. Now consider a tree T with |V | = n + 1.
+    Let i be a leaf node of T , then by (2) and the spatial independence as-
+sumption we have
+
+                   p(xV ) = p(xi |xV \i )p(xV \i )
+                              = p(g(xf (i) , zei )|xV \i )p(xV \i )
+                              = p(g(xf (i) , zei )|xf (i) )p(xV \i )
+                              = p(xi |xf (i) )p(xV \i ).                   (5)
+
+   XV \i is defined on T ′ = (V \ i, E \ (f (i), i)), a tree with n nodes. By
+induction assumption
+                                        Y
+                   p(xV \i ) = p(xs )          p(xk |xf (k) ).
+                                            k∈V \i\s
+
+Substituting it into (5) we have shown that Equation (4) holds for T with
+|V | = n + 1. By induction argument, Equation (4) is true for any tree.
+     Now for any k ∈ V , from (4) we have
+                                         Y           
+             p(xV ) =      p(xk |xf (k) )   p(xj |xk ) · q(xV \k ),
+                                          j∈c(k)
+                      X               Y           
+          p(xV \k ) =   p(xk |xf (k) )   p(xj |xk ) · q(xV \k ),
+                         xk                    j∈c(k)
+
+
+
+
+                                           8
+where q(xV \k ) is a function that does not depend on xk . Then
+
+                             p(xV )
+          p(xk |xV \k ) =
+                            p(xV \k )
+                                        Q
+                          p(xk |xf (k) ) j∈c(k) p(xj |xk )
+                       =P                 Q                   
+                         xk p(xk |xf (k) )    j∈c(k) p(xj |xk )
+                                                  Q
+                          p(xf (k) )p(xk |xf (k) ) j∈c(k) p(xj |xk )
+                       =P                           Q                  
+                         xk p(xf (k) )p(xk |xf (k) )   j∈c(k) p(xj |xk )
+
+                       =p(xk |xf (k)∪c(k) )
+
+   Therefore XV is a Markov random field on T (s, D).                                  ✷
+
+    For an MRF XV = (Xk : k ∈ V ) on T (s, D), we can construct an additive
+metric as follows. For each link (i, j) ∈ E, we define an M × M (assume
+|X | = M ) forward link transition matrix Pij and an M × M backward link
+transition matrix Pji with entries
+
+                     Pij (xi , xj ) = P(Xj = xj |Xi = xi ),
+                     Pji (xj , xi ) = P(Xi = xi |Xj = xj ),
+                                         xi , xj ∈ X .
+                                                                     ∆
+   If the link transition matrices are invertible so that |Pij | = | det(Pij )| > 0,
+not equal to a permutation matrix (a matrix with exactly one entry in each
+row and each column being 1 and others being 0) so that |Pij | < 1, and
+there exists a node i ∈ V with positive marginal distribution, then we can
+construct an additive metric d0 with link length (e.g., [4], [9]):
+
+             d0 (e) = − log |Pij | − log |Pji |,   ∀e = (i, j) ∈ E.             (6)
+
+   For any pair of terminal nodes i, j ∈ U , the distance between i and j
+under additive metric d0 can be computed by
+
+                d0 (i, j) = − log |Pij | − log |Pji |,   i, j ∈ U.              (7)
+
+    We can construct other additive metrics based on the specific network
+inference problem. We use link loss inference as the example. Additive
+metrics based on link utilization inference and link delay inference can be
+found in [21].
+Example 1 (Link Loss Inference): For this example, the link state variable
+
+                                           9
+Ze is a Bernoulli random variable which takes value 1 with probability αe
+if link e is in good state and the probe can go through the link, and takes
+                                   ∆
+value 0 with probability 1 − αe = ᾱe if the probe is lost on the link (e.g.,
+[6]). αe is called the success rate or packet delivery rate of link e, and ᾱe is
+called the loss rate of link e.
+     The outcome variable Xk is also a Bernoulli random variable, which takes
+value 1 if the probe successfully reaches node k. Since the probe is sent by
+the source node s, we have Xs ≡ 1. It is clear that for link loss inference
+                                               Y
+                         Xk = Xf (k) · Zek =         Ze .                    (8)
+                                                          e∈P(s,k)
+
+   If 0 < αe < 1 for all links, then we can construct an additive metric dl
+with link length
+                         dl (e) = − log αe ,                 ∀e ∈ E.                          (9)
+    Notice that there is a one-to-one mapping between the link length and
+link success rate, hence we can derive the link success rates from the link
+lengths, and vice versa.
+    Under the spatial independence assumption that the link states are in-
+dependent from link to link, we have
+                              Y                Y
+              P(Xi = 1) =P(         Ze = 1) =       αe ,
+                                  e∈P(s,i)                    e∈P(s,i)
+                                    Y                              Y
+              P(Xj = 1) =P(                  Ze = 1) =                     αe ,
+                                  e∈P(s,j)                    e∈P(s,j)
+                                     Y                  Y                Y
+           P(Xi Xj = 1) =P(                   Ze                  Ze               Ze = 1)
+                                  e∈P(s,ij)           e∈P(ij,i)        e∈P(ij,j)
+                                  Y                   Y                Y
+                           =                αe               αe               αe ,
+                                e∈P(s,ij)        e∈P(ij,i)        e∈P(ij,j)
+
+where ij is the nearest common ancestor of i and j on T (s, D) (i.e., the
+ancestor of i and j that is closest to i and j on the routing tree). For
+example, in Fig. 1(b), the nearest common ancestor of destination nodes 4
+and 5 is node 2, and the nearest common ancestor of destination nodes 4
+and 6 is node 1.
+   Therefore, the distances between the terminal nodes, dl (U 2 ), can be
+computed by
+                                P(Xi = 1)P(Xj = 1)
+              dl (i, j) = log                      ,                   i, j ∈ U.             (10)
+                                  P2 (Xi Xj = 1)
+
+
+                                                 10
+3.2      Estimation of Distances
+As in (7) and (10), if we know the pairwise joint distributions of the outcome
+variables at the terminal nodes, then we can construct an additive metric
+and derive d(U 2 ). In actual network inference problems, however, the joint
+distributions of the outcome variables are not given. We need to estimate
+the joint distributions based on measurements taken at the terminal nodes.
+Specifically, the source node will send a sequence of n probes, and there are
+                         (t)         (t)
+totally n outcomes XV = (Xk : k ∈ V ), t = 1, 2, ..., n, one for each probe.
+                                                   (t)      (t)
+For the t-th probe, only the outcome variables XU = (Xk : k ∈ U = s ∪ D)
+at the terminal nodes can be measured and observed. We can estimate the
+joint distributions of the outcome variables using the observed empirical
+distributions, which will converge to the actual distributions almost surely
+if the link state processes are stationary and ergodic during the measurement
+period.
+     Suppose s sends a sequence of n probes to (a subset of) destination nodes
+                                         (t)
+in D. For any probed node i, let Xi be the measured loss outcome of the
+                                   (t)
+t-th probe at node i, with Xi = 1 if node i successfully receives the probe
+        (t)
+and Xi = 0 otherwise.
+     We use the empirical distributions of the outcome variables to estimate
+the distances. For a Bernoulli random variable X (as in link loss inference),
+the empirical probability that X takes value 1 is just the sample mean X̄ 1
+of the samples X (1) , ..., X (n) :
+                                                    n
+                                           ∆ 1
+                                                    X
+                         P̂ (X = 1) = X̄ =                X (t) .                 (11)
+                                                n
+                                                    t=1
+
+   We can construct explicit estimators for the distances in (10) as follows
+(we useˆover d to represent estimated distances):
+
+                                                X̄i X̄j
+                               dˆl (i, j) = log        2,                         (12)
+                                                Xi Xj
+  1
+      X̄ is the maximum likelihood estimator (MLE) of P(X = 1) for the samples.
+
+
+
+
+                                           11
+where
+                                                n
+                                           1 X (t)
+                                X̄i =         Xi ,
+                                           n
+                                             t=1
+                                              n
+                                           1 X   (t)
+                               X̄j =            X ,
+                                           n t=1 j
+                                                n
+                                           1 X (t) (t)
+                            Xi Xj =           Xi Xj .
+                                           n
+                                             t=1
+
+   We can derive exponential error bounds for the distance estimators in
+(12) using Chernoff bounds [20].
+
+Proposition 2 For any pair of nodes i, j ∈ U , a sample size of n (number
+of probes to estimate dˆl ), and any small ǫ > 0:
+                    n                            o
+                  P |dˆl (i, j) − dl (i, j)| ≥ ǫ   ≤ e−cij (ǫ)n      (13)
+
+where cij (ǫ)’s are some constants.
+
+3.3     Other Additive Metrics and Information Fusion
+We can also construct additive metrics and compute/estimate the distances
+between the terminal nodes using (end-to-end) unicast packet pair probing
+or traceroute probing, as described in [21]. A nice property of additive met-
+rics is that a linear combination of several additive metrics is still an additive
+metric. In order to fuse information collected from different measurements,
+we can construct a new additive metric using a linear (convex) combination
+of additive metrics d1 , d2 , ..., dk :
+
+                        d = a1 d1 + a2 d2 + ... + ak dk ,                    (14)
+                            s.t. a1 + a2 + ... + ak = 1.
+
+   The estimated distance between terminal nodes i, j ∈ U under the new
+additive metric can be easily computed:
+             ˆ j) = a1 dˆ1 (i, j) + a2 dˆ2 (i, j) + ... + ak dˆk (i, j).
+             d(i,
+
+   In practice we can select the coefficients empirically based on the current
+network state or to minimize the variance of the estimator d. ˆ
+
+
+
+                                           12
+4     Neighbor-Joining Algorithm
+We have described how to construct additive metrics and estimate the dis-
+tances between the terminal nodes via end-to-end packet probing measure-
+ments. In this section we introduce the neighbor-joining (NJ) algorithm,
+which is considered the most widely used algorithm for building binary phy-
+logenetic trees from distances (e.g., [16], [24], [27]).
+
+Definition 2 A distance-based tree inference algorithm (or distance-
+based algorithm for short) takes the (estimated) distances between the termi-
+nal nodes of a tree as the input and returns a tree topology and the associated
+                                    ˆ 2 ) satisfy:
+link lengths. The input distances d(U
+             ˆ
+             d(i, j) ≥ 0, with equality if and only if i = j,
+             d(i, j) = ˆ
+             ˆ         d(j, i).
+
+Definition 3 Two or more nodes on a tree are called neighbors ( siblings),
+if they are connected via one internal node (if they have the same parent)
+on the tree.
+
+   The NJ algorithm is an agglomerative algorithm. The algorithm begins
+with a leaf set including all destination nodes. In each step it selects two leaf
+nodes that are likely to be neighbors, deletes them from the leaf set, creates
+a new node as their parent and adds that node to the leaf set. The whole
+process is iterated until there is only one node left in the leaf set, which will
+be the child of the root (source node).
+   To avoid trivial cases, we assume |D| ≥ 2.
+
+
+Algorithm 1: Neighbor-Joining (NJ) Algorithm for Binary Trees
+
+                                                           ˆ 2 ).
+Input: Estimated distances between the nodes in U = s ∪ D, d(U
+    1. V = ∅, E = ∅.
+
+ 2.1 For any pair of nodes i, j ∈ D, compute
+                          ˆ            d(j, k) − (|U | − 2) ˆ
+                                       ˆ
+                       X           X
+            Q̂(i, j) =   d(i, k) +                         d(i, j).         (15)
+                        k∈U           k∈U
+
+
+ 2.2 Find i∗ , j ∗ ∈ D with the largest Q̂(i, j) (break the tie arbitrarily).
+     Create a node f as the parent of i∗ and j ∗ .
+
+                                       13
+      D = D \ {i∗ , j ∗ }, U = U \ {i∗ , j ∗ }
+      V = V ∪ {i∗ , j ∗ }, E = E ∪ {(f, i∗ ), (f, j ∗ )}.
+ 2.3 Compute the link lengths from the distances:
+
+          ˆ i∗ ) = 1           ˆ i∗ ) + d(i
+                                          ˆ ∗ , j ∗ ) − d(k,
+                                                        ˆ j ∗ ) /2,
+                           X                                  
+          d(f,                 d(k,                                      (16)
+                     |U |
+                           k∈U
+
+          ˆ j∗) =      1    X
+                                ˆ j ∗ ) + d(i
+                                           ˆ ∗ , j ∗ ) − d(k,
+                                                         ˆ i∗ ) /2.
+                                                               
+          d(f,                 d(k,                                      (17)
+                      |U |
+                               k∈U
+
+ 2.4 For each k ∈ U , compute the distance between k and f :
+
+           ˆ f ) = 1 d(k,        ˆ i∗ ) + 1 d(k,
+                        ˆ i∗ ) − d(f,          ˆ j ∗ ) − d(f,
+                                                         ˆ j∗) .
+                                                           
+          d(k,                                                           (18)
+                    2                      2
+     D = D ∪ f, U = U ∪ f.
+  3. If |D| = 1, for the i ∈ D: V = V ∪ {i}, E = E ∪ (s, i).
+     Otherwise, repeat Step 2.
+                                           ˆ for all e ∈ E.
+Output: Tree T̂ = (V, E), and link lengths d(e)
+
+
+   The NJ algorithm has several nice properties:
+   • it is computationally efficient, with a polynomial-time complexity O(N 3 )
+     for (binary) trees with N terminal nodes;
+   • it returns the correct tree topology and link lengths if the input dis-
+     tances are additive (i.e., if the input distances are derived from an
+     additive metric without estimation errors);
+   • it is robust: it achieves the optimal l∞ -radius among all distance-based
+     algorithms for binary trees.
+   The l∞ -radius notation was introduced by Atteson [3].
+
+Definition 4 For a distance-based algorithm, we say it has l∞ -radius r,
+if for any tree T associated with any additive metric d, whenever the input
+                                       ˆ 2 ), satisfy:
+distances between the terminal nodes, d(U
+                                         ∆
+                  ˆ 2 ) − d(U 2 )||∞ = max |d(i,
+                                            ˆ j) − d(i, j)|
+                ||d(U
+                                               i,j∈U
+                                         < r min d(e),                   (19)
+                                                e∈E
+
+the algorithm will return the correct topology of T .
+
+                                          14
+    An algorithm with larger l∞ -radius is more robust, because it can toler-
+ate more estimation errors. [3] showed that no distance-based algorithm has
+l∞ -radius larger than 12 via an example, and proved that the NJ algorithm
+in fact achieves the optimal l∞ -radius for binary trees.
+
+Theorem 2 The NJ algorithm achieves the optimal l∞ -radius 12 for binary
+trees.
+
+   It is not straightforward to extend the NJ algorithm for general (non-
+binary) trees. Since most routing trees in communication networks are not
+binary, we are motivated to design algorithms that can handle general trees.
+
+
+5     Rooted Neighbor-Joining Algorithm
+5.1    Binary Trees
+We first present an algorithm which can be viewed as a rooted version of
+the NJ algorithm for binary trees. To avoid trivial cases, we assume |D| ≥ 2.
+
+
+Algorithm 2: Rooted Neighbor-Joining (RNJ) Algorithm for Binary Trees
+
+                                                           ˆ 2 ).
+Input: Estimated distances between the nodes in U = s ∪ D, d(U
+
+    1. V = {s}, E = ∅.
+       For any pair of nodes i, j ∈ D, compute
+                                    ˆ i) + d(s,
+                                    d(s,   ˆ j) − d(i,
+                                                  ˆ j)
+                       ρ̂(i, j) =                      .                        (20)
+                                             2
+
+ 2.1 Find i∗ , j ∗ ∈ D with the largest ρ̂(i, j) (break the tie arbitrarily).
+     Create a node f as the parent of i∗ and j ∗ .
+     D = D \ {i∗ , j ∗ },
+     V = V ∪ {i∗ , j ∗ }, E = E ∪ {(f, i∗ ), (f, j ∗ )}.
+
+ 2.2 Compute:
+                            ˆ f ) = ρ̂(i∗ , j ∗ ),
+                           d(s,                                                 (21)
+                           ˆ i∗ ) = d(s,
+                          d(f,       ˆ i∗ ) − ρ̂(i∗ , j ∗ ),                    (22)
+                          ˆ j ∗ ) = d(s,
+                          d(f,       ˆ j ∗ ) − ρ̂(i∗ , j ∗ ).                   (23)
+
+
+
+                                       15
+ 2.3 For each k ∈ D, compute:
+
+               ˆ f ) = 1 d(k,           ˆ i∗ ) + 1 d(k,
+                             ˆ i∗ ) − d(f,                ˆ j ∗ ) − d(f,
+                                                                    ˆ j∗) ,
+                                                                      
+              d(k,
+                         2                            2
+                         1 ˆ         ˆ f ) − d(k,   ˆ f)
+                                                           
+              ρ̂(k, f ) = d(s, k) + d(s,
+                         2
+                         1
+                        = ρ̂(k, i∗ ) + ρ̂(k, j ∗ ) .
+                                                  
+                         2
+      D = D ∪ f.
+  3. If |D| = 1, for the i ∈ D: V = V ∪ {i}, E = E ∪ (s, i).
+     Otherwise, repeat Step 2.
+                                           ˆ for all e ∈ E.
+Output: Tree T̂ = (V, E), and link lengths d(e)
+
+
+
+    The major difference between the NJ algorithm and the RNJ algorithm
+is the selection of the score function: the NJ algorithm uses the Q̂ function
+defined in (15), which has no simple interpretation; while the RNJ algorithm
+uses the ρ̂ function in (20), which has a simple interpretation that we will
+explain next.
+    For any pair of nodes i, j ∈ D, remember ij is their nearest common
+ancestor on T (s, D). Under additive metric d, we know
+                             d(s, i) + d(s, j) − d(i, j)
+                 ρ(i, j) =                               = d(s, ij)           (24)
+                                         2
+is the distance from the root (source node s) to ij. It is not hard to verify
+that a pair of nodes i∗ , j ∗ with largest ρ(i, j) must be neighbors (siblings)
+on the tree. ρ̂(i, j) in (20) is the estimated distance from the root to ij
+computed from the input distances. If the input distances are close to the
+true additive distances, then we would expect that the two nodes selected
+in Step 2.1 of Algorithm 2 are indeed neighbors.
+    We provide a sufficient condition for Algorithm 2 to return the correct
+tree topology. From the condition we can establish several nice properties
+of the algorithm.
+
+Lemma 1 For binary trees, a sufficient condition for Algorithm 2 to return
+the correct tree topology is:
+
+                                 ∀i, j, k ∈ D s.t. ij ≺ ik
+                        ⇒        ρ̂(i, j) > ρ̂(i, k),                         (25)
+
+                                          16
+where ij ≺ ik means that ij is descended from ik.
+
+
+Proof We prove the lemma by induction on the cardinality of D.
+(1) If |D| = 2, then clearly Algorithm 2 will return the correct tree topology.
+(2) Assume Algorithm 2 returns the correct tree topology under condition
+(25) for |D| ≤ N . Now consider |D| = N + 1.
+     Claim 1. i∗ , j ∗ found in Step 2.1 which maximize ρ̂(i, j) are
+siblings (neighbors).
+If i∗ and j ∗ are not siblings, then there exists k ∈ D such that either i∗ k or
+j ∗ k is descended from i∗ j ∗ . Under condition (25), this implies either
+
+                                    ρ̂(i∗ , k) > ρ̂(i∗ , j ∗ )
+                          or        ρ̂(j ∗ , k) > ρ̂(i∗ , j ∗ ),
+
+a contradiction to the maximality of ρ̂(i∗ , j ∗ ).
+    Claim 2. Condition (25) is maintained over the nodes in D
+after Step 2.
+After Step 2, i∗ , j ∗ are deleted from D and f is added to D as a new leaf
+node. Since i∗ , j ∗ are siblings and f is their parent, we know that for any
+i ∈ D,
+                                  if = ii∗ = ij ∗ .
+   Therefore, ∀i, j ∈ D s.t. ij ≺ if , we have ij ≺ ii∗ and ij ≺ ij ∗ , which
+implies
+
+                         ρ̂(i, j) > ρ̂(i, i∗ )
+                and      ρ̂(i, j) > ρ̂(i, j ∗ )
+                                                   1
+                                                      ρ̂(i, i∗ ) + ρ̂(i, j ∗ ) .
+                                                                              
+              hence      ρ̂(i, j) > ρ̂(i, f ) =
+                                                   2
+    Similarly, ∀i, k ∈ D s.t. if ≺ ik, we can show ρ̂(i, f ) > ρ̂(i, k).
+    From claims 1 and 2, we know that after one iteration of Step 2, Al-
+gorithm 2 will correctly find out a pair of siblings, and condition (25) is
+maintained for the new set of leaf nodes in D. Then |D| is decreased by 1.
+By induction assumption, the algorithm will return the correct topology of
+the remaining part of the tree. This completes our proof of the lemma.      ✷
+
+
+Proposition 3 For binary trees, Algorithm 2 will return the correct tree
+                                                 ˆ 2 ) are additive.
+topology and link lengths if the input distances d(U
+
+
+                                          17
+Proof If the input distances are additive, then ρ̂(i, j) and ρ̂(i, k) are the
+actual distances from s to ij and ik under an additive metric. In this case,
+if ij is descended from ik, since link lengths are positive, we have ρ̂(i, j) >
+ρ̂(i, k), hence condition (25) holds. Then by Lemma 1, Algorithm 2 will
+return the correct tree topology. In addition, under additive distances it is
+clear that the link lengths computed in Step 2.2 of Algorithm 2 are correct.
+                                                                                     ✷
+
+    In practice, the distances between the terminal nodes are estimated from
+measurements taken at the terminal nodes. The estimated distances may
+deviate from the true additive distances due to measurement errors. Never-
+theless, we will show that if the estimated distances are close enough to the
+true distances, then Algorithm 2 will return the correct tree topology. In ad-
+dition, Algorithm 2 achieves the optimal l∞ -radius among all distance-based
+algorithms.
+
+Proposition 4 The RNJ algorithm (Algorithm 2) achieves the optimal l∞ -
+radius 21 for binary trees, i.e., for any binary tree associated with any additive
+metric d, whenever the input distances ˆ     d(U 2 ) satisfy:
+
+                         ˆ j) − d(i, j)| <        1
+                    max |d(i,                       min d(e),                (26)
+                    i,j∈U                         2 e∈E
+
+Algorithm 2 will return the correct tree topology.
+
+
+Proof Using Lemma 1 we only need to show that condition (26) implies
+condition (25). Let
+
+                                ∆ = min d(e)
+                                         e∈E
+
+be the minimum link length on the tree. If ij ≺ ik, i.e., if ij is descended
+from ik, since link lengths ≥ ∆, we have
+
+                            ρ(i, j) − ρ(i, k) ≥ ∆.
+
+
+
+
+                                       18
+Then from (20), (24), (26) we have:
+
+                 ρ̂(i, j) − ρ̂(i, k)
+                                                            
+               ≥   ρ̂(i, j) − ρ̂(i, k) − ρ(i, j) − ρ(i, k) − ∆
+                      1 ˆ                    1 ˆ
+               ≥ ∆ − |(d(s,  j) − d(s, j)| − |d(i, j) − d(i, j)|
+                      2                      2
+                    1 ˆ                  1 ˆ
+                 − |d(s, k) − d(s, k)| − |d(i, k) − d(i, k)|
+                    2                    2
+                      1     1      1       1
+               > ∆− ∆− ∆− ∆− ∆
+                      4     4      4       4
+               > 0.
+
+    Hence condition (26) indeed implies condition (25). Since (25) is a suf-
+ficient condition for Algorithm 2 to return the correct tree topology, (26) is
+also a sufficient condition for Algorithm 2 to return the correct tree topology.
+                                                                                   ✷
+
+
+5.2   General Trees
+ρ(i, j) is the distance from the root to the nearest common ancestor of nodes
+i and j. For a general routing tree with positive link lengths, we have several
+observations of the ρ function.
+   • If nodes i and j are neighbors on the tree, then for any other node k
+     on the tree we have
+
+                                 ρ(i, j) ≥ ρ(i, k).                        (27)
+
+   • If nodes i and j are neighbors on the tree, then for any other node k
+     that is also a neighbor of i and j we have
+
+                                 ρ(i, j) = ρ(i, k)                         (28)
+
+      because ij = ik.
+
+   • If nodes i and j are neighbors on the tree, then for any other node k
+     that is not a neighbor of i and j we have
+
+                               ρ(i, j) ≥ ρ(i, k) + ∆                       (29)
+
+      (where ∆ is the minimum link length) because ij is descended from ik
+      and they are separated by at least one link.
+
+                                      19
+    Therefore, we can determine whether a group of nodes are neighbors on
+the tree from knowledge of the ρ function under an additive metric.
+    To extend the RNJ algorithm (Algorithm 2) for general trees, after we
+find out two nodes i∗ and j ∗ that are likely to be neighbors in Step 2.1,
+we need to find out other nodes that are likely to be neighbors of i∗ and
+j ∗ based on ρ̂ computed from the input distances. We use the following
+threshold neighbor criterion:
+
+Threshold Neighbor Criterion.
+Suppose i∗ and j ∗ are neighbors on the tree. Node k will be chosen as a
+neighbor of i∗ and j ∗ if and only if
+
+                            ρ̂(i∗ , j ∗ ) − ρ̂(i∗ , k) ≤ t                      (30)
+
+for some threshold t > 0.
+
+   Based on observations (28) and (29), and since ρ̂ is an estimator of ρ
+with possible estimation errors, we use the middle point ∆2 as the threshold.
+Later we will show that such a threshold enables the algorithm to achieve
+the optimal l∞ -radius 14 for general trees if the threshold criterion (30) is
+used in the algorithm (see the proof of Proposition 7).
+
+
+Algorithm 3: Rooted Neighbor-Joining (RNJ) Algorithm for General Trees
+
+                                                           ˆ 2 ); esti-
+Input: Estimated distances between the nodes in U = s ∪ D, d(U
+mated minimum link length ∆ > 0.
+
+  1. V = {s}, E = ∅.
+     For any pair of nodes i, j ∈ D, compute
+                                       ˆ i) + d(s,
+                                       d(s,   ˆ j) − d(i,
+                                                     ˆ j)
+                       ρ̂(i, j) =                         .                     (31)
+                                                2
+
+ 2.1 Find i∗ , j ∗ ∈ D with the largest ρ̂(i, j) (break the tie arbitrarily).
+     Create a node f as the parent of i∗ and j ∗ .
+     D = D \ {i∗ , j ∗ },
+     V = V ∪ {i∗ , j ∗ }, E = E ∪ {(f, i∗ ), (f, j ∗ )}.
+
+
+
+
+                                         20
+ 2.2 Compute:
+                            ˆ f ) = ρ̂(i∗ , j ∗ ),
+                           d(s,                                               (32)
+                           ˆ i∗ ) = d(s,
+                          d(f,       ˆ i∗ ) − ρ̂(i∗ , j ∗ ),                  (33)
+                          ˆ j ∗ ) = d(s,
+                          d(f,       ˆ j ∗ ) − ρ̂(i∗ , j ∗ ).                 (34)
+
+ 2.3 For every k ∈ D such that ρ̂(i∗ , j ∗ ) − ρ̂(i∗ , k) ≤ ∆
+                                                            2:
+     D = D \ k,
+     V = V ∪ k, E = E ∪ (f, k).
+     Compute:
+                           ˆ k) = d(s,
+                           d(f,   ˆ k) − ρ̂(i∗ , j ∗ ).                       (35)
+
+ 2.4 For each k ∈ D, compute:
+
+               ˆ f ) = 1 d(k,           ˆ i∗ ) + 1 d(k,
+                             ˆ i∗ ) − d(f,                ˆ j ∗ ) − d(f,
+                                                                    ˆ j∗) ,
+                                                                      
+              d(k,
+                         2                            2
+                         1 ˆ
+              ρ̂(k, f ) = d(s, k) + ˆ d(s, f ) − ˆ
+                                                            
+                                                    d(k, f )
+                         2
+                         1
+                        = ρ̂(k, i∗ ) + ρ̂(k, j ∗ ) .
+                                                  
+                         2
+     D = D ∪ f.
+
+  3. If |D| = 1, for the i ∈ D: V = V ∪ {i}, E = E ∪ (s, i).
+     Otherwise, repeat Step 2.
+                                           ˆ for all e ∈ E.
+Output: Tree T̂ = (V, E), and link lengths d(e)
+
+
+
+Lemma 2 Let ∆ ≤ mine∈E d(e) be the input parameter. A sufficient con-
+dition for Algorithm 3 to return the correct tree topology is:
+                                                               ∆
+            ∀i, j, k ∈ D s.t. ij ≺ ik ⇒ ρ̂(i, j) − ρ̂(i, k) >    ,
+                                                               2
+                                                                ∆
+            ∀i, j, k ∈ D s.t. ij = ik ⇒ |ρ̂(i, j) − ρ̂(i, k)| ≤ .
+                                                                 2
+                                                                              (36)
+
+
+Proof We outline the proof, which is similar to the proof of Lemma 1.
+There are three key observations:
+
+                                        21
+ (1) Under condition (36), i∗ , j ∗ found in Step 2.1 of Algorithm 3 are sib-
+     lings.
+
+ (2) Under condition (36), k will be selected in Step 2.3 if and only if it is
+     a sibling of i∗ and j ∗ .
+
+ (3) Condition (36) is maintained over the nodes in D after Step 2.
+   The lemma then follows by induction on the cardinality of D.                  ✷
+
+
+Proposition 5 For general trees, Algorithm 3 will return the correct tree
+                                                 ˆ 2 ) are additive.
+topology and link lengths if the input distances d(U
+
+
+Proof The proof is similar to the proof of Proposition 3.                        ✷
+
+    In practice the input distances may deviate from the true additive dis-
+tances due to measurement errors. Again we can show that if the input
+distances are close enough to the true additive distances, then Algorithm 3
+will return the correct tree topology.
+
+Proposition 6 For a general tree with additive metric d, if the input pa-
+rameter
+
+                               ∆ ≤ min d(e)
+                                         e∈E
+
+                        ˆ 2 ) satisfy:
+and the input distances d(U
+
+                            ˆ j) − d(i, j)| <      ∆
+                       max |d(i,                     ,                   (37)
+                       i,j∈U                       4
+then Algorithm 3 will return the correct tree topology.
+
+
+Proof The proof is similar to the proof of Proposition 4. We can show
+that condition (37) implies condition (36), then the proposition follows by
+Lemma 2.                                                                    ✷
+
+   If the input parameter ∆ = mine∈E d(e), then Proposition 6 says that
+the RNJ algorithm has l∞ -radius 14 for general trees.
+
+Corollary 1 The RNJ algorithm (Algorithm 3) has l∞ -radius 14 for general
+trees when ∆ = mine∈E d(e).
+
+                                     22
+   We have the following conjecture.
+Conjecture 1 No distance-based algorithm has l∞ -radius greater than 41 for
+general trees. If this is true, then the RNJ algorithm (Algorithm 3) achieves
+the optimal l∞ -radius 41 for general trees when ∆ = mine∈E d(e).
+   We can show that no distance-based algorithm has l∞ -radius greater
+than 14 if the threshold (neighbor) criterion (30) is used in the algorithm.
+Proposition 7 If the threshold criterion (30) is used, then no distance-
+based algorithm has l∞ -radius greater than 14 for general trees.
+
+Proof Suppose A is a distance-based algorithm with l∞ -radius r in which
+the threshold criterion (30) is used. Let ∆ = mine∈E d(e). Therefore, for
+                                                                         ˆ 2)
+any tree T associated with any additive metric d, if the input distances d(U
+satisfy:
+                             ˆ j) − d(i, j)| < r∆,
+                       max |d(i,                                           (38)
+                        i,j∈U
+
+then A will return the correct topology of T .
+   Suppose i∗ and j ∗ are neighbors on T , and k is a neighbor of them. Then
+we have ρ(i∗ , j ∗ ) = ρ(i∗ , k). Under condition (38) we know
+                        ρ̂(i∗ , j ∗ ) − ρ̂(i∗ , k) < 2r∆.
+Since the threshold criterion (30) is used, we need to have
+                                                             t
+                 ρ̂(i∗ , j ∗ ) − ρ̂(i∗ , k) < 2r∆ ≤ t ⇒ r ≤                (39)
+                                                            2∆
+to correctly add k as a neighbor of i∗ and j ∗ .
+    Now suppose k′ is not a neighbor of i∗ and j ∗ . Then we have ρ(i∗ , j ∗ ) −
+ρ(i , k′ ) ≥ ∆. Under condition (38) we know
+   ∗
+
+                     ρ̂(i∗ , j ∗ ) − ρ̂(i∗ , k′ ) > ∆ − 2r∆.
+Since the threshold criterion (30) is used, we need to have
+                                                            1  t
+            ρ̂(i∗ , j ∗ ) − ρ̂(i∗ , k′ ) > ∆ − 2r∆ ≥ t ⇒ r ≤ −
+                                                            2 2∆
+                                                                           (40)
+to correctly not add k′ as a neighbor of i∗ and j ∗ .
+    Combining (39) and (40) we have
+                              t 1       t           1
+                    r ≤ min       , −          ⇒ r≤                        (41)
+                              2∆ 2 2∆                 4
+where the upper bound 4 of r is achieved with the threshold t = ∆
+                        1
+                                                                2.                 ✷
+
+
+                                         23
+5.3   Complexity and Consistency
+The computational complexity of the RNJ algorithm is O(N 2 log N ) for a
+routing tree with N destination nodes. We now show the consistency of the
+RNJ algorithm for general trees (Algorithm 3), and a similar result holds
+for binary trees.
+    Let T̂n be the inferred tree topology returned by the RNJ algorithm
+with a sample size n (number of probes to estimate the distances between
+the terminal nodes). Let
+
+                            Pn = P{T̂n = T }
+
+denote the probability of correct topology inference of the RNJ algorithm.
+
+Proposition 8 Let ∆ ≤ mine∈E d(e) be the input parameter of the RNJ
+algorithm. If
+              n                      ∆o
+            P |ˆd(i, j) − d(i, j)| ≥    ≤ e−cij (∆)n , ∀i, j ∈ U, (42)
+                                     4
+where n is the sample size and cij (∆) is a constant, then for a routing tree
+with N terminal nodes:
+
+                          Pn ≥ 1 − N 2 e−c(∆)n .                         (43)
+
+
+Proof By Proposition 6 we have
+
+                                ˆ j) − d(i, j)| < ∆
+                       n \                            o
+            Pn ≥ P             |d(i,
+                                                    4
+                        i,j∈U
+
+                                     ˆ j) − d(i, j)| ≥ ∆
+                           n [                            o
+                  = 1−P             |d(i,
+                                                        4
+                             i,j∈U
+                          X
+                  ≥ 1−          e−cij (∆)n
+                             i,j∈U
+
+                     ≥ 1 − N 2 e−c(∆)n
+
+where C(∆) = mini,j∈U cij (∆).                                                   ✷
+
+
+Proposition 9 If the input distances d(U ˆ 2 ) are consistent (i.e., they con-
+verge to the true distances in probability in the sample size) and the RNJ
+algorithm returns the correct tree topology, then the link lengths returned by
+the RNJ algorithm are consistent.
+
+                                     24
+    If we use the distance estimators in (12), since they satisfy condition (42)
+(by Proposition 2) and are consistent, by Proposition 8, the probability of
+correct topology inference of the RNJ algorithm goes to 1 exponentially fast
+in the sample size. If the inferred topology is correct, then by Proposition 9,
+the returned link lengths are also consistent. For network inference problems
+where there is a one-to-one mapping between the link performance param-
+eters and the link lengths (e.g., (9)), the link lengths returned by the RNJ
+algorithm provide consistent estimators for the link performance parameters
+(e.g., success rates).
+
+
+6       Simulation Evaluation
+In addition to analysis, we demonstrate the effectiveness of the NJ algorithm
+and the RNJ algorithm via model simulation. For each experiment, we first
+randomly generate the tree topology and select the link success rates in
+a certain range. The source node then sends a sequence of probes to the
+destination nodes. The destination nodes measure the loss outcomes of the
+probes. We consider both random binary trees and general trees2 .
+    The distances between the terminal nodes are estimated from the em-
+pirical distributions of the observed outcomes at the destination nodes as
+in (12). We then apply both inference algorithms to infer the tree topology
+and link success rates using the estimated distances between the terminal
+nodes.
+    We compare the inferred tree topology with the true tree topology. If
+the inferred topology is correct, then we further compare the inferred link
+success rates α̂e ’s with the true link success rates αe ’s. Specifically, for
+each link e, we compute the relative error of the inferred link success rate
+(compared with the true link success rate) as follows:
+                                           α̂e − αe
+                                 ǫe = |             |,
+                                               αe
+and we calculate the average relative error among all links on the tree:
+                                            1 X
+                                 ǫE   =         ǫe .
+                                           |E|
+                                               e∈E
+
+   Each experiment is repeated 100 times. For each inference algorithm,
+we compute the fraction of correctly inferred trees among all 100 trials
+    2
+    Like the RNJ algorithm, we extend the NJ algorithm for general trees using a similar
+threshold neighbor criterion as in (30).
+
+
+                                          25
+                                                                             Random Binary Trees, 10 Destination Nodes, Link Success Rates [0.9, 0.99]
+                                                         1
+
+
+                                                        0.9
+
+
+                                                        0.8
+
+
+                                                        0.7
+
+
+
+
+ fraction of correctly inferred trees
+                                                        0.6
+
+
+                                                        0.5
+
+
+                                                        0.4
+
+
+                                                        0.3
+
+
+                                                        0.2
+                                                                                                               Neighbor−Joining (NJ) Algorithm
+                                                                                                               Rooted Neighbor−Joining (RNJ) Algorithm
+                                                        0.1
+
+
+                                                         0
+                                                              5          6              7          8          9         10         11         12         13   14
+                                                                                                            log(sample size)
+
+
+                                                                      Figure 2: Binary trees: fraction of correctly inferred trees.
+
+                                                                                 Random Binary Trees, 10 Destination Nodes, Link Success Rates [0.9, 0.99]
+                                                         0.05
+
+
+                                                        0.045
+                                                                                                                 Neighbor−Joining (NJ) Algorithm
+                                                                                                                 Rooted Neighbor−Joining (RNJ) Algorithm
+
+
+
+
+average relative error of inferred link success rates
+                                                         0.04
+
+
+                                                        0.035
+
+
+                                                         0.03
+
+
+                                                        0.025
+
+
+                                                         0.02
+
+
+                                                        0.015
+
+
+                                                         0.01
+
+                                                                                                               26
+                                                        0.005
+
+
+                                                              0
+                                                                  5          6              7          8       9         10         11        12         13   14
+                                                                                                             log(sample size)
+
+
+Figure 3: Binary trees: average relative error of inferred link success rates.
+                                                                           Random General Trees, 10 Destination Nodes, Link Success Rates [0.9, 0.99]
+                                                         1
+
+
+                                                        0.9
+
+
+                                                        0.8
+
+
+                                                        0.7
+
+
+
+
+ fraction of correctly inferred trees
+                                                        0.6
+
+
+                                                        0.5
+
+
+                                                        0.4
+
+
+                                                        0.3
+
+
+                                                        0.2
+                                                                                                             Neighbor−Joining (NJ) Algorithm
+                                                                                                             Rooted Neighbor−Joining (RNJ) Algorithm
+                                                        0.1
+
+
+                                                         0
+                                                              5           6          7          8          9         10         11         12         13   14
+                                                                                                         log(sample size)
+
+
+                                                                      Figure 4: General trees: fraction of correctly inferred trees.
+
+                                                                              Random General Trees, 10 Destination Nodes, Link Success Rates [0.9, 0.99]
+                                                         0.05
+
+
+                                                        0.045
+                                                                                                              Neighbor−Joining (NJ) Algorithm
+                                                                                                              Rooted Neighbor−Joining (RNJ) Algorithm
+
+
+
+
+average relative error of inferred link success rates
+                                                         0.04
+
+
+                                                        0.035
+
+
+                                                         0.03
+
+
+                                                        0.025
+
+
+                                                         0.02
+
+
+                                                        0.015
+
+
+                                                         0.01
+
+                                                                                                             27
+                                                        0.005
+
+
+                                                              0
+                                                                  5           6          7          8       9         10         11        12         13   14
+                                                                                                          log(sample size)
+
+
+Figure 5: General trees: average relative error of inferred link success rates.
+(which can be viewed as the probability of correct topology inference of the
+algorithm), as well as the average value of ǫE among the correctly inferred
+trees.
+    The results are shown in Figs. 2-5. The x axis is in log scale, i.e., it is
+log2 n for a sample size of n probes. As we expect from our analysis, the NJ
+algorithm and the RNJ algorithm are consistent: the fraction of correctly
+inferred trees of both algorithms goes to 1 (exponentially fast) as we increase
+the sample size, and the average relative error of the inferred link success
+rates goes to 0 with an increasing sample size.
+    For binary trees, we observe that the NJ algorithm and the RNJ al-
+gorithm have very similar performance; while for general trees, the RNJ
+algorithm has a clear advantage over the NJ algorithm in terms of the frac-
+tion of correctly inferred trees, implying that the RNJ algorithm is more
+accurate for topology inference of general trees.
+    We conduct experiments for trees with different sizes and ranges of link
+success rates, and we observe the same pattern of the results.
+
+
+7    Multiple-Source Single-Destination Network In-
+     ference
+In this section we study the network inference problem of estimating the
+routing topology and link performance from multiple source nodes to a sin-
+gle destination node, in contrast to the single-source multiple-destination
+network inference problem we have addressed in the previous sections.
+    Again we assume that during the measurement period, the underlying
+routing algorithm determines a unique path from a node to another node
+that is reachable from it. Therefore, the physical routing topology from a set
+of source nodes to a destination node forms a reversed directed tree. From
+the physical routing topology, we can derive a logical routing tree which
+consists of the source nodes, the destination node, and the joining nodes
+(internal nodes with at least two incoming links) of the physical routing
+tree. Each internal node on the logical routing tree has degree at least
+three, and a logical link may comprise more than one physical links. An
+example is shown in Fig. 6.
+    Let r be a destination node (receiver) in the network, and S be a set of
+source nodes that will communicate with r. Let T (S, r) = (V, E) denote the
+(logical) routing tree from nodes in S to r, with node set V and link set E.
+Let U = S ∪ r be the set of terminal nodes, which are nodes with degree
+one.
+
+
+                                      28
+       source
+
+                             source                          Source Nodes S = {3,4,5}
+
+                                                                4          5
+
+        X
+                                                    source
+       router                                                         2            3
+                         X                 X
+                router                     router
+                                                                               1
+
+                                X      router
+                                                                               r
+
+                                                                    Destination Node
+
+                             destination
+
+         (a) The physical routing topology.                    (b) The logical routing tree.
+
+
+Figure 6: The physical routing topology and the associated logical routing
+tree with multiple source nodes and a single destination node.
+
+
+    Each node k ∈ V has a child c(k) ∈ V such that (k, c(k)) ∈ E, and a set
+of parents f (k) = {j ∈ V : c(j) = k}, except that the destination node has
+no child and the source nodes have no parents.
+    For notational simplification, we use ek to denote link (k, c(k)). Each
+link ek is associated with a performance parameter θk (e.g., success rate,
+delay distribution, utilization, etc.) that we want to estimate. The network
+inference problem involves using measurements taken at the terminal nodes
+to infer
+
+ (1) the topology of the (logical) routing tree;
+
+ (2) link performance parameters θe of the links on the routing tree.
+
+7.1   Reverse Multicast Probing
+Similar to multicast probing from a source node to a set of destination nodes,
+we can have reverse multicast probing from a set of source nodes to a single
+destination node. We illustrate the idea of reverse multicast using Fig. 6(b)
+as the example.
+
+
+                                                      29
+    Under a reverse multicast probing, source nodes 4 and 5 will send a
+packet (probe) to their child node 2. Node 2 may receive both packets, or
+one of them, or none of them (because of packet loss). If node 2 receives
+at least one packet from its parents, it will combine (e.g., concatenate) the
+packets and sends the combined packet (as a probe) to its child node 1.
+Otherwise, node 2 will send nothing. Similarly, source node 3 will send a
+packet to its child node 1. Node 1 combines the packets received from its
+parents (if any) and sends the combined packet to the destination node r.
+The whole process is like the reverse process of multicasting a probe from
+node r to the other nodes on the routing tree.
+    For a probe sent from the source nodes in S to the destination node r,
+we define a set of link state variables Ze for all links on the routing tree
+T (S, r). Using link loss inference as the example, Ze is a Bernoulli random
+variable which takes value 1 with probability αe if the probe can go through
+                                                   ∆
+link e, and takes value 0 with probability 1 − αe = ᾱe if the probe is lost on
+the link.
+    For each node k on the routing tree, we use Xk to denote the (random)
+outcome of the probe sent from node k observed by the destination node r.
+For link loss inference, Xk takes value 1 if r successfully receives the probe
+sent from node k, and takes value 0 otherwise. It is clear that for any source
+node i,                                       Y
+                         Xi = Zei · Xc(i) =        Ze .                    (44)
+                                           e∈P(i,r)
+
+   If 0 < αe < 1 for all links, then we can construct an additive metric dl
+with link length
+
+                       dl (e) = − log αe ,     ∀e ∈ E.                    (45)
+
+    For any pair of source nodes i, j ∈ S, let ij denote their nearest common
+descendant on T (S, r) (i.e., the descendant of both nodes i and j that is
+closest to i and j on the routing tree). For example, in Fig. 6(b), the
+nearest common descendant of source nodes 4 and 5 is node 2, and the
+nearest common descendant of source nodes 3 and 4 is node 1.
+    Under the spatial independence assumption that the link states are in-
+
+
+
+
+                                      30
+dependent from link to link, for any pair of source nodes i and j, we have
+                                 Y
+              P(Xi = 1) =             αe ,
+                                   e∈P(i,r)
+                                     Y
+               P(Xj = 1) =                    αe ,
+                                   e∈P(j,r)
+                                     Y                 Y                Y
+            P(Xi Xj = 1) =                     αe                αe               αe .
+                                   e∈P(i,ij)         e∈P(j,ij)        e∈P(ij,r)
+
+
+   Therefore, the distances between the terminal nodes, dl (U 2 ), can be
+computed by (P(Xr = 1) = 1):
+
+                               P(Xi = 1)P(Xj = 1)
+             dl (i, j) = log                      ,              i, j ∈ U.               (46)
+                                 P2 (Xi Xj = 1)
+
+    We can see that the mathematical model of a reverse multicast probing
+on a routing tree (with multiple source nodes and a single destination node)
+is similar to the mathematical model of a multicast probing on a routing
+tree (with a single source node and multiple destination nodes). Therefore,
+the additive-metric framework can be directly applied to analyze and solve
+the multiple-source single-destination network inference problem. Specif-
+ically, we can construct additive metrics, estimate the distances between
+the terminal nodes from end-to-end measurements, and apply the distance-
+based algorithms to infer the routing tree topology and the link performance
+metrics.
+
+7.2   Passive Network Monitoring in Wireless Sensor Net-
+      works
+Although the current Internet does not support reverse multicast probing
+because internal nodes (routers) do not combine packets sent from different
+source nodes to a destination node, reverse multicast can be deployed in
+wireless networks (e.g., [17], [18]) for efficiently data collecting.
+    A typical scenario in wireless sensor networks for data collecting is as
+follows. A base station (a receiver) will first propagate an interest message
+into the network via flooding or constrained/directional flooding. An inter-
+est message could be a query message which specifies what the base station
+wants (e.g., temperature statistics). A node, when first receives the interest
+message from another node, will set that node as its child and forward the
+interest message to its own neighbors excluding its child. Hence the interest
+
+
+                                         31
+propagation procedure serves both to disseminate the interest message, and
+to set up a reverse path from each node to the base station.
+    When a sensor node which has the data of interest (a source node) re-
+ceives the interest message, it can send the data back to the base station
+using the reverse path (i.e., it sends the data to its child). Assume each
+source node has a unique ID (e.g., the geographical location of the node).
+The data sent by a source node to the base station also include the source
+node’s ID so the base station knows from where it receives the data.
+    If each node selects only one node as its child, i.e., if there is a unique
+path from a node to the base station, then we know that the routing topology
+(undirected version) from the source nodes to the base station is a tree. We
+call it a data collecting tree. Each internal node on the tree only needs to
+maintain the information of a set of parents that it will receive data from,
+and a child that it will send data to.
+    Suppose directed diffusion [17] is applied on the data collecting tree,
+under which an internal node will aggregate (e.g., combine, compress, code,
+etc.) the data sent from its parents and then send the aggregated data to
+its child. Then this process is like a reverse multicast probing process as we
+described in Section 7.1. Using the algorithms we have developed in this
+paper, the base station can infer: (1) the topology of the data collecting
+tree; (2) the link performance (e.g., packet delivery rate) of every link on
+the data collecting tree.
+    There are several advantages for the base station to do network inference
+based on the collected data from the sensor nodes. First, the (internal) sen-
+sor nodes do not need to measure and infer the link performance which can
+save their resources; while normally the base station has sufficient battery
+and computation power so it is competent for the network inference task.
+Second, this is a passive network monitoring framework so no extra probing
+traffic is generated. In addition, since the inference is based on real data
+transmission, the inferred link performance metrics are more accurate and
+meaningful.
+
+
+8    Conclusion
+In this paper we address the network inference problem of estimating the
+routing topology and link performance in a communication network. We
+propose a new, general framework for designing and analyzing network in-
+ference algorithms based on additive metrics using ideas and tools from
+phylogenetic inference. The framework is applicable to a variety of measure-
+
+
+                                      32
+ment techniques. Based on the framework we introduce and develop several
+distance-based inference algorithms. We provide sufficient conditions for the
+correctness of the algorithms. We show that the algorithms are computa-
+tionally efficient (polynomial-time), consistent (return correct topology and
+link performance with an increasing sample size), and robust (can tolerate a
+certain level of measurement errors). In addition, we establish certain opti-
+mality properties of the algorithms (i.e., they achieve the optimal l∞ -radius)
+and demonstrate their effectiveness via model simulation. The framework
+provides powerful tools that enable us to infer and estimate the structure
+and dynamics of large-scale communication networks.
+
+
+References
+[1] D. G. Andersen, H. Balakrishnan, M. F. Kaashoek, R. Morris, “Resilient
+    Overlay Networks,” Proc. SOSP 2001, October 2001.
+
+[2] D. Antonova, A. Krishnamurthy, Z. Ma, R. Sundaram, “Managing a
+    Portfolio of Overlay Paths,” Proc. NOSSDAV 2004, Kinsale, Ireland,
+    June 2004.
+
+[3] K. Atteson, “The Performance of Neighbor-Joining Methods of Phylo-
+    genetic Reconstruction,” Algorithmica, vol. 25, pp. 251-278, 1999.
+
+[4] D. Barry and J. A. Hartigan, “Asynchronous Distance Between Homoge-
+    nous DNA Squences,” Biometrics, vol. 43, pp. 261-276, June 1987.
+
+[5] P. Buneman, “The Recovery of Trees from Measures of Dissimilarity,”
+    Mathematics in the Archaeological and Historical Sciences, Edinburgh
+    University Press, pp. 387-395, 1971.
+
+[6] R. Caceres, N. G. Duffield, J. Horowitz, D. Towsley, “Multicast-Based
+    Inference of Network-Internal Loss Characteristics,” IEEE Transactions
+    on Information Theory, vol. 45, no. 7, pp. 2462-2480, Nov. 1999.
+
+[7] R. Castro, M. Coates, G. Liang, R. Nowak, B. Yu, “Network Tomog-
+    raphy: Recent Developments,” Statistical Science, vol. 19, no. 3, pp.
+    499-517, 2004.
+
+[8] R. Castro, M. Coates, R. Nowak, “Likelihood Based Hierarchical Clus-
+    tering,” IEEE Transactions on Signal Processing, vol. 52, no. 8, pp.
+    2308-2321, Aug. 2004.
+
+
+
+                                      33
+[9] J. T. Chang, “Full Reconstruction of Markov Models on Evolutionary
+    Trees: Identifiability and Consistency,” Mathematical Biosciences, vol.
+    137, pp. 51-73, 1996.
+
+[10] M. Coates and R. Nowak, “Network Loss Inference using Unicast End-
+    to-End Measurement,” Proceedings of ITC Conference on IP Traffic,
+    Modelling and Management, Monterey, CA, Sep. 2000.
+
+[11] M. Coates, A. O. Hero III, R. Nowak, B. Yu, “Internet Tomography,”
+    IEEE Signal Processing Magazine, vol. 19, no. 3, pp. 47-65, May 2002.
+
+[12] M. Coates, R. Castro, M. Gadhiok, R. King, Y. Tsang, R. Nowak,
+    “Maximum Likelihood Network Topology Identification from Edge-
+    Based Unicast Measurements,” Proc. ACM Sigmetrics 2002, Jun. 2002.
+
+[13] N. G. Duffield, J. Horowitz, F. Lo Presti, D. Towsley, “Multicast Topol-
+    ogy Inference From Measured End-to-End Loss,” IEEE Transactions on
+    Information Theory, vol. 48, no. 1, pp. 26-45, Jan. 2002.
+
+[14] N. G. Duffiled, F. Lo Presti, V. Paxson, D. Towsley, “Network Loss
+    Tomography Using Striped Unicast Probes,” IEEE/ACM Transactions
+    on Networking, vol. 14, no. 4, pp. 697-710, Aug. 2006.
+
+[15] J. Felsenstein, Inferring Phylogenies, Sinauer, New York, 2004.
+
+[16] O. Gascuel and M. Steel, “Neighbor-Joining Revealed,” Molecular Bi-
+    ology and Evolution, vol. 23, no. 11, pp. 1997-2000, 2006.
+
+[17] C. Intanagonwiwat, R. Govindan, D. Estrin, J. Heidemann, F. Silva,
+    “Directed Diffusion for Wireless Sensor Networking,” IEEE/ACM Trans-
+    actions on Networking, vol. 11, no. 1, pp. 2-16, February 2003.
+
+[18] Y. Mao, F. R. Kschischang, B. Li, S. Pasupathy, “A Factor Graph
+    Approach to Link Loss Monitoring in Wireless Sensor Netowrks,” IEEE
+    Journal on Selected Areas in Communications, vol. 23, no. 4, pp. 820-
+    829, April 2005.
+
+[19] J. Ni and S. Tatikonda, “A Markov Random Field Approach to
+    Multicast-Based Network Inference Problems,” 2006 IEEE International
+    Symposium on Information Theory, Seattle, July 2006.
+
+[20] J. Ni and S. Tatikonda, “Explicit Link Parameter Estimators Based on
+    End-to-End Measurements,” 45th Allerton Conference on Communica-
+    tion, Control, and Computing, Monticello, Illinois, September 2007.
+
+                                     34
+[21] J. Ni, H. Xie, S. Tatikonda, Y. R. Yang, “Network Routing Topology
+    Inference from End-to-End Measurements,” Proc. IEEE Conference on
+    Computer Communications (INFOCOM), Phoenix, Arizona, April 2008.
+
+[22] F. L. Presti, N. G. Duffield, J. Horowitz, D. Towsley, “Multicast-Based
+    Inference of Network-Internal Delay Distributions,” IEEE/ACM Trans-
+    actions on Networking, vol. 10, no. 6, pp. 761-775, Dec. 2002.
+
+[23] S. Ratnasamy and S. McCanne, “Inference of Multicast Routing Trees
+    and Bottleneck Bandwidths using End-to-end Measurements,” Proc.
+    IEEE INFOCOM 1999, Mar. 1999.
+
+[24] N. Saitou and M. Nei, “The Neighbor-Joining Method: A New Method
+    for Reconstruction of Phylogenetic Trees,” Molecular Biology and Evo-
+    lution, vol. 4, no. 4, pp. 406-425, 1987.
+
+[25] C. Semple and M. Steel, Phylogenetics, volume 22 of Mathematics and
+    Its Applications Series, Oxford University Press, 2003.
+
+[26] M. Shih, A. O. Hero III, “Hierarchical Inference of Unicast Network
+    Topologies Based on End-to-End Measurements,” IEEE Transactions
+    on Signal Processing, vol. 55, no. 5, pp. 1708-1718, May 2007.
+
+[27] K. Tamura, M. Nei, S, Kumar, “Prospects for Inferring Very Large
+    Phylogenies by Using Neigbhor-Joining Mehtod,” Proc. of the National
+    Academy of Sciences, vol. 101, no. 30, pp. 11030-11035, July 2004.
+
+[28] Y. Tsang, M. Coates, R. Nowak, “Network Delay Tomography,” IEEE
+    Transactions on Signal Processing, Special Issue on Signal Processing in
+    Networking, vol. 51, no. 8, pp. 2125-2136, Aug. 2003.
+
+[29] Y. Vardi, “Network Tomography: Estimating Source-Destination Traf-
+    fic Intensities from Link Data,” Journal of the American Statistical As-
+    sociation, vol. 91, no. 433, pp. 365-377, 1996.
+
+[30] B. Yao, R. Viswanathan, F. Chang, D. Waddington, “Topology Infer-
+    ence in the Presence of Anonymous Routers,” Proc. IEEE INFOCOM
+    2003, pp. 353-363, Apr. 2003.
+
+
+
+
+                                    35
+

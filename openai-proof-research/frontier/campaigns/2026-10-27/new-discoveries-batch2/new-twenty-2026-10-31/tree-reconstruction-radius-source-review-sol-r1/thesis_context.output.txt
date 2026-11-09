@@ -1,0 +1,517 @@
+PAGES 59
+PDFPAGE 15
+Chapter 2
+
+Introduction to Computational
+Problems
+
+This introduction is meant to give background and to place the results of this thesis
+into context. The next chapter is meant to give a detailed exposition of the results.
+Here, we deal with distance-based and character-based phylogenetic tree reconstruc-
+tion, computation of pairwise distances both with respect to DNA sequences and
+gene order data, ancestral sequence reconstruction, and also multiple alignments.
+The red line throughout the chapter is that of phylogenetic tree reconstruction. For
+a full and excellent exposition to this subject the reader is referred to Felsenstein’s
+book on phylogeny [61].
+    The evolutionary history of a set of species is a central concept in biology that
+is commonly described by a phylogenetic tree. Frequently it is the case that the
+phylogenetic tree is unknown and the only information available is the genetic
+information of the taxa, e.g., a set of extant species. It is, therefore, a fundamental
+problem to reconstruct the phylogenetic tree given information about the taxa.
+    The ﬁrst to reconstruct evolutionary trees were Darwin and Haeckel in the
+middle of the 19th century. They used physical and morphological information
+about the species and from that they reconstructed trees in which similar species
+were grouped together. Today evolutionary trees are reconstructed from genetic
+information about the taxa. Most often the information is in the form of genetic
+sequences, but it can also be information about the gene order, or based on anything
+else where similarity between species can be measured. However, the underlying
+assumption is the same as that of Darwin and Haeckel;
+      Two species with a close common ancestor are more similar than two
+      species with a more remote common ancestor.
+   All methodologies for phylogenetic tree reconstruction are deﬁned by the fol-
+lowing two notions:
+  1. the objective function, i.e. a criterion by which trees can be compared,
+
+                                          11
+
+PDFPAGE 16
+12        CHAPTER 2. INTRODUCTION TO COMPUTATIONAL PROBLEMS
+
+
+     2. and the algorithm that is used to search the space of trees to ﬁnd the best
+        tree.
+The aim is that the objective function models our assumption of evolution and that
+the algorithm is good enough at ﬁnding the best tree. In general, there are two
+approaches to phylogenetic tree reconstruction;
+     1. distance matrix methods and
+     2. character-based methods.
+Distance matrix methods are the more universally applicable approach. The only
+input is a matrix of estimated pairwise distances between the taxa and the ob-
+jective is to ﬁnd an edge weighted tree whose leaf-to-leaf distances are close to
+the input matrix. These estimated distances have, however, been estimated from
+the available genetic information about the taxa. In character-based methods, the
+approach is to use the actual genetic information and not to reduce it to pairwise
+distances. Further, each character-based method has an underlying assumption of
+the type of mutations that change the genetic information. The objective functions
+in character-based methods are thus deﬁned by the genetic information and the
+mutations that act on it.
+    There are two basic types of optimization criteria for character-based recon-
+struction: parsimony and likelihood. Parsimony is the most straightforward ap-
+proach; the objective is to ﬁnd the phylogenetic tree which explains the genetic
+information at the leafs using as few mutations as possible. Mutations are however
+known to occur at random and occasionally it happens that new mutations reverse
+the eﬀect of earlier mutations. Therefore, there are likelihood methods for tracing
+mutational events. In likelihood methods, there is an assumption of a known prob-
+abilistic model describing the probability of the mutational events and the objective
+is to ﬁnd the phylogenetic tree which is the most likely explanation of the genetic
+information at the leafs.
+    This thesis concerns computational problems that arise in diﬀerent settings
+and stages of phylogenetic tree reconstruction. This includes computing distances,
+computing objective functions, and designing algorithms for searching the space of
+trees.
+
+Organization of Introduction
+In the rest of this introduction, we describe computational problems that arise
+in diﬀerent settings of tree reconstruction. First, in Section 2.1, distance matrix
+methods are described together with the most common objective functions and al-
+gorithms. Moreover, the subject of accuracy from a distance-based perspective is
+approached. This introduces the paper Fast Neighbor Joining by Elias and Lager-
+gren [49].
+    As mentioned, distance-based methods take as input a matrix of pairwise evol-
+utionary distances between the taxa. This requires that pairwise distances can be
+
+PDFPAGE 17
+                                                                                   13
+
+
+computed from genetic information corresponding to the taxa. In the following sec-
+tions, we describe the three major settings of genetic information that is available
+for phylogenetic tree reconstruction:
+
+
+  1. genetic sequences that have evolved through substitutions,
+
+
+  2. genetic sequences that have evolved through local point mutations (substitu-
+     tions, insertions, and deletions),
+
+
+  3. and genomes that have evolved through genome rearrangements.
+
+
+    Section 2.2 introduces the most simple setting of phylogenetic tree reconstruc-
+tion; when the genetic information of the taxa are DNA-sequences that have evolved
+only through substitutions. We discuss the character-based methods in this setting
+and present some common probabilistic models of DNA-sequence evolution. With
+respect to these models it is possible to compute the ML estimate of the actual
+number of mutations by correcting for the observed mutational events. This is the
+main concern of the paper Fast Computation of Distance Estimators by Elias and
+Lagergren [50].
+    In view of probabilistic models, an algorithm for tree reconstruction can be seen
+as a statistical estimator of the underlying tree it aims at reconstructing. Thus, due
+consideration has to be taken to consistency and convergence of these estimators.
+We discuss these issues with regard to various character-based methods and distance
+matrix methods. Thereafter, we discuss issues of reconstructing ancestral sequences
+in a phylogenetic tree with respect to such probabilistic models. This introduces
+the paper Reconstruction of Ancestral Genomic Sequences using Likelihood by Elias
+and Tuller [51].
+    Thereafter, in Section 2.3, it is described how tree reconstruction is performed
+when the taxa correspond to sequences that have evolved through local point muta-
+tions: substitutions, insertions, and deletions. In most such cases, there is a stage
+in the data processing in which the sequences have to be aligned into an alignment
+matrix such that homologous nucleotides are in the same column. Such multiple
+alignments allow for a more thorough investigation of the data using only substitu-
+tions, as described above. We introduce the most common optimization criteria for
+multiple alignments, discuss their complexity, approximation algorithms, and heur-
+istics. The complexity of multiple alignment is the main concern of Settling the In-
+tractability of Multiple Alignment by Elias [46]. Finally, in Section 2.4, we describe
+how pairwise distances can be computed from gene order data that have evolved
+through genome rearrangements. This introduces the paper A 1.375-Approximation
+Algorithm for Sorting By Transpositions by Elias and Hartman [48].
+
+PDFPAGE 18
+14                              CHAPTER 2. INTRODUCTION TO COMPUTATIONAL PROBLEMS
+
+
+2.1                Phylogenetic Tree Reconstruction using Distance
+                   Methods
+This section introduces the problem of constructing phylogenetic trees from pairwise
+distances. First the most important optimization criteria are introduced followed
+by an exposition on the diﬀerent heuristic algorithms. At the end, we discuss the
+issue of accuracy from a distance-based perspective.
+    Phylogenetic trees are used to represent the evolutionary history of a set of
+taxa. In the setting of distance matrix methods, such trees are accompanied by an
+edge length function, where each edge length represents the amount of evolution-
+ary change between the two associated nodes. Such edge weighted trees naturally
+induces an additive leaf-to-leaf distance function which uniquely corresponds to
+the underlying edge weighted tree, see Figure 2.1. If the tree is T and the edge
+length function is w then we denote the leaf-to-leaf distance between leaf i and j
+as DTw [i, j].
+    The general idea of distance matrix methods is to reconstruct the edge weighted
+tree from a distance matrix of estimated pairwise distances between the taxa. The
+aim is that the additive distance matrix of the edge weighted tree should be as
+close as possible to the estimated distances. This simple formulation has led to a
+large variety of optimization criteria for ﬁnding the closest tree. Today distance
+matrix methods is the largest family of tree reconstruction methods. It should be
+mentioned that although the edge lengths are of interest, it is the tree which is the
+most essential parameter in tree reconstruction.
+                                                                                                           Tree T
+                                                                                                                                                                                                                                                                                  A   B   C   D
+                                                                                                                                                                                                                                                     A
+                                                                                                                                                                                                                                                    .....
+                                                                                                                                                                                                                                                            ...
+                                                                                                                                                                                                                                                        .....
+                                                                                                                                                                                                                                                                              A   0   3   6   6
+                                                                                                                                                                                                                                                 ....
+                                                                                                                                                                                                       2
+      D
+      .....
+          ....
+              .....
+                  .....      1                                                                                                                                                                                       .....
+                                                                                                                                                                                                                             ....
+                                                                                                                                                                                                                          ....
+                                                                                                                                                                                                                                ..
+                                                                                                                                                                                                                                 ......
+                                                                                                                                                                                                                                  .
+                                                                                                                                                                                                                                         .....
+                                                                                                                                                                                                                                      ....
+                                                                                                                                                                                                                                             .....
+                                                                                                                                                                                                                                                                        DTw = B       0   5   5
+                      .....
+                                                                                                                   3                                                                                             ....
+                                                                                                                                                                                                             .....
+                          .....
+
+
+                            .
+                            ..
+                              .....
+
+                              ....
+                                   .....
+                                 .....
+                                                                                                                                                                                                .....
+                                       .............................................................................................................................................................
+                                                                                                                                                                                                     ....
+                                                                                                                                                                                                    ....
+                                                                                                                                                                                                         ....
+
+                                                                                                                                                                                                        .....
+                                                                                                                                                                                                                                                                              C           0   2
+                          .                                                                                                                                                                                 .....
+                      .....                                                                                                                                                                                      ....
+          .....
+      .....
+                  .....
+               ....
+                             1                                                                                                                                                          1
+                                                                                                                                                                                                                    .....
+                                                                                                                                                                                                                         .....
+                                                                                                                                                                                                                             ....
+                                                                                                                                                                                                                                ..                                            D               0
+      C                                                                                                                                                                                                               B
+
+Figure 2.1: A tree with edge lengths and the associated additive distance matrix.
+
+
+
+Optimization Criteria
+In 1967, Cavalli-Sforza and Edwards [27] proposed the least squares criterion for
+reconstructing an edge weighted tree from a matrix of pairwise distances between
+the leafs:                          X
+                        argmin(T,w)   (D[i, j] − DTw [i, j])2 ,
+                                                                                                                                                                                                                                                                  i,j
+
+where DTw [i, j] is the leaf-to-leaf distance between leaf i and j
+                                                                 and D the mat-
+rix of estimated distances. In addition to the ℓ2 matrix norm, which corresponds
+to the least squares estimate, there are optimization criteria under other matrix
+
+PDFPAGE 19
+2.1. PHYLOGENETIC TREE RECONSTRUCTION USING DISTANCE
+METHODS                                                                           15
+
+norms such as ℓ1 and ℓ∞ norms. The ℓ2 norm is, however, statistically justiﬁed
+and is, therefore, the most common criterion. The justiﬁcation is based on the
+assumption that the estimated distances in the input matrix are observations from
+independent normally distributed distances in the true edge weighted tree. Under
+this assumption, the least squares estimate of Cavalli-Sforza and Edwards is the
+standard statistical approach for obtaining the most likely estimate, when the vari-
+ances of the distributions are assumed to be 1. Also in 1967, Fitch and Margoliash
+[64] introduced a least squares estimate in which the variance was allowed to dif-
+fer. Furthermore, there are least squares estimates in which the distances are not
+assumed to be independent [29].
+    Cavalli-Sforza and Edwards proposed the least squares estimate and showed
+how the least squares estimate of the edge lengths can be computed for a given
+tree in time O(n3 ), this has subsequently been improved to O(n2 ) [66]. However,
+as was shown by Day in 1986 [39], ﬁnding the least squares edge weighted tree is
+NP-hard. Furthermore, it is NP-hard to select the closest edge weighted tree under
+the ℓ1 [39] and ℓ∞ [2] matrix norms. Therefore, it is unlikely that exact polynomial
+algorithms exist, but several heuristics have been proposed.
+    Minimum evolution (ME) [82, 105] is another popular criteria for distance meth-
+ods. In ME, the objective is to ﬁnd the edge weighted tree with total shortest edge
+lengths when these are deﬁned by the least squares estimate. Furthermore, there
+are criteria that not are based on matrix norms. In particularly, those that are used
+in quartet methods, which are mentioned below.
+
+Algorithms
+The work of Cavalli-Sforza and Edwards is based on the work on clustering al-
+gorithms by Sokal and Sneath from 1963 [113]. The ﬁrst clustering algorithm, called
+UPGMA, was introduced by Sokal and Michener in 1958 [114] and since then a large
+number of clustering algorithms have been invented [114, 107, 49, 65, 21, 110].
+These build a binary tree from a star tree by iteratively picking a pair of sibling
+taxa, creating a new node representing their parent, and computing a new reduced
+distance matrix in which the siblings have been replaced by their parent. Thus,
+there are two properties that deﬁne a clustering method: (1) the selection criterion
+that is used for selecting a pair of siblings and (2) the reduction function used for
+computing the new matrix.
+    Clustering methods do in general not optimize any of the aforementioned cri-
+teria. They should rather be seen as recipes for constructing a tree according to a
+set of rules. These rules are, however, many times based on the criteria mentioned
+above and the algorithms can, therefore, be seen as heuristics for these criteria.
+    The Neighbor Joining (NJ) algorithm, seen below, is a clustering method intro-
+duced by Saitou and Nei in [107], in Studier and Keppler [116] the running time
+was improved to O(n3 ). My impression is that NJ is the most widely used tree
+reconstruction method and that it has been embraced due to its simplicity, speed,
+and accuracy. At each step it uses a form of minimum evolution to select which
+
+PDFPAGE 20
+16       CHAPTER 2. INTRODUCTION TO COMPUTATIONAL PROBLEMS
+
+
+pair of taxa to cluster. NJ can thus be seen to approximate the minimum evolution
+criterion and may also be seen as a rough estimation of the least squares estimate.
+Algorithm NJ(D)
+     1. while the number of nodes in D > 3 do
+         a) Select a sibling pair by                 P                     
+            (a, b) ← argminx6=y∈D (n − 2) · D[a, b] − z∈D D[z, a] + D[z, b]
+         b) Reduce a and b to a new node c representing their parent. Remove a
+            and b from D and add c by setting the distance to any other node z as
+            D[z, c] , D[z, a] + D[z, b] /2
+         c) Connect a and b to c by adding edges (a, c) and (b, c).
+     2. Connect the three nodes of D in a star and return the resulting tree.
+
+    There are other methods which attempt to optimize one of the criteria men-
+tioned above. However, since the problems are NP-hard there are probably no
+polynomial algorithms. Therefore, most algorithms that attempt at actually op-
+timizing one of the criteria adopt heuristic hill climbing. The basic idea in these
+methods, so called branch swapping algorithms, is to perform local changes in trees
+to improve the objective, such as disconnecting a subtree and then reconnecting it
+at some other place. In the case of the least squares criterion, there are two such
+methods: Felsenstein’s method [60] and Makarenkov and Leclerc [91]. For min-
+imum evolution the algorithm by Desper and Gascuel [41] also attempts at ﬁnding
+a local optima through branch swapping.
+    Quartet methods 1 , popularized by Buneman [23], use a diﬀerent set of optim-
+ization criteria that are not based on matrix norms. Here, the idea is to build
+small trees of only four species and then to puzzle these together using diﬀerent
+rules. The ﬁrst such method was the Buneman tree algorithm [23] which has O(n3 )
+running time [18] and constructs a tree containing all quartets (a, b)(c, d) s.t.
+
+         min( D[a, c] + D[b, d] , D[a, d] + D[b, c] ) − D[a, b] − D[c, d] > 0.
+
+The idea of using quartets to build a tree has been extended further in the DCM
+algorithm [77, 85] which builds a set of subtrees, using some other algorithm as
+a subroutin, and then merges these together to create a tree for all taxa. The
+only implementation of DCM that is of practical interest uses NJ to construct the
+subtrees and it requires O(n5 ) time. The algorithm FastNJ presented in Elias and
+Lagergren yields a variant of DCM with running time O(n4 ).
+
+
+   1 It should be mentioned that quartet methods also are applicable when the input consists of
+
+quartets, rather than a distance matrix from which the quartets are constructed.
+
+PDFPAGE 21
+2.1. PHYLOGENETIC TREE RECONSTRUCTION USING DISTANCE
+METHODS                                                                            17
+
+Accuracy of Algorithms
+
+Most objective functions in tree reconstruction from distance functions have been
+shown to be NP-hard. However, it is possible to give conditions on the input matrix
+under which algorithms do ﬁnd the correct tree. One particularly desirable property
+for a distance method is to reconstruct the unique edge weighted tree (T, w) given
+an additive distance function DTw . For example, the UPGMA algorithm [114] does
+not have this property while the NJ algorithm [66] does.
+    With regard to accuracy of tree reconstruction, the big quest is to give a com-
+prehensive set of conditions under which diﬀerent methods reconstruct the correct
+tree. Atteson [7] was the ﬁrst to approach this subject. He termed a distance
+matrix D nearly additive if there is an additive distance function DTw such that
+
+
+                                              µ(T, w)
+                              |D − DTw |∞ <           ,                          (2.1)
+                                                 2
+
+
+where µ(T, w) is the minimum edge length in (T, w). Further, Atteson proved
+that the two clustering algorithms NJ [107] and ADDTREE [110] have optimal
+reconstruction radius in the sense that: (a) given a nearly additive distance function
+they reconstruct the unique tree T and (b) there can be more than one tree for which
+|D − DTw | < δ holds if δ ≥ µ(T, w)/2 (see Figure 2.2 for an explanation). Atteson’s
+proof have been signiﬁcantly simpliﬁed by Elias and Lagergren [49]. Moreover, they
+presented a new variant of NJ, called FastNJ, with the same optimality guarantee
+and also optimal runtime complexity O(n2 ). Recently, Mihaescu et al. [94] further
+improved the work and proved that both NJ and FastNJ reconstruct the closest
+tree under a larger set of distance matrices (which includes the nearly additive
+matrices). They also proved that all edges which are longer than 4 · |D − DTw |∞ are
+correctly inferred by both algorithms, i.e., l(e)/4 > |D − DTw |∞ . This last property
+is referred to as the edge radius of the algorithm.
+    In practice, most distances are far from being nearly additive. Thus, although
+important, optimal reconstruction radius is not suﬃcient for an algorithm to be use-
+ful in practice. Moreover, the notion of reconstruction radius only includes some of
+the matrices for which a method correctly reconstructs the tree. Therefore, methods
+cannot be compared only with respect to the reconstruction radius. For example,
+the recent DLCA algorithm by Gronau and Moran [68] has optimal reconstruction
+radius, optimal edge radius, and optimal runtime complexity. However, in practice
+the output from this algorithm is not necessarily more accurate than that of NJ
+and FastNJ. On page 22 we approach the subject of accuracy under probabilistic
+models of sequence evolution. For a listing of the conditions under which diﬀerent
+algorithms reconstruct the correct tree see Table 2.1
+
+PDFPAGE 44
+40                                   CHAPTER 3. PRESENT INVESTIGATION
+
+
+of π̂ can be used to mimic a sorting of π by simply removing all new elements in
+π̂. Such a transformation is called safe if it maintains the lower bound of Bafna
+and Pevzner, i.e., if n(π) − codd (π) = n(π̂) − codd (π̂). Lin and Xue [89] proved that
+every permutation can be transformed safely into a simple one.
+    The approximation algorithm given in Elias and Hartman [48], ﬁrst safely trans-
+forms the given permutation π into a simple permutation π̂, then it ﬁnds a sorting
+sequence for π̂, and, ﬁnally, the sorting of π̂ is mimicked on π. The sorting found
+for π̂ is guaranteed to for every eleven consecutive moves use at least eight 2-moves
+and no more than three 0-moves. Thus the algorithm is guaranteed to return a
+solution with approximation ratio 11  8 = 1.375.
+    The results in the paper, like many other results in genome rearrangements, are
+based on rigorous case analyzes. However, for the results on 3-permutations, which
+is the basis of the approximation algorithm, the number of cases is huge. Therefore,
+we developed a computer program that systematically generates the proof. Each
+case in the proof is discrete and consists of a few elementary steps that can be
+veriﬁed by hand and thus it is a proof in the conventional mathematical sense.
+Since it is not practical to manually verify the proof as a whole, a veriﬁcation
+program was written, which takes the proof as an input and veriﬁes that each
+elementary step in the proof is correct.
+
+
+3.3      Fast Neighbor Joining
+The paper Fast Neighbor Joining by Elias and Lagergren [49] is a contribution to
+the ﬁeld of distance matrix methods for tree reconstruction, see Section 2.1 for an
+introduction. There are two major contributions in the paper:
+
+     • An algorithm called Fast Neighbor Joining (FastNJ) with optimal reconstruc-
+       tion radius and optimal runtime complexity O(n2 ).
+
+     • A greatly simpliﬁed proof that also the Neighbor Joining (NJ) algorithm (see
+       page 16) has optimal reconstruction radius.
+
+Initial experiments show that the FastNJ algorithm in practice has almost the same
+accuracy as the NJ algorithm; this indicates that it is the optimal reconstruction
+radius and other similarities with NJ that give FastNJ its good performance. The
+paper is one piece in the puzzle of constructing both fast and accurate tree recon-
+struction algorithms.
+
+Formal Definitions
+A distance function is an n×n matrix D over the ﬁeld of positive real numbers, it is
+symmetric, and for all x it satisﬁes D[x, x] = 0. A phylogenetic tree T together with
+an edge length function w : E(T ) → R+P      induces a leaf-to-leaf distance function,
+i.e., DTw : L(T )2 → R+ where DTw (a, b) , e∈PT (a,b) w(e).
+
+PDFPAGE 45
+3.4. FAST DISTANCE ESTIMATION FROM ALIGNED SEQUENCES                                 41
+
+
+    A distance function D is additive if there is a phylogenetic tree T together
+with a edge length function w such that D = DTw ; the tree is said to realize D,
+it is unique, and it is denoted T (D). A distance function D is nearly additive if
+there is a phylogenetic tree T together with a edge length function w such that
+|D − DTw |∞ < µ(T, w)/2, where | · |∞ is the max norm and µ(T, w) the shortest
+edge; again, the tree is said to realize D and it is unique with respect to the topology
+T.
+    The FastNJ algorithm of Elias and Lagergren is a variant of the regular NJ
+algorithm [107]. It takes a distance function as input and outputs an additive
+distance matrix. FastNJ has running time O(n2 ), i.e., it is linear in the size of
+the input matrix, while the regular NJ algorithm has running time O(n3 ). In the
+paper, the FastNJ algorithm is shown to have optimal reconstruction radius in the
+sense that: (a) given a nearly additive distance function it reconstructs the unique
+tree T and (b) there can be more than one tree for which |D − DTw | < δ holds if
+δ ≥ µ(T, w)/2 (see Figure 2.2). The proof of Elias and Lagergren also provides
+a signiﬁcantly simpliﬁed proof of the fact that also NJ has optimal reconstruction
+radius.
+
+3.4    Fast Distance Estimation from Aligned Sequences
+The paper Fast Computation of Distance Estimators by Elias and Lagergren [50]
+is a contribution to the problem of computing estimated pairwise distance between
+aligned DNA sequences, see page 20 for an introduction. There are two contribu-
+tions in the paper:
+  • A fast algorithm for computing the number of mutational events between
+    DNA sequences.
+  • A new method for estimating pairwise distance when ambiguity symbols are
+    present.
+The new algorithm is several hundred times faster than the famous Phylip pack-
+age. Since pairwise distance estimation is a bottleneck in distance-based phylo-
+geny reconstruction, the new algorithm improves the overall running time of many
+distance-based methods by a factor of several hundred.
+
+Formal Definitions
+The algorithm presented in the paper takes two aligned DNA-sequences of length
+l as input and counts the number of diﬀerences in the strings. In particular, it
+counts the number of purine-transitions, pyrimidine-transitions, and transversions;
+purine-transitions are diﬀerences between purines (A and T), pyrimidine-transitions
+are diﬀerences between pyrimidines, and transversions are diﬀerences between the
+two groups. The algorithm has the same asymptotic runtime complexity as the
+straightforward approach of looping through every position, i.e. O(l). However,
+
+BIBPAGE 52
+48                                                              BIBLIOGRAPHY
+
+
+[41] R. Desper and 0. Gascuel. Fast and accurate phylogeny reconstruction al-
+     gorithms based on the minimum-evolution principle. Journal of Computa-
+     tional Biology, 19(5):687–705, 2002.
+
+[42] T. Dobzhansky and A.Sturtvant. Inversions in the chromosome of drosophila
+     pseudooobscura. Genetics, 1938.
+
+[43] A. W. F. Edwards and L. L. Cavalli-Sforza. The reconstruction of evolution.
+     Annals of Human Genetics, 27:105–106, 1963.
+
+[44] A. W. F. Edwards and L. L. Cavalli-Sforza. Reconstruction of evolutionary
+     trees. Phenetic and Phylogenetic Classification, pages 67–76, 1964.
+
+[45] I. Elias. Settling the intractability of multiple alignment. In Proc. of the
+     14th Ann. Int. Symp. on Algorithms and Computation (ISAAC’03), volume
+     2906 of Lecture Notes in Computer Science, pages 352–363. Springer-Verlag,
+     November 2003.
+
+[46] I. Elias. Settling the intractability of multiple alignment. Journal of Compu-
+     tational Biology, 13(7):1323–1339, September 2006.
+
+[47] I. Elias and T. Hartman. A 1.375-approximation algorithm for sorting by
+     transpositions. In Proc. of the 5th International Workshop on Algorithms
+     in Bioinformatics (WABI’05), volume 3692 of Lecture Notes in Computer
+     Science, pages 204–214. Springer-Verlag, October 2005.
+
+[48] I. Elias and T. Hartman. A 1.375-approximation algorithm for sorting by
+     transpositions. To appear in IEEE/ACM Transactions on Computational
+     Biology and Bioinformatics, 2006.
+
+[49] I. Elias and J. Lagergren. Fast neighbor joining. In Proc. of the 32nd
+     International Colloquium on Automata, Languages and Programming (IC-
+     ALP’05), volume 3580 of Lecture Notes in Computer Science, pages 1263–
+     1274. Springer-Verlag, July 2005.
+
+[50] I. Elias and J. Lagergren. Fast computation of distance estimators. Submitted,
+     2006.
+
+[51] I. Elias and T. Tuller. Reconstruction of ancestral genomic sequences using
+     likelihood. Submitted, 2006.
+
+[52] P.L. Erdös, M.A. Steel, L.A. Szekely, and T.J. Warnow. A few logs suﬃce to
+     build (almost) all trees (I). RSA: Random Structures & Algorithms, 14:153–
+     184, 1999.
+
+[53] Niklas Eriksen. (1+eps)-approximation of sorting by reversals and transpos-
+     itions. Journal of Theoretical Computer Science, 289:517–529, 2002.
+
