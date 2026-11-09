@@ -1,0 +1,114 @@
+# Sustained finite routes: author-only, incomplete targets
+
+GPT-6.1 Sol, high/default, personally. No children, mathematical execution, enumeration program, Lean, CAS, solver or network. Credit zero; 57/60 beyond 39 prior, 96 total unchanged. The conclusions below are hand proofs of restricted helpers and failures, not full solutions, independent reviews, novelty claims or accepted discoveries.
+
+## Source and procedure boundaries
+
+Read TASK.txt [0,8081) and inherited-denials.json [0,275950) in contiguous pieces of at most 15000 characters. The initial combined transport was truncated; subsequent range-labelled receipts recover the text, including the missing middle [30000,45000). This is a documentary recovery, not a claim that the first display was complete. Source reads are the copied own-lane texts only: star.txt Definition 1.1, Conjecture 9.6/Proposition 9.7; star-final.txt Conjecture 79/Proposition 80; star-followup.txt Section 3.1 Proposition 3.1.1/Lemma 3.1.2 and its sign/truncation discussion; degree.txt introduction and closing Conjecture 3.2/Observation 2; local.txt Proposition 5, its complete doubling proof, Theorem 6 proof, Theorem 9 and closing Conjecture 11. A combined primary display was truncated and the follow-up proof was read separately afterward. No PDF visual audit, whole-body audit, final-equivalence or fresh current-status claim. The degree final remains unread. The local corpus Lovasz sentence refers to Kneser, not Conjecture 11. No external provenance paths followed.
+
+## 348662: the full small-star case r=3, but no all-r theorem
+
+Literal: for every integer n>=1, H=K_{1,n}, and every finite graph G, omega(X_G^H) has power-sum coefficients of one weak sign. Source final Conjecture 79 matches. We retain the canonical monomial lift; finite-variable equality alone does not justify a stable p-expansion.
+
+### Exact model, independently reconstructed
+
+Let N=|V(G)|, r=|V(H)|. For a partition pi into b independent nonempty blocks let Q_pi be the simple quotient and c_pi=(r-b)! injhom(Q_pi,H), with c_pi=0 for b>r. For each pi, sum monomials over distinct variable labels on its blocks, then multiply by c_pi. This counts every labelled H-coloring through its fiber partition exactly once. Inclusion-exclusion on equal block labels gives a p-term indexed by a partition rho of the blocks, weighted by product_C (-1)^{|C|-1}(|C|-1)!. Applying omega changes its sign to (-1)^{N+b}. Thus
+
+S_lambda = sum_{pi,rho: lambda(pi,rho)=lambda} c_pi (-1)^{N+b} product_C (|C|-1)!.
+
+This argument uses integers and finite partitions and is valid with isolates and disconnected graphs. It does not prove the common-sign assertion at arbitrary r.
+
+### Hand proof for H=K_{1,2}, every G
+
+For N>=4, all S_lambda have sign (-1)^{N+3}, allowing zeros. Partitions lambda have length at most three. Nonbipartite G gives zero, so assume bipartite.
+
+First suppose G has at least one edge. There are no one-block terms. For every independent two-block partition c_pi=4. An independent three-block quotient with nonzero c_pi is either P3 (c_pi=2) or one edge and an isolated vertex (c_pi=4). This follows because Q_pi has an edge, is simple on three blocks and embeds into K_{1,2}.
+
+Write R(a,b)=(2^{a-1}-1)+(2^{b-1}-1), the number of ways to split one of the two blocks into two unordered nonempty blocks. For positive a+b=N>=4, R(a,b)>=2: if both a,b>=2 both summands are >=1, and if one is 1 the other is >=3. Such refinements remain independent and their quotient embeds into the star, with c>=2.
+
+Length three: only b=3 contributes, already of the asserted sign.
+
+Length two: after factoring (-1)^N, its coefficient is A_lambda-B_lambda, where A_lambda sums c_pi over two-block partitions of shape lambda, and B_lambda sums c_pi over three-block partitions together with a pair of blocks to merge, giving shape lambda. Splitting any two-block pi gives R(a,b) distinct (three-block partition, merged pair) objects, each of weight at least 2. Different original pi give different such pairs. Hence B_lambda >= sum_pi 2 R(a,b) >= sum_pi 4=A_lambda. Additional merges of adjacent blocks, whose coarsening is not independent, only increase B_lambda. Therefore this coefficient has sign (-1)^{N+1}=(-1)^{N+3}.
+
+Length one: put A=sum_{b=2}c_pi, B=sum_{b=3}c_pi. Its coefficient is (-1)^N(A-2B). Double-count refinements without fixing shape. A three-block quotient P3 has exactly one independent pair to merge; an edge plus isolate has exactly two. Since the corresponding c_pi are 2 and 4, respectively, twice their weights equal 4 times these merger counts. Consequently 2B=sum_{two-block pi}4R(|pi_1|,|pi_2|)>=2A. Thus A-2B<=0, giving the required sign.
+
+For edgeless G, c_pi=6 for b=1,2,3. Length three has the required sign. For length two the same refinement bijection is exact, now with weight 6 on both sides, giving coefficient (-1)^N*6 sum_{two-block pi of shape lambda}(1-R(a,b)), of the required sign. Length one is
+
+6(-1)^{N+1}(1-S(N,2)+2S(N,3))
+ =6(-1)^{N+1}(3+3^{N-1}-3*2^{N-1}).
+
+The bracket is positive for N>=4: it is 6 at N=4, and if F_N denotes it, F_{N+1}-2F_N=3^{N-1}-3>0. This checks the one-block terms that cannot be discarded.
+
+For N<=3 no monomial truncation occurs. Edgeless G has X=6p_1^N. If G has an edge its stable orientation expression has at most three labels and the source large-star sign argument applies (the maximum bipartition side load is at most two). The empty graph on zero vertices, if allowed, gives a positive constant. Therefore r=3 is fully covered. This is a restricted helper, not FULLCANDIDATE-348662.
+
+### Why the same argument stops at r=4 and beyond
+
+The length-two comparison above only has b=2,3. At r=4 it also has positive b=4 contributions, and length one acquires a negative factorial-six term before the omega factor. Independent refinements no longer form a single opposite-sign comparison. Moreover injective quotient weights depend on star capacity and on whether there is an isolated quotient block. Counting refinements without keeping the merger partition rho does not preserve lambda. The exact r=3 multiplicity identity cannot be promoted to an all-r involution by forgetting those extra data.
+
+A top-length coefficient forces sign (-1)^{N+r} whenever an r-block star quotient exists, but says nothing about shorter coefficients. Stable orientation factorization remains invalid after finite monomial truncation. No counterexample or common-sign proof for all r was obtained. Exact unpaid lemma: for every finite G and every r>=4, either all integers S_lambda>=0 or all<=0, with the exceptional smaller maximum block count handled explicitly.
+
+Qualification: fixed-star coefficient cancellation is a finite special case and uses a standard partition-refinement device. No prior-art clearance for even this helper, no novelty/significance qualification, and no credit. The source large-star theorem does not cover arbitrary N at r=3, but that observation alone does not qualify the helper as a discovery.
+
+## 364538: repeated fixed components cannot support an extra lattice obstruction
+
+Literal: for each fixed d, only finitely many simple d-regular graphs may fail the specified simultaneous histogram bounds, with the stated handshaking branch. Source Conjecture 3.2 agrees and explicitly leaves d=4 open. Known d<=3 cases are not new.
+
+### Exact histogram lattice for any fixed nonempty regular graph
+
+Let C be a finite simple d-regular graph of order v, d>=1, with at least one edge. Let h(F)=(m(F,0),...,m(F,d)) range over all spanning edge subsets F of C. Let L_C be the integer subgroup generated by h(F)-h(empty). Then
+
+L_C={z in Z^{d+1}: sum_k z_k=0 and sum_k k z_k is even}.
+
+Necessity follows from vertex count and handshaking. For sufficiency put f_a=e_{a+1}-e_a, 0<=a<d. Fix an edge xy. For any a,b in {0,...,d-1}, choose a edges incident with x other than xy and b incident with y other than xy. These two edge sets are disjoint, even when x,y share a neighbor, because C is simple. In their union x,y have degrees a,b. Adding xy changes the histogram by f_a+f_b; all other degrees stay fixed. These differences lie in L_C. The f_a form an integer basis of the sum-zero vectors, and the subgroup generated by all f_a+f_b is exactly the vectors sum_a t_a f_a with sum_a t_a even: it contains 2f_a and f_a-f_b=(f_a+f_b)-2f_b. Finally sum_k k z_k=sum_a t_a. This proves equality. There is no additional histogram difference lattice obstruction for any fixed C.
+
+### Strictly positive rational uniform mixture, entirely finite
+
+Put m=|E(C)|. Order the m distinct edge tokens together with one marker uniformly in all (m+1)! orders; take F to be the edges preceding the marker. For each vertex x, its d incident edge tokens and the marker have each of the d+1 relative marker positions equally often. Hence deg_F(x) is uniform on {0,...,d}, and the average histogram is u=(v/(d+1),...,v/(d+1)). Every individual edge subset F occurs a positive integer number |F|!(m-|F|)! of times. Thus there are positive integer multiplicities a_F and an integer A=(m+1)! with
+
+sum_F a_F=A,    sum_F a_F h(F)=A u.
+
+This is a combinatorial count, not a simulation or a real-valued probabilistic/formal dependency.
+
+### Saturation along the repeated-component ray (complete helper proof)
+
+For every fixed real bound B, all sufficiently large integers t have the following property. Every integer vector z with sum z_k=tv, even sum k z_k, and |z_k-tv/(d+1)|<=B is realizable by a spanning subgraph of tC. Equivalently one can take any fixed natural B and clear denominators throughout.
+
+Write t=qA+s, 0<=s<A, and fix h0=h(empty). The correction y=z-qAu-s h0 has coordinate sum zero, even weighted sum, and belongs to a finite bounded set depending only on C and B: y=s(u-h0)+(z-tu). By the lattice identity, choose for each such possible integral y integers b_F with y=sum_F b_F(h(F)-h0). There are only finitely many y, so all negative coefficients and all sums of coefficients have a common finite bound. Start with q a_F copies of each F and s additional copies of the empty subset. Add b_F to the copy counts and subtract sum_F b_F from the empty copy count. The total number of copies is still t, and the histogram is z. Because every a_F is positive, all copy counts are nonnegative once q exceeds the finite correction bound. This proves the claim without invoking a black-box semigroup theorem.
+
+In particular tC cannot furnish infinitely many counterexamples to the literal: an admissible near-uniform even-weighted vector exists at every order permitted by d-regularity. For completeness, write n=(d+1)q+r. At r>0 choose r degree coordinates to round up; both parities of their index sum are available whenever 1<=r<=d, by taking a size-r subset and swapping across an adjacent selected/unselected boundary. For odd d the allowed n is even, so r is even and cannot equal 1 or d; thus the sharper bound still permits both rounded values. At r=0 exact balance has even weighted sum unless precisely the stated q and ceil(d/2) are odd. In that branch move one unit from coordinate zero to coordinate one to flip parity within error one. The asymptotic helper allows B=1 and realizes these vectors for all large t.
+
+### Stronger bounded-component consequence
+
+Fix d and a bound M on component order. There are finitely many component isomorphism types C_i. For each type use its positive mixture block of A_i copies with exact uniform histogram. In any graph whose components have these types, some type has arbitrarily many copies as total order grows. Select a type j of largest copy count, reduce each other type's count modulo A_i and realize its complete mixture blocks exactly; put its bounded remainder copies into the empty subset. The residual target histogram for the copies of C_j has the right total and even weighted sum, and differs from its uniform vector by a bounded amount independent of the graph. The previous saturation helper realizes it once that largest copy count is large. The bounds can be maximized over the finitely many choices of j. Hence the conjectured bounds hold, apart from finitely many graphs, within each fixed bounded-component-order class.
+
+This is not the all-d conjecture: the constants depend on the individual components (factorially large mixture blocks are used), and a sequence of connected d-regular graphs of growing order is untouched. No effective uniform bound in d is proved. Replacing finite-type correction by arbitrary components has no bounded correction reservoir. Alternating-trail local improvement still lacks a theorem guaranteeing the requisite endpoint/parity trail; existence of formal lattice combinations uses subgraphs of different copies and does not implement moves within one connected host. Exact unpaid lemma: a uniform-in-component-order realization or exchange principle for fixed d that pays the literal error-one rounding set, outside finitely many hosts.
+
+Qualification: the lattice and saturation argument is an ordinary finite convex-combination/integer-correction helper. Its bounded-component consequence has no independent or prior review and receives no novelty or significant-discovery claim. It is recorded to close the fixed-component obstruction route, not to manufacture a survivor.
+
+## 358527: necessary cycle domination, and failures of amplification
+
+Literal: there exists a universal natural chromatic threshold such that every finite G above it and every tournament T on V(G) have a vertex whose open out-neighborhood induces a G-cycle. The primary Conjecture 11 states exactly this. Source Theorem 2 only makes neighborhoods bipartite; Proposition 5 only supplies regular hypercubes. Neither is a refutation.
+
+### Equivalent obstruction formulation
+
+The local-forest condition is equivalent to saying: every G-cycle C dominates every vertex outside C in T, meaning each such vertex x has some c in C with c->x. Indeed an outside vertex violating this dominates all of C, placing the cycle in its out-neighborhood. Conversely any cycle in an out-neighborhood avoids its center and violates that domination property. This is an exact equivalence for all cycles, not just induced cycles.
+
+The inherited chi(G)<=2l+1 bound follows by covering V(G) with the l open out-neighborhoods of an l-cycle, plus at most one uncovered cycle vertex, then coloring each forest with its own two colors. Cycle domination does not bound l. A graph family with increasing girth remains a live obstruction route. No uniform threshold follows.
+
+### Doubling cannot raise chromatic number
+
+The underlying source operation is the Cartesian prism G square K2: two copies plus the matching joining corresponding vertices. If chi(G)=q>=2, color one copy by a proper q-coloring c and the second by sigma(c), where sigma is a fixed-point-free cyclic permutation of the q colors. Every vertical edge has different colors, and each layer is proper. The induced first layer forces the opposite inequality, so chi(G square K2)=chi(G). For a nonempty edgeless base the prism has chromatic number two. Consequently iterating the exact source forest-gluing operation never raises chromatic number beyond max(2,chi(base)), independently of tournament choices. This pays the precise failure of that amplification, not a new local-to-global theorem.
+
+### Why homogeneous substitution fails
+
+If an external vertex x dominates an entire module B in T and G[B] has a cycle, then that cycle lies in G[N_T^+(x)]. Thus in a tournament substitution with at least two nonempty modules, every module with an incoming quotient arc must induce a forest. In particular replacing every quotient vertex by the same cyclic graph is impossible. At most one module can have no incoming quotient arc, so at most one cyclic module is compatible with this substitution scheme. This blocks homogeneous cyclic substitution, not arbitrary interlacing of modules.
+
+More elaborate cross-links between two forest pieces are controlled by their component-incidence multigraph: contract each tree component on each side and keep the cross-edges, retaining parallel edges. The union is a forest exactly when this multigraph is a forest. A cycle in the contracted multigraph lifts through unique paths inside the tree components; conversely contracting tree edges preserves whether there is a cycle. Thus the source's single cross-edge guarantee can be weakened to this exact criterion, but to use it for every tournament neighborhood one must simultaneously control all these incidence multigraphs. Generic dense cross-links create parallel connections and cycles. No chromatic-raising operation satisfying the simultaneous condition was found.
+
+Critical-graph averaging also stalls: sum_v e(G[N_T^+(v)]) weights each G-edge xy by the number of common tournament predecessors of x,y. This number can be zero, so local forest bounds alone do not supply a positive edge multiplicity for a minimum-degree argument. The source hypercubes additionally show that unbounded regular degree is compatible with all local constraints. Source Theorem 9 already bounds fractional chromatic number by six in this class (take c=2); using it as a new result or equating fractional and integral chromatic number would be invalid.
+
+Exact unpaid alternative: either prove every finite pair with all out-neighborhoods forests has chi(G)<=C for a universal C, via a dichotomy controlling the sparse-common-predecessor case, or give a construction with unbounded chi and verify the component-incidence acyclicity constraint in every open out-neighborhood. No full proof or counterexample, no novelty/significance qualification.
+
+## Final gates and scope
+
+All targets remain INCOMPLETE/PARK, no qualified survivor, credit zero. The star helper settles only n=2; the degree helper settles fixed/bounded-size components and rules out a proposed obstruction route; the tournament helpers explain concrete failed amplifications. None satisfies the requested full literal. No FULLCANDIDATE or dormant formal plan is warranted. All formal, independent, prior, novelty and acceptance gates remain unpaid. The finite formulations use natural/integer counts, finite partitions, permutations, edges, colorings and walks; no claim about kernel feasibility of a whole library or actual Lean verification. Root alone adjudicates and dispatches any next work.
