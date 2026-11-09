@@ -1,0 +1,13 @@
+# MathDB 352253 — draft dossier complete, zero accepted credit
+
+Seven-page AI-assisted draft: paper.pdf; editable sources: paper.md, paper.template.md and paper.ps. Full dossier: dossier.zip. Byte-identical formal packet: lean-source.zip. Root alone accepts.
+
+Fresh independent source-definition recomputation confirms 2,328 labelled pure states, 9,846 legal-centre arcs, minimum order 11, and 25 chain-free labelled minima. The seven-move witness reaches order 10. All numerical statements and matrices are regenerated; the exact raw MathDB JSONL line and its hash are preserved. Standalone offline recomputation passes using copied inputs, without any Lean invocation. All seven final PDF pages were rendered and visually inspected.
+
+The chain claim uses the illustrated edge-distinct capacity reading, allowing apex/attachment coincidences; it does not reuse the earlier restricted incidence test. Significance is qualified and modest, with no priority claim. The manuscript preserves the source-known Figure 14 relationship and sharpens the brief's timing: (c) appears after one expansion in the shorter trace; both (c) and (g) appear after two expansions in the original detoured trace. No printed gadget occurs in the initial H.
+
+Round-two independent fidelity review held replay at Closure276. Its qualified definitions/bridge verdict is preserved. Round-three smaller census checks and narrower imports retained the data/statements, and the root's subsequent receipt reports a full strict replay PASS for the hash-bound packet. This worker reused those receipts and ran no Lean, lake or leanchecker. Packet SHA-256: c0dba5dc4f6738531b09750bd5e6f46ba565ba952f50fbe927e4f9cfe4a0e08c.
+
+Initial and supplemental frozen-input before/after hashes match; source-copy hashes match originals. Scripts are isolated Python, capped, serialized, and local. No network, git, children, publication, accounts, external messages, browser tabs, other-lane writes, or shared-ledger edits. No running jobs at handback. Earlier checker development failures (child-pair format and an overstrong Figure 14 timing assertion) were corrected and the final checker rerun successfully; resource logs preserve their nonzero exits.
+
+PROOF.md, REPRODUCE.md, results.json, receipts/, QA PNGs, source copies, input manifests and the deliverable manifest are included. The archive receipt is external to avoid circular hashes. Scratch extraction directories are excluded from the ZIP; the original packet and complete extraction hashes are included. The live resources.jsonl is excluded from deliverable hashing; its stable prepackaging snapshot is separately included. Acceptance and any broader prior-art or priority assessment remain root responsibilities.

@@ -1,0 +1,19 @@
+import csv,hashlib,json,pathlib
+p=pathlib.Path(__file__).resolve().parent.parent
+rows=[]
+for line in (p/'logs/replay.tsv').read_text().splitlines():
+ phase,module,stats=line.split('\t'); wall,user,system,rss,rc=stats.split()
+ rows.append(dict(phase=phase,module=module,wall_seconds=float(wall),user_seconds=float(user),system_seconds=float(system),max_rss_kib=int(rss),exit_code=int(rc)))
+completed=[x['module'] for x in rows if x['phase']=='check']
+order=(p/'import-order.txt').read_text().splitlines()
+summary={'modules_total':len(order),'modules_compiled_and_kernel_checked':len(completed),'completed_modules':completed,'failed_module':'Closure276','failed_phase':'build','failure':'Lean memory_exception at interpreter under -M3500; signal 6','failed_wall_seconds':11.69,'failed_user_seconds':1.83,'failed_system_seconds':1.89,'failed_max_rss_kib':3586420,'uncompleted_modules':[m for m in order if m not in completed],'calls':rows,'max_successful_rss_kib':max(x['max_rss_kib'] for x in rows),'max_successful_wall_seconds':max(x['wall_seconds'] for x in rows)}
+(p/'replay-summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+with (p/'per-module.csv').open('w') as f:
+ w=csv.DictWriter(f,fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
+def hashes(fn):
+ return dict(line.split('  ',1)[::-1] for line in (p/fn).read_text().splitlines())
+before=hashes('inputs-before.sha256'); after=hashes('inputs-after.sha256'); assert before==after
+assert (p/'extracted-before.sha256').read_bytes()==(p/'extracted-after.sha256').read_bytes()
+review={'mathdb_id':352253,'role':'independent formal-fidelity review; not acceptance','archive_sha256':before['delta-formal-r2/source.zip'],'gates':{'A':{'verdict':'QUALIFIED_PASS','finding':'Faithful root-fixed illustrated edge-distinct chain reading; wording qualification documented.'},'B':{'verdict':'PASS','finding':'Literal/canonical transport, literal chain absence and controls match definitions; replayed bridge modules pass.'},'C':{'verdict':'FAIL','finding':'Fresh replay stopped at Closure276 memory_exception; 323 of 634 modules compiled and kernel checked. No retry or limit increase. Final literal_negation axiom print and full metadata audit unavailable.','failed_module':'Closure276','completed':len(completed),'total':len(order),'failure_log':'logs/build-Closure276.log','partial_independent_audit':'Attempted after replay stop, failed due unannotated counter inferred as MessageData in reviewer-only helper. No claim of completed independent metadata audit; no retry. Conditional endpoint axiom print has only propext, Classical.choice, Quot.sound.'},'D':{'verdict':'PASS','finding':'Independent 2328-state / 9846-arc DAG, minimum 11, all 25 minima chain-free, seven moves to order 10, positive controls.'}},'overall':'HOLD','required_fix':'Repackage the closure certificate to compile every module under the unchanged -M3500 and other caps; independently replay the entire new archive, explicit-module leanchecker on every module, print axioms of Round2.literal_negation, and finish full local declaration metadata audit. No source patch was made by this reviewer.','acceptance':False,'credit':0,'input_hashes_before':before,'input_hashes_after':after,'extracted_source_manifests_equal':True,'supplemental_hash_check':'logs/supplemental-hash-check.log','replay_summary':'replay-summary.json','per_module_resources':'per-module.csv','drivers':['scripts/replay.sh','scripts/cap.sh','scripts/env.sh','scripts/recompute.py','scripts/finalize.py'],'numerical_result':'numerical.json','source_scan':'logs/source-scan.txt','no_child_agents':True,'no_network':True,'no_background_jobs_at_handback':True}
+(p/'review.json').write_text(json.dumps(review,indent=2)+'\n')
+print(json.dumps({k:v for k,v in summary.items() if k not in ('calls','completed_modules','uncompleted_modules')},indent=2))

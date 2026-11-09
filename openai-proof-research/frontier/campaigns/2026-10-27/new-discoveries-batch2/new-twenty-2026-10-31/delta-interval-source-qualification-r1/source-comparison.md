@@ -1,0 +1,42 @@
+# Source qualification: MathDB 377613
+
+Audit date: 2026-11-05 UTC. Result: no full resolution or complete routine bridge for the full conjunction identified in the bounded inspected evidence; NO claim that the problem is currently open or globally novel. PARK, zero credit. Task order was source qualification first, then ordinary audit; no mathematical search engine was run.
+
+## Exact source and versions
+
+The frozen raw/377613.jsonl and ID entry in results.json agree on these vertices:
+
+- Delta_3: (0,0),(4/7,2/7),(7/11,4/11),(5/7,3/7),(1,1).
+- Delta_4: (0,0),(5/12,1/6),(9/19,4/19),(1/2,2/9),(2/3,10/27),(17/24,5/12),(1,1).
+
+These match the actual printed Conjecture 7.8 in math/0210041v1 p65 and v2 p61. Both pages were rendered and viewed independently here; v1's Greek glyphs are poorly rendered but the fractions and targets are readable. The frozen author CRTSS.8.pdf has the same section 7.2 statement on p61. Figure 8 is a graph of asserted/conjectured values, not an endpoint construction catalogue. The frozen Figure 8 image is reference evidence; the source text explicitly labels the bounds computational and not verified sharp. An exact proof must establish BOTH complete graphs on [0,1], or refute at least one source-faithful instance.
+
+Live original arXiv HTML lists only v1 (2002-10-03 02:22:08 UTC) and v2 (2002-10-05 18:43:59 UTC); no journal reference is attached to that original record. The manuscript title-page date is September 28, 2002. This date is not its deposit date and neither establishes global priority. Cached PDF target bodies were preferred over duplicate downloads. Definition equations (2),(3), Lemma 3.4 and section 7.2 supply the precise measure, center, infimum and endpoint conventions detailed in ordinary-audit.md.
+
+Original public source: https://arxiv.org/abs/math/0210041 . Original cached author PDF URL: https://www.math.csi.cuny.edu/~obryant/Mathematician/Papers/CRTSS/CRTSS.8.pdf . Frozen receipts retain response hashes and dates. No contact was made.
+
+## Journal successor and printed recipes
+
+The later paper is Martin–O'Bryant, The Symmetric Subset Problem in Continuous Ramsey Theory, arXiv math/0410004 (v1 September 30, 2004; v2 August 15, 2006), Experimental Mathematics 16(2) (2007), 145–165. Author-page JavaScript explicitly constructs the download URL SSPCRT.pdf and labels it the official Experimental Mathematics version; this PDF was fetched successfully and its body inspected. Its arXiv v2 title page currently has a generated date November 13, 2018 despite a 2006 deposit; no 2018 submission or priority conclusion is inferred. The journal imprint, not a search engine crawl date or later online-host date, is the publication chronology used here.
+
+URLs: https://arxiv.org/abs/math/0410004 ; https://personal.math.ubc.ca/~gerg/papers/downloads/SSPCRT.pdf ; author metadata https://personal.math.ubc.ca/~gerg/index.shtml?abstract=SSPCRT . The author's other-page URL ?papers returned only navigation HTML and is NOT treated as an exhaustive publication list.
+
+Both arXiv successor bodies were screened for interval/LP/polygon/conjecture references; the v2 relevant definitions and section 3 interval conversion/proofs, terminal-line argument, and section 4 were read. Journal Proposition 3.1 and its complete interval-conversion proof, Proposition 3.3's approximation argument, Proposition 3.10 and surrounding derivation, and section 4 were inspected. The fixed-k section, original Conjecture 7.8 and Figure 8 are omitted, not promoted to a theorem. No exact finite-k polygon proof was identified in these bodies. Journal Conjecture 4.1 concerns unrestricted Delta, a different target.
+
+Printed original recipes inspected: Proposition 5.1's conversion A(S)=union_{s in S}((s-1)/n,s/n); Lemma 6.10's g-dependent discrete construction and adjoining discussion; Table 3 and its B*[2] row S={1,2,5,7}; section 7.1's unrestricted limiting argument; section 7.2 in all three original bodies. There are no printed all-segment three/four-interval endpoint families in the target passage. Table 3 plus Proposition 5.1 DOES give a complete bridge for r265's initial Delta_3 family, by reflection and scaling, as proved in ordinary-audit.md. This identifies a concrete duplicate partial construction. It does not exclude the entire unresolved conjunction as routine. The half-density block in the limit of Lemma 6.10 cannot be declared a single indicator interval.
+
+## Citing primary bodies and scope differences
+
+1. Martin–O'Bryant, The supremum of autoconvolutions, with applications to additive number theory, Illinois J. Math. 53(1) (2009), 219–235, official author-hosted offprint https://personal.math.ubc.ca/~gerg/papers/downloads/SAAANT.pdf . Read Theorem 1.1 and Corollary 1.2, the complete section 4 proof of that corollary, and the surrounding stated applications. It gives D(E)>0.631 epsilon^2 for indicator functions, by substituting 1_E into the analytic inequality. This is not the fixed-k polygon. For example at epsilon=1/2 its resulting constant is strictly below 2/9, so that displayed bound alone cannot close Delta_4. No full-proof review of its harmonic-analysis kernel construction is claimed or needed to identify this scope mismatch.
+
+2. Matolcsi–Vinuesa, Improved bounds on the supremum of autoconvolutions, author manuscript dated September 14, 2009, https://math.bme.hu/~matolcsi/sch0914.pdf . Read introduction, notation, section 3 statement/argument structure, section 4 counterexample formulation and explicit formula (14), and appendix step-function recipes, especially the 208-bin polynomial. It refutes a Schinzel–Schmidt extremal-density conjecture and a related norm conjecture. These are NONCONSTANT nonnegative density/step functions with many bins, not indicators of at most four intervals. Its displayed examples supply no direct source-faithful witness here. Passing from a density to a set by fine-scale discretization/probabilistic thinning loses the fixed interval count. We did not verify its decimal witnesses, repeat its numerical search, or infer that its numerical proof quality settles any target in this lane.
+
+3. Cilleruelo–Vinuesa, B2[g] sets and a conjecture of Schinzel and Schmidt, discovered via a primary author PDF URL. Fetch FAILED TLS certificate verification. Stopped without retry or verification bypass. The body remains unread; search excerpts are routing evidence only. Receipt: receipts/cilleruelo-vinuesa.pdf.json. This and uninspected later citing proofs remain explicit source-clearance gaps. No exhaustive citation census is claimed.
+
+Bounded live web searches (three batches, exact queries/results saved in receipts/search1.json through search3.json) covered original title/Conjecture 7.8, author successors, symmetric subsets with three/four intervals, Delta_3 and corrections/errata. No target-specific full proof or erratum was located. This is not evidence that none exists. A current journal retraction/correction service and all citing primary bodies have not been exhausted. No publisher denial was bypassed; no GitHub API request, retry or alternate API route was made. MathDB's current solution state was not reaccessed under inherited access restrictions.
+
+## Bounded current registries and history
+
+Fresh public HTTP snapshots of https://www.trureturing.org/conjectures , https://raw.githubusercontent.com/Vilin97/lean-pool/main/LeanPool/projects.yml , and https://raw.githubusercontent.com/openai/math/main/CONTENTS.md were fetched successfully and hashed. All three match the earlier r265 response hashes. Exact-ID/source/family screen results and literal terms are in registry-screen.json; all tested terms had zero matches. The pinned local OpenAI catalogue and complete preprint PATH listing were also screened. This is bounded catalogue review, not proof-body review of a whole repository. Current commit heads were not established; no git operation or blocked API was used. Pin from sources/upstream.json: fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb (2026-10-08); live bytes are distinguished from that pin.
+
+Read r265 history/inventory/receipts and parent integration as historical routing evidence, not an independent novelty certificate. Current ledger/STATUS confirm 52/60; parent r265 integration grants zero credit and explicitly withholds Pi execution. No shared state was changed. No full eligible routine adaptation was found; source qualification remains incomplete and does not authorize costly execution.
