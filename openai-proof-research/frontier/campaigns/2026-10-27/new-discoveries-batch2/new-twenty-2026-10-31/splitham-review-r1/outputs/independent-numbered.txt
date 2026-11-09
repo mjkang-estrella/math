@@ -1,0 +1,54 @@
+     1	import itertools as it,json,time,hashlib
+     2	from pathlib import Path
+     3	root=Path(__file__).resolve().parents[1]
+     4	def graph(m,B):
+     5	    # Literal brief: independent i adjacent clique k iff k-i belongs B.
+     6	    return [{v for v in range(2*m) if v!=u and (u<m and v<m or u<m<=v and (u-(v-m))%m in B or v<m<=u and (v-(u-m))%m in B)} for u in range(2*m)]
+     7	m=9;r=5;B={0,1,2,3,5}; adj=graph(m,B);n=2*m
+     8	assert all(v in adj[u] for u in range(m) for v in range(m) if u!=v)
+     9	assert not any(v>=m for u in range(m,n) for v in adj[u])
+    10	cut_count=0
+    11	for k in range(r):
+    12	 for cut in it.combinations(range(n),k):
+    13	  left=set(range(n))-set(cut);seen={min(left)};todo=list(seen)
+    14	  while todo:
+    15	   for v in adj[todo.pop()] & left-seen: seen.add(v);todo.append(v)
+    16	  assert seen==left,(cut,seen);cut_count+=1
+    17	# Enumerate every possible centre and every six-element subset of its neighbours.
+    18	checks=0; leaf_min=100
+    19	for u in range(n):
+    20	 for leaves in it.combinations(sorted(adj[u]),r+1):
+    21	  edges=sum(v in adj[w] for w,v in it.combinations(leaves,2))
+    22	  assert edges not in (0,1),(u,leaves,edges)
+    23	  leaf_min=min(leaf_min,edges);checks+=1
+    24	# Held-Karp path DP, with no independence-count pruning.
+    25	# reach[mask] is bitset of possible final vertices for simple paths from vertex 0.
+    26	reach=[0]*(1<<n);reach[1]=1
+    27	neigh=[sum(1<<v for v in a) for a in adj]
+    28	states=0
+    29	for mask in range(1,1<<n,2):
+    30	 ends=reach[mask]
+    31	 while ends:
+    32	  bit=ends&-ends;ends-=bit;v=bit.bit_length()-1;states+=1
+    33	  available=neigh[v]&~mask
+    34	  while available:
+    35	   nb=available&-available;available-=nb;reach[mask|nb]|=nb
+    36	res={'m':m,'r':r,'B':sorted(B),'edges':sum(map(len,adj))//2,'degrees':list(map(len,adj)), 'cut_tests':cut_count,'forbidden_tests':checks,'minimum_leaf_edges':leaf_min,'dp_states':states,'dp_full_endpoints':[v for v in range(n) if reach[-1]>>v&1], 'no_path_0_1':not bool(reach[-1]&2),'adjacency':[sorted(a) for a in adj]}
+    37	assert res['no_path_0_1']
+    38	source=root.parent/'expanded-corpus-r156';raw=json.loads((source/'raw/373598.jsonl').read_text());results=json.loads((source/'results.json').read_text())['373598']
+    39	res['statement_hash']=hashlib.sha256(raw['statement'].encode()).hexdigest();assert res['statement_hash']==results['statement_sha256']
+    40	(root/'outputs/independent.json').write_text(json.dumps(res,indent=2)+'\n');print(json.dumps(res),flush=True)
+    41	# Exact cyclic regular search, translation normalisation 0 in B suffices.
+    42	# Criterion: all distinct clique neighbour sets intersect in >=2. Necessary
+    43	# (one clique leaf plus r independent leaves) and sufficient (cases q=0,1,2,>=3).
+    44	rob=[]
+    45	for r in range(4,9):
+    46	 for m in range(r+4,min(r*(r-1)//2+1,20)+1):
+    47	  full=(1<<m)-1; tested=0;good=0;first=None
+    48	  for tail in it.combinations(range(1,m),r-1):
+    49	   b=1+sum(1<<x for x in tail);tested+=1
+    50	   if all((b&(((b<<t)|(b>>(m-t)))&full)).bit_count()>=2 for t in range(1,m)):
+    51	    good+=1
+    52	    if first is None:first=[0,*tail]
+    53	  row={'r':r,'m':m,'order':2*m,'tested_0_normalized':tested,'good':good,'first':first};rob.append(row);print(json.dumps(row),flush=True)
+    54	(root/'outputs/robustness.json').write_text(json.dumps(rob,indent=2)+'\n')
