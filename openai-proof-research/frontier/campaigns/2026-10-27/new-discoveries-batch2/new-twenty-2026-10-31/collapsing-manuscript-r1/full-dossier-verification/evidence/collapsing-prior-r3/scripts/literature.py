@@ -1,0 +1,2 @@
+from fetch import *
+for url,name in [('https://math.ucdavis.edu/~deloera/researchsummary/nonreg.pdf','deloera.pdf'),('https://arxiv.org/pdf/math/0312069','santos.pdf'),('https://arxiv.org/pdf/1707.02814','schroter.pdf'),('https://sethsullivant.wordpress.ncsu.edu/publications/','sullivant-publications.html'),('https://www.ams.org/books/gsm/194/gsm194-endmatter.pdf','sullivant-index.pdf'),('https://www.ams.org/books/gsm/194/gsm194-ch8.pdf','sullivant-ch8.pdf')]:fetch(url,name)
