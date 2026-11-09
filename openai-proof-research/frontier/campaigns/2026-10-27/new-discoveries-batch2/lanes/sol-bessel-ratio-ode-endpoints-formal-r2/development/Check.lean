@@ -1,0 +1,26 @@
+module
+import BesselInterfaces
+#check ContinuousAt.comp
+#check Filter.Tendsto.rpow_const
+#check tendsto_rpow_nhdsWithin_zero
+#check FormalMultilinearSeries.coeff_injective
+#check FormalMultilinearSeries.ext_iff
+#check ContinuousMultilinearMap.ext_ring
+#check FormalMultilinearSeries.coeff
+#check FormalMultilinearSeries.coeff_ofScalars
+#check FormalMultilinearSeries.derivSeries_coeff_one
+#check ContinuousLinearMap.comp_hasFPowerSeriesOnBall
+#check FormalMultilinearSeries.ext
+#check ContinuousMultilinearMap.ext_iff
+#check HasFPowerSeriesOnBall.hasSum
+#check HasFPowerSeriesOnBall.sum
+#check FormalMultilinearSeries.ofScalars_apply_eq
+#check HasFPowerSeriesOnBall.add
+#check HasFPowerSeriesOnBall.mul
+#check FormalMultilinearSeries.mul
+#check HasFPowerSeriesOnBall.const_mul
+#check HasFPowerSeriesOnBall.const_smul
+#check HasFPowerSeriesOnBall.id
+#check tsum_eq_zero_add
+#check Summable.tsum_eq_zero_add
+#check Summable.tsum_mul_left
