@@ -1,0 +1,60 @@
+# Independent reading and access limits
+
+This is the reading record for the independent Structural233 correctness review, round 1. It is separate from the author's historical reading record. Authorized provenance: Codex / GPT-6 Astra / xhigh / default, as supplied in the role header. Verdicts are proposed for parent adoption only. No contribution verdict, acceptance or count is assigned.
+
+## Isolation and exact admission
+
+All commands used `/home/mj-kang/Documents/Dev/math/openai-proof-research` as workdir. All created notes, code, controls and sealing records stayed beneath the exclusive `frontier/campaigns/2026-10-14/structural-r220-isolated-continuation/structural-r233-proof-r1/` root. The wrapper is isolation only. No git commands, shared edits, staging, commits, nested agents, browser UI, publication, uploads, submissions, contacts or downstream formal/manuscript/release work occurred.
+
+The exact project-root AGENTS.md and sources/upstream.json were read directly. Only acceptance bytes [4801,6347) were read from frontier/NEW-TEN-2026-10-14.md, with the supplied 1546-byte SHA256 verified. The opening and other ledger records were not displayed. No catalogue body was needed or read in this review.
+
+Before the first author-root inventory, all 389 literal full-path wildcard/no-r patterns and 162 full-path substring guards were independently enumerated in guards.json. They were compared exactly against the admitted author's guard arrays. Matching is casefolded full-project-relative POSIX, not basename matching. The inherited component-derivative and administrative-heading rejection policies were also retained. Access was more restrictive than a guarded broad search: only exact directly admitted files and the manifest's exact file selection were read. No original-history traversal was undertaken, so no candidate history heading/body was admitted. No claim of exhaustive history clearance or perfect alias classification follows. Broad exclusions can omit useful originals; no excluded body was reopened to resolve that limitation.
+
+The author root was not a blanket body exception. First its three supplied detached hashes were verified, then the 48 manifest entry names were checked for canonical safe relative paths before opening them for authentication. Those 48 files plus only the five authorized detached files were hashed and statted. A metadata-only walk confined to that exact root checked the surface: exactly 53 regular files, no symlink, twelve subdirectories. No containing wrapper or sibling was traversed. The independent baseline is author-baseline.json. Every admitted original had mode 0444, and every selected file matched its recorded byte length and hash. Exact frozen statement, author proof, selection and verifier anchors also match the user-supplied values.
+
+I inspected verify_packet.py before executing it with python -I -B and all three explicit anchors. It is read-only. I did not execute run_controls.py, read_source.py or read_primary.py on the originals. The own reader writes only a semantic log in the review root. The author's FINAL.md and REPORT.md were read under their explicit admission, not as independent mathematical authority. No parent, foreign-owner, peer review, contribution review, task registry, liveness/status/activity, assessment or other-round body was read or used.
+
+## Source authentication and semantic coverage
+
+The complete sources/preprints-tree.json was authenticated at 4858136 bytes, 13223 entries, SHA256 eeecc1da49aa02877d137c4fb90339aca460ec27718b623916368bc08dc5e09b. Only the exact Source357 prefix was selected as metadata, yielding eleven entries including eight blobs. The admitted copied source bytes independently match the pinned canonical Git blob hashes and sizes. I did not make a fresh network retrieval or inspect another canonical folder. Authentication does not establish truth; truth of all operative upstream proofs at the specified pin is stipulated by the assignment.
+
+Semantic source reading was complete for:
+
+* introduction.tex, lines 1–258;
+* coordinates.tex, lines 1–1166;
+* pinching.tex, lines 1–1149;
+* renormalization.tex, lines 1–839;
+* paper.tex, operative macros, abstract and includes through line 57, with production/title and end/bibliography-driver masks at lines 37–42 and 55–57.
+
+All four complete mathematical includes were displayed in bounded, untruncated outputs. Source section and driver boundaries were classified before display. There was one actual incidental exposure: paper.tex line 6 included the PDF author/production metadata despite the masks elsewhere. This is recorded honestly and is not mathematical coverage. No proof line was lost to those driver masks. The source README, PDF and bibliography were authenticated only; the PDF was not rendered and the bibliography was not semantically read by this reviewer. TeX contains the complete operative argument and its dependencies; there is no unread operative include.
+
+The actual source main theorem gives finite dimension-only L_n=4sqrt(A(n)). It was not treated as an almost-isometry statement. The source rescaling, harmonic, matrix/heat, pinching, jet, ellipsoid and ambient-distance proofs were read for their exact interfaces, without auditing their stipulated truth.
+
+No formal build or formal-support claim was made. The author's reported exact Lean endpoint 404 was read as its access disclosure; I did not independently retry it or inspect a formal declaration. No step of this correctness verdict depends on Lean support.
+
+## Independent primary comparison scope
+
+The eight admitted original primary source containers and extracted TeX files were authenticated as part of the 53-file baseline. I additionally checked, in memory and without extracting to disk, that each explicitly named TeX archive member or gzip decompression equals its admitted article.tex bytes. This verifies local container/member identity, not external availability today or full proof reading. The versions are exactly the admitted GV25 2406.13771v1, HZ26 2608.16021v1, KM21 1907.02614v3, DPG18 1708.02060v3, AH18 1703.04939v1, MN19 1405.2222v3, DT12 0910.4869v1 and CN13 1111.2184v1. The supplied version metadata records the June 2025 revision for DPG18. No broader literature search was undertaken.
+
+For boundary classification and semantic extraction I used the same bytes.splitlines(keepends=True) parser. Byte offsets and inclusive line ranges are preserved in semantic-reads.jsonl. Encoding was UTF-8 except DT12, which was decoded as Latin1 from the outset. No extraction was blank/scanned: byte and line counts were checked before semantic displays. No unclassified prefixes, covers, issue contents, acknowledgements, licence/download text or primary personal-credit bodies were displayed.
+
+Initial classification reported structural markers and masked editorial labels, including start and stop boundaries. Plain-TeX DT12 required an additional classification of its proclaim/qed and numbered bold section markers; this was done before its semantic display. The selected ranges terminate at the actual proof end or before the next section. Whole-line TeX comments were masked in primary displays. Inline mathematical comments, such as AH18's proof-start comment, are not counted as operative coverage. A broad provisional 'thanks' pattern matched mathematical transitions in AH18/MN19; these were resolved as nonpersonal reference transitions before display. The one unresolved MN19 candidate at line 1358 lies outside every selected semantic range and was never displayed. This classifier issue therefore leaves no missing line in an admitted proof passage.
+
+Actual independent primary semantic reads were:
+
+* **GV25:** 269–333 (statements, global/local distinction and associated mathematical remarks/example); 618–744 (complete main product/tail/separation/surjectivity argument, conditional there on the later constructed approximating manifolds and maps). This review did not independently read the later inter-manifold construction/gluing proof. The source already supplies its own complete chart machinery; the comparison here checks the summable-GH regime and does not import unverified GV machinery into the new proof.
+* **DT12:** 2501–2644 (complete Lemma 7.32 squared-angle derivative proof); 2648–2987 (entire Section 8 through Proposition 8.34, including the all-pairs argument). Earlier coherent-plane/graph construction is a dependency of that comparison and was not independently re-read. No claim of full-paper coverage is made.
+* **HZ26:** 1795–1964 (Reifenberg definition, nondegeneracy statement and proof, canonical Reifenberg statement and its actual transformation outline); 1967–2080 (complete selected chart-characterization section through both implications); 2083–2193 (quantitative bi-Lipschitz and Hessian-control statements/proofs). Its external HP references and omitted contradiction details were not independently closed. They are not used as replacements for the stipulated Source357 proof.
+* **KM21:** 744–780 (topological regularity theorem and its volume propagation/Reifenberg proof). Its stability and sphere/cone portions were not independently read here.
+* **DPG18:** 609–631 (volume rigidity and Bishop/density-one regularity statements). Their proofs were not independently re-read here; the new argument uses the stipulated Source357 operations in which those facts are already operative.
+* **AH18:** 1339–1359 (harmonic approximation/replacement corollary and its proof). The earlier convergence-stability and Sobolev approximation lemmas it invokes were not independently re-read here.
+* **MN19:** 1406–1434, with whole-line comments 1426–1433 masked (k-rectifiability theorem and final measure-density proof). Its preceding good-set construction was not independently re-read here.
+* **CN13:** 128–181 (uniform Reifenberg definition, higher-dimensional embedding and non-Hölder-metric/angle statements with the intervening mathematical explanation). The example construction and its externally quoted construction lemma were not independently read by this reviewer. These statements are used only to distinguish the type of claimed obstruction; no CN counterexample is asserted against the frozen theorem.
+
+These are narrower than parts of the author's recorded primary reading. I have not represented the author's reading as my own. The author also discloses earlier archive-format diagnosis, a recovered 83-token truncation, a failed initial Latin1 attempt, corrected masks, primary boundary overreads and search/editorial exposures. Those historical disclosures were read, not reenacted. This review had no truncated semantic tool result requiring recovery, no primary body overread beyond its selected boundaries, no network search result exposure and no late new source read after composing a different theorem. All operative source reads preceded the written final review analysis.
+
+## What remains outside this verdict
+
+The complete source operations are stipulated true. The new source-to-refinement bridges were checked in REVIEW.md, and no essential verification remains unresolved at that relative scope. The primary reads support bounded comparison statements, not literature completeness, priority, full external-dependency certification, or a contribution verdict. No original-history body was necessary as a correctness premise; absence of history reading proves no novelty. The exact smooth sphere example is checked directly in REVIEW.md.
+
+Original author bytes and modes are rechecked from the preserved baseline after semantic reading and again during the final seal verification. Own controls concern only copying, byte/mode tampering and exact-selection checks. They do not certify mathematics. Protected source/primary bodies and named metadata remain private/local under their original rights. No copied source or primary body is included in the review packet; the local baseline and reading metadata remain private/local nonetheless.

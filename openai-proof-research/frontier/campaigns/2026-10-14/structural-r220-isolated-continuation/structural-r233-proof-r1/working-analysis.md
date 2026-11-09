@@ -1,0 +1,24 @@
+# Independent correctness analysis (working record)
+
+Entire submitted proof and all five required mathematical/reading prose files, FINAL and REPORT read. All source mathematics in introduction.tex 1–258, coordinates.tex 1–1166, pinching.tex 1–1149, renormalization.tex 1–839 read in complete bounded outputs; paper macros/includes read with production masks. Source truth is stipulated, not audited. One incidental source-driver pdfauthor metadata line (paper.tex 6) was displayed; record this exposure, not mathematical coverage. No truncated semantic tool result occurred in this review so far.
+
+Authenticated 48 selected + five detached author files and twelve subdirectories, modes 0444; exact detached anchors agree. Guard sets independently installed and compare exactly: 389 wildcards and 162 substrings. Complete tree authenticated; eight copied source blobs independently match canonical Git blob hashes. No broad project or history scan, peers or parents read.
+
+Provisional mathematical findings (not a final verdict):
+
+* Exact category and flat sequence match. Source theorem only gives L_n=4sqrt(A(n)); refinement must come from new (1.1).
+* Heat residual T_t is PSD with norm at most lambda+2kappa||G||infty+sup||P_t E_cut||; all tend to zero uniformly 0<t<=1. Positive-time measure semigroup equality holds at every testing center, entrywise then as a matrix, not just a.e. Total heat mass and original gradient bound are essential. Raw mass growth for n=2 remains bounded beyond support.
+* Gaussian shell coefficients have superexponential decay; exterior shells bounded by r_i^gamma I uniformly in support radius. Weighted bound uses the paid inverse-increment convolution, not commuting inverses. a=1/16 satisfies 4a<gamma=1/2 and 2-4a>0. Hence regularizer contribution is uniformly o(1) relative to H_k>=I/2.
+* Localized heat kernel tail gains exp(-cL^2/8) independently of its cumulative envelope constant. Nearby pole difference retains distance/r_i, with gradient along geodesic, continuity/full-support extension at singular source poles, and cutoff difference <=C d/(Lr_i). Constant independent of L>=2.
+* Fine net is finite by properness/total boundedness. Coarse source localization is needed before upgrading to <=4h r_i. Volume packing then has dimension-only overlap (threshold depends h). Closed supports include every derivative. Reciprocal derivatives expand over ordered compositions after dividing by m!, preserving Gevrey 2 with fixed exponential base.
+* Source co:cumulative-comparison explicitly permits arbitrary at-most-J center choices and weights one. Give auxiliary weights one to D mass forms (not normalized partition weights), then dominate A by C D. All active centers cover B_ri(x) when L>=2. This yields both Z smallness and its upper sum. Source co:normalization-error has exactly the needed sum for arbitrary nearby centers.
+* (1.1) follows by accumulated normalization mass error, positive-form Cauchy–Schwarz cross terms, pole interpolation, heat tail, inverse linearization and H0. No new issue identified here. L then h then flatness is necessary.
+* Fixed near minimizers exist from positive E_i floor even without continuity or compact active sets. Their distances and E_i comparison give directional A[w] bound. Direct product differentiation yields all six (6.3) bounds and (6.4); no derivative of H or coefficient matrices.
+* Source inverse-majorant/jet-step proofs depend only on frozen field jets and old-level metric bound, hence transfer. s=sigma=2 yields h jets (m!)^3. Rough A=2 closes using near-equality instead of C_*; all quantities needed for new invertibility use old inverses. b recursion and square sum control linear inverse errors without sum sqrt(E_i).
+* Uniform tail and central ellipsoid permit Taylor on every segment point. D chosen after B, then flatness chosen for error <=theta d on r_i/(2D)<d<=r_i/D and 4D tau<=theta. Dyadic coverage and B_ri(x) containment work for all ambient pairs in rho=(16D+4)^-1. Constants 1±4theta and eta conversion correct. Invariance of domain applies via already-open u, not through a differential inverse theorem on X.
+
+Remaining work: independently check necessary auxiliary primary comparisons, write complete numbered reasoning/objection resolutions and reading limits, seal own exact selection once, controls and final original baseline recheck. No contribution verdict or acceptance/count.
+
+## Completion of analysis
+
+The complete REVIEW.md now proposes correctness PASS at the unchanged scope relative to the stipulated source truth. All thirteen requested checks have explicit reasoning and objection resolutions. The independent primary ranges and their limits are recorded separately; no history or contribution verdict is inferred. The mathematical work is complete. Original post-read authentication still matches all 53 files and twelve directories. Only own-packet sealing and its final read-only checks remain.

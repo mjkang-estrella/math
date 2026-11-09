@@ -1,0 +1,3 @@
+Same Structural240 / Source365 discovery; no new mathematical round.
+
+The work through CALCULATIONS.md and the existing reading records was performed under the previously authorized Codex / GPT-6 Astra / xhigh / default service tier. The user then interrupted the run solely to apply Codex / gpt-6-astra / xhigh / serviceTier ultrafast, which the parent reports verified for this same thread. Work resumed under that explicit ultrafast instruction. No runtime-provider inspection or peer polling was performed here. No statement had been frozen and no packet had been sealed at the transition. Existing files and reading records are preserved.

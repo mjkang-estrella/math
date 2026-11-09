@@ -1,0 +1,15 @@
+# R207 final author handoff
+
+Outcome: full-scope author-proof nominee for the exact immutable FROZEN.md statement. No correctness, contribution, acceptance or count is assigned. Parent alone integrates and commissions the separate reviews.
+
+The theorem characterizes AMUC for one countably branching product tree with parent-dependent nonnegative mean-one laws: when their first-Wasserstein closure K is compact and uniformly separated from the constant-one law, its inherited real L1 norm is AMUC if and only if every law in K is essentially unbounded. Only first moments are required. The author proof also gives the stated law-dependent modulus bound and the full equivalent-norm AUC obstruction. A concrete example has unbounded laws at every parent but fails AMUC because a bounded law lies in their closure.
+
+Frozen statement SHA256: 7e9597aa5af080257a8a1f88e7a99a3bc41d3c0668fcf3e109076c4097d1d4e2.
+
+The distinct operation to assess is the law-uniform normalized-excess lemma for arbitrary mixed finite coefficient lists, its conditional first-moment comparison, and the necessity argument at bounded limiting laws. The Bernoulli-thinning/infinitely-divisible-limit principle used in its proof is classical and is explicitly proved and credited. The seven source companions, their strongest constants and all compatible constructions are credited; routine MAP, direct-sum, graph-depth and AMUC/AUC-separation consequences are not proposed as new findings.
+
+All99 canonical blobs from the exact120-entry source selection were authenticated at the stipulated pin. All seven companions' operative TeX and references were read. Comparator main endpoints are sorry declarations, supplying no proved endpoint coverage. READINGS and limits are in READING.md; actual exact ranges, authentication records, seven retrieved primary PDFs with their extracted text, and selected original-history sections remain private. The Andrews–Mallows publisher proof was inaccessible (403); its special-law operation was read in the canonical proof. The guarded original-history scan had one relevant original file and a disclosed administrative false admission; coarse omissions and opaque aliases prevent any exhaustive clearance claim.
+
+AUTHOR-PROOF.md proves the entire frozen scope. AUTHOR-CHECKS.md records author-side checks and identifies no remaining mathematical obligation; it is not independent validation. Remaining acceptance obligations include independent adversarial correctness review and separate substantial-contribution/primary-literature review. No new formalization, manuscript, release, publication, upload, submission, contact, browser UI, shared edit, git operation or nested agent work was performed.
+
+The exact selected packet is the packet/ directory. Its newly generated MANIFEST.json lives outside it in the round root, as does REPORT.md. Detached FINAL/MANIFEST/REPORT anchors and the read-only explicit-anchor verifier are supplied outside the packet. The metadata manifests inside private/ concern source authentication and are not substituted for this packet's manifest. Tiny copied controls concern only artifact integrity, not mathematics.

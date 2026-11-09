@@ -1,0 +1,1 @@
+Tiny independent synthetic packet plus its copy. The same read-only verifier accepts the exact copy and rejects changed bytes, file/directory/outside-file modes, extra file/empty directory, and a wrong detached anchor. Every mutation was confined to the copy and restored. These are artifact controls, not mathematical tests. No author manifest is used for these reduced selections.
