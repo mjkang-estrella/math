@@ -1,0 +1,26 @@
+import Matkowski
+
+#check MatkowskiCounterexample.Equation
+#print axioms MatkowskiCounterexample.Equation
+#check MatkowskiCounterexample.cap
+#print axioms MatkowskiCounterexample.cap
+#check MatkowskiCounterexample.cap_continuous
+#print axioms MatkowskiCounterexample.cap_continuous
+#check MatkowskiCounterexample.cap_nonneg
+#print axioms MatkowskiCounterexample.cap_nonneg
+#check MatkowskiCounterexample.cap_of_nonpos
+#print axioms MatkowskiCounterexample.cap_of_nonpos
+#check MatkowskiCounterexample.cap_le_self
+#print axioms MatkowskiCounterexample.cap_le_self
+#check MatkowskiCounterexample.cap_equation
+#print axioms MatkowskiCounterexample.cap_equation
+#check MatkowskiCounterexample.cap_one
+#print axioms MatkowskiCounterexample.cap_one
+#check MatkowskiCounterexample.cap_two
+#print axioms MatkowskiCounterexample.cap_two
+#check MatkowskiCounterexample.cap_not_linear_on_positive
+#print axioms MatkowskiCounterexample.cap_not_linear_on_positive
+#check MatkowskiCounterexample.cap_not_two_slopes
+#print axioms MatkowskiCounterexample.cap_not_two_slopes
+#check MatkowskiCounterexample.continuous_nonlinear_counterexample
+#print axioms MatkowskiCounterexample.continuous_nonlinear_counterexample

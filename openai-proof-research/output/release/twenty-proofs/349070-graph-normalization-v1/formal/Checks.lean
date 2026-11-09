@@ -1,0 +1,18 @@
+import GraphNormalization
+
+#check GraphNormalization.symmetric_energy_le
+#print axioms GraphNormalization.symmetric_energy_le
+#check GraphNormalization.normalized_energy_le
+#print axioms GraphNormalization.normalized_energy_le
+#check GraphNormalization.closedKernel
+#print axioms GraphNormalization.closedKernel
+#check GraphNormalization.closedKernel_nonneg
+#print axioms GraphNormalization.closedKernel_nonneg
+#check GraphNormalization.closedKernel_symm
+#print axioms GraphNormalization.closedKernel_symm
+#check GraphNormalization.closedKernel_eq_adj_add_one
+#print axioms GraphNormalization.closedKernel_eq_adj_add_one
+#check GraphNormalization.graph_normalization_inequality
+#print axioms GraphNormalization.graph_normalization_inequality
+#check GraphNormalization.mathdb349070
+#print axioms GraphNormalization.mathdb349070

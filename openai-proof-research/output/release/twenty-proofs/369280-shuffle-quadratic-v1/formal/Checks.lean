@@ -1,0 +1,34 @@
+import ShuffleQuadratic
+
+#check ShuffleQuadratic.binomial_quadratic
+#print axioms ShuffleQuadratic.binomial_quadratic
+#check ShuffleQuadratic.binomial_quadratic_extended
+#print axioms ShuffleQuadratic.binomial_quadratic_extended
+#check ShuffleQuadratic.vEntry
+#print axioms ShuffleQuadratic.vEntry
+#check ShuffleQuadratic.positionMatrix
+#print axioms ShuffleQuadratic.positionMatrix
+#check ShuffleQuadratic.quadraticVector
+#print axioms ShuffleQuadratic.quadraticVector
+#check ShuffleQuadratic.reflected_sum
+#print axioms ShuffleQuadratic.reflected_sum
+#check ShuffleQuadratic.quadratic_reflection
+#print axioms ShuffleQuadratic.quadratic_reflection
+#check ShuffleQuadratic.row_numerator
+#print axioms ShuffleQuadratic.row_numerator
+#check ShuffleQuadratic.quadratic_mulVec
+#print axioms ShuffleQuadratic.quadratic_mulVec
+#check ShuffleQuadratic.first_entry_positive
+#print axioms ShuffleQuadratic.first_entry_positive
+#check ShuffleQuadratic.quadraticVector_ne_zero
+#print axioms ShuffleQuadratic.quadraticVector_ne_zero
+#check ShuffleQuadratic.quadratic_hasEigenvector
+#print axioms ShuffleQuadratic.quadratic_hasEigenvector
+#check ShuffleQuadratic.quarter_hasEigenvalue
+#print axioms ShuffleQuadratic.quarter_hasEigenvalue
+#check ShuffleQuadratic.quarter_eigenspace_dimension
+#print axioms ShuffleQuadratic.quarter_eigenspace_dimension
+#check ShuffleQuadratic.positionMatrix_one_based
+#print axioms ShuffleQuadratic.positionMatrix_one_based
+#check ShuffleQuadratic.quadraticVector_one_based
+#print axioms ShuffleQuadratic.quadraticVector_one_based

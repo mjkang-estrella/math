@@ -1,0 +1,18 @@
+import PositivityRigidity
+
+#check PositivityRigidity.sourceSum
+#print axioms PositivityRigidity.sourceSum
+#check PositivityRigidity.Hypotheses
+#print axioms PositivityRigidity.Hypotheses
+#check PositivityRigidity.Conclusion
+#print axioms PositivityRigidity.Conclusion
+#check PositivityRigidity.coefficients
+#print axioms PositivityRigidity.coefficients
+#check PositivityRigidity.sum_ignores_endpoint
+#print axioms PositivityRigidity.sum_ignores_endpoint
+#check PositivityRigidity.candidate_hypotheses
+#print axioms PositivityRigidity.candidate_hypotheses
+#check PositivityRigidity.candidate_not_conclusion
+#print axioms PositivityRigidity.candidate_not_conclusion
+#check PositivityRigidity.printed_conjecture_false
+#print axioms PositivityRigidity.printed_conjecture_false

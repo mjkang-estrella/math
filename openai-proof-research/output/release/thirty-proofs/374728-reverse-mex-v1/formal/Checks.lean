@@ -1,0 +1,92 @@
+import ReverseMex
+
+#check ReverseMexCounterexample.exists_missing
+#print axioms ReverseMexCounterexample.exists_missing
+#check ReverseMexCounterexample.mex
+#print axioms ReverseMexCounterexample.mex
+#check ReverseMexCounterexample.mex_eq_iff
+#print axioms ReverseMexCounterexample.mex_eq_iff
+#check ReverseMexCounterexample.moves
+#print axioms ReverseMexCounterexample.moves
+#check ReverseMexCounterexample.subtractionSet
+#print axioms ReverseMexCounterexample.subtractionSet
+#check ReverseMexCounterexample.sourceMoves
+#print axioms ReverseMexCounterexample.sourceMoves
+#check ReverseMexCounterexample.moves_source_bridge
+#print axioms ReverseMexCounterexample.moves_source_bridge
+#check ReverseMexCounterexample.SGSequence
+#print axioms ReverseMexCounterexample.SGSequence
+#check ReverseMexCounterexample.tail
+#print axioms ReverseMexCounterexample.tail
+#check ReverseMexCounterexample.grundy
+#print axioms ReverseMexCounterexample.grundy
+#check ReverseMexCounterexample.base_recurrence
+#print axioms ReverseMexCounterexample.base_recurrence
+#check ReverseMexCounterexample.tail_recurrence
+#print axioms ReverseMexCounterexample.tail_recurrence
+#check ReverseMexCounterexample.grundy_recurrence
+#print axioms ReverseMexCounterexample.grundy_recurrence
+#check ReverseMexCounterexample.sg_unique
+#print axioms ReverseMexCounterexample.sg_unique
+#check ReverseMexCounterexample.SourceSGSequence
+#print axioms ReverseMexCounterexample.SourceSGSequence
+#check ReverseMexCounterexample.source_sg_iff
+#print axioms ReverseMexCounterexample.source_sg_iff
+#check ReverseMexCounterexample.source_recurrence
+#print axioms ReverseMexCounterexample.source_recurrence
+#check ReverseMexCounterexample.source_unique
+#print axioms ReverseMexCounterexample.source_unique
+#check ReverseMexCounterexample.eventual_period
+#print axioms ReverseMexCounterexample.eventual_period
+#check ReverseMexCounterexample.PPosition
+#print axioms ReverseMexCounterexample.PPosition
+#check ReverseMexCounterexample.P_outcome_recurrence
+#print axioms ReverseMexCounterexample.P_outcome_recurrence
+#check ReverseMexCounterexample.P_positions
+#print axioms ReverseMexCounterexample.P_positions
+#check ReverseMexCounterexample.reduce
+#print axioms ReverseMexCounterexample.reduce
+#check ReverseMexCounterexample.reduce_ge
+#print axioms ReverseMexCounterexample.reduce_ge
+#check ReverseMexCounterexample.reduce_mod
+#print axioms ReverseMexCounterexample.reduce_mod
+#check ReverseMexCounterexample.reduce_spec
+#print axioms ReverseMexCounterexample.reduce_spec
+#check ReverseMexCounterexample.grundy_reduce
+#print axioms ReverseMexCounterexample.grundy_reduce
+#check ReverseMexCounterexample.reduced_sub_value
+#print axioms ReverseMexCounterexample.reduced_sub_value
+#check ReverseMexCounterexample.Hit
+#print axioms ReverseMexCounterexample.Hit
+#check ReverseMexCounterexample.distance_exists
+#print axioms ReverseMexCounterexample.distance_exists
+#check ReverseMexCounterexample.dist
+#print axioms ReverseMexCounterexample.dist
+#check ReverseMexCounterexample.dist_eq_iff
+#print axioms ReverseMexCounterexample.dist_eq_iff
+#check ReverseMexCounterexample.distanceTable
+#print axioms ReverseMexCounterexample.distanceTable
+#check ReverseMexCounterexample.distance_exact
+#print axioms ReverseMexCounterexample.distance_exact
+#check ReverseMexCounterexample.even_distance_residue
+#print axioms ReverseMexCounterexample.even_distance_residue
+#check ReverseMexCounterexample.qualifying_positions
+#print axioms ReverseMexCounterexample.qualifying_positions
+#check ReverseMexCounterexample.reduced_add_value
+#print axioms ReverseMexCounterexample.reduced_add_value
+#check ReverseMexCounterexample.ConditionA
+#print axioms ReverseMexCounterexample.ConditionA
+#check ReverseMexCounterexample.condition_A
+#print axioms ReverseMexCounterexample.condition_A
+#check ReverseMexCounterexample.nonvacuous_zero
+#print axioms ReverseMexCounterexample.nonvacuous_zero
+#check ReverseMexCounterexample.nonvacuous_thirteen
+#print axioms ReverseMexCounterexample.nonvacuous_thirteen
+#check ReverseMexCounterexample.ReverseMex
+#print axioms ReverseMexCounterexample.ReverseMex
+#check ReverseMexCounterexample.failure_at_five
+#print axioms ReverseMexCounterexample.failure_at_five
+#check ReverseMexCounterexample.not_reverse_mex
+#print axioms ReverseMexCounterexample.not_reverse_mex
+#check ReverseMexCounterexample.source_counterexample
+#print axioms ReverseMexCounterexample.source_counterexample

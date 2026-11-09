@@ -1,0 +1,765 @@
+The accompanying \texttt{TSLocal.lean} package supplies scoped Lean support, using Lean 4.34.1 and the pinned mathlib revision recorded in its provenance. It does not formalize Theorem~\ref{thm:main}. Its mathematical interfaces fall into three groups.
+
+First, it defines finite words recursively, an option-valued first-difference edge label, and the head-constant condition. Under an assumed irreflexive total base relation on an additive group, it proves incoming-label uniqueness in the first-coordinate quotient, inheritance in each fiber, finite fiber counting, and the bound $|I|\le3^h$, including $|I|<82$ when $h=4$. Thus this part includes an actual recursive exclusion argument, not merely the arithmetic inequality $81<82$. The base relation is not identified in Lean with the Paley-square relation used in Section~\ref{sec:labels}.
+
+Second, for function-valued vectors over a field and a subgroup $H$ of its unit group, it proves affine difference scaling, preservation of a specified first differing coordinate, and injectivity, transitivity, composition, identity and a left inverse for the row-position maps. This algebraic model is separate from the recursive word representation. The identification of those representations, the square-subgroup orientation, and the resulting gate-label covariance for the actual Paley tournament remain parts of the prose proof.
+
+Third, it proves the finite-depth coupled-profile estimate from explicitly assumed scalar recurrences, initial bounds $u_0\le L$, $v_0\le0$, and $L,\varepsilon\ge0$, $\varepsilon3^{d+1}\le2$. The conclusion includes $u_l\le2L$ and $v_l\le\varepsilon L(3^l-1)$ for $l\le d$. Separate normalization lemmas assume the displayed one-side and zero-side scalar inequalities. Exact seed support proves $2^{20}\cdot1936<3^{20}$ and
+\[
+ (44M^{21})^2<M^2k^{20}
+ \quad\text{under }M>0\text{ and }3M^2\le2k.
+\]
+These assumptions are discharged mathematically in Sections~\ref{sec:estimates}--\ref{sec:composition}, not by a formal derivation of Boolean sensitivities.
+
+The implementation does not formalize the nested Boolean predicates, their ordinary/joint profile recurrences, the common permutation action on their raw bits, prime existence and rounding choices, the disjoint zero blocks, OR balancing, Boolean composition, or the logarithmic exponent conclusion. Exact declaration signatures, source hashes, compiler assumptions and validation records are supplied in the accompanying coverage receipt. They must be read with these exclusions; local support is not a formal proof of the full theorem.
+
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[a4paper,margin=28mm]{geometry}
+\usepackage{microtype}
+\usepackage[hidelinks,breaklinks]{hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+\setlength{\emergencystretch}{2em}
+\allowdisplaybreaks[1]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\DeclareMathOperator{\bs}{bs}
+\DeclareMathOperator{\dist}{dist}
+\newcommand{\F}{\mathbb F}
+\newcommand{\N}{\mathbb N}
+\newcommand{\bits}{\{0,1\}}
+\newcommand{\zero}{\mathbf 0}
+\newcommand{\OR}{\operatorname{OR}}
+\title{A superquadratic sensitivity separation\texorpdfstring{\\}{ }for transitive Boolean functions}
+\author{Myeongjin Kang}
+\date{October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+For every $C>0$ we construct a nonconstant total Boolean function $f$, invariant under a group transitive on all input coordinates, such that $f(\zero)=0$ and $\bs(f,\zero)>C\,s(f)^2$. Here $s(f)$ is ordinary sensitivity maximized over all inputs. We also obtain a fixed $\alpha>2$ and a sequence of transitive functions with $\bs(F_m,\zero)\ge s(F_m)^\alpha$ and diverging block sensitivity. The construction equips the nested-predicate framework of the pinned OpenAI separation with a deterministic labelled tournament. First-difference labels on $\F_p^4$ admit simultaneous affine covariance, have an alphabet of size $(p-1)/2$, and exclude head-constant sets of more than $81$ rows. These compatible properties preserve transitivity while keeping the alphabet cost small in the ordinary and joint sensitivity recurrences. The complete argument, including those recurrences and the composition endpoint, is given below.
+\end{abstract}
+
+\section{Statement, conventions and antecedents}
+For a finite coordinate set $\Omega$, an input $x\in\bits^\Omega$, and $B\subseteq\Omega$, write $x^B$ for the input obtained by flipping precisely the coordinates in $B$. For a total Boolean function $f:\bits^\Omega\to\bits$, define
+\[
+ s(f,x)=|\{i\in\Omega:f(x^{\{i\}})\ne f(x)\}|,
+ \qquad s(f)=\max_{x\in\bits^\Omega}s(f,x).
+\]
+The block sensitivity $\bs(f,x)$ is the largest number of pairwise disjoint nonempty subsets $B_1,\ldots,B_b$ such that $f(x^{B_j})\ne f(x)$ for all $j$. A permutation $\sigma$ of $\Omega$ acts on inputs by $(\sigma x)_{\sigma(i)}=x_i$. We call $f$ \emph{coordinate-transitive} if a subgroup of these permutations preserves $f$ and acts transitively on $\Omega$.
+
+\begin{theorem}\label{thm:main}
+For every real $C>0$ there exist a finite coordinate set $\Omega$ and a nonconstant total coordinate-transitive function $f:\bits^\Omega\to\bits$ such that
+\[
+ f(\zero)=0,\qquad \bs(f,\zero)>C\,s(f)^2.
+\]
+Moreover, there are a fixed real $\alpha>2$ and nonconstant total coordinate-transitive functions $F_m$, $m\ge1$, such that
+\[
+ F_m(\zero)=0,\qquad
+ \bs(F_m,\zero)\ge s(F_m)^\alpha,\qquad
+ \bs(F_m,\zero)\longrightarrow\infty.
+\]
+\end{theorem}
+
+All sensitivity upper bounds in this paper hold at every raw Boolean input. No promise on the input, spectral substitute, row-only symmetry, or minterm representation is imposed. The theorem makes no claim about cyclic invariance, graph properties, an optimal exponent, or sensitivity below the cubic-root scale in the number of variables.
+
+\paragraph{Source contract and attribution.}
+We work with the OpenAI manuscript \emph{A superquadratic separation between sensitivity and block sensitivity}, September 25, 2026, at the immutable revision specified in \cite{OpenAI}. Its results are stipulated inputs to the research setting, rather than independently certified upstream results. That source supplies the nested Hamming-ball predicates, gated-tournament architecture, four ordinary/joint sensitivity recurrences, disjoint zero-input blocks, OR balancing and composition amplification. Its random labelling need not preserve a transitive group on the complete row-position set. We reproduce the relevant arguments for our different parameters, so that no unproved parameter-substitution interface is needed in Theorem~\ref{thm:main}.
+
+Meiburg's spectral construction and its cyclotomic discussion already provide closely related tournament gates and Paley symmetry \cite[Sections 3--6]{Meiburg}. In particular, his Section 6.1 explicitly discusses algebraic gate assignments and transitive symmetry. A spectral-sensitivity upper bound is not an ordinary-sensitivity upper bound. The contribution here is the simultaneous compatibility of a small alphabet, a constant forbidden-pattern bound and exact label covariance. A single Paley layer with its actual square differences as labels has alphabet size of order the row count. The fixed-depth lift used below increases the number of rows without increasing the alphabet, while retaining incoming-label uniqueness inside each quotient. It therefore meets the small-error regime needed by the source recurrences.
+
+Transitivity-preserving constructions themselves are classical. Chakraborty, Kayal and Paraashar use coordinated raw-bit decoding and pointer permutations for other measure separations \cite{CKP}. Kulkarni and Tal use transitive fractional packing, composition and OR/AND balancing \cite[Section 4]{KT}. Neither these general tools nor powering is claimed as a new contribution here. The comparison concerns the particular compatible-label interface proved in Section~\ref{sec:labels}; it is bounded primary-literature comparison, not a worldwide priority assertion. Familiar ingredients can form a routine assembly, so substantiality is not inferred merely from the absence of a theorem with the same headline.
+
+\section{First-difference labels and their symmetries}\label{sec:labels}
+Let $p\equiv3\pmod4$ be prime and let $H=(\F_p^*)^2$ be the multiplicative group of nonzero squares. Put $r=|H|=(p-1)/2$. Since $-1\notin H$, every nonzero field element lies in exactly one of $H$ and $-H$.
+
+For $h\ge0$ let $V_h=\F_p^h$. For distinct $u,v\in V_h$, let $j(u,v)$ be their first differing coordinate. Define a tournament by
+\[
+ u\longrightarrow v
+ \quad\Longleftrightarrow\quad
+ v_{j(u,v)}-u_{j(u,v)}\in H.
+\]
+For such an edge define its label
+\[
+ a(u,v)=v_{j(u,v)}-u_{j(u,v)}\in H.
+\]
+This is the lexicographic product of $h$ Paley tournaments. Its outdegree is independent of the vertex and equals
+\begin{equation}\label{eq:degree}
+ r\sum_{j=1}^h p^{h-j}=\frac{p^h-1}{2}.
+\end{equation}
+Indeed, after the first differing coordinate $j$ is fixed, there are $r$ choices for its oriented difference and $p^{h-j}$ free suffixes.
+
+\begin{definition}
+A set $I\subseteq V_h$ is \emph{head-constant} if there are labels $m_v\in H$, $v\in I$, such that $a(u,v)=m_v$ for every internal edge $u\to v$ of $I$.
+\end{definition}
+Labels at vertices with no incoming internal edge impose no restriction.
+
+\begin{lemma}\label{lem:exclusion}
+Every head-constant subset of $V_h$ has cardinality at most $3^h$.
+\end{lemma}
+\begin{proof}
+For $h=0$ there is one vertex. Suppose $h\ge1$ and partition a head-constant set $I$ into its nonempty first-coordinate fibers $I_c$. Their distinct first coordinates form a tournament, with $c\to e$ if $e-c\in H$. If distinct $c,c'$ both point to $e$, choose $u\in I_c$, $u'\in I_{c'}$ and $v\in I_e$. Then
+\[
+ e-c=a(u,v)=m_v=a(u',v)=e-c',
+\]
+a contradiction. Each quotient vertex has indegree at most one. If there are $b$ nonempty fibers, counting the quotient edges gives $b(b-1)/2\le b$, whence $b\le3$; this also covers the empty case. Within a fiber, deleting the common first coordinate retains every internal orientation and label. The same assignments $m_v$ witness a head-constant set in $V_{h-1}$. Induction bounds each fiber by $3^{h-1}$, proving the result.
+\end{proof}
+
+\begin{lemma}\label{lem:affine}
+The maps
+\begin{equation}\label{eq:affine}
+ (v,c)\longmapsto(\lambda v+b,\lambda c),
+ \qquad \lambda\in H,\quad b\in V_h,
+\end{equation}
+form a transitive permutation group on $V_h\times H$. On rows they preserve orientation, and for every edge $u\to v$ satisfy
+\[
+ a(\lambda u+b,\lambda v+b)=\lambda a(u,v).
+\]
+\end{lemma}
+\begin{proof}
+Multiplication by a nonzero scalar preserves the first differing position; translation cancels in the difference. Multiplication by a square preserves membership in $H$, and multiplies the label by that square. The composite of parameters $(\lambda,b)$ and $(\mu,c)$ has parameters $(\lambda\mu,\lambda c+b)$; the inverse has parameters $(\lambda^{-1},-\lambda^{-1}b)$, so these maps form a group. Given $(v,c),(w,e)$, choose $\lambda=e/c\in H$ and $b=w-\lambda v$. This sends the first pair to the second.
+\end{proof}
+
+Henceforth fix
+\begin{equation}\label{eq:parameters}
+ h=4,\qquad k=p^4,\qquad t=82,\qquad
+ A=\frac{k-1}{2},\qquad M=\lceil\sqrt A\rceil.
+\end{equation}
+No set of $t$ rows is head-constant, and $A\le M^2$. Here $A$ is the gate degree. These parameters replace the source's particular relation between its degree, alphabet and forbidden-pattern size.
+
+\section{A common transitive group for nested predicates}\label{sec:predicates}
+Fix an integer depth $d\ge1$. Write
+\[
+ L=d+2,\qquad h_l=d+1-l\quad(0\le l\le d),\qquad
+ N_l=LM(kr)^l.
+\]
+The lower-case $h_l$ specifies the number of predicate indices, not the fixed tournament dimension $h=4$.
+
+On $N_0=LM$ coordinates choose disjoint sets $E_1,\ldots,E_M$, each of size $L$, covering all coordinates. Let $z_i=\mathbf1_{E_i}$ and
+\[
+ D(x)=\min_{1\le i\le M}\dist_{\rm Ham}(x,z_i).
+\]
+For $1\le q\le h_0$ define
+\begin{equation}\label{eq:base}
+ P_{0,q}(x)=1\quad\Longleftrightarrow\quad D(x)\le h_0-q.
+\end{equation}
+
+At level $l\ge1$, set $Q=h_{l-1}=h_l+1$ and arrange the input in $kr$ disjoint children $x_{v,c}$, indexed by $v\in V_4$ and $c\in H$, each with $N_{l-1}$ coordinates. For $1\le q\le h_l$, a row $u$ has a satisfied clause if
+\begin{align}
+ P_{l-1,Q}(x_{u,c})&=1 &&\text{for every }c\in H,\label{eq:targets}\\
+ P_{l-1,Q-q}(x_{v,a(u,v)})&=0 &&\text{for every edge }u\to v.\label{eq:gates}
+\end{align}
+Define $P_{l,q}$ as the OR of these $k$ clauses. Each clause uses $r+A$ distinct children: its own $r$ target positions and one gate in each outgoing row. The indices obey $1\le Q-q<Q$. These formulas define total Boolean functions at all inputs.
+
+\begin{lemma}\label{lem:nested}
+For each $l$, the predicates $P_{l,q}$ decrease as $q$ increases. There is one coordinate-transitive permutation group on their $N_l$ coordinates that preserves every $P_{l,q}$ simultaneously.
+\end{lemma}
+\begin{proof}
+At level zero, nesting follows from the decreasing radii. Permutations of the $M$ equal blocks and independent permutations within each block preserve the set of centers, hence $D$ and every predicate. They act transitively on all $LM$ bits.
+
+Inductively, increasing $q$ decreases the gate index $Q-q$. By child nesting this makes the gate predicate larger, so requiring it to be zero is a stronger condition. Thus parent nesting holds. Take independent copies of the common child group in each child. They preserve both indices used by every clause. Also let the affine group in Lemma~\ref{lem:affine} permute the whole children, retaining their identical internal coordinate indexing. It sends all targets in row $u$ to all targets in row $\lambda u+b$. For a gate indexed by $(v,a(u,v))$, covariance sends its position to
+\[
+ (\lambda v+b,\lambda a(u,v))
+ =(\lambda v+b,a(\lambda u+b,\lambda v+b)),
+\]
+the corresponding gate of that new clause. Every parent predicate is preserved.
+
+Given two raw coordinates, use the affine group to move the first coordinate's child to the destination child. Then use the independent group in that child to move its internal coordinate to the requested bit. The generated group is transitive. The induction preserves the entire nested family, which is necessary because clauses use two different child indices.
+\end{proof}
+
+\section{Ordinary and joint sensitivity at every input}\label{sec:recurrences}
+For $b\in\bits$, let $S_{l,b}$ be the maximum of $s(P_{l,q},x)$ over all indices $q$ and inputs with $P_{l,q}(x)=b$. Let $J_{l,b}$ be the maximum number of coordinates $i$ for which
+\[
+ P_{l,q}(x)=P_{l,q'}(x)=b,\qquad
+ P_{l,q}(x^{\{i\}})=P_{l,q'}(x^{\{i\}})=1-b,
+\]
+over distinct indices $q,q'$ and all such inputs. Empty maxima are zero. These are profiles of the whole family; no structured-input condition is present.
+
+\begin{lemma}\label{lem:baseprofiles}
+The base profiles satisfy
+\[
+ S_{0,0}\le L,\qquad S_{0,1}\le LM,\qquad J_{0,0}=J_{0,1}=0.
+\]
+\end{lemma}
+\begin{proof}
+At a rejecting input of a ball predicate with radius $R=h_0-q\le d$, every successful flip approaches a center at distance $R+1\le d+1$. At most one center can be this close, since distinct centers have distance $2L=2d+4>2d+2$. There are at most $R+1\le L$ coordinates approaching that center. The accepting-side bound is the total number $LM$ of coordinates. The integer-valued function $D$ is $1$-Lipschitz across a cube edge. A single flip cannot cross two distinct integer radii in the same direction, giving both joint bounds.
+\end{proof}
+
+\begin{proposition}\label{prop:recurrences}
+For each $l\ge1$ the following inequalities hold:
+\begin{align}
+ S_{l,1}&\le A S_{l-1,0}+rS_{l-1,1},\label{eq:S1}\\
+ J_{l,1}&\le A J_{l-1,0}+rS_{l-1,1},\label{eq:J1}\\
+ S_{l,0}&\le t S_{l-1,0}+S_{l-1,1}+3J_{l-1,1},\label{eq:S0}\\
+ J_{l,0}&\le t S_{l-1,0}+3J_{l-1,1}.\label{eq:J0}
+\end{align}
+\end{proposition}
+\begin{proof}
+These are the ordinary/joint transition arguments of the source framework, with the actual degree $A$ and exclusion parameter $t$ of~\eqref{eq:parameters}. We verify each case.
+
+\paragraph{One to zero.}
+At an accepting input fix a satisfied clause. Every flip that changes the parent to zero must break this clause. It must either change one of its $r$ true targets from one to zero or one of its $A$ false gates from zero to one. Since these children are distinct, the union bound gives~\eqref{eq:S1}.
+
+\paragraph{Joint one to zero.}
+Let $q<q'$ and fix a clause initially satisfied for the stronger parent $q'$. By nesting it is also satisfied for $q$. Its gate indices obey
+\[
+ g'=Q-q'<g=Q-q<Q.
+\]
+Breaking a target costs at most $rS_{l-1,1}$. If no target breaks, making even the weaker parent $q$ false requires breaking a gate at index $g$. Initially both $g$ and $g'$ are zero. Afterward $g$ is one, and nesting forces $g'$ to be one as well. Each such gate costs at most $J_{l-1,0}$, giving~\eqref{eq:J1}. The clause is fixed before the flips are counted.
+
+\paragraph{Zero to one.}
+At a rejecting input and fixed parent index $q$, form two lists of initially almost-satisfied clauses. Let $T$ consist of clauses with exactly one failed target and no failed gate, and let $G$ consist of clauses with exactly one failed gate and no failed target. A raw bit belongs to only one child and affects at most one condition of each clause. Hence every clause made true by one flip was already in $T$ or $G$. The lists are fixed independently of the selected flip.
+
+For a row $v\in T$, let $m_v$ be its unique failed target position. If $u,v\in T$ and $u\to v$, the passing gate of $u$ at $(v,a(u,v))$ says that the weaker child predicate there is zero. Its strongest predicate is therefore zero too. The uniqueness of $m_v$ yields $a(u,v)=m_v$. Thus $T$ is head-constant, and Lemma~\ref{lem:exclusion} gives $|T|\le81<t$. Each member has at most $S_{l-1,0}$ repairs, for a total at most $tS_{l-1,0}$.
+
+For each row in $G$, all its target predicates are true. Every internal edge $u\to v$ of $G$ therefore fails the gate of clause $u$ in row $v$, because the strongest target there is one. Since each clause in $G$ has exactly one failed gate, its induced outdegree is at most one. Edge counting gives $|G|\le3$. At most one member has induced outdegree zero: an edge between two such members would contradict this property. Every other member has its unique failed gate in a row of $G$, whose strongest target index $Q$ is initially one. Repairing the weaker gate index $Q-q$ from one to zero forces $Q$ to zero by nesting. These are distinct indices, so such a repair costs at most $J_{l-1,1}$. The possible exceptional member costs at most $S_{l-1,1}$. The safe bound $S_{l-1,1}+3J_{l-1,1}$, together with the $T$ estimate, proves~\eqref{eq:S0}.
+
+\paragraph{Joint zero to one.}
+Let $q<q'$, both initially zero, and use the fixed lists $T,G$ for the weaker parent $q$. A clause finally true for $q'$ is also finally true for $q$, so it belongs to one of these lists. The $T$ repairs still cost at most $tS_{l-1,0}$. For a $G$ witness, its failed gate at $g=Q-q$ is initially one; the smaller index $g'=Q-q'$ is initially one as well. Final truth of the same clause for $q'$ requires $g'=0$, and nesting then gives $g=0$. Both distinct indices change, including for the possible exceptional member of $G$. Its cost is therefore at most $J_{l-1,1}$, proving~\eqref{eq:J0}. A clause with another unrepaired failure at $q'$ is not a final witness and adds no flips. Overlaps of clauses do not invalidate any union bound. If there is no pair of parent indices, the joint bound is automatic.
+\end{proof}
+
+\section{Normalized estimates and parameter choices}\label{sec:estimates}
+For the chosen depth $d$, choose a prime $p\equiv3\pmod4$ satisfying
+\begin{equation}\label{eq:prime}
+ p\ge\max\{167,3^{d+1}\}.
+\end{equation}
+Such primes are unbounded. Indeed, if all primes congruent to $3$ modulo $4$ divided a finite product $P$, the positive integer $4P-1\equiv3\pmod4$ would have a prime factor congruent to $3$ modulo $4$ not dividing $P$.
+
+Because $A=(p^4-1)/2\ge p^4/4$ for $p\ge2$, we have $M\ge p^2/2$. Hence, with $t=82$,
+\begin{equation}\label{eq:epsilon}
+ \varepsilon:=\frac{\max\{r,t\}}M
+ \le\frac1p\le\frac{2}{3^{d+1}}.
+\end{equation}
+Here $r/M\le1/p$ follows from $r=(p-1)/2$, and $t/M\le164/p^2\le1/p$ follows from $p\ge167$.
+
+Define normalized profiles
+\[
+ u_l=\max_{b\in\bits}\frac{S_{l,b}}{M^{l+b}},\qquad
+ v_l=\max_{b\in\bits}\frac{J_{l,b}}{M^{l+b}}.
+\]
+Lemma~\ref{lem:baseprofiles} and Proposition~\ref{prop:recurrences}, using $A\le M^2$, give
+\begin{align}
+ &u_0\le L,\qquad v_0=0,\label{eq:initial}\\
+ &u_l\le(1+\varepsilon)u_{l-1}+3v_{l-1},\qquad
+ v_l\le\varepsilon u_{l-1}+3v_{l-1}.\label{eq:normalized}
+\end{align}
+For clarity, the separate normalized ordinary bounds are $(1+r/M)u_{l-1}$ on side one and $(1+t/M)u_{l-1}+3v_{l-1}$ on side zero. The joint bounds are $v_{l-1}+(r/M)u_{l-1}$ and $3v_{l-1}+(t/M)u_{l-1}$. They imply exactly~\eqref{eq:normalized}.
+
+\begin{lemma}\label{lem:profiles}
+For $0\le l\le d$ and $b\in\bits$,
+\[
+ S_{l,b}\le2L M^{l+b}.
+\]
+\end{lemma}
+\begin{proof}
+Let $U_0=L,V_0=0$ and use equality in the two recurrences~\eqref{eq:normalized} to define $U_l,V_l$. Their nonnegative coefficients give $u_l\le U_l$ and $v_l\le V_l$ by induction. We prove simultaneously
+\[
+ U_l\le2L,\qquad V_l\le\varepsilon L(3^l-1)\qquad(0\le l\le d).
+\]
+The initial bounds hold. Using $U_{l-1}\le2L$ and the previous $V$ bound gives
+\[
+ V_l\le2\varepsilon L+3\varepsilon L(3^{l-1}-1)
+ =\varepsilon L(3^l-1).
+\]
+For $U_l$, sum its increments and use only the previously established indices $j<l$:
+\begin{align*}
+ U_l
+ &=L+\sum_{j=0}^{l-1}(\varepsilon U_j+3V_j)\\
+ &\le L+\varepsilon L\left[\frac32(3^l-1)-l\right]
+ <2L.
+\end{align*}
+The last inequality follows from~\eqref{eq:epsilon}, since the increment divided by $L$ is at most
+\[
+ \frac{3^{l+1}-3-2l}{3^{d+1}}<1\qquad(1\le l\le d).
+\]
+This is a simultaneous induction, not an assumption of the final bound. Multiplying back by $M^{l+b}$ proves the result.
+\end{proof}
+
+\section{Disjoint zero blocks and OR balancing}\label{sec:blocks}
+\begin{lemma}\label{lem:blocks}
+At level $l$, every predicate is zero at $\zero$. There are $Mk^l$ pairwise disjoint nonempty blocks, each of size $Lr^l$, whose flips at $\zero$ make every $P_{l,q}$ one simultaneously.
+\end{lemma}
+\begin{proof}
+At level zero, $D(\zero)=L>d$, so all predicates vanish. Each $E_i$ sends $\zero$ to a center and makes all predicates one. Suppose the assertion holds at level $l-1$. At the all-zero parent input every target fails, so every clause fails. For one row $u$ and one of the common child blocks $B$, take the union of the identical copy of $B$ in all $r$ children $(u,c)$. Flipping this union makes all strongest targets in row $u$ true. Each outgoing gate lies in a different row left at zero, where every child predicate is zero. Thus this row's clause is true for every parent index.
+
+Different rows use disjoint children. Within one row, disjoint child blocks remain disjoint in each child. This gives $k$ times the previous number of blocks and $r$ times their size, proving the induction.
+\end{proof}
+
+Let $f$ be the OR of $M$ disjoint identical copies of $P_{d,1}$. Its number of coordinates is
+\begin{equation}\label{eq:n}
+ n=LM^2(kr)^d.
+\end{equation}
+The common groups in Lemma~\ref{lem:nested}, acting independently on the copies, together with all permutations of the copies, preserve $f$ and act transitively on all $n$ raw coordinates. At a rejecting input all copies reject, so the sensitivity is at most $MS_{d,0}$. At an accepting input with at least two accepting copies, no single flip changes the OR. If exactly one copy accepts, every sensitive bit lies in that copy, giving at most $S_{d,1}$. Lemmas~\ref{lem:profiles} and~\ref{lem:blocks} therefore yield
+\begin{equation}\label{eq:seedbounds}
+ s(f)\le2L M^{d+1},\qquad
+ \bs(f,\zero)\ge M^2k^d,\qquad f(\zero)=0.
+\end{equation}
+The blocks are nonempty, so $f$ is nonconstant. A cube path between inputs with different values shows $s(f)>0$.
+
+Integer rounding leaves a fixed exponential gain. Namely,
+\[
+ M\le\sqrt A+1\le\frac{3p^2}{4}+1\le\frac{4p^2}{5},
+\]
+where the last inequality uses $p^2\ge20$. Thus
+\begin{equation}\label{eq:ratio}
+ \frac{k}{M^2}\ge\frac{25}{16}>\frac32,
+ \qquad
+ \frac{\bs(f,\zero)}{s(f)^2}
+ \ge\frac{(k/M^2)^d}{4L^2}
+ \ge\frac{(3/2)^d}{4(d+2)^2}.
+\end{equation}
+The final expression tends to infinity. Given $C>0$, first choose $d$ so it exceeds $C$, then a prime satisfying~\eqref{eq:prime}. Equations~\eqref{eq:seedbounds}--\eqref{eq:ratio} and the transitivity proof establish the first part of Theorem~\ref{thm:main}.
+
+\section{A fixed exponent and composition}\label{sec:composition}
+Take $d=20$ and choose one prime satisfying~\eqref{eq:prime}. For its fixed seed $f$, put
+\[
+ A_*=44M^{21},\qquad B_*=M^2k^{20}.
+\]
+Then $s(f)\le A_*$ and $\bs(f,\zero)\ge B_*$. Moreover,
+\[
+ \frac{B_*}{A_*^2}\ge\frac{3^{20}}{2^{20}\cdot1936}>1,
+\]
+because
+\[
+ 3^{20}=3486784401>2030043136=2^{20}\cdot1936.
+\]
+Since $A_*>1$, the fixed real number
+\begin{equation}\label{eq:alpha}
+ \alpha=\frac{\log B_*}{\log A_*}
+\end{equation}
+satisfies $\alpha>2$.
+
+We recall the complete composition arguments. If $g$ is a total Boolean function on an outer coordinate set and $h$ is a total Boolean function on an inner coordinate set, let $g\circ h$ apply an identical independent copy of $h$ in each outer position. At any input, a sensitive raw bit must be sensitive for its child $h$, and that child's output position must be sensitive for $g$ at the vector of child outputs. Hence
+\begin{equation}\label{eq:compose-s}
+ s(g\circ h)\le s(g)s(h).
+\end{equation}
+If $h(\zero)=0$, choose disjoint sensitive blocks $C_i$ for $g$ at zero and disjoint sensitive blocks $D_j$ for $h$ at zero. The product blocks $C_i\times D_j$ are nonempty and pairwise disjoint. Flipping one of them changes exactly the child outputs in $C_i$, so it changes $g$. Consequently
+\begin{equation}\label{eq:compose-bs}
+ \bs(g\circ h,\zero)\ge\bs(g,\zero)\bs(h,\zero).
+\end{equation}
+For pairwise disjointness, two product blocks with different outer indices use disjoint outer sets, while those with the same outer index and different inner indices use disjoint inner sets.
+
+If both functions are coordinate-transitive, so is their composition: an outer automorphism permutes the identical children, and independent inner automorphisms preserve their outputs. To move a raw coordinate, move its outer position first and then its inner position. The generated group preserves the composition and is transitive on the full product coordinate set. No automorphism is asserted to preserve a chosen witness family; only invariance of the functions is needed.
+
+Set $F_1=f$ and $F_{m+1}=f\circ F_m$. By induction these functions are total, coordinate-transitive and zero at zero. Equations~\eqref{eq:compose-s}--\eqref{eq:compose-bs} give
+\[
+ s(F_m)\le A_*^m,\qquad
+ \bs(F_m,\zero)\ge B_*^m=(A_*^m)^\alpha\ge s(F_m)^\alpha.
+\]
+Since $B_*>1$, their zero-input block sensitivities diverge, so every $F_m$ is nonconstant. This proves the second part of Theorem~\ref{thm:main}.
+
+\section{Formal support and provenance}\label{sec:formal}
+\input{formal-support.tex}
+
+The proof above is a human-readable mathematical argument. Finite diagnostic computations are not premises for its asymptotic claims. The fixed-depth tournament, arbitrary depth of the nested predicates, sufficiently large prime, and iterated compositions each have separate roles; no finite experiment substitutes for their quantified proofs.
+
+The research source was authenticated against the complete preprint tree at the revision in \cite{OpenAI}. The seven non-PDF source files comprise its README, main file, bibliography and four mathematical sections. The manuscript's accompanying provenance identifies the frozen author, proof-review and contribution-review packets and the precise formal coverage. These internal reviews are distinct from external peer review or a worldwide novelty certification. Private third-party source bodies are not included in this manuscript package.
+
+\paragraph{Rights and author information.}
+Myeongjin Kang has no listed affiliation. This manuscript and original accompanying prose are licensed under Creative Commons Attribution 4.0 International. Original accompanying code is licensed under the MIT License. These licenses do not relicense cited third-party works.
+
+\begin{thebibliography}{9}
+\bibitem{OpenAI}
+OpenAI, \emph{A superquadratic separation between sensitivity and block sensitivity}, September 25, 2026. Pinned research source, revision
+\texttt{fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb}.
+\href{https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/A-superquadratic-separation-between-sensitivity-and-block-sensitivity-September-25-2026}{Source manuscript and proof files}.
+\bibitem{Meiburg}
+A. Meiburg, \emph{Block Sensitivity can exceed Spectral Sensitivity Squared}, arXiv:2608.00851v1, August 1, 2026.
+\href{https://arxiv.org/abs/2608.00851v1}{Versioned primary preprint}.
+\bibitem{CKP}
+S. Chakraborty, C. Kayal and M. Paraashar, \emph{Separations between Combinatorial Measures for Transitive Functions}, Discrete Mathematics \& Theoretical Computer Science \textbf{27:2}, article 18 (2025); arXiv:2103.12355v7.
+\href{https://dmtcs.episciences.org/15992/pdf}{Journal primary text}.
+\bibitem{KT}
+R. Kulkarni and A. Tal, \emph{On Fractional Block Sensitivity}, Electronic Colloquium on Computational Complexity, comment 1 on report 168 (2013), November 29, 2013.
+\href{https://eccc.weizmann.ac.il/report/2013/168/comment/1/download/}{Versioned primary text}.
+\end{thebibliography}
+\end{document}
+
+The accompanying \texttt{TSLocal.lean} package supplies scoped Lean support, using Lean 4.34.1 and the pinned mathlib revision recorded in its provenance. It does not formalize Theorem~\ref{thm:main}. Its mathematical interfaces fall into three groups.
+
+First, it defines finite words recursively, an option-valued first-difference edge label, and the head-constant condition. Under an assumed irreflexive total base relation on an additive group, it proves incoming-label uniqueness in the first-coordinate quotient, inheritance in each fiber, finite fiber counting, and the bound $|I|\le3^h$, including $|I|<82$ when $h=4$. Thus this part includes an actual recursive exclusion argument, not merely the arithmetic inequality $81<82$. The base relation is not identified in Lean with the Paley-square relation used in Section~\ref{sec:labels}.
+
+Second, for function-valued vectors over a field and a subgroup $H$ of its unit group, it proves affine difference scaling, preservation of a specified first differing coordinate, and injectivity, transitivity, composition, identity and a left inverse for the row-position maps. This algebraic model is separate from the recursive word representation. The identification of those representations, the square-subgroup orientation, and the resulting gate-label covariance for the actual Paley tournament remain parts of the prose proof.
+
+Third, it proves the finite-depth coupled-profile estimate from explicitly assumed scalar recurrences, initial bounds $u_0\le L$, $v_0\le0$, and $L,\varepsilon\ge0$, $\varepsilon3^{d+1}\le2$. The conclusion includes $u_l\le2L$ and $v_l\le\varepsilon L(3^l-1)$ for $l\le d$. Separate normalization lemmas assume the displayed one-side and zero-side scalar inequalities. Exact seed support proves $2^{20}\cdot1936<3^{20}$ and
+\[
+ (44M^{21})^2<M^2k^{20}
+ \quad\text{under }M>0\text{ and }3M^2\le2k.
+\]
+These assumptions are discharged mathematically in Sections~\ref{sec:estimates}--\ref{sec:composition}, not by a formal derivation of Boolean sensitivities.
+
+The implementation does not formalize the nested Boolean predicates, their ordinary/joint profile recurrences, the common permutation action on their raw bits, prime existence and rounding choices, the disjoint zero blocks, OR balancing, Boolean composition, or the logarithmic exponent conclusion. Exact declaration signatures, source hashes, compiler assumptions and validation records are supplied in the accompanying coverage receipt. They must be read with these exclusions; local support is not a formal proof of the full theorem.
+
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools}
+\usepackage[a4paper,margin=28mm]{geometry}
+\usepackage{microtype}
+\usepackage[hidelinks,breaklinks]{hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+\setlength{\emergencystretch}{2em}
+\allowdisplaybreaks[1]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\DeclareMathOperator{\bs}{bs}
+\DeclareMathOperator{\dist}{dist}
+\newcommand{\F}{\mathbb F}
+\newcommand{\N}{\mathbb N}
+\newcommand{\bits}{\{0,1\}}
+\newcommand{\zero}{\mathbf 0}
+\newcommand{\OR}{\operatorname{OR}}
+\title{A superquadratic sensitivity separation\texorpdfstring{\\}{ }for transitive Boolean functions}
+\author{Myeongjin Kang}
+\date{October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+For every $C>0$ we construct a nonconstant total Boolean function $f$, invariant under a group transitive on all input coordinates, such that $f(\zero)=0$ and $\bs(f,\zero)>C\,s(f)^2$. Here $s(f)$ is ordinary sensitivity maximized over all inputs. We also obtain a fixed $\alpha>2$ and a sequence of transitive functions with $\bs(F_m,\zero)\ge s(F_m)^\alpha$ and diverging block sensitivity. The construction equips the nested-predicate framework of the pinned OpenAI separation with a deterministic labelled tournament. First-difference labels on $\F_p^4$ admit simultaneous affine covariance, have an alphabet of size $(p-1)/2$, and exclude head-constant sets of more than $81$ rows. These compatible properties preserve transitivity while keeping the alphabet cost small in the ordinary and joint sensitivity recurrences. The complete argument, including those recurrences and the composition endpoint, is given below.
+\end{abstract}
+
+\section{Statement, conventions and antecedents}
+For a finite coordinate set $\Omega$, an input $x\in\bits^\Omega$, and $B\subseteq\Omega$, write $x^B$ for the input obtained by flipping precisely the coordinates in $B$. For a total Boolean function $f:\bits^\Omega\to\bits$, define
+\[
+ s(f,x)=|\{i\in\Omega:f(x^{\{i\}})\ne f(x)\}|,
+ \qquad s(f)=\max_{x\in\bits^\Omega}s(f,x).
+\]
+The block sensitivity $\bs(f,x)$ is the largest number of pairwise disjoint nonempty subsets $B_1,\ldots,B_b$ such that $f(x^{B_j})\ne f(x)$ for all $j$. A permutation $\sigma$ of $\Omega$ acts on inputs by $(\sigma x)_{\sigma(i)}=x_i$. We call $f$ \emph{coordinate-transitive} if a subgroup of these permutations preserves $f$ and acts transitively on $\Omega$.
+
+\begin{theorem}\label{thm:main}
+For every real $C>0$ there exist a finite coordinate set $\Omega$ and a nonconstant total coordinate-transitive function $f:\bits^\Omega\to\bits$ such that
+\[
+ f(\zero)=0,\qquad \bs(f,\zero)>C\,s(f)^2.
+\]
+Moreover, there are a fixed real $\alpha>2$ and nonconstant total coordinate-transitive functions $F_m$, $m\ge1$, such that
+\[
+ F_m(\zero)=0,\qquad
+ \bs(F_m,\zero)\ge s(F_m)^\alpha,\qquad
+ \bs(F_m,\zero)\longrightarrow\infty.
+\]
+\end{theorem}
+
+All sensitivity upper bounds in this paper hold at every raw Boolean input. No promise on the input, spectral substitute, row-only symmetry, or minterm representation is imposed. The theorem makes no claim about cyclic invariance, graph properties, an optimal exponent, or sensitivity below the cubic-root scale in the number of variables.
+
+\paragraph{Source contract and attribution.}
+We work with the OpenAI manuscript \emph{A superquadratic separation between sensitivity and block sensitivity}, September 25, 2026, at the immutable revision specified in \cite{OpenAI}. Its results are stipulated inputs to the research setting, rather than independently certified upstream results. That source supplies the nested Hamming-ball predicates, gated-tournament architecture, four ordinary/joint sensitivity recurrences, disjoint zero-input blocks, OR balancing and composition amplification. Its random labelling need not preserve a transitive group on the complete row-position set. We reproduce the relevant arguments for our different parameters, so that no unproved parameter-substitution interface is needed in Theorem~\ref{thm:main}.
+
+Meiburg's spectral construction and its cyclotomic discussion already provide closely related tournament gates and Paley symmetry \cite[Sections 3--6]{Meiburg}. In particular, his Section 6.1 explicitly discusses algebraic gate assignments and transitive symmetry. A spectral-sensitivity upper bound is not an ordinary-sensitivity upper bound. The contribution here is the simultaneous compatibility of a small alphabet, a constant forbidden-pattern bound and exact label covariance. A single Paley layer with its actual square differences as labels has alphabet size of order the row count. The fixed-depth lift used below increases the number of rows without increasing the alphabet, while retaining incoming-label uniqueness inside each quotient. It therefore meets the small-error regime needed by the source recurrences.
+
+Transitivity-preserving constructions themselves are classical. Chakraborty, Kayal and Paraashar use coordinated raw-bit decoding and pointer permutations for other measure separations \cite{CKP}. Kulkarni and Tal use transitive fractional packing, composition and OR/AND balancing \cite[Section 4]{KT}. Neither these general tools nor powering is claimed as a new contribution here. The comparison concerns the particular compatible-label interface proved in Section~\ref{sec:labels}; it is bounded primary-literature comparison, not a worldwide priority assertion. Familiar ingredients can form a routine assembly, so substantiality is not inferred merely from the absence of a theorem with the same headline.
+
+\section{First-difference labels and their symmetries}\label{sec:labels}
+Let $p\equiv3\pmod4$ be prime and let $H=(\F_p^*)^2$ be the multiplicative group of nonzero squares. Put $r=|H|=(p-1)/2$. Since $-1\notin H$, every nonzero field element lies in exactly one of $H$ and $-H$.
+
+For $h\ge0$ let $V_h=\F_p^h$. For distinct $u,v\in V_h$, let $j(u,v)$ be their first differing coordinate. Define a tournament by
+\[
+ u\longrightarrow v
+ \quad\Longleftrightarrow\quad
+ v_{j(u,v)}-u_{j(u,v)}\in H.
+\]
+For such an edge define its label
+\[
+ a(u,v)=v_{j(u,v)}-u_{j(u,v)}\in H.
+\]
+This is the lexicographic product of $h$ Paley tournaments. Its outdegree is independent of the vertex and equals
+\begin{equation}\label{eq:degree}
+ r\sum_{j=1}^h p^{h-j}=\frac{p^h-1}{2}.
+\end{equation}
+Indeed, after the first differing coordinate $j$ is fixed, there are $r$ choices for its oriented difference and $p^{h-j}$ free suffixes.
+
+\begin{definition}
+A set $I\subseteq V_h$ is \emph{head-constant} if there are labels $m_v\in H$, $v\in I$, such that $a(u,v)=m_v$ for every internal edge $u\to v$ of $I$.
+\end{definition}
+Labels at vertices with no incoming internal edge impose no restriction.
+
+\begin{lemma}\label{lem:exclusion}
+Every head-constant subset of $V_h$ has cardinality at most $3^h$.
+\end{lemma}
+\begin{proof}
+For $h=0$ there is one vertex. Suppose $h\ge1$ and partition a head-constant set $I$ into its nonempty first-coordinate fibers $I_c$. Their distinct first coordinates form a tournament, with $c\to e$ if $e-c\in H$. If distinct $c,c'$ both point to $e$, choose $u\in I_c$, $u'\in I_{c'}$ and $v\in I_e$. Then
+\[
+ e-c=a(u,v)=m_v=a(u',v)=e-c',
+\]
+a contradiction. Each quotient vertex has indegree at most one. If there are $b$ nonempty fibers, counting the quotient edges gives $b(b-1)/2\le b$, whence $b\le3$; this also covers the empty case. Within a fiber, deleting the common first coordinate retains every internal orientation and label. The same assignments $m_v$ witness a head-constant set in $V_{h-1}$. Induction bounds each fiber by $3^{h-1}$, proving the result.
+\end{proof}
+
+\begin{lemma}\label{lem:affine}
+The maps
+\begin{equation}\label{eq:affine}
+ (v,c)\longmapsto(\lambda v+b,\lambda c),
+ \qquad \lambda\in H,\quad b\in V_h,
+\end{equation}
+form a transitive permutation group on $V_h\times H$. On rows they preserve orientation, and for every edge $u\to v$ satisfy
+\[
+ a(\lambda u+b,\lambda v+b)=\lambda a(u,v).
+\]
+\end{lemma}
+\begin{proof}
+Multiplication by a nonzero scalar preserves the first differing position; translation cancels in the difference. Multiplication by a square preserves membership in $H$, and multiplies the label by that square. The composite of parameters $(\lambda,b)$ and $(\mu,c)$ has parameters $(\lambda\mu,\lambda c+b)$; the inverse has parameters $(\lambda^{-1},-\lambda^{-1}b)$, so these maps form a group. Given $(v,c),(w,e)$, choose $\lambda=e/c\in H$ and $b=w-\lambda v$. This sends the first pair to the second.
+\end{proof}
+
+Henceforth fix
+\begin{equation}\label{eq:parameters}
+ h=4,\qquad k=p^4,\qquad t=82,\qquad
+ A=\frac{k-1}{2},\qquad M=\lceil\sqrt A\rceil.
+\end{equation}
+No set of $t$ rows is head-constant, and $A\le M^2$. Here $A$ is the gate degree. These parameters replace the source's particular relation between its degree, alphabet and forbidden-pattern size.
+
+\section{A common transitive group for nested predicates}\label{sec:predicates}
+Fix an integer depth $d\ge1$. Write
+\[
+ L=d+2,\qquad h_l=d+1-l\quad(0\le l\le d),\qquad
+ N_l=LM(kr)^l.
+\]
+The lower-case $h_l$ specifies the number of predicate indices, not the fixed tournament dimension $h=4$.
+
+On $N_0=LM$ coordinates choose disjoint sets $E_1,\ldots,E_M$, each of size $L$, covering all coordinates. Let $z_i=\mathbf1_{E_i}$ and
+\[
+ D(x)=\min_{1\le i\le M}\dist_{\rm Ham}(x,z_i).
+\]
+For $1\le q\le h_0$ define
+\begin{equation}\label{eq:base}
+ P_{0,q}(x)=1\quad\Longleftrightarrow\quad D(x)\le h_0-q.
+\end{equation}
+
+At level $l\ge1$, set $Q=h_{l-1}=h_l+1$ and arrange the input in $kr$ disjoint children $x_{v,c}$, indexed by $v\in V_4$ and $c\in H$, each with $N_{l-1}$ coordinates. For $1\le q\le h_l$, a row $u$ has a satisfied clause if
+\begin{align}
+ P_{l-1,Q}(x_{u,c})&=1 &&\text{for every }c\in H,\label{eq:targets}\\
+ P_{l-1,Q-q}(x_{v,a(u,v)})&=0 &&\text{for every edge }u\to v.\label{eq:gates}
+\end{align}
+Define $P_{l,q}$ as the OR of these $k$ clauses. Each clause uses $r+A$ distinct children: its own $r$ target positions and one gate in each outgoing row. The indices obey $1\le Q-q<Q$. These formulas define total Boolean functions at all inputs.
+
+\begin{lemma}\label{lem:nested}
+For each $l$, the predicates $P_{l,q}$ decrease as $q$ increases. There is one coordinate-transitive permutation group on their $N_l$ coordinates that preserves every $P_{l,q}$ simultaneously.
+\end{lemma}
+\begin{proof}
+At level zero, nesting follows from the decreasing radii. Permutations of the $M$ equal blocks and independent permutations within each block preserve the set of centers, hence $D$ and every predicate. They act transitively on all $LM$ bits.
+
+Inductively, increasing $q$ decreases the gate index $Q-q$. By child nesting this makes the gate predicate larger, so requiring it to be zero is a stronger condition. Thus parent nesting holds. Take independent copies of the common child group in each child. They preserve both indices used by every clause. Also let the affine group in Lemma~\ref{lem:affine} permute the whole children, retaining their identical internal coordinate indexing. It sends all targets in row $u$ to all targets in row $\lambda u+b$. For a gate indexed by $(v,a(u,v))$, covariance sends its position to
+\[
+ (\lambda v+b,\lambda a(u,v))
+ =(\lambda v+b,a(\lambda u+b,\lambda v+b)),
+\]
+the corresponding gate of that new clause. Every parent predicate is preserved.
+
+Given two raw coordinates, use the affine group to move the first coordinate's child to the destination child. Then use the independent group in that child to move its internal coordinate to the requested bit. The generated group is transitive. The induction preserves the entire nested family, which is necessary because clauses use two different child indices.
+\end{proof}
+
+\section{Ordinary and joint sensitivity at every input}\label{sec:recurrences}
+For $b\in\bits$, let $S_{l,b}$ be the maximum of $s(P_{l,q},x)$ over all indices $q$ and inputs with $P_{l,q}(x)=b$. Let $J_{l,b}$ be the maximum number of coordinates $i$ for which
+\[
+ P_{l,q}(x)=P_{l,q'}(x)=b,\qquad
+ P_{l,q}(x^{\{i\}})=P_{l,q'}(x^{\{i\}})=1-b,
+\]
+over distinct indices $q,q'$ and all such inputs. Empty maxima are zero. These are profiles of the whole family; no structured-input condition is present.
+
+\begin{lemma}\label{lem:baseprofiles}
+The base profiles satisfy
+\[
+ S_{0,0}\le L,\qquad S_{0,1}\le LM,\qquad J_{0,0}=J_{0,1}=0.
+\]
+\end{lemma}
+\begin{proof}
+At a rejecting input of a ball predicate with radius $R=h_0-q\le d$, every successful flip approaches a center at distance $R+1\le d+1$. At most one center can be this close, since distinct centers have distance $2L=2d+4>2d+2$. There are at most $R+1\le L$ coordinates approaching that center. The accepting-side bound is the total number $LM$ of coordinates. The integer-valued function $D$ is $1$-Lipschitz across a cube edge. A single flip cannot cross two distinct integer radii in the same direction, giving both joint bounds.
+\end{proof}
+
+\begin{proposition}\label{prop:recurrences}
+For each $l\ge1$ the following inequalities hold:
+\begin{align}
+ S_{l,1}&\le A S_{l-1,0}+rS_{l-1,1},\label{eq:S1}\\
+ J_{l,1}&\le A J_{l-1,0}+rS_{l-1,1},\label{eq:J1}\\
+ S_{l,0}&\le t S_{l-1,0}+S_{l-1,1}+3J_{l-1,1},\label{eq:S0}\\
+ J_{l,0}&\le t S_{l-1,0}+3J_{l-1,1}.\label{eq:J0}
+\end{align}
+\end{proposition}
+\begin{proof}
+These are the ordinary/joint transition arguments of the source framework, with the actual degree $A$ and exclusion parameter $t$ of~\eqref{eq:parameters}. We verify each case.
+
+\paragraph{One to zero.}
+At an accepting input fix a satisfied clause. Every flip that changes the parent to zero must break this clause. It must either change one of its $r$ true targets from one to zero or one of its $A$ false gates from zero to one. Since these children are distinct, the union bound gives~\eqref{eq:S1}.
+
+\paragraph{Joint one to zero.}
+Let $q<q'$ and fix a clause initially satisfied for the stronger parent $q'$. By nesting it is also satisfied for $q$. Its gate indices obey
+\[
+ g'=Q-q'<g=Q-q<Q.
+\]
+Breaking a target costs at most $rS_{l-1,1}$. If no target breaks, making even the weaker parent $q$ false requires breaking a gate at index $g$. Initially both $g$ and $g'$ are zero. Afterward $g$ is one, and nesting forces $g'$ to be one as well. Each such gate costs at most $J_{l-1,0}$, giving~\eqref{eq:J1}. The clause is fixed before the flips are counted.
+
+\paragraph{Zero to one.}
+At a rejecting input and fixed parent index $q$, form two lists of initially almost-satisfied clauses. Let $T$ consist of clauses with exactly one failed target and no failed gate, and let $G$ consist of clauses with exactly one failed gate and no failed target. A raw bit belongs to only one child and affects at most one condition of each clause. Hence every clause made true by one flip was already in $T$ or $G$. The lists are fixed independently of the selected flip.
+
+For a row $v\in T$, let $m_v$ be its unique failed target position. If $u,v\in T$ and $u\to v$, the passing gate of $u$ at $(v,a(u,v))$ says that the weaker child predicate there is zero. Its strongest predicate is therefore zero too. The uniqueness of $m_v$ yields $a(u,v)=m_v$. Thus $T$ is head-constant, and Lemma~\ref{lem:exclusion} gives $|T|\le81<t$. Each member has at most $S_{l-1,0}$ repairs, for a total at most $tS_{l-1,0}$.
+
+For each row in $G$, all its target predicates are true. Every internal edge $u\to v$ of $G$ therefore fails the gate of clause $u$ in row $v$, because the strongest target there is one. Since each clause in $G$ has exactly one failed gate, its induced outdegree is at most one. Edge counting gives $|G|\le3$. At most one member has induced outdegree zero: an edge between two such members would contradict this property. Every other member has its unique failed gate in a row of $G$, whose strongest target index $Q$ is initially one. Repairing the weaker gate index $Q-q$ from one to zero forces $Q$ to zero by nesting. These are distinct indices, so such a repair costs at most $J_{l-1,1}$. The possible exceptional member costs at most $S_{l-1,1}$. The safe bound $S_{l-1,1}+3J_{l-1,1}$, together with the $T$ estimate, proves~\eqref{eq:S0}.
+
+\paragraph{Joint zero to one.}
+Let $q<q'$, both initially zero, and use the fixed lists $T,G$ for the weaker parent $q$. A clause finally true for $q'$ is also finally true for $q$, so it belongs to one of these lists. The $T$ repairs still cost at most $tS_{l-1,0}$. For a $G$ witness, its failed gate at $g=Q-q$ is initially one; the smaller index $g'=Q-q'$ is initially one as well. Final truth of the same clause for $q'$ requires $g'=0$, and nesting then gives $g=0$. Both distinct indices change, including for the possible exceptional member of $G$. Its cost is therefore at most $J_{l-1,1}$, proving~\eqref{eq:J0}. A clause with another unrepaired failure at $q'$ is not a final witness and adds no flips. Overlaps of clauses do not invalidate any union bound. If there is no pair of parent indices, the joint bound is automatic.
+\end{proof}
+
+\section{Normalized estimates and parameter choices}\label{sec:estimates}
+For the chosen depth $d$, choose a prime $p\equiv3\pmod4$ satisfying
+\begin{equation}\label{eq:prime}
+ p\ge\max\{167,3^{d+1}\}.
+\end{equation}
+Such primes are unbounded. Indeed, if all primes congruent to $3$ modulo $4$ divided a finite product $P$, the positive integer $4P-1\equiv3\pmod4$ would have a prime factor congruent to $3$ modulo $4$ not dividing $P$.
+
+Because $A=(p^4-1)/2\ge p^4/4$ for $p\ge2$, we have $M\ge p^2/2$. Hence, with $t=82$,
+\begin{equation}\label{eq:epsilon}
+ \varepsilon:=\frac{\max\{r,t\}}M
+ \le\frac1p\le\frac{2}{3^{d+1}}.
+\end{equation}
+Here $r/M\le1/p$ follows from $r=(p-1)/2$, and $t/M\le164/p^2\le1/p$ follows from $p\ge167$.
+
+Define normalized profiles
+\[
+ u_l=\max_{b\in\bits}\frac{S_{l,b}}{M^{l+b}},\qquad
+ v_l=\max_{b\in\bits}\frac{J_{l,b}}{M^{l+b}}.
+\]
+Lemma~\ref{lem:baseprofiles} and Proposition~\ref{prop:recurrences}, using $A\le M^2$, give
+\begin{align}
+ &u_0\le L,\qquad v_0=0,\label{eq:initial}\\
+ &u_l\le(1+\varepsilon)u_{l-1}+3v_{l-1},\qquad
+ v_l\le\varepsilon u_{l-1}+3v_{l-1}.\label{eq:normalized}
+\end{align}
+For clarity, the separate normalized ordinary bounds are $(1+r/M)u_{l-1}$ on side one and $(1+t/M)u_{l-1}+3v_{l-1}$ on side zero. The joint bounds are $v_{l-1}+(r/M)u_{l-1}$ and $3v_{l-1}+(t/M)u_{l-1}$. They imply exactly~\eqref{eq:normalized}.
+
+\begin{lemma}\label{lem:profiles}
+For $0\le l\le d$ and $b\in\bits$,
+\[
+ S_{l,b}\le2L M^{l+b}.
+\]
+\end{lemma}
+\begin{proof}
+Let $U_0=L,V_0=0$ and use equality in the two recurrences~\eqref{eq:normalized} to define $U_l,V_l$. Their nonnegative coefficients give $u_l\le U_l$ and $v_l\le V_l$ by induction. We prove simultaneously
+\[
+ U_l\le2L,\qquad V_l\le\varepsilon L(3^l-1)\qquad(0\le l\le d).
+\]
+The initial bounds hold. Using $U_{l-1}\le2L$ and the previous $V$ bound gives
+\[
+ V_l\le2\varepsilon L+3\varepsilon L(3^{l-1}-1)
+ =\varepsilon L(3^l-1).
+\]
+For $U_l$, sum its increments and use only the previously established indices $j<l$:
+\begin{align*}
+ U_l
+ &=L+\sum_{j=0}^{l-1}(\varepsilon U_j+3V_j)\\
+ &\le L+\varepsilon L\left[\frac32(3^l-1)-l\right]
+ <2L.
+\end{align*}
+The last inequality follows from~\eqref{eq:epsilon}, since the increment divided by $L$ is at most
+\[
+ \frac{3^{l+1}-3-2l}{3^{d+1}}<1\qquad(1\le l\le d).
+\]
+This is a simultaneous induction, not an assumption of the final bound. Multiplying back by $M^{l+b}$ proves the result.
+\end{proof}
+
+\section{Disjoint zero blocks and OR balancing}\label{sec:blocks}
+\begin{lemma}\label{lem:blocks}
+At level $l$, every predicate is zero at $\zero$. There are $Mk^l$ pairwise disjoint nonempty blocks, each of size $Lr^l$, whose flips at $\zero$ make every $P_{l,q}$ one simultaneously.
+\end{lemma}
+\begin{proof}
+At level zero, $D(\zero)=L>d$, so all predicates vanish. Each $E_i$ sends $\zero$ to a center and makes all predicates one. Suppose the assertion holds at level $l-1$. At the all-zero parent input every target fails, so every clause fails. For one row $u$ and one of the common child blocks $B$, take the union of the identical copy of $B$ in all $r$ children $(u,c)$. Flipping this union makes all strongest targets in row $u$ true. Each outgoing gate lies in a different row left at zero, where every child predicate is zero. Thus this row's clause is true for every parent index.
+
+Different rows use disjoint children. Within one row, disjoint child blocks remain disjoint in each child. This gives $k$ times the previous number of blocks and $r$ times their size, proving the induction.
+\end{proof}
+
+Let $f$ be the OR of $M$ disjoint identical copies of $P_{d,1}$. Its number of coordinates is
+\begin{equation}\label{eq:n}
+ n=LM^2(kr)^d.
+\end{equation}
+The common groups in Lemma~\ref{lem:nested}, acting independently on the copies, together with all permutations of the copies, preserve $f$ and act transitively on all $n$ raw coordinates. At a rejecting input all copies reject, so the sensitivity is at most $MS_{d,0}$. At an accepting input with at least two accepting copies, no single flip changes the OR. If exactly one copy accepts, every sensitive bit lies in that copy, giving at most $S_{d,1}$. Lemmas~\ref{lem:profiles} and~\ref{lem:blocks} therefore yield
+\begin{equation}\label{eq:seedbounds}
+ s(f)\le2L M^{d+1},\qquad
+ \bs(f,\zero)\ge M^2k^d,\qquad f(\zero)=0.
+\end{equation}
+The blocks are nonempty, so $f$ is nonconstant. A cube path between inputs with different values shows $s(f)>0$.
+
+Integer rounding leaves a fixed exponential gain. Namely,
+\[
+ M\le\sqrt A+1\le\frac{3p^2}{4}+1\le\frac{4p^2}{5},
+\]
+where the last inequality uses $p^2\ge20$. Thus
+\begin{equation}\label{eq:ratio}
+ \frac{k}{M^2}\ge\frac{25}{16}>\frac32,
+ \qquad
+ \frac{\bs(f,\zero)}{s(f)^2}
+ \ge\frac{(k/M^2)^d}{4L^2}
+ \ge\frac{(3/2)^d}{4(d+2)^2}.
+\end{equation}
+The final expression tends to infinity. Given $C>0$, first choose $d$ so it exceeds $C$, then a prime satisfying~\eqref{eq:prime}. Equations~\eqref{eq:seedbounds}--\eqref{eq:ratio} and the transitivity proof establish the first part of Theorem~\ref{thm:main}.
+
+\section{A fixed exponent and composition}\label{sec:composition}
+Take $d=20$ and choose one prime satisfying~\eqref{eq:prime}. For its fixed seed $f$, put
+\[
+ A_*=44M^{21},\qquad B_*=M^2k^{20}.
+\]
+Then $s(f)\le A_*$ and $\bs(f,\zero)\ge B_*$. Moreover,
+\[
+ \frac{B_*}{A_*^2}\ge\frac{3^{20}}{2^{20}\cdot1936}>1,
+\]
+because
+\[
+ 3^{20}=3486784401>2030043136=2^{20}\cdot1936.
+\]
+Since $A_*>1$, the fixed real number
+\begin{equation}\label{eq:alpha}
+ \alpha=\frac{\log B_*}{\log A_*}
+\end{equation}
+satisfies $\alpha>2$.
+
+We recall the complete composition arguments. If $g$ is a total Boolean function on an outer coordinate set and $h$ is a total Boolean function on an inner coordinate set, let $g\circ h$ apply an identical independent copy of $h$ in each outer position. At any input, a sensitive raw bit must be sensitive for its child $h$, and that child's output position must be sensitive for $g$ at the vector of child outputs. Hence
+\begin{equation}\label{eq:compose-s}
+ s(g\circ h)\le s(g)s(h).
+\end{equation}
+If $h(\zero)=0$, choose disjoint sensitive blocks $C_i$ for $g$ at zero and disjoint sensitive blocks $D_j$ for $h$ at zero. The product blocks $C_i\times D_j$ are nonempty and pairwise disjoint. Flipping one of them changes exactly the child outputs in $C_i$, so it changes $g$. Consequently
+\begin{equation}\label{eq:compose-bs}
+ \bs(g\circ h,\zero)\ge\bs(g,\zero)\bs(h,\zero).
+\end{equation}
+For pairwise disjointness, two product blocks with different outer indices use disjoint outer sets, while those with the same outer index and different inner indices use disjoint inner sets.
+
+If both functions are coordinate-transitive, so is their composition: an outer automorphism permutes the identical children, and independent inner automorphisms preserve their outputs. To move a raw coordinate, move its outer position first and then its inner position. The generated group preserves the composition and is transitive on the full product coordinate set. No automorphism is asserted to preserve a chosen witness family; only invariance of the functions is needed.
+
+Set $F_1=f$ and $F_{m+1}=f\circ F_m$. By induction these functions are total, coordinate-transitive and zero at zero. Equations~\eqref{eq:compose-s}--\eqref{eq:compose-bs} give
+\[
+ s(F_m)\le A_*^m,\qquad
+ \bs(F_m,\zero)\ge B_*^m=(A_*^m)^\alpha\ge s(F_m)^\alpha.
+\]
+Since $B_*>1$, their zero-input block sensitivities diverge, so every $F_m$ is nonconstant. This proves the second part of Theorem~\ref{thm:main}.
+
+\section{Formal support and provenance}\label{sec:formal}
+\input{formal-support.tex}
+
+The proof above is a human-readable mathematical argument. Finite diagnostic computations are not premises for its asymptotic claims. The fixed-depth tournament, arbitrary depth of the nested predicates, sufficiently large prime, and iterated compositions each have separate roles; no finite experiment substitutes for their quantified proofs.
+
+The research source was authenticated against the complete preprint tree at the revision in \cite{OpenAI}. The seven non-PDF source files comprise its README, main file, bibliography and four mathematical sections. The manuscript's accompanying provenance identifies the frozen author, proof-review and contribution-review packets and the precise formal coverage. These internal reviews are distinct from external peer review or a worldwide novelty certification. Private third-party source bodies are not included in this manuscript package.
+
+\paragraph{Rights and author information.}
+Myeongjin Kang has no listed affiliation. This manuscript and original accompanying prose are licensed under Creative Commons Attribution 4.0 International. Original accompanying code is licensed under the MIT License. These licenses do not relicense cited third-party works.
+
+\begin{thebibliography}{9}
+\bibitem{OpenAI}
+OpenAI, \emph{A superquadratic separation between sensitivity and block sensitivity}, September 25, 2026. Pinned research source, revision
+\texttt{fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb}.
+\href{https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/A-superquadratic-separation-between-sensitivity-and-block-sensitivity-September-25-2026}{Source manuscript and proof files}.
+\bibitem{Meiburg}
+A. Meiburg, \emph{Block Sensitivity can exceed Spectral Sensitivity Squared}, arXiv:2608.00851v1, August 1, 2026.
+\href{https://arxiv.org/abs/2608.00851v1}{Versioned primary preprint}.
+\bibitem{CKP}
+S. Chakraborty, C. Kayal and M. Paraashar, \emph{Separations between Combinatorial Measures for Transitive Functions}, Discrete Mathematics \& Theoretical Computer Science \textbf{27:2}, article 18 (2025); arXiv:2103.12355v7.
+\href{https://dmtcs.episciences.org/15992/pdf}{Journal primary text}.
+\bibitem{KT}
+R. Kulkarni and A. Tal, \emph{On Fractional Block Sensitivity}, Electronic Colloquium on Computational Complexity, comment 1 on report 168 (2013), November 29, 2013.
+\href{https://eccc.weizmann.ac.il/report/2013/168/comment/1/download/}{Versioned primary text}.
+\end{thebibliography}
+\end{document}

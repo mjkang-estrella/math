@@ -1,0 +1,3 @@
+# Public package licensing
+
+Original prose, including the manuscript and original research/review notes, is offered under Creative Commons Attribution 4.0 International (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/ . Original code and Lean are offered under the accompanying MIT license. These grants apply only to rights held by Myeongjin Kang; existing third-party notices and licenses prevail for third-party material. Bibliographic quotations and mathematical statements retain their applicable status. Lean/mathlib and other external dependencies keep their own licenses and are not relicensed here. Raw third-party manuscripts and web captures are omitted from this public package.

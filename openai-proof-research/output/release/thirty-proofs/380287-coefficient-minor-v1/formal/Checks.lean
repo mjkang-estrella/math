@@ -1,0 +1,62 @@
+import CoefficientMinor
+
+#check CoefficientMinorCounterexample.Mat
+#print axioms CoefficientMinorCounterexample.Mat
+#check CoefficientMinorCounterexample.D1
+#print axioms CoefficientMinorCounterexample.D1
+#check CoefficientMinorCounterexample.D2
+#print axioms CoefficientMinorCounterexample.D2
+#check CoefficientMinorCounterexample.D3
+#print axioms CoefficientMinorCounterexample.D3
+#check CoefficientMinorCounterexample.symmetric_D1
+#print axioms CoefficientMinorCounterexample.symmetric_D1
+#check CoefficientMinorCounterexample.symmetric_D2
+#print axioms CoefficientMinorCounterexample.symmetric_D2
+#check CoefficientMinorCounterexample.symmetric_D3
+#print axioms CoefficientMinorCounterexample.symmetric_D3
+#check CoefficientMinorCounterexample.nonzero_coordinate
+#print axioms CoefficientMinorCounterexample.nonzero_coordinate
+#check CoefficientMinorCounterexample.D1_posDef
+#print axioms CoefficientMinorCounterexample.D1_posDef
+#check CoefficientMinorCounterexample.D2_quadratic
+#print axioms CoefficientMinorCounterexample.D2_quadratic
+#check CoefficientMinorCounterexample.D2_posDef
+#print axioms CoefficientMinorCounterexample.D2_posDef
+#check CoefficientMinorCounterexample.D3_quadratic
+#print axioms CoefficientMinorCounterexample.D3_quadratic
+#check CoefficientMinorCounterexample.D3_posDef
+#print axioms CoefficientMinorCounterexample.D3_posDef
+#check CoefficientMinorCounterexample.PX
+#print axioms CoefficientMinorCounterexample.PX
+#check CoefficientMinorCounterexample.PXZ
+#print axioms CoefficientMinorCounterexample.PXZ
+#check CoefficientMinorCounterexample.PXYZ
+#print axioms CoefficientMinorCounterexample.PXYZ
+#check CoefficientMinorCounterexample.pencil
+#print axioms CoefficientMinorCounterexample.pencil
+#check CoefficientMinorCounterexample.determinant
+#print axioms CoefficientMinorCounterexample.determinant
+#check CoefficientMinorCounterexample.coefficientMatrix
+#print axioms CoefficientMinorCounterexample.coefficientMatrix
+#check CoefficientMinorCounterexample.minor
+#print axioms CoefficientMinorCounterexample.minor
+#check CoefficientMinorCounterexample.displayed
+#print axioms CoefficientMinorCounterexample.displayed
+#check CoefficientMinorCounterexample.determinant_expansion
+#print axioms CoefficientMinorCounterexample.determinant_expansion
+#check CoefficientMinorCounterexample.coefficient_bridge
+#print axioms CoefficientMinorCounterexample.coefficient_bridge
+#check CoefficientMinorCounterexample.minor_formula
+#print axioms CoefficientMinorCounterexample.minor_formula
+#check CoefficientMinorCounterexample.minor_at_zero
+#print axioms CoefficientMinorCounterexample.minor_at_zero
+#check CoefficientMinorCounterexample.minor_at_one
+#print axioms CoefficientMinorCounterexample.minor_at_one
+#check CoefficientMinorCounterexample.positive_real_root
+#print axioms CoefficientMinorCounterexample.positive_real_root
+#check CoefficientMinorCounterexample.Stable
+#print axioms CoefficientMinorCounterexample.Stable
+#check CoefficientMinorCounterexample.minor_not_stable
+#print axioms CoefficientMinorCounterexample.minor_not_stable
+#check CoefficientMinorCounterexample.source_counterexample
+#print axioms CoefficientMinorCounterexample.source_counterexample

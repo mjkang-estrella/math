@@ -1,0 +1,1 @@
+Original proof code in this packet is offered under MIT terms; original explanatory prose is offered under CC BY 4.0. Credit the local project author and disclose AI assistance. Third-party source records, papers, and earlier solutions retain their own rights. They are archived only for local provenance. This packet claims neither mathematical priority nor first formalization.

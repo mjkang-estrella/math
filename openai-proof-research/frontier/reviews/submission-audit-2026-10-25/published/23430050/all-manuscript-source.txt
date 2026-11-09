@@ -1,0 +1,549 @@
+\paragraph{Formal support and its limits.}
+The accompanying Lean~4.34.1 project contains eleven supporting theorems
+and seven control theorems, with mathlib pinned to revision
+\begin{center}\small\texttt{d13f23b723b8a846827a245b89c10fc7d3f11612}.\end{center}
+The implementation's fresh-source build and type/axiom receipts report only
+\path{propext}, \path{Classical.choice} and \path{Quot.sound} as kernel
+axioms. No upstream theorem or new conclusion is installed as an axiom.
+These are implementation checks; independent formal audit is separate.
+
+The three boundary theorems prove the integer consequences of the assumed
+identity $\delta_D=\delta_H+q+b-a$, including the complete indicator case
+split. Three aggregate theorems treat arbitrary finite index sets, a
+distinguished subset of at least $m-1$ improved fibers, $nm$ fibers in total,
+and the bound $\sum c\leq-m<0$ for $m=n^2+2$. Two fiber theorems convert
+negative total finite-fiber defects into strict sums and tagged-family
+cardinalities. Three closure theorems prove complement cardinality gain and
+objective improvement from explicitly assumed disjointness, strict image
+inequalities, retained subsets, deletion budget and maximality.
+
+The full graph theorem is \emph{not formalized}. The graph-to-boundary
+identity, minimum-counterexample argument, protected subset deficit,
+strong connectivity after deletion, transitive-blowup image estimate,
+compatibility and anchor exclusion, coordinate-image interpretation,
+pruning existence, diagonal retention, charge-set bounds and admissibility
+remain in the paper proof. The control theorems expose false weakenings;
+they are not graph counterexamples or extra frontier results. The package's
+\texttt{formal/coverage.json} lists every declaration and its exact assumptions.
+
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,amssymb,amsthm,mathtools,microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{enumitem}
+\setlength{\emergencystretch}{2em}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{premise}{Premise}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\abs}[1]{\lvert #1\rvert}
+\newcommand{\set}[1]{\{#1\}}
+\newcommand{\N}{\mathbb N}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\dif}{\setminus}
+\title{Two Seymour vertices in every sink-free oriented graph\\[4pt]\large An exceptional-boundary and aggregate-fiber argument}
+\author{Myeongjin Kang}
+\date{October 16, 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+We prove, relative to two explicitly stated results of the pinned OpenAI
+manuscript on Seymour's conjecture, that every nonempty finite sink-free
+oriented graph has two distinct vertices whose exact second out-neighborhood
+is at least as large as their first. This is Conjecture~2 of
+Dara, Francis, Jacob and Narayanan. The inputs are the ordinary one-vertex
+Seymour theorem and a finite-relation pruning lemma; their truth is stipulated
+here. A minimum counterexample has a unique good vertex with one successor.
+Deleting that vertex leaves weak subset deficits together with a strict
+inequality for subsets that do not reach the successor in one or two steps.
+In a transitive blowup, compatibility with the diagonal selects many fibers
+with this strict inequality. Their total gain dominates the possible losses
+of all remaining fibers, allowing the established pruning objective to close.
+All deductions from the two inputs are proved below. Finite diagnostics and
+formal supporting lemmas are distinguished from the full graph theorem.
+\end{abstract}
+
+\section{Statement, notation and dependencies}
+An \emph{oriented graph} is a finite directed graph without loops, parallel
+arcs or opposite pairs of arcs. For a vertex $v$ of $D$, let $N_{1,D}(v)$ be
+its set of out-neighbors and let $N_{2,D}(v)$ consist of the vertices at
+\emph{directed distance exactly two} from $v$. In particular, a first neighbor
+is not counted again in $N_2$. A vertex is \emph{good} if
+$\abs{N_{2,D}(v)}\geq\abs{N_{1,D}(v)}$. A sink has no outgoing arc.
+
+\begin{theorem}\label{thm:main}
+Assume Premises~\ref{prem:snc} and~\ref{prem:pruning}. Every nonempty finite
+oriented graph with no sink has at least two distinct good vertices.
+\end{theorem}
+There is no strong-connectivity, degree, missing-edge or size restriction in
+this conclusion. Sink-freeness is essential: a transitive tournament has only
+one good vertex, its sink. The statement is the already formulated
+Conjecture~2 of Dara et al.\ \cite{Dara}, not a new conjecture.
+
+For any such graph $K$ and vertex subset $S$, define the outgoing image and
+its iterates by
+\[
+ F_K(S)=\bigcup_{v\in S}N_{1,K}(v),\qquad F_K^2(S)=F_K(F_K(S)).
+\]
+We do not remove $S$ from either image. Put
+\begin{equation}\label{eq:deficit}
+ \delta_K(S)=\abs{F_K^2(S)\dif F_K(S)}-\abs{F_K(S)\dif S}.
+\end{equation}
+For a singleton this is $\abs{N_{2,K}(v)}-\abs{N_{1,K}(v)}$:
+a length-two return to $v$ would require opposite arcs, and loops are absent.
+For larger sets, the image notation in~\eqref{eq:deficit} is the definition;
+no distance interpretation for a set is needed.
+
+Our only imported mathematical inputs are the following two statements from
+OpenAI~\cite{OpenAI}, at the immutable revision recorded in Appendix~\ref{app:source}.
+They are stipulated true for this deduction; their proofs are not part of
+this paper's claim of independent verification.
+
+\begin{premise}[Ordinary Seymour theorem]\label{prem:snc}
+Every nonempty finite oriented graph has at least one good vertex.
+\end{premise}
+This is \texttt{thm:main} in the source's \texttt{00-introduction.tex}.
+We next give the full pruning input in notation convenient for its later use.
+
+\begin{premise}[Finite-relation pruning]\label{prem:pruning}
+Let $X$ be any finite set equipped with a binary relation $\to$; loops or
+opposite pairs are allowed for this premise. Let $R,C\subseteq X\times X$
+be two separately counted families. A left member $(p,j)\in R$ and a right
+member $(i,s)\in C$ conflict precisely when $p\to i$ and $s\to j$.
+Let
+\begin{align*}
+ Z&=\set{(i,j):\exists(p,j)\in R,\ (i,s)\in C,\ p\to i,\ s\to j},\\
+ B&=\set{(p,s):\exists(p,j)\in R,\ (i,s)\in C,\ p\to i,\ s\to j}.
+\end{align*}
+A left member $(p,j)$ covers $(i,j)$ if $p\to i$, and a right member
+$(i,s)$ covers $(i,j)$ if $s\to j$; these are the only covering incidences.
+There exist subfamilies $R'\subseteq R$ and $C'\subseteq C$ with no
+remaining conflict, retaining every member that had no conflict initially,
+and satisfying
+\begin{equation}\label{eq:pruning}
+ \abs{R\dif R'}+\abs{C\dif C'}
+ \leq \abs B+\abs{\set{u\in Z:u\text{ is not covered by }R'\text{ or }C'}}.
+\end{equation}
+A member appearing on both sides is counted separately on each side.
+\end{premise}
+This is \texttt{lem:pruning} in \texttt{02-pruning.tex}; its initial charge
+set is called $H$ there and $B$ here to avoid confusion with a graph below.
+The premise applies to every finite binary relation, with no additional
+orientation, connectivity or nonemptiness hypothesis.
+
+\section{A minimum counterexample and protected subsets}
+Suppose the conclusion of Theorem~\ref{thm:main} is false. Choose a
+sink-free counterexample $D$ minimizing its number of vertices and, subject
+to that, its number of arcs. Premise~\ref{prem:snc} implies that $D$ has
+exactly one good vertex, denoted by $z$.
+
+The graph $D$ is strongly connected. Otherwise, a terminal strongly connected
+component $C$ is proper. It cannot be a singleton, because $D$ is sink-free;
+its induced graph is sink-free. Both out-neighborhoods of each vertex in
+$C$ stay inside $C$, so minimum order gives two good vertices of $D$,
+a contradiction.
+
+Every vertex $x\ne z$ has outdegree at least two. Indeed, outdegree zero is
+excluded. If $N_{1,D}(x)=\set{y}$, then
+$N_{2,D}(x)=N_{1,D}(y)$: loops and opposite arcs exclude both $x$ and $y$
+from the set on the right. It is nonempty, so $x$ would be good.
+On the other hand, $z$ has outdegree exactly one. If it had at least two
+outgoing arcs, deleting one would leave a sink-free graph with fewer arcs.
+At any other vertex the first neighborhood would be unchanged and the
+second could not enlarge. All vertices other than $z$ would remain bad,
+contradicting arc minimality. Write $z\to w$ for its unique outgoing arc.
+
+\begin{lemma}[Protected strict deficit]\label{lem:protected}
+For every nonempty $S\subseteq V(D)\dif\set{z}$, one has $\delta_D(S)<0$.
+\end{lemma}
+\begin{proof}
+Fix $S$, and write $I=F_D(S)\cap S$ and $E=F_D(S)\dif S$.
+Strong connectivity and the fact that $S$ is proper imply $E\ne\varnothing$.
+For $T\subseteq E$ put $g(T)=\abs{F_D(T)\dif(I\cup T)}$.
+
+For each proper $T\subsetneq E$, delete all arcs from $S$ to $E\dif T$,
+and call the resulting graph $D_T$. At least one arc is removed. If $D_T$
+has a sink, this sink lies in $S$ and is newly good. If $D_T$ is sink-free,
+minimality gives at least two good vertices in it. Outside $S$, first
+neighborhoods are unchanged and second neighborhoods cannot improve, so
+only $z$ can be good there. In either case there is a newly good vertex
+$v\in S$. Set
+\[
+ Q=N_{1,D}(v)\cap(E\dif T).
+\]
+This is precisely the set of first neighbors lost by $v$. It is nonempty,
+since otherwise $v$ could not improve. Put $d_i=\abs{N_{i,D}(v)}$.
+Since $v\ne z$, $d_2\leq d_1-1$.
+
+The surviving first neighbors of $v$ lie in $I\cup T$. A two-step path
+through $I\subseteq S$ ends in $I\cup T$, and one through $T$ ends in
+$F_D(T)$. Thus all surviving two-step endpoints lie in
+$I\cup T\cup F_D(T)$. A newly counted exact second neighbor must be a
+lost first neighbor, and therefore lies in $Q\cap F_D(T)$. Conversely, every
+member of
+\[
+ L=F_D(Q)\dif\bigl(I\cup T\cup Q\cup F_D(T)\bigr)
+\]
+was formerly an exact second neighbor and is no longer reachable in two
+steps. Such a member cannot equal $v$, since that would give opposite arcs
+between $v$ and a member of $Q$. Goodness in $D_T$ consequently gives
+\begin{equation}\label{eq:loss}
+ d_1-\abs Q\leq\abs{N_{2,D_T}(v)}
+ \leq d_2-\abs L+\abs{Q\cap F_D(T)}.
+\end{equation}
+On adjoining $Q$ to $T$, exactly $Q\cap F_D(T)$ is removed from the set
+counted by $g(T)$, and exactly $L$ is added. Hence
+\[
+ g(T\cup Q)-g(T)=\abs L-\abs{Q\cap F_D(T)}\leq\abs Q-1.
+\]
+Starting at $T=\varnothing$, repeat this construction, always forming $D_T$
+afresh from $D$. Each nonempty $Q$ is disjoint from the current $T$, so
+finitely many steps reach $T=E$. There is at least one step, and $g(\varnothing)=0$;
+thus $g(E)\leq\abs E-1$. Finally $I\subseteq S$ implies
+$F_D(I)\subseteq F_D(S)$, whence
+\[
+ F_D^2(S)\dif F_D(S)=F_D(E)\dif(I\cup E).
+\]
+Its cardinality is $g(E)$, proving the lemma.
+\end{proof}
+This argument is an adaptation of the source's \texttt{lem:subset-deficit},
+with the unique exceptional vertex protected. It does not assert a strict
+deficit for sets containing $z$.
+
+\section{Retaining the exceptional boundary}
+Let $H=D-z$, and write $F=F_H$. Every remaining vertex had at least two
+outgoing arcs in $D$ and loses at most one, so $H$ is sink-free.
+For a nonempty $S\subseteq V(H)$ write $A=F(S)$, $A_2=F^2(S)$ and set
+\[
+ a=\one_{\{z\in F_D(S)\}},\quad
+ q=\one_{\{a=1,\ w\notin A\cup A_2\}},\quad
+ b=\one_{\{a=0,\ z\in F_D(A)\}}.
+\]
+The first image in $D$ is $A$ with $z$ adjoined exactly when $a=1$.
+The $H$-part of the second image is $A_2$ with $w$ adjoined exactly when
+$a=1$. Its possible $z$-part is removed by the first image when $a=1$.
+These observations give the exact identities
+\begin{align}
+ \abs{F_D^2(S)\dif F_D(S)}&=\abs{A_2\dif A}+q+b,\label{eq:boundary1}\\
+ \abs{F_D(S)\dif S}&=\abs{A\dif S}+a.\label{eq:boundary2}
+\end{align}
+Lemma~\ref{lem:protected}, including integrality of cardinalities, now yields
+\begin{equation}\label{eq:weak}
+ \delta_H(S)\leq-1+a-q-b\leq0.
+\end{equation}
+There is extra information beyond this weak bound:
+\begin{equation}\label{eq:anchorbase}
+ w\notin F(S)\cup F^2(S)\quad\Longrightarrow\quad\delta_H(S)\leq-1.
+\end{equation}
+Indeed, if $a=1$, then $q=1$; if $a=0$, the first bound in~\eqref{eq:weak}
+is already at most $-1$.
+
+The graph $H$ is strongly connected as well. Choose a terminal strongly
+connected component $C$ in it. Sink-freeness makes $C$ nontrivial, and every
+vertex in it has an internal predecessor. Hence $F(C)=C=F^2(C)$.
+Strong connectivity of $D$ forces an arc from $C$ to $z$, since there is
+no other possible outgoing destination outside $C$. Thus $a=1$ for $S=C$.
+As $\delta_H(C)=0$,~\eqref{eq:weak} forces $q=0$, so $w\in C$.
+Then $C\cup\set z$ is outgoing-closed in $D$, which by strong connectivity
+implies $C\cup\set z=V(D)$. Consequently $C=V(H)$.
+In particular, every vertex of $H$ has positive indegree. Write $n=\abs{V(H)}$.
+
+\section{A transitive blowup and its fiber estimates}
+Set $m=n^2+2$. Replace each vertex $p$ of $H$ by a transitive tournament
+on labels $1,\ldots,m$, with arcs from smaller to larger labels.
+For every base arc $p\to q$, put all arcs from the $p$-block to the $q$-block.
+Denote this oriented graph by $G$, its vertex set by $X$, and its outgoing
+image operator by $J$. Thus $\abs X=nm$, and all vertices of $G$ have
+positive indegree. For $U\subseteq X$ define
+\[
+ c(U)=\abs U+\abs{J^2(U)}-2\abs{J(U)}.
+\]
+
+\begin{lemma}\label{lem:blowup}
+Let $U$ be a nonempty proper subset of $X$, and let
+$S=\set{p\in V(H):U\text{ meets the }p\text{-block}}$.
+If $S\ne V(H)$, then
+\begin{equation}\label{eq:blowup}
+ c(U)\leq m\delta_H(S)+\abs{S\dif F(S)}\leq m\delta_H(S)+n.
+\end{equation}
+If $S=V(H)$, then $c(U)=\abs U-\abs X<0$.
+In all cases $c(U)\leq n$.
+\end{lemma}
+\begin{proof}
+Let $T_p$ be the labels selected by $U$ in block $p$, and let $f$ be the
+internal image operator of the transitive tournament. If a nonempty label
+set $T$ has least element $t$, then $f(T)=\set{t+1,\ldots,m}$.
+For $t<m$, $f^2(T)=\set{t+2,\ldots,m}$ and
+\[
+ \abs T-2\abs{f(T)}+\abs{f^2(T)}=\abs T-(m-t)-1\leq0.
+\]
+For $t=m$, the expression is $1$. In particular it is always at most $1$.
+
+Put $W=F(S)\cup F^2(S)$. The first image fills every $F(S)$-block and
+has label set $f(T_p)$ in a block $p\in S\dif F(S)$.
+A two-step path with two external arcs ends in $F^2(S)$, one with exactly
+one external arc ends in $F(S)$, and a path wholly internal contributes
+$f^2(T_p)$. Allowing complete $W$-blocks therefore gives an upper bound:
+\begin{align*}
+ c(U)\leq{}&m\bigl(\abs W-2\abs{F(S)}\bigr)+\sum_{p\in S}\abs{T_p}\\
+ &-2\sum_{p\in S\dif F(S)}\abs{f(T_p)}
+   +\sum_{p\in S\dif W}\abs{f^2(T_p)}.
+\end{align*}
+Extend the last sum to $S\dif F(S)$; this only increases it. Bound
+$\abs{T_p}\leq m$ on $S\cap F(S)$ and apply the internal inequality to
+all remaining blocks. The result is
+\[
+ c(U)\leq m\bigl(\abs{F^2(S)\dif F(S)}-\abs{F(S)\dif S}\bigr)
+              +\abs{S\dif F(S)},
+\]
+which proves~\eqref{eq:blowup}. If $S=V(H)$, positive indegrees in $H$
+give $F(S)=V(H)$, hence $J(U)=X$ and $J^2(U)=X$. This proves the
+full-support assertion. Finally use~\eqref{eq:weak} for the bound $c(U)\leq n$.
+\end{proof}
+
+\section{Strictness after summing compatible fibers}
+For a family $P\subseteq X\times X$, define its two coordinate images by
+\begin{align*}
+ J_1(P)&=\set{(i,j):\exists(p,j)\in P,\ p\to i},\\
+ J_2(P)&=\set{(i,j):\exists(i,s)\in P,\ s\to j}.
+\end{align*}
+Call $P,Q$ \emph{compatible} when $J_1(P)\cap J_2(Q)=\varnothing$.
+The diagonal $\Delta=\set{(x,x):x\in X}$ is compatible with itself because
+$G$ has no opposite arcs. In this section let $P,Q$ be compatible and
+contain $\Delta$.
+
+For $j,i\in X$, respectively write
+$P_j=\set{p:(p,j)\in P}$ and $Q_i=\set{s:(i,s)\in Q}$.
+Each column $P_j$ and row $Q_i$ is nonempty and proper. The diagonal gives
+nonemptiness. If $P_j=X$, positive indegrees imply
+$X\times\set j\subseteq J_1(P)$. An in-neighbor $t\to j$ gives
+$(t,j)\in J_2(\Delta)$, a conflict. If $Q_i=X$, then
+$\set i\times X\subseteq J_2(Q)$, and an in-neighbor $t\to i$ gives
+$(i,t)\in J_1(\Delta)$, again a conflict.
+
+Fix $j=(w,a)$ with $2\leq a\leq m$. No member $x\in P_j$ can have a
+two-step walk $x\to t\to j$: the left member $(x,j)$ and right diagonal
+member $(t,t)$ would conflict. Consequently the support $S$ of $P_j$ satisfies
+\begin{equation}\label{eq:support}
+ w\notin F(S)\cup F^2(S).
+\end{equation}
+For the first image, a base arc $p\to w$ from a supported block lifts from
+any chosen $p$-vertex through $(w,a-1)$ to $(w,a)$. For the second image,
+a base walk $p\to q\to w$ lifts through any vertex in the $q$-block.
+Either would contradict the exclusion just proved. The support is nonempty,
+and it is proper since it omits every base in-neighbor of $w$, of which
+there is at least one. Equations~\eqref{eq:anchorbase} and~\eqref{eq:blowup}
+therefore give
+\[
+ c(P_{(w,a)})\leq-m+n\qquad(2\leq a\leq m).
+\]
+For the right row anchored at $i=(w,a)$, a walk $s\to t\to i$ would make
+the right member $(i,s)$ conflict with the left diagonal member $(t,t)$:
+both coordinate images contain $(i,t)$. The same lifts then prove
+\eqref{eq:support} for the row support and give $c(Q_{(w,a)})\leq-m+n$.
+
+There are $nm$ fibers on each side. Lemma~\ref{lem:blowup} bounds each by
+$n$, while the $m-1$ specified anchors improve this bound by $m$. Thus
+\begin{align}
+ \sum_{j\in X}c(P_j)&\leq n^2m-m(m-1)=-m<0,\label{eq:sumleft}\\
+ \sum_{i\in X}c(Q_i)&\leq n^2m-m(m-1)=-m<0.\label{eq:sumright}
+\end{align}
+Coordinate images act separately on the relevant fibers, so these imply
+\begin{equation}\label{eq:strictfamilies}
+ \abs P+\abs{J_1^2(P)}<2\abs{J_1(P)},\qquad
+ \abs Q+\abs{J_2^2(Q)}<2\abs{J_2(Q)}.
+\end{equation}
+This is a total-family conclusion. It requires no assertion that every
+individual nonempty proper subset of $G$ has negative $c$.
+
+\section{The extremal pruning contradiction}
+There are finitely many compatible pairs containing $\Delta$, and at least
+one exists. Choose such a pair $P,Q$ maximizing $M+d$, where
+\[
+ M=\abs P+\abs Q,\qquad
+ d=\abs X^2-\abs{J_1(P)}-\abs{J_2(Q)}.
+\]
+Here and below $\abs X^2$ means $(\abs X)^2=\abs{X\times X}$.
+Compatibility makes $d$ exactly the number of points uncovered by the two
+coordinate images. Form the complementary families
+\[
+ R=(X\times X)\dif J_2^2(Q),\qquad
+ C=(X\times X)\dif J_1^2(P).
+\]
+Adding~\eqref{eq:strictfamilies} yields
+\begin{equation}\label{eq:gain}
+ \abs R+\abs C>M+2d.
+\end{equation}
+Both complements contain $\Delta$. For example, if
+$(v,v)\in J_2^2(Q)$, then some $(v,s)\in J_2(Q)$ has $s\to v$.
+But $(s,s)\in P$ then puts $(v,s)$ in $J_1(P)$, a conflict.
+For the other complement, if $(v,v)\in J_1^2(P)$, then some
+$(s,v)\in J_1(P)$ has $s\to v$, while $(s,s)\in Q$ puts $(s,v)$
+in $J_2(Q)$.
+
+Moreover, every diagonal member in these new families is conflict-free.
+A left diagonal member $(v,v)\in R$ conflicting with $(i,s)\in C$ would
+give $s\to v\to i$. Since $(s,s)\in P$, this puts $(i,s)\in J_1^2(P)$,
+contrary to its membership in $C$. A right diagonal member $(v,v)\in C$
+conflicting with $(p,j)\in R$ gives $p\to v\to j$; from $(p,p)\in Q$
+we obtain $(p,j)\in J_2^2(Q)$, again a contradiction.
+
+Apply Premise~\ref{prem:pruning} to $R,C$. For any conflict
+$(p,j)\in R$, $(i,s)\in C$, where $p\to i$ and $s\to j$, its initial
+charge $(p,s)$ lies outside $J_1(P)\cup J_2(Q)$. Indeed, membership in
+$J_1(P)$ would give $(u,s)\in P$ with $u\to p$, hence
+$(i,s)\in J_1^2(P)$. Membership in $J_2(Q)$ would give $(p,t)\in Q$
+with $t\to s$, hence $(p,j)\in J_2^2(Q)$. Both are impossible.
+Thus the initial charge set $B$ in the premise has size at most $d$.
+
+The premise gives compatible retained families $P'\subseteq R$ and
+$Q'\subseteq C$, retaining the entire diagonal. Put
+\[
+ d'=\abs X^2-\abs{J_1(P')}-\abs{J_2(Q')}.
+\]
+Every point of the premise's set $Z$ left uncovered by the retained members
+is outside $J_1(P')\cup J_2(Q')$. Their number is therefore at most $d'$.
+Consequently at most $d+d'$ members were deleted, with the two sides
+counted separately. Combining this with~\eqref{eq:gain} gives
+\[
+ \abs{P'}+\abs{Q'}+d'
+ \geq\abs R+\abs C-(d+d')+d'>M+d.
+\]
+The retained pair is admissible for the same maximum, a contradiction.
+This rules out the assumed counterexample and proves
+Theorem~\ref{thm:main}.\hfill$\square$
+
+\section{Attribution and the scope of the contribution}
+Dara et al.\ \cite{Dara} state exactly our conclusion as Conjecture~2 and
+its unique-good/sink version as Conjecture~3. Their Lemma~18 describes the
+singleton boundary after deleting a vertex: a good vertex that becomes bad
+on reinsertion must point to the deleted vertex and see its successors in
+its first two neighborhoods. Their Theorem~6 proves a deletion-survival
+statement when the deleted graph is a tournament missing a matching, using
+safe completions, modules and median-order arguments; Corollary~5 supplies
+two good vertices in that restricted class. Their Proposition~8 uses
+minimality and arc deletion in comparing the conjectures. These are
+antecedents, not new constructions claimed here.
+
+Seacrest's subset-deletion method~\cite[Lemma~4]{Seacrest} is an antecedent
+of the protected-subset argument. Brantner et al.\ \cite[Theorems~4.1--4.3]{Brantner}
+give minimum-counterexample properties and lexicographic amplification.
+OpenAI~\cite{OpenAI} develops the strict subset-deficit reduction,
+transitive blowup estimate, compatible-pair objective, complement step and
+pruning closure used here. The source's route begins with strict deficits
+for every relevant subset of an all-bad counterexample and makes each
+individual blown-up subset strictly concave.
+
+The added operation here is the conjunction of
+\eqref{eq:boundary1}--\eqref{eq:anchorbase} with
+\eqref{eq:support}--\eqref{eq:sumright}. A deleted exceptional vertex leaves
+only weak deficits globally, but also a distinguished successor. Compatibility
+selects $m-1$ anchor fibers in its block; their combined gain $m(m-1)$
+dominates the residual $n^2m$. Strictness is obtained after summing the
+constrained fibers. Neither standard minimality nor the final imported
+pruning operation receives separate novelty credit.
+
+For additional comparison, Guo, Kang and Zwaneveld~\cite{Tight} study
+pointwise tightness under products and module replacements; these are
+product precedents rather than the exceptional-anchor selection above.
+Tahara~\cite{Tahara} studies excess margins and restricted constructions.
+An excess bound and a bound on the number of good vertices are different:
+one good vertex can contribute several units of excess. The literature
+comparison covers the named primary bodies and is bounded. It is not a
+certification of worldwide priority. The theorem is presented relative to
+its stipulated inputs, not as a wholly independent proof of ordinary SNC.
+
+\section{Validation and formalization boundary}\label{sec:validation}
+The universal proof is Sections~2--6. Computation is not used to infer the
+theorem. Two independently written finite diagnostics accompany it. The
+author's bitmask checker verifies 352,224 deletion-boundary identities across
+23,664 small orientations and verifies a six-vertex counterexample to a
+discarded shortcut. An independent reviewer's set-based checker verifies
+15,129 deletion endpoint and increment cases, 198,936 blowup subset cases,
+and 151,362 anchor exclusion cases. The latter enumerates orientations on
+three and four base vertices, with internal block sizes three and two.
+These finite tests detect local errors of signs, endpoints or directions;
+they do not verify the unrestricted assertion by enumeration.
+
+For clarity, the discarded shortcut asserted that strong connectivity plus
+$\delta_H(S)\leq0$ for all nonempty $S$ forces zero singleton deficits.
+It is false: with vertices $0,\ldots,5$ and outgoing bitmasks
+$(36,25,10,17,37,10)$, all 63 nonempty subset deficits are nonpositive but
+the singleton deficits are $(0,-1,0,0,-1,0)$. The proof above uses the
+stronger exceptional-successor information~\eqref{eq:anchorbase}, not this
+shortcut. The counterexample is not an S2 counterexample.
+
+\input{formal-coverage.tex}
+
+The discovery, internal adversarial proof review, literature comparison and
+manuscript preparation used AI assistance. Internal review verdicts are
+workflow checks, not external peer review or journal acceptance. The local
+package records exact candidate and review identities and distinguishes
+inherited checkers from the portable packaging adapter. No public upload or
+submission is asserted.
+
+\appendix
+\section{Source identity and reproducibility}\label{app:source}
+The fixed source is \texttt{openai/math}, revision
+\begin{center}\small\texttt{fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb}.\end{center}
+Its manuscript directory is
+\begin{center}\small
+\path{preprints/A-proof-of-Seymours-second-neighborhood-conjecture-September-23-2026}.
+\end{center}
+Under \texttt{build/source/}, the two imported statements are
+\texttt{00-introduction.tex}, \texttt{thm:main}, and
+\texttt{02-pruning.tex}, \texttt{lem:pruning}. The operation antecedents
+are \texttt{01-reduction.tex}, notably \texttt{lem:subset-deficit}, and
+\path{03-incompatibility.tex}. Weighted and directed-cycle consequence
+sections were checked for scope overlap; neither is an extra premise here.
+The complete family inventory identifies no separate companion manuscript.
+The package records source URLs, Git blob identities and SHA-256 values;
+third-party source files and reading PDFs are not redistributed in it.
+
+From a clean extraction of the public package, with Python~3.10 or later, run
+\begin{quote}\ttfamily python3 -B support/run\_checks.py\end{quote}
+This authenticates the preserved
+checker copies and adapter, runs both finite diagnostics, and compares their
+structured outputs with the fixed expected counts. It fails if a required
+file, check or expected result is absent. The separate integrity command
+\begin{quote}\ttfamily python3 -B support/verify\_package.py\end{quote}
+checks exact payload membership
+and hashes. Neither command requires private reading copies or the original
+workspace. Integrity is not mathematical proof or a certificate of origin;
+a recipient should compare the detached manifest hash with a trusted record
+before executing code. Build and rendering instructions, exact coverage,
+rights and local submission metadata are in the accompanying README.
+
+\paragraph{Rights and author information.}
+Myeongjin Kang, no affiliation. Original prose is licensed under CC BY~4.0;
+original code under the MIT license. Third-party mathematical statements
+and bibliographic identities are attributed to their sources; their source
+texts and PDFs retain their existing rights. License files in the package
+apply only to the original materials identified there.
+
+\begin{thebibliography}{9}
+\raggedright
+\bibitem{OpenAI} OpenAI, \emph{A proof of Seymour's second-neighborhood
+conjecture}, September 23, 2026. OpenAI Math Release, revision
+\texttt{fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb}.
+\href{https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/A-proof-of-Seymours-second-neighborhood-conjecture-September-23-2026}{Pinned manuscript and sources}.
+\bibitem{Dara} S. Dara, M. C. Francis, D. Jacob and N. Narayanan,
+\emph{Extending some results on the second neighborhood conjecture},
+Discrete Applied Mathematics \textbf{311} (2022), 1--17.
+\href{https://doi.org/10.1016/j.dam.2021.12.034}{doi:10.1016/j.dam.2021.12.034}.
+Preprint \href{https://arxiv.org/abs/1808.02247v3}{arXiv:1808.02247v3}.
+\bibitem{Seacrest} T. Seacrest, \emph{Seymour's Second Neighborhood
+Conjecture for Subsets of Vertices}, 2019.
+\href{https://arxiv.org/abs/1808.06293v3}{arXiv:1808.06293v3}.
+\bibitem{Brantner} J. Brantner, G. Brockman, B. Kay and E. Snively,
+\emph{Contributions to Seymour's second neighborhood conjecture},
+Involve \textbf{2} (2009), no.~4, 385--393.
+\href{https://web.mit.edu/gdb/www/pdfs/contributions-to-seymour.pdf}{Primary paper}.
+\bibitem{Tight} K. Guo, R. J. Kang and G. Zwaneveld,
+\emph{Seymour-tight orientations}, 2026.
+\href{https://arxiv.org/abs/2603.29626v1}{arXiv:2603.29626v1}.
+\bibitem{Tahara} D. Tahara, \emph{Measuring the moat: excess bounds near Seymour's second neighbourhood conjecture}, version~2.1, 2026.
+\href{https://raw.githubusercontent.com/42tahara/seymour-excess/main/note/measuring-the-moat-v2.1.pdf}{Versioned research note}.
+\end{thebibliography}
+\end{document}
