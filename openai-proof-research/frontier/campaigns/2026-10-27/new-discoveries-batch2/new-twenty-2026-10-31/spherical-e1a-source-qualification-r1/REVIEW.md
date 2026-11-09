@@ -1,0 +1,94 @@
+# MathDB367009 — ordinary bridge closed; routine reduction, credit 0
+
+This is a standalone source/ordinary-proof review, not an acceptance, formal certificate, execution request, or priority claim. Campaign remains 52/60 beyond 39 prior. Root alone adjudicates. The mathematical argument below closes the r315 generic global gap. The complete classical bridge makes this unsuitable for discovery credit under the stated rule; shortness or familiarity alone is not the reason. Source/version and worldwide novelty HOLDs remain HOLDs. No dormant Pi plan is supplied because no eligible significant proof survives that gate.
+
+## Literal statement and source conventions
+
+For every finite simple minimally 2-rigid graph G, and every type E1a 1-extension G', the generic complex spherical realization counts satisfy c°₂(G') = 2c°₂(G). The quotient is by SO₃(C), so reflected full-rank placements remain distinct. No assertion about the number of real placements at a prescribed real length vector is made. The literal record, UUID and statement hash are in literal-target.json and target-provenance.json; the record's open label/empty solutions do not establish novelty.
+
+2502.04736v1 Definitions 1–2 have an initial all-pair-distance congruence wording followed by an explicit convention that reflections are counted separately. The latter is essential. Section 7.2.1 Conjecture 2 is the exact target; Section 7.1.1 and Figure 9 specify E1a. Independently reading the full inline SVG paths confirms three old vertices with all three edges, removing one and joining a fresh vertex to all three. In coordinates of the figure the old vertices are (0,0),(39.37,0),(19.69,34.10), with three connecting segments; the new diagram translates the old vertices by (98.43,0), retains the bottom and right sides, and adds the green vertex (118.11,12.99) with three incident segments. Thus label the deleted side ac, retained sides ab,bc, and fresh vertex u. All other vertices/edges are untouched. This is vector-source inspection, not raster visual review. No unstated triangle assumption is introduced.
+
+2309.16416v2 Section 4 defines the unit sphere by p·p=1, the map s(p)=(1-p_v·p_w), and congruence using O₃(C). Lemma 4.2 supplies dominance for independent graphs; Lemma 4.3 and Proposition 4.4 supply the generically finite normalized map and generic count; Definition 4.5 defines c*₂. On the full-rank locus every O₃ orbit splits into exactly two SO₃ orbits, so c°₂=2c*₂. Our graphs contain a triangle, hence this locus is forced by a nonzero measurement polynomial and is available generically. 2308.15305v1 uses rotations, so its c_{S²} agrees directly with c°₂, without an extra factor two. Its Definition 2.1 uses general lengths; Theorem 2.2 gives the Laman characterization. Squared chord lengths, half-squared chord lengths and dot products differ by invertible affine changes on unit vectors. Such changes preserve the generic counts and nonempty opens.
+
+## Complete global proof
+
+Everything is over C. Let x denote all old edge dot products other than ab,bc,ac. These are independent coordinates together with A=a·b,C=c·b,z=a·c, since G is minimally rigid. Put D=a·u,E=c·u,F=b·u. Old and new measurement spaces are
+
+B = A^{|x|+3}_{x,A,C,z},   B' = A^{|x|+5}_{x,A,C,D,E,F}.
+
+The new edge number is the old number plus two, as required. Define
+
+s=1-F², r=s-A²-D²+2FAD, t=s-C²-E²+2FCE,
+p=AC+DE-F(AE+CD), P=p/s, R=r/s, T=t/s,
+Δ=1+2ACz-A²-C²-z².
+
+### 1. Old generic count on an actual measurement open
+
+There is a nonzero polynomial e(x,A,C,z) such that for e≠0 the old fiber consists of exactly c°₂(G) SO₃ orbits, is reduced after normalization, and Δ(1-A²)≠0. Here is a construction, rather than an unsupported appeal to generic degree. Normalize b=(1,0,0), a=(A,h,0), with A²+h²=1; all remaining vertices range over the unit sphere. The normalization variety Y is irreducible, affine and smooth, of dimension 1+2(n-2)=2n-3=|E(G)|. Its measurement map is dominant and generically finite by the source results just specified. This also follows by the usual slice interpretation of spherical rigidity. Its coordinate-ring inclusion has a finite separable fraction-field extension: finiteness follows from generic finiteness, separability from characteristic zero.
+
+To see the needed open concretely, take finite algebra generators of C[Y] over C[B]. Each is algebraic over C(B); invert the finitely many nonzero leading coefficients and denominators of their monic equations. The resulting algebra is finite. Choose a fraction-field basis, clear the denominators expressing the algebra generators in that basis and the basis in the algebra. After another localization the algebra is free of the extension degree d. Invert the nonzero discriminant of the separable trace pairing. Every resulting complex fiber is a d-dimensional reduced finite algebra, hence has d distinct complex points. This procedure does not discard any points of the original affine fiber over that open: localization is entirely by base polynomials.
+
+Finally include (1-A²)Δ in e. These polynomials are nonzero in B. For any placement in such a fiber there are exactly two slice representatives of each SO₃ orbit, one for each h with h²=1-A². For fixed h the nondegenerate ordered pair (b,a) determines a unique SO₃ normalization: extend it by its cross product, which fixes the orientation. Thus d=2c°₂(G). The source generic-count definition identifies this constant with its c°₂(G); equivalently each O₃ orbit has four slice representatives and two SO₃ orbits. All placements have linearly independent a,b,c because their Gram determinant is Δ, fixed by the measurements. Stabilizers in O₃ and SO₃ are consequently trivial. This proves the asserted old measurement open, including all old fiber points, not just a generic subset of placements.
+
+### 2. The local equation, independently checked
+
+When s≠0, the span of b,u is nondegenerate with Gram matrix [[1,F],[F,1]]. Orthogonal projection of a,c onto this plane gives mutual inner product p/s and complementary squared lengths r/s,t/s. Their complements lie in a nondegenerate one-dimensional space, so
+
+Q(z)=(z-P)²-rt/s²=0.                                      (1)
+
+Conversely (1) is exactly the vanishing determinant of the unit-diagonal Gram matrix of a,b,c,u after multiplication by the invertible Schur-complement factor s. This proves necessity without symbolic computation.
+
+Let Z=Spec(C[x,A,C,D,E,F,1/s,z]/(Q)). Its projection q to B'_s is finite free of rank two because Q is monic. On rt≠0 it has two distinct reduced roots. There is no claim that each root is generic merely because Q has degree two.
+
+### 3. Irreducibility and dominance, including untouched edges
+
+Z is integral. Indeed r, viewed as a monic quadratic in D up to sign over C(F,A), has discriminant 4(1-F²)(1-A²), a nonsquare: each of F-1,F+1,A-1,A+1 has odd valuation. Gauss's lemma makes r irreducible in C[F,A,D]. The same applies to t in C[F,C,E]. Adjoining the other independent variables preserves these irreducibilities; r,t are distinct nonassociate prime polynomials in the full polynomial ring. Neither divides s. Consequently rt/s² is not a square in C(x,A,C,D,E,F), since its valuation at r is odd. The quadratic Q is irreducible over that field and, being monic, defines a domain over the localized polynomial ring. This proves integrality rather than assuming an arbitrary quadratic family irreducible.
+
+The map f:Z→B forgetting D,E,F is dominant. For every (A,C,z) with Δ≠0 the corresponding symmetric 3×3 unit-diagonal Gram matrix is invertible and can be realized by three unit vectors over C: diagonalize the symmetric bilinear form by congruence and take square roots of its nonzero diagonal entries. Choose any unit u with (b·u)²≠1; such u exist because the irreducible unit quadric is not contained in the union of the two planes b·u=±1. Its three dot products give a point of Z over (A,C,z). Every x is free in Z and is carried identically to B. Thus the image contains the open B_Δ. This proves dominance in the full old measurement space while preserving every untouched coordinate.
+
+### 4. A single nonempty open works for BOTH branches
+
+Pull e back along f. It is nonzero in the domain C[Z] by dominance. In the quadratic fraction-field extension its norm N=e(z₊)e(z₋) is nonzero. It belongs to C[B',1/s] because multiplication by e is an endomorphism of the free rank-two algebra and its determinant is that norm. Clear a power of s and denote the resulting nonzero polynomial by N₀. Define
+
+U' = { s r t N₀ ≠ 0 } ⊂ B'.
+
+This is a nonempty Zariski open: its defining factors are nonzero polynomials in an integral polynomial ring. For every new measurement vector in U', q has two distinct roots z₊,z₋, and N≠0 forces e(x,A,C,z₊) and e(x,A,C,z₋) BOTH nonzero. In particular Δ≠0 on both branches. This is the precise simultaneous base-change bridge missing in r315. No arbitrary root has been declared generic. The construction works for any proper old exceptional closed set by first choosing a nonzero polynomial vanishing on it.
+
+### 5. Orbitwise bijection and reduced fibers
+
+Fix a point of U'. For each root z_i, every old SO₃ class with measurements (x,A,C,z_i) has a unique u with dot products D,E,F: a,b,c are a basis, so the three linear equations have a unique solution. If M is their Gram matrix and v=(D,F,E) in the order (a,b,c), this solution has squared norm vᵀM^{-1}v. The block determinant identity gives det(Gram(a,b,c,u))=det(M)(1-vᵀM^{-1}v). Equation (1) makes this zero and det(M)=Δ≠0, hence u·u=1. The solution therefore is a spherical realization of G'.
+
+Conversely every realization of G' has its missing z among the two roots by (1); its restriction is an old realization of that branch. These operations are inverse and SO₃-equivariant. Distinct roots cannot identify under SO₃ because z is an invariant. On a fixed root the unique extension prevents any new identification or multiplicity. All stabilizers are trivial since a,b,c span C³. In normalized coordinates the bijection is algebraic with inverse, using M^{-1}; hence reducedness also follows from the old reduced fibers and the simple roots (or from the invertible derivative 2(z-P)). There is no factor for reflecting u while fixing all three old neighbors; that purported operation is invalid.
+
+Each branch contributes exactly c°₂(G), so every point of U' has exactly 2c°₂(G) direct-isometry classes. Since U' is nonempty open, it computes the generic new count and proves c°₂(G')=2c°₂(G). It also proves dominance/finite generic fibers for G' directly. Alternatively G' is Laman: in a vertex subset containing u, let W be its old vertices. If W contains all three neighbors the deletion of ac saves one old edge and the addition of three gives at most (2|W|-3)-1+3=2(|W|+1)-3; if W has two neighbors the addition is at most two; if W has at most one, the remaining small cases obey the same bound directly. Subsets without u inherit sparsity. Total size is 2(n+1)-3. Thus the new generic-count convention is applicable.
+
+The smallest possible graph here is K₃. The same proof applies with x empty. Its old count is two, the new count four. Graphs on fewer than three vertices cannot admit an E1a step. Exceptional isotropic spans, coincident/antipodal neighbors, Δ=0, s=0 or repeated roots lie outside the explicit generic open; none is silently counted. This suffices for a generic-count conjecture, not an all-measurements assertion.
+
+## Actual calligraph proof comparison and routine-source bridge
+
+The authenticated companion is 2308.15305v1 (2023-08-29), preceding the target preprint (2025-02-07). Latest unversioned HTML is byte-identical to the retrieved v1. Definitions 2.3–2.5 require |E(H)|=2|V(H)|-4, a common edge {1,2}, and a distinguished vertex 0 such that adding 01 or 02 gives rigidity. Splits overlap in exactly those three vertices and just edge 12. Theorem 2.6 gives [L]=(1,1,0), [R]=(1,0,1), [C_u]=(2,0,0), and pairing 2(aa'-bb'-cc'). It asserts this count for rotations.
+
+The proof body, not merely the theorem title, was compared: Section 4 Lemma 4.1 factors edge divisor classes; Propositions 4.2–4.3 push the product to Mbar_{0,6}. The forgetful square is explicitly NOT a fiber square; Lemmas 4.4–4.5 replace it using a proper birational map and projection formulas. Section 5 Proposition 5.1 computes the fixed-edge configuration surface as the blowup of P¹×P¹ at four points via the Segre cubic and cross-ratio map. Section 6 Eq. (10) restricts the pushforwards to that surface, Eq. (12)/Definition 6.1 defines the class with multiplicities, and Proposition 6.3 computes the intersection pairing. The basic L,R classes are conics through conjugate nodes. The proof initially leaves two possibilities for C_u; Appendix A Proposition A.1 and its following divisor-exclusion argument remove (6,4,4), yielding (2,0,0). Thus no unverified choice of the second possible class is being hidden.
+
+Here is the full classical reduction in the notation of that theorem. Label 0=c,1=a,2=b. Let H=G-ac. Then H contains 12=ab and 02=bc; adding 01=ac recovers G, so H is a calligraph. G=H∪L and G'=H∪C_u have exactly the required vertex/edge intersections, including when G=K₃. Fix a general ab length. Because H already contains bc, its configuration image on the three distinguished vertices is the same irreducible fixed-bc curve as R. For a general point on that curve, complete the missing ac measurement. Step 1 above, with the other H measurements general, implies exactly m=c°₂(G)/2 lifts: a nondegenerate prescribed Gram triangle has two SO₃ classes, exchanged by an O₃ reflection, and the reflection gives a bijection between their completions with the same H measurements. The generic old open gives their total c°₂(G).
+
+In the source's reduced formulation (common ab omitted), the image is correspondingly the irreducible fixed-bc surface. Proper pushforward of its fundamental cycle is m times that surface by the definition of pushforward using generic fiber degree. Contracted components contribute zero to that cycle; a boundary component dominating the surface would, after imposing a general missing ac edge, give a boundary configuration of generic G, excluded by the source Proposition 3.5 configuration/count statement. Consequently Definition 6.1 gives [H]=m[R]=(m,0,m). Now Theorem 2.6 gives
+
+c°₂(G)=[H]·[L]=2m,
+c°₂(G')=[H]·[C_u]=4m.
+
+All distinguished-edge, graph, quotient and multiplicity hypotheses are matched. This is a complete routine bridge from the existing theorem plus elementary generic-fiber/pushforward and reflection arguments. The separate norm proof above also proves the endpoint without the calligraph machinery. Therefore this is a mathematical closure but receives 0 discovery credit under the explicit exclusion of routine complete classical/source bridges. We do NOT claim that the 2023 paper literally states an E1a theorem, or that an exact earlier final theorem has been published. Its broader theorem and the displayed reduction suffice for the local substantive gate, without resolving global bibliographic priority.
+
+## Source/version and registry limits
+
+HTTP retrievals were ordinary public read-only urllib requests, without browser, API/auth/proxy substitutions or TLS bypasses. Exact URL/UTC/status/bytes/SHA receipts are in http-receipts.json. All 12 attempted URLs returned 200. Version histories: target v1 2025-02-07 only; calligraph v1 2023-08-29 only; definitions v1 2023-09-28 and v2 2023-10-11. Target v1, calligraph v1 and definitions v2 have exactly the cached r315 HTML hashes. Definitions v1 Section 4 was separately converted/read: it makes stronger global image/congruence assertions; v2 restricts the relevant all-pair congruence equivalence to spanning placements and changes the slice statement to density. The proof here uses only the full-rank/generic locus and the v2 statements, so does not rely on those overbroad v1 assertions.
+
+The ALCO publisher landing page identifies the definitions paper as Algebraic Combinatorics 7(6) (2024), 1615–1645, DOI 10.5802/alco.390, and links /item/10.5802/alco.390.pdf. Publisher full PDF, corrections, all citing papers, and possible other calligraph publications were NOT comprehensively read. No failed route is reattempted or represented as clearance. Source/version HOLD persists for acceptance-level qualification. No worldwide novelty clearance is claimed.
+
+Fresh public GitHub HTML returned openai/math head 4eaee87548250b2682affda7d05d947c05554bae and Vilin97/lean-pool head 01db1d7049cf9668bda1e9e106875ee1278b43e6. A pinned OpenAI README and pinned Vilin projects.yml were retrieved. Routing checks did not locate an exact 367009/calligraph entry; broad spherical/rigidity tokens include unrelated subjects and hexadecimal E1a substrings. This is routing only, with no exact relevant proof body authenticated. It cannot clear live prior art. Other LeanPool repositories are not assigned the Vilin head. No upstream truth audit was undertaken.
+
+## Access, resources, and handback
+
+The required bootstrap was the first actual tool command, verbatim; its receipt records its tighter 10-second CPU/512-MiB-AS cap and affinity before reads. All subsequent local Python workers set affinity to the first two allowed cores, CPU limit 120 seconds, AS limit 6 GiB before substantive work, with external timeouts ≤140 seconds. Short setup/read workers used timeouts 20–25 seconds. work.py records actual per-process CPU, elapsed time, affinity and peak self RSS for retrieval workers. AS enforces a bound on process address space and hence its RSS; no cgroup or independently sampled process-group RSS instrumentation is claimed. The timeout wrapper starts before child affinity is set. Earlier short read/setup workers did not persist individual rusage telemetry; their successful bounded completion is in tool receipts. No children for text conversion, background jobs, Lean, mathematical enumeration/search/solver/CAS, git, external mutations, authors' files or shared files were used. Only text/hash processing, source HTTP and ordinary proof reasoning occurred.
+
+frozen-before.json verifies every one of the allowlisted 128 r315 inputs before source investigation. frozen-after.json verifies them again at handback. These integrity-only hashes necessarily cover the frozen unrelated r315 files but no other target investigations were reopened for research. No crown-vnumber path, expanded-corpus-r317 or other active body was read, hashed or globbed. Bounded campaign metadata confirms 52/60 and 39 prior. Metadata was read-only. The report does not alter the campaign ledger or accept anything. The final artifact manifest hashes this lane's outputs only and excludes itself; process completion is explicitly checked. No Pi semantic endpoint/dependency plan is recommended or executed.
