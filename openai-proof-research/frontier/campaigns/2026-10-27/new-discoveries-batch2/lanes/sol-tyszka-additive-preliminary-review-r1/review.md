@@ -1,0 +1,79 @@
+# Independent preliminary review: Tyszka additive systems
+
+Recommendation to root: EXCLUDE AS ROUTINE CLASSICAL DEDUCTIONS for both literal Conjecture 3 and Conjecture 5. Ordinary mathematics PASS, with the explicit square-system clarification below. This is an independent review recommendation, not acceptance, integration, or a claim that either full endpoint appeared in a prior publication. No Lean or manuscript work was undertaken.
+
+| Gate | Finding |
+|---|---|
+| SOURCE | PASS for the actual arXiv math/0702558v86 Conjectures 3 and 5. Journal-version correspondence remains unread. |
+| MATH | PASS for arbitrary additive G in Conjecture 3 and all real/complex inputs in Conjecture 5. Full bridge below. |
+| SUBSTANTIVE | FAIL under this campaign's standard: complete incidence, finite-group, Smith-form and pointed-polyhedron deductions leave no additional mathematical premise. |
+| NOVELTY | No universal clearance. FFP is an actual public rational exact-equation proof; neither its statement nor mere shortness excludes the other scopes. Exclusion here rests on the complete applicable bridge. |
+| Formal feasibility | Feasible in principle but substantial library/assembly work: finite integer linear algebra and quotient groups, or finite polyhedral decomposition. No literal Lean endpoint, replay, or formal PASS is claimed or needed for this exclusion recommendation. |
+
+## Inputs and actual primary bodies
+
+Scientific copies are bound in `input-freeze.json`, independently checked at capture and after review. `administrative/` contains snapshots of ledger, prior-campaign context, NEXT and batch instructions, outside the mathematical dependency set. Ancestor and batch instructions were read. Embedded historical bindings are evidence of provenance, not an adoption of live administrative files as scientific premises. No parked historical interval was reopened.
+
+The r217 PROOF.md was reviewed on a frozen copy. The entire extant Claude lane was captured apart from its administrative snapshot; this includes its source bodies, discovery draft, scripts, checks, failed HTTP bodies and logs. The user reports that run FAILED at an API rate limit. It has not been restarted or promoted to a verified delivery. Its draft is useful corroboration, not an independent completed acceptance review. Its checks were not rerun or adopted as certificates.
+
+Primary coverage in this review:
+
+* Tyszka, math/0702558v86 (4 December 2009), actual Conjecture 3 p21, Conjecture 4 p24, Conjecture 5 p25, Observation 3/Theorem 11 and Lemma 4/Theorem 12 pp22–27. PDF was inherited from `https://arxiv.org/pdf/math/0702558`; SHA256 `71bc111b8310bc857cd4d935eabb0c83912207872964f390d1d74dfd7f5514e9`. Current metadata was freshly read at `https://arxiv.org/abs/math/0702558` at 2026-10-30T08:05:40.969314+00:00, matching the earlier metadata body hash. First version 19 February 2007; latest listed v86 4 December 2009. Earlier version bodies were not compared for first appearance of these particular statements.
+* Freitas–Friedland–Porta, `https://arxiv.org/pdf/1108.4078v2`, all fourteen pages of extracted actual body, particularly Theorem 1.2, Conjecture 2.5 and Sections 3–5 proof. SHA256 `45d26f99a1aa7382ed8059238f715766ed95307944adfe7f75ea5a3955b9170d`. v1 20 August 2011; body v2 4 May 2012. Current metadata at `https://arxiv.org/abs/1108.4078` freshly read at 2026-10-30T08:05:40.995761+00:00 and byte-identical to r217. No journal-equivalence claim.
+* Borosh–Flahive–Rubin–Treybig, Proc. AMS 105(4), April 1989, pp844–846. The actual cached three-page primary body in the failed Claude artifacts was independently re-extracted and read in full here. SHA256 `83378ae865a2d303d6a7e052009b212d626b0c521484fd0f75db5e43483f172e`. Its inherited successful URL is `https://www.ams.org/journals/proc/1989-105-04/S0002-9939-1989-0955458-1/S0002-9939-1989-0955458-1.pdf` at 2026-10-30T07:58:43.405945+00:00. Received December 11, 1987; revised August 17, 1988. This predates every target arXiv version. This review made NO AMS request. r217's denied `/proc/` URL and the failed lane's different `/journals/proc/` success are retained verbatim, not silently conflated or retried. The cached body closes this review's BFRT unread-body gate; it does not erase r217's historical 403 or certify prior access conduct.
+
+The MLQ 2010 shortened target version remains unread. Exact later-Tyszka bodies are preserved in the failed lane, but I do not certify a full new all-citer review of them. Bibliographic metadata, search hits and an abstract are never used to fill a missing theorem hypothesis. `provenance.json` and the inherited/fresh HTTP logs retain exact URLs, times and hashes.
+
+## Applicable classical bridge, checked independently
+
+Throughout n is a positive integer; all index repetitions are allowed. There are only finitely many distinct permitted equations, so arbitrary systems in these forms reduce to a finite subset.
+
+### 1. Determinants and every arrangement vertex
+
+Call a vector simple if it has at most one +1 and at most one -1, all other entries zero. Every square matrix with simple rows has determinant 0 or ±1: if some row has at most one nonzero entry, expand along that row and induct; otherwise each row sums to zero and the matrix is singular. Include the empty determinant 1. Column deletion preserves simplicity.
+
+Each additive row e_i+e_j-e_k equals e_i+(e_j-e_k), the sum of at most two simple rows, even when indices repeat. A d-row minor is therefore bounded by 2^d by multilinearity. This also proves the literal Conjecture 4 row-pattern bound. A minor involving at least one coordinate row has bound 2^(d-1).
+
+At a vertex of the real arrangement z_i=1 and z_i+z_j=z_k, choose n independent active normals. With no constant equation these are homogeneous and uniquely force zero. Otherwise merge all coordinates fixed to 1 in these chosen equations into one coordinate. The resulting d-variable system is uniquely solvable. Its homogeneous matrix B has rank d-1: its kernel contains the nonzero solution with the distinguished coordinate 1, and adding that constant row gives full rank. Choose d-1 independent homogeneous rows. The signed cofactors span ker B; the distinguished cofactor is nonzero, because otherwise its kernel could not contain a vector with distinguished coordinate 1. The solution coordinates are ratios of integer cofactors, each numerator at most 2^(d-1), denominator a nonzero integer. Thus EVERY vertex lies in the box of radius 2^(n-1). This is stronger than existence of one bounded point and is the premise needed below. For d=1 the empty cofactor argument yields 1 directly. Repeated indices, coincident hyperplanes and multiple constants do not change it.
+
+### 2. Conjecture 5, all residuals and both fields
+
+For a real x, orient every form f=z_i-1 or z_i+z_j-z_k so that its oriented value at x is nonnegative. Use closed inequalities. A zero residual may be assigned either orientation. Let P be their intersection and K its recession cone. P contains x. Every recession direction has a prescribed weak coordinate sign, from the coordinate forms; consequently r and -r cannot both lie in K unless r=0. This proves pointedness even when P has lower dimension.
+
+Here is the full decomposition argument, including lower-dimensional faces. At a point p whose active normals have rank below n, choose a nonzero u in their common kernel. All inactive inequalities have positive slack and there are finitely many, so p+tu is feasible for a two-sided neighborhood of zero. The feasible t form a closed interval. Both endpoints cannot be infinite, since then u and -u are recession directions. At every finite endpoint at least one new active normal has nonzero pairing with u, so active rank strictly increases. If both endpoints are finite, p is their convex combination. If only one is finite, p is that endpoint plus a nonnegative multiple of the direction toward the infinite endpoint; that direction satisfies every homogeneous oriented inequality and belongs to K. Repeat at finite endpoints. In at most n rank increases on every branch, all leaves are vertices. Convex combinations and sums preserve K. Thus x=z+r with z a finite convex combination of vertices and r in K. In particular vertices exist; this is not assumed from nonemptiness alone.
+
+The vertex bound gives |z_i|≤2^(n-1). For every oriented affine f with linear part l, f(z)≥0 and l(r)≥0 and f(x)=f(z)+l(r). Hence |f(z)|≤|f(x)| for the original orientation, simultaneously for all triples and coordinate forms. When f(x)=0 both nonnegative terms must vanish. Zero faces therefore retain ALL equalities exactly. Set y=z.
+
+For complex x first apply the real theorem to Re(x); real y is an allowed complex output. Since the forms have real coefficients, |f(y)|≤|f(Re x)|=|Re f(x)|≤|f(x)|. This proves the literal complex residual statement without any rational-output or subgroup-output claim. A doubling chain has zero residuals and forces (1,2,...,2^(n-1)), so the radius is sharp. n=1 and zero coordinates are included.
+
+### 3. Conjecture 3, rational output inside arbitrary G
+
+Consistency means existence of a solution IN G^n. Interpreting consistency as only complex solvability would fail for G=2Z and x_1=1; that is not the source's quantifier. If there is no constant equation, the zero vector works, including empty systems and rank zero. Otherwise 1 belongs to G.
+
+Write Ax=b with integer A,b. Choose Smith normal form UAV=D with integer unimodular U,V. From a G-valued solution x, w=V^(-1)x remains G-valued. On every nonzero diagonal entry, d_i w_i=(Ub)_i forces w_i to be rational AND in G; this uses torsion-freeness inside C, not closure of G under rational division. Set all free coordinates to zero; the remaining zero rows are consistent because a solution exists. Transforming back yields q in (G∩Q)^n solving every equation.
+
+The subgroup generated by 1 and the finitely many q_i is (1/h)Z for some positive integer h. Indeed, write the generators over common denominator L and let g be the gcd of their integer numerators, including L. Bezout gives g/L in G, g divides L, and h=L/g. Thus 1/h is in G; merely clearing denominators without this generator argument would not suffice.
+
+Merge coordinates explicitly fixed to 1, leaving d variables and one constant coordinate. This preserves every equation and transforms repeated indices into permitted additive rows. Scaling by h gives an integer-consistent system with one equation z_c=h and homogeneous additive equations. Select a maximal independent row subset containing e_c; let its rank be m≤d. Every omitted row is a rational combination of retained rows, and its right-hand side is the same combination, witnessed by the already-known integer solution. Thus the subsystem is equivalent as an affine system; no discarded constraint is lost.
+
+Its augmented maximal minors are bounded by h·2^(m-1). Without the augmented column, expanding along the constant row leaves an additive (m-1)-minor or zero. With that column, expand along its only nonzero entry h. This also covers m=1. No full-rank assumption on the original equation list was smuggled in.
+
+BFRT supplies an integer solution of the full-row-rank subsystem bounded by its largest augmented maximal minor Y. The actual body explicitly treats d>m; for d=m Cramer's rule gives |z_i|≤Y/|det A|≤Y for the unique already-integral solution. Here is an independent derivation for d>m, checking the exact sign-free hypothesis rather than assuming a nonnegative-solution theorem:
+
+Choose nonsingular integer basis B, remaining columns N, and δ=|det B|. The finite group Z^m/BZ^m has δ elements. Integer consistency puts the residue of b in the subgroup generated by the residues of columns of N. In a finite group that subgroup is their nonnegative semigroup. A shortest nonnegative word for the target has distinct partial sums (otherwise delete a zero-sum segment), so its length is at most δ-1. These word multiplicities give nonnegative free coordinates of sum ≤δ-1. The basic coordinates B^(-1)(b-Nz_N) are integral. Every Cramer numerator determinant involving b or a column of N is an augmented maximal minor, hence at most Y. Therefore |z_B,i|≤Y(1+sum z_N)/δ≤Y, and each free coordinate ≤δ-1≤Y since δ itself is a maximal minor of A. This proves precisely the version used, including absence of a sign restriction on basic coordinates. Nonzero solution preservation is unnecessary here; the nonzero constant already forces it.
+
+Divide this integer solution by h and unmerge coordinates. All outputs lie in (1/h)Z⊆G∩Q, all original equations hold, and |y_i|≤2^(m-1)≤2^(n-1). This includes discrete, dense, irrationally generated and genuinely nonreal additive subgroups. No approximation or divisibility of arbitrary elements of G is invoked.
+
+## Competing proof and eligibility limits
+
+FFP Theorem 1.2 permits signed unit equations and signed sums of at most k+1 terms, returns a rational solution with radius k^(r-1) where r is rank, and at k=2 contains the rational exact-equation Tyszka problem. Its actual reductions merge constants, set free variables to zero, remove zero/equal-up-to-sign variables, organize maximal k-chains, and estimate Gram determinants by Hadamard–Fischer. The body does not impose distinct indices before simplification, so repeated-variable doubling is covered. Theorem 1.2, rather than its narrower summary Conjecture 2.5, gives the general solvable-system scope.
+
+That theorem directly covers G containing Q. It does not guarantee membership in an arbitrary subgroup, and it does not state residual compression. A simple warning example is x_1=1, x_2+x_2=x_3, x_3+x_1=x_4 over Z: a free-coordinate reduction setting x_4=0 forces x_2=-1/2 and loses subgroup membership. The Smith/cyclic/BFRT bridge above supplies exactly the missing arbitrary-G ingredient. Likewise a bounded solution of a subset of exact equations alone does not provide all arrangement-vertex bounds or simultaneous residual inequalities; Sections 1–2 supply those ingredients explicitly.
+
+Consequently I recommend routine exclusion on demonstrated applicability of classical results and elementary reductions, not a claim that FFP published either larger endpoint. The fresh bounded metadata checks and inherited history/catalogue screens cannot clear all history, public proof registries, MathSciNet/zbMATH, all later bodies, or the unread journal target. GitHub API/raw/codeload/diff/patch, ScienceDirect and Google challenge routes were not attempted. No public resolution status is inferred from an empty database field or an arXiv comment. Source fidelity for this arXiv endpoint is sufficient for review; journal equivalence and worldwide novelty remain separate unclosed gates.
+
+## Own exact controls and operational limits
+
+`checks.py` performs independent exact arithmetic: 469 additive minors, all 386 invertible arrangement bases in dimensions at most three, 45 constructive closed-cell decompositions with 30 zero-residual occurrences, and 143 finite-group/BFRT constructions including 43 square cases. All assertions passed. Distinct-row enumeration omits identical rows only because their square determinants vanish. These are finite diagnostics, not the universal proof, formalization, or verification of the failed lane's numerical claims.
+
+All scientific originals/copies are verified at capture and again separately after final writes; the final manifest excludes itself and its receipt explicitly. Resource caps were not raised. One operational deviation is preserved in `FAILURES.md`: the initial broad file inventory ran directly before guard use. Subsequent helper, Python, extraction, retrieval, hashing and write commands used the required guard; native apply_patch was used only in this lane. No shared edits, git, child agents, browser, external messages/uploads or MathDB actions were performed.

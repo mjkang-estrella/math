@@ -1,0 +1,9 @@
+# Mathematical disposition
+
+The strongest inherited targets now have complete ordinary classical bridges in PROOF.md. Conjecture5 includes every residual, every n>=1 and both R/C; the complex reduction is real-part projection, not separate real/imaginary clipping. Conjecture3 includes arbitrary additive subgroups of C; Smith normal form prevents illicit division inside G, and the denominator lattice permits applying the sharp integer theorem before scaling back. Multiple constant equations are identified before determinant estimates. No bounded-size observation is used to claim universality.
+
+The early screen and actual competing Freitas–Friedland–Porta2012 body check show why the ordinary rational small-solution endpoint is already public. The additional bridges are fully explicit standard constructions. No source-resolution claim is promoted as a substantive new discovery here, and nothing is accepted or counted. PROOF.md is an ordinary mathematical deduction, not a manuscript or Lean artifact. The subgroup proof's classical integer theorem is sourced through literal Tyszka Lemma4; the original1989 body remains unread after a single403.
+
+Sustained work consisted of two distinct full-scope mechanisms: polyhedral decomposition for simultaneous errors and integer-lattice shrinking for subgroup preservation. Remaining pseudoinverse/adjacent-gap variants do not follow from either; no partial endpoint is relabeled as the full question. PLC/SNT generic characterizations were not reinvested, nor were Rossi, Richardson, all-even rigidity, projection or publicly solved binomial-Hankel determinants.
+
+SCOUTING.md supplies the full quantifier register, ranked next steps/objections, literal Frank follow-up limitations and current-prior chronology. Current searches cannot certify absence of all historical or competing proofs. No worldwide priority assertion.
