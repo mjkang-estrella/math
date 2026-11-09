@@ -1,0 +1,46 @@
+import RankTwo
+import NilpotentCollapse
+import UpperFamily
+
+#check PeakonCoefficients.det_one_add_two_outer
+#print axioms PeakonCoefficients.det_one_add_two_outer
+#check PeakonCoefficients.inverse_skew
+#print axioms PeakonCoefficients.inverse_skew
+#check PeakonCoefficients.dot_outer_mulVec
+#print axioms PeakonCoefficients.dot_outer_mulVec
+#check PeakonCoefficients.resolvent_pair_identity
+#print axioms PeakonCoefficients.resolvent_pair_identity
+#check PeakonCoefficients.det_add_two_outer
+#print axioms PeakonCoefficients.det_add_two_outer
+#check PeakonCoefficients.determinant_spectral_collapse
+#print axioms PeakonCoefficients.determinant_spectral_collapse
+#check PeakonCoefficients.strict_upper_power_zero
+#print axioms PeakonCoefficients.strict_upper_power_zero
+#check PeakonCoefficients.strict_upper_scaled_det
+#print axioms PeakonCoefficients.strict_upper_scaled_det
+#check PeakonCoefficients.finiteResolvent
+#print axioms PeakonCoefficients.finiteResolvent
+#check PeakonCoefficients.finiteResolvent_mul
+#print axioms PeakonCoefficients.finiteResolvent_mul
+#check PeakonCoefficients.mul_finiteResolvent
+#print axioms PeakonCoefficients.mul_finiteResolvent
+#check PeakonCoefficients.strict_upper_spectral_collapse
+#print axioms PeakonCoefficients.strict_upper_spectral_collapse
+#check PeakonCoefficients.upperKernel
+#print axioms PeakonCoefficients.upperKernel
+#check PeakonCoefficients.upperKernel_triangular
+#print axioms PeakonCoefficients.upperKernel_triangular
+#check PeakonCoefficients.upperKernel_diagonal
+#print axioms PeakonCoefficients.upperKernel_diagonal
+#check PeakonCoefficients.upperKernel_skew
+#print axioms PeakonCoefficients.upperKernel_skew
+#check PeakonCoefficients.skewPart
+#print axioms PeakonCoefficients.skewPart
+#check PeakonCoefficients.symmetricPart
+#print axioms PeakonCoefficients.symmetricPart
+#check PeakonCoefficients.algebraicLax
+#print axioms PeakonCoefficients.algebraicLax
+#check PeakonCoefficients.algebraicLax_rank_two
+#print axioms PeakonCoefficients.algebraicLax_rank_two
+#check PeakonCoefficients.algebraicLax_det_collapse
+#print axioms PeakonCoefficients.algebraicLax_det_collapse

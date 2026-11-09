@@ -1,0 +1,13 @@
+import TraceLog
+#check PowerSeries.coeff_of_lt_order
+#check finsum_eq_sum_of_support_subset
+#check PowerSeries.coeff_smul
+#check PowerSeries.coeff_subst'
+#check PowerSeries.coeff_zero_eq_constantCoeff_apply
+#check map_ratCast
+#check Rat.cast_def
+#check Finset.sum_range_succ'
+#check PowerSeries.coeff_coe
+#check Polynomial.coeToPowerSeries.ringHom
+#check Matrix.map_map
+#check PowerSeries.C_0
