@@ -1,0 +1,77 @@
+# PART A — MathDB 368315 (Conjecture 4.1 of arXiv 2505.04000v1)
+
+Literal: fix a positive integer m; r(n) = fraction of interval-closed sets of [m]×[n] lying in rowmotion orbits
+of size m+n+1. Claim r(n) → 1 as n → ∞.
+
+**Theorem A.** For every fixed m ≥ 1, r(n) = 1 − O_m(1/n).
+
+Notation: N = m+n+1. Elements (i,j), i∈[m] "row", j∈[n]. (a,b) ≤ (c,d) iff a≤c and b≤d.
+
+## A1. Shape and enumeration
+Every row of an ICS is a segment. Let I have all m rows nonempty, row i = [a_i,b_i].
+*Lemma A1.* a_1≥…≥a_m and b_1≥…≥b_m. Conversely any such data with a_i≤b_i is an ICS.
+Proof. Consecutive rows i,i+1. If a_i ≤ b_{i+1} then (i,a_i) ≤ (i+1,b_{i+1}), and the interval between contains
+(i,b_{i+1}) and (i+1,a_i), so b_{i+1}≤b_i and a_{i+1}≤a_i. If a_i > b_{i+1} then a_{i+1}≤b_{i+1}<a_i≤b_i.
+Converse: for (i,p)≤(l,r)≤(k,q) with (i,p),(k,q)∈I: a_l≤a_i≤p≤r≤q≤b_k≤b_l. ∎
+*Lemma A2.* |IC([m]×[n])| ≤ C_m·binom(n,2m) + O_m(n^{2m−1}), C_m Catalan. Proof. ICS with an empty row: at most
+2^m·(n²)^{m−1}. All rows nonempty and all 2m values distinct: the values form a 2m-subset, and an assignment is a
+standard filling of the 2×m shape (a's decreasing, b's decreasing, a_i<b_i), C_m ways. Non-distinct: ≤ binom(2m,2)·n^{2m−1}. ∎
+
+## A2. Global rowmotion on staircase data
+Attributed input: source Theorem 1.1 (printed proof read; it rests on [ELMSW, Thm 2.20]):
+Row(I) = (Inc(Ceil I) − I) ∪ (ΔCeil I − Δ(Min I ∩ ΔCeil I)).
+The bracketing was confirmed from the source's own proof (sets D and C). Four transitions below were additionally
+checked by hand against the toggle definition at m=2, n=10 (a-tie, b-tie, b_1=n with k=1 and k=2).
+
+For weakly decreasing data with all rows nonempty set C={i: b_i<n, and i=1 or b_{i−1}>b_i},
+D={i: i=1 or a_{i−1}>a_i}, c(i)=min{k∈C,k≥i}, e(i)=max{k∈C,k≤i}. Direct computation from Lemma A1:
+Ceil I={(i,b_i+1):i∈C}; Min I={(i,a_i):i∈D}; row i of ΔCeil is {j≤b_{c(i)}+1} (empty if c(i)=∞); row i of
+Inc(Ceil I) is empty if i∈C and otherwise {j: j>b_{c(i)}+1 and j<b_{e(i)}+1} (a missing index drops that bound);
+D'={i∈D: a_i≤b_{c(i)}+1}, and row i of Δ(Min∩ΔCeil) is {j≤a_{d(i)}} with d(i)=min{k∈D',k≥i}. (R)
+
+## A3. Generic states and one event
+Marks: x_i=a_i−1, y_i=b_i+1, in {0,…,n+1}⊂Z_N. Let G_n be the set of ICS with all rows nonempty whose 2m marks are at
+pairwise circular distance ≥ m+2 in Z_N. For I∈G_n the a_i, b_i are strict; a_i<b_{i+1} or a_i≥b_{i+1}+5 (so
+a_i≤b_{i+1}+1 ⇔ a_i<b_{i+1}). Conventions b_{m+1}=−∞, a_{m+1}=1−m.
+
+*Shift.* If b_1<n, (R) gives C=D=D'=[m], Inc empty, Row(I)=([a_i+1,b_i+1])_i.
+
+*Event.* Let b_1=n. Distance from the mark n+1 forces every other mark into [2,n−m−1]. Let
+k=min{i: a_i>b_{i+1}}. Define for 1≤s<k the state B_s: a_i+s all i; b_{i+1}+s (i≤s); b_i+s (i>s).
+For k≤s≤m−1 the state A_s: rows i<k: [a_i+s, b_{i+1}+s]; row k: [a_{k+1}+s, a_k+s−2]; rows k<i≤s: [a_{i+1}+s, b_i+s];
+rows i>s: [a_i+s, b_i+s]. (B_s has a tie b_s=b_{s+1}; A_s has a tie a_s=a_{s+1}.)
+Using (R), each check being a substitution in which every inequality has margin from G_n:
+- I → B_1 if k≥2; I → A_1 if k=1 and m≥2 (row 1: [a_2+1, b_2+1] ∪ ([b_2+2,n]∖[a_1,n]) = [a_2+1,a_1−1]).
+- B_s → B_{s+1} if s+1<k: row s+1 is [a_{s+1}+s+1, b_{s+2}+s+1], the Inc part lying inside I.
+- B_{k−1} → A_k (flip) if k<m: index k leaves D' because a_k>b_{k+1}; row k = [a_{k+1}+k, b_{k+1}+k] ∪ [b_{k+1}+k+1, a_k+k−2].
+- A_s → A_{s+1}: C=[m], D'=[m]∖{s+1}, so row s+1 is [a_{s+2}+s+1, b^{(s)}_{s+1}+1], all else +1.
+- Last step to time m: from A_{m−1} (row m becomes [1, b+1]), or from B_{m−1} when k=m (row m = [1, a_m+m−2]); for m=1, I→[1,a_1−1].
+Result at time m (token-free):
+ a' = (a_1+m,…,a_{k−1}+m, a_{k+1}+m,…,a_m+m, 1),
+ b' = (b_2+m,…,b_k+m, a_k+m−2, b_{k+1}+m,…,b_m+m).
+Times 1,…,m−1 of the event have a tie, so differ from any state of G_n.
+
+## A4. Rotating noncrossing matching
+For I∈G_n read marks in decreasing position, writing "(" for y and ")" for x; a_i<b_i gives a ballot word, a Dyck word W.
+Its matching μ is a noncrossing perfect matching on the marks. The partner of the top "(" is x_k, k as above: the balance
+after x_i is #{y above x_i}−i, positive for i<k (a_i<b_{i+1}) and 0 at i=k.
+Comparing a',b' with a,b: every mark moves by +m mod N; the top mark n+1 goes to 0 and becomes ")"; x_k becomes "(".
+Writing W=(W_1)W_2 the new word is W_1(W_2). So the pair {top,x_k} remains a pair and all others are unchanged: μ is carried
+by rotation.
+
+*Proposition A3.* Let I∈G_n, marks M, matching μ. (i) Row^N(I)=I. (ii) If Row^d(I)=I with 0<d<N then M+d=M.
+Proof. Token-free times t: M+t⊂[0,n+1], matching μ+t, the next token-free time being t+1 (no mark at n+1) or t+m (mark at n+1).
+State at a token-free time is determined by (M+t,μ+t), since each pair's higher mark is y. N is a token-free time: if t<N<t+m at an event then
+M∋n+1−t ≡ n+1+(N−t), a position in {n+2,…,n+m}, but M⊂[0,n+1]. This proves (i). For (ii), d is token-free since states at other times have a tie. ∎
+
+## A5. Conclusion
+*Count of G_n.* Each 2m-subset of {1,…,n−1} with consecutive gaps ≥m+2 (so also diff ≤n−2, i.e. N−diff≥m+3) and each standard filling gives an element of G_n:
+|G_n| ≥ C_m·binom(n−1−(2m−1)(m+1), 2m) = C_m binom(n,2m) − O(n^{2m−1}).
+*Exceptions.* M+d=M with 0<d<N forces M to be a union of e=N/gcd(d,N)≥2-cosets, e|2m; at most Σ_{e|2m,e≥2} binom(N/e,2m/e)=O(N^m) sets, times C_m.
+So at least C_m binom(n,2m) − O(n^{2m−1}) ICS lie in orbits of size exactly N (orbit size divides N by (i) and equals N by (ii)), while the total is at most C_m binom(n,2m)+O(n^{2m−1}). Since m≥1, O(N^m)=O(n^{2m−1}). ∎
+
+## A6. Adversarial self-review (mandatory)
+Generic-proof attempts: (1) a two-paths/Stanley–Thomas word for pairs of order ideals — the hidden zone of m−1 positions and the conversions x→y do not arise from order-ideal rowmotion on a single product of chains, so no direct reduction was found; (2) a generic "rowmotion on convex subsets" orbit statement — source Theorem 1.2 and its quadratic orbits show no uniform statement holds for all ICS; (3) reduction to source Theorem 1.1 alone — that gives one step, not the orbit structure.
+Source: Section 4.1 outlines the good-family strategy. Note that its assertion that *all* good ICS have orbit size m+n+1 is false as worded: at m=1 and even n≥6 the interval [1,n/2] has antipodal marks and orbit size (n+2)/2; the O(N^m) exception in A5 repairs this. Strongest objection: the source named the good-family plan, and Thm 1.1 is imported, so a critic may call this a completion of a stated strategy. Strongest reply: the source states the needed orbit claim only conditionally ("if one could show"), says general-m orbit analysis "seems intractable", and the hidden-zone/matching mechanism is absent from it.
+
+---------------------------------------------------------------------------------------------------
