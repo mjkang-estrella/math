@@ -1,0 +1,127 @@
+import BoundaryChecks
+#check FourProjection.denominator_pos
+#print axioms FourProjection.denominator_pos
+#check FourProjection.sqrt_lower
+#print axioms FourProjection.sqrt_lower
+#check FourProjection.scalar_coefficient
+#print axioms FourProjection.scalar_coefficient
+#check FourProjection.weight_inequality
+#print axioms FourProjection.weight_inequality
+#check FourProjection.real_pair
+#print axioms FourProjection.real_pair
+#check FourProjection.complex_pair
+#print axioms FourProjection.complex_pair
+#check FourProjection.weighted_bound
+#print axioms FourProjection.weighted_bound
+#check FourProjection.spectral_core
+#print axioms FourProjection.spectral_core
+#check FourProjection.mpInvSqrt
+#print axioms FourProjection.mpInvSqrt
+#check FourProjection.mpInvSqrt_spectral
+#print axioms FourProjection.mpInvSqrt_spectral
+#check FourProjection.diagonal_intertwine
+#print axioms FourProjection.diagonal_intertwine
+#check FourProjection.hermitian_cfc_intertwine
+#print axioms FourProjection.hermitian_cfc_intertwine
+#check FourProjection.mpInvSqrt_mul
+#print axioms FourProjection.mpInvSqrt_mul
+#check FourProjection.invSqrt
+#print axioms FourProjection.invSqrt
+#check FourProjection.mpInvSqrt_isHermitian
+#print axioms FourProjection.mpInvSqrt_isHermitian
+#check FourProjection.mpInvSqrt_posSemidef
+#print axioms FourProjection.mpInvSqrt_posSemidef
+#check FourProjection.mpInvSqrt_sandwich_of_posDef
+#print axioms FourProjection.mpInvSqrt_sandwich_of_posDef
+#check FourProjection.polarFrame
+#print axioms FourProjection.polarFrame
+#check FourProjection.polarFrame_eq_mpInvSqrt_mul
+#print axioms FourProjection.polarFrame_eq_mpInvSqrt_mul
+#check FourProjection.polarFrame_isometry
+#print axioms FourProjection.polarFrame_isometry
+#check FourProjection.normalized_congruence
+#print axioms FourProjection.normalized_congruence
+#check FourProjection.mpInvSqrt_mul_eq_mul_invSqrt
+#print axioms FourProjection.mpInvSqrt_mul_eq_mul_invSqrt
+#check FourProjection.mpInvSqrt_zero
+#print axioms FourProjection.mpInvSqrt_zero
+#check FourProjection.mpInvSqrt_mulVec_eq_zero
+#print axioms FourProjection.mpInvSqrt_mulVec_eq_zero
+#check FourProjection.normalized_congruence_is_projection
+#print axioms FourProjection.normalized_congruence_is_projection
+#check FourProjection.coordinateProjection
+#print axioms FourProjection.coordinateProjection
+#check FourProjection.coordinateProjection_isHermitian
+#print axioms FourProjection.coordinateProjection_isHermitian
+#check FourProjection.coordinateProjection_idempotent
+#print axioms FourProjection.coordinateProjection_idempotent
+#check FourProjection.normalized_coordinateProjection
+#print axioms FourProjection.normalized_coordinateProjection
+#check FourProjection.normalized_coordinateProjection_is_projection
+#print axioms FourProjection.normalized_coordinateProjection_is_projection
+#check FourProjection.hsSq
+#print axioms FourProjection.hsSq
+#check FourProjection.hsSq_nonneg
+#print axioms FourProjection.hsSq_nonneg
+#check FourProjection.hsSq_conjTranspose
+#print axioms FourProjection.hsSq_conjTranspose
+#check FourProjection.trace_conjTranspose_mul_self_re
+#print axioms FourProjection.trace_conjTranspose_mul_self_re
+#check FourProjection.trace_mul_conjTranspose_self_re
+#print axioms FourProjection.trace_mul_conjTranspose_self_re
+#check FourProjection.hsSq_isometry_mul
+#print axioms FourProjection.hsSq_isometry_mul
+#check FourProjection.hsSq_mul_coisometry
+#print axioms FourProjection.hsSq_mul_coisometry
+#check FourProjection.trace_frame_products
+#print axioms FourProjection.trace_frame_products
+#check FourProjection.orthonormal_columns
+#print axioms FourProjection.orthonormal_columns
+#check FourProjection.GramContractive
+#print axioms FourProjection.GramContractive
+#check FourProjection.row_bound_of_gramContractive
+#print axioms FourProjection.row_bound_of_gramContractive
+#check FourProjection.col_bound_of_gramContractive
+#print axioms FourProjection.col_bound_of_gramContractive
+#check FourProjection.GramContractive.unitary_change
+#print axioms FourProjection.GramContractive.unitary_change
+#check FourProjection.isometry_complement_posSemidef
+#print axioms FourProjection.isometry_complement_posSemidef
+#check FourProjection.gramContractive_cross_isometries
+#print axioms FourProjection.gramContractive_cross_isometries
+#check FourProjection.spectralCoords
+#print axioms FourProjection.spectralCoords
+#check FourProjection.cfc_sqrt_one_add
+#print axioms FourProjection.cfc_sqrt_one_add
+#check FourProjection.cfc_sqrt_one_sub
+#print axioms FourProjection.cfc_sqrt_one_sub
+#check FourProjection.spectralCoords_cfc_mul
+#print axioms FourProjection.spectralCoords_cfc_mul
+#check FourProjection.sqrt_grading
+#print axioms FourProjection.sqrt_grading
+#check FourProjection.spectral_entry_relation
+#print axioms FourProjection.spectral_entry_relation
+#check FourProjection.spectral_bounds
+#print axioms FourProjection.spectral_bounds
+#check FourProjection.hsSq_spectralCoords
+#print axioms FourProjection.hsSq_spectralCoords
+#check FourProjection.spectralCoords_add
+#print axioms FourProjection.spectralCoords_add
+#check FourProjection.trace_square_eq_spectral_sum
+#print axioms FourProjection.trace_square_eq_spectral_sum
+#check FourProjection.hermitian_spectral_bound
+#print axioms FourProjection.hermitian_spectral_bound
+#check FourProjection.graded_spectral_bound
+#print axioms FourProjection.graded_spectral_bound
+#check FourProjection.spectrum_bounds_of_posDef_shifts
+#print axioms FourProjection.spectrum_bounds_of_posDef_shifts
+#check FourProjection.posDef_one_sub_of_grading
+#print axioms FourProjection.posDef_one_sub_of_grading
+#check FourProjection.sqrt_relation_of_odd_cross
+#print axioms FourProjection.sqrt_relation_of_odd_cross
+#check FourProjection.graded_cross_isometry_bound
+#print axioms FourProjection.graded_cross_isometry_bound
+#check FourProjection.zero_rectangular_bound
+#print axioms FourProjection.zero_rectangular_bound
+#check FourProjection.rectangular_column_contracts
+#print axioms FourProjection.rectangular_column_contracts

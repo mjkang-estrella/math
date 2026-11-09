@@ -1,0 +1,45 @@
+import PolarFrameBridge
+#check FourProjection.mpInvSqrt
+#print axioms FourProjection.mpInvSqrt
+#check FourProjection.mpInvSqrt_spectral
+#print axioms FourProjection.mpInvSqrt_spectral
+#check FourProjection.diagonal_intertwine
+#print axioms FourProjection.diagonal_intertwine
+#check FourProjection.hermitian_cfc_intertwine
+#print axioms FourProjection.hermitian_cfc_intertwine
+#check FourProjection.mpInvSqrt_mul
+#print axioms FourProjection.mpInvSqrt_mul
+#check FourProjection.invSqrt
+#print axioms FourProjection.invSqrt
+#check FourProjection.mpInvSqrt_isHermitian
+#print axioms FourProjection.mpInvSqrt_isHermitian
+#check FourProjection.mpInvSqrt_posSemidef
+#print axioms FourProjection.mpInvSqrt_posSemidef
+#check FourProjection.mpInvSqrt_sandwich_of_posDef
+#print axioms FourProjection.mpInvSqrt_sandwich_of_posDef
+#check FourProjection.polarFrame
+#print axioms FourProjection.polarFrame
+#check FourProjection.polarFrame_eq_mpInvSqrt_mul
+#print axioms FourProjection.polarFrame_eq_mpInvSqrt_mul
+#check FourProjection.polarFrame_isometry
+#print axioms FourProjection.polarFrame_isometry
+#check FourProjection.normalized_congruence
+#print axioms FourProjection.normalized_congruence
+#check FourProjection.mpInvSqrt_mul_eq_mul_invSqrt
+#print axioms FourProjection.mpInvSqrt_mul_eq_mul_invSqrt
+#check FourProjection.mpInvSqrt_zero
+#print axioms FourProjection.mpInvSqrt_zero
+#check FourProjection.mpInvSqrt_mulVec_eq_zero
+#print axioms FourProjection.mpInvSqrt_mulVec_eq_zero
+#check FourProjection.normalized_congruence_is_projection
+#print axioms FourProjection.normalized_congruence_is_projection
+#check FourProjection.coordinateProjection
+#print axioms FourProjection.coordinateProjection
+#check FourProjection.coordinateProjection_isHermitian
+#print axioms FourProjection.coordinateProjection_isHermitian
+#check FourProjection.coordinateProjection_idempotent
+#print axioms FourProjection.coordinateProjection_idempotent
+#check FourProjection.normalized_coordinateProjection
+#print axioms FourProjection.normalized_coordinateProjection
+#check FourProjection.normalized_coordinateProjection_is_projection
+#print axioms FourProjection.normalized_coordinateProjection_is_projection
