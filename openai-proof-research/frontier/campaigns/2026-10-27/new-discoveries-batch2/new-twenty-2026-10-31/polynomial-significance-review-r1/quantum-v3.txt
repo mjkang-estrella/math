@@ -1,0 +1,1355 @@
+                                                   Efficient Approximation of Quantum Channel Fidelity
+                                                                   Exploiting Symmetry
+                                                                   Yeow Meng Chee, Hoang Ta, and Van Khu Vu
+
+
+
+
+arXiv:2308.15884v3 [quant-ph] 21 Mar 2024
+                                                        Department of Industrial Systems Engineering and Management,
+                                                                 National University of Singapore, Singapore
+
+
+                                                                                            Abstract
+                                                     Determining the optimal fidelity for the transmission of quantum information over noisy quan-
+                                                 tum channels is one of the central problems in quantum information theory. Recently, [Berta-
+                                                 Borderi-Fawzi-Scholz, Mathematical Programming, 2021] introduced an asymptotically converg-
+                                                 ing semidefinite programming hierarchy of outer bounds for this quantity. However, the size of
+                                                 the semidefinite programs (SDPs) grows exponentially with respect to the level of the hierarchy,
+                                                 thus making their computation unscalable. In this work, by exploiting the symmetries in the
+                                                 SDP, we show that, for a fixed output dimension of the quantum channel, we can compute the
+                                                 SDP in time polynomial with respect to the level of the hierarchy and input dimension. As a
+                                                 direct consequence of our result, the optimal fidelity can be approximated with an accuracy of ϵ
+                                                 in poly(1/ϵ, input dimension) time.
+
+
+                                            1    Introduction
+                                            One of the central problems in information theory is determining the minimum error probability that
+                                            arises during data transmission through a noisy channel or when storing it on an unreliable storage
+                                            medium. This task can be formulated as an optimization problem that maximizes the probability of
+                                            determining the sent messages exactly over all valid encoders and decoders. This problem was initially
+                                            investigated by Shannon [Sha48]. There, the author showed that when considering large numbers of
+                                            independent copies of the same channel, this quantity can be characterized by a simple expression
+                                            known as the channel capacity of the channel.
+                                                In terms of the algorithmic point of view regarding this problem, the study conducted in [BF17]
+                                            focused on investigating the problem of determining the optimal encoder and decoder that leads to
+                                            the maximum success probability over a noisy channel in the non-asymptotic regime. In this setting,
+                                            given NX→Y that is a noisy channel from X to Y and M ∈ N, let p(N, M ) to be the maximum
+                                            success probability for transmitting a uniform M -dimensional message through the channel NX→Y .
+                                            The study in [BF17] showed that the computation of p(N, M ) can be formulated as an optimization
+                                            problem involving a submodular function. Building upon this insight, a simple and efficient greedy
+                                            algorithm was introduced in [BF17] to find a code that achieves a (1 − e−1 )-approximation of p(N, M ).
+                                            Furthermore, the study in [BF17] provided an efficiently computable linear programming relaxation
+                                            denoted by LP(N, M ) (also referred to as meta converse [Hay09, PPV10]). This relaxation provides
+                                            upper bounds on p(N, M ), and it was proven that p(N, M ) ≤ LP(N, M ) ≤ (1 − e−1 )−1 p(N, M ).
+                                            However, it was highlighted in [BF17] that the problem of obtaining an approximate solution for
+                                            p(N, M ) with a better constant factor than 1 − e−1 is classified as NP-Hard. Further research on this
+                                            problem on variant models has been conducted in [BFS16, FSS19, BFGG22, FF23a].
+                                                The problem in the analog quantum setting involves determining quantum channel fidelity (or short
+                                            channel fidelity) F(N , M ) for transmitting one part of a maximally entangled state with dimension
+
+
+                                                                                                1
+M through a noisy quantum channel NA→B from A to B, where A and B are finite dimensional
+complex Hilbert spaces. Similar to the classical case, this problem can be formulated as a bilinear
+optimization problem with matrix-valued variables. In order to approximate F(N , M ), an efficiently
+computable semidefinite programming relaxation was proposed in [LM15]. However, unlike the classical
+case, the gap between this relaxation and F(N , M ) is not well understood in the quantum setting.
+In other directions, numerical methods based on iterative seesaw techniques, such as those proposed
+in [RW05, FSW07, TKL10, JRO+ 17], have been developed to provide lower bounds for F(N , M ).
+These methods are computationally tractable semidefinite programs that often converge in practice.
+In different settings, several works in [TBR16, WD16, WFD18, KDWW19] have focused on the problem
+of determining the size of a maximally entangled state that can be transmitted through a noisy quantum
+channel while maintaining a fixed fidelity of 1 − ϵ.
+    In a recent work [BBFS21], the authors introduced an asymptotically converging semidefinite
+programming hierarchy {SDPn (N , M )}n∈N of outer bounds for F(N , M ) (defined in Section 2.1).
+The hierarchy provides a measure of convergence speed and approaches the channel fidelity F(N , M )
+as the parameter n tends to infinity. In particular, the authors showed that the inequality 0 ≤
+OPT(SDPn (N , M )) − F(N , M ) ≤ poly(d)√
+                                          n
+                                            holds, where OPT(SDPn (N , M )) is the optimal value of the
+program SDPn (N , M ), and d depends only on the input dimension, output dimension, M . This result
+implies that for any ϵ > 0, estimating F(N , M ) with an additive error of ϵ can be achieved by solving
+the semidefinite program SDPn (N , M ), where n = poly(d)
+                                                        ϵ2  . However, it is important to note that the
+size of the matrix variables in SDPn (N , M ) grows exponentially with respect to n. Therefore, direct
+computation of the optimal value of the program SDPn (N , M ) is inefficient.
+
+Main result and techniques In this paper, we aim to propose an efficient way to compute the
+optimal value of the program SDPn (N , M ), and therefore, have an efficient approximate algorithm for
+computing channel fidelity F(N , M ), where N is a quantum channel, and M, n ∈ N. In particular, our
+main result is stated as follows.
+Theorem. For M, n ∈ N≥1 , let NĀ→B be a quantum channel, and let dĀ denote the input dimension
+of NĀ→B . The optimal value of the program SDPn (N , M ) can be computed in poly(n, dĀ ) time, for a
+fixed output dimension of the quantum channel NĀ→B . As a direct consequence, the channel fidelity
+F(N , M ) can be estimated with an additive error of ϵ in poly(1/ϵ, dĀ ) time.
+    To achieve this goal, we exploit the symmetries of the semidefinite program SDPn (N , M ) to obtain
+an equivalent representation and solve it efficiently. Specifically, in Lemma 3.1, we demonstrate that
+the search space of the program can be restricted to an invariant subspace EndSn (Hn ), which is
+obtained by taking a natural action of the symmetric group Sn on the Hn - the original search space.
+Utilizing tools from representation theory, particularly the representation
+                                                                         Lt theory of the symmetric
+group, we can construct a bijective linear map ψ from EndSn (Hn ) to i=1 Cmi ×mi for some integers
+t and mi , i = 1, . . . , t. This map ensures that for any X ∈ EndSn (Hn ), the matrix ψ(X) takes on a
+block diagonal form with poly(n) number of blocks, i.e., t = poly(n), and each of which has a size
+bounded by a polynomial in dĀ and n, i.e., mi = poly(dĀ , n) for all i ∈ {1, . . . , t}.
+    In addition, the bijective map ψ preserves positive semidefiniteness, i.e., for any X ∈ EndSn (Hn ),
+X ⪰ 0 if and only if ψ(X) ⪰ 0. Therefore, for any X ∈ EndSn (Hn ), checking whether X is a positive
+semidefinite matrix can be reduced to checking if the smaller matrices [ψ(X)]1 , . . . , [ψ(X)]t are all
+positive semidefinite, where [ψ(X)]i is the i-th block of ψ(X) for i = 1, . . . , t.
+    From the construction of ψ, we can build a transformation Φ that converts the program SDPn (N , M )
+into an equivalent semidefinite program, denoted as Φ(SDPn (N , M )), which has poly(dĀ , n) number
+of constraints, and each matrix variable has a polynomial size in dĀ and n (see Theorem 3.4). Addi-
+tionally, by utilizing the representation of the symmetric group and exploiting specific properties of the
+constraints involved in the program SDPn (N , M ), we show in Theorem 3.7 that the transformation
+can be implemented in poly(dĀ , n) time, while a direct implementation of the transformation would
+require exponential computation in n. Therefore, we can determine the optimal value of the program
+
+
+                                                    2
+SDPn (N , M ) by solving the program Φ(SDPn (N , M )), and this can be done in poly(dĀ , n) time.
+The Table 1 shows the reduction in the size of the matrix variables in the program Φ(SDPn (N , 2))
+compared to the program SDPn (N , 2) (for certain values of n) for arbitrary qubit quantum channels
+N.
+      n    size.matrix in SDPn (N , 2)   max.size.matrix in Φ(SDPn (N , 2))    number of blocks
+       2             64 × 64                          40 × 40                         2
+       3           256 × 256                          80 × 80                         3
+       4          1024 × 1024                       180 × 180                         5
+       5          4096 × 4096                       336 × 336                         6
+       6         16384 × 16384                      560 × 560                         9
+       7         65536 × 65536                      896 × 896                        11
+       8        262144 × 262144                    1440 × 1440                       15
+       9       1048576 × 1048576                   2160 × 2160                       18
+      10       4194304 × 4194304                   3080 × 3080                       23
+
+Table 1: Comparing the sizes of two semidefinite programs: SDPn (N , 2) vs. Φ(SDPn (N , 2)) for
+arbitrary qubit quantum channels N
+
+
+    In the case where the input dimension dĀ of the channel NĀ→B is fixed, we will consider an-
+other semidefinite programming hierarchy, which is also an asymptotically converging semidefinite
+programming hierarchy of outer bounds for determining F(N , M ) (see Section 2.1 for more details).
+By exploiting symmetries with the same strategy as in this work for the program, we can show that
+the channel fidelity F(N , M ) can be estimated with an additive error of ϵ in poly(1/ϵ, dB ), where dB
+is the output dimension of the quantum channel NĀ→B .
+
+Related work Algorithmic aspects of optimal channel coding have been extensively studied in
+various settings. In classical channels, the problem was explored in [BF17] for point-to-point channels,
+and a generalization was investigated in [BFGG22]. For entanglement-assisted classical channels,
+the research can be found in [BFS16], and for the multiple-access channel, the study is investigated
+in [FF23b], and for broadcast channels, it is discussed in [FF23a]. In terms of quantum channels, the
+problem has been examined in [LM15, BBFS21, KDWW21, HSW23] for general quantum channels
+and in [FSS19] for classical-quantum channels. In addition, in recent work [HSW23], authors exploited
+the unitary covariance symmetry of the identity channel to reduce the complexity of the SDPn (N , M )
+when n = 2 compared with the original form in [BBFS21].
+    Exploiting symmetries to simplify convex programs, especially semidefinite programs, has been done
+for various problems and applications [LM11, Chapter 9]. This approach has been seen in other surveys
+
+
+                                                   3
+as well [Val09, DK10]. Specifically, it has been applied to the mutually unbiased bases problem [GP21]
+and the classical (quantum) capacity of quantum channels in quantum information theory [FST22],
+quantum separability problem [DPS04]. In coding theory, this method has been used to provide upper
+bounds for nonbinary codes [Sch05, GST06, Lau07, LPS17, Pol19a]. Furthermore, this approach has
+also proven beneficial in various other fields and problems, such as queueing theory [BLS21, Pol22],
+crossing numbers for graphs [DKPS07, BP22], truss topology optimization [BdKPS09], and polynomial
+optimization [GP04, RTAL13, RSST18]. Our approach in this paper is to exploit symmetries under
+the symmetric group action, inspired by some prior works in [LPS17, GP21, FST22].
+
+Organization The rest of this paper is organized as follows. Section 2 provides an introduction
+to some fundamental notation and a brief overview of the problem of approximate quantum error
+correction, and presents tools for exploiting symmetries in semidefinite programs. Finally, our proof
+for the main result is presented in Section 3.
+
+
+2    Preliminaries
+Basic notation
+Let H be a finite dimensional complex Hilbert space; we denote by L (H) the set of linear operators
+on H, P(H) denotes the set of positive semidefinite operators on H, and S(H) := {ρ ∈ P(H) :
+tr (ρ) = 1} is the set of density operators on H. For any two Hermitian operators ρ, σ ∈ L (H), we
+write σ ⪰ ρ if σ − ρ ∈ P(H). Let A, B be finite dimensional complex Hilbert spaces, we denote
+dA , dB as the dimension of A and B, respectively. For X ∈ P(A ⊗ B), we often explicitly indicate
+the quantum systems P      as a subscript by writing XAB . The marginal on the subsystem A is denoted
+XA = tr B (XAB ) := i (IA ⊗ ⟨i|B )XAB (IA ⊗ |i⟩B ), where {|i⟩B }i is an orthogonal basis of B and
+IA denotes the identity map on L (A). Let {|i⟩}i and {|j⟩}j be the standard bases for A and B,
+respectively. We will use a correspondence between the linear operator in L (B, A) and vectors in
+A ⊗ B, given by the linear map vec : L (B, A) → A ⊗ B, defined as vec (|i⟩⟨j|) = |i⟩|j⟩. In the case
+of n copies of the same Hilbert space H, we denote by H⊗n = H ⊗ H ⊗ · · · ⊗ H, we also use the
+notation H1n or Hn to indicate H1 ⊗ · · · ⊗ Hn , where Hi ∼   = H for all i ∈ [n]. For i < j, we denote by
+Hij := Hi ⊗ · · · ⊗ Hj .
+    We denote by CP(A : B) the set of completely positive (CP) maps from L (A) to L (B). A quantum
+                             P trace-preserving linear map from L (A) to L (B). Let A be isomorphic
+                                                                                           ′
+channel NA→B is a CP and
+                         1
+to A and |Φ⟩AA′ = √d           i |i⟩A |i⟩A be the maximally entangled state. For a linear map NA →B , we
+                                          ′                                                       ′
+                           A
+denote by JAB ∈ P(A ⊗ B) the corresponding Choi matrix defined as JAB = (IA ⊗ N )(|Φ⟩⟨Φ|AA′ ).
+             N                                                               N
+
+    For n ∈ N, we use the notation Sn to denote the symmetric group on n symbols. This group
+consists of the permutations that can be performed on the n symbols, and its group operation involves
+the composition of permutations. For every π ∈ Sn , we define the action of π on n copies of a finite
+dimensional Hilbert space H⊗n as
+
+                    π · (h1 ⊗ · · · ⊗ hn ) = hπ−1 (1) ⊗ · · · ⊗ hπ−1 (n) , hi ∈ H , ∀π ∈ Sn .
+
+    For every π ∈ Sn , we denote by UHn (π) is a permutation matrix which corresponds to the action
+of π on H⊗n . For any ρHn ∈ H⊗n , we write
+
+                                  UHn (π) (ρHn ) := UHn (π)ρHn UHn (π)∗ ,
+
+where UHn (π)∗ is conjugate transpose of UHn (π). Moreover, because the permutation matrices are
+real, thus UHn (π)∗ = UHn (π)T for all π ∈ Sn . A multipartite operator ρHn ∈ L (H⊗n ) is called
+symmetric if ρHn = UHn (π) (ρHn ) for all π ∈ Sn .
+
+
+
+
+                                                       4
+2.1    Approximate quantum error correction
+In this section, we briefly present the mathematical setting of approximate quantum error correction.
+For further information, we refer to [BBFS21, Bor22].
+    Let A, B, Ā, B̄ be finite dimensional complex Hilbert spaces. Let NĀ→B (N in short) be a quantum
+channel. The quantum channel fidelity (or short channel fidelity) for message dimension M ∈ N is
+defined as
+
+              F(N , M ) :=       max             F (ΦB̄R , ((DB→B̄ ◦ NĀ→B ◦ EA→Ā ) ⊗ IR )(ΦAR ))
+                             DB→B̄ ,EA→Ā
+
+                                                s.t. DB→B̄ , EA→Ā quantum channels ,
+                    √ √
+where F (ρ, σ) := ∥ ρ σ∥21 denotes the fidelity, ΦAR denotes the maximally entangled state on AR,
+and M = dA = dB̄ = dR .
+    Using the Choi-Jamiolkowski isomorphism, the authors in [BBFS21] demonstrated that the channel
+fidelity can be reformulated as a bilinear optimization problem as follows.
+                                                      N                          
+                      F(N , M ) = max dĀ dB · tr (JĀB    ⊗ ΦAB̄ )(EAĀ ⊗ DB B̄ )
+                                    EAĀ ,DB B̄
+
+                                                    s.t. EAĀ ⪰ 0, , DB B̄ ⪰ 0                               (1)
+                                                           IA         IB
+                                                    EA =      , DB =       .
+                                                           dA         dB
+   By the linearity of the objective function, we can write the above program in an equivalent form
+that optimizes over a convex hull of feasible solutions [BBFS21] as follows.
+                                               "                                   !#
+                                                                X
+                                                   N                  i       i
+                                                              
+                   F(N , M ) = max dĀ dB · tr JĀB    ⊗ ΦAB̄      EA   Ā ⊗ DB B̄
+                                                                                 i∈I
+                                                                       X
+                                              s.t. pi ≥ 0 , ∀i ∈ I,          pi = 1 ,
+                                                                       i∈I
+                                                                                                             (2)
+                                               i           i
+                                              EA Ā ⪰ 0, DB B̄ ⪰ 0 ∀i ∈ I ,
+                                               i     IA      i   IB
+                                              EA  =     , DB   =    ∀i ∈ I .
+                                                     dA          dB
+Program (2) can be viewed as the maximization of a linear function over a subset of quantum bipartite
+states known as separable quantum states. Approximating the set of separable states within the set
+of bipartite states is a hard problem in quantum information, as showed in [Gha10]. However, it is
+possible to approximate the set of separable states using a semidefinite programming hierarchy [DPS02,
+DPS04], and the convergence of this approximation can be analyzed with the finite quantum de Finetti
+theorem [CKMR07]. Similarly, in [BBFS21], authors considered the problem of approximating feasible
+solutions of Program (2) and introduced a semidefinite programming hierarchy SDPn (N , M ) for this
+purpose as follows.
+
+                                                          h                              i
+                                                             N
+   OPT(SDPn (N , M )) :=       max             dĀ dB · tr (JĀB 1
+                                                                   ⊗ Φ A B̄1
+                                                                             )ρ AĀB  B̄
+                                                                                     1 1
+                             ρAĀ(B B̄)n
+                                      1
+                                                       h            i
+                             s.t. ρAĀ(B B̄)n1 ⪰ 0 , tr ρAĀ(B B̄)n1 = 1 ,
+                                                                          
+                             ρAĀ(B B̄)n1 = IAĀ ⊗ U(B B̄)n1 (π) ρAĀ(B B̄)n1 ∀π ∈ Sn ,          (SDPn (N , M ))
+                                                IA
+                             ρA(B B̄)n1 =          ⊗ ρ(B B̄)n1 ,
+                                                dA
+                                                                         I Bn
+                             ρAĀ(B B̄)n−1 Bn = ρAĀ(B B̄)n−1 ⊗               .
+                                          1                        1     dB
+
+                                                              5
+Note that we identified B1 := B in Program SDPn (N , M ) and recall that B1 ∼    = B2 ∼= ... ∼
+                                                                                             = Bn and
+B̄1 ∼
+    = B̄2 ∼
+          = ... ∼
+                = B̄n . In addition, by introducing novel finite quantum de Finetti theorems that allow
+imposing linear constraints on the approximating states, in [BBFS21] provided a quantification of the
+convergence of Program SDPn (N , M ) to channel fidelity F(N , M ).
+Theorem 2.1 ([BBFS21]). Let NĀ→B be a quantum channel and n, M ∈ N. Then, we have
+                                                                            poly(d)
+                           0 ≤ OPT(SDPn (N , M )) − F(N , M ) ≤               √     ,
+                                                                                n
+where d = max{dA = dB̄ = M, dĀ , dB }.
+    Noting that instead of extending the B-systems we could alternatively extend the A-systems,
+which leads to the following asymptotically converging semidefinite program hierarchy SDPn (N , M )
+for approximating F(N , M ) [BBFS21].
+                                                     h                             i
+                                                        N
+   OPT(SDPn (N , M )) :=     max          dĀ dB · tr (JĀB 1
+                                                              ⊗ Φ     )ρ
+                                                                  AB̄1 A1 Ā1 B B̄
+                           ρ(AĀ)n B B̄
+                                 1
+                                                      h             i
+                           s.t. ρ(AĀ)n1 B B̄ ⪰ 0 , tr ρ(AĀ)n1 B B̄ = 1 ,
+                                                                          
+                           ρ(AĀ)n1 B B̄ = U(AĀ)n1 (π) ⊗ IB B̄ ρ(AĀ)n1 B B̄ ∀π ∈ Sn ,   (SDPn (N , M ))
+                                                      IB
+                           ρ(AĀ)n1 B = ρ(AĀ)n1 ⊗       ,
+                                                      dB
+                                                  IAn
+                           ρ(AĀ)n−1 An B B̄ =        ⊗ ρ(AĀ)n−1 B B̄ .
+                                  1               dA          1
+
+
+   The Program SDPn (N , M ) and Program SDPn (N , M ) are non-equivalent. However, the conver-
+gence guarantees in Theorem 2.1 still hold, i.e., 0 ≤ OPT(SDPn (N , M )) − F(N , M ) ≤ poly(d)
+                                                                                         √
+                                                                                           n
+                                                                                               , where
+d = max{dA = dB̄ = M, dĀ , dB }.
+   In this work, given M = dA = dB̄ ∈ N, we consider the problem of computing SDPn (N , M ) where
+the output dimension dB of NĀ→B is fixed. In this case, follow the Theorem 2.1, one as
+                                                                           poly(dĀ )
+                          0 ≤ OPT(SDPn (N , M )) − F(N , M ) ≤               √        ,
+                                                                               n
+                                                                                               p
+where dĀ is the input dimension of the channel N . In particular, poly(dĀ ) is at most O(dĀ log dĀ )
+                                                                   Ā )
+follows [Bor22, Theorem 4.2.1]. Therefore, by choosing n = poly(d
+                                                                ϵ2      , we can estimate F(N , M ) with
+an accuracy of ϵ by solving SDPn (N , M ). However, the size of the matrix variables in SDPn (N , M )
+grows exponentially with n. Thus, solving SDPn (N , M ) directly would require exponential time in
+terms of n. In this paper, we provide an efficient method to compute the optimal value of the program
+SDPn (N , M ), which can be done in poly(dĀ , n) time.
+Remark 2.2. For a fixed M and the output dimension dB of NĀ→B , the channel fidelity F(N , M )
+can be determined in exponential time in terms of dĀ by solving Program (1) using a brute-force
+algorithm, as it forms a constrained polynomial optimization problem. Some methods for solving
+constrained polynomial optimization problems can be found at [Las15].
+Remark 2.3. Noting that our method in this work can be adapted to the case where M and the input
+dimension dĀ of NĀ→B are fixed. In this scenario, the same strategy can be employed to exploit the
+symmetries in Program SDPn (N , M ), yielding poly(n, dB ) time complexity for solving SDPn (N , M ).
+
+2.2    Elementary Representation Theory
+In this subsection, we present the essential mathematical foundation for exploiting symmetries in a
+semidefinite program to represent the program effectively. For further information, readers interested
+in this topic can refer to references such as [LM11, Chapter 9].
+
+
+                                                         6
+Representation theory
+We recall some basic facts and notions in the representation theory of finite groups. For further
+information, we refer the reader to Refs. [Ser77] and [FH13]. Let G be a finite group and H be a
+finite dimensional complex Hilbert space. A group homomorphism ϱ : G → GL(H) is called a linear
+representation of G on H, where GL(H) is the general linear group on H. The space H is called a
+G-module. For v ∈ H and g ∈ G, we write g · v as shorthand for ϱ(g)v. For X ∈ L (H), the action of
+g ∈ G on X is given by ϱ(g)Xϱ(g)∗ .
+    A representation ϱ : G → GL(H) of G is called irreducible if for any subspace H′ of H then
+{gH′ : g ∈ G} ⊊ H′ , in other words, it contains no proper submodule H′ of H such that gH′ ⊆ H′ .
+Let H and H′ be G-modules, a G-equivariant map from H to H′ is a linear map ϕ : H → H′ such
+that g · ϕ(v) = ϕ(g · v) for all g ∈ G, v ∈ H. Two G-modules H and H′ are called G-isomorphic, write
+H∼ = H′ , if there is a bijective equivariant map from H to H′ . We denote by EndG (H), the set of all
+G-equivariant maps from H to H, i.e.,
+                        EndG (H) = {T ∈ L (H) : T (g · v) = g · T (v), ∀v ∈ H, g ∈ G}.
+
+Note that EndG (H) is known to form a matrix ∗-algebra [LM11], that is, a set of complex matrices
+that is closed under addition, scalar multiplication, matrix multiplication, and taking the conjugate
+transpose.
+      Let G be a finite group acting on a finite dimensional complex vector space H. Then the space H
+can be decomposed into a direct sum of subspaces as H = H1 ⊕ · · · ⊕ Ht , where H1 , . . . , Ht are G-
+modules and called the G-isotypical component. In more detail, every Hi is a direct sum of irreducible
+G-modules denoted as Hi,1 ⊕ · · · ⊕ Hi,mi and note that two irreducible G-modules Hi,j and Hi′ ,j ′ are
+isomorphic (i.e., Hi,j ∼   = Hi′ ,j ′ ) if and only if i = i′ . The tuple (m1 , . . . , mt ) are called multiplicities of
+the corresponding irreducible representations.
+      For each i ∈ [t] and j ∈ [mi ], let ui,j ∈ Hi,j be a nonzero vector such that for each i and all
+j, j ′ ∈ [mi ], there is a bijective G-equivariant map from Hi,j to Hi,j ′ that maps ui,j to ui,j ′ . For i ∈ [t],
+we define a matrix Ui as [ui,1 , . . . , ui,mi ], with ui,j forming the j-th column of Ui . The matrix set
+{U1 , . . . , Ut } obtained in this way is called a representative matrix set for the action of G on H. The
+columns of the matrices Ui can be viewed as elements of the dual space H∗ (by taking the standard
+inner product). Then each Ui is an ordered set of linear functions on H. Since Hi,j is the linear space
+spanned by G · ui,j (for each i, j), we have
+                                                      M mi
+                                                      t M
+                                                H=              CG · ui,j ,
+                                                      i=1 j=1
+               nP                       o
+where CG =          g∈G αg g : αg ∈ C       denotes the complex group algebra of G. Furthermore, we have
+                                                               
+                                                     M  mi
+                                                      t M           t
+                                                                    X
+                            dim EndG (H) = dim EndG       Hi,j  =   m2i .                                          (3)
+                                                                 i=1 j=1           i=1
+
+    Note that with the action of the finite group G on the space H, any inner
+                                                                            P product ⟨ , ⟩ on H gives
+                                                                          1
+rise to a G-invariant inner product ⟨ , ⟩G on H via the rule ⟨x, y⟩G := |G|   g∈G ⟨g · x, g · y⟩. Let ⟨ , ⟩ be
+a G-invariant inner product on H and {U1 , . . . , UL
+                                                    t } be a representative matrix set for the action of G
+                                                       t
+on H. Consider the linear map ψ : EndG (H) → i=1 Cmi ×mi defined as
+                                        t
+                                        M                       m
+                             ψ(X) :=          (⟨Xui,j ′ , ui,j ⟩)j,ji′ =1 , ∀X ∈ EndG (H) .                          (4)
+                                        i=1
+                                                                                   m
+For i ∈ [t] and X ∈ EndG (H), we denote the matrix (⟨Xui,j ′ , ui,j ⟩)j,ji′ =1 corresponding to the i-th
+block of ψ(X) by Jψ(X)Ki .
+
+
+                                                            7
+Lemma 2.4 (Proposition 2.4.4, [Pol19b]). The linear map ψ of Eq. (4) is bijective and for every
+X ∈ EndG (H), we have X ⪰ 0 if and only if ψ(X) ⪰ 0. Moreover, there is a unitary matrix U such
+that
+                                                          M mi
+                                                          t M
+                                            U ∗ XU =                 Jψ(X)Ki , ∀X ∈ EndG (H) ,
+                                                           i=1 j=1
+
+where mi = dim(Hi,1 ), for every i ∈ [t].
+                                                                                             Pt
+    Lemma 2.4 plays a crucial role in our symmetry reductions. Noting that dim(EndG (H)) = i=1 m2i
+can be significantly smaller than the dimension of H. Furthermore, thanks to this lemma, we can sim-
+plify the task of verifying whether a matrix X ∈ EndG (H) is positive semidefinite. This simplification
+involves checking if the smaller mi × mi matrices Jψ(X)Ki are positive semidefinite for each i ∈ [t].
+The following result, which was mentioned in [Pol19b], helps construct a representative set of direct
+product groups.
+                                                                                              (1)          (1)                 (2)               (2)
+Lemma 2.5. Let G1 and G2 be two finite groups. Let {U1 , . . . , Uk1 } and {U1 , . . . , Uk2 } be the
+representative matrix sets that correspond to the action of G1 and G2 on H1 and H2 , respectively.
+Then
+                                                (1)         (2)
+                                             {Ui      ⊗ Uj        : i = 1, . . . , k1 , j = 1, . . . , k2 }                                                  (5)
+
+is representative matrix set for the action of G1 × G2 on H1 ⊗ H2 .
+                         (1)          (1)             (2)            (2)
+Proof. Let {U1 , . . . , Uk1 } and {U1 , . . . , Uk2 } be the representative matrix sets that correspond
+                                                                                                                                                       (1)
+to the action of G1 and G2 on H1 and H2 , respectively. That is, let H1 = ⊕ki=1 1
+                                                                                  ⊕mj=1 Hi,j and
+                                                                                      i
+
+
+                H be decompositions of H1 and H2 into irreducible modules, such that H ∼
+       k2    si  (2)                                                                    (1)   (1)
+H2 = ⊕ ⊕     i=1     j=1       i,j                                                          =H′ ′                                                i,j         i ,j
+if and only if i = i′ (for i ∈ [k1 ] and j ∈ [mi ]), and Hi,j ∼
+                                                          (2)    (2)
+                                                              = Hi′ ,j ′ if and only if i = i′ (for i ∈ [k2 ]
+                                                                                        (1)         (1)
+and j ∈ [si ]). For each i ∈ [k1 ] and j ∈ [mi ], let ui,j ∈ Hi,j be a nonzero vector such that for
+                                                                                                                         (1)                     (1)         (1)
+each i ∈ [k1 ] and j, j ′ ∈ [mi ] there is a bijective G1 -equivariant linear map ϕi,j,j ′ from Hi,j to Hi,j ′
+                   (1)          (1)                                               (1)          (1)
+mapping ui,j to ui,j ′ . Assume that the matrix Ui := (ui,j |j ∈ [mi ]) is the i-th matrix in the
+representative matrix set for the action of G1 on H1 , for i ∈ [k1 ].
+                                                     (2)    (2)
+   Similarly, For each i ∈ [k2 ] and j ∈ [si ], let ui,j ∈ Hi,j be a nonzero vector such that for each i ∈ [k2 ]
+                                                                                                     (2)               (2)           (2)                      (2)
+and j, j ′ ∈ [si ] there is a bijective G2 -equivariant linear map ϕi,j,j ′′ from Hi,j to Hi,j ′ mapping ui,j
+       (2)                                          (2)           (2)
+to ui,j ′ . Assume that the matrix Ui := (ui,j |j ∈ [si ]) is the i-th matrix in the representative matrix
+set for the action of G2 on H2 , for i ∈ [k2 ].
+    According to [Ser77, Theorem 10], the decomposition of H1 ⊗ H2 into irreducible representations
+                                             (1)    (2)            (1)    (2) ∼      (1)          (2)
+for G1 × G2 is ⊕ki=11
+                       ⊕ki′2=1 ⊕m    si
+                                j=1 ⊕j ′ =1 Hi,j ⊗ Hi′ ,j ′ , and Hi,j ⊗ Hi′ ,j ′ = Hi′′ ,j ′′ ⊗ Hi′′′ ,j ′′′ if and only
+                                  i
+
+                                              (1)         (2)           (1)        (2)              (1)     (2)              (1)           (2)
+if i = i′′ and i′ = i′′′ . Now, if ui,j ⊗ ui′ ,j ′ ∈ Hi,j ⊗ Hi′ ,j ′ and ui,j ′′ ⊗ ui′ ,j ′′′ ∈ Hi,j ′′ ⊗ Hi′ ,j ′′′ , the map
+ (1)          (2)                                                                  (1)        (2)          (1)        (2)                          (1)       (2)
+ϕi,j,j ′ ⊗ ϕi′ ,j ′′ ,j ′′′ is a G1 × G2 -equivariant map from Hi,j ⊗ Hi′ ,j ′ to Hi,j ′′ ⊗ Hi′ ,j ′′′ mapping ui,j ⊗ ui′ ,j ′
+       (1)         (2)
+to ui,j ′′ ⊗ ui′ ,j ′′′ . It follows that the representative vectors for the action of G1 × G2 on H1 ⊗ H2 are the
+              (1)        (2)                                                                        (1)    (2)
+vectors ui,j ⊗ui′ ,j ′ , and that the representative matrix set is {Ui ⊗Uj                                       : i = 1, . . . , k1 , j = 1, . . . , k2 },
+as desired.
+
+Representation theory of the symmetric group
+Fix n ∈ N and a finite-dimensional vector space H with dim(H) = d. We consider the natural action
+of the symmetric group Sn on H⊗n by permuting the indices, i.e.,
+
+                                π · (h1 ⊗ · · · ⊗ hn ) = hπ−1 (1) ⊗ · · · ⊗ hπ−1 (n) , hi ∈ H , ∀π ∈ Sn .                                                    (6)
+
+
+                                                                              8
+      Based on representation theory of the symmetric group, we describe a representative set for the
+action of Sn on H⊗n . Many of the concepts and notation are based on the method for symmetry
+reduction from [LPS17]. The concepts we describe in this section will be used throughout this paper
+      A partition λ of n is a sequence (λ1 , . . . , λd ) of natural numbers with λ1 ≥ . . . λd > 0 and λ1 +
+· · · + λd = n. The number d is called the height of λ. We write λ ⊢d n if λ is a partition of n with
+height d. Let Par(d, n) := {λ : λ ⊢d n}. The Young shape Y (λ) of λ is the set
+                               Y (λ) := {(i, j) ∈ N2 : 1 ≤ j ≤ d, 1 ≤ i ≤ λj } .
+     Following the French notation [Pro07], for an index j0 ∈ [d], the j0 -th row of Y (λ) is set of elements
+(i, j0 ) in Y (λ). Similarly, fixing an element i0 ∈ [λ1 ], the i0 -th column of Y (λ) is set of elements (i0 , j)
+in Y (λ). We label the elements in Y (λ) from 1 to k according the lexicographic order on their positions.
+Then the row stabilizer Rλ of λ is the group of permutations π of Y (λ) with π(L) = L for each row L
+of Y (λ). Similarly, the column stabilizer Cλ of λ is the group of permutations π of Y (λ) with π(L) = L
+for each column L of Y (λ).
+     For λ ⊢d n, a λ-tableau is a function τ : Y (λ) → N. A λ-tableau is semistandard if the entries
+are non-decreasing in each row and strictly increasing in each column. Let Tλ,d be the collection of
+semistandard λ-tableaux with entries in [d]. We write τ ∼ τ ′ for λ-tableaux τ, τ ′ if τ ′ = τ r for some
+r ∈ Rλ . Let e1 , . . . , ed be the standard basis of H. For any τ ∈ Tλ,d , define uτ ∈ H⊗n as
+                                             X X              O
+                                       uτ :=          sgn(c)         eτ ′ (c(y)) .                            (7)
+                                           τ ′ ∼τ c∈Cλ       y∈Y (λ)
+
+Here the Young shape Y (λ) is ordered by concatenating its rows. Then the matrix set
+                                  {Uλ : λ ⊢d n} with Uλ = [uτ : τ ∈ Tλ,d ]                                     (8)
+   is a representative matrix set for the natural action of Sn on H⊗n [LPS17, Section 2.1]. Moreover,
+we have
+                    |Par(d, n)| ≤ (n + 1)d and |Tλ,d | ≤ (n + 1)d(d−1)/2 , ∀λ ∈ Par(d, n) .                    (9)
+
+
+3     Efficient approximation of channel fidelity
+Given Hilbert space H, we follow the notation in Section 2 and consider the action of symmetric group
+Sn on H⊗n defined in Eq. (6). Throughout this paper, we work with spaces of the form A⊗H⊗n ⊗B for
+some Hilbert spaces A, B. A multipartite operator ρAHn B ∈ L (A ⊗ H⊗n ⊗ B) is said to be symmetric
+with respect to A and B, if it is invariant under permutation of H-systems while keeping A and B fixed.
+In particular,
+                  ρAHn B = (IA ⊗ UHn (π) ⊗ IB ) (ρAHn B )
+                         := (IA ⊗ UHn (π) ⊗ IB ) ρAHn B (IA ⊗ UHn (π)∗ ⊗ IB ) ∀π ∈ Sn .
+
+   The invariant subspace under the action of Sn is given by
+ EndSn A ⊗ H⊗n ⊗ B := ρ ∈ L A ⊗ H⊗n ⊗ B : ρ = (IA ⊗ UHn (π) ⊗ IB ) (ρ)
+                                              
+                                                                                             for all π ∈ Sn     .
+We first show in the following lemma that the search space of Program SDPn (N , M ) can be restricted
+to the invariant subspaces that arising under the action of Sn .
+Lemma 3.1. For n ∈ N≥1 , if ρAĀ(B B̄)n1 ∈ EndSn AĀ ⊗ (B B̄)⊗n , then
+                                                                  
+
+                           IA
+                               ⊗ ρ(B B̄)n1 ∈ EndSn A ⊗ (B B̄)⊗n ,
+                                                               
+               ρA(B B̄)n1 ,                                                                                   (10)
+                           dA
+                                                 IB                                 
+               ρAĀ(B B̄)n−1 Bn , ρAĀ(B B̄)n−1 ⊗ n ∈ EndSn−1 AĀ ⊗ (B B̄)⊗(n−1) ⊗ Bn .                       (11)
+                         1                  1    dB
+
+                                                         9
+Proof. The proof can be found in Appendix A.
+   From Lemma 3.1, we will use the tools from Section 2.2 to simplify Program SDPn (N , M ).
+   Let Par(dH , n) := {λ : λ ⊢dH n} and mλ (H) := |Tλ,dH | for each λ ∈ Par(dH , n). From Lemma 2.5,
+the representative matrix set for the action of Sn on the space A ⊗ H⊗n ⊗ B is described as follows,
+
+                                      {IA ⊗ Uλ ⊗ IB }λ∈Par(dH ,n) ,                                  (12)
+
+where {Uλ }λ∈Par(dH ,n) are real matrices defined in Eq. (8).
+   For each λ ∈ Par(dH , n), let mλ (A, Hn , B) be the number of rows of the matrix (IA ⊗ Uλ ⊗ IB ).
+From Lemma 2.4 and the representative matrix set constructed in Eq. (12), we have the following
+proposition.
+Proposition 3.2. The following map
+                                                    M               n           n
+            ΨA,Hn ,B : EndSn (A ⊗ H⊗n ⊗ B) →                Cmλ (A,H ,B)×mλ (A,H ,B)
+                                                   λ⊢dH n
+                                                    M                                                (13)
+                                                             IA ⊗ UλT ⊗ IB X (IA ⊗ Uλ ⊗ IB ) ,
+                                                                          
+                                            X 7→
+                                                   λ⊢dH n
+
+
+is a bijective linear map that preserve the positive semidefinitess property, i.e., X ⪰ 0 if and only if
+ΨA,Hn ,B (X) ⪰ 0.
+   Moreover, as a consequences of Eqs. (9) and (3), we have the following proposition.
+
+Proposition 3.3. We have:
+
+                   |Par(dH , n)| ≤ (n + 1)dH ,                                                       (14)
+                   mλ (A, Hn , B) ≤ dA dB (n + 1)dH (dH −1)/2 : ∀λ ∈ Par(dH , n) ,                   (15)
+                                        h                       i                 2
+                   m(A, Hn , B) := dim EndSn A ⊗ H⊗n ⊗ B ≤ d2A d2B (n + 1)dH .                       (16)
+
+A basis for the invariant subspace. We can construct the canonical basis that consists of zero-
+one incidence matrices of the EndSn (A ⊗ H⊗n ⊗ B) from the orbits of the group action of Sn on
+                         2
+pairs [dA × (dH )n × dB ] (see [KPS07] or [LM11, Chapter 9] for more information). In particular, let
+i ∈ [dA × (dH )n × dB ] be the index of the standard basis of A ⊗ H⊗n ⊗ B. Then the orbit of the pair
+                            2
+(i, j) ∈ [dA × (dH )n × dB ] under the action of the group Sn is given by
+
+                                   O(i, j) = {(π(i), π(j)) : π ∈ Sn },
+                                                                                                 2
+where π(i) is the index of the basis vector (IA ⊗ UHn (π) ⊗ IB ) |i⟩. The set [dA × (dH )n × dB ] decom-
+poses into orbits O1 , . . . , Om(A,Hn ,B) under the action of Sn , recall that m(A, Hn , B) is the dimen-
+sion of the invariant space EndSn (A ⊗ H⊗n ⊗ B). Moreover, from Eq. (16), one has m(A, Hn , B) ≤
+                2
+d2A d2B (n + 1)dH .
+     For each r ∈ [m(A, Hn , B)], we construct a zero-one matrix Cr of size (dA × (dH )n × dB ) ×
+(dA × (dH )n × dB ) given by
+                                                    (
+                                                      1 if (i, j) ∈ Or ,
+                                          (Cr )ij =                                                   (17)
+                                                      0 otherwise.
+
+We have the set {C1 , . . . , Cm(A,Hn ,B) } forms a canonical basis of EndSn (A ⊗ H⊗n ⊗ B) [LM11, Chap-
+ter 9].
+
+
+                                                    10
+   Next, we will show how to utilize the symmetries in Program SDPn (N , M ) to simplify it.
+   Let H := B B̄. For each D ∈ {AĀ ⊗ H⊗n , A ⊗ H⊗n , AĀ ⊗ H⊗n−1 ⊗         LBn }, we set t(D) = n − 1 if
+D = AĀ ⊗ H⊗n−1 ⊗ Bn , otherwise t(D) = n. Let ψD : EndSt(D) (D) → λ∈Par(dH ,t(D)) Cmλ (D)×mλ (D)
+be the bijective linear map defined in Eq. (13), where dH = dB B̄ = dB dB̄ .
+   For any X ∈ EndSt(D) (D) and λ ∈ Par(dH , t(D)), we write JψD (X)Kλ for the block of ψD (X) in-
+dexed by λ. Let m(D) denote the dimension of the invariant subspace EndSt(D) (D), i.e., m(D) dim :=
+EndSt(D) (D), and {C1 (D), . . . , Cm(D) (D)} denote the canonical basis of EndSt(D) (D) defined in Eq. (17).
+For D1 := AĀ ⊗ H⊗n , D2 := A ⊗ H⊗n and D3 := AĀ ⊗ H⊗n−1 ⊗ Bn . Since ρAĀ(B B̄)n1 ∈ EndSn (D1 ),
+                                   Pm(D )
+thus we can write ρAĀ(B B̄)n1 = i=1 1 xi Ci (D1 ) for some xi ∈ C, i = 1, . . . , m(D1 ). From Lemma 3.1
+and Proposition 3.2, we can construct a transformation Φ that maps Program SDPn (N , M ) to an
+equivalent semidefinite program Φ(SDPn (N , M )) as follows.
+
+                                    m(D1 )             h                                    i
+                                     X
+                                                           N
+       maximize : dĀ dB ·                   xi · tr     JĀB 1
+                                                                ⊗ Φ AB̄1   Ci (D 1 )AĀB1 B̄1
+                                     i=1
+              m(D1 )
+               X
+       s.t.            xi · JψD1 (Ci (D1 ))Kλ ⪰ 0 , ∀λ ∈ Par(dB dB̄ , n) ,
+               i=1
+        m(D1 )
+         X
+                 xi · tr [Ci (D1 )] = 1 ,
+         i=1
+              m(D1 )
+                X
+       dA ·             xi · JψD2 (tr Ā (Ci (D1 )))Kλ
+                i=1
+                                                                                                  (Φ(SDPn (N , M )))
+            m(D1 )
+              X
+        =             xi · JψD2 (IA ⊗ tr AĀ (Ci (D1 )))Kλ ∀λ ∈ Par(dB dB̄ , n) ,
+              i=1
+               m(D1 )
+                X           q                     y
+       dB ·             xi · ψD3 tr B̄n (Ci (D1 )) λ
+                i=1
+            m(D1 )
+              X           q                             y
+        =             xi · ψD3 tr Bn B̄n (Ci (D1 )) ⊗ IB λ ∀λ ∈ Par(dB dB̄ , n − 1) ,
+              i=1
+       x1 , . . . , xm(D1 ) ∈ C .
+
+
+
+Theorem 3.4. For M,n ∈ N≥1 . Let NĀ→B be a quantum channel. The semidefinite program
+                                        2 2                                     
+Φ(SDPn (N , M )) has O d2A d2Ā (n + 1)dB dB̄ variables and O (n + 1)dB dB̄ positive semidefinite con-
+straints involving matrices of size at most O dA dĀ dB (n + 1)dB dB̄ (dB dB̄ −1)/2 . As a consequence, the
+                                                                                   
+
+size of the Program Φ(SDPn (N , M )) is poly(dĀ , n), for fixed dA = dB̄ = M and dB .
+Proof. The proof of the theorem follows directly by using the results from Proposition 3.3.  Firstly,
+                                                                         Sn
+the number of variables in Program
+                                  Φ(SDPn (N , M ))is m(D1 ) = dim End     AĀ ⊗ (B B̄)⊗n . Thus,
+                                                                  2   2                               2   2
+from Eq. (16), it is bounded by O d2A d2Ā (n + 1)dB dB̄ . Since |Par(dB dB̄ , n)| ≤ (n + 1)dB dB̄ according
+                                                                                                           
+to Eq. (14), so the number of positive semidefinite (PSD) constraints is bounded by O (n + 1)dB dB̄ .
+Finally, for every q ∈ [3] and λ ∈ Par(dB dB̄ , n), by Eq. (15), we have mλ (Dq ) ≤ dA dĀ dB (n +
+1)dB dB̄ (dB dB̄ −1)/2 . This implies that the size of matrices involved in PSD constraints is at most
+O dA dĀ dB (n + 1)dB dB̄ (dB dB̄ −1)/2 . Therefore, when dA = dB̄ = M and dB are fixed, the size of
+Program Φ(SDPn (N , M )) is bounded by poly(dĀ , n), which completes the proof.
+
+
+                                                                   11
+   From Theorem 3.4, we have the size of the Program Φ(SDPn (N , M )) is bounded by a polynomial
+in n and dĀ , therefore it can be solved in poly(dĀ , n) time. However, directly applying the trans-
+formation Φ that maps Program SDPn (N , M ) into the equivalent Program Φ(SDPn (N , M )) requires
+exponential computations in n. Next, we will provide an efficient method to accomplish this task.
+In particular, let {C1 (D), . . . , Cm(D) (D)} be the canonical basis of EndSt(D)r(D)defined in Eq. (17).
+                                                                                                       z
+                                                                                      Pm(D)
+Given z1 , . . . , zm(D) ∈ C, we show that for any λ ∈ Par(dH , t(D)), the block ψD      i=1  z C
+                                                                                               i i (D)
+                                                                                                                           λ
+can be computed in poly(dĀ , n) time, where dH is fixed. We then use this result to apply it to our
+specific spaces to reach the desired conclusion.
+   Let C1H , . . . , Cm(H)
+                      H
+                           denote the canonical basis of EndSn (H⊗n ) as defined in Eq. (17). Furthermore,
+we can explicitly express this canonical basis as follows,
+
+                                     {|iA ⟩⟨jA | ⊗ CtH ⊗ |iB ⟩⟨jB |}iA ,jA ∈[dA ] .                                  (18)
+                                                                          iB ,jB ∈[dB ]
+                                                                           t∈[m(H)]
+
+                                                         mλ (A,Hn ,B)×mλ (A,Hn ,B)
+Let ψA,H,B : EndSn (A ⊗ H⊗n ⊗ B) →
+                                        L
+                                          λ∈Par(dH ,n) C                           be a bijective linear
+map defined in Eq. (13). For any λ ∈ Par(dH , n), we have
+
+
+     ψA,H,B |iA ⟩⟨jA | ⊗ CtH ⊗ |iB ⟩⟨jB |                                  |iA ⟩⟨jA | ⊗ CtH ⊗ |iB ⟩⟨jB | (IA ⊗ Uλ ⊗ IB )
+ q
+                                                 := IA ⊗ UλT ⊗ IB
+                                            y                                                         
+                                             λ
+                                                 = |iA ⟩⟨jA | ⊗ UλT CtH Uλ ⊗ |iB ⟩⟨jB |.
+                                                                                                                     (19)
+
+We are going to show UλT CtH Uλ can be computed in poly(n) time, for any λ ∈ Par(dH , n) and
+t ∈ [m(H)]. More generally, given z1 , . . . , zm(H) ∈ C, for any λ ∈ Par(dH , n), we will show that
+Pm(H)          T H
+   i=1 zi Uλ Ci Uλ can be computed in poly(n) time. In particular, from Eqs. (8) and (9), we just
+                                        Pm(H)
+need to show that we can compute i=1 zi uTτ CiH uγ in poly(n) time for any τ, γ ∈ TdH ,λ . We note
+that uτ , uγ and CrH all have exponential size in n. As a direct consequence from [LPS17, Lemma 2]
+(see also in [FST22, Lemma 4.5]), we have the following lemma.
+                                                                                     Pm(H)
+Lemma 3.5. Let λ ∈ Par(dH , n), and τ, γ ∈ Tλ,dH . Given z1 , . . . , zm(H) ∈ C. Then r=1 zr uTτ CrH uγ
+can be computed in polynomial time in n, for fixed dH . As qa direct consequence, for any iAy      , jA ∈
+[dA ]; iB , jB ∈ [dB ]; t ∈ [m(H)], we can determine the matrix ψA,H,B |iA ⟩⟨jA | ⊗ CtH ⊗ |iB ⟩⟨jB | λ in
+poly(dA , dB , n) time for all λ ∈ Par(dH , n).
+    The proof of Lemma 3.5 is based on [LPS17] and [Pol19b, pp. 30-31] (see also [FST22]), but we
+provide it here for the reader’s convenience. We first introduce some notation and basic results.
+    For a finite dimensional complex vector space H, the dual vector space H∗ of H is the vector space
+of all linear transformations φ : H → C. The coordinate ring of H, denoted as O(H), is the algebra
+consisting of all C-linear combinations of products of elements from H∗ . An element of O(H) is called
+a polynomial on H. A polynomial p ∈ O(H) is called homogeneous if it is a C-linear combination of a
+product of n non-constant elements of H∗ (for a fixed non-negative integer n). We denote by On (H)
+the set of all homogeneous polynomials of degree n.
+    Set WH := H ⊗ H, for each p := (x, y) ∈ [dH ] × [dH ], define
+
+                                                   ap := x ⊗ y ∈ WH ,
+
+then the set W := {ap : p ∈ [dH ] × [dH ]} is a basis of WH . Let W ∗ := {a∗p : p ∈ [dH ] × [dH ]} be the
+                                ∗
+corresponding dual basis for WH   .
+                                                                     2
+   Using the natural identification of ([dH ] × [dH ])n and [(dH )n ] , for any r ∈ [m(H)], we have
+                                          X
+                                                                          ⊗n
+                             CrH :=               ap1 ⊗ · · · ⊗ apn ∈ WH     .
+                                            (p1 ,...,pn )∈OrH
+
+
+
+                                                                12
+Note that CrH can be obtained from vec CrH by applying the permutation operator which maps
+                                                    
+      ⊗2        ⊗n
+(H⊗n ) to H⊗2       . For every (p1 , . . . , pn ) ∈ [(dH )2 ]n , let
+
+                                     µ(p1 , . . . , pn ) := a∗p1 · · · a∗pn ∈ On (WH )                                           (20)
+
+be a degree n monomial expressed in the basis W ∗ . Note that, for a fixed r ∈ [m(H)], µ(p  1 , . . . , pn )
+is the same monomial, for every (p1 , . . . , pn ) ∈ OrH . We denote this monomial by µ OrH . Moreover,
+                                 n
+{OrH }r∈[m(H)] partitions (dH )2 into disjoint subsets. Therefore, there exists a bijection between
+                          
+
+{OrH }r∈[m(H)] and the set of degree n monomials expressed in the basis W ∗ .
+              ∗ ⊗n
+    Let ζ : (WH ) → On (WH ) be a linear function defined by
+
+                          ζ(w1∗ ⊗ · · · ⊗ wn∗ ) := w1∗ · · · wn∗ for all w1∗ , . . . , wn∗ ∈ WH
+                                                                                              ∗
+                                                                                                .
+                                           ∗ ⊗n
+   We denote w = ζ(w) for all w ∈ (WH       ) . For any λ ⊢dH n and τ, γ ∈ Tλ,dH , define the polynomial
+Gτ,γ ∈ C[xi,j : i, j = 1, . . . , dH ] by
+                                          X X               Y
+                              Gτ,γ (X) :=         sgn(cc′ )     xτ ′ c(y),γ ′ c′ (y) ,              (21)
+                                            τ ′ ∼τ c,c′ ∈Cλ              y∈Y (λ)
+                                            γ ′ ∼γ
+
+
+for X = (xi,j )di,j=1
+                  H
+                      ∈ CdH ×dH . Ref [LPS17, Proposition 3] and [Gij09, Theorem 7] show that the
+polynomial in Eq (21) can be computed in polynomial time, i.e., expressed as a linear combination of
+monomials in variables xi,j in poly(n) time.
+Lemma 3.6 ([Gij09, LPS17]). Let λ ∈ Par(dH , n) and every τ, γ ∈ Tλ,dH . Expressing the polynomial
+Gτ,γ (X) as a linear combination of monomials can be done in poly(n) time, for fixed dH .
+   We now prove Lemma 3.5.
+Proof Lemma 3.5. For r ∈ [m(H)], utilizing the fact that CrH ∈ H⊗n ⊗ H⊗n and uτ , uγ ∈ (H⊗n )∗ (via
+the standard inner product), we can write uTτ CrH uγ = (uτ ⊗ uγ )(CrH ). Set
+                                     X X                    O
+                      g := uτ ⊗ uγ =              sgn(cc′ )     (F )τ ′ c(y),γ ′ c′ (y) ,
+                                             τ ′ ∼τ c,c′ ∈Cλ                 y∈Y (λ)
+                                             γ ′ ∼γ
+
+where F ∈ (W ∗ )dH ×dH with (F )x,y = a∗(x,y) . Then
+
+        m(H)                                m(H)
+         X                                  X
+               (uτ ⊗ uγ )(CrH )µ(OrH ) =            g(CrH )µ(OrH )
+         r=1                                 r=1
+                                                        X
+                                        =                                    g(ap1 ⊗ · · · ⊗ apn )a∗p1 · · · a∗pn
+                                            (p1 ,...,pn )∈([dH ]×[dH ])n
+                                                        X
+                                        =                                    g(ap1 ⊗ · · · ⊗ apn )a∗p1 ⊗ · · · ⊗ a∗pn
+                                            (p1 ,...,pn )∈([dH ]×[dH   ])n
+                                                   X       X                       Y
+                                        =g=                          sgn(cc′ )           (F )τ ′ c(y),γ ′ c′ (y) = Gτ,γ (F ) .
+                                                   τ ′ ∼τ c,c′ ∈Cλ               y∈Y (λ)
+                                                   γ ′ ∼γ
+
+                                                    Pm(H)
+   By the Lemma 3.6, one computes the entry r=1 zr uTτ CrH uγ by replacing each monomial µ(OrH ) in
+                                                                                        Pm(H)
+Gτ,γ (F ) with the variable zr . Thus, given z1 , . . . , zm(H) we can compute
+                                                                         q     the value r=1 zr uTτ CrH uγyin
+poly(n) time. Finally, from Eq. (19) we can determine the matrix ψA,H,B |iA ⟩⟨jA | ⊗ CtH ⊗ |iB ⟩⟨jB | λ
+in poly(dA , dB , n) time for all λ ∈ Par(dH , n) and iA , jA ∈ [dA ]; iB , jB ∈ [dB ]; t ∈ [m(H)], which
+completes the proof.
+
+
+                                                               13
+   Consider the Program Φ(SDPn (N , M )). For each D ∈ AĀ ⊗ H⊗n , A ⊗ H⊗n , AĀ ⊗ H⊗n−1 ⊗ Bn
+and any X ∈ EndSt(D) (D), if all coordinates in the expansion of X in the canonical basis EndSt(D) (D)
+are given, we can compute the block JψD (X)Kλ in poly(dĀ , n) time for all λ ∈ Par(dH , t(D)), as
+pointed out in Lemma 3.5. With this result, we demonstrate in the following theorem that the
+transformation Φ can be implemented in polynomial time with respect to dĀ and n. As a conclusion,
+Program SDPn (N , M ) can be solved in poly(dĀ , n) time.
+Theorem 3.7. For M, n ∈ N≥1 . Let NĀ→B be a quantum channel. The transformation Φ that
+maps Program SDPn (N , M ) to Program Φ(SDPn (N , M )) can be done in poly(dĀ , n) time for fixed
+dH = dB dB̄ .
+    Before proving Theorem 3.7, we present some properties of the orbits that were generated from the
+natural action symmetric group.
+    Enumerating all orbits. Let {C1H , . . . , Cm(H)
+                                                  H
+                                                       } be the canonical basis of EndSn (H⊗n ) defined in
+Eq. (17). For each r = {1, . . . , m(H)}, let OrH be an orbit that corresponds to the matrix CrH , we need
+                                                                                                  H ×dH
+to compute a representative element of OrH . In order to do so, we define a matrix E (i,j) ∈ Zd≥0
+
+                         (E (i,j) )a,b := |{v ∈ [n] : iv = a, jv = b}| , ∀a, b ∈ [dH ] .                 (22)
+
+    Based on the construction given in Eq. (22), for any two pairs (i, j), (i′ , j ′ ) belonging to the
+sets [dH ]n × [dH ]n , it holds that (i′ , j ′ ) = (π(i), π(j)) for some permutation π ∈ Sn ifand only if
+              ′ ′
+E (i,j) = E (i ,j ) . Therefore, there exists a direct one-to-one mapping between the orbits OrH r∈[mH ]
+                          H ×dH
+and matrices E ∈ Zd≥0
+                                                                                          P
+                                 where the sum of all elements in E is equal to n, i.e.,     a,b Ea,b = n.
+                                                                         H
+Thus, we can efficiently find a representative P     element for each Or in polynomial time by listing all
+non-negative integer solutions of the equation a,b∈[dH ] Ea,b = n.
+    For convenience, we will recall some notations. For each D ∈ {AĀ ⊗ H⊗n , A ⊗ H⊗n , AĀ ⊗ H⊗n−1 ⊗
+Bn }, we set t(D) = n − 1 iff D = AĀ ⊗ H⊗n−1 ⊗ Bn . Let {C1 (D), . . . , Cm(D) (D)} denote the canonical
+basis of EndSt(D) (D) L   defined in Eq. (17). Following the notation in the proof of Theorem 3.4, let
+ψD : EndSt(D) (D) → λ∈Par(dH ,t(D)) Cmλ (D)×mλ (D) be the bijective linear map defined in Eq. (13),
+where mλ (D) is the size of the block indexed by λ. Recall that, for any λ ∈ Par(dH , t(D)), one has
+mλ (D) ≤ poly(dĀ , n) by Theorem 3.4.
+Proof of the Theorem 3.7. For D1 := AĀ⊗H⊗n and note that dH = dB dB̄ is fixed. Let {C1H , . . . , Cm(H)
+                                                                                                    H
+                                                                                                         }
+denote the canonical basis of EndSn (H⊗n ) defined in Eq. (17) and let {O1H , . . . , Om(H)
+                                                                                          H
+                                                                                               } denote the
+                                               H            H
+set of orbits of pairs that corresponding to {C1 , . . . , Cm(H) }. The following set of matrices
+
+                                    B1 = {|i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH } i,j∈[dA ]
+                                                                   x,y∈[dĀ ]
+                                                                   t∈[m(H)]
+
+
+is the canonical basis of the EndSn (D1 ). Since ρAĀ(B B̄)n1 ∈ EndSn (D1 ), we can express it in terms of
+the canonical basis B1 as
+                                           X
+                            ρAĀ(B B̄)n1 =       vi,j,x,y,t |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH ,
+                                            i,j∈[dA ]
+                                           x,y∈[dĀ ]
+                                           t∈[m(H)]
+
+
+where vi,j,x,y,t ∈ C for all i, j ∈ [dA ]; x, y ∈ [dĀ ]; t ∈ [m(H)], note that m(H) ≤ poly(n). We first write
+the Program Φ(SDPn (N , M ) in terms of variables vi,j,x,y,t for i, j ∈ [dA ]; x, y ∈ [dĀ ]; t ∈ [m(H).
+
+
+
+
+                                                        14
+     For simplicity of notation, for any i, j ∈ [dA ], x, y ∈ [dĀ ], and t ∈ [m(H)], we denote Z(i, j, x, y, t) =
+|i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH . For D2 := A ⊗ H⊗n and D3 := AĀ ⊗ H⊗n−1 ⊗ Bn . Program Φ(SDPn (N , M )) can
+be rewritten as
+                                  X                    h                                                   i
+                                                             N
+             maximize dĀ dB ·          vi,j,x,y,t · tr JĀB   1
+                                                                 ⊗   Φ A B̄1
+                                                                               tr (B B̄)n (Z(i, j, x, y, t))
+                                                                                        2
+                                           i,j∈[dA ]
+                                          x,y∈[dĀ ]
+                                          t∈[m(H)]
+                  X
+       s.t.                vi,j,x,y,t JψD1 (Z(i, j, x, y, t))Kλ ⪰ 0 , ∀λ ∈ Par(dB dB̄ , n) ,
+               i,j∈[dA ]
+              x,y∈[dĀ ]
+              t∈[m(H)]
+                  X
+                           vi,j,x,y,t · tr (Z(i, j, x, y, t)) = 1 ,
+               i,j∈[dA ]
+              x,y∈[dĀ ]
+              t∈[m(H)]
+                       X
+              dA ·                vi,j,x,y,t JψD2 (tr Ā (Z(i, j, x, y, t)))Kλ
+                      i,j∈[dA ]
+                     x,y∈[dĀ ]
+                     t∈[m(H)]
+                     X
+              =                vi,j,x,y,t JψD2 (IA ⊗ tr AĀ (Z(i, j, x, y, t)))Kλ ∀λ ∈ Par(dB dB̄ , n) ,
+                   i,j∈[dA ]
+                  x,y∈[dĀ ]
+                  t∈[m(H)]
+                       X                    q                             y
+              dB ·                vi,j,x,y,t ψD3 tr B̄n (Z(i, j, x, y, t)) λ
+                      i,j∈[dA ]
+                     x,y∈[dĀ ]
+                     t∈[m(H)]
+                     X                   q                                     y
+              =                vi,j,x,y,t ψD3 tr Bn B̄n (Z(i, j, x, y, t)) ⊗ IB λ ∀λ ∈ Par(dB dB̄ , n − 1) ,
+                   i,j∈[dA ]
+                  x,y∈[dĀ ]
+                  t∈[m(H)]
+
+              vi,j,x,y,t ∈ C for all i, j ∈ [dA ]; x, y ∈ [dĀ ], and t ∈ [m(H)] .
+
+   We will demonstrate that the objective function and constraints in Program Φ(SDPn (N , M )) can
+be determined explicitly in poly(dĀ , n) time.
+   Firstly, for any t ∈ [m(H)], let (a, b) be an representative element of OtH . We can compute the
+trace of each matrix in the canonical basis B1 of EndSn (D1 ) efficiently. Indeed,
+                                                (
+                                            H
+                                                 |OtH |, if i = j, x = y and a = b ,
+                     tr |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ Ct =
+                                                  0,      otherwise.
+
+Therefore, we can compute tr (Z(i, j, x, y, t)) efficiently for all i, j ∈ [dA ]; x, y ∈ [dĀ ]; t ∈ [m(H).
+In addition, from Lemma 3.5, we can determine JψD1 (Z(i, j, x, y, t))Kλ in poly(dĀ , n) time for all
+λ ∈ Par(dB dB̄ , n).
+                                                                                             Pm(Dq )
+     Next, for each q ∈ [3], given z1 , . . . , zm(Dq ) ∈ C and consider a matrix X =             i=1    zi Ci (Dq ).
+From Lemma 3.5, we can determine all blocks in the diagonal matrix ψDq (X) in poly(dĀ , n) time.
+Using this observation, qto show JψD2 (tr Ā (Z(i, j,yx, y,qt)))Kλ , JψD2 (IA ⊗ tr AĀ (Z(i, j, x,y y, t)))Kλ for
+λ ∈ Par(dB dB̄ , n) and ψD3 tr B̄n (Z(i, j, x, y, t)) λ , ψD3 tr Bn B̄n (Z(i, j, x, y, t)) ⊗ IB λ for λ ∈
+Par(dB dB̄ , n−1) can be computed in poly(dĀ , n) time.    It suffices to show that, for all i,j ∈ [dA ] ; x, y ∈
+[dĀ ] ; t ∈ [m(H)], expanding tr A |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH , IA ⊗ tr AĀ |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH in the canoni-
+cal basis of EndSn (D2 ) and tr B̄n |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH ; tr Bn B̄n |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH in the canonical
+                                                                                            
+
+basis EndSn−1 (D3 ) can be done in poly(dĀ , n) time.
+
+
+                                                                      15
+    We have
+                                                                     (
+                                                                      |i⟩⟨j| ⊗ CtH , if x = y
+                             tr Ā |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH
+                                                              
+                                                                   =
+                                                                      0,             otherwise.
+And,
+                                                                        (
+                                                                            CtH , if i = j and x = y
+                            tr AĀ |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH
+                                                               
+                                                                   =
+                                                                            0,    otherwise.
+
+On the other hand, the canonical basis of the space EndSn (D2 ) is described as follows,
+                                               B2 = {|i⟩⟨j| ⊗ CtH } i,j∈[dA ] .
+                                                                             t∈[m(H)]
+
+Therefore, for any i, j ∈ [dA ]; x, y ∈ [dĀ ], and t ∈ [m(H)], we can efficiently compute coordinates of the
+matrices tr Ā |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH and IA ⊗ tr AĀ |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH over the canonical basis B2 .
+                                                                               
+
+    Let ℓ(H) := dim EndSn−1 H⊗n−1 , note that from Eq. (16), one has ℓ(H) ≤ poly(n). Con-
+                                             
+
+sider the invariant subspace EndSn−1 (D3 ), let {K1H , . . . , Kℓ(H)H
+                                                                       } be the canonical basis of the space
+    Sn−1     ⊗n−1
+                   
+End        H          defined in Eq. (17). The following set of matrices
+                                     B3 = {|i⟩⟨j| ⊗ |x⟩⟨y| ⊗ KtH ⊗ |u⟩⟨v|} i,j∈[dA ]
+                                                                                         x,y∈[dĀ ]
+                                                                                         t∈[ℓ(H)]
+                                                                                        u,v∈[dBn ]
+
+is the canonical basis of the space EndSn−1 (D3 ).
+    We will show that all coordinates of tr B̄n |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH over B3 can be computed in poly(dĀ , n)
+                                                                               
+
+time for any i, j ∈ [dA ]; x, y ∈ [dĀ ], and t ∈ [m(H)]. Firstly, for any t ∈ [m(H)], we can write
+                                          X
+                               CtH =            |a1 ⟩⟨b1 | ⊗ |a2 ⟩⟨b2 | ⊗ · · · ⊗ |an ⟩⟨bn | .
+                                          (a,b)∈OtH
+
+Let (a, b) ∈ [dB B̄ ]n × [dB B̄ ]n be a representative element of OtH following the construction in Eq. (22).
+Let S be the set of all distinct pairs in n pairs (a1 , b1 ), (a2 , b2 ), . . . , (an , bn ), i.e., S = {(a1 , b2 )∪(a2 , b2 )∪
+· · · ∪ (an , bn )}. Under the action of Sn−1 , the set OtH can be partitioned into |S| sets {O(c,d)             t
+                                                                                                                     }(c,d)∈S ,
+           t                     H                                                      t
+where O(c,d) := {(u, v) ∈ Ot : un = c, vn = d}. Note that the size of O(c,d) can be computed in poly(n)
+time by determining the frequency for all pairs in S in (a, b). For any c ∈ [dB B̄ ], using the natural
+identification between [dB B̄ ] and [dB ] × [dB̄ ] ([dB B̄ ] ∼
+                                                             = [dB ] × [dB̄ ]), and write c = (cB , cB̄ ) ∈ [dB ] × [dB̄ ].
+We have
+                                  X       X
+                        CtH =                     |u1 ⟩⟨v1 | ⊗ · · · ⊗ |un = c⟩⟨vn = d|
+                                                t
+                                 (c,d)∈S (u,v)∈O(c,d)
+                                  X           X
+                             =                          |u1 ⟩⟨v1 | ⊗ · · · ⊗ |cBn ⟩⟨dBn | ⊗ |cB̄n ⟩⟨dB̄n | .
+                                                t
+                                 (c,d)∈S (u,v)∈O(c,d)
+
+Therefore,
+           tr B̄n (|i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH )
+                                                                                                                      
+                                        X                 X
+            = tr B̄n |i⟩⟨j| ⊗ |x⟩⟨y| ⊗                                |u1 ⟩⟨v1 | ⊗ · · · ⊗ |cBn ⟩⟨dBn | ⊗ |cB̄n ⟩⟨dB̄n |
+                                                                                                                        
+                                                            t
+                                             (c,d)∈S (u,v)∈O(c,d)
+                  X           X
+            =                           |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ |u1 ⟩⟨v1 | ⊗ · · · ⊗ |un−1 ⟩⟨vn−1 | ⊗ |cBn ⟩⟨dBn |
+                                t
+                 (c,d)∈S (u,v)∈O(c,d)
+                cB̄n =dB̄n
+
+
+
+                                                                   16
+In addition, we can determine an index t′ ∈ [ℓ(H)] such that
+                                     X
+                           Kt′ =             |u1 ⟩⟨v1 | ⊗ · · · ⊗ |un−1 ⟩⟨vn−1 |
+                                                   t
+                                            (u,v)∈O(c,d)
+                                             cB̄n =dB̄n
+
+in poly(n) time by considering all representative elements that corresponding to K1H , . . . , Kℓ(H)           H
+                                                                                                                   . Thus,
+                                                    H
+                                                      
+the coordinates of tr B̄n |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ Ct over the canonical basis B3 can be computed in poly(n)
+time. The same method can be used for tr Bn B̄n |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH ⊗ IB .
+     Finally, we will show that the objective function can be explicitly described by using variables
+vi,j,x,y,t for i, j ∈ [dA ] ; x, y ∈ [dĀ ], and t ∈ [m(H)], in poly(dĀ , n) time. In particular, the expression
+ρAĀB1 B̄1 can be described using variables vi,j,x,y,t , for vi,j,x,y,t for i, j ∈ [dA ] ; x, y ∈ [dĀ ], and t ∈
+[m(H)], in poly(dĀ , n) time. Similarly to the previous argument, we need to show for any i, j ∈
+[dA ] ; x, y ∈ [dĀ ], and t ∈ [m(H)], the value tr (B B̄)n2 |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH can be computed efficiently.
+     Firstly, recall that for x, y ∈ [m]n , their Hamming distance H(x, y) is defined as H(x, y) := |{i ∈
+[n] : xi ̸= yi }|. Let (a, b) be a representative element of OtH . Let C(t) be the size of set {(u, v) ∈ OtH :
+u1 = a1 , v1 = b1 }. We have
+                                                                                                                         
+                                                        X
+ tr (B B̄)n2 |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ CtH = tr (B B̄)n2 
+                                    
+                                                            |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ |c1 ⟩⟨d1 | ⊗ |c2 ⟩⟨d2 | ⊗ · · · ⊗ |cn ⟩⟨dn |
+                                                      (c,d)∈OtH
+                                        (
+                                            C(t) (|i⟩⟨j| ⊗ |x⟩⟨y| ⊗ |a1 ⟩⟨b1 |) if H(a, b) = 1 and a1 ̸= b1 ,
+                                    =
+                                            0 otherwise.
+
+Here we used the fact that the Hamming distance is invariant under the action of the symmetric group,
+which is defined in Eq. (6). In addition, C(t) can be determined in poly(n) time, which completes the
+proof.
+
+Acknowledgements. We would like to thank Sven Polak for his useful comments and help in the
+proof of Lemma 2.5. HT would like to thank Omar Fawzi and Mario Berta for the useful discussions.
+
+
+
+
+                                                             17
+References
+[BBFS21]    Mario Berta, Francesco Borderi, Omar Fawzi, and Volkher B Scholz. Semidefinite pro-
+            gramming hierarchies for constrained bilinear optimization. Mathematical Programming,
+            pages 1–49, 2021. doi:10.1007/s10107-021-01650-1.
+
+[BdKPS09] Yanqin Bai, Etienne de Klerk, Dmitrii Pasechnik, and Renata Sotirov. Exploiting group
+          symmetry in truss topology optimization. Optimization and Engineering, 10:331–349,
+          2009. doi:10.1007/s11081-008-9050-6.
+[BF17]      Siddharth Barman and Omar Fawzi. Algorithmic aspects of optimal channel coding.
+            IEEE Transactions on Information Theory, 64(2):1038–1045, 2017. doi:10.1109/TIT.
+            2017.2696963.
+[BFGG22]    Siddharth Barman, Omar Fawzi, Suprovat Ghoshal, and Emirhan Gürpınar. Tight ap-
+            proximation bounds for maximum multi-coverage. Mathematical Programming, 192(1-
+            2):443–476, 2022. doi:10.1007/s10107-021-01677-4.
+[BFS16]     Mario Berta, Omar Fawzi, and Volkher B Scholz. Quantum bilinear optimization. SIAM
+            Journal on Optimization, 26(3):1529–1564, 2016. doi:10.1137/15M1037731.
+[BLS21]     Daniel Brosch, Monique Laurent, and Andries Steenkamp. Optimizing hypergraph-based
+            polynomials modeling job-occupancy in queuing with redundancy scheduling. SIAM Jour-
+            nal on Optimization, 31(3):2227–2254, 2021. doi:10.1137/20M1369592.
+
+[Bor22]     Francesco Borderi. De finetti methods in quantum information. 2022. doi:10.25560/
+            96948.
+[BP22]      Daniel Brosch and Sven Polak. New lower bounds on crossing numbers of Km,n from
+            permutation modules and semidefinite programming. arXiv preprint arXiv:2206.02755,
+            2022. URL: https://arxiv.org/abs/2206.02755.
+
+[CKMR07] Matthias Christandl, Robert König, Graeme Mitchison, and Renato Renner. One-and-a-
+         half quantum de finetti theorems. Communications in mathematical physics, 273(2):473–
+         498, 2007. doi:10.1007/s00220-007-0189-3.
+[DK10]      Etienne De Klerk. Exploiting special structure in semidefinite programming: A survey of
+            theory and applications. European Journal of Operational Research, 201(1):1–10, 2010.
+            doi:10.1016/j.ejor.2009.01.025.
+[DKPS07]    Etienne De Klerk, Dmitrii V Pasechnik, and Alexander Schrijver. Reduction of symmet-
+            ric semidefinite programs using the regular-representation. Mathematical programming,
+            109(2-3):613–624, 2007. doi:10.1007/s10107-006-0039-7.
+
+[DPS02]     Andrew C Doherty, Pablo A Parrilo, and Federico M Spedalieri. Distinguishing sep-
+            arable and entangled states. Physical Review Letters, 88(18):187904, 2002. doi:
+            10.1103/PhysRevLett.88.187904.
+[DPS04]     Andrew C Doherty, Pablo A Parrilo, and Federico M Spedalieri. Complete family of
+            separability criteria. Physical Review A, 69(2):022308, 2004. doi:10.1103/PhysRevA.
+            69.022308.
+
+[FF23a]     Omar Fawzi and Paul Fermé. Broadcast channel coding: Algorithmic aspects and non-
+            signaling assistance. arXiv preprint arXiv:2310.05515, 2023. URL: https://arxiv.org/
+            pdf/2310.05515.pdf.
+
+
+
+
+                                                18
+[FF23b]     Omar Fawzi and Paul Fermé. Multiple-access channel coding with non-signaling cor-
+            relations. IEEE Transactions on Information Theory, 2023. doi:10.1109/TIT.2023.
+            3301719.
+[FH13]      William Fulton and Joe Harris. Representation theory: a first course, volume 129. Springer
+            Science & Business Media, 2013.
+[FSS19]     Omar Fawzi, Johanna Seif, and Dániel Szilágyi. Approximation algorithms for classical-
+            quantum channel coding. In 2019 IEEE International Symposium on Information Theory
+            (ISIT), pages 2569–2573. IEEE, 2019. doi:10.1109/ISIT.2019.8849617.
+[FST22]     Omar Fawzi, Ala Shayeghi, and Hoang Ta. A hierarchy of efficient bounds on quantum
+            capacities exploiting symmetry. IEEE Transactions on Information Theory, 68(11):7346–
+            7360, 2022. doi:10.1109/TIT.2022.3182101.
+[FSW07]     Andrew S Fletcher, Peter W Shor, and Moe Z Win. Optimum quantum error recovery
+            using semidefinite programming. Physical Review A, 75(1):012338, 2007. doi:10.1103/
+            PhysRevA.75.012338.
+[Gha10]     Sevag Gharibian. Strong np-hardness of the quantum separability problem. Quantum Info.
+            Comput., 10(3):343–360, Mar 2010. URL: https://dl.acm.org/doi/10.5555/2011350.
+            2011361.
+[Gij09]     Dion Gijswijt. Block diagonalization for algebra’s associated with block codes. arXiv
+            preprint arXiv:0910.4515, 2009. URL: https://arxiv.org/abs/0910.4515.
+[GP04]      Karin Gatermann and Pablo A Parrilo. Symmetry groups, semidefinite programs, and
+            sums of squares. Journal of Pure and Applied Algebra, 192(1-3):95–128, 2004. doi:
+            10.1016/j.jpaa.2003.12.011.
+[GP21]      Sander Gribling and Sven Polak. Mutually unbiased bases: polynomial optimization
+            and symmetry. arXiv preprint arXiv:2111.05698, 2021. URL: https://arxiv.org/abs/
+            2111.05698.
+[GST06]     Dion Gijswijt, Alexander Schrijver, and Hajime Tanaka. New upper bounds for nonbinary
+            codes based on the terwilliger algebra and semidefinite programming. Journal of Combi-
+            natorial Theory, Series A, 113(8):1719–1731, 2006. doi:10.1016/j.jcta.2006.03.010.
+[Hay09]     Masahito Hayashi. Information spectrum approach to second-order coding rate in channel
+            coding. IEEE Transactions on Information Theory, 55(11):4947–4966, 2009. doi:10.
+            1109/TIT.2009.2030478.
+[HSW23]     Tharon Holdsworth, Vishal Singh, and Mark M. Wilde. Quantifying the performance of
+            approximate teleportation and quantum error correction via symmetric 2-ppt-extendible
+            channels. Phys. Rev. A, 107:012428, Jan 2023. URL: https://link.aps.org/doi/10.
+            1103/PhysRevA.107.012428, doi:10.1103/PhysRevA.107.012428.
+[JRO+ 17]   Peter D Johnson, Jonathan Romero, Jonathan Olson, Yudong Cao, and Alán Aspuru-
+            Guzik. Qvector: an algorithm for device-tailored quantum error correction. arXiv preprint
+            arXiv:1711.02249, 2017. URL: https://arxiv.org/abs/1711.02249.
+[KDWW19] Eneet Kaur, Siddhartha Das, Mark M Wilde, and Andreas Winter. Extendibility limits
+         the performance of quantum processors. Physical review letters, 123(7):070502, 2019.
+         doi:10.1103/PhysRevLett.123.070502.
+[KDWW21] Eneet Kaur, Siddhartha Das, Mark M Wilde, and Andreas Winter. Resource theory of
+         unextendibility and nonasymptotic quantum capacity. Physical Review A, 104(2):022401,
+         2021. doi:10.1103/PhysRevA.104.022401.
+
+
+                                                 19
+[KPS07]    Etienne Klerk, Dmitrii Pasechnik, and Alexander Schrijver. Reduction of symmetric
+           semidefinite programs using the regular -representation. Math. Program., 109:613–624,
+           March 2007. doi:10.1007/s10107-006-0039-7.
+[Las15]    Jean Bernard Lasserre. An introduction to polynomial and semi-algebraic optimization,
+           volume 52. Cambridge University Press, 2015.
+[Lau07]    Monique Laurent. Strengthened semidefinite programming bounds for codes. Mathemat-
+           ical programming, 109(2-3):239–261, 2007. doi:10.1007/s10107-006-0030-3.
+[LM11]     Jean-Bernard Lasserre and Anjos F. Miguel. Handbook on Semidefinite, Conic and Poly-
+           nomial Optimization. International Series in Operations Research & Management Science.
+           Springer, November 2011. URL: https://hal.archives-ouvertes.fr/hal-00697757.
+[LM15]     Debbie Leung and William Matthews. On the power of ppt-preserving and non-signalling
+           codes. IEEE Transactions on Information Theory, 61(8):4486–4499, 2015. doi:10.1109/
+           TIT.2015.2439953.
+[LPS17]    Bart Litjens, Sven Polak, and Alexander Schrijver. Semidefinite bounds for nonbinary
+           codes based on quadruples. Designs, Codes and Cryptography, 84(1):87–100, 2017. doi:
+           10.1007/s10623-016-0216-5.
+[Pol19a]   Sven C Polak. Semidefinite programming bounds for lee codes. Discrete Mathematics,
+           342(9):2579–2589, 2019. doi:10.1016/j.disc.2019.05.019.
+[Pol19b]   Sven Carel Polak. New methods in coding theory : Error-correcting codes and the Shannon
+           capacity. PhD thesis, University of Amsterdam, 2019. URL: https://arxiv.org/abs/
+           2005.02945.
+[Pol22]    Sven C Polak. Symmetry reduction to optimize a graph-based polynomial from queueing
+           theory. SIAM Journal on Applied Algebra and Geometry, 6(2):243–266, 2022. doi:
+           10.1137/21M14132.
+[PPV10]    Yury Polyanskiy, H Vincent Poor, and Sergio Verdú. Channel coding rate in the finite
+           blocklength regime. IEEE Transactions on Information Theory, 56(5):2307–2359, 2010.
+           doi:10.1109/TIT.2010.2043769.
+[Pro07]    Claudio Procesi. Lie groups. an approach through invariants and representations. Bull.
+           Amer. Math. Soc, 2007. doi:10.1007/978-0-387-28929-8.
+[RSST18]   Annie Raymond, James Saunderson, Mohit Singh, and Rekha R Thomas. Symmetric
+           sums of squares over k-subset hypercubes. Mathematical Programming, 167(2):315–354,
+           2018.
+[RTAL13]   Cordian Riener, Thorsten Theobald, Lina Jansson Andrén, and Jean B Lasserre. Exploit-
+           ing symmetries in sdp-relaxations for polynomial optimization. Mathematics of Operations
+           Research, 38(1):122–141, 2013. doi:10.1287/moor.1120.0558.
+[RW05]     Michael Reimpell and Reinhard F Werner. Iterative optimization of quantum error cor-
+           recting codes. Physical review letters, 94(8):080501, 2005. doi:10.1103/PhysRevLett.
+           94.080501.
+[Sch05]    Alexander Schrijver. New code upper bounds from the terwilliger algebra and semidefinite
+           programming. IEEE Transactions on Information Theory, 51(8):2859–2866, 2005. doi:
+           10.1109/TIT.2005.851748.
+[Ser77]    Jean-Pierre Serre. Linear Representations of Finite Groups. Cambridge University Press,
+           1977.
+
+
+                                               20
+[Sha48]   Claude Elwood Shannon. A mathematical theory of communication. The Bell system
+          technical journal, 27(3):379–423, 1948. doi:10.1002/j.1538-7305.1948.tb01338.x.
+[TBR16]   Marco Tomamichel, Mario Berta, and Joseph M Renes. Quantum coding with finite
+          resources. Nature communications, 7(1):11419, 2016. doi:10.1038/ncomms11419.
+[TKL10]   Soraya Taghavi, Robert L Kosut, and Daniel A Lidar. Channel-optimized quantum error
+          correction. IEEE Transactions on Information Theory, 56(3):1461–1473, 2010. doi:
+          10.1109/TIT.2009.2039162.
+
+[Val09]   Frank Vallentin. Symmetry in semidefinite programs. Linear Algebra and its Applications,
+          430(1):360–369, 2009. doi:10.1016/j.laa.2008.07.025.
+[WD16]    Xin Wang and Runyao Duan. A semidefinite programming upper bound of quantum
+          capacity. In 2016 IEEE International Symposium on Information Theory (ISIT), pages
+          1690–1694. IEEE, 2016. doi:10.1109/ISIT.2016.7541587.
+
+[WFD18]   Xin Wang, Kun Fang, and Runyao Duan. Semidefinite programming converse bounds for
+          quantum communication. IEEE Transactions on Information Theory, 65(4):2583–2592,
+          2018. doi:10.1109/TIT.2018.2874031.
+
+
+
+
+                                              21
+A      Proof of Lemma 3.1
+Proof. For proving Claim (10), we express ρAĀ(B B̄)n1 in terms of the standard bases of L (A) and
+L (Ā). We write ρAĀ(B B̄)n1 = i,j∈[dA ] |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ ρi,j,x,y . Therefore,
+                               P
+                                            x,y∈[dĀ ]
+                                                                           X
+                                ρĀ(B B̄)n1 := tr Ā (ρAĀ(B B̄)n1 ) =               |i⟩⟨j| ⊗ ρi,j,x,x .
+                                                                         i,j∈[dA ]
+                                                                          x∈[dĀ ]
+
+
+Moreover, since ρAĀ(B B̄)n1 ∈ EndSn AĀ ⊗ (B B̄)⊗n , we have
+                                                   
+
+                                X
+           ρAĀ(B B̄)n1 =                |i⟩⟨j| ⊗ |x⟩⟨y| ⊗ U(B B̄)n1 (π)ρi,j,x,y U(B B̄)n (π)∗ for any π ∈ Sn .
+                            i,j∈[dA ]
+                            x,y∈[dĀ ]
+
+    Therefore,
+
+               ρĀ(B B̄)n1 := tr Ā (ρAĀ(B B̄)n1 )
+                               X
+                           =           |i⟩⟨j| ⊗ U(B B̄)n1 (π)ρi,j,x,x U(B B̄)n1 (π)∗
+                                i,j∈[dA ]
+                                 x∈[dĀ ]
+                                                                                         
+                                              X                                      ∗
+                                                                                            
+                          = IA ⊗ U(B B̄)n1 (π) 
+                                                  |i⟩⟨j| ⊗ ρi,j,x,x 
+                                                                      IA ⊗ U(B B̄)n1 (π)
+                                                          i,j∈[dA ]
+                                                           x∈[dĀ ]
+                                                                                   
+                          = IA ⊗ U(B B̄)n1 (π) tr Ā (ρAĀ(B B̄)n1 ) IA ⊗ U(B B̄)n1 (π)∗ .
+
+The above equality holds for any π ∈ Sn , which implies that
+
+                                ρĀ(B B̄)n1 := tr Ā (ρAĀ(B B̄)n1 ) ∈ EndSn A ⊗ (B B̄)⊗n .
+                                                                                         
+
+
+    Similarly, we also have dIAA ⊗ ρ(B B̄)n1 ∈ EndSn A ⊗ (B B̄)⊗n . This proves the Claim (10).
+                                                                   
+
+    For proving Claim (11), we write ρAĀ(B B̄)n1 = i,j∈[dAĀ ] |i⟩⟨j| ⊗ ρi,j,u,v,x,y ⊗ |u⟩⟨v| ⊗ |x⟩⟨y|. Thus,
+                                                     P
+                                                                      u,v∈[dBn ]
+                                                                      x,y∈[dB̄n ]
+
+                                                                       X
+                 ρAĀ(B B̄)n−1 Bn := tr B̄n ρAĀ(B B̄)n1 =                          |i⟩⟨j| ⊗ ρi,j,u,v,x,x ⊗ |u⟩⟨v| .
+                            1
+                                                                      i,j∈[dAĀ ]
+                                                                      u,v∈[dBn ]
+                                                                       x∈[dB̄n ]
+
+
+Note that, for any π ∈ Sn−1 , the permutation matrix U(B B̄)n−1 (π) ⊗ IBn B̄n corresponds to a permu-
+                                                                  1
+tation in Sn that acts on the space (B B̄)n1 which fixes the system (B B̄)n . This leads to
+                                                                                               
+      ρAĀ(B B̄)n1 = IAĀ ⊗ U(B B̄)n−1 (π) ⊗ IBn B̄n ρAĀ(B B̄)n1   IAĀ ⊗ U(B B̄)n−1 (π)∗ ⊗ IBn B̄n .
+                                            1                                                          1
+
+
+
+
+                                                                22
+Therefore, for any π ∈ Sn−1
+                                                   X
+ ρAĀ(B B̄)n−1 Bn := tr B̄n (ρAĀ(B B̄)n1 ) =                 |i⟩⟨j| ⊗ U(B B̄)n−1 (π)ρi,j,u,v,x,x ⊗ U(B B̄)n−1 (π)∗ ⊗ |u⟩⟨v|
+           1                                                                 1                            1
+                                                i,j∈[dAĀ ]
+                                                u,v∈[dBn ]
+                                                 x∈[dB̄n ]
+                                                                                        
+                                                                            
+                               X                                                                       
+  = IAĀ ⊗ U(B B̄)n−1 (π) ⊗ IBn              |i⟩⟨j| ⊗ ρ i,j,u,v,x,x
+                                                                     ⊗ |u⟩⟨v| IAĀ ⊗ U(B B̄)n−1 (π)∗ ⊗ IBn
+                                                                            
+                  1                                                                        1
+                                 i,j∈[dAĀ ]                                
+                                         u,v∈[dBn ]
+                                          x∈[dB̄n ]
+                                                                               
+  = IAĀ ⊗ ⊗U(B B̄)n−1 (π) ⊗ IBn tr B̄n (ρAĀ(B B̄)n1   IAĀ ⊗ U(B B̄)n−1 (π)∗ ⊗ IBn .
+                       1                                                             1
+
+
+
+This implies ρAĀ(B B̄)n−1 Bn ∈ EndSn−1 AĀ ⊗ (B B̄)⊗(n−1) ⊗ Bn . Similarly, we also have ρAĀ(B B̄)n−1 ⊗
+                                                                     
+                       1                                                                            1
+IBn        Sn−1                 ⊗(n−1)
+                                             
+ dB ∈  End        A Ā ⊗ (B  B̄)       ⊗ B n   . This proves the Claim (11).
+
+
+
+
+                                                                 23
+

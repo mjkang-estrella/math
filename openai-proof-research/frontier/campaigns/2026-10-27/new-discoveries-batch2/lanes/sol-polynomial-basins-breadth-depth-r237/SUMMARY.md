@@ -1,0 +1,11 @@
+# r237 handoff
+
+**Borisov Q10: a complete ordinary universal obstruction is proposed in PROOF.md.** Basin invariance forces the first coordinate polynomial to preserve the hyperplane x1=0 over every prime. An elementary Schur argument forces that coordinate to be c*x1^k. At a prime with a multiplicative subgroup of prime order coprime to k, ratios of two nonzero first coordinates never merge, contradicting a common nonzero-branch fixed point. This works in arbitrary finite dimension, even with finitely many exceptional primes and prime-dependent fixed points. It answers the distinct-basin reading of the literal original; root must review source interpretation and proof. No claim of novelty clearance, acceptance or formal certification.
+
+Actual primary chronology: same question in arXiv:1301.0517v1 p2, Jan3 2013; journal Q10 p4, Oct12 2013; actual May2015 follow-up treats different subvariety traps, not a solution. Fresh journal original matches the cached original byte for byte. Current author query locates these actual bodies; broad dynamics queries are noisy. Current public proof-registry heads and inaccessible historical intervals remain uncleared. Classical-tool/routine-corollary objection remains for root adjudication.
+
+**Root's dismal C26 argument is sound under the actual decimal conventions.** routine-proof.md supplies the complete ordinary cardinality/degree proof with root provenance. Recommend routine exclusion; no credit or separate nomination.
+
+SCOUTING.md contains eight further distinct attributed arithmetic/algebraic/finite question families, exact scopes, actual proof comparisons, chronology, mechanisms, decisive calculations and eligibility objections. Memory has positive later generating-function coverage; bounded-altitude cubic walks have a complete routine transfer-matrix bridge. Other families are provisional or parked, not certified currently open.
+
+Required final verification is separate from writing. source-bindings.json and source-postread-checks.json bind original/copy hashes; failures and bounded-query limits are explicit. final-manifest.json excludes itself and verification-receipt.json. No shared/git/public/browser/MathDB/Lean/manuscript edits; no children. **Counts unchanged:9 additional,39 total,next40. Root alone accepts/counts.**

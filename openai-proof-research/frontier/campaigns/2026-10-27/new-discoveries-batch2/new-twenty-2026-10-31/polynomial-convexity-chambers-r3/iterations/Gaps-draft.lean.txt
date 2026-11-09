@@ -1,0 +1,75 @@
+import PolynomialConvexity.Model
+
+namespace PolynomialConvexity
+noncomputable section
+open Finset
+
+/-- Descending coordinates from positive gaps, with the last gap above zero. -/
+def tailSum {d : ℕ} (u : Fin d → ℝ) (i : Fin d) : ℝ :=
+  ∑ j ∈ univ.filter (i ≤ ·), u j
+
+theorem tailSum_nonneg {d : ℕ} (u : Fin d → ℝ) (hu : ∀ j, 0 ≤ u j) (i : Fin d) :
+    0 ≤ tailSum u i := sum_nonneg fun j _ => hu j
+
+theorem tailSum_antitone {d : ℕ} (u : Fin d → ℝ) (hu : ∀ j, 0 ≤ u j) :
+    Antitone (tailSum u) := by
+  intro i k hik
+  exact sum_le_sum_of_subset_of_nonneg
+    (fun j hj => mem_filter.mpr ⟨mem_univ _, hik.trans (mem_filter.mp hj).2⟩)
+    (fun j _ _ => hu j)
+
+theorem tailSum_pos {d : ℕ} (u : Fin d → ℝ) (hu : ∀ j, 0 < u j) (i : Fin d) :
+    0 < tailSum u i := by
+  exact lt_of_lt_of_le (hu i) (single_le_sum (fun j _ => (hu j).le)
+    (mem_filter.mpr ⟨mem_univ _, le_rfl⟩))
+
+/-- The concrete maximum is the tail at the first edge containing the vertex. -/
+theorem vertexThreshold_tailSum {n L d : ℕ} (e : Fin d → Edge n L)
+    (u : Fin d → ℝ) (hu : ∀ j, 0 ≤ u j) (v : Fin n) :
+    vertexThreshold e (tailSum u) v =
+      ∑ j, if v ∈ prefixUnion e j then u j else 0 := by
+  let s := univ.filter (fun i => v ∈ (e i).val)
+  by_cases hs : s.Nonempty
+  · let k := s.min' hs
+    have hk : v ∈ (e k).val := (mem_filter.mp (min'_mem s hs)).2
+    have hfirst (i : Fin d) (hi : v ∈ (e i).val) : k ≤ i :=
+      min'_le s i (mem_filter.mpr ⟨mem_univ _, hi⟩)
+    have hprefix (j : Fin d) : v ∈ prefixUnion e j ↔ k ≤ j := by
+      rw [mem_prefixUnion]
+      exact ⟨fun ⟨i, hij, hi⟩ => (hfirst i hi).trans hij,
+        fun h => ⟨k, h, hk⟩⟩
+    have hmax : vertexThreshold e (tailSum u) v = tailSum u k := by
+      apply le_antisymm
+      · exact (vertexThreshold_le e _ v _).mpr
+          ⟨tailSum_nonneg u hu k, fun i hi => tailSum_antitone u hu (hfirst i hi)⟩
+      · have h := (vertexThreshold_le e (tailSum u) v _).mp le_rfl
+        exact h.2 k hk
+    rw [hmax]
+    simp_rw [hprefix]
+    exact (sum_filter _ _ _).symm
+  · have hv (i : Fin d) : v ∉ (e i).val := by
+      intro hi
+      exact hs ⟨i, mem_filter.mpr ⟨mem_univ _, hi⟩⟩
+    have hp (j : Fin d) : v ∉ prefixUnion e j := by
+      rw [mem_prefixUnion]
+      rintro ⟨i, _, hi⟩
+      exact hv i hi
+    simp only [hp, ↓reduceIte, sum_const_zero]
+    apply le_antisymm
+    · exact (vertexThreshold_le e _ v 0).mpr ⟨le_rfl, fun i hi => (hv i hi).elim⟩
+    · exact ((vertexThreshold_le e _ v _).mp le_rfl).1
+
+/-- Exact prefix exponent identity for the actual descending gap map. -/
+theorem prefix_exponent {n L d : ℕ} (e : Fin d → Edge n L)
+    (u : Fin d → ℝ) (hu : ∀ j, 0 ≤ u j) :
+    (∑ v, vertexThreshold e (tailSum u) v) =
+      ∑ j, ((prefixUnion e j).card : ℝ) * u j := by
+  simp_rw [vertexThreshold_tailSum e u hu]
+  rw [sum_comm]
+  apply sum_congr rfl
+  intro j _
+  rw [← sum_filter]
+  simp
+
+end
+end PolynomialConvexity

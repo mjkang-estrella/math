@@ -1,0 +1,25 @@
+# Prior-art and novelty review: MathDB357503
+
+Search date: 2026-10-26. Proposed result: the literal polynomial in Yuster's Corollary3.7 has at least four distinct roots in (0,1) for k=48. This refutes Conjecture3.9. One candidate only; equivalent root-count formulations are not additional discoveries.
+
+## Actual primary source and updates
+
+- Raphael Yuster, *Almost k-union closed set systems*, arXiv:2302.12276v1, 23Feb2023. Live arXiv metadata lists only v1. Actual PDF read, with rendered pp6–9 visually checked: recurrence Lemma3.5 p6; coefficient normalization and zero-row convention p7; exact ρ/σ polynomial formulas Corollary3.7 pp7–8; Conjecture3.9 p9. URL: https://arxiv.org/abs/2302.12276 and version-pinned PDF https://arxiv.org/pdf/2302.12276v1.
+- The actual author code linked on source p9 was read at immutable commit `c41ecb533f7fa7f8d727764a2adc05b4ca345ff1`: https://raw.githubusercontent.com/raphaelyuster/almost-k-union-closed/c41ecb533f7fa7f8d727764a2adc05b4ca345ff1/polynomial.py . Its integer recurrence divides by (k−1)! in rho_x, confirming our normalization. Code is GPL3 and retained only for local audit, not copied into the proposed proof implementation.
+- Live MathDB357503 full post saved as `sources/357503.json`: `status=open`, with no posted solutions/replies. Its exact conjecture matches primary Conjecture3.9. The references field inconsistently says solved and quotes “As mentioned earlier, this was proved shortly after by several researchers.” Actual source p1 shows that sentence concerns Gilmer’s proposed constant ψ for ordinary/almost union-closed systems (k=2), not the polynomial Conjecture3.9 on p9. This contextual metadata error is explicitly excluded as evidence of a prior root-count resolution; the original source is controlling.
+
+## Nearest later work
+
+1. Tanay Wakhare, *Iterated Entropy Derivatives and Binary Entropy Inequalities*, arXiv:2312.14743v2, revised14Jan2025; Journal of Approximation Theory307(2025),106143, DOI10.1016/j.jat.2025.106143. Actual arXiv v2 PDF/HTML read. Conjecture2 proposes exactly two interior roots, counting multiplicity, for a related rational-exponent polynomial family. The introductory statement reports two coefficient sign changes in its numerical experiments, rather than a proof for all parameters. The theorem transfers such a root-count assertion to the entropy inequality; it does not establish the general root count. URL: https://arxiv.org/abs/2312.14743 . Exact equivalence of its r=1 polynomial to the current source polynomial has not been included in the formal packet, so no second-conjecture claim is needed for this result.
+2. Yuster's Technion seminar13Nov2024, *An entropy inequality and almost k-union closed set systems*, states entropy cases3≤k≤20 and a weakened all-k entropy bound; the abstract continues to describe a reduction to a polynomial root-count conjecture. Parts joint with Geva Yashfe. Actual official abstract read through the web tool: https://math.technion.ac.il/events/raphael-yuster/ . No full joint manuscript was located; this limits comparison with that work.
+3. Boon Suan Ho, *A generalization of Boppana's entropy inequality*, arXiv:2601.19327v1,27Jan2026. Actual full four-page paper read. Theorem1 proves the entropy inequality for all real k>1, using a different calculus proof, with an existing Lean formalization. This settles the underlying entropy inequality; we explicitly do not claim that result. The paper does not prove Yuster's stronger polynomial-root conjecture or present a polynomial-root counterexample. URL: https://arxiv.org/abs/2601.19327 . It cites the Wakhare paper and Yuster2024seminar.
+
+## Search and limitations
+
+Primary-site/current searches included exact source titles and combinations of Yuster/Wakhare with polynomial, root count, counterexample, four roots, Conjecture3.9, and the later entropy inequality. The author repository has two commits and no visible issues or pull requests; the linked generator computes coefficients, not a root-count proof. The immutable OpenAI math catalogue/preprint inventory was also searched for Yuster/Wakhare, entropy-polynomial, and union-closed root-count connections; none were found.
+
+No earlier proof of this counterexample or a stronger theorem implying it was located. This supports sending the full root-count counterexample to independent review under the documented-prior-art/no-known-prior-resolution standard. It does not certify absolute worldwide priority. Material comparison limits: a later full Yuster–Yashfe manuscript was not found; Wakhare's publisher body was not separately compared with its actual latest arXiv v2 body. Independent reviewer is checking source and novelty separately.
+
+## Claims explicitly excluded
+
+No new entropy inequality, no refutation of Ho's valid entropy result, no refutation of any union-closed-set theorem, no claim of a smallest k, no exact total root count, no claim that a coefficient sign-change excess alone proves four roots, and no separate count for equivalent source formulations.

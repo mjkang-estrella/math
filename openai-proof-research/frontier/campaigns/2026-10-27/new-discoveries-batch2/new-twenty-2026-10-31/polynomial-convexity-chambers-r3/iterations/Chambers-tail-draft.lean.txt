@@ -1,0 +1,39 @@
+import PolynomialConvexity.Ties
+import Mathlib.Data.Fin.Tuple.Sort
+set_option Elab.async false
+namespace PolynomialConvexity
+noncomputable section
+open MeasureTheory Set Filter
+/-- Strict descending labelled chamber inside the positive orthant. -/
+def chamber {d : ℕ} (σ : Equiv.Perm (Fin d)) : Set (Fin d → ℝ) :=
+  {t | (∀ i, 0 < t i) ∧ StrictAnti (t ∘ σ)}
+
+theorem chamber_measurable {d : ℕ} (σ : Equiv.Perm (Fin d)) :
+    MeasurableSet (chamber σ) := by
+  have heq : chamber σ =
+      (⋂ i, {t : Fin d → ℝ | 0 < t i}) ∩
+      (⋂ i, ⋂ j, ⋂ (_ : i < j), {t : Fin d → ℝ | t (σ j) < t (σ i)}) := by
+    ext t
+    simp [chamber, StrictAnti]
+  rw [heq]
+  exact (MeasurableSet.iInter fun i => measurableSet_lt measurable_const (measurable_pi_apply i)).inter
+    (MeasurableSet.iInter fun i => MeasurableSet.iInter fun j => MeasurableSet.iInter fun _ =>
+      measurableSet_lt (measurable_pi_apply (σ j)) (measurable_pi_apply (σ i)))
+
+theorem chamber_unique {d : ℕ} {t : Fin d → ℝ} {σ τ : Equiv.Perm (Fin d)}
+    (hσ : t ∈ chamber σ) (hτ : t ∈ chamber τ) : σ = τ := by
+  have ht : Function.Injective t := by
+    have h : Function.Injective (t ∘ σ) := hσ.2.injective
+    exact (h.comp σ.symm.injective : Function.Injective ((t ∘ σ) ∘ σ.symm))
+  have heq := Tuple.unique_antitone hσ.2.antitone hτ.2.antitone
+  ext i
+  exact ht (congrFun heq i)
+
+theorem chamber_cover {d : ℕ} {t : Fin d → ℝ} (ht : Function.Injective t)
+    (hpos : ∀ i, 0 < t i) : ∃ σ, t ∈ chamber σ := by
+  let σ := Tuple.sort (fun i => OrderDual.toDual (t i))
+  have ha : Antitone (t ∘ σ) := Tuple.monotone_sort (fun i => OrderDual.toDual (t i))
+  exact ⟨σ, hpos, ha.strictAnti_of_injective (ht.comp σ.injective)⟩
+
+end
+end PolynomialConvexity

@@ -1,0 +1,1903 @@
+SIAM J. MATRIX ANAL. APPL.                           2006 Society for Industrial and Applied Mathematics
+                                                    c
+Vol. 28, No. 4, pp. 1126–1156
+
+
+
+
+        ACCURATE SYMMETRIC RANK REVEALING AND
+     EIGENDECOMPOSITIONS OF SYMMETRIC STRUCTURED
+                      MATRICES∗
+                         FROILÁN M. DOPICO† AND PLAMEN KOEV‡
+
+    Abstract. We present new O(n3 ) algorithms that compute eigenvalues and eigenvectors to high
+relative accuracy in ﬂoating point arithmetic for the following types of matrices: symmetric Cauchy,
+symmetric diagonally scaled Cauchy, symmetric Vandermonde, and symmetric totally nonnegative
+matrices when they are given as products of nonnegative bidiagonal factors. The algorithms are
+divided into two stages: the ﬁrst stage computes a symmetric rank revealing decomposition of the
+matrix to high relative accuracy, and the second stage applies previously existing algorithms to
+this decomposition to get the eigenvalues and eigenvectors. Rank revealing decompositions are also
+interesting in other problems, such as the numerical determination of the rank and the approximation
+of a matrix by a matrix with smaller rank.
+
+    Key words. eigenvalue, eigenvector, high relative accuracy, symmetric rank revealing factor-
+ization, Cauchy matrix, Vandermonde matrix, totally nonnegative matrix
+
+    AMS subject classiﬁcations. 65F15, 65F30
+
+    DOI. 10.1137/050633792
+
+
+    1. Introduction. When traditional algorithms are used to compute the eigen-
+values and eigenvectors of ill-conditioned real symmetric matrices in ﬂoating point
+arithmetic, only the eigenvalues with largest absolute values are computed with guar-
+anteed relative accuracy. The tiny eigenvalues may be computed with no relative
+accuracy at all—and even with the wrong sign. The eigenvectors are computed with
+small error with respect to the absolute eigenvalue gap. This means that if  is the
+machine precision, and vi and v̂i are, respectively, the exact and computed eigenvec-
+tors corresponding to an eigenvalue λi , then the acute angle between these vectors is
+bounded as θ(vi , v̂i ) ≤ O()/gapi , where gapi = (minj=i |λi − λj |)/ maxk |λk |. This
+implies that if there is more than one tiny eigenvalue, then the corresponding eigenvec-
+tors are computed with large errors, even if the tiny eigenvalues are well separated in
+the relative sense. See [1, section 4.7] for a survey on errors bounds for the symmetric
+eigenproblem.
+    Our goal is to derive algorithms for computing eigenvalues and eigenvectors of
+some structured n × n symmetric matrices to high relative accuracy by respecting
+the symmetry of the problem, and with cost O(n3 ), i.e., roughly the same cost as
+traditional algorithms for dense symmetric matrices. By high relative accuracy we
+mean that the eigenvalues λi , the eigenvectors vi , and their computed counterparts
+
+   ∗ Received by the editors June 16, 2005; accepted for publication (in revised form) by I. C. F. Ipsen
+
+April 19, 2006; published electronically December 18, 2006. This research was partially supported
+by the Ministerio de Educación y Ciencia of Spain through grant BFM-2003-00223, by the PRICIT
+Program of the Comunidad de Madrid through SIMUMAT Project grant S-0505/ESP/0158 (Froilán
+M. Dopico), and by NSF grant DMS-0314286 (Plamen Koev). This research was partially performed
+while P. Koev was visiting the Universidad Carlos III de Madrid in December 2004–January 2005
+and was supported by the Ph.d. Program of Ingenierı́a Matemática.
+     http://www.siam.org/journals/simax/28-4/63379.html
+   † Departamento de Matemáticas, Universidad Carlos III de Madrid, Avda. Universidad 30, 28911
+
+Leganés, Spain (dopico@math.uc3m.es).
+   ‡ Department of Mathematics, Massachusetts Institute of Technology, Cambridge, MA 02139
+
+(plamen@math.mit.edu).
+                                                 1126
+                  EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                    1127
+
+λ̂i and v̂i will satisfy
+                                                        O()
+(1)     |λ̂i − λi | ≤ O()|λi | and θ(vi , v̂i ) ≤                  for i = 1, . . . , n.
+                                                          λ −λ 
+                                                     min  iλi j 
+                                                      j=i
+
+These conditions guarantee that the new algorithms compute all eigenvalues, including
+the tiniest ones, with correct sign and leading digits. Moreover, the eigenvectors
+corresponding to relatively well separated tiny eigenvalues are accurately computed.
+In the case of a multiple eigenvalue, or a cluster of very close eigenvalues in the relative
+sense, the previous bound for θ(vi , v̂i ) becomes inﬁnite or very large. In this case, we
+understand by high relative accuracy that the sines of the canonical angles between
+the unperturbed and the perturbed invariant subspaces corresponding to the cluster of
+eigenvalues are bounded by O() over the relative gap between the eigenvalues inside
+the cluster and those outside the cluster [27]. This means that the new algorithms
+compute accurate bases of invariant subspaces corresponding to cluster of eigenvalues
+well separated in the relative sense from the rest of the eigenvalues.
+    In this work, we focus on the following classes of symmetric matrices: diago-
+nally scaled Cauchy matrices (this class includes usual symmetric Cauchy matrices),
+Vandermonde matrices, and nonsingular totally nonnegative (TN) matrices. Sym-
+metric diagonally scaled Cauchy matrices are deﬁned through two ordered sets of real
+numbers, {x1 , x2 , . . . , xn } and {s1 , s2 , . . . , sn }, and they are of the form
+                                      1
+C = SC  S,     where       
+                           Cij =           ,   1 ≤ i, j ≤ n,    and S = diag(s1 , s2 , . . . , sn );
+                                   xi + xj
+i.e., they are the two-sided product of a usual symmetric Cauchy matrix C  times a
+diagonal matrix S. It should be noticed that if S is the identity matrix, then C = C  ,
+and C is just a usual symmetric Cauchy matrix. Symmetric Vandermonde matrices
+depend only on one real parameter a, and they are deﬁned as
+                                               n
+                                A = a(i−1)(j−1)        .
+                                                        i,j=1
+
+This is the only type of Vandermonde matrices that is symmetric. As far as we know,
+this is the ﬁrst time that the class of symmetric Vandermonde matrices has been
+studied in the literature. TN matrices are the matrices with all minors nonnegative.
+For symmetric diagonally scaled Cauchy matrices, we assume that the parameters
+{xi }ni=1 and {si }ni=1 are given, i.e., we are not given just the entries of the matrices.
+This is a very natural assumption in situations where Cauchy matrices appear, such
+as, for instance, in rational interpolation theory. For symmetric Vandermonde ma-
+trices, we adopt the (also natural) assumption that the parameter a is given. In the
+case of TN matrices, we assume that the TN structure is explicitly revealed; i.e., any
+TN matrix is represented as a product of nonnegative bidiagonal matrices [18, 19].
+This bidiagonal decomposition is particularly attractive because its nontrivial entries
+determine the eigenvalues of the matrix with high relative accuracy, and it can be
+computed very accurately for many important classes of TN matrices [26]. To ﬁnish
+this short presentation of the type of matrices we are dealing with, we want to stress
+that the symmetric diagonally scaled Cauchy and the symmetric Vandermonde matri-
+ces are, in general, indeﬁnite matrices, while the symmetric nonsingular TN matrices
+are positive deﬁnite.
+     There exist O(n3 ) algorithms for computing eigendecompositions of symmetric
+diagonally scaled Cauchy and symmetric Vandermonde matrices with high relative
+1128                  FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+accuracy, but these algorithms do not respect the symmetry of the problem. They are
+based on the idea of rank revealing decomposition (RRD): an RRD of G ∈ Rm×n , m ≥
+n, is a factorization G = XDY T , where D ∈ Rr×r is diagonal and nonsingular, and
+X ∈ Rm×r and Y ∈ Rn×r are well-conditioned matrices of full column rank (notice
+that this implies r = rank(G)). Demmel et al. presented in [6] an algorithm for
+computing the singular value decomposition (SVD) of G with high relative accuracy
+when the computed factors    X, D, and Y of an RRD satisfy the following forward
+error bounds:
+                                       ii | = O()|Dii |,
+                               |Dii − D
+(2)                            X − 
+                                   X2 = O()X2 ,
+                               Y − Y 2 = O()Y 2 ,
+
+where  · 2 is the spectral, or two-norm. Throughout this paper we will use the
+expression accurate RRD to mean an RRD that satisﬁes the error bounds (2). Algo-
+rithms for computing accurate RRDs of general diagonally scaled Cauchy and Van-
+dermonde matrices were derived in [5], and therefore it is possible to compute the
+SVD of these matrices with high relative accuracy. Finally, an algorithm for com-
+puting a high relative accuracy eigendecomposition of a symmetric matrix, given an
+SVD computed with high relative accuracy, was developed in [11]. We note that when
+these algorithms are used, the symbols O() appearing in (1) should be replaced with
+O(max{κ2 (X), κ2 (Y )} ), where κ2 (X) ≡ X2 · X −1 2 is the spectral condition
+number of X.
+     The process outlined in the previous paragraph does not respect the symmetry of
+the problem in two stages. First, the RRDs of diagonally scaled Cauchy and Vander-
+monde matrices computed in [5] are not symmetric, i.e., X = Y , when G is symmetric.
+Second, even when G is symmetric and X = Y , the algorithm in [6] computes the
+SVD of G without respecting the symmetry of the problem. Respecting the symmetry
+is a very important property of eigenvalue algorithms (as well as other computations
+in the ﬁeld of numerical linear algebra) because it often leads to increased speed,
+decreased storage requirements, and improved stability properties [3, 10, 21].
+     As two of our major contributions we present algorithms for computing accurate
+symmetric RRDs of symmetric diagonally scaled Cauchy matrices and symmetric
+Vandermonde matrices, i.e., decompositions G = XDX T with X well conditioned
+and D diagonal, which satisfy the bounds (2). In this context, it is important to
+stress that RRDs have been computed in practice as LDU factorizations provided
+by Gaussian elimination with complete pivoting (GECP) [6]. As can be seen in [21,
+section 4.4] and [22, Chapter 11], just preserving the symmetry of general dense
+symmetric indeﬁnite matrices in a stable factorization of LU type requires much more
+complicated algorithms and pivoting strategies than the usual Gaussian elimination.
+In our algorithms, we need to preserve the symmetry and also attain the accuracy (2).
+This demands a careful exploitation of the structure of the problems that allows us to
+get important beneﬁts from the point of view of operational cost. The algorithm we
+present for computing RRDs of symmetric diagonally scaled Cauchy matrices needs
+only half the operations required by the general nonsymmetric algorithm presented in
+[5]. In the case of symmetric Vandermonde matrices, the improvements are much more
+signiﬁcant: the cost of the algorithm in [5] is O(n3 ) and requires complex arithmetic,
+and the cost of the algorithm we develop is 2n2 and requires only real arithmetic. We
+note, however, that for symmetric Vandermonde matrices our algorithm computes
+                 EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                          1129
+
+accurate RRDs only if |a| ≤ 23 or |a| ≥ 32 . For the rest of the values of the parameter,
+i.e., 23 < |a| < 32 , our algorithm computes LDLT factorizations with componentwise
+relative errors of O(), but they are not RRDs because L may be ill conditioned. This
+means that the factorizations A = LDLT we compute of symmetric Vandermonde
+matrices cannot be used to compute accurate eigendecompositions for values of |a|
+close to one. However, they can be potentially useful in other contexts such as, for
+instance, in fast solvers of systems of linear equations Ax = b, where A is a symmetric
+Vandermonde matrix. The operational savings we have just described may not be
+of primary interest for computing accurate eigendecompositions, because in that case
+an O(n3 ) algorithm with high cost has to be applied to the RRD, but they are very
+important in other applications of RRDs.
+      Once an accurate symmetric RRD of a symmetric indeﬁnite matrix G is computed,
+the J-orthogonal algorithm, introduced in [35] and carefully analyzed in [33], can be
+used to compute an eigendecomposition of G to high relative accuracy, preserving the
+symmetry of the process. Also, the signed SVD algorithm of [11] may be used, but
+then the symmetry is lost in this second stage. It should be noticed that the error
+bounds for the J-orthogonal algorithm [33] are not exactly of type (1) because the
+O() symbols are rigorously κ, where κ is the maximum of the condition numbers of
+some intermediate matrices appearing in the algorithm, which has not been bounded
+by any moderate magnitude. The error bounds for the signed SVD algorithm [11]
+are exactly of type (1) because the error for the eigenvectors depends on a diﬀerent,
+smaller eigenvalue relative gap than the one in (1). However, in practice, both the
+J-orthogonal and signed SVD algorithms compute the eigenvalues and eigenvectors
+to high relative accuracy.
+      Our third major contribution is to develop algorithms for computing accurate
+RRDs of a nonsingular TN matrix whenever its bidiagonal factors are given. RRDs
+of general, not necessarily symmetric, TN matrices can be computed by combin-
+ing algorithms in [26] and in [6], but the computation of symmetric RRDs requires
+a new approach. It should be remarked that algorithms for computing eigenval-
+ues and singular values of general nonsingular TN matrices already have been pre-
+sented in [26]. If the TN matrix is symmetric, the techniques in [26] allow us to
+modify these algorithms to compute eigenvalues to high relative accuracy respecting
+the symmetry. However, the algorithms in [26] do not use RRDs computed by a ﬁnite
+process.
+      Nonsingular symmetric TN matrices are positive deﬁnite; thus a symmetric RRD
+A = XDX T has positive elements on the diagonal matrix D. In this case we can
+compute an accurate eigendecomposition of A starting from this RRD, using a simpler
+and more eﬃcient approach than the J-orthogonal or signed SVD algorithms. To do
+so, we compute the singular values and left singular vectors of XD1/2 by using the
+one-sided Jacobi method with the rotations applied on the left [10, section 5.4.3] (see
+also the seminal reference [9]). This yields eigenvalues and eigenvectors with high
+relative accuracy as in (1), where the O() symbols are replaced with O( κ2 (X)).
+Obviously, this process preserves the symmetry.
+      In the previous paragraphs we have stressed the essential role of accurate RRDs
+in computing spectral problems to high relative accuracy. However, the computation
+of accurate RRDs is an interesting problem in its own right that can be used in other
+problems, such as the numerical determination of the rank, and the approximation of
+a matrix by a matrix with smaller rank [34, Chapter 5]. This is one of the reasons
+why reducing the cost in computing accurate RRDs is an important issue.
+1130                      FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+      The three classes of symmetric matrices we consider—diagonally scaled Cauchy,
+Vandermonde, and TN—require three very diﬀerent techniques for computing their
+accurate symmetric RRDs. In this regard, in [30] accurate symmetric RRDs of total
+signed compound and diagonally scaled totally unimodular matrices are computed by
+using an approach related to the one we used for diagonally scaled Cauchy matrices,
+i.e., combining accurate computation of Schur complements with the Bunch–Parlett
+pivoting strategy for the diagonal pivoting method [4]. Two other interesting classes
+of structured matrices for which there are algorithms for computing accurate RRDs
+are weakly diagonally dominant M-matrices [7, 31] and polynomial Vandermonde
+matrices [8]. For symmetric weakly diagonally dominant M-matrices, the general
+algorithm presented in [7] for nonsymmetric matrices respects the symmetry because it
+performs only diagonal pivoting. The algorithm in [8] does not preserve the symmetry
+for symmetric matrices, but the symmetric polynomial Vandermonde matrices are
+nonsymmetric, except in very special cases.
+      The paper is organized as follows. In section 2 we study how the eigenvalues and
+eigenvectors of a symmetric matrix are changed by errors of type (2) in a symmetric
+RRD. In section 3 we present the algorithm, and its error analysis, for computing
+symmetric RRDs of symmetric diagonally scaled Cauchy matrices. The same is done
+in section 4 for symmetric Vandermonde matrices. Section 5 includes the algorithms
+for computing accurate RRDs (symmetric and nonsymmetric) of nonsingular TN ma-
+trices. We present numerical experiments in section 6. Finally, in the appendix the
+technical proof of Theorem 3.1 for the rounding error analysis of diagonally scaled
+Cauchy matrices is carefully developed in a more general setting.
+     2. Perturbation properties of symmetric RRDs. Let G be an m×n matrix,
+and let G = XDY T be an RRD of G. It was shown in [6, Theorem 2.1] that the
+RRD of G determines its SVD to high relative accuracy; i.e., small relative normwise
+perturbations of X and Y , and small relative componentwise perturbations of D,
+produce small relative changes in all singular values of G, and produce small changes in
+the singular vectors with respect to the singular value relative gap. Next we prove that
+a symmetric RRD of a symmetric matrix determines its eigenvalues and eigenvectors
+to high relative accuracy.
+     Theorem 2.1. Let A = XDX T and A           =X      D  X   T be RRDs of the real symmetric
+                       
+n × n matrices A and A. Let λ1 ≥ · · · ≥ λn be the eigenvalues of A and λ̃1 ≥ · · · ≥ λ̃n
+                       Let q1 , . . . , qn and q̃1 , . . . , q̃n be the corresponding orthonormal
+be the eigenvalues of A.
+eigenvectors. Let us assume that
+
+                                      X − X2
+                                                    ≤ β,
+                                         X2
+                                     |D ii − Dii |
+                                                    ≤ β for all i,
+                                          |Dii |
+
+where 0 ≤ β < 1. Let η = β (2 + β) κ2 (X) be smaller than 1; then
+
+                          |λi − λ̃i | ≤ (2η + η 2 ) |λi |,           1 ≤ i ≤ n,
+
+and
+                                         ⎛                            ⎞
+                                     η ⎝        2+η          ⎠,
+               sin θ(qi , q̃i ) ≤        1+                                  1 ≤ i ≤ n,
+                                    1−η     min
+                                                  |λ̃i −λj |
+                                                    j=i     |λj |
+                   EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                  1131
+
+where θ(qi , q̃i ) is the acute angle between qi and q̃i . In the case of multiple eigenvalues,
+or clusters of very close eigenvalues in the relative sense, a similar bound holds for
+the sines of the canonical angles of the corresponding invariant subspaces.
+     Proof. The proof is similar to that of Theorem 2.1 in [6]. The main idea is to
+express A as a symmetric multiplicative perturbation of A, i.e., A      = (I +E)A(I +E)T .
+This is combined with [12, Theorem 2.1] and [27, Theorem 3.1].
+     A more general version of Theorem 2.1, including similar perturbation results
+for invariant subspaces [27], can be developed. These bounds are useful when sev-
+eral eigenvalues form a tight cluster, well separated from the remaining eigenvalues,
+because in this case the invariant subspace is well conditioned, while the individual
+eigenvectors are very ill conditioned. It is also possible to present perturbation results
+for eigenvectors with the relative gap deﬁned using exclusively eigenvalues of A, at
+the cost of bounding the sine of the double angle, i.e., sin 2θ(qi , q̃i ) [10, Theorem 5.7],
+[28, Theorem 2.2].
+     3. Symmetric diagonally scaled Cauchy matrices. For a real symmetric
+matrix A, the LU factorization computed using Gaussian elimination, with partial or
+complete pivoting, does not always preserve the symmetry of the problem. Symmetric
+pivoting strategies, i.e., permuting rows and columns in the same way, may be unstable
+or may not exist. A trivial instance is when all the entries on the main diagonal are
+zero. The most widely used factorization [1, 21, 22] for symmetric matrices is the
+following special block LU factorization:
+                                       P AP T = L Db LT ,
+where P is a permutation matrix, L is unit lower triangular, and Db is block diagonal
+with diagonal blocks of dimension 1 or 2. The 2 × 2 diagonal blocks are symmetric
+indeﬁnite matrices, and the corresponding diagonal blocks of L are the 2 × 2 identity
+matrix. This method is sometimes called the diagonal pivoting method [22] and can be
+implemented with partial, complete, or rook pivoting. We are interested in computing
+a symmetric RRD; therefore we will focus on the Bunch–Parlett complete pivoting
+strategy [4], which in practice1 produces a well-conditioned matrix L. Notice that
+L Db LT is not an RRD because Db is not diagonal. To get an RRD, we will perform
+a spectral factorization of each of the 2 × 2 blocks of Db ; thus Db = V DV T with D
+diagonal and V orthogonal and block diagonal as Db . Finally,
+(3)                    P AP T = L Db LT = (LV )D(LV )T ≡ XDX T
+is a symmetric RRD. This procedure has been essentially introduced in [32] to compute
+a symmetric indeﬁnite decomposition GJGT , where J = diag(±1). Notice that a
+GJGT factorization can be easily computed from XDX T as (X |D|) J ( |D|X T ).
+Moreover, if XDX T is accurately computed, then GJGT is also accurately computed,
+and vice versa. In the rest of the paper we will focus on RRDs XDX T from the point
+of view of both algorithms and error analysis.
+     To be more speciﬁc, the method can be described as follows. Let Π be a permu-
+tation matrix such that
+                                                  E    CT
+(4)                                 ΠAΠT =                    ,
+                                                  C    B
+   1 It can be proven that κ (L) < n (3.78)n , by using Theorem 8.12 and Problem 8.5 in [22].
+                              ∞
+This bound is similar to that appearing in GECP. Therefore, there exists a remote possibility of the
+Bunch–Parlett pivoting strategy failing to compute a well-conditioned factor L.
+1132                      FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+where E is a 1 × 1 or a 2 × 2 nonsingular matrix. The pivot E and the permutation
+Π are chosen by comparing the numbers μ0 = maxi,j |aij | ≡ |ars | (r ≥ s) and μ1 =
+maxi |aii | ≡ |app |. If μ1 ≥ αμ0 , where α is a parameter (0 < α < 1), then E = app ,
+and if μ1 < αμ0 , then E  √ has dimension 2 and E21 = |ars |. The classical value for the
+parameter is α = (1 + 17)/8 (≈ 0.64). Then we can factorize
+                            I          0       E         0                I   E −1 C T
+(5)         ΠAΠT =                                                                         .
+                           CE −1       I       0    B − CE −1 C T         0      I
+If E is a 2×2 matrix, let E = U ΛU T be its orthogonal spectral factorization computed
+by the Jacobi procedure [21, section 8.4]. Then
+                         U         0       Λ            0               UT    Λ−1 U T C T
+(6)     ΠAΠT =                                                                                 .
+                       CU Λ−1      I       0       B − CE −1 C T         0        I
+The process is recursively repeated on the Schur complement B − CE −1 C T .
+    In the case of diagonally scaled Cauchy matrices, it was shown in [5] how to
+compute all the Schur complements with an entrywise small relative error. Therefore,
+to compute an accurate symmetric RRD, the remaining task is to show that in (6)
+the orthogonal diagonalization E = U ΛU T of the 2 × 2 pivot and the matrix CU Λ−1
+can be accurately computed for each Schur complement.
+    Let us summarize some key results in [5]. The entries of an n × n symmetric
+diagonally scaled Cauchy matrix C are Cij = si sj /(xi + xj ), where the si and xi , 1 ≤
+i ≤ n, are given real ﬂoating point numbers. Let S (m) be the mth Schur complement
+of C (S (0) ≡ C). We enumerate the elements of S (m) as the corresponding elements
+of C. The recurrence relation,
+                               (xr − xm )(xs − xm )
+(7)          (m)
+            Srs     (m−1)
+                 = Srs                                         for    m + 1 ≤ r, s ≤ n,
+                               (xm + xs )(xr + xm )
+allows us to compute accurately each Schur complement from the previous one. This
+is what we need when the Bunch–Parlett pivoting strategy selects a 1 × 1 pivot. If a
+2 × 2 pivot is selected, we apply (7) twice to obtain
+                                 (xr − xm )(xs − xm ) (xr − xm+1 )(xs − xm+1 )
+(8)          (m+1)
+            Srs       (m−1)
+                   = Srs                             ·                         .
+                                 (xm + xs )(xr + xm ) (xm+1 + xs )(xr + xm+1 )
+   Combining (7) and (8) with (6), we get the following algorithm to compute a
+symmetric RRD of a symmetric diagonally scaled Cauchy matrix.2
+   Algorithm 1. Symmetric RRD of a symmetric diagonally scaled Cauchy matrix.
+   Input: S = {s1 , . . . , sn }; x = {x1 , . . . , xn }
+   Output:
+      D is a rank × rank diagonal matrix, where rank is the rank of
+      the diagonally scaled Cauchy matrix defined by S and x.
+      X is an n × rank block lower triangular matrix, with diagonal
+      blocks of dimension 1 × 1 or 2 × 2.
+      IPIV is an n-dimensional vector containing a permutation of
+      {1, . . . , n} such that, if Q = In and P = Q(IPIV, :), then
+                                                      n
+                                             si sj
+                                       P                      P T = XDX T .
+                                           xi + xj    i,j=1
+
+    2 We will use MATLAB [29] notation for submatrices, e.g., A(i : j, k : l) will indicate the submatrix
+
+of A consisting of rows i through j and columns k through l, and A(:, k : l) will indicate the submatrix
+of A consisting of columns k through l.
+         EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                       1133
+
+% Initializing
+           √      variables
+  α = (1 + 17)/8 ≈ 0.64
+  rank = n
+  IPIV = 1 : n
+  D = zeros(n)
+  for p = 1 : n and q = 1 : p
+      A(p, q) = sp sq /(xp + xq )
+      A(q, p) = A(p, q)
+  endfor
+% Main loop
+  k=1
+  while k ≤ n
+      μ0 = maximum entry of |A(k : n, k : n)| ≡ |A(r, s)| (r ≥ s)
+      μ1 = maximum entry of diag(|A(k : n, k : n)|) ≡ |A(p, p)|
+      if μ1 ≥ αμ0
+           if μ1 = 0
+                rank = k − 1
+                k =n+1
+           else
+                swap entries k ↔ p in IPIV
+                swap entries k ↔ p in x
+                swap rows k ↔ p and swap columns k ↔ p in A
+                for r = k + 1 : n and s = k + 1 : r
+                                        (xr − xk )(xs − xk )
+                      A(r, s) = A(r, s)
+                                        (xk + xs )(xr + xk )
+                      A(s, r) = A(r, s)
+                endfor
+                D(k, k) = A(k, k)
+                A(k : n, k) = A(k : n, k)/A(k, k)
+                A(k, k + 1 : n) = zeros(1, n − k)
+                k =k+1
+           endif
+      else
+           swap entries k ↔ s and swap entries k + 1 ↔ r in IPIV
+           swap entries k ↔ s and swap entries k + 1 ↔ r in x
+           swap rows k ↔ s and swap rows k + 1 ↔ r in A
+           swap columns k ↔ s and swap columns k + 1 ↔ r in A
+           for r = k + 2 : n and s = k + 2 : r
+                                  (xr − xk )(xs − xk )(xr − xk+1 )(xs − xk+1 )
+                A(r, s) = A(r, s)
+                                  (xk + xs )(xr + xk )(xk+1 + xs )(xr + xk+1 )
+                A(s, r) = A(r, s)
+           endfor
+% Orthogonal diagonalization of the 2 × 2 pivot A(k : k + 1, k : k + 1)
+           z = (A(k + 1, k + 1) − A(k, k))/A(k + 1, k)/2
+           if z = 0
+                t=1
+           else                         √        
+                t = sign(z)/ abs(z) + 1 + z 2
+           endif
+1134                     FROILÁN M. DOPICO AND PLAMEN KOEV
+
+                            √
+                     cs = 1/ 1 + t2
+                     sn =t · cs 
+                            cs sn
+                     U = −sn   cs
+                   D(k, k) = A(k, k) − t · A(k + 1, k)
+                   D(k + 1, k + 1) = A(k + 1, k + 1) + t · A(k + 1, k)
+                   A(k : k + 1, k : k + 1) = U
+                   A(k + 2 : n, k : k + 1) = A(k + 2 : n, k : k + 1) · U
+                                             · diag[ D(k,k)
+                                                       1          1
+                                                            , D(k+1,k+1) ]
+                   A(k : k + 1, k + 2 : n) =zeros(2, n − k − 1)
+                   k =k+2
+              endif
+         endwhile
+         X = A(:, 1 : rank)
+         D = D(1 : rank, 1 : rank)
+         Q =eye(n)
+         P = Q(IP IV, :)
+    The cost of Algorithm 1 is 4 n3 /3 + O(n2 ) ﬂops, or 2 n3 /3 + O(n2 ) if all n2
+possible values of (xr − xm ) and 1/(xr + xm ) are precomputed. Next, we show that
+the computed symmetric RRD is accurate.
+    Theorem 3.1. Let
+                                                         n
+                                                 si sj
+                                        C=
+                                               xi + xj   i,j=1
+
+be a real symmetric diagonally scaled Cauchy matrix, where s1 , . . . , sn and x1 , . . . , xn
+are ﬂoating point numbers. Let P, X,   and D   be the matrices of the factorization
+(3) computed by Algorithm 1 applied to C in ﬂoating point arithmetic with machine
+precision . Let us apply Algorithm 1 in exact arithmetic to C, but choosing the same
+dimensions and positions for the pivots as those selected in ﬂoating point arithmetic.
+Let X and D be the exact factors; thus P CP T = XDX T . If
+
+                                         648 (n + 2) 
+                                                         < 1,
+                                       1 − 648 (n + 2) 
+
+then
+       1.
+
+              ii − Dii | ≤     146 (n + 4) 
+            |D                                  |D(i, i)|        for all    i = 1, . . . , n.
+                              1 − 146 (n + 4) 
+
+       2.
+
+                             − X||F ≤ 13        684 (n + 2) 
+                          ||X                                    ||X||F .
+                                               1 − 684 (n + 2) 
+
+If, moreover,
+
+                                          12481 n     1
+                                                      < ,
+                                        1 − 12481 n   2
+then
+                EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                       1135
+
+     3.
+                                √         684 (n + 2) 
+ || 
+   X(:, j) − X(:, j)||2 ≤ 144       n                     ||X(:, j)||2   for all   j = 1, . . . , n.
+                                        1 − 684 (n + 2) 
+
+     According to Theorem 2.1 and (2), the third item in Theorem 3.1 is not necessary
+for computing accurate eigenvalues and eigenvectors. It is included for the sake of
+completeness and because it allows us to state error bounds for the column scaling
+of X with minimum condition number. We remark that the numerical constants
+appearing in the bounds above are not optimal: we have sometimes overestimated
+the constants to get simpler bounds. However, the order of magnitude is correct up
+to a factor smaller than 10. Theorem 3.1 remains valid if the rank, say ρ, of the
+matrix is less that n. In this case, the last n − ρ diagonal elements of D are exactly
+computed to be zero, and the corresponding columns of X are just the n − ρ columns
+of the identity matrix, and they are also exactly computed.
+     The proof of Theorem 3.1 is technical and is presented in the appendix. However,
+the argument explaining why Algorithm 1 accurately computes a symmetric rank
+revealing factorization of the diagonally scaled Cauchy matrix C can be easily under-
+stood. In the ﬁrst place, the recurrence relation (7) allows us to compute the entries
+of the Schur complements with a relative error bounded by 8n/(1 − 8n). Therefore,
+the elements of D and the entries of the columns of X corresponding to 1 × 1 pivots
+are also computed with small relative errors. For the quantities corresponding to 2×2
+pivots, the error analysis heavily depends on the properties of these pivots. As we
+will prove in the appendix, the 2 × 2 pivots selected by the Bunch–Parlett complete
+pivoting strategy are very well-conditioned indeﬁnite matrices (with a spectral condi-
+tion number less than 4.6 for the value α = 0.64 used in Algorithm 1), and the entries
+of their unitary eigenvectors are greater than 0.47 (again for α = 0.64). Therefore,
+the Jacobi algorithm computes with small relative error the eigenvalues (i.e., the ele-
+ments of D) and the entries of the eigenvectors of the 2 × 2 pivots. According to (6),
+the upper 2 × 2 block of the corresponding two columns of X is just the eigenvector
+matrix U , and therefore its entries are accurately computed. The rest of the elements
+of these two columns of X are obtained through multiplying by U and by Λ−1 , but
+these two matrices are well conditioned and all their entries have been computed with
+small relative error. This last step does not guarantee small entrywise relative errors
+but it does guarantee small normwise relative errors for X.
+     4. Symmetric Vandermonde matrices. A symmetric Vandermonde matrix
+is deﬁned as
+                                  ⎡                                ⎤
+                                    1   1       1    ...      1
+                                  ⎢ 1
+                                  ⎢     a      a2    ...    an−1 ⎥ ⎥
+                         n
+(9)       A = a(i−1)(j−1)
+                                  ⎢
+                                 =⎢ 1   a  2
+                                               a  4
+                                                     . . . a2(n−1) ⎥
+                                                                   ⎥,
+                           i,j=1  ⎢ ..   ..     ..            ..   ⎥
+                                  ⎣ .     .      .   ...       .   ⎦
+                                       n−1    2(n−1)        (n−1)2
+                                    1 a      a       ... a
+
+where a is a real number. The class of symmetric Vandermonde matrices depends
+only on one parameter, and it is the only class of matrices which are, simultaneously,
+symmetric and of Vandermonde type. Symmetric Vandermonde matrices with n > 2
+are singular when a = 0, a = 1, and a = −1. In these cases they have only, 2, 1, and
+2, respectively, nonzero eigenvalues that can be accurately computed by any standard
+symmetric eigenvalue algorithm because they are of similar magnitudes. In fact, when
+1136                    FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+a = 1, the only nonzero eigenvalue is equal to n. We assume that a is diﬀerent from
+0, 1 and −1. The matrix A is positive deﬁnite if a > 1 and, in this case, A is also
+totally positive. Therefore, when a > 1, an accurate bidiagonal factorization of A
+can be computed [26, section 3], and its eigenvalues can be obtained to high relative
+accuracy with the method presented in [26]. The algorithm we introduce in section 5
+for computing accurate symmetric RRDs of symmetric totally positive matrices can
+also be applied to symmetric Vandermonde matrices with a > 1.
+     In this section, we present a method for computing an accurate RRD of A, in the
+sense of (2), by respecting the symmetry of A. This allows us to compute eigenvalues
+and eigenvectors to high relative accuracy, as explained in the introduction.
+     The method we present to compute an accurate RRD of A is very diﬀerent from
+the one we used for diagonally scaled Cauchy matrices. The Schur complement of a
+Vandermonde matrix does not inherit the Vandermonde structure. Moreover, row and
+column permutations coming from any pivoting strategy also destroy the symmetric
+Vandermonde structure. Our approach avoids the computation of the Schur comple-
+ments and, also, avoids pivoting. To be more precise, in the case |a| < 1, we use exact
+formulas for the elements of the LDLT factorization of A, where L is unit lower trian-
+gular and D is diagonal, and we prove that the condition number of L in the 1-norm
+is O(n2 ) when |a| ≤ 23 . In the case |a| > 1, we use exact formulas for the elements
+                                                                             n
+of the L̄D̄L̄T factorization of the converse of A, i.e., A# ≡ An−i+1,n−j+1 i,j=1 , and
+we will prove that κ1 (L̄) = O(n2 ) when |a| ≥ 32 . Note that in both cases |a| ≤ 23 and
+|a| ≥ 32 , we are dealing with matrices whose elements vary widely and in which the
+largest elements are in the ﬁrst positions. This is the reason why we are able to get
+RRDs without using pivoting strategies. The formulas we use allow us to compute
+accurate LDLT factorizations for any value of a, but only when |a| ≤ 23 or |a| ≥ 32
+can we guarantee that they are RRDs. These limits are somewhat arbitrary since we
+can consider values of a closer to |a| = 1 at the cost of increasing the bound for κ1 (L).
+However, it should be stressed that we cannot consider values of a as close as we want
+to |a| = 1 because κ1 (L) approaches 2n as |a| approaches 1.
+     In plain words, there are three limits for which the matrix A is extremely ill
+conditioned and that have eigenvalues that can vary widely: |a| small enough, |a|
+large enough, and |a| close enough to 1. We are able to compute eigenvalues and
+eigenvectors of A to high relative accuracy by respecting the symmetry only in the ﬁrst
+two cases, i.e., when A contains elements with very diﬀerent magnitudes. Eigenvalues
+and eigenvectors for any value of a can be computed to high relative accuracy by
+combining the algorithm presented in [5] to compute a nonsymmetric RRD of A with
+the signed SVD (SSVD) algorithm in [11], at the cost of not respecting the symmetry
+of the problem.
+     Consider ﬁrst the case |a| < 1. We start with the LDU decomposition A = LDLT .
+The entries of L and D are quotient of minors of A [15, section 1.II]:
+
+                          det A(1 : i, 1 : i)         1
+                                                                     
+                                                                     i−1
+(10)          di =                                = a 2 (i−2)(i−1) ·     (at − 1),
+                      det A(1 : i − 1, 1 : i − 1)                    t=1
+
+                      det A([1 : j − 1, i], 1 : j)    1 − ai−j+t
+                                                     j−1
+(11)          lij =                                =              .
+                          det A(1 : j, 1 : j)        t=1
+                                                         1 − at
+
+    Next, we prove that when |a| ≤ 23 , the entries of L and L−1 are bounded by e6 ;
+thus L is well conditioned.
+                      EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                      1137
+
+       Lemma 4.1. If 0 ≤ x ≤ 23 and j ≥ 1, then
+
+                                           
+                                           j−1
+                                                 1
+                                                      ≤ e6 .
+                                           t=1
+                                               1 − xt
+
+    Proof. We start by observing that log(1 − xt ) ≥ −3xt for t ≥ 1: If f (z) =
+log(1 − z) + 3z, then f  (z) = z−1
+                                  1
+                                           z−1 ≥ 0, meaning f (z) is increasing on [0, 3 ]
+                                     + 3 = 3z−2                                        2
+
+and f (z) ≥ f (0) = 0 on the same interval. Therefore,
+                          ∞                    ∞
+                                                       −3x
+                     log        (1 − x ) ≥ −3
+                                      t
+                                                    xt =     ≥ −6
+                            t=1                 t=1
+                                                         1−x
+
+and
+
+                               
+                               j−1          ∞
+                                     1            1
+                                          ≤            ≤ e6 .
+                               t=1
+                                   1 − xt
+                                            t=1
+                                                1 − xt
+
+
+
+    Next, we bound the entries lij of L: If 0 < a ≤ 23 , or − 23 ≤ a < 0 and i − j is
+even, we have
+
+                                        1 − ai−j+t      1
+                                                   ≤          ,
+                                          1 − at     1 − |a|t
+
+and using (11) and Lemma 4.1 we get
+
+                                  
+                                  j−1
+                                      1 − ai−j+t   
+                                                   j−1
+                                                          1
+                          lij =                  ≤              ≤ e6 .
+                                  t=1
+                                        1 − at
+                                                   t=1
+                                                       1 − |a|t
+
+
+
+Otherwise, if − 23 ≤ a < 0 and i − j is odd, we again have
+
+                
+                j−1
+                    1 − ai−j+t   1 − ai−1  1 − ai−j−1+t
+                                            j−1
+                                                           1 + |a|i−1 6
+        lij =                  =          ·              ≤            · e ≤ e6 .
+                t=1
+                      1 − at     1 − ai−j
+                                            t=1
+                                                1 − at     1 + |a|i−j
+
+
+
+Either way, lij ≤ e6 and L1 ≤ e6 n.
+    The entries of L−1 are also quotients of minors of A, as we now describe. From
+the LDU decomposition A = LDU we get A−T # = L−T # D−T # U −T # . Therefore, by
+formula (1.31) in [2],
+                 −1      
+                 L     ij
+                          = L−T # )n−j+1,n−i+1
+                             det A−T # ([1 : n − i, n − j + 1], 1 : n − i + 1)
+                           =
+                                 det A−T # (1 : n − i + 1, 1 : n − i + 1)
+                             det A−1 (i : n, [j, i + 1 : n])
+                           =
+                                 det A−1 (i : n, i : n)
+                                       det A([1 : j − 1, j + 1 : i], 1 : i − 1)
+                           = (−1)i+j ·
+                                              det A(1 : i − 1, 1 : i − 1)
+                                             1
+                                                            
+                                                            j−1
+                                                                   1 − ai−j+t
+(12)                       = (−1)i+j · a 2 (i−j−1)(i−j) ·                     .
+                                                               t=1
+                                                                     1 − at
+1138                          FROILÁN M. DOPICO AND PLAMEN KOEV
+                           
+       Similarly, (L−1 )ij  ≤ e6 when |a| ≤ 23 , and
+
+                                 κ1 (L) = L1 · L−1 1 ≤ e12 n2 ;
+
+i.e., L is well conditioned when |a| ≤ 23 . The constant e12 and the factor n2 in the
+previous bound are pessimistic, and the true values of κ1 (L) are much smaller. They
+are shown in the following table for some values of a in 30×30 Vandermonde matrices:
+              a       −2/3     −0.5     −0.3      −0.05         0.05          0.3      0.5      2/3
+            κ1 (L)    92.12    79.25    69.83     61.50        64.16        126.98   379.12   2694.99
+
+       When |a| > 1 we consider the converse of A:
+                                        n                 n
+                        A# ≡ An−i+1,n−j+1 i,j=1 = a(n−i)(n−j) i,j=1 .
+
+
+The matrices A and A# are similar via an orthogonal similarity transformation,
+
+                                                A = JA# J,
+
+where the matrix J = [δn−i+1,j ]ni,j=1 is the reverse identity (which is orthogonal and
+involutary: J = J T = J −1 ). Therefore, it suﬃces to compute an accurate RRD of A# .
+Consider the LDU decomposition A# = L̄D̄L̄T . The entries of L̄ and D̄ are quotients
+of minors of A# ; thus, after some long but elementary manipulations, we get
+
+                                                      i(i−1)       
+                                                                   i−1
+                                  d¯i = a(n−i) −
+                                              2
+(13)                                                     2     ·         (at − 1),
+                                                                   t=1
+
+                                                         
+                                                         j−1
+                                                             ai−j+t − 1
+(14)                             ¯lij = a(n−1)(j−i)                     .
+                                                         t=1
+                                                               at − 1
+
+
+       For |a| ≥ 32 , the entries ¯lij are bounded as
+
+                                                
+                                                j−1
+                                                        1
+                                       ¯lij ≤                 ≤ e6 .
+                                                    1 − |a|−t
+                                                t=1
+
+
+       For the entries of L̄−1 , we obtain analogously to (12),
+
+                      −1                                          ai−j+t − 1
+                                                                   j−1
+                                            (j−i)(n− 12 (i−j+1))
+                      L̄       = (−1)i+j
+                                         · a                     ·              .
+                            ij
+                                                                   t=1
+                                                                       at − 1
+
+
+Finally, since n − 12 (i − j − 1) ≥ j − 1 we have
+
+            −1                                ai−j+t − 1 j−1
+                                                 j−1                  1
+            L̄       = a(j−i)(n− 12 (i−j+1)) ·             ≤               ≤ e6 .
+                  ij                                 at − 1        1 − |a|−t
+                                                 t=1           t=1
+                  EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                              1139
+
+     Again, κ1 (L̄) ≤ e12 n2 . Therefore, L̄ is well conditioned when |a| ≥ 32 , and
+A = (J L̄)D̄(J L̄)T is an RRD of A. The true values of κ1 (L̄) are much smaller
+than the bound—in particular, for 30 × 30 matrices κ1 (L̄) = 13.37 for a = 32 and
+κ1 (L̄) = 2.35 for a = − 32 . We have observed that κ1 (L̄) decreases as |a| increases.
+     In order to guarantee high relative accuracy in each computed entry of L, L̄, D,
+and D̄, we compute all expressions ai − 1 to high relative accuracy as ai − 1 when
+ai < 0 and as (|a| − 1)(|a|i−1 + |a|i−2 + · · · + 1) when ai > 0.
+     The cost of computing factorizations with the formulas (10) and (11), or (13) and
+(14), is O(n2 ). We need n2 ﬂops to compute ai for i = 1, 2, . . . , n2 , and n ﬂops to
+          j
+compute p=0 |a|p for j = 1, 2, . . . , n. With this, at most n extra ﬂops are needed to
+compute ai − 1 for i = 1, 2, . . . , n. All the diagonal elements di , i = 1, 2, . . . , n, are
+computed in 6n ﬂops. If i − j = k, the n − k oﬀ-diagonal elements lij are computed
+in 2(n − k) ﬂops. Taking into account that k = 1, 2, . . . , n − 1, n2 + O(n) ﬂops are
+needed to compute all oﬀ-diagonal elements lij . The total cost of computing the
+LDLT factorization using (10) and (11) is 2n2 + O(n) ﬂops. A similar argument
+shows that the total cost of computing the L̄D̄L̄T factorization using (13) and (14) is
+2n2 + O(n) ﬂops. This extremely fast performance is important in its own right, but
+for the purpose of computing eigenvalues and eigenvectors to high relative accuracy
+the cost of applying the J-orthogonal or SSVD algorithms to the RRD is O(n3 ),
+and the cost O(n2 ) in the RRD computation does not signiﬁcantly improve the total
+cost.
+    5. Computing an RRD of a TN matrix. The matrices with all minors non-
+negative are called totally nonnegative (TN). They appear in a wide range of problems
+and applications (see [2, 14, 17, 24, 26] and references therein). One of the most im-
+portant application is to one-dimensional oscillatory problems [16].
+    It has been recently shown [26, 25] that many accurate computations with nonsin-
+gular n×n TN matrices are possible when these matrices are appropriately represented
+as products of nonnegative bidiagonal matrices:
+
+(15)              A = L(1) · L(2) · · · L(n−1) · D · U (n−1) · · · U (2) · U (1) ,
+
+where D is diagonal. This decomposition was introduced in [18, 19], and it is a unique,
+intrinsic representation for any nonsingular TN matrix A. This bidiagonal decomposi-
+tion will be denoted by BD(A). We refer to [26, section 2.2] for a detailed explanation
+of the structure of the factorization (15), and also for the essential relationship be-
+tween this factorization and Neville elimination, an alternative process to Gaussian
+elimination that allows one to compute (15) and to check whether a matrix is TN or
+not.
+     The numerical virtues of BD(A) are discussed at length in [26, 25]. This decompo-
+sition reveals the TN structure of A, and its nontrivial entries accurately determine the
+eigenvalues, the SVD, the inverse, and other properties of a nonsingular TN matrix.
+Starting with the representation (15), one can perform many highly accurate matrix
+computations with nonsingular TN matrices [26, 25], and, in particular, the SVD of
+a TN matrix A can certainly be computed given (15) (see Algorithm 6.1 from [26]).
+The SVD is, of course, an RRD. This approach, however, relies on the convergence
+properties of an algorithm for computing the SVD of a bidiagonal matrix.
+     Our goal in this section is to design algorithms that compute an accurate RRD
+of a nonsingular TN matrix given its bidiagonal factorization (15) in O(n3 ) time by
+using a ﬁnite process and respecting the symmetry; i.e., a symmetric TN matrix will
+1140                  FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+have a symmetric RRD. This last requirement forces us to develop two algorithms:
+one for general TN matrices and another speciﬁcally for symmetric TN matrices.
+    5.1. RRD of a nonsymmetric TN matrix. Given the bidiagonal decomposi-
+tion (15) of a nonsingular TN matrix A, we can accurately compute a decomposition
+A = QBH T , where Q and H are orthogonal and B is bidiagonal, using the ﬁrst part
+of Algorithm 6.1 from [26]. All entries of B are computed with relative errors of order
+, while Q and H are computed by accumulating Givens rotations with normwise
+                               2 = O(). A similar bound holds for H. If B = D̄Ū ,
+errors of order , i.e., Q − Q
+where D̄ is diagonal and Ū is unit upper bidiagonal, then B = D̄Ū need not be an
+RRD of B.
+    How do we compute an RRD of B? We can simply run GECP on B. Since B is
+acyclic (the bipartite graph of B does not have any cycles), the process of Gaussian
+elimination with complete pivoting will not involve any subtractions and will therefore
+be highly accurate (see section 6 and Algorithm 10.1 in [6]). More precisely, if P1
+and P2T are the permutation matrices coming from the complete pivoting strategy
+and B = P1 LDU P2T , with L unit lower triangular, U unit upper triangular, and D
+diagonal, then all the entries of the L, D, and U factors are computed with relative
+errors of order .
+    Once we have B = P1 LDU P2T , we obtain an RRD of A:
+
+                       A = (QP1 L) · D · (U P2T H T ) ≡ XDY T .
+
+A direct and standard error analysis shows that the computed factors satisfy the error
+bounds (2). The cost of computing B is at most 16    3      2
+                                                  3 n + O(n ) ﬂops [26], and forming
+                                    3      2
+Q and H requires not more than 6n + O(n ) ﬂops. The cost of GECP on B does not
+                                 3
+exceed 23 n3 + O(n2 ) ﬂops and n3 comparisons. Finally, the last two matrix multipli-
+cations require not more than 2n3 ﬂops. The total cost does not exceed 14 n3 + O(n2 )
+            3
+ﬂops and n3 comparisons.
+     5.2. RRD of a symmetric TN matrix. The techniques of section 5.1 can
+certainly be used to compute an RRD of a nonsingular symmetric TN matrix given
+its bidiagonal decomposition. This approach does not, however, respect the symmetry
+of the matrix. In this subsection we present a diﬀerent RRD algorithm, which does
+respect the symmetry.
+     Let the bidiagonal decomposition of a symmetric and nonsingular TN matrix A
+be given. Then in (15) we have L(i) = (U (i) )T . We can use the techniques of [26] to
+apply highly accurate Givens rotations to A and reduce A to tridiagonal form T :
+
+                                     A = QT QT ,
+
+where Q is orthogonal and T = LDLT is TN. All entries in the lower unit bidiagonal
+factor L and in the diagonal factor D are computed with relative errors of order ,
+                              2 = O(). Notice that the previous process computes
+while the error in Q is Q − Q
+BD(T ) and Q starting from BD(A), and that the decomposition T = LDLT need not
+reveal the rank of T since L need not be well conditioned.
+    The remaining task in getting an accurate symmetric RRD is to compute, given
+BD(T ), an accurate RRD of T by using symmetric GECP:
+
+                                  T = P L̄D̄L̄T P T ,
+                   EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                 1141
+
+where P is a permutation matrix, L̄ is unit lower triangular, and D̄ is diagonal. Then
+the symmetric RRD of A is
+
+                                    A = (QP L̄)D̄(QP L̄)T .
+
+     We will show how to compute P and all the entries of L̄ and D̄ with relative
+errors of order . Our approach is based on two key ideas: the ﬁrst is that T is
+positive deﬁnite, and thus the pivoting strategy in GECP will be diagonal, and the
+second is that the elements of L̄ and D̄ are signed quotients of minors of T . We
+will proceed in three steps as follows: (a) The bidiagonal factorization of a principal
+submatrix of T is accurately computed starting from BD(T ) in Algorithm 3; (b) this
+is used in Algorithm 4 to compute accurate minors of T ; and (c) the elements of L̄
+and D̄ are computed as quotients of minors in Algorithm 5, together with P .
+     We can summarize the algorithm to compute a symmetric RRD of a nonsingular
+symmetric TN matrix A as follows.
+     Algorithm 2. Computing a symmetric RRD A = XDX T of a symmetric
+nonsingular TN matrix A given BD(A).
+       1. Apply Givens rotations as in [26, section 4.3] to compute an orthogonal matrix
+          Q and BD(T ) of a symmetric TN tridiagonal matrix T such that A = QT QT .
+       2. Compute a symmetric RRD of T = P L̄D̄L̄T P T using Algorithm 5.
+       3. Multiply to get A = (QP L̄)D̄(QP L̄)T ≡ XDX T .
+     Step 1 requires not more than 83 n3 + O(n2 ) ﬂops to get BD(T ) (see [26]) and not
+more than 3n3 + O(n2 ) additional ﬂops to compute Q. We will see that the cost of
+step 2 does not exceed 14 13 n3 + O(n2 ). Finally, the cost of step 3 does not exceed n3 .
+The total cost of Algorithm 2 does not exceed 21n3 + O(n2 ) ﬂops.
+     We will show that the computation of the symmetric RRD T = P L̄D̄L̄T P T is
+subtraction free. Combining this with the errors in Q, BD(T ), and matrix multipli-
+cation, it can be easily shown that the computed RRD satisﬁes (2).
+     Once a symmetric RRD, A = XDX T , of the TN matrix A is computed, the
+eigenvalues and eigenvectors of A can be accurately computed by using the one-sided
+Jacobi algorithm to get the singular values and left singular vectors of XD1/2 [10,
+section 5.4.3], [9]. The Jacobi rotations in this procedure have to be applied on the
+left, and the whole process respects the symmetry. The techniques introduced in [26]
+allow us to develop another symmetric method to compute accurate eigenvalues of a
+nonsingular symmetric TN matrix A: First, step 1 of Algorithm 2 is performed to
+get T = LDLT ; next, the diﬀerential quotient-diﬀerence algorithm with shifts (dqds)
+[13] is applied on the Cholesky factor LD1/2 to compute its accurate singular values.
+This approach does not use RRDs.
+
+    5.2.1. The bidiagonal decomposition of a principal submatrix of a TN
+tridiagonal symmetric matrix. Let T be a nonsingular symmetric TN tridiagonal
+matrix3 and S be a principal submatrix of T . The purpose of this section is to accu-
+rately compute BD(S) given BD(T ).
+    Consider ﬁrst the simple special case when the principal submatrix S is obtained
+
+    3 The results of this section remain valid for positive deﬁnite tridiagonal matrices because a
+
+positive deﬁnite tridiagonal matrix is TN if and only if its oﬀ-diagonal elements are nonnegative
+[16, p. 81]. Therefore, any positive deﬁnite tridiagonal matrix is similar to a TN matrix through a
+diagonal similarity transformation with elements ±1.
+1142                        FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+by erasing the ith row and the ith column of T :
+          ⎡                           ⎤
+             t11 t12
+          ⎢                           ⎥
+          ⎢ t21 . . .    ..
+                            .         ⎥
+     T =⎢ ⎢                           ⎥;
+                  ..     ..           ⎥
+          ⎣          .      . tn−1,n ⎦
+                       tn,n−1   tnn
+       S = T ([1 : i − 1, i + 1 : n], [1 : i − 1, i + 1 : n])
+           ⎡                                                                                             ⎤
+              t11 t12
+           ⎢         ..        ..                                                                        ⎥
+           ⎢ t21         .         .                                                                     ⎥
+           ⎢                                                                                             ⎥
+           ⎢         .         .                                                                         ⎥
+           ⎢           . .       . .   ti−2,i−1                                                          ⎥
+           ⎢                                                                                             ⎥
+           ⎢               t           ti−1,i−1                                                          ⎥
+         =⎢⎢
+                             i−1,i−2                                                                     ⎥.
+                                                                                                         ⎥
+           ⎢                                        ti+1,i+1 ti+1,i+2                                    ⎥
+           ⎢                                                    ..                   ..                  ⎥
+           ⎢                                        ti+2,i+1       .                      .              ⎥
+           ⎢                                                                                             ⎥
+           ⎢                                                    .                    ..                  ⎥
+           ⎣                                                      ..                .           tn−1,n   ⎦
+                                                                                tn,n−1            tnn
+     Once we ﬁgure out how to compute BD(S) from BD(T ), we can proceed by induc-
+tion and erase other rows and columns of S to obtain the bidiagonal decomposition
+of any principal submatrix of T .
+     Since the process of Neville elimination of S and T does not diﬀer for the ﬁrst
+i − 1 rows and columns, we have BD(S(1 : i − 1, 1 : i − 1)) = BD(T (1 : i − 1, 1 : i − 1)),
+and we need only compute BD(S(i + 1 : n, i + 1 : n)). Therefore, we may assume that
+i = 1 without any loss of generality.
+     Let BD(T ) and BD(S) be given as
+                        T = LDLT         and S = T (2 : n, 2 : n) = L̄D̄L̄T ,
+where D = diag(di )ni=1 , D̄ = diag(d¯i )ni=2 , and the unit lower bidiagonal matrices L
+and L̄ have oﬀ-diagonal elements li , i = 1, 2, . . . , n − 1, and ¯li , i = 2, 3, . . . , n − 1,
+respectively. From T = LDLT we have
+                               2
+(16)         t11 = d1 ; tii = li−1 di−1 + di ; ti−1,i = li−1 di−1 , i = 2, 3, . . . , n,
+and from T (2 : n, 2 : n) = L̄D̄L̄T we get
+(17)         t22 = d¯2 ; tii = ¯li−1
+                                 2
+                                     d¯i−1 + d¯i ; ti−1,i = ¯li−1 d¯i−1 , i = 3, 4, . . . , n.
+By comparing (16) and (17), we obtain
+                          d¯2 = l12 d1 + d2 ,
+(18)                       d¯i = di + li−1
+                                        2
+                                           di−1 − l¯i−1
+                                                     2
+                                                           d¯i−1 , i = 3, 4, . . . , n,
+                       l¯i d¯i = li di , i = 2, 3, . . . , n − 1.
+We introduce auxiliary variables zi ≡ d¯i − di and get rid of the subtraction in (18):
+       z2 = l12 d1 ,
+       d¯2 = z2 + d2 ,
+(19) ¯li = li di /d¯i , i = 2, . . . , n − 1,
+    zi+1 = d¯i+1 − di+1 = li2 di − l¯i2 d¯i = (d¯i − di )li2 di /d¯i = li l¯i zi ,            i = 2, . . . , n − 1,
+    d¯i+1 = zi+1 + di+1 , i = 2, . . . , n − 1.
+                   EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                 1143
+
+The iterations (19) need only be performed for those i ≥ 2 for which li = 0. These
+iterations therefore cost 5(j − 1), where j < n is the smallest index such that lj = 0
+(or j = n if lk = 0 for k = 1, 2, . . . , n − 1). In the general case, when we remove the
+ith row and the ith column of T , the cost is 5(j − i), where j ≥ i is deﬁned as above.
+      We now implement the recurrences (19).
+      Algorithm 3. Let T = LDLT be a nonsingular symmetric TN tridiagonal ma-
+trix, where D = diag(di )ni=1 , di > 0, i = 1, 2, . . . , n, and L is a unit lower bidiagonal
+matrix with oﬀ-diagonal entries li ≥ 0, i = 1, 2, . . . , n − 1. Let α = {α1 , α2 , . . . , αr },
+1 ≤ α1 < α2 < · · · < αr ≤ n be a subset of indices. Given the vectors d =
+(d1 , d2 , . . . , dn ) and l = (l1 , . . . , ln−1 ), the following subtraction-free algorithm com-
+putes the decomposition T (α, α) = L̄D̄L̄T in at most 5r time:
+         function [d,         ¯ ¯l] = TNTridiagSubmatrix(d, l, α)
+         n = length(d)
+         d¯ = d; ¯l = l; ¯ln = 0
+         Let β be the complement of α in the set {1, 2, . . . , n}
+         (In MATLAB notation: β = [1 : n]; β(α) = 0; β = β(β > 0))
+         for k = length(β) : −1 : 1
+                 if βk < n
+                     z = dβk lβ2 k
+                     j = βk + 1
+                     d¯j = z + dj
+                     while ¯lj = 0
+                           ¯lj = lj dj /d¯j
+                            z = lj ¯lj z
+                            d¯j+1 = z + dj+1
+                            j =j+1
+                     end
+                 end
+                ¯lβ −1 = 0; ¯lβ = 0
+                   k                k
+         end
+         d¯ = d(α);
+                  ¯      ¯l = ¯l(α); ¯l = ¯l(1 : (r − 1))
+
+    5.2.2. A minor of a TN tridiagonal symmetric matrix. Next we consider
+the problem of accurately computing the value of any minor of a nonsingular sym-
+metric TN tridiagonal matrix T :
+
+                            T (α, β) = T ([i1 , . . . , ik ], [j1 , . . . , jk ]),
+
+where α = [i1 , i2 , . . . , ik ], 1 ≤ i1 < i2 < . . . < ik ≤ n, and β = [j1 , j2 , . . . , jk ],
+1 ≤ j1 < j2 < . . . < jk ≤ n.
+    Let 1 ≤ k1 < k2 < · · · < kr ≤ k be all indices such that iks = jks , s = 1, 2, . . . , r,
+and let γ = {i1 , i2 , . . . , ik }\{ik1 , . . . , ikr }. Then [16, p. 80]
+
+(20)                     det T (α, β) = det T (γ, γ)tik1 jk1 · · · tikr jkr .
+
+The minor det T (γ, γ) can be computed by ﬁrst computing the bidiagonal decom-
+position of T (γ, γ) using Algorithm 3 (then det T (γ, γ) = d¯1 d¯2 · · · d¯k−r ). Any entry
+tiks jks , iks = jks , equals either zero, tm,m+1 , or tm+1,m . The latter two are easily
+computed from T = LDLT : tm,m+1 = tm+1,m = dm lm . The total cost of computing
+any minor det T (α, β) following this procedure does not exceed 6k ﬂops.
+1144                      FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+    Remark 1. A set of indices z ⊂ {1, 2, . . . , n} can be sorted in increasing order in
+4n time by using the following MATLAB commands:
+
+                            x=1:n; x(z)=0; y=1:n; z=y(x==0);
+
+therefore, we can sort the index sets in T (α, β) in 8n time and allow index sets in
+arbitrary order in Algorithm 4 below.
+    Algorithm 4 (minor of a TN tridiagonal matrix). Let T = LDLT be a non-
+singular symmetric TN tridiagonal matrix with notation as in Algorithm 3. Given
+the vectors d and l, and two sets of indices α and β, the following subtraction-free
+algorithm computes | det T (α, β)| to high relative accuracy in at most 14n time:
+       function f = TNTridiagMinor(d, l, α, β)
+              . . . ﬁrst sort α and β in increasing order (see Remark 1 above). . .
+       f = 1; γ = [ ]
+       for i = 1 : length(α)
+            if αi = βi
+                   γ = [γ, αi ]
+            elseif |αi − βi | = 1
+                   f = f ds ls , where s = min(αi , βi )
+            else
+                   f = 0; return
+            end
+       end
+        ¯ ¯l] = TNTridiagSubmatrix(d, l, γ)
+       [d,
+       f = f d¯1 d¯2 · · · d¯s , where s = length(γ)
+     5.2.3. Computing an RRD of a TN tridiagonal symmetric matrix. In
+this section we present an O(n3 ) algorithm which, given the factorization T = LDLT
+of a nonsingular symmetric TN tridiagonal matrix T , computes an accurate, sym-
+metric RRD of T . The RRD in question is the LDU decomposition of T resulting
+from GECP, with L (resp., U ) being a unit lower (resp., upper) triangular matrix.
+We compute each entry of this LDU decomposition as a quotient of minors of T . We
+compute each minor of T accurately using Algorithm 4.
+     Since T is positive deﬁnite, the pivoting in GECP will be diagonal. The pivot
+order is determined by comparing the diagonal entries in the Schur complements; if
+γ = [γ1 , γ2 , . . . , γk ] is the current pivot order at step k, and α = {1, 2, . . . , n}\γ, then
+the diagonal entries of the kth Schur complement are4
+
+                        det T ([γ, αj ], [γ, αj ])
+(21)                                               ,    j = 1, 2, . . . , n − k.
+                             det T (γ, γ)
+
+We need only compare the numerators in (21) and we compute those using Algo-
+rithm 4.
+
+    4 These expressions for the entries of the Schur complements are valid if for each step of Gaussian
+
+elimination the row and column containing the chosen pivot are moved to the ﬁrst positions in the
+corresponding Schur complement and the rows and columns between the ﬁrst and the ones containing
+the pivot are displaced down one position. This is not the usual implementation of pivoting in
+Gaussian elimination, which simply interchanges the ﬁrst row and the ﬁrst column with the pivot
+row and the pivot column, respectively [21, 22]. Obviously both implementations produce similar
+bounds on the elements of L and U , and, therefore, they are equivalent from the point of view of
+computing RRDs.
+                  EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                1145
+
+     Once we obtain the pivot order γ, the entries of the LDU decomposition T =
+P L̄D̄L̄T P T resulting from GECP are computed as
+
+                                det T (γ(1 : i), γ(1 : i))
+(22)                 D̄ii =                                      ;
+                            det T (γ(1 : i − 1), γ(1 : i − 1))
+                            det T (γ(1 : i), γ([1 : i − 1, j]))
+(23)                 L̄ji =                                     ,    j > i,
+                                det T (γ(1 : i), γ(1 : i))
+
+with each minor in (22) and (23) computed using Algorithm 4.
+      The sign of the minor det T (γ(1 : i), γ([1 : i − 1, j])) equals sgn(γ(1 : i)) · sgn(γ([1 :
+i − 1, j])). Here sgn(δ) is the sign of [δ1 , δ2 , . . . ] as a permutation of the ordered set
+{δ1 , δ2 , . . . }, deﬁned as sgn(δ) ≡ (−1)t , where t ≡ #{(k, l)|k < l and δk > δl }; i.e., t is
+the minimum number of transpositions necessary to sort the elements of δ in increasing
+order. The ﬁrst i − 1 entries of γ(1 : i) and γ([1 : i − 1, j]) coincide; therefore the sign
+                                                             i−1
+of det T (γ(1 : i), γ([1 : i − 1, j])) equals (−1)s , s = k=1 xor(γi < γk , γj < γk ).
+      Algorithm 5 (GECP on a TN tridiagonal matrix). Let T = LDLT be a
+nonsingular symmetric TN tridiagonal matrix. Given the vectors d and l (deﬁned in
+Algorithm 3), the following subtraction-free algorithm computes the decomposition of
+T = P L̄D̄L̄T P T resulting from Gaussian elimination with complete pivoting. Every
+entry of D̄ and L̄ is computed to high relative accuracy, and the total cost does not
+exceed 14 13 n3 + O(n2 ).
+         function [P, L̄, D̄] = TNTridiagGECP(d, l)
+         n = length(d)
+         L̄ = eye(n); P = eye(n); D̄ = eye(n);
+         α = 1 : n; γ = [ ]
+                   . . . First, determine the pivot order. . .
+       for i = 1 : n
+           for j = 1 : n − i + 1
+               zj = TNTridiagMinor(d, l, [γ, αj ], [γ, αj ])
+           end
+           Let m be such that zm =             max zj
+                                            1≤j≤n−i+1
+          γi = αm
+          α = α([1 : m − 1, m + 1 : n − i + 1])
+          t i = zm
+       end
+                    . . . Next, compute the entries of D̄ and L̄ using (22) and (23). . .
+       for i = 1 : n
+          D̄ii = ti /ti−1 ( . . . assume t0 = 1)
+           for j = i + 1 : n
+                     . . . Compute the sign of L̄ji . . .
+               s=1
+               for k = 1 : i − 1
+                    s = s · (−1)^xor(γi < γk , γj < γk )
+               end
+               L̄ji = s · TNTridiagMinor(d, l, γ(1 : i), γ([1 : i − 1, j]))/ti
+          end
+       end
+       P = P (:, γ)
+1146                   FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+     6. Numerical experiments. We performed extensive numerical tests and con-
+ﬁrmed the accuracy and cost of our algorithms. More precisely, we combined Al-
+gorithm 1 and the one-sided J-orthogonal algorithm [33, Algorithm 3.3.1, page 66]
+to compute, preserving the symmetry, accurate eigenvalues and eigenvectors of sym-
+metric diagonally scaled Cauchy matrices with diﬀerent dimensions and several dis-
+tributions of random Cauchy parameters. The output was compared with that of
+another O(n3 ) accurate algorithm (nonsymmetric RRD computed as in [5] combined
+with the SSVD algorithm from [11]), and also with the output from the MATLAB
+eig function in variable precision arithmetic (with precision set to log10 κ2 (C) + 20
+decimal digits, guaranteeing at least 16 correct signiﬁcant digits in each eigenvalue).
+The output of all three algorithms agreed to at least 14 digits for all the eigenvalues,
+including the ones with tiniest absolute values. The computed eigenvectors also satis-
+ﬁed the bounds (1). Most test matrices had condition numbers well in excess of 1016 ,
+so conventional eigenvalue algorithms (e.g., the MATLAB function eig in double [23]
+precision) failed to get any correct digits in the eigenvalues with tiniest absolute values
+and in the direction of the eigenvectors corresponding to these eigenvalues (when at
+least two tiny eigenvalues λi such that |λi | ≤ 10−16 C2 were present). We performed
+similar tests on symmetric Vandermonde matrices for several dimensions and choices
+of the parameter a, and also for symmetric TN matrices. In the case of symmetric
+Vandermonde matrices, we also tested matrices with 23 < |a| < 32 and veriﬁed that the
+factorizations obtained with the approach in section 4 are not RRDs when |a| is close
+to one (κ2 (L) → 2n as |a| → 1). For these matrices, eigenvalues and eigenvectors to
+high relative accuracy can be obtained, at present, only through the nonsymmetric
+procedure by ﬁrst computing a nonsymmetric RRD as in [5] and then applying the
+SSVD algorithm from [11].
+     We present in detail one of our tests. We consider the 20 × 20 symmetric Vander-
+monde matrix A with a = 12 ; see (9). The condition number of A is κ2 (A) ≈ 3.5 · 1053 .
+We compute its eigenvalues using the following algorithms:
+       • Algorithm A: The MATLAB eig function with 75-digit arithmetic.
+       • Algorithm B: Compute a symmetric RRD using the formulas in section 4
+         followed by the J-orthogonal algorithm [33, Algorithm 3.3.1, page 66].
+       • Algorithm C: Compute a nonsymmetric RRD as in [5] followed by the SSVD
+         algorithm of [11].
+       • Algorithm D: The MATLAB eig function in double [23] precision arithmetic.
+The output of Algorithms A, B, and C agreed to at least 14 digits, so we plotted only
+the output of Algorithms B and D in Figure 6.1. Since κ2 (A) ≈ 3.5 · 1053 , Algorithm
+A computed all eigenvalues with at least 16 signiﬁcant decimal digits of accuracy.
+Algorithms B and C guarantee high relative accuracy for the computed eigenvalues.
+The results from those algorithms agreed with the ones from Algorithm A to at least
+14 digits. In contrast, the traditional Algorithm D returned only the eigenvalues of
+largest absolute value accurately, with the accuracy gradually decreasing until the
+eigenvalues with magnitude smaller than O()||A||2 were computed with no correct
+digits at all.
+
+     Appendix. Rounding error analysis for diagonally scaled Cauchy ma-
+trices. Theorem 3.1 is proved in this appendix in a more general setting. The error
+analysis we present remains valid when the Bunch–Parlett method is applied on any
+matrix for which it is possible to compute the entries of its Schur complements with
+relative errors bounded by k/(1 − k), where k is an integer positive number and 
+is the machine precision. For scaled Cauchy matrices, k = 8n according to (7).
+                       EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                             1147
+
+                       Eigenvalues of 20×20 symmetric Vandermonde matrix with a=1/2
+                  10
+               10
+
+                  0
+               10
+
+                  −10
+               10
+
+                  −20
+               10
+
+                  −30
+               10
+
+                  −40
+               10
+
+                  −50
+               10
+
+                  −60
+               10
+                       0             5               10            15         20
+
+     Fig. 6.1. Plots of the absolute values of the eigenvalues of the 20 × 20 symmetric Vandermonde
+matrix with a = 12 . The “” and “” symbols represent, respectively, the negative and positive
+eigenvalues computed with an accurate algorithm. The “×” and “+” symbols represent, respectively,
+the negative and positive eigenvalues computed by Algorithm D (implemented as the MATLAB
+function eig in double precision arithmetic). Data below the dotted line may be inaccurate for
+Algorithm D.
+
+
+
+       We use the conventional error model for ﬂoating point arithmetic [22, section 2.2]:
+
+                                    fl(a      b) = (a     b)(1 + δ),
+
+where a and b are real ﬂoating point numbers, ∈ {+, −, ×, /}, and |δ| ≤ . Moreover,
+we assume that neither overﬂow nor underﬂow occurs. We also use the following
+notation introduced in [22, Chapter 3]: θq is any number such that
+
+                                                     q
+(24)                                     |θq | ≤          ≡ γq .
+                                                   1 − q
+
+Moreover, the results in [22, Lemma 3.3] will be frequently used throughout this
+section without being explicitly referred to. We will assume that 0 < γq for all the
+symbols γq appearing in this section.
+    In what follows, α is the parameter used in the Bunch–Parlett pivoting strategy
+to decide whether a 1 × 1 or 2 × 2 pivot is selected (see Algorithm 1). We present the
+error bounds in this section depending on α, where 0 < α < 1. Thus values diﬀerent
+                                 √
+from the classical one, α = (1 + 17)/8, are also considered.
+    A.1. Auxiliary results on the Jacobi method. Let us write the Jacobi pro-
+cedure [21] to orthogonally diagonalize a 2 × 2 real symmetric matrix as a matrix
+factorization. The following equation holds:
+
+                 a c              cs     sn        a − ct    0          cs   −sn
+(25)                        =                                                         ,
+                 c b             −sn     cs          0    b + ct        sn    cs
+1148                      FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+where
+                                   b−a                           sign(ζ)
+(26)                          ζ=       ,        t=                                   ,
+                                    2c                  |ζ| +           1 + ζ2
+
+
+                                          1
+(27)                            cs = √          ,           sn = cs · t,
+                                         1 + t2
+
+and sign(0) = 1.
+     In general, disastrous cancellations may appear in the Jacobi procedure above,
+and the eigenvalues computed in ﬂoating point arithmetic may be inaccurate. How-
+ever, it is well known that the Jacobi procedure is backward stable because only
+orthogonal matrices are involved. Theorem A.1 below shows this, providing precise
+error bounds that we will use in the detailed error analysis of the next subsections.
+The Jacobi method computes accurate eigenvalues for well-conditioned matrices be-
+cause it is backward stable. We will see that this is the case for the 2 × 2 pivots
+selected by the Bunch–Parlett pivoting strategy.
+     Theorem A.1. Let
+
+                                          =        ã c̃
+                                          A
+                                                    c̃ b̃
+
+be a matrix of real ﬂoating point numbers. Let us apply to A            the Jacobi procedure
+(25) in ﬂoating point arithmetic with machine precision . Let            cs, s n, λ̃1 = ã − c̃ t̃,
+and λ̃2 = b̃ + c̃ t̃ be the exact magnitudes for A,         and let 
+                                                                     cs, s
+                                                                          n, λ̂1 , and λ̂2 be the
+corresponding computed counterparts. Then
+      1. 
+         cs = cs (1 + θ113 ).
+      2. sn = sn (1 + θ141 ).
+      3. λ̂1 = λ̃1 + e1 with |e1 | ≤ (|ã| + |c̃ t̃|)γ29 .
+      4. λ̂2 = λ̃2 + e2 with |e2 | ≤ (|b̃| + |c̃ t̃|)γ29 .
+Moreover, the computed eigendecomposition
+
+                              
+                              cs  sn         λ̂1      0                
+                                                                        cs     −sn
+                             −sn cs          0      λ̂2              sn      
+                                                                                cs
+
+                                           + E; more precisely,
+is nearly the exact eigendecomposition of A
+
+                    +E =           cs s
+                                        n            λ̂1         0             
+                                                                                cs       −sn
+                    A                                                                               ,
+                                   −sn 
+                                        cs             0         λ̂2           sn        
+                                                                                          cs
+             √
+where E2 ≤ 2 γ29 A F ≤ 2 γ29 A  2.
+   Proof. The bounds for   cs, s
+                                 n, λ̂1 , and λ̂2 follow from a direct application of
+Lemmas 3.1 and 3.3 in [22]. For the backward error bound, notice that
+
+                                 cs s
+                                     n          e1         0             
+                                                                          cs     −sn
+                       E=                                                                       .
+                                −sn 
+                                     cs          0          e2           sn      
+                                                                                  cs
+
+Then E
+       √ 2 = max{|e1 |, |e2 |} ≤ γ29 max{|ã| + |c̃ t̃|, |b̃| + |c̃ t̃|} ≤ γ29 max{|ã| + |c̃|, |b̃| +
+                F.
+|c̃|} ≤ 2 γ29 A
+                  EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                             1149
+
+    A.2. Properties of 2 × 2 Bunch–Parlett pivots. The 2 × 2 pivots selected
+by the Bunch–Parlett complete pivoting strategy are very well conditioned symmetric
+indeﬁnite matrices. The next lemma quantiﬁes this fact.
+    Lemma A.2. Let H be a real symmetric 2 × 2 matrix such that α |h21 | >
+max{|h11 |, |h22 |}, where 0 < α < 1. Then the spectral condition number, κ2 (H),
+of H is bounded as
+                                                   1+α
+                                        κ2 (H) <       .
+                                                   1−α
+This bound cannot be improved. In particular, if α = 0.6404, then κ2 (H) < 4.6.
+    Proof. Let us write the matrix H as
+                               0    h21        h11     0
+                    H=                     +                    ≡ H0 + H 1 .
+                              h21    0          0     h22
+The singular values of H0 are both equal to |h21 |. Then using Weyl’s perturbation
+theorem for singular values (see, for instance, [10, Corollary 5.1]), we get
+                              |h21 | + H1 2    |h21 | + α|h21 |    1+α
+                   κ2 (H) ≤                   <                   =      .
+                              |h21 | − H1 2    |h21 | − α|h21 |    1−α
+                                                                          
+The bound cannot be improved because the matrix H = α1 α1 has κ2 (H) =
+1+α
+1−α .
+    The entries of the eigenvectors of the 2 × 2 pivots selected by the Bunch–Parlett
+strategy are bounded below by 1/3. This means that small normwise variations in
+the eigenvectors imply small variations in the components.
+    Lemma A.3. Let H be a real symmetric     cs sn  2 × 2 matrix such that α |h21 | >
+max{|h11 |, |h22 |}, where 0 < α < 1. Let −sn     cs be the orthogonal eigenvector matrix
+of H; then
+                                                   √
+                             1                α + 1 + α2
+                            √ ≤ cs ≤                 √        2 ,
+                              2             1+ α+ 1+α         2
+
+
+
+                                      1                  1
+                                     √      2 ≤ sn ≤ √2 .
+                               1 + α + 1 + α2
+In particular, if α = 0.6404, then 0.47 ≤ sn and cs ≤ 0.88. The following simple
+lower bound for sn is valid for any α: 1/3 < √
+                                             sn.
+    Proof. From (26), |ζ| ≤ α and 1/(α + 1 + α2 ) ≤ |t| ≤ 1. Combining these
+bounds with (27), the lemma is proved.
+    A.3. Forward errors in RRDs. The entries of the Schur complements of diag-
+onally scaled Cauchy matrices are computed by (7) with relative errors less than γ8n .
+In this section we assume that the entries of the Schur complements are computed
+with relative errors less than γk ; thus the error analysis remains valid for other cases.
+    A nagging problem will arise in the analysis: the computed 2 × 2 pivots fulﬁll the
+conditions of Bunch and Parlett, i.e., α |ĥ21 | > max{|ĥ11 |, |ĥ22 |}, but the exact pivots
+may not. This justiﬁes the following lemma.
+    Lemma A.4. Let
+
+                       =       a(1 + βa ) c(1 + βc )             ã c̃
+                       A                                    ≡
+                                c(1 + βc ) b(1 + βb )             c̃ b̃
+1150                      FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+                                              max{|βa |, |βb |, |βc |} ≤ γk , and α |c̃| >
+be a matrix of real ﬂoating point numbers, where
+max{|ã|, |b̃|}, with 0 < α < 1. Denote A ≡ ac cb . If
+                                          √ 1+α
+(28)                                     4 2     γk ≤ 1,
+                                             1−α
+then
+                                                      1+α
+(29)                                     κ2 (A) ≤ 2       .
+                                                      1−α
+       Proof. Notice that
+                                                                      √
+(30)             = A + E1
+                A                  with         E1 F ≤ γk AF ≤         2 γk A2 .
+
+                                                            respectively. Now
+Let σ1 ≥ σ2 and σ̃1 ≥ σ̃2 be the singular values of A and A,
+Corollary 5.1 from [10] implies
+                                √                         √
+                     σ̃1   σ1 − 2 γk A2             1 − 2 γk
+             κ2 (A) =     ≥     √          = κ2 (A)     √           .
+                      σ̃2   σ2 + 2 γk A2          1 + 2 γk κ2 (A)
+From this we get
+                                                        
+                                                    κ2 (A)
+                                 κ2 (A) ≤           √            .
+                                                              
+                                               1 − 2 2 γk κ2 (A)
+The result follows from (28) and Lemma A.2, which implies
+                                     ≤ (1 + α)/(1 − α).
+                                κ2 (A)
+
+     Obviously the rigorous factor 2 in (29) is pessimistic, and in practice κ2 (A) ≈
+κ2 ( 
+    A) ≤ (1+α)/(1−α). However, at the cost of the nonessential factor 2, Lemma A.4
+allows us to get rigorous error bounds instead of ﬁrst-order error bounds. In particular,
+we can prove the following lemma.
+     Lemma A.5. Let
+
+                          ≡     ã c̃           a(1 + βa ) c(1 + βc )
+                          A                =
+                                 c̃ b̃           c(1 + βc ) b(1 + βb )
+
+be a matrix of real ﬂoating point numbers, where max{|β     a |, |βb |, |βc |} ≤ γk , and α |c̃| >
+max{|ã|, |b̃|}, with 0 < α < 1. Denote A ≡ ac cb . Let the eigenvalues of A be
+λ1 ≥ λ2 ; v1 and v2 be the corresponding orthonormal eigenvectors; and cs and sn be
+the components of the eigenvectors, i.e., v1 = [cs , −sn]T and v2 = [sn , cs]T or vice
+versa. Let λ̂1 , λ̂2 , v̂1 , v̂2 , 
+                                  cs, and s
+                                           n be their corresponding computed counterparts by
+applying the Jacobi process in (25)–(27) to A        in ﬂoating point arithmetic with machine
+precision . If
+                         √ 1+α
+(31)                 4    2     γk+29 ≤ 1             and     γ141+48k ≤ 1,
+                            1−α
+then
+        1.
+                            |λ̂i − λi |     1+α
+(32)                                    ≤ 4     γk+29 ,        i = 1, 2;
+                                |λi |       1−α
+                 EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                           1151
+
+       2.
+
+(33)                      v̂i − vi 2 ≤ γ4k+141 ,       i = 1, 2;
+
+       3.
+
+(34)          
+              cs = cs (1 + θ16k+113 )      and       s
+                                                      n = sn (1 + θ48k+141 ).
+
+     We have chosen to get error bounds for cs and sn that do not depend on α. At
+the cost of complicating the bounds, it is possible to get sharper bounds depending on
+α. Moreover, we have frequently overestimated the bounds to get simpler expressions.
+It is well known that the precise value of the constants appearing in roundoﬀ error
+bounds are, in any case, pessimistic.
+     Proof of Lemma A.5. According to Theorem A.1, λ̂1 and λ̂2 are the exact eigen-
+values of
+                                                     √
+                       +E
+                       A         with       E2 ≤ 2γ29 A   F,
+
+                                                        + E by only small relative
+while v̂1 and v̂2 diﬀer from the exact eigenvectors of A
+changes in each component. Therefore, by taking into account (30), we get that λ̂1
+and λ̂2 are the exact eigenvalues of
+                                                   √
+(35) A + E2 ≡ A + E1 + E          with    E2 2 ≤ 2 γk+29 AF ≤ 2 γk+29 A2 ,
+
+and v̂1 , v̂2 are small relative componentwise perturbations of the eigenvectors of A +
+E2 . Weyl’s perturbation theorem for eigenvalues implies that |λ̂i − λi | ≤ E2 2 ≤
+2 γk+29 A2 . By using (29) we obtain (32):
+
+               |λ̂i − λi |                      1+α
+                           ≤ 2 γk+29 κ2 (A) ≤ 4     γk+29 ,          i = 1, 2.
+                   |λi |                        1−α
+     Let us focus on the eigenvectors. In the ﬁrst place, we are going to relate the
+eigenvectors v1 and v2 of A to the eigenvectors v1 and v2 of A.  Notice that according
+to Theorem A.1, the components of v̂1 and v̂2 are small relative perturbations of the
+components of v1 and v2 . Therefore, once v1 and v2 are related to v1 and v2 , the
+diﬀerence between v̂i and vi , i = 1, 2, is easily obtained. Let θ(vi , vi ) be the acute
+angle between vi and vi . Then [10, Theorem 5.4] and (30) lead to
+                                                    √
+                             1                        2 γk A2
+(36)                           sin 2 θ(vi , vi ) ≤             .
+                             2                       |λ1 − λ2 |
+
+                                    
+√ λ̃1 ≥ λ̃2 be the eigenvalues of A. Using again√Weyl’s theorem, we obtain |λ̃i −λi | ≤
+Let
+ 2γk A2 , i = 1, 2. Therefore, |λ̃i − λi |/|λi | ≤ 2γk κ2 (A). Lemma A.4 implies
+
+                               |λ̃i − λi |    √ 1+α
+(37)                                       ≤ 2 2     γk ,
+                                   |λi |         1−α
+
+and the ﬁrst assumption in (31) leads to |λ̃i − λi |/|λi | ≤ 1/2. Therefore, λ̃i and λi
+have the same sign. The matrix A is indeﬁnite, as is A, thus |λ1 − λ2 | > A2 , and
+
+                                1                     √
+(38)                              sin 2 θ(vi , vi ) ≤ 2 γk .
+                                2
+1152                     FROILÁN M. DOPICO AND PLAMEN KOEV
+
+                                                                           √
+The ﬁrst assumption in (31) implies sin 2 θ(vi , vi ) < 1/2; thus 1/ 2 ≤ cos θ(vi , vi ).
+From
+√      this bound and (38), we obtain sin θ(vi , vi ) ≤ 2 γk , and, by using that vi −
+                                                                                        vi 2 ≤
+  2 sin θ(vi , vi ),
+                                       √
+(39)                   vi − vi 2 ≤ 2 2 γk < γ4k ,           i = 1, 2.
+
+                                       and s
+Now, notice that the error bounds for cs     n appearing in Theorem A.1 lead to
+
+ vi − vi 2 ≤ γ141 . Finally,
+
+              
+               vi − vi 2 ≤ 
+                             vi − vi 2 + 
+                                            vi − vi 2 ≤ γ4k+141 ,      i = 1, 2,
+
+which is (33).
+     Let us prove the third item. We prove only the error bound for sn. The bound
+for cs is proved in a similar way. The bound (39) implies
+                                         √
+                             sn − s
+                                    n  2 2 γk     √
+                                        ≤       < 6 2 γk ,
+                             s n        |
+                                            s n|
+
+where we have used that 1/3 < s   |n|, according to Lemma A.3. Then
+                                √
+                  sn − s
+                         n     6 2 γk            √    √
+                 
+(40)              sn  ≤ 1 − 6 √2 γ ≤ (2 + 2) 6 2 γk < γ48k ,
+                                          k
+                              √         √
+where we have used that 6 2γk ≤ 1/ 2. The previous bound can also be written as
+s
+ n = sn(1 + θ48k ). Combining this expression with Theorem A.1, we get the bound
+in (34) for the sine.
+     Lemma A.5 allows us to prove the main theorem of this section. In this theorem,
+we extend the symbols θx and γx introduced in (24) to noninteger values of x ≥ 1.
+In particular, it is easy to check that Lemma 3.3 in [22] remains valid for these non-
+integer values.
+     Theorem A.6. Let B = B T be an n × n real matrix, and let S (m) be its mth
+Schur complement, 0 ≤ m ≤ n − 1. Let us assume that all the entries of the Schur
+complements of B can be computed with relative error bounded by γk in ﬂoating point
+arithmetic with machine precision , i.e.,
+
+              Sij = Sij (1 + βij ),
+                (m)   (m)      (m)              (m)
+(41)                                          |βij | ≤ γk        for all i, j, m,
+
+where S(m) are the computed Schur complements. Let us also assume that the Bunch–
+Parlett pivoting strategy applied to B in ﬂoating point arithmetic does not permute
+any rows or columns of B.
+    Let XDX T be the RRD of B computed in ﬂoating point arithmetic by applying
+the Bunch–Parlett method to the Schur complements S(m) , 0 ≤ m ≤ n − 1, followed
+by the Jacobi spectral diagonalization of the 2 × 2 pivots, as in (6). Let us apply this
+algorithm to B in exact arithmetic by choosing the same dimensions for the pivots
+as those selected in ﬂoating point arithmetic. Let X and D be the exact factors, i.e.,
+B = XDX T . If
+                        √ 1+α
+                    4    2     γk+29 ≤ 1          and       γ141+48k ≤ 1,
+                           1−α
+then
+                     EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                      1153
+
+        1.
+                            ii − Dii | ≤ 4     1+α
+                          |D                        γk+29 |Dii |,          1 ≤ i ≤ n;
+                                                1−α
+        2.
+                                                    √ 1+α
+(42)                              − XF ≤ 2
+                                X                   2     γh(α) XF ,
+                                                       1−α
+where
+                                                !
+                                        1+α              1+α
+(43)                       h(α) =     8     + 49 k + 232     + 144;
+                                        1−α              1−α
+        3.
+                                              √
+           j) − X(:, j)2 ≤                 4 2n(1 + α)
+(44)     X(:,                                                  γh(α) X(:, j)2 ,        1 ≤ j ≤ n;
+                                          (1 − α)2 (1 − γg(α) )
+where
+                                                         !2                
+                                                  1+α                1+α
+(45)                            g(α) =     32                  + 196            k,
+                                                  1−α                1−α
+
+and it is assumed that γg(α) < 1.
+     Theorem 3.1 follows from Theorem A.6, taking k = 8 n, α = 0.6404, and increas-
+ing some of the bounds to get simpler expressions.
+     Proof of Theorem A.6. The ﬁrst item is trivial in the case of 1 × 1 pivots, and it
+is a consequence of (32) for the 2 × 2 pivots, selected by the Bunch–Parlett strategy.
+     If X(:, s) is a column of X corresponding to a 1 × 1 pivot, we simply combine
+                          s) = X(i, s)(1 + θ2k+1 ), and then
+roundoﬀ errors to get X(i,
+
+(46)                              s) − X(:, s)2 ≤ γ2k+1 X(:, s)2 .
+                                X(:,
+
+Therefore, we need only focus on the columns corresponding to 2 × 2 pivots.
+     Let us assume for the rest of the proof that X(:, j : j + 1) are two columns of
+X corresponding to a 2 × 2 pivot. Let us denote the nontrivial part of X as follows:
+X(j : j + 1, j : j + 1) ≡ X11 and X(j + 2 : n, j : j + 1) ≡ X21 . We will also use
+S21 ≡ S (j−1) (j +2 : n, j : j +1). The 2×2 pivot is S11 ≡ S (j−1) (j : j +1, j : j +1), and
+its orthogonal diagonalization is denoted by S11 = U ΛU T . Finally, Λ ≡ diag(λ1 , λ2 ).
+The corresponding computed magnitudes will be denoted by the same hatted letters.
+     According to (6),
+                                             √
+(47)        X 11 − X11 F = U   − U F ≤ 2 γ4k+141 = γ4k+141 X11 F ,
+
+where (33) has been used. To study the error in X21 , it is convenient to deﬁne
+                                                            1+α
+                                                f (α) ≡ 4       .
+                                                            1−α
+Thus, (32) implies that λ̂p = λp (1 + θf (α) (k+29) ), for p = 1, 2. Notice that, by (6),
+X21 = S21 U Λ−1 . Then for the computed magnitude,
+                          
+                          2
+                            (S21 )pl (U
+                                        )lq                         
+                                                                     2
+                                                                       (S21 )pl Ulq
+              21 )pq =
+             (X
+                                                      (p,l,q)
+                                                (1 + θ3         )=
+                                                                                          (p,l,q)
+                                                                                    (1 + θh(α) ),
+                                    λ̂q                                    λq
+                          l=1                                        l=1
+1154                   FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+where h(α) is given by (43), and (34) has been used to bound the errors in the entries
+of U . The previous equation leads to
+
+                            21 − X21 | ≤ γh(α) |S21 | |U Λ−1 |,
+                           |X
+
+where, for any matrix B, |B| is the matrix whose entries are the absolute values of
+the entries of B. Now, we use that the Frobenius norm is unitarily invariant to get
+
+                    21 − X21 F ≤ γh(α) S21 U F Λ−1 F
+                   X
+                                   √
+                                 ≤ 2 γh(α) S21 U Λ−1 ΛF Λ−1 2
+                                   √
+                                 ≤ 2 γh(α) S21 U Λ−1 F κ2 (Λ)
+                                    √ 1+α
+(48)                             ≤2 2          γh(α) X21 F ,
+                                         1−α
+
+where (29) and κ2 (S11 ) = κ2 (Λ) have been used. This inequality and (47) imply
+                                            √
+         j : j + 1) − X(:, j : j + 1)F ≤ 2 2 1 + α γh(α) X(:, j : j + 1)F .
+       X(:,
+                                               1−α
+
+The normwise bound (42) is ﬁnally obtained by combining the above inequality with
+(46).
+    The proof of the columnwise error bound (44) needs more work in the case of
+columns of X corresponding to 2 × 2 pivots. It relies on two properties. The ﬁrst is
+that the absolute values of the entries of the matrix S21 S11
+                                                             −1
+                                                                are bounded by 1/(1 − α)
+          
+because S11 is a 2 × 2 pivot chosen by the Bunch–Parlett pivoting strategy [4, 22]
+(see also [20, page 118] for a simple proof). The second is that X11 = U , and, as a
+consequence, both columns of X(:, j : j + 1) have a norm greater than or equal to 1.
+    We will use some additional notation in the rest of the proof. Let S11 = U   ΛU
+                                                                                     T
+                                               
+be the exact orthogonal diagonalization of S11 . Notice that we have previously used
+                                                                                 Λ
+S11 = U ΛU T , the exact orthogonal diagonalization of the exact block S11 , and U UT ,
+                                                                                  
+the computed orthogonal diagonalization of S11 . We will also use the matrices X11 ≡
+ and X
+U       21 = S21 U
+                   Λ                 ≡ diag(λ̃1 , λ̃2 ).
+                      −1 . Finally, Λ
+    According to [20, page 118],
+                                                                √
+                   21 F = S21 S−1 F ≤      2(n − j − 1)     2n
+(49)              X                                          ≤      .
+                                    11
+                                                   1−α          1−α
+
+               21 F to X21 F . Notice that
+Let us relate X
+
+                                           
+                                           2
+                                             (S21 )pl (U
+                                                         )lq
+(50)                           21 )pq =
+                              (X                                .
+                                           l=1
+                                                    λ̃q
+
+The diﬀerence between the eigenvalues and eigenvectors of S11 and those of S11 can
+be bounded as done in (37) and (40) for A and A.      Therefore, λ̃q = λq (1 + θf (α) k )
+                                        
+and (U )lq = Ulq (1 + θ48k ). Moreover, (S21 )pl = (S21 )pl (1 + θk ), and (50) implies
+
+                                  
+                                  2
+                                    (S21 )pl Ulq
+                      21 )pq =
+                     (X                          (1 + θ(2f (α)+49)k ).
+                                        λq
+                                  l=1
+                 EIGENDECOMPOSITIONS OF SYMMETRIC MATRICES                                1155
+
+This implies |X21 − X21 | ≤ γ(2f (α)+49)k |S21 | |U Λ−1 |. An argument similar to that
+leading to (48) implies
+
+                              21 − X21 F ≤ γg(α) X21 F ,
+                             X
+
+where g(α) is given by (45). This bound and (49) yield
+                                                   √
+                         21 F + X21 − X
+                                         21 F ≤    2n
+           X21 F ≤ X                                 + γg(α) X21 F
+                                                  1−α
+and
+                                                  √
+                                                   2n
+                              X21 F ≤                        .
+                                           (1 − α)(1 − γg(α) )
+
+We substitute this bound in (48) to get
+                                                √
+                        21 − X21 F ≤        4 n (1 + α)
+                       X                                        γh(α) .
+                                           (1 − α)2 (1 − γg(α) )
+
+This inequality and (47) imply
+                                                          √
+              j : j + 1) − X(:, j : j + 1)F ≤          4 2 n (1 + α)
+            X(:,                                                           γh(α) .
+                                                      (1 − α)2 (1 − γg(α) )
+
+The bound (44) follows from (46) and the previous bound because max{       X(:, j) −
+                                             
+X(:, j)2 , X(:, j + 1) − X(:, j + 1)2 } ≤ X(:, j : j + 1) − X(:, j : j + 1)F and
+1 ≤ X(:, j)2 , 1 ≤ X(:, j + 1)2 .
+    Acknowledgments. The authors thank the editor of this paper, Prof. Ilse Ipsen,
+for her careful reading of the original manuscript and for many helpful suggestions
+that have signiﬁcantly improved the paper.
+
+                                        REFERENCES
+
+ [1] E. Anderson, Z. Bai, C. Bischof, S. Blackford, J. Demmel, J. Dongarra, J. Du Croz,
+         A. Greenbaum, S. Hammarling, A. McKenney, and D. Sorensen, LAPACK Users’
+         Guide, 3rd ed., SIAM, Philadelphia, 1999.
+ [2] T. Ando, Totally positive matrices, Linear Algebra Appl., 90 (1987), pp. 165–219.
+ [3] D. S. Bindel and S. Givindjee, Elastic PMLs for Resonator Anchor Loss Simulation, Report
+         no. UCB/SEMM-2005/01, University of California, Berkeley, CA, 2005. Available online
+         http://www.cs.berkeley.edu/∼dbindel/papers/pml-tr.pdf.
+ [4] J. R. Bunch and B. N. Parlett, Direct methods for solving symmetric indeﬁnite systems of
+         linear equations, SIAM J. Numer. Anal., 8 (1971), pp. 639–655.
+ [5] J. Demmel, Accurate singular value decompositions of structured matrices, SIAM J. Matrix
+         Anal. Appl., 21 (1999), pp. 562–580.
+ [6] J. Demmel, M. Gu, S. Eisenstat, I. Slapničar, K. Veselić, and Z. Drmač, Computing
+         the singular value decomposition with high relative accuracy, Linear Algebra Appl., 299
+         (1999), pp. 21–80.
+ [7] J. Demmel and P. Koev, Accurate SVDs of weakly diagonally dominant M -matrices, Numer.
+         Math., 98 (2004), pp. 99–104.
+ [8] J. Demmel and P. Koev, Accurate SVDs of polynomial Vandermonde matrices involving
+         orthonormal polynomials, Linear Algebra Appl., 417 (2006), pp. 382–396.
+ [9] J. Demmel and K. Veselić, Jacobi’s method is more accurate than QR, SIAM J. Matrix Anal.
+         Appl., 13 (1992), pp. 1204–1245.
+[10] J. W. Demmel, Applied Numerical Linear Algebra, SIAM, Philadelphia, 1997.
+1156                    FROILÁN M. DOPICO AND PLAMEN KOEV
+
+
+[11] F. M. Dopico, J. M. Molera, and J. Moro, An orthogonal high relative accuracy algorithm
+          for the symmetric eigenproblem, SIAM J. Matrix Anal. Appl., 25 (2003), pp. 301–351.
+[12] S. C. Eisenstat and I. C. F. Ipsen, Relative perturbation techniques for singular value prob-
+          lems, SIAM J. Numer. Anal., 32 (1995), pp. 1972–1988.
+[13] K. Fernando and B. Parlett, Accurate singular values and diﬀerential qd algorithms, Numer.
+          Math., 67 (1994), pp. 191–229.
+[14] S. Fomin and A. Zelevinsky, Total positivity: Tests and parametrizations, Math. Intelligencer,
+          22 (2000), pp. 23–33.
+[15] F. Gantmacher, The Theory of Matrices, Vol. 1, AMS Chelsea Publishing, Providence, RI,
+          1998.
+[16] F. Gantmacher and M. Krein, Oscillation Matrices and Kernels and Small Vibrations of
+          Mechanical Systems, revised ed., AMS Chelsea Publishing, Providence, RI, 2002.
+[17] M. Gasca and C. A. Micchelli, eds., Total Positivity and Its Applications, Math. Appl. 359,
+          Kluwer Academic Publishers, Dordrecht, The Netherlands, 1996.
+[18] M. Gasca and J. M. Peña, Total positivity and Neville elimination, Linear Algebra Appl.,
+          165 (1992), pp. 25–44.
+[19] M. Gasca and J. M. Peña, On factorizations of totally positive matrices, in Total Positivity
+          and Its Applications, M. Gasca and C. A. Micchelli, eds., Kluwer Academic Publishers,
+          Dordrecht, The Netherlands, 1996, pp. 109–130.
+[20] P. E. Gill, W. Murray, and M. H. Wright, Numerical Linear Algebra and Optimization,
+          Vol. 1, Addison-Wesley Publishing Company, Advanced Book Program, Redwood City,
+          CA, 1991.
+[21] G. Golub and C. Van Loan, Matrix Computations, 3rd ed., Johns Hopkins University Press,
+          Baltimore, MD, 1996.
+[22] N. J. Higham, Accuracy and Stability of Numerical Algorithms, 2nd ed., SIAM, Philadelphia,
+          2002.
+[23] IEEE Standard for Binary Floating Point Arithmetic, Std 754-1985, ANSI/IEEE, New York,
+          1985.
+[24] S. Karlin, Total Positivity, Vol. I, Stanford University Press, Stanford, CA, 1968.
+[25] P. Koev, Accurate computations with totally nonnegative matrices, SIAM J. Matrix Anal.
+          Appl., submitted.
+[26] P. Koev, Accurate eigenvalues and SVDs of totally nonnegative matrices, SIAM J. Matrix
+          Anal. Appl., 27 (2005), pp. 1–23.
+[27] R.-C. Li, Relative perturbation theory. II. Eigenspace and singular subspace variations, SIAM
+          J. Matrix Anal. Appl., 20 (1998), pp. 471–492.
+[28] R.-C. Li, Relative perturbation theory. IV. sin 2θ theorems, Linear Algebra Appl., 311 (2000),
+          pp. 45–60.
+[29] MATLAB Reference Guide, The MathWorks, Inc., Natick, MA, 1992.
+[30] M. J. Peláez and J. Moro, High accuracy eigenvalue algorithms for symmetric DSTU and
+          TSC matrices, SIAM J. Matrix Anal. Appl., submitted.
+[31] J. M. Peña, LDU decompositions with L and U well conditioned, Electron. Trans. Numer.
+          Anal., 18 (2004), pp. 198–208 (electronic).
+[32] I. Slapničar, Componentwise analysis of direct factorization of real symmetric and Hermitian
+          matrices, Linear Algebra Appl., 272 (1998), pp. 227–275.
+[33] I. Slapničar, Accurate Symmetric Eigenreduction by a Jacobi Method, Ph.D. thesis, Fernuni-
+          versität—Hagen, Hagen, Germany, 1992.
+[34] G. W. Stewart, Matrix Algorithms, Vol. I, SIAM, Philadelphia, 1998.
+[35] K. Veselić, A Jacobi eigenreduction algorithm for deﬁnite matrix pairs, Numer. Math., 64
+          (1993), pp. 241–269.
+
