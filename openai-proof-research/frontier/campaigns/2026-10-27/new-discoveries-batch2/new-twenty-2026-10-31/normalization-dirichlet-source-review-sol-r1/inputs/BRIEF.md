@@ -1,0 +1,15 @@
+# r404 standalone research handoff
+
+Fixed20, GPT-6.1 Sol high/default, no children or fallback. Zero accepted credit. Campaign unchanged at55/60 beyond39,94total. No dispatch/formal execution/acceptance.
+
+All20 literal original records were read before prioritizing and retained byte-for-byte in records/, with actual source chunk path/hash, one-based line and newline provenance, raw JSON statement-token hash, decoded UTF8 hash and whitespace-token-sequence hash in provenance-details/. Reservation SHA6c55cbc3f7947f57f1f6240947097fe078abecd5892fde43a06d7115a692f289 was asserted before extraction. Before frozen verifier:12 inputs,no mismatches. Exact20 ID-keyed separate gates are in results.json.
+
+349070 has a complete ordinary proof of the exact adjacency inequality: set s=(A+I)x, then the deficit is(1/2)sum_ij (A+I)_ij x_i x_j(1/s_i-1/s_j)^2. FULLCANDIDATE.md pays the algebra, division positivity, matrix bridge, equality audit and scope limits. DORMANT-SOL-FORMAL-PLAN.md is a plan only. Novelty/subsumption and significance remain UNPAID; the standard Dirichlet identity may be judged routine. No Lean was run, no independent review happened, and no literature or registry clearance is claimed.
+
+Sustained full-scope work also covers349224's bipartite obstruction, which closes on paper but has an exact current public counterpart and receives zero credit;349178's sign-gauge and pair-coincidence routes remain unpaid for arbitrary block signs.349128/349130 variation and compactness attempts identify missing bridges, a source-coordinate mismatch, and a zero-coefficient literal correction with zero credit. SUSTAINED-DERIVATIONS.md contains the arguments, failures, exact unpaid lemmas and contrary assessments.
+
+350935 has an existing Elizalde exact theorem/proof.381578 is already Theorem2.4 of its cited primary paper.341561 has an explicit prior counterexample/theorem in its source with cited original proof unread.341546 has a precise source-reported Orelowitz proof HOLD;341584 has an applicable Karu claim HOLD.363274's original record explicitly reports a cited counterexample, whose primary body remains unread. The other hard targets are parked individually in results.json; no padding, reselection or artificial novelty.
+
+16 GET hops,16 successes,0 redirects/failures, maximum perID6. Exactly3 nativeSEARCH calls9 strings, precharged plans and full responses saved. Four registry root HTML bodies yield current head metadata; root filenames/head metadata do not prove absence of results.10 of20 IDs had primary passages read;10 remain primary-body unread. Read depth, output truncations/recoveries, figures not visually inspected, access history and sampled resource limits are candidly recorded in inventories.json and receipts. Historical allowlist reads were filtered for protected names before opening; no protected peer or old formal campaign body or r395 source artifact was inspected.
+
+Final frozen result is frozen-after.json. MANIFEST.json contains actual file SHA256 hashes, completed receipts and explicit terminal self-exclusions. This is a bounded research handoff, not an acceptance package.
