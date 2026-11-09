@@ -1,0 +1,3 @@
+module
+public import URMatchingAvoidanceProduct
+#print axioms URMatching.avoidance_product_bound

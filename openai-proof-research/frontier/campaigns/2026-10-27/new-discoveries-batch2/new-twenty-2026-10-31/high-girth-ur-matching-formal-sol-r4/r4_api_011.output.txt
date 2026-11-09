@@ -1,0 +1,361 @@
+Mathlib/Basic/Real/Basic.lean
+/-
+Copyright (c) 2018 Mario Carneiro. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Mario Carneiro, Floris van Doorn
+-/
+module
+
+public import Mathlib.Algebra.Order.CauSeq.Completion
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Data.Rat.Cast.Defs
+
+/-!
+# Real numbers from Cauchy sequences
+
+This file defines `ℝ` as the type of equivalence classes of Cauchy sequences of rational numbers.
+This choice is motivated by how easy it is to prove that `ℝ` is a commutative ring, by simply
+lifting everything to `ℚ`.
+
+The facts that the real numbers are an Archimedean floor ring,
+and a conditionally complete linear order,
+have been deferred to the file `Mathlib/Algebra/Order/Archimedean/Real/Basic.lean`,
+in order to keep the imports here simple.
+
+The fact that the real numbers are a (trivial) \*-ring has similarly been deferred to
+`Mathlib/Basic/Real/Star.lean`.
+-/
+
+@[expose] public section
+
+
+assert_not_exists Finset Module Submonoid FloorRing
+
+/-- The type `ℝ` of real numbers constructed as equivalence classes of Cauchy sequences of rational
+numbers. -/
+@[wikidata Q12916, wikidata Q2584477]
+structure Real where ofCauchy ::
+  /-- The underlying Cauchy completion -/
+  cauchy : CauSeq.Completion.Cauchy (abs : ℚ → ℚ)
+
+@[inherit_doc]
+notation "ℝ" => Real
+
+namespace CauSeq.Completion
+
+-- this can't go in `Mathlib.Algebra.Order.CauSeq.Completion`
+-- as the structure on `ℚ` isn't available
+@[simp]
+theorem ofRat_rat {abv : ℚ → ℚ} [IsAbsoluteValue abv] (q : ℚ) :
+    ofRat (q : ℚ) = (q : Cauchy abv) :=
+  rfl
+
+end CauSeq.Completion
+
+namespace Real
+
+open CauSeq CauSeq.Completion
+
+variable {x : ℝ}
+
+theorem ext_cauchy_iff : ∀ {x y : Real}, x = y ↔ x.cauchy = y.cauchy
+  | ⟨a⟩, ⟨b⟩ => by rw [ofCauchy.injEq]
+
+theorem ext_cauchy {x y : Real} : x.cauchy = y.cauchy → x = y :=
+  ext_cauchy_iff.2
+
+/-- The real numbers are isomorphic to the quotient of Cauchy sequences on the rationals. -/
+def equivCauchy : ℝ ≃ CauSeq.Completion.Cauchy (abs : ℚ → ℚ) :=
+  ⟨Real.cauchy, Real.ofCauchy, fun ⟨_⟩ => rfl, fun _ => rfl⟩
+
+-- irreducible doesn't work for instances: https://github.com/leanprover-community/lean/issues/511
+private irreducible_def zero : ℝ :=
+  ⟨0⟩
+
+private irreducible_def one : ℝ :=
+  ⟨1⟩
+
+private irreducible_def add : ℝ → ℝ → ℝ
+  | ⟨a⟩, ⟨b⟩ => ⟨a + b⟩
+
+private irreducible_def neg : ℝ → ℝ
+  | ⟨a⟩ => ⟨-a⟩
+
+private irreducible_def mul : ℝ → ℝ → ℝ
+  | ⟨a⟩, ⟨b⟩ => ⟨a * b⟩
+
+private noncomputable irreducible_def inv' : ℝ → ℝ
+  | ⟨a⟩ => ⟨a⁻¹⟩
+
+@[no_expose]
+instance : Zero ℝ :=
+  ⟨zero⟩
+
+@[no_expose]
+instance : One ℝ :=
+  ⟨one⟩
+
+@[no_expose]
+instance : Add ℝ :=
+  ⟨add⟩
+
+@[no_expose]
+instance : Neg ℝ :=
+  ⟨neg⟩
+
+@[no_expose]
+instance : Mul ℝ :=
+  ⟨mul⟩
+
+instance : Sub ℝ :=
+  ⟨fun a b => a + -b⟩
+
+@[no_expose]
+noncomputable instance : Inv ℝ :=
+  ⟨inv'⟩
+
+theorem ofCauchy_zero : (⟨0⟩ : ℝ) = 0 :=
+  zero_def.symm
+
+theorem ofCauchy_one : (⟨1⟩ : ℝ) = 1 :=
+  one_def.symm
+
+theorem ofCauchy_add (a b) : (⟨a + b⟩ : ℝ) = ⟨a⟩ + ⟨b⟩ :=
+  (add_def _ _).symm
+
+theorem ofCauchy_neg (a) : (⟨-a⟩ : ℝ) = -⟨a⟩ :=
+  (neg_def _).symm
+
+theorem ofCauchy_sub (a b) : (⟨a - b⟩ : ℝ) = ⟨a⟩ - ⟨b⟩ := by
+  rw [sub_eq_add_neg, ofCauchy_add, ofCauchy_neg]
+  rfl
+
+theorem ofCauchy_mul (a b) : (⟨a * b⟩ : ℝ) = ⟨a⟩ * ⟨b⟩ :=
+  (mul_def _ _).symm
+
+theorem ofCauchy_inv {f} : (⟨f⁻¹⟩ : ℝ) = ⟨f⟩⁻¹ :=
+  show _ = inv' _ by rw [inv']
+
+theorem cauchy_zero : (0 : ℝ).cauchy = 0 :=
+  show zero.cauchy = 0 by rw [zero_def]
+
+theorem cauchy_one : (1 : ℝ).cauchy = 1 :=
+  show one.cauchy = 1 by rw [one_def]
+
+theorem cauchy_add : ∀ a b, (a + b : ℝ).cauchy = a.cauchy + b.cauchy
+  | ⟨a⟩, ⟨b⟩ => show (add _ _).cauchy = _ by rw [add_def]
+
+theorem cauchy_neg : ∀ a, (-a : ℝ).cauchy = -a.cauchy
+  | ⟨a⟩ => show (neg _).cauchy = _ by rw [neg_def]
+
+theorem cauchy_mul : ∀ a b, (a * b : ℝ).cauchy = a.cauchy * b.cauchy
+  | ⟨a⟩, ⟨b⟩ => show (mul _ _).cauchy = _ by rw [mul_def]
+
+theorem cauchy_sub : ∀ a b, (a - b : ℝ).cauchy = a.cauchy - b.cauchy
+  | ⟨a⟩, ⟨b⟩ => by
+    rw [sub_eq_add_neg, ← cauchy_neg, ← cauchy_add]
+    rfl
+
+theorem cauchy_inv : ∀ f, (f⁻¹ : ℝ).cauchy = f.cauchy⁻¹
+  | ⟨f⟩ => show (inv' _).cauchy = _ by rw [inv']
+
+instance instNatCast : NatCast ℝ where natCast n := ⟨n⟩
+instance instIntCast : IntCast ℝ where intCast z := ⟨z⟩
+instance instNNRatCast : NNRatCast ℝ where nnratCast q := ⟨q⟩
+instance instRatCast : RatCast ℝ where ratCast q := ⟨q⟩
+
+lemma ofCauchy_natCast (n : ℕ) : (⟨n⟩ : ℝ) = n := rfl
+lemma ofCauchy_intCast (z : ℤ) : (⟨z⟩ : ℝ) = z := rfl
+lemma ofCauchy_nnratCast (q : ℚ≥0) : (⟨q⟩ : ℝ) = q := rfl
+lemma ofCauchy_ratCast (q : ℚ) : (⟨q⟩ : ℝ) = q := rfl
+
+lemma cauchy_natCast (n : ℕ) : (n : ℝ).cauchy = n := rfl
+lemma cauchy_intCast (z : ℤ) : (z : ℝ).cauchy = z := rfl
+lemma cauchy_nnratCast (q : ℚ≥0) : (q : ℝ).cauchy = q := rfl
+lemma cauchy_ratCast (q : ℚ) : (q : ℝ).cauchy = q := rfl
+
+instance commRing : CommRing ℝ where
+  natCast n := ⟨n⟩
+  intCast z := ⟨z⟩
+  npow := @npowRec ℝ ⟨1⟩ ⟨(· * ·)⟩
+  nsmul := @nsmulRec ℝ ⟨0⟩ ⟨(· + ·)⟩
+  zsmul := @zsmulRec ℝ ⟨0⟩ ⟨(· + ·)⟩ ⟨@Neg.neg ℝ _⟩ (@nsmulRec ℝ ⟨0⟩ ⟨(· + ·)⟩)
+  add_zero a := by apply ext_cauchy; simp [cauchy_add, cauchy_zero]
+  zero_add a := by apply ext_cauchy; simp [cauchy_add, cauchy_zero]
+  add_comm a b := by apply ext_cauchy; simp only [cauchy_add, add_comm]
+  add_assoc a b c := by apply ext_cauchy; simp only [cauchy_add, add_assoc]
+  mul_zero a := by apply ext_cauchy; simp [cauchy_mul, cauchy_zero]
+  zero_mul a := by apply ext_cauchy; simp [cauchy_mul, cauchy_zero]
+  mul_one
+Mathlib/Combinatorics/SimpleGraph/Paths.lean
+/-
+Copyright (c) 2021 Kyle Miller. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Kyle Miller
+-/
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Decomp
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Maps
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Subwalks
+public import Mathlib.Order.Preorder.Finite
+
+/-!
+
+# Trail, Path, and Cycle
+
+In a simple graph,
+
+* A *trail* is a walk whose edges each appear no more than once.
+
+* A *circuit* is a nonempty trail whose first and last vertices are the
+  same.
+
+* A *path* is a trail whose vertices appear no more than once.
+
+* A *cycle* is a nonempty trail whose first and last vertices are the
+  same and whose vertices except for the first appear no more than once.
+
+**Warning:** graph theorists mean something different by "path" than
+do homotopy theorists.  A "walk" in graph theory is a "path" in
+homotopy theory.  Another warning: some graph theorists use "path" and
+"simple path" for "walk" and "path."
+
+Some definitions and theorems have inspiration from multigraph
+counterparts in [Chou1994].
+
+## Main definitions
+
+* `SimpleGraph.Walk.IsTrail`, `SimpleGraph.Walk.IsPath`, and `SimpleGraph.Walk.IsCycle`.
+
+* `SimpleGraph.Path`
+
+* `SimpleGraph.Path.map` for the induced map on paths,
+  given an (injective) graph homomorphism.
+
+## Tags
+trails, paths, circuits, cycles
+-/
+
+@[expose] public section
+
+open Function
+
+universe u v w
+
+namespace SimpleGraph
+
+variable {V : Type u} {V' : Type v}
+variable (G : SimpleGraph V) (G' : SimpleGraph V')
+
+namespace Walk
+
+variable {G G'} {u u' v w : V} {p : G.Walk u v} {f : G →g G'}
+
+/-! ### Trails, paths, circuits, cycles -/
+
+/-- A *trail* is a walk with no repeating edges. -/
+@[mk_iff isTrail_def]
+structure IsTrail {u v : V} (p : G.Walk u v) : Prop where
+  edges_nodup : p.edges.Nodup
+
+/-- A *path* is a walk with no repeating vertices.
+Use `SimpleGraph.Walk.IsPath.mk'` for a simpler constructor. -/
+structure IsPath {u v : V} (p : G.Walk u v) : Prop extends isTrail : IsTrail p where
+  support_nodup : p.support.Nodup
+
+/-- A *circuit* at `u : V` is a nonempty trail beginning and ending at `u`. -/
+@[mk_iff isCircuit_def]
+structure IsCircuit {u : V} (p : G.Walk u u) : Prop extends isTrail : IsTrail p where
+  ne_nil : p ≠ nil
+
+/-- A *cycle* at `u : V` is a circuit at `u` whose only repeating vertex
+is `u` (which appears exactly twice). -/
+structure IsCycle {u : V} (p : G.Walk u u) : Prop extends isCircuit : IsCircuit p where
+  support_nodup : p.support.tail.Nodup
+
+@[simp]
+theorem isTrail_copy {u v u' v'} (p : G.Walk u v) (hu : u = u') (hv : v = v') :
+    (p.copy hu hv).IsTrail ↔ p.IsTrail := by
+  subst_vars
+  rfl
+
+theorem IsPath.mk' {u v : V} {p : G.Walk u v} (h : p.support.Nodup) : p.IsPath :=
+  ⟨⟨edges_nodup_of_support_nodup h⟩, h⟩
+
+theorem isPath_def {u v : V} (p : G.Walk u v) : p.IsPath ↔ p.support.Nodup :=
+  ⟨IsPath.support_nodup, IsPath.mk'⟩
+
+theorem isPath_iff_injective_get_support {u v : V} (p : G.Walk u v) :
+    p.IsPath ↔ (p.support.get ·).Injective :=
+  p.isPath_def.trans List.nodup_iff_injective_get
+
+@[simp]
+theorem isPath_copy {u v u' v'} (p : G.Walk u v) (hu : u = u') (hv : v = v') :
+    (p.copy hu hv).IsPath ↔ p.IsPath := by
+  subst_vars
+  rfl
+
+@[simp]
+theorem isCircuit_copy {u u'} (p : G.Walk u u) (hu : u = u') :
+    (p.copy hu hu).IsCircuit ↔ p.IsCircuit := by
+  subst_vars
+  rfl
+
+lemma IsCircuit.not_nil {p : G.Walk v v} (hp : IsCircuit p) : ¬ p.Nil := (hp.ne_nil ·.eq_nil)
+
+theorem isCycle_def {u : V} (p : G.Walk u u) :
+    p.IsCycle ↔ p.IsTrail ∧ p ≠ nil ∧ p.support.tail.Nodup :=
+  Iff.intro (fun h => ⟨h.1.1, h.1.2, h.2⟩) fun h => ⟨⟨h.1, h.2.1⟩, h.2.2⟩
+
+@[simp]
+theorem isCycle_copy {u u'} (p : G.Walk u u) (hu : u = u') :
+    (p.copy hu hu).IsCycle ↔ p.IsCycle := by
+  subst_vars
+  rfl
+
+lemma IsCycle.not_nil {p : G.Walk v v} (hp : IsCycle p) : ¬ p.Nil := (hp.ne_nil ·.eq_nil)
+
+@[simp]
+theorem IsTrail.nil {u : V} : (nil : G.Walk u u).IsTrail :=
+  ⟨by simp [edges]⟩
+
+theorem IsTrail.of_cons {u v w : V} {h : G.Adj u v} {p : G.Walk v w} :
+    (cons h p).IsTrail → p.IsTrail := by simp [isTrail_def]
+
+@[simp]
+theorem isTrail_cons {u v w : V} (h : G.Adj u v) (p : G.Walk v w) :
+    (cons h p).IsTrail ↔ p.IsTrail ∧ s(u, v) ∉ p.edges := by simp [isTrail_def, and_comm]
+
+protected lemma IsTrail.cons {w : G.Walk u' v} (hw : w.IsTrail) (hu : G.Adj u u')
+    (hu' : s(u, u') ∉ w.edges) : (w.cons hu).IsTrail := by simp [*]
+
+@[simp]
+theorem isTrail_concat (hadj : G.Adj v w) :
+    (p.concat hadj).IsTrail ↔ p.IsTrail ∧ s(v, w) ∉ p.edges := by
+  simp_rw [isTrail_def, edges_concat, List.nodup_concat, and_comm]
+
+theorem IsTrail.concat (hp : p.IsTrail) (hadj : G.Adj v w) (hmem : s(v, w) ∉ p.edges) :
+    (p.concat hadj).IsTrail :=
+  isTrail_concat hadj |>.mpr ⟨hp, hmem⟩
+
+theorem IsTrail.reverse {u v : V} (p : G.Walk u v) (h : p.IsTrail) : p.reverse.IsTrail := by
+  simpa [isTrail_def] using h
+
+@[simp]
+theorem reverse_isTrail_iff {u v : V} (p : G.Walk u v) : p.reverse.IsTrail ↔ p.IsTrail := by
+  constructor <;>
+    · intro h
+      convert! h.reverse _
+      try rw [reverse_reverse]
+
+@[simp]
+theorem isTrail_append {u v w : V} (p : G.Walk u v) (q : G.Walk v w) :
+    (p.append q).IsTrail ↔ p.IsTrail ∧ q.IsTrail ∧ p.edges.Disjoint q.edges := by
+  simp [Walk.isTrail_def, List.nodup_append']
+
+theorem IsTrail.of_append_left {u v w : V} {p : G.Walk u v} {q : G.Walk v w}
+    (h : (p.append q).IsTrail) : p.IsTrail := by
+  simp_all
+
+theorem IsTrail.of_append_right {u v w : V} {p : G.Walk u v} {q

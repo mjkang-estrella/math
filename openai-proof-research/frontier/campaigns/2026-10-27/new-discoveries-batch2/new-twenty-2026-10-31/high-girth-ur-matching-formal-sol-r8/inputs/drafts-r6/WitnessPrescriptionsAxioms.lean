@@ -1,0 +1,5 @@
+import URMatchingWitnessPrescriptions
+#print axioms URMatching.witnessDomain
+#print axioms URMatching.occurs_iff_prescriptions
+#print axioms URMatching.occurring_witness_count
+#print axioms URMatching.inconsistent_witness_count

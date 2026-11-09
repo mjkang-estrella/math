@@ -1,0 +1,199 @@
+METADATA Mathlib.lean True
+METADATA lake-manifest.json True
+MODULES ['URMatchingBase', 'URMatchingFinite', 'URMatchingDeletion', 'URMatchingControls', 'URMatchingSwitch', 'URMatchingEmbeddedSwitch', 'URMatchingDirectedCycle', 'URMatchingRectangle', 'URMatchingDAG', 'URMatchingCycleExtraction', 'URMatchingURRectangle', 'URMatchingOrientation', 'URMatchingRectangleSides', 'URMatchingURSides', 'URMatchingOrientationSides', 'URMatchingIndependentCount', 'URMatchingPartition', 'URMatchingBipartiteObstruction', 'URMatchingAvoidanceProduct', 'URMatchingPermutationFibers', 'URMatchingAvoidanceCount', 'URMatchingAvoidanceBound', 'URMatchingHoleUnion', 'URMatchingPrescriptions', 'URMatchingCycleDescriptions', 'URMatchingWitnessPrescriptions', 'URMatchingWitnessDistinct', 'URMatchingWitnessTotal', 'URMatchingWitnessBound', 'URMatchingWitnessMoment', 'URMatchingWeightedMoment', 'URMatchingJointTuple', 'URMatchingRemovedVertices', 'URMatchingSurvivingColours', 'URMatchingSurvivorGraph', 'URMatchingSurvivorDegree', 'URMatchingSurvivorHoles', 'URMatchingWalkParity', 'URMatchingOrderedCycle', 'URMatchingWalkPositions', 'URMatchingWalkLabels', 'URMatchingWalkDescription']
+FILE src/URMatchingBase.lean
+module
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Finset.Sym
+
+/-! Source model for MathDB 338806. No existence or expansion assumptions.
+Scientific HOLD; this model alone does not refute the conjecture. -/
+@[expose] public section
+namespace URMatching
+universe u
+variable {V : Type u} [Fintype V] [DecidableEq V]
+
+/-- A finite set of actual unordered graph edges, pairwise vertex-disjoint. -/
+def IsMatching (G : SimpleGraph V) (M : Finset (Sym2 V)) : Prop :=
+  (∀ e ∈ M, e ∈ G.edgeSet) ∧
+  ∀ e ∈ M, ∀ f ∈ M, ∀ v : V, v ∈ e → v ∈ f → e = f
+
+/-- Vertices covered by the matching, without any induced-subgraph restriction. -/
+def Covered (M : Finset (Sym2 V)) : Set V := {v | ∃ e ∈ M, v ∈ e}
+
+/-- Literal uniqueness among ALL matchings covering exactly the same vertices. -/
+def IsUR (G : SimpleGraph V) (M : Finset (Sym2 V)) : Prop :=
+  IsMatching G M ∧ ∀ M' : Finset (Sym2 V),
+    IsMatching G M' → Covered M' = Covered M → M' = M
+
+noncomputable def matchingNumber (G : SimpleGraph V) : ℕ := by
+  classical
+  exact ((Finset.univ : Finset (Finset (Sym2 V))).filter (IsMatching G)).sup Finset.card
+
+noncomputable def urMatchingNumber (G : SimpleGraph V) : ℕ := by
+  classical
+  exact ((Finset.univ : Finset (Finset (Sym2 V))).filter (IsUR G)).sup Finset.card
+
+/-- All vertices satisfy the genuine finite neighbor-cardinality bound. -/
+def DegreeBound (G : SimpleGraph V) (Δ : ℕ) : Prop :=
+  ∀ v, by classical exact ((Finset.univ : Finset V).filter (G.Adj v)).card ≤ Δ
+
+end URMatching
+
+FILE src/URMatchingDeletion.lean
+module
+public import URMatchingFinite
+@[expose] public section
+namespace URMatching
+universe u
+variable {V : Type u}
+
+/-- Delete vertices by keeping exactly those original edges with no deleted endpoint. -/
+noncomputable def survivingEdges (M : Finset (Sym2 V)) (D : Finset V) : Finset (Sym2 V) := by
+  classical
+  exact M.filter fun e => ∀ v ∈ e, v ∉ D
+
+/-- Edges lost to vertex deletion. -/
+noncomputable def lostEdges (M : Finset (Sym2 V)) (D : Finset V) : Finset (Sym2 V) := by
+  classical
+  exact M.filter fun e => ∃ v ∈ e, v ∈ D
+
+theorem surviving_isMatching {G : SimpleGraph V} {M : Finset (Sym2 V)}
+    (hM : IsMatching G M) (D : Finset V) : IsMatching G (survivingEdges M D) := by
+  classical
+  constructor
+  · intro e he; exact hM.1 e (Finset.mem_filter.mp he).1
+  · intro e he f hf v hve hvf
+    exact hM.2 e (Finset.mem_filter.mp he).1 f (Finset.mem_filter.mp hf).1 v hve hvf
+
+/-- Disjoint matching edges admit distinct charges to deleted vertices. -/
+theorem lost_card_le {G : SimpleGraph V} {M : Finset (Sym2 V)}
+    (hM : IsMatching G M) (D : Finset V) : (lostEdges M D).card ≤ D.card := by
+  classical
+  let L := lostEdges M D
+  have witness (e : L) : ∃ v : V, v ∈ e.val ∧ v ∈ D := by
+    exact (Finset.mem_filter.mp e.property).2
+  let charge : L → D := fun e => ⟨(witness e).choose, (witness e).choose_spec.2⟩
+  apply Finset.card_le_card_of_injective (f := charge)
+  intro e f hef
+  apply Subtype.ext
+  have hv : (charge e).val = (charge f).val := congrArg Subtype.val hef
+  exact hM.2 e.val (Finset.mem_filter.mp e.property).1
+    f.val (Finset.mem_filter.mp f.property).1
+    (charge e).val (witness e).choose_spec.1 (hv ▸ (witness f).choose_spec.1)
+
+theorem survive_add_lost (M : Finset (Sym2 V)) (D : Finset V) :
+    (survivingEdges M D).card + (lostEdges M D).card = M.card := by
+  classical
+  have h : survivingEdges M D = M \ lostEdges M D := by
+    ext e
+    simp +contextual [survivingEdges, lostEdges]
+  rw [h]
+  exact Finset.card_sdiff_add_card_eq_card (Finset.filter_subset _ _)
+
+/-- The retained matching loses at most one edge per deleted vertex; no perfect
+matching of the surviving graph or equality of its side sizes is asserted. -/
+theorem matching_retention {G : SimpleGraph V} {M : Finset (Sym2 V)}
+    (hM : IsMatching G M) (D : Finset V) :
+    M.card ≤ (survivingEdges M D).card + D.card := by
+  rw [← survive_add_lost M D]
+  exact Nat.add_le_add_left (lost_card_le hM D) _
+end URMatching
+
+FILE src/URMatchingSurvivorGraph.lean
+module
+public import URMatchingRemovedVertices
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+@[expose] public section
+namespace URMatching
+open scoped Classical
+def permutationAdj {N : ℕ} (σ : PermutationTuples N 100) : BipartiteVertex N → BipartiteVertex N → Prop
+  | .inl x, .inr y => ∃ c, σ c x = y
+  | .inr y, .inl x => ∃ c, σ c x = y
+  | _, _ => False
+
+def permutationGraph {N : ℕ} (σ : PermutationTuples N 100) : SimpleGraph (BipartiteVertex N) where
+  Adj := permutationAdj σ
+  symm := ⟨by intro u v; cases u <;> cases v <;> exact fun h => h⟩
+  loopless := ⟨by intro u; cases u <;> exact fun h => h⟩
+
+abbrev Survivor {N : ℕ} (h : ℕ) (σ : PermutationTuples N 100) :=
+  {v : BipartiteVertex N // v ∉ removedVertices N h σ}
+
+def inducedGraph {V : Type*} (G : SimpleGraph V) (P : Set V) : SimpleGraph P where
+  Adj u v := G.Adj u.val v.val
+  symm := ⟨fun _ _ h => G.adj_symm h⟩
+  loopless := ⟨fun u => G.loopless.irrefl u.val⟩
+
+def survivorGraph {N : ℕ} (h : ℕ) (σ : PermutationTuples N 100) : SimpleGraph (Survivor h σ) :=
+  inducedGraph (permutationGraph σ) {v | v ∉ removedVertices N h σ}
+end URMatching
+
+FILE src/URMatchingSurvivingColours.lean
+module
+public import URMatchingRemovedVertices
+@[expose] public section
+namespace URMatching
+open scoped Classical
+def parallelDescription {N : ℕ} (x y : Fin N) (c d : Fin 100) : CycleDescription N 0 :=
+  (⟨fun _ => x, fun i j _ => (Fin.fin_one_eq_zero i).trans (Fin.fin_one_eq_zero j).symm⟩,
+   ⟨fun _ => y, fun i j _ => (Fin.fin_one_eq_zero i).trans (Fin.fin_one_eq_zero j).symm⟩,
+   (fun _ => c), (fun _ => d))
+
+theorem surviving_colour_unique {N h : ℕ} (σ : PermutationTuples N 100) (hh : 0 < h)
+    (x y : Fin N) (hx : Sum.inl x ∉ removedVertices N h σ)
+    (c d : Fin 100) (hc : σ c x = y) (hd : σ d x = y) : c = d := by
+  classical
+  by_contra hcd
+  let w := parallelDescription x y c d
+  have hw : ValidDescription w := fun _ => hcd
+  have ho : DescriptionOccurs w σ := fun _ => ⟨hc,hd⟩
+  apply hx
+  apply witness_vertex_removed σ ⟨w,hw⟩ hh ho
+  exact Finset.mem_union_left _ (Finset.mem_image.mpr ⟨0, Finset.mem_univ _, rfl⟩)
+
+/-- Joint tuples have fewer than N/100 actually deleted vertices. -/
+theorem exists_sparse_deletion_tuple (h : ℕ) : ∃ a : ℕ, 0 < a ∧ h ≤ a ∧
+    ∃ σ : PermutationTuples (4*a) 100,
+      100*(removedVertices (4*a) h σ).card < 4*a ∧
+      (∀ A B : Finset (Fin (4*a)), A.card = a → B.card = a →
+        ∃ c, ∃ x ∈ A, σ c x ∈ B) := by
+  obtain ⟨a,ha,hh,σ,hweight,hholes⟩ := exists_joint_tuple h
+  exact ⟨a,ha,hh,σ,(Nat.mul_le_mul_left 100 (removed_vertices_bound (4*a) h σ)).trans_lt hweight,hholes⟩
+end URMatching
+
+FILE formal_command.py
+import os,re,json,hashlib,subprocess,sys,shutil
+from pathlib import Path
+p=Path(__file__).resolve().parent
+pins=json.loads((p/'PINS.json').read_text())
+mode=os.environ['FORMAL_OPERATION'];module=os.environ['FORMAL_MODULE']
+assert mode in ['compile','check'] and re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*',module)
+def sha(q):return hashlib.sha256(q.read_bytes()).hexdigest()
+assert sha(Path(pins['lean_bin']))==pins['lean_sha256'] and sha(Path(pins['leanchecker_bin']))==pins['leanchecker_sha256']
+source=p/'src'/(module+'.lean');olean=p/'build'/(module+'.olean')
+assert source.is_file();before=sha(source)
+env=dict(os.environ);env['PATH']=str(Path(pins['lean_bin']).parent)+os.pathsep+env.get('PATH','');env['LEAN_PATH']=os.pathsep.join([str(p/'build')]+pins['upstream_lean_paths']);env['LEAN_NUM_THREADS']='1'
+prior=sha(olean) if olean.exists() else None
+if mode=='compile':
+ if olean.exists():
+  archive=p/'cache'/(module+'.'+prior+'.olean')
+  if not archive.exists():shutil.copyfile(olean,archive)
+  olean.unlink()
+ args=[pins['lean_bin'],'-j1','-M3500','-DwarningAsError=true','-o',str(olean),str(source)]
+else:
+ assert olean.is_file(),'Kernel checker requires actual production olean'
+ args=[pins['leanchecker_bin'],module]
+r=subprocess.run(args,cwd=p,env=env,text=True,capture_output=True)
+sys.stdout.write(r.stdout);sys.stderr.write(r.stderr)
+after=sha(source);out=sha(olean) if olean.exists() else None
+print(json.dumps(dict(stage=mode,module=module,argv=args,exit=r.returncode,source_sha256_before=before,source_sha256_after=after,olean_sha256_before=prior,olean_sha256_after=out,LEAN_PATH=env['LEAN_PATH'],LEAN_NUM_THREADS=1)))
+assert before==after,'Source changed during compile/check'
+if r.returncode==0:
+ assert out is not None,'No fresh olean produced'
+ if mode=='check':assert prior==out,'Checker changed olean'
+raise SystemExit(r.returncode)
+
+DOCS [('inputs/author/FULLCANDIDATE.md', 9895), ('inputs/author/DORMANT-SOL-FORMAL-PLAN.md', 2738), ('inputs/review-r1/REVIEW.md', 15250), ('inputs/review-r1/PROOF.md', 6799), ('inputs/review-r2/REVIEW.md', 5980), ('inputs/review-r2/PROOF.md', 7672), ('inputs/review-r2/GAP.md', 3339), ('inputs/previous/SUMMARY.md', 6643), ('inputs/previous/CHECKPOINT.md', 1741), ('inputs/previous-r4/SUMMARY.md', 4955), ('inputs/previous-r4/CHECKPOINT.md', 4955), ('inputs/previous-r5/SUMMARY.md', 3870), ('inputs/previous-r5/CHECKPOINT.md', 3870), ('inputs/previous-r6/SUMMARY.md', 3340), ('inputs/previous-r6/CHECKPOINT.md', 3340), ('inputs/previous-r7/SUMMARY.md', 3572), ('inputs/previous-r7/CHECKPOINT.md', 3572)]

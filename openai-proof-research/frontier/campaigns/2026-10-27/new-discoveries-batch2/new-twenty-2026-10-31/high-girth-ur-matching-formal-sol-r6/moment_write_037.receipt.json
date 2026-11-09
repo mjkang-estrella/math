@@ -1,0 +1,30 @@
+{
+  "utc": "2026-11-08T19:44:15.179056+00:00",
+  "name": "moment_write_037",
+  "cwd": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/high-girth-ur-matching-formal-sol-r6",
+  "command": [
+    "/usr/bin/python3",
+    "-I",
+    "-B",
+    "-c",
+    "import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\nfrom pathlib import Path\nimport subprocess\ns='''module\npublic import URMatchingWitnessBound\n@[expose] public section\nnamespace URMatching\nopen scoped Classical\nabbrev ValidWitness (N k : \u2115) := {w : CycleDescription N k // ValidDescription w}\nnoncomputable def witnessCount (N k : \u2115) (\u03c3 : PermutationTuples N 100) : \u2115 :=\n  Fintype.card {w : ValidWitness N k // DescriptionOccurs w.val \u03c3}\n\ntheorem witness_double_count (N k : \u2115) :\n    \u2211 \u03c3 : PermutationTuples N 100, witnessCount N k \u03c3 =\n      \u2211 w : ValidWitness N k,\n        Fintype.card {\u03c3 : PermutationTuples N 100 // DescriptionOccurs w.val \u03c3} := by\n  classical\n  let e : (\u03a3 \u03c3 : PermutationTuples N 100, {w : ValidWitness N k // DescriptionOccurs w.val \u03c3}) \u2243\n      (\u03a3 w : ValidWitness N k, {\u03c3 : PermutationTuples N 100 // DescriptionOccurs w.val \u03c3}) := {\n    toFun := fun z => \u27e8z.2.val, \u27e8z.1,z.2.property\u27e9\u27e9\n    invFun := fun z => \u27e8z.2.val, \u27e8z.1,z.2.property\u27e9\u27e9\n    left_inv := fun _ => rfl\n    right_inv := fun _ => rfl }\n  simpa only [Fintype.card_sigma, witnessCount] using Fintype.card_congr e\n\ntheorem nat_scaled_sum {\u03b1 : Type*} [DecidableEq \u03b1] (s : Finset \u03b1) (f : \u03b1 \u2192 \u2115)\n    (q r : \u2115) (h : \u2200 i \u2208 s, q * f i \u2264 r) :\n    q * (\u2211 i \u2208 s, f i) \u2264 s.card * r := by\n  induction s using Finset.induction_on with\n  | empty => simp\n  | @insert j s hj ih =>\n    rw [Finset.sum_insert hj, Finset.card_insert_of_notMem hj, Nat.mul_add, Nat.add_mul, Nat.one_mul]\n    exact (Nat.add_le_add (h j (Finset.mem_insert_self _ _))\n      (ih (fun i hi => h i (Finset.mem_insert_of_mem hi)))).trans_eq (Nat.add_comm _ _)\n\ntheorem witness_half_bound {N k : \u2115} (w : CycleDescription N k) (hw : ValidDescription w)\n    (b : \u2115) (hb : 0 < b) (hsmall : b+2*(k+1) \u2264 N) (hlarge : N \u2264 2*b) :\n    N^(2*(k+1)) * Fintype.card {\u03c3 : PermutationTuples N 100 // DescriptionOccurs w \u03c3} \u2264\n      2^(2*(k+1)) * (N.factorial)^100 := by\n  have h := witness_integer_bound w hw b hsmall\n  apply Nat.le_of_mul_le_mul_left (Nat.pow_pos hb : 0 < b^(2*(k+1)))\n  calc\n    _ = N^(2*(k+1)) * (b^(2*(k+1)) * _) := by ac_rfl\n    _ \u2264 (2*b)^(2*(k+1)) * (b^(2*(k+1)) * _) :=\n      Nat.mul_le_mul_right _ (Nat.pow_le_pow_left hlarge _)\n    _ = b^(2*(k+1)) * (2^(2*(k+1)) * (b^(2*(k+1)) * _)) := by rw [Nat.mul_pow]; ac_rfl\n    _ \u2264 b^(2*(k+1)) * (2^(2*(k+1)) * (N.factorial)^100) :=\n      Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _ h)\n\ntheorem witness_first_moment (N k b : \u2115) (hb : 0 < b)\n    (hsmall : b+2*(k+1) \u2264 N) (hlarge : N \u2264 2*b) :\n    \u2211 \u03c3 : PermutationTuples N 100, witnessCount N k \u03c3 \u2264\n      200^(2*(k+1)) * Fintype.card (PermutationTuples N 100) := by\n  classical\n  have hN : 0 < N := hb.trans_le ((Nat.le_add_right b _).trans hsmall)\n  have hs := nat_scaled_sum Finset.univ\n    (fun w : ValidWitness N k => Fintype.card {\u03c3 : PermutationTuples N 100 // DescriptionOccurs w.val \u03c3})\n    (N^(2*(k+1))) (2^(2*(k+1)) * (N.factorial)^100)\n    (fun w _ => witness_half_bound w.val w.property b hb hsmall hlarge)\n  have hc : Fintype.card (ValidWitness N k) \u2264 N^(2*(k+1)) * 100^(2*(k+1)) := by\n    have h := description_count_bound N k\n    convert h using 1 <;> simp only [pow_mul, pow_two] <;> ac_rfl\n  rw [Finset.card_univ] at hs\n  apply Nat.le_of_mul_le_mul_left (Nat.pow_pos hN : 0 < N^(2*(k+1)))\n  rw [witness_double_count]\n  calc\n    _ \u2264 Fintype.card (ValidWitness N k) * (2^(2*(k+1)) * (N.factorial)^100) := hs\n    _ \u2264 (N^(2*(k+1)) * 100^(2*(k+1))) * (2^(2*(k+1)) * (N.factorial)^100) := Nat.mul_le_mul_right _ hc\n    _ = _ := by\n      simp only [PermutationTuples, Fintype.card_pi, Fintype.card_perm, Fintype.card_fin,\n        Finset.prod_const, Finset.card_univ, \u2190 Nat.mul_pow]\n      ac_rfl\nend URMatching\n'''\nsubprocess.run(['python3','-I','-B',str(Path.cwd()/'write_lane.py'),'src/URMatchingWitnessMoment.lean'],input=s,text=True,check=True)\n"
+  ],
+  "env_overrides": {
+    "MALLOC_ARENA_MAX": "2"
+  },
+  "affinity": [
+    0,
+    1
+  ],
+  "cpu_limit_s": 115,
+  "as_limit_bytes": 6442450944,
+  "group_rss_guard_bytes": 6442450944,
+  "deadline_s": 130,
+  "wall_s": 0.023497510002925992,
+  "sampled_group_rss_peak_bytes": 12607488,
+  "samples": 1,
+  "exit": 0,
+  "killed": null,
+  "child_cpu_cumulative_s": 0.023174,
+  "stderr": ""
+}

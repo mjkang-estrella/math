@@ -1,0 +1,322 @@
+FILE src/URMatchingSurvivorHoles.lean
+module
+public import URMatchingSurvivorDegree
+public import URMatchingSurvivingColours
+@[expose] public section
+namespace URMatching
+open scoped Classical
+def LeftSurvivor {N : ℕ} {h : ℕ} {σ : PermutationTuples N 100} (v : Survivor h σ) : Prop :=
+  ∃ x, v.val = Sum.inl x
+
+theorem survivor_bipartite {N h : ℕ} (σ : PermutationTuples N 100)
+    (u v : Survivor h σ) (huv : (survivorGraph h σ).Adj u v) :
+    (LeftSurvivor u ∧ ¬ LeftSurvivor v) ∨ (¬ LeftSurvivor u ∧ LeftSurvivor v) := by
+  obtain ⟨u,hu⟩ := u
+  obtain ⟨v,hv⟩ := v
+  cases u <;> cases v <;> simp_all [LeftSurvivor, survivorGraph, inducedGraph, permutationGraph, permutationAdj]
+
+def SurvivorNoHole {N : ℕ} (h a : ℕ) (σ : PermutationTuples N 100) : Prop :=
+  ∀ A B : Finset (Fin N), A.card = a → B.card = a →
+    (∀ x ∈ A, Sum.inl x ∉ removedVertices N h σ) →
+    (∀ y ∈ B, Sum.inr y ∉ removedVertices N h σ) →
+    ∃ u v : Survivor h σ, (∃ x ∈ A, u.val = Sum.inl x) ∧
+      (∃ y ∈ B, v.val = Sum.inr y) ∧ (survivorGraph h σ).Adj u v
+
+theorem induced_no_hole {N h a : ℕ} (σ : PermutationTuples N 100)
+    (hh : ∀ A B : Finset (Fin N), A.card = a → B.card = a → ∃ c, ∃ x ∈ A, σ c x ∈ B) :
+    SurvivorNoHole h a σ := by
+  intro A B hA hB hleft hright
+  obtain ⟨c,x,hx,hy⟩ := hh A B hA hB
+  exact ⟨⟨Sum.inl x,hleft x hx⟩, ⟨Sum.inr (σ c x),hright _ hy⟩,
+    ⟨x,hx,rfl⟩,⟨σ c x,hy,rfl⟩,c,rfl⟩
+
+theorem exists_induced_survivor (h : ℕ) : ∃ a : ℕ, 0 < a ∧ h ≤ a ∧
+    ∃ σ : PermutationTuples (4*a) 100,
+      100*(removedVertices (4*a) h σ).card < 4*a ∧
+      DegreeBound (survivorGraph h σ) 100 ∧ SurvivorNoHole h a σ := by
+  obtain ⟨a,ha,hh,σ,hs,hn⟩ := exists_sparse_deletion_tuple h
+  exact ⟨a,ha,hh,σ,hs,survivor_degree_bound h σ,induced_no_hole σ hn⟩
+end URMatching
+
+FILE src/URMatchingPartition.lean
+module
+public import URMatchingBase
+@[expose] public section
+namespace URMatching
+universe v
+variable {V : Type v}
+/-- The bipartition is an actual proper two-coloring of every graph edge. -/
+def AcrossPartition (G : SimpleGraph V) (P : V → Prop) : Prop :=
+  ∀ x y, G.Adj x y → (P x ↔ ¬ P y)
+
+theorem partition_orients_edge (G : SimpleGraph V) (P : V → Prop)
+    (bip : AcrossPartition G P) (a : Sym2 V) (he : a ∈ G.edgeSet) :
+    ∃ x y, P x ∧ ¬ P y ∧ a = s(x,y) := by
+  classical
+  revert he
+  refine Sym2.inductionOn a (fun x y hxy => ?_)
+  have hadj : G.Adj x y := hxy
+  by_cases hp : P x
+  · exact ⟨x, y, hp, (bip x y hadj).mp hp, rfl⟩
+  · have hpy : P y := by
+      by_contra hny
+      exact hp ((bip x y hadj).mpr hny)
+    exact ⟨y, x, hpy, hp, by simp [Sym2.eq_swap]⟩
+end URMatching
+
+FILE src/URMatchingBipartiteObstruction.lean
+module
+public import URMatchingOrientationSides
+public import URMatchingPartition
+@[expose] public section
+namespace URMatching
+universe v
+variable {V : Type v} [DecidableEq V]
+
+/-- The directed-cycle/topological obstruction for ANY literal bipartite UR
+matching, including partial matchings, odd size, and uncovered ambient vertices. -/
+theorem ur_partition_empty_rectangle (G : SimpleGraph V) (P : V → Prop)
+    (bip : AcrossPartition G P) (M : Finset (Sym2 V)) (ur : IsUR G M) :
+    ∃ A B : Finset V, A.card = M.card / 2 ∧ B.card = M.card / 2 ∧
+      (∀ x ∈ A, P x) ∧ (∀ y ∈ B, ¬ P y) ∧
+      Disjoint A B ∧ ∀ x ∈ A, ∀ y ∈ B, ¬ G.Adj x y := by
+  classical
+  apply ur_oriented_empty_rectangle_sides G M P ur
+  intro a ha
+  exact partition_orients_edge G P bip a (ur.1.1 a ha)
+end URMatching
+
+FILE src/URMatchingFinite.lean
+module
+public import URMatchingBase
+@[expose] public section
+namespace URMatching
+universe u
+variable {V : Type u} (G : SimpleGraph V)
+
+@[simp] theorem empty_isMatching : IsMatching G ∅ := by
+  simp [IsMatching]
+
+@[simp] theorem covered_empty : Covered (∅ : Finset (Sym2 V)) = ∅ := by
+  ext v
+  simp [Covered]
+
+theorem eq_empty_of_covered_empty (M : Finset (Sym2 V)) (h : Covered M = ∅) : M = ∅ := by
+  apply Finset.eq_empty_iff_forall_notMem.mpr
+  intro e he
+  obtain ⟨⟨x, y⟩, rfl⟩ := Sym2.mk_surjective e
+  have hv : x ∈ Covered M := ⟨s(x, y), he, Sym2.mem_mk_left x y⟩
+  rw [h] at hv
+  exact hv
+
+@[simp] theorem empty_isUR : IsUR G ∅ := by
+  refine ⟨empty_isMatching G, ?_⟩
+  intro M _ hc
+  exact eq_empty_of_covered_empty M (hc.trans covered_empty)
+
+variable [Fintype V]
+
+theorem card_le_matchingNumber {M : Finset (Sym2 V)} (h : IsMatching G M) :
+    M.card ≤ matchingNumber G := by
+  classical
+  exact Finset.le_sup (f := Finset.card) (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩)
+
+theorem card_le_urMatchingNumber {M : Finset (Sym2 V)} (h : IsUR G M) :
+    M.card ≤ urMatchingNumber G := by
+  classical
+  exact Finset.le_sup (f := Finset.card) (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩)
+
+theorem exists_maximum_matching : ∃ M : Finset (Sym2 V),
+    IsMatching G M ∧ M.card = matchingNumber G := by
+  classical
+  let S := (Finset.univ : Finset (Finset (Sym2 V))).filter (IsMatching G)
+  have hs : S.Nonempty := ⟨∅, Finset.mem_filter.mpr ⟨Finset.mem_univ _, empty_isMatching G⟩⟩
+  obtain ⟨M, hm, heq⟩ := Finset.exists_mem_eq_sup S hs Finset.card
+  exact ⟨M, (Finset.mem_filter.mp hm).2, heq.symm⟩
+
+theorem exists_maximum_urMatching : ∃ M : Finset (Sym2 V),
+    IsUR G M ∧ M.card = urMatchingNumber G := by
+  classical
+  let S := (Finset.univ : Finset (Finset (Sym2 V))).filter (IsUR G)
+  have hs : S.Nonempty := ⟨∅, Finset.mem_filter.mpr ⟨Finset.mem_univ _, empty_isUR G⟩⟩
+  obtain ⟨M, hm, heq⟩ := Finset.exists_mem_eq_sup S hs Finset.card
+  exact ⟨M, (Finset.mem_filter.mp hm).2, heq.symm⟩
+
+theorem urMatchingNumber_le_matchingNumber : urMatchingNumber G ≤ matchingNumber G := by
+  obtain ⟨M, hm, heq⟩ := exists_maximum_urMatching G
+  rw [← heq]
+  exact card_le_matchingNumber G hm.1
+
+/-- This exact universal characterization verifies that the supremum ranges over all matchings. -/
+theorem matchingNumber_le_iff (k : ℕ) :
+    matchingNumber G ≤ k ↔ ∀ M, IsMatching G M → M.card ≤ k := by
+  classical
+  constructor
+  · intro h M hm; exact (card_le_matchingNumber G hm).trans h
+  · intro h
+    exact Finset.sup_le fun M hm => h M (Finset.mem_filter.mp hm).2
+
+theorem urMatchingNumber_le_iff (k : ℕ) :
+    urMatchingNumber G ≤ k ↔ ∀ M, IsUR G M → M.card ≤ k := by
+  classical
+  constructor
+  · intro h M hm; exact (card_le_urMatchingNumber G hm).trans h
+  · intro h
+    exact Finset.sup_le fun M hm => h M (Finset.mem_filter.mp hm).2
+end URMatching
+
+FILE src/URMatchingOrientationSides.lean
+module
+public import URMatchingURSides
+@[expose] public section
+namespace URMatching
+universe v
+variable {V : Type v} [DecidableEq V]
+
+/-- Arbitrary literal edge-set matching, with each edge oriented across a fixed
+vertex partition. The indexing and all endpoint disjointness are proved. -/
+theorem ur_oriented_empty_rectangle_sides (G : SimpleGraph V) (M : Finset (Sym2 V))
+    (P : V → Prop) (ur : IsUR G M)
+    (orient : ∀ a ∈ M, ∃ x y, P x ∧ ¬ P y ∧ a = s(x,y)) :
+    ∃ A B : Finset V, A.card = M.card / 2 ∧ B.card = M.card / 2 ∧
+      (∀ x ∈ A, P x) ∧ (∀ y ∈ B, ¬ P y) ∧
+      Disjoint A B ∧ ∀ x ∈ A, ∀ y ∈ B, ¬ G.Adj x y := by
+  classical
+  have ho : ∀ a : M, ∃ x y, P x ∧ ¬ P y ∧ a.val = s(x,y) :=
+    fun a => orient a.val a.property
+  choose x y hx hy he using ho
+  let f : Sum M M → V := Sum.elim x y
+  have hf : Function.Injective f := by
+    intro a b hab
+    cases a with
+    | inl i =>
+      cases b with
+      | inl j =>
+        have hi : x i ∈ i.val := by rw [he i]; simp
+        have hj : x i ∈ j.val := by rw [he j]; simp [show x i = x j from hab]
+        have hij := ur.1.2 i.val i.property j.val j.property (x i) hi hj
+        exact congrArg Sum.inl (Subtype.ext hij)
+      | inr j =>
+        change x i = y j at hab
+        exact False.elim (hy j (hab ▸ hx i))
+    | inr i =>
+      cases b with
+      | inl j =>
+        change y i = x j at hab
+        exact False.elim (hy i (hab.symm ▸ hx j))
+      | inr j =>
+        have hi : y i ∈ i.val := by rw [he i]; simp
+        have hj : y i ∈ j.val := by rw [he j]; simp [show y i = y j from hab]
+        have hij := ur.1.2 i.val i.property j.val j.property (y i) hi hj
+        exact congrArg Sum.inr (Subtype.ext hij)
+  let e : Sum M M ↪ V := ⟨f, hf⟩
+  have hedges : indexedEdges e (Equiv.refl M) = M := by
+    ext a
+    constructor
+    · intro ha
+      obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp ha
+      change s(x i, y i) ∈ M
+      rw [← he i]
+      exact i.property
+    · intro ha
+      exact Finset.mem_image.mpr ⟨⟨a,ha⟩, Finset.mem_univ _, (he ⟨a,ha⟩).symm⟩
+  have hu : IsUR G (indexedEdges e (Equiv.refl M)) := hedges.symm ▸ ur
+  obtain ⟨A, B, hA, hB, hleft, hright, hd, hempty⟩ := ur_indexed_empty_rectangle_sides G e hu
+  refine ⟨A, B, by simpa using hA, by simpa using hB, ?_, ?_, hd, hempty⟩
+  · intro w hw
+    obtain ⟨i, rfl⟩ := hleft w hw
+    exact hx i
+  · intro w hw
+    obtain ⟨i, rfl⟩ := hright w hw
+    exact hy i
+end URMatching
+
+RESULT    "URMatchingWalkParity",
+    "URMatchingOrderedCycle",
+    "URMatchingWalkPositions",
+    "URMatchingWalkLabels",
+    "URMatchingWalkDescription"
+  ],
+  "r7_uncertified": {
+    "module": "URMatchingGenuineCycle",
+    "compile_exit": 0,
+    "checker_exit": 1,
+    "scoped_axiom_exit": 0,
+    "reason": "Unreadable pinned upstream Walk/Subwalks.olean.private; no upstream mutation or unchanged rerun.",
+    "hashes": {
+      "src/URMatchingGenuineCycle.lean": "1fa48d9066ac967d0acb31dcaa2a752e6f79bdf3a9e965958885ab0fa176c617",
+      "build/URMatchingGenuineCycle.olean": "c83fd18cafeb1bb938b04ba6974700c6c87607d5428d8b27287261a5f42b8337",
+      "r7_genuine_compile_043.receipt.json": "69f27d19e01ef2529c91af44b61fe5da44667c38236422a148129cc76689a08d",
+      "r7_genuine_compile_043.output.txt": "ada6fb07d67358bd3abc882360b50c5f19ee14f9ad376e4f58f1a066c42e7baf",
+      "r7_genuine_kernel_044.receipt.json": "cf72fb0cdb505c31465654e7ace3a6a9f7aee59ce6f5dd00a95f9dfe6d7b2233",
+      "r7_genuine_kernel_044.output.txt": "be8d8120ef2b69240c2a37a89d0627109b632d3f376c1e2a965762a7049c1a58",
+      "audit/GenuineCycleAxioms.txt": "2628f97e902e4a7caa115492a4f53a1432421fefdb51940d387b4941b7e01630",
+      "r7_close_document_045.receipt.json": "f6b6f6f0cf753e3a826c4f999e861ee1da198db3a9c1cbcfd592cbd1a066e2f9"
+    }
+  },
+  "r7_checkpoint_receipt_hashes": {
+    "r7_checkpoint_parity_015.receipt.json": "865086c5b83fe6f594daa1f8a61cea08186bc7228d86e3f25620c8c7fa604777",
+    "r7_ordered_checkpoint_020.receipt.json": "9c8c8e30308ff2bfea0da41c68c4dbeee09ff0327eac1f15a00ab6273df608e8",
+    "r7_positions_checkpoint_029.receipt.json": "3c5c8661fb898c511be61430c3af6b948035819633e19b0566990ab4966dfda4",
+    "r7_labels_checkpoint_035.receipt.json": "3a66649098ffac6acbbc2604cc1a97ddfcf82ce3910c58bf6a02a650a5b12b1a",
+    "r7_walkdescription_checkpoint_041.receipt.json": "5d925be6ca2543fa2e559c6f3ccdefa92d9313e576ee2c08d69b6c301571af7c"
+  },
+  "r7_failures": [
+    {
+      "receipt": "r7_parity_compile_006.receipt.json",
+      "sha256": "7bc595ec26c26ef2c21427b4c8f157187cb8f8833d84501a6a9963f956566123",
+      "exit": 1,
+      "stderr": ""
+    },
+    {
+      "receipt": "r7_parity_kernel_009.receipt.json",
+      "sha256": "1dd676d1c9a4ab825076725148828f6f06a28c6781012a476716881695ac03d7",
+      "exit": 1,
+      "stderr": "leanchecker found a problem in URMatchingWalkParity\nuncaught exception: failed to read file '/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Combinatorics/SimpleGraph/Walk/Maps.olean.private'\n"
+    },
+    {
+      "receipt": "r7_checkpoint_parity_014.receipt.json",
+      "sha256": "57beced338c4e5f2724175ee56e22721a537e3174c7fe513745633b2491a7e31",
+      "exit": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 9, in <module>\n    print(r.stdout,r.stderr);write('audit/WalkParityAxioms.txt',r.stdout+r.stderr);assert r.returncode==0\n                                                                                          ^^^^^^^^^^^^^^^\nAssertionError\n"
+    },
+    {
+      "receipt": "r7_positions_compile_023.receipt.json",
+      "sha256": "25705402d99a00602227ce1c21180cb19d418be3919dc872a27f0a776b6f5c19",
+      "exit": 1,
+      "stderr": ""
+    },
+    {
+      "receipt": "r7_positions_diagnostic_025.receipt.json",
+      "sha256": "7de808d213ef7309928f164f64fc20f7721a4f734f50c4f4f1d7a72f03e25061",
+      "exit": 1,
+      "stderr": ""
+    },
+    {
+      "receipt": "r7_labels_compile_031.receipt.json",
+      "sha256": "f3ae6ea557044c3f8bba7c12510cddda6174f477488732fa7364b9ac0ce94d14",
+      "exit": 1,
+      "stderr": ""
+    },
+    {
+      "receipt": "r7_walkdescription_compile_037.receipt.json",
+      "sha256": "4db1816269cd792df50a7f9ddb86fdf7ab4eb738051684e7f3baf9c7e467e1bb",
+      "exit": 1,
+      "stderr": ""
+    },
+    {
+      "receipt": "r7_genuine_kernel_044.receipt.json",
+      "sha256": "cf72fb0cdb505c31465654e7ace3a6a9f7aee59ce6f5dd00a95f9dfe6d7b2233",
+      "exit": 1,
+      "stderr": "leanchecker found a problem in URMatchingGenuineCycle\nuncaught exception: failed to read file '/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib/.lake/build/lib/lean/Mathlib/Combinatorics/SimpleGraph/Walk/Subwalks.olean.private'\n"
+    }
+  ],
+  "r7_limits": [
+    "Runtime 4.34.1 and binary/source metadata hashes matched; upstream prebuilts trusted, not rebuilt or fully origin-attested.",
+    "Nonmodular axiom attempt014 Lean aborted with bad_alloc; modular audit015 changed import graph and passed.",
+    "Documentary reads001 were truncated; R7 override separately read. No new complete source-fidelity review claimed.",
+    "No children, model/provider fallback, network, git, installs, peer access or frozen baseline rebuild.",
+    "Scoped axiom prints only; no full body audit or replay. Sampled RSS only, native/transient/writer/supervisor peaks unknown."
+  ]
+}
+FILES ['inputs/original338806.raw.jsonl', 'inputs/literal338806.json', 'inputs/provenance338806.json', 'inputs/matching.pdf', 'inputs/matching.txt', 'inputs/matching-metadata.html', 'inputs/accepted57-scopes.json', 'inputs/prior39-scopes.json', 'inputs/PREVIOUS-ROOT-AUTHORIZATION-r3.json', 'inputs/PREVIOUS-ROOT-AUTHORIZATION-r4.json', 'inputs/PREVIOUS-ROOT-AUTHORIZATION-r5.json', 'inputs/PREVIOUS-ROOT-AUTHORIZATION-r6.json', 'inputs/PREVIOUS-ROOT-AUTHORIZATION-r7.json', 'inputs/author', 'inputs/review-r1', 'inputs/review-r2', 'inputs/sources', 'inputs/drafts', 'inputs/previous-receipts', 'inputs/previous', 'inputs/drafts-r4', 'inputs/previous-receipts-r4', 'inputs/previous-r4', 'inputs/drafts-r5', 'inputs/previous-receipts-r5', 'inputs/previous-r5', 'inputs/drafts-r6', 'inputs/previous-receipts-r6', 'inputs/previous-r6', 'inputs/INHERITED-DENIALS.json', 'inputs/drafts-r7', 'inputs/previous-receipts-r7', 'inputs/previous-r7', 'inputs/ROOT-AUTHORIZATION.json']

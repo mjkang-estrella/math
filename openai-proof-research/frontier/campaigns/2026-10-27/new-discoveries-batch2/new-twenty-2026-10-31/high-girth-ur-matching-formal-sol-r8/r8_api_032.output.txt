@@ -1,0 +1,432 @@
+Mathlib/Combinatorics/SimpleGraph/Subgraph.lean:63:structure Subgraph {V : Type u} (G : SimpleGraph V) where
+Mathlib/Combinatorics/SimpleGraph/Subgraph.lean:804:def degree (G' : Subgraph G) (v : V) [Fintype (G'.neighborSet v)] : ℕ :=
+Mathlib/Combinatorics/SimpleGraph/Subgraph.lean:1197:def induce (G' : G.Subgraph) (s : Set V) : G.Subgraph where
+Mathlib/Combinatorics/SimpleGraph/Matching.lean:67:def IsMatching (M : Subgraph G) : Prop := ∀ ⦃v⦄, v ∈ M.verts → ∃! w, M.Adj v w
+Mathlib/Combinatorics/SimpleGraph/Matching.lean:70:noncomputable def IsMatching.toEdge (h : M.IsMatching) (v : M.verts) : M.edgeSet :=
+Mathlib/Combinatorics/SimpleGraph/Matching.lean:349:def IsMatchingFree (G : SimpleGraph V) := ∀ M : Subgraph G, ¬ M.IsPerfectMatching
+Mathlib/Combinatorics/SimpleGraph/Maps.lean:583:def induceHom : G.induce s →g G'.induce t where
+Mathlib/Combinatorics/SimpleGraph/Maps.lean:611:def induceHomOfLE (h : s ≤ s') : G.induce s ↪g G.induce s' where
+Mathlib/Combinatorics/SimpleGraph/Maps.lean:766:protected def induce : G.induce s ≃g G'.induce t where
+Mathlib/Combinatorics/SimpleGraph/Maps.lean:804:def induceUnivIso (G : SimpleGraph V) : G.induce Set.univ ≃g G where
+Mathlib/Combinatorics/SimpleGraph/Finite.lean:242:def degree : ℕ := #(G.neighborFinset v)
+Mathlib/Combinatorics/SimpleGraph/Finite.lean:635:lemma degree_eq_card_sub_one [DecidableRel G.Adj] (v : V) :
+Mathlib/Combinatorics/SimpleGraph/Finite.lean:645:  grind [degree_eq_card_sub_one, Nat.le_sub_one_of_lt <| G.degree_lt_card_verts v]
+Mathlib/Combinatorics/SimpleGraph/Copy.lean:160:def induce (G : SimpleGraph V) (s : Set V) : Copy (G.induce s) G := (Embedding.induce s).toCopy
+Mathlib/Combinatorics/SimpleGraph/Walk/Maps.lean:225:protected def induce {u v : V} :
+Mathlib/Combinatorics/SimpleGraph/Extremal/Turan.lean:184:lemma degree_eq_card_sub_part_card [DecidableEq V] :
+Mathlib/Combinatorics/SimpleGraph/Extremal/Turan.lean:213:    degree_eq_card_sub_part_card h, small_eq, degree_eq_card_sub_part_card h, large_eq]
+
+FILE Mathlib/Combinatorics/SimpleGraph/Subgraph.lean /-
+Copyright (c) 2021 Hunter Monroe. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hunter Monroe, Kyle Miller, Alena Gusakov
+-/
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
+public import Mathlib.Data.Fintype.Powerset
+
+/-!
+# Subgraphs of a simple graph
+
+A subgraph of a simple graph consists of subsets of the graph's vertices and edges such that the
+endpoints of each edge are present in the vertex subset. The edge subset is formalized as a
+sub-relation of the adjacency relation of the simple graph.
+
+## Main definitions
+
+* `Subgraph G` is the type of subgraphs of a `G : SimpleGraph V`.
+
+* `Subgraph.neighborSet`, `Subgraph.incidenceSet`, and `Subgraph.degree` are like their
+  `SimpleGraph` counterparts, but they refer to vertices from `G` to avoid subtype coercions.
+
+* `Subgraph.coe` is the coercion from a `G' : Subgraph G` to a `SimpleGraph G'.verts`.
+  (In Lean 3 this could not be a `Coe` instance since the destination type depends on `G'`.)
+
+* `Subgraph.IsSpanning` for whether a subgraph is a spanning subgraph and
+  `Subgraph.IsInduced` for whether a subgraph is an induced subgraph.
+
+* Instances for `DistribLattice G.Subgraph` and `BoundedOrder (Subgraph G)`.
+
+* `SimpleGraph.toSubgraph`: If a `SimpleGraph` is a subgraph of another, then you can turn it
+  into a member of the larger graph's `SimpleGraph.Subgraph` type.
+
+* Graph homomorphisms from a subgraph to a graph (`Subgraph.map_top`) and between subgraphs
+  (`Subgraph.map`).
+
+## Implementation notes
+
+* Recall that subgraphs are not determined by their vertex sets, so `SetLike` does not apply to
+  this kind of subobject.
+
+## TODO
+
+* Images of graph homomorphisms as subgraphs.
+
+-/
+
+@[expose] public section
+
+
+universe u v
+
+namespace SimpleGraph
+
+/-- A subgraph of a `SimpleGraph` is a subset of vertices along with a restriction of the adjacency
+relation that is symmetric and is supported by the vertex subset.  They also form a bounded lattice.
+
+Thinking of `V → V → Prop` as `Set (V × V)`, a set of darts (i.e., half-edges), then
+`Subgraph.adj_sub` is that the darts of a subgraph are a subset of the darts of `G`. -/
+@[ext]
+structure Subgraph {V : Type u} (G : SimpleGraph V) where
+  /-- Vertices of the subgraph -/
+  verts : Set V
+  /-- Edges of the subgraph -/
+  Adj : V → V → Prop
+  adj_sub : ∀ {v w : V}, Adj v w → G.Adj v w
+  edge_vert : ∀ {v w : V}, Adj v w → v ∈ verts
+  symm : Std.Symm Adj := by aesop_graph
+
+initialize_simps_projections SimpleGraph.Subgraph (Adj → adj)
+
+variable {ι : Sort*} {V : Type u} {W : Type v}
+
+/-- The one-vertex subgraph. -/
+@[simps]
+protected def singletonSubgraph (G : SimpleGraph V) (v : V) : G.Subgraph where
+  verts := {v}
+  Adj := ⊥
+  adj_sub := False.elim
+  edge_vert := False.elim
+
+/-- The one-edge subgraph. -/
+@[simps]
+def subgraphOfAdj (G : SimpleGraph V) {v w : V} (hvw : G.Adj v w) : G.Subgraph where
+  verts := {v, w}
+  Adj a b := s(v, w) = s(a, b)
+  adj_sub h := by
+    rw [← G.mem_edgeSet, ← h]
+    exact hvw
+  edge_vert {a b} h := by
+    apply_fun fun e ↦ a ∈ e at h
+    simp only [Sym2.mem_iff, true_or, eq_iff_iff, iff_true] at h
+    exact h
+
+namespace Subgraph
+
+variable {G : SimpleGraph V} {G₁ G₂ : G.Subgraph} {a b : V}
+
+protected theorem loopless (G' : Subgraph G) : Std.Irrefl G'.Adj where
+  irrefl _ hadj := G.irrefl <| G'.adj_sub hadj
+
+theorem adj_comm (G' : Subgraph G) (v w : V) : G'.Adj v w ↔ G'.Adj w v :=
+  G'.symm.iff v w
+
+@[symm]
+theorem adj_symm (G' : Subgraph G) {u v : V} (h : G'.Adj u v) : G'.Adj v u :=
+  G'.symm.symm u v h
+
+protected theorem Adj.symm {G' : Subgraph G} {u v : V} (h : G'.Adj u v) : G'.Adj v u :=
+  G'.adj_symm h
+
+@[grind →]
+protected theorem Adj.adj_sub {H : G.Subgraph} {u v : V} (h : H.Adj u v) : G.Adj u v :=
+  H.adj_sub h
+
+protected theorem Adj.fst_mem {H : G.Subgraph} {u v : V} (h : H.Adj u v) : u ∈ H.verts :=
+  H.edge_vert h
+
+protected theorem Adj.snd_mem {H : G.Subgraph} {u v : V} (h : H.Adj u v) : v ∈ H.verts :=
+  h.symm.fst_mem
+
+protected theorem Adj.ne {H : G.Subgraph} {u v : V} (h : H.Adj u v) : u ≠ v :=
+  h.adj_sub.ne
+
+theorem adj_congr_of_sym2 {H : G.Subgraph} {u v w x : V} (h2 : s(u, v) = s(w, x)) :
+    H.Adj u v ↔ H.Adj w x := by
+  simp only [Sym2.eq, Sym2.rel_iff', Prod.mk.injEq, Prod.swap_prod_mk] at h2
+  rcases h2 with hl | hr
+  · rw [hl.1, hl.2]
+  · rw [hr.1, hr.2, Subgraph.adj_comm]
+
+/-- Coercion from `G' : Subgraph G` to a `SimpleGraph G'.verts`. -/
+@[simps]
+protected def coe (G' : Subgraph G) : SimpleGraph G'.verts where
+  Adj v w := G'.Adj v w
+  symm := G'.symm.comap Subtype.val
+  loopless.irrefl _ hadj := G.irrefl hadj.adj_sub
+
+@[simp]
+theorem Adj.adj_sub' (G' : Subgraph G) (u v : G'.verts) (h : G'.Adj u v) : G.Adj u v :=
+  G'.adj_sub h
+
+theorem coe_adj_sub (G' : Subgraph G) (u v : G'.verts) (h : G'.coe.Adj u v) : G.Adj u v :=
+  G'.adj_sub h
+
+-- Given `h : H.Adj u v`, then `h.coe : H.coe.Adj ⟨u, _⟩ ⟨v, _⟩`.
+protected theorem Adj.coe {H : G.Subgraph} {u v : V} (h : H.Adj u v) :
+    H.coe.Adj ⟨u, H.edge_vert h⟩ ⟨v, H.edge_vert h.symm⟩ := h
+
+instance (G : SimpleGraph V) (H : Subgraph G) [DecidableRel H.Adj] : DecidableRel H.coe.Adj :=
+  fun a b ↦ ‹DecidableRel H.Adj› _ _
+
+/-- A subgraph is called a *spanning subgraph* if it contains all the vertices of `G`. -/
+def IsSpanning (G' : Subgraph G) : Prop :=
+  ∀ v : V, v ∈ G'.verts
+
+theorem isSpanning_iff {G' : Subgraph G} : G'.IsSpanning ↔ G'.verts = Set.univ :=
+  Set.eq_univ_iff_forall.symm
+
+protected alias ⟨IsSpanning.verts_eq_univ, _⟩ := isSpanning_iff
+
+/-- Coercion from `Subgraph G` to `SimpleGraph V`.  If `G'` is a spanning
+subgraph, then `G'.spanningCoe` yields an isomorphic graph.
+In general, this adds in all vertices from `V` as isolated vertices. -/
+@[simps]
+protected def spanningCoe (G' : Subgraph G) : SimpleGraph V where
+  Adj := G'.Adj
+  symm := G'.symm
+  loopless.irrefl _ hadj := G.irrefl hadj.adj_sub
+
+attribute [grind =] Subgraph.spanningCoe_adj
+
+@[simp]
+lemma spanningCoe_coe (G' : G.Subgraph) : G'.coe.spanningCoe = G'.spanningCoe := by
+  ext
+  simp only [map_adj, Function.Embedding.subtype_apply, Subtype.exists]
+  grind [coe_adj, edge_vert, adj_symm]
+
+theorem Adj.of_spanningCoe {G' : Subgraph G} {u v : G'.verts} (h : G'.spanningCoe.Adj u v) :
+    G.Adj u v :=
+  G'.adj_sub h
+
+lemma spanningCoe_le (G' : G.Subgraph) : G'.spanningCoe ≤ G := fun _ _ ↦ G'.3
+
+theorem spanningCoe_inj : G₁.spanningCoe = G₂.spanningCoe ↔ G₁.Adj = G₂.Adj := by
+  simp [Subgraph.spanningCoe]
+
+lemma mem_of_adj_spanningCoe {v w : V} {s : Set V} (G : SimpleGraph s)
+    (hadj : G.spanningCoe.Adj v w) : v ∈ s := by aesop
+
+@[simp]
+lemma spanningCoe_subgraphOfAdj {v w : V} (hadj : G.Adj v w) :
+    (G.subgraphOfAdj hadj).spanningCoe = fromEdgeSet {s(v, w)} := by
+  ext v w
+  aesop
+
+/-- `coe` can be embedded in `spanningCoe`. -/
+@[simps]
+def coeEmbeddingSpanningCoe (G' : Subgraph G) : G'.coe ↪g G'.spanningCoe where
+  toFun := Subtype.val
+  inj' := Subtype.val_injective
+  map_rel_iff' := .rfl
+
+/-- `spanningCoe` is equivalent to `coe` for a subgraph 
+FILE Mathlib/Combinatorics/SimpleGraph/Finite.lean /-
+Copyright (c) 2020 Aaron Anderson, Jalex Stark, Kyle Miller. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Aaron Anderson, Jalex Stark, Kyle Miller, Alena Gusakov
+-/
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Set.Card
+public import Mathlib.Data.Sym.Card
+public import Mathlib.Tactic.CrossRefAttribute
+
+/-!
+# Definitions for finite and locally finite graphs
+
+This file defines finite versions of `edgeSet`, `neighborSet` and `incidenceSet` and proves some
+of their basic properties. It also defines the notion of a locally finite graph, which is one
+whose vertices have finite degree.
+
+The design for finiteness is that each definition takes the smallest finiteness assumption
+necessary. For example, `SimpleGraph.neighborFinset v` only requires that `v` have
+finitely many neighbors.
+
+## Main definitions
+
+* `SimpleGraph.edgeFinset` is the `Finset` of edges in a graph, if `edgeSet` is finite
+* `SimpleGraph.neighborFinset` is the `Finset` of vertices adjacent to a given vertex,
+  if `neighborSet` is finite
+* `SimpleGraph.incidenceFinset` is the `Finset` of edges containing a given vertex,
+  if `incidenceSet` is finite
+
+## Naming conventions
+
+If the vertex type of a graph is finite, we refer to its cardinality as `CardVerts`
+or `card_verts`.
+
+## Implementation notes
+
+* A locally finite graph is one with instances `Π v, Fintype (G.neighborSet v)`.
+* Given instances `DecidableRel G.Adj` and `Fintype V`, then the graph
+  is locally finite, too.
+-/
+
+@[expose] public section
+
+
+open Finset Function
+
+namespace SimpleGraph
+
+variable {V : Type*} (G H : SimpleGraph V) {e : Sym2 V}
+
+section EdgeFinset
+
+variable {G₁ G₂ : SimpleGraph V} [Fintype G.edgeSet] [Fintype G₁.edgeSet] [Fintype G₂.edgeSet]
+
+/-- The `edgeSet` of the graph as a `Finset`. -/
+def edgeFinset : Finset (Sym2 V) :=
+  Set.toFinset G.edgeSet
+
+@[simp, norm_cast]
+theorem coe_edgeFinset : (G.edgeFinset : Set (Sym2 V)) = G.edgeSet :=
+  Set.coe_toFinset _
+
+variable {G}
+
+@[simp]
+theorem mem_edgeFinset : e ∈ G.edgeFinset ↔ e ∈ G.edgeSet :=
+  Set.mem_toFinset
+
+theorem not_isDiag_of_mem_edgeFinset : e ∈ G.edgeFinset → ¬e.IsDiag :=
+  not_isDiag_of_mem_edgeSet _ ∘ mem_edgeFinset.1
+
+/-- Mapping an edge to a finite set produces a finset of size `2`. -/
+theorem card_toFinset_mem_edgeFinset [DecidableEq V] (e : G.edgeFinset) :
+    (e : Sym2 V).toFinset.card = 2 :=
+  Sym2.card_toFinset_of_not_isDiag e.val (G.not_isDiag_of_mem_edgeFinset e.prop)
+
+@[simp]
+theorem edgeFinset_inj : G₁.edgeFinset = G₂.edgeFinset ↔ G₁ = G₂ := by simp [edgeFinset]
+
+@[simp]
+theorem edgeFinset_subset_edgeFinset : G₁.edgeFinset ⊆ G₂.edgeFinset ↔ G₁ ≤ G₂ := by
+  simp [edgeFinset]
+
+@[simp]
+theorem edgeFinset_ssubset_edgeFinset : G₁.edgeFinset ⊂ G₂.edgeFinset ↔ G₁ < G₂ := by
+  simp [edgeFinset]
+
+@[mono, gcongr] alias ⟨_, edgeFinset_mono⟩ := edgeFinset_subset_edgeFinset
+
+@[mono, gcongr]
+alias ⟨_, edgeFinset_strict_mono⟩ := edgeFinset_ssubset_edgeFinset
+
+@[simp]
+theorem edgeFinset_bot : (⊥ : SimpleGraph V).edgeFinset = ∅ := by simp [edgeFinset]
+
+@[simp]
+theorem edgeFinset_sup [Fintype (edgeSet (G₁ ⊔ G₂))] [DecidableEq V] :
+    (G₁ ⊔ G₂).edgeFinset = G₁.edgeFinset ∪ G₂.edgeFinset := by simp [edgeFinset]
+
+@[simp]
+theorem edgeFinset_inf [Fintype (G₁ ⊓ G₂).edgeSet] [DecidableEq V] :
+    (G₁ ⊓ G₂).edgeFinset = G₁.edgeFinset ∩ G₂.edgeFinset := by
+  simp [edgeFinset]
+
+@[simp]
+theorem edgeFinset_sdiff [DecidableEq V] :
+    (G₁ \ G₂).edgeFinset = G₁.edgeFinset \ G₂.edgeFinset := by simp [edgeFinset]
+
+@[simp]
+lemma disjoint_edgeFinset : Disjoint G₁.edgeFinset G₂.edgeFinset ↔ Disjoint G₁ G₂ := by
+  simp_rw [← Finset.disjoint_coe, coe_edgeFinset, disjoint_edgeSet]
+
+@[simp]
+lemma edgeFinset_eq_empty : G.edgeFinset = ∅ ↔ G = ⊥ := by
+  rw [← edgeFinset_bot, edgeFinset_inj]
+
+@[simp]
+lemma edgeFinset_nonempty : G.edgeFinset.Nonempty ↔ G ≠ ⊥ := by
+  rw [Finset.nonempty_iff_ne_empty, edgeFinset_eq_empty.ne]
+
+theorem edgeFinset_card : #G.edgeFinset = Fintype.card G.edgeSet :=
+  Set.toFinset_card _
+
+theorem card_edgeSet : Fintype.card G.edgeSet = #G.edgeFinset :=
+  .symm <| Set.toFinset_card _
+
+theorem edgeSet_univ_card : #(univ : Finset G.edgeSet) = #G.edgeFinset := by
+  simp [card_edgeSet, -Set.fintypeCard_eq_ncard]
+
+variable [Fintype V]
+
+@[simp]
+theorem edgeFinset_top [DecidableEq V] :
+    (⊤ : SimpleGraph V).edgeFinset = Sym2.diagSetᶜ.toFinset := by simp [← coe_inj]
+
+/-- The complete graph on `n` vertices has `n.choose 2` edges. -/
+theorem card_edgeFinset_top_eq_card_choose_two [DecidableEq V] :
+    #(⊤ : SimpleGraph V).edgeFinset = (Fintype.card V).choose 2 := by
+  simp_rw [edgeFinset, Set.toFinset_card, edgeSet_top, ← Sym2.card_diagSet_compl]
+
+/-- Any graph on `n` vertices has at most `n.choose 2` edges. -/
+theorem card_edgeFinset_le_card_choose_two : #G.edgeFinset ≤ (Fintype.card V).choose 2 := by
+  classical
+  rw [← card_edgeFinset_top_eq_card_choose_two]
+  exact card_le_card (edgeFinset_mono le_top)
+
+end EdgeFinset
+
+section FiniteAt
+
+/-!
+## Finiteness at a vertex
+
+This section contains definitions and lemmas concerning vertices that
+have finitely many adjacent vertices.  We denote this condition by
+`Fintype (G.neighborSet v)`.
+
+We define `G.neighborFinset v` to be the `Finset` version of `G.neighborSet v`.
+Use `neighborFinset_eq_filter` to rewrite this definition as a `Finset.filter` expression.
+-/
+
+variable (v) [Fintype (G.neighborSet v)]
+
+/-- `G.neighborFinset v` is the `Finset` version of `G.neighborSet v` in case `G` is
+locally finite at `v`. -/
+def neighborFinset : Finset V :=
+  (G.neighborSet v).toFinset
+
+theorem neighborFinset_def : G.neighborFinset v = (G.neighborSet v).toFinset :=
+  rfl
+
+@[simp, norm_cast]
+theorem coe_neighborFinset : (G.neighborFinset v : Set V) = G.neighborSet v :=
+  Set.coe_toFinset _
+
+@[simp]
+theorem mem_neighborFinset (w : V) : w ∈ G.neighborFinset v ↔ G.Adj v w :=
+  Set.mem_toFinset
+
+theorem notMem_neighborFinset_self : v ∉ G.neighborFinset v := by simp
+
+theorem neighborFinset_disjoint_singleton : Disjoint (G.neighborFinset v) {v} :=
+  Finset.disjoint_singleton_right.mpr <| notMem_neighborFinset_self _ _
+
+theorem singleton_disjoint_neighborFinset : Disjoint {v} (G.neighborFinset v) :=
+  Finset.disjoint_singleton_left.mpr <| notMem_neighborFinset_self _ _
+
+theorem neighborFinset_bot [Fintype ((⊥ : SimpleGraph V).neighborSet v)] :
+    (⊥ : SimpleGraph V).neighborFinset v = ∅ := by
+  ext; simp
+
+@[simp]
+theorem neighborFinset_top [Fintype V] [DecidableEq V] :
+    (⊤ : SimpleGraph V).neighborFinset v = {v}ᶜ := by
+  simp [← Finset.coe_inj]
+
+@[simp]
+theorem neighborFinset_sup [DecidableEq V] {G₁ G₂ : SimpleGraph V}
+    [Fintype ((G₁ ⊔ G₂).neighborSet v)] [Fintype (G₁.neighborSet v)] [Fintype (G₂.neighborSet v)] :
+    (G₁ ⊔ G₂).neighborFinset v = G₁.neighborFinset v ∪ G₂.neighborFinset v := by
+  simp [← Finset.coe_inj]
+
+@[simp]
+theorem neighborFinset_inf [DecidableEq V] {G₁ G₂ : SimpleGraph V}
+    [Fintype ((G₁ ⊓ G₂).neighborSet 

@@ -1,0 +1,3 @@
+module
+import URMatchingURRectangle
+#print axioms URMatching.ur_indexed_empty_rectangle

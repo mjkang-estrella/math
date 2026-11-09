@@ -1,0 +1,7 @@
+module
+public import URMatchingAvoidanceBound
+#print axioms URMatching.one_colour_avoidance_bound
+#print axioms URMatching.hundred_colour_avoidance_bound
+
+#print axioms URMatching.local_descFactorial_eq_prod_range
+#print axioms URMatching.avoidance_product_bound_reduced

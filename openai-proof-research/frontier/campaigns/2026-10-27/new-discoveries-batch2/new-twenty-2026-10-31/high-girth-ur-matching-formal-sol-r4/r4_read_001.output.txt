@@ -1,0 +1,344 @@
+CWD /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/high-girth-ur-matching-formal-sol-r4
+
+FILE run.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+
+FILE write_lane.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+
+FILE PINS.json
+{
+  "lean_version": "4.34.1",
+  "mathlib_revision": "d13f23b723b8a846827a245b89c10fc7d3f11612",
+  "lean_bin": "/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/lean",
+  "lean_sha256": "e8baaa71855a616dc351028f3ad2200051b0671f423a1696a100e809302d5550",
+  "leanchecker_bin": "/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/leanchecker",
+  "leanchecker_sha256": "ccef1bfe9bfeecea65137d94a69033c1a89f360711f50fa3178e7ba3e696fcbe",
+  "packages_root": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages",
+  "upstream_lean_paths": [
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/batteries/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/aesop/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/Qq/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/proofwidgets/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/importGraph/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/LeanSearchClient/.lake/build/lib/lean",
+    "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/plausible/.lake/build/lib/lean"
+  ],
+  "mathlib_source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages/mathlib",
+  "mathlib_metadata_sha256": {
+    "Mathlib.lean": "61d699d8ace6240934a751f1b1951339090d6e380b505041632227dd7eb73a29",
+    "lake-manifest.json": "8f67b2cf24143ac091cdb425e886c2164b2fc2d6fbccd6db9454b697f9541a67"
+  },
+  "pin_limits": "Root hashed binaries and available upstream source metadata, did NOT execute Lean/git or attest all upstream olean origins. Worker verifies runtime version/pin metadata before compilation; accepted pinned upstream oleans trusted. Never overwrite PINS.json; record discovered verification limits separately."
+}
+
+
+FILE BASELINE.json
+{
+  "origin": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/high-girth-ur-matching-formal-sol-r3",
+  "root_verified_manifest_sha256": "e48b9a8d29bdca9203e338c20984254499883608087e069c1094ab89c7008ab7",
+  "immutable_green_modules": [
+    {
+      "module": "URMatchingBase",
+      "source_sha256": "0712ced23bed2a5f129533355a47a57660f924a5c4ad389bae9e18ec3f7836c0",
+      "olean_sha256": "f2c2331a4fe7b1cb95a41357f6e5d1cd823fd56b9808fc0385090de9a7253670",
+      "compile": "base_minimal_24",
+      "checker": "base_minimal_kernel_25",
+      "compile_receipt_sha256": "609d4946ce5b123f4e8d56fdaf1a17a08ee2750fb92c08f7847eaee622b840a4",
+      "checker_receipt_sha256": "268ca511f0e71fa64b3812c33be6256d2e51e925df36ba878115de5b36d519db",
+      "blobs": [
+        {
+          "path": "build/URMatchingBase.olean",
+          "sha256": "f2c2331a4fe7b1cb95a41357f6e5d1cd823fd56b9808fc0385090de9a7253670"
+        },
+        {
+          "path": "build/URMatchingBase.olean.server",
+          "sha256": "848c450856db1dd279f7476f15e7c2fc9df17bea489334791efba88df5cd9696"
+        },
+        {
+          "path": "build/URMatchingBase.olean.private",
+          "sha256": "8e48337e13a6d83428c9b18dea31d97424b6c4d89479b7698fcf7ad303d987c9"
+        },
+        {
+          "path": "build/URMatchingBase.ir.sig",
+          "sha256": "63bd33a0f43bd87933cdd4080e4ebaaed4f9a7ec2f825ba4ccef4af495377468"
+        },
+        {
+          "path": "build/URMatchingBase.ir",
+          "sha256": "596a2b336122d299d368c7462b55ee6fd1f2e122b5f1e78ec713f9165023da19"
+        }
+      ]
+    },
+    {
+      "module": "URMatchingFinite",
+      "source_sha256": "d24d14176db05c0d658f0124c2e7d8dcbca299eb9a59ea683385b10a9ea280b3",
+      "olean_sha256": "12081db9eb26565484338f83cf3b50d3d517407e30f6a8afaaccd72f37b0d93f",
+      "compile": "finite_repaired_31",
+      "checker": "finite_kernel_32",
+      "compile_receipt_sha256": "b76b36dda1e7929212b9fd2d750f98b96275e6a4eb5a93638e898ed6d271352c",
+      "checker_receipt_sha256": "0c35e297d41fa94e958469f8146b7f8fe0bc5688e072d50cd199e060f92840d1",
+      "blobs": [
+        {
+          "path": "build/URMatchingFinite.olean",
+          "sha256": "12081db9eb26565484338f83cf3b50d3d517407e30f6a8afaaccd72f37b0d93f"
+        },
+        {
+          "path": "build/URMatchingFinite.olean.server",
+          "sha256": "919b14c452859274470b682dad314a27a647505a145766369878a16c3423d69b"
+        },
+        {
+          "path": "build/URMatchingFinite.olean.private",
+          "sha256": "cb07825a3a19b54d4bd4dcb383fe4e66817194018b5b1441d216dd1c9494bb7a"
+        },
+        {
+          "path": "build/URMatchingFinite.ir.sig",
+          "sha256": "692847649844dedfb7a9f79c859b3ef73b342d9666ca4f2970828ac1f76234ea"
+        },
+        {
+          "path": "build/URMatchingFinite.ir",
+          "sha256": "5b0db5453a0c829a9487a265350800bc8ac102c804781b67a6c297f888a505a0"
+        }
+      ]
+    },
+    {
+      "module": "URMatchingDeletion",
+      "source_sha256": "9ba54f1becea6dec7a537ea8528dabdfafe6828bc8e63fb6157f961f80dc65fb",
+      "olean_sha256": "eb59ad2808da6bb9aaced4a1bdc1dc7ee995d08ce3fccd302a9fdf47865f46cd",
+      "compile": "deletion_repaired_37",
+      "checker": "deletion_kernel_38",
+      "compile_receipt_sha256": "2bd392bd0f31f60e61501871e3dc49b0ff0d412fd2d9a51be36029fde8b0e7ad",
+      "checker_receipt_sha256": "792055f4e68cf5aa9cc1fe05ef57e16a6446cfbdfec06efd948c6600f7e3ff40",
+      "blobs": [
+        {
+          "path": "build/URMatchingDeletion.olean",
+          "sha256": "eb59ad2808da6bb9aaced4a1bdc1dc7ee995d08ce3fccd302a9fdf47865f46cd"
+        },
+        {
+          "path": "build/URMatchingDeletion.olean.server",
+          "sha256": "9d23b7dc52604bed8cc392e904ecad0b8d76be13298da1d52387a11692bbd452"
+        },
+        {
+          "path": "build/URMatchingDeletion.olean.private",
+          "sha256": "87ce37efc60eaf0c6fb6c661fe48fff86017d29e5891e2008231ab4eaf63652e"
+        },
+        {
+          "path": "build/URMatchingDeletion.ir.sig",
+          "sha256": "c1ea2c6320f15fa7a0191377d77d88d060b5eb818ffceeef3b03cbd72e1b3af7"
+        },
+        {
+          "path": "build/URMatchingDeletion.ir",
+          "sha256": "9c287ea5cd5b693f92f60d1cfb6aee2022355476239debf834147497504846ed"
+        }
+      ]
+    },
+    {
+      "module": "URMatchingControls",
+      "source_sha256": "d2c961fc105f5884955c4aa214f62130d8969dab682a8519ad3236bc667225d4",
+      "olean_sha256": "912fafd8b2f404b43c3a78c0c0eae3cf5695e949f1db49fb132acd74d3c71cfb",
+      "compile": "controls_first_52",
+      "checker": "controls_kernel_53",
+      "compile_receipt_sha256": "7b42b00e3ef951b8c6faef4bfea92639d9aaa554332e5b15de1544ef1f4f39c5",
+      "checker_receipt_sha256": "5c39e1277e4bf3b16dbc19972bc4749d4b9908f747981296a2bcc244bc52b7a1",
+      "blobs": [
+        {
+          "path": "build/URMatchingControls.olean",
+          "sha256": "912fafd8b2f404b43c3a78c0c0eae3cf5695e949f1db49fb132acd74d3c71cfb"
+        },
+        {
+          "path": "build/URMatchingControls.olean.server",
+          "sha256": "c415fbe4313b942741c52c1b572b181f679cc64573c85ada0d980ff6c6868961"
+        },
+        {
+          "path": "build/URMatchingControls.olean.private",
+          "sha256": "fda6b230102928d1952496f896a50bc6128e26c6814116c0651fdd2af9d46eb0"
+        },
+        {
+          "path": "build/URMatchingControls.ir.sig",
+          "sha256": "5027bd89464c5e2dbec808125eb7ef9e0a7ea3f0b202fa1403ce446a6f189ad2"
+        },
+        {
+          "path": "build/URMatchingControls.ir",
+          "sha256": "172f488709a75b71b98739ca922d914fd1c3e5d364d6278e610f5fdaa3ee5a07"
+        }
+      ]
+    }
+  ],
+  "uncompiled_drafts": "inputs/drafts only; NOT paid theorem/source endpoint",
+  "rule": "Own copied baseline source+all compiler sidecars immutable; do not rewrite/recompile these in production. Import ownbuild sealed oleans. Final empty-build source-only replay must rebuild copied source plus new source with no production/legacy paths. No external origin paths may be followed."
+}
+
+OWN FILES
+BASELINE.json
+INPUT-ORIGINS.json
+PINS.json
+ROOT-PREP.json
+TASK.txt
+bootstrap-receipt.json
+bootstrap.py
+build/URMatchingBase.ir
+build/URMatchingBase.ir.sig
+build/URMatchingBase.olean
+build/URMatchingBase.olean.private
+build/URMatchingBase.olean.server
+build/URMatchingControls.ir
+build/URMatchingControls.ir.sig
+build/URMatchingControls.olean
+build/URMatchingControls.olean.private
+build/URMatchingControls.olean.server
+build/URMatchingDeletion.ir
+build/URMatchingDeletion.ir.sig
+build/URMatchingDeletion.olean
+build/URMatchingDeletion.olean.private
+build/URMatchingDeletion.olean.server
+build/URMatchingFinite.ir
+build/URMatchingFinite.ir.sig
+build/URMatchingFinite.olean
+build/URMatchingFinite.olean.private
+build/URMatchingFinite.olean.server
+check.sh
+checker.sh
+formal_command.py
+frozen-before.json
+frozen-inputs.json
+inputs/INHERITED-DENIALS.json
+inputs/PREVIOUS-ROOT-AUTHORIZATION.json
+inputs/ROOT-AUTHORIZATION.json
+inputs/accepted57-scopes.json
+inputs/author/DORMANT-SOL-FORMAL-PLAN.md
+inputs/author/FULLCANDIDATE.md
+inputs/drafts/URMatchingAxioms.lean
+inputs/drafts/URMatchingBodyInventory.lean
+inputs/drafts/URMatchingNegativeLoop.lean
+inputs/drafts/URMatchingSource.lean
+inputs/literal338806.json
+inputs/matching-metadata.html
+inputs/matching.pdf
+inputs/matching.txt
+inputs/original338806.raw.jsonl
+inputs/previous/338806.json
+inputs/previous/CHECKPOINT.md
+inputs/previous/SUMMARY.md
+inputs/previous/first-model.lean.txt
+inputs/previous/receipt-inventory-checkpoint.json
+inputs/previous/source-to-literal-map.json
+inputs/previous-receipts/axioms_40.output.txt
+inputs/previous-receipts/axioms_40.receipt.json
+inputs/previous-receipts/base_finite_19.output.txt
+inputs/previous-receipts/base_finite_19.receipt.json
+inputs/previous-receipts/base_first_07.output.txt
+inputs/previous-receipts/base_first_07.receipt.json
+inputs/previous-receipts/base_kernel_12.output.txt
+inputs/previous-receipts/base_kernel_12.receipt.json
+inputs/previous-receipts/base_minimal_24.output.txt
+inputs/previous-receipts/base_minimal_24.receipt.json
+inputs/previous-receipts/base_minimal_kernel_25.output.txt
+inputs/previous-receipts/base_minimal_kernel_25.receipt.json
+inputs/previous-receipts/base_partition_16.output.txt
+inputs/previous-receipts/base_partition_16.receipt.json
+inputs/previous-receipts/base_sym2_21.output.txt
+inputs/previous-receipts/base_sym2_21.receipt.json
+inputs/previous-receipts/controls_first_52.output.txt
+inputs/previous-receipts/controls_first_52.receipt.json
+inputs/previous-receipts/controls_kernel_53.output.txt
+inputs/previous-receipts/controls_kernel_53.receipt.json
+inputs/previous-receipts/deletion_first_35.output.txt
+inputs/previous-receipts/deletion_first_35.receipt.json
+inputs/previous-receipts/deletion_kernel_38.output.txt
+inputs/previous-receipts/deletion_kernel_38.receipt.json
+inputs/previous-receipts/deletion_repaired_37.output.txt
+inputs/previous-receipts/deletion_repaired_37.receipt.json
+inputs/previous-receipts/diagnose_limits_09.output.txt
+inputs/previous-receipts/diagnose_limits_09.receipt.json
+inputs/previous-receipts/finite_first_29.output.txt
+inputs/previous-receipts/finite_first_29.receipt.json
+inputs/previous-receipts/finite_kernel_32.output.txt
+inputs/previous-receipts/finite_kernel_32.receipt.json
+inputs/previous-receipts/finite_repaired_31.output.txt
+inputs/previous-receipts/finite_repaired_31.receipt.json
+inputs/previous-receipts/inventory_first_43.output.txt
+inputs/previous-receipts/inventory_first_43.receipt.json
+inputs/previous-receipts/inventory_repaired_45.output.txt
+inputs/previous-receipts/inventory_repaired_45.receipt.json
+inputs/previous-receipts/inventory_typed_47.output.txt
+inputs/previous-receipts/inventory_typed_47.receipt.json
+inputs/previous-receipts/negative_loop_54.output.txt
+inputs/previous-receipts/negative_loop_54.receipt.json
+inputs/previous-receipts/partial_replay_50.output.txt
+inputs/previous-receipts/partial_replay_50.receipt.json
+inputs/previous-receipts/pin_scope_05.output.txt
+inputs/previous-receipts/pin_scope_05.receipt.json
+inputs/prior39-scopes.json
+inputs/provenance338806.json
+inputs/review-r1/PROOF.md
+inputs/review-r1/REVIEW.md
+inputs/review-r1/review.json
+inputs/review-r1/scope-comparisons.json
+inputs/review-r1/source-map.json
+inputs/review-r2/GAP.md
+inputs/review-r2/NETWORK-STOP.json
+inputs/review-r2/PROOF.md
+inputs/review-r2/REVIEW.md
+inputs/review-r2/review.json
+inputs/review-r2/source-map.json
+inputs/sources/goddard2005.pdf
+inputs/sources/goddard2005.txt
+inputs/sources/restricted-matchings.pdf
+inputs/sources/restricted-matchings.txt
+model-policy-sol-only.json
+run.py
+src/URMatchingBase.lean
+src/URMatchingControls.lean
+src/URMatchingDeletion.lean
+src/URMatchingFinite.lean
+verify_frozen.py
+write_lane.py

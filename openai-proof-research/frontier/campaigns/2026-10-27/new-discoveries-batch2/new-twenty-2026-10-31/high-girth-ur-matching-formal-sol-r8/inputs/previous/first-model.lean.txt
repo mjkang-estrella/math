@@ -1,0 +1,49 @@
+module
+public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Basic.Real.Basic
+
+/-! Source model for MathDB 338806. No existence or expansion assumptions.
+Scientific HOLD; this model alone does not refute the conjecture. -/
+@[expose] public section
+namespace URMatching
+universe u
+variable {V : Type u} [Fintype V] [DecidableEq V]
+
+/-- A finite set of actual unordered graph edges, pairwise vertex-disjoint. -/
+def IsMatching (G : SimpleGraph V) (M : Finset (Sym2 V)) : Prop :=
+  (∀ e ∈ M, e ∈ G.edgeSet) ∧
+  ∀ e ∈ M, ∀ f ∈ M, ∀ v : V, v ∈ e → v ∈ f → e = f
+
+/-- Vertices covered by the matching, without any induced-subgraph restriction. -/
+def Covered (M : Finset (Sym2 V)) : Set V := {v | ∃ e ∈ M, v ∈ e}
+
+/-- Literal uniqueness among ALL matchings covering exactly the same vertices. -/
+def IsUR (G : SimpleGraph V) (M : Finset (Sym2 V)) : Prop :=
+  IsMatching G M ∧ ∀ M' : Finset (Sym2 V),
+    IsMatching G M' → Covered M' = Covered M → M' = M
+
+noncomputable def matchingNumber (G : SimpleGraph V) : ℕ := by
+  classical
+  exact ((Finset.univ : Finset (Finset (Sym2 V))).filter (IsMatching G)).sup Finset.card
+
+noncomputable def urMatchingNumber (G : SimpleGraph V) : ℕ := by
+  classical
+  exact ((Finset.univ : Finset (Finset (Sym2 V))).filter (IsUR G)).sup Finset.card
+
+/-- All vertices satisfy the genuine finite neighbor-cardinality bound. -/
+def DegreeBound (G : SimpleGraph V) (Δ : ℕ) : Prop :=
+  ∀ v, Nat.card {w : V // G.Adj v w} ≤ Δ
+
+/-- Every genuine simple cycle has length at least g; forests satisfy this for all g. -/
+def GirthAtLeast (G : SimpleGraph V) (g : ℕ) : Prop :=
+  ∀ v : V, ∀ p : G.Walk v v, p.IsCycle → g ≤ p.length
+
+/-- Full source class in any fixed universe, not merely bipartite or Fin-labelled graphs. -/
+def SourceConjecture : Prop :=
+  ∀ ε : ℝ, 0 < ε → ∀ Δ : ℕ, 0 < Δ → ∃ g : ℕ, 0 < g ∧
+    ∀ (V : Type u) [Fintype V] [DecidableEq V] (G : SimpleGraph V),
+      DegreeBound G Δ → GirthAtLeast G g →
+        (1 - ε) * (matchingNumber G : ℝ) ≤ (urMatchingNumber G : ℝ)
+
+end URMatching

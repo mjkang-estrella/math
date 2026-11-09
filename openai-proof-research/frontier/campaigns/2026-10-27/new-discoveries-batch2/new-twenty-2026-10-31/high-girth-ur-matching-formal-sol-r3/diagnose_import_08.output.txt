@@ -1,0 +1,899 @@
+import os,re,json,hashlib,subprocess,sys,shutil
+from pathlib import Path
+p=Path(__file__).resolve().parent
+pins=json.loads((p/'PINS.json').read_text())
+mode=os.environ['FORMAL_OPERATION'];module=os.environ['FORMAL_MODULE']
+assert mode in ['compile','check'] and re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*',module)
+def sha(q):return hashlib.sha256(q.read_bytes()).hexdigest()
+assert sha(Path(pins['lean_bin']))==pins['lean_sha256'] and sha(Path(pins['leanchecker_bin']))==pins['leanchecker_sha256']
+source=p/'src'/(module+'.lean');olean=p/'build'/(module+'.olean')
+assert source.is_file();before=sha(source)
+env=dict(os.environ);env['PATH']=str(Path(pins['lean_bin']).parent)+os.pathsep+env.get('PATH','');env['LEAN_PATH']=os.pathsep.join([str(p/'build')]+pins['upstream_lean_paths']);env['LEAN_NUM_THREADS']='1'
+prior=sha(olean) if olean.exists() else None
+if mode=='compile':
+ if olean.exists():
+  archive=p/'cache'/(module+'.'+prior+'.olean')
+  if not archive.exists():shutil.copyfile(olean,archive)
+  olean.unlink()
+ args=[pins['lean_bin'],'-j1','-M3500','-DwarningAsError=true','-o',str(olean),str(source)]
+else:
+ assert olean.is_file(),'Kernel checker requires actual production olean'
+ args=[pins['leanchecker_bin'],module]
+r=subprocess.run(args,cwd=p,env=env,text=True,capture_output=True)
+sys.stdout.write(r.stdout);sys.stderr.write(r.stderr)
+after=sha(source);out=sha(olean) if olean.exists() else None
+print(json.dumps(dict(stage=mode,module=module,argv=args,exit=r.returncode,source_sha256_before=before,source_sha256_after=after,olean_sha256_before=prior,olean_sha256_after=out,LEAN_PATH=env['LEAN_PATH'],LEAN_NUM_THREADS=1)))
+assert before==after,'Source changed during compile/check'
+if r.returncode==0:
+ assert out is not None,'No fresh olean produced'
+ if mode=='check':assert prior==out,'Checker changed olean'
+raise SystemExit(r.returncode)
+
+UPSTREAM Mathlib/Algebra/Group/Int/Even.lean
+/-
+Copyright (c) 2016 Jeremy Avigad. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Jeremy Avigad
+-/
+module
+
+public import Mathlib.Algebra.Group.Int.Defs
+public import Mathlib.Algebra.Group.Nat.Even
+public import Mathlib.Data.Int.Sqrt
+public import Mathlib.Tactic.Attr.Core
+
+/-!
+# Parity of integers
+-/
+
+public section
+
+open Nat
+
+namespace Int
+
+/-! #### Parity -/
+
+variable {m n : ℤ}
+
+@[simp] lemma emod_two_ne_one : ¬n % 2 = 1 ↔ n % 2 = 0 := by grind
+
+@[simp] lemma one_emod_two : (1 : Int) % 2 = 1 := rfl
+
+-- `EuclideanDomain.mod_eq_zero` uses (2 ∣ n) as normal form
+@[local simp] lemma emod_two_ne_zero : ¬n % 2 = 0 ↔ n % 2 = 1 := by grind
+
+@[grind =]
+lemma even_iff : Even n ↔ n % 2 = 0 where
+  mp := fun ⟨m, hm⟩ ↦ by simp [← Int.two_mul, hm]
+  mpr h := ⟨n / 2, by grind⟩
+
+lemma not_even_iff : ¬Even n ↔ n % 2 = 1 := by grind
+
+@[simp] lemma two_dvd_ne_zero : ¬2 ∣ n ↔ n % 2 = 1 := by grind
+
+instance : DecidablePred (Even : ℤ → Prop) := fun _ ↦ decidable_of_iff _ even_iff.symm
+
+/-- `IsSquare` can be decided on `ℤ` by checking against the square root. -/
+instance : DecidablePred (IsSquare : ℤ → Prop) :=
+  fun m ↦ decidable_of_iff' (sqrt m * sqrt m = m) <| by
+    simp_rw [← exists_mul_self m, IsSquare, eq_comm]
+
+@[simp] lemma not_even_one : ¬Even (1 : ℤ) := by simp [even_iff]
+
+@[parity_simps] lemma even_add : Even (m + n) ↔ (Even m ↔ Even n) := by grind
+
+lemma two_not_dvd_two_mul_add_one (n : ℤ) : ¬2 ∣ 2 * n + 1 := by grind
+
+@[parity_simps]
+lemma even_sub : Even (m - n) ↔ (Even m ↔ Even n) := by grind
+
+@[parity_simps] lemma even_add_one : Even (n + 1) ↔ ¬Even n := by grind
+
+@[parity_simps] lemma even_sub_one : Even (n - 1) ↔ ¬Even n := by grind
+
+@[parity_simps, grind =] lemma even_mul : Even (m * n) ↔ Even m ∨ Even n := by
+  rcases emod_two_eq_zero_or_one m with h₁ | h₁ <;>
+  rcases emod_two_eq_zero_or_one n with h₂ | h₂ <;>
+  simp [even_iff, h₁, h₂, Int.mul_emod]
+
+@[parity_simps, grind =] lemma even_pow {n : ℕ} : Even (m ^ n) ↔ Even m ∧ n ≠ 0 := by
+  induction n with grind
+
+lemma even_pow' {n : ℕ} (h : n ≠ 0) : Even (m ^ n) ↔ Even m := by grind
+
+@[simp, norm_cast, grind =]
+lemma even_coe_nat (n : ℕ) : Even (n : ℤ) ↔ Even n := by
+  rw_mod_cast [even_iff, Nat.even_iff]
+
+lemma two_mul_ediv_two_of_even : Even n → 2 * (n / 2) = n := by grind
+
+lemma ediv_two_mul_two_of_even : Even n → n / 2 * 2 = n := by grind
+
+-- Here are examples of how `parity_simps` can be used with `Int`.
+example (m n : ℤ) (h : Even m) : ¬Even (n + 3) ↔ Even (m ^ 2 + m + n) := by
+  simp +decide [*, parity_simps]
+
+example : ¬Even (25394535 : ℤ) := by decide
+
+@[simp]
+theorem isSquare_sign_iff {z : ℤ} : IsSquare z.sign ↔ 0 ≤ z := by
+  induction z using Int.induction_on with
+  | zero => simpa using ⟨0, by simp⟩
+  | succ => norm_cast; simp
+  | pred =>
+    rw [sign_eq_neg_one_of_neg (by lia), ← neg_add', Int.neg_nonneg]
+    norm_cast
+    simp only [reduceNeg, le_zero_eq, Nat.add_eq_zero_iff, succ_ne_self, and_false, iff_false]
+    rintro ⟨a | a, ⟨⟩⟩
+
+end Int
+
+UPSTREAM Mathlib/Combinatorics/SimpleGraph/Paths.lean
+/-
+Copyright (c) 2021 Kyle Miller. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Kyle Miller
+-/
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Decomp
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Maps
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Subwalks
+public import Mathlib.Order.Preorder.Finite
+
+/-!
+
+# Trail, Path, and Cycle
+
+In a simple graph,
+
+* A *trail* is a walk whose edges each appear no more than once.
+
+* A *circuit* is a nonempty trail whose first and last vertices are the
+  same.
+
+* A *path* is a trail whose vertices appear no more than once.
+
+* A *cycle* is a nonempty trail whose first and last vertices are the
+  same and whose vertices except for the first appear no more than once.
+
+**Warning:** graph theorists mean something different by "path" than
+do homotopy theorists.  A "walk" in graph theory is a "path" in
+homotopy theory.  Another warning: some graph theorists use "path" and
+"simple path" for "walk" and "path."
+
+Some definitions and theorems have inspiration from multigraph
+counterparts in [Chou1994].
+
+## Main definitions
+
+* `SimpleGraph.Walk.IsTrail`, `SimpleGraph.Walk.IsPath`, and `SimpleGraph.Walk.IsCycle`.
+
+* `SimpleGraph.Path`
+
+* `SimpleGraph.Path.map` for the induced map on paths,
+  given an (injective) graph homomorphism.
+
+## Tags
+trails, paths, circuits, cycles
+-/
+
+@[expose] public section
+
+open Function
+
+universe u v w
+
+namespace SimpleGraph
+
+variable {V : Type u} {V' : Type v}
+variable (G : SimpleGraph V) (G' : SimpleGraph V')
+
+namespace Walk
+
+variable {G G'} {u u' v w : V} {p : G.Walk u v} {f : G →g G'}
+
+/-! ### Trails, paths, circuits, cycles -/
+
+/-- A *trail* is a walk with no repeating edges. -/
+@[mk_iff isTrail_def]
+structure IsTrail {u v : V} (p : G.Walk u v) : Prop where
+  edges_nodup : p.edges.Nodup
+
+/-- A *path* is a walk with no repeating vertices.
+Use `SimpleGraph.Walk.IsPath.mk'` for a simpler constructor. -/
+structure IsPath {u v : V} (p : G.Walk u v) : Prop extends isTrail : IsTrail p where
+  support_nodup : p.support.Nodup
+
+/-- A *circuit* at `u : V` is a nonempty trail beginning and ending at `u`. -/
+@[mk_iff isCircuit_def]
+structure IsCircuit {u : V} (p : G.Walk u u) : Prop extends isTrail : IsTrail p where
+  ne_nil : p ≠ nil
+
+/-- A *cycle* at `u : V` is a circuit at `u` whose only repeating vertex
+is `u` (which appears exactly twice). -/
+structure IsCycle {u : V} (p : G.Walk u u) : Prop extends isCircuit : IsCircuit p where
+  support_nodup : p.support.tail.Nodup
+
+@[simp]
+theorem isTrail_copy {u v u' v'} (p : G.Walk u v) (hu : u = u') (hv : v = v') :
+    (p.copy hu hv).IsTrail ↔ p.IsTrail := by
+  subst_vars
+  rfl
+
+theorem IsPath.mk' {u v : V} {p : G.Walk u v} (h : p.support.Nodup) : p.IsPath :=
+  ⟨⟨edges_nodup_of_support_nodup h⟩, h⟩
+
+theorem isPath_def {u v : V} (p : G.Walk u v) : p.IsPath ↔ p.support.Nodup :=
+  ⟨IsPath.support_nodup, IsPath.mk'⟩
+
+theorem isPath_iff_injective_get_support {u v : V} (p : G.Walk u v) :
+    p.IsPath ↔ (p.support.get ·).Injective :=
+  p.isPath_def.trans List.nodup_iff_injective_get
+
+@[simp]
+theorem isPath_copy {u v u' v'} (p : G.Walk u v) (hu : u = u') (hv : v = v') :
+    (p.copy hu hv).IsPath ↔ p.IsPath := by
+  subst_vars
+  rfl
+
+@[simp]
+theorem isCircuit_copy {u u'} (p : G.Walk u u) (hu : u = u') :
+    (p.copy hu hu).IsCircuit ↔ p.IsCircuit := by
+  subst_vars
+  rfl
+
+lemma IsCircuit.not_nil {p : G.Walk v v} (hp : IsCircuit p) : ¬ p.Nil := (hp.ne_nil ·.eq_nil)
+
+theorem isCycle_def {u : V} (p : G.Walk u u) :
+    p.IsCycle ↔ p.IsTrail ∧ p ≠ nil ∧ p.support.tail.Nodup :=
+  Iff.intro (fun h => ⟨h.1.1, h.1.2, h.2⟩) fun h => ⟨⟨h.1, h.2.1⟩, h.2.2⟩
+
+@[simp]
+theorem isCycle_copy {u u'} (p : G.Walk u u) (hu : u = u') :
+    (p.copy hu hu).IsCycle ↔ p.IsCycle := by
+  subst_vars
+  rfl
+
+lemma IsCycle.not_nil {p : G.Walk v v} (hp : IsCycle p) : ¬ p.Nil := (hp.ne_nil ·.eq_nil)
+
+@[simp]
+theorem IsTrail.nil {u : V} : (nil : G.Walk u u).IsTrail :=
+  ⟨by simp [edges]⟩
+
+theorem IsTrail.of_cons {u v w : V} {h : G.Adj u v} {p : G.Walk v w} :
+    (cons h p).IsTrail → p.IsTrail := by simp [isTrail_def]
+
+@[simp]
+theorem isTrail_cons {u v w : V} (h : G.Adj u v) (p : G.Walk v w) :
+    (cons h p).IsTrail ↔ p.IsTrail ∧ s(u, v) ∉ p.edges := by simp [isTrail_def, and_comm]
+
+protected lemma IsTrail.cons {w : G.Walk u' v} (hw : w.IsTrail) (hu : G.Adj u u')
+    (hu' : s(u, u') ∉ w.edges) : (w.cons hu).IsTrail := by simp [*]
+
+@[simp]
+theorem isTrail_concat (hadj : G.Adj v w) :
+    (p.concat hadj).IsTrail ↔ p.IsTrail ∧ s(v, w) ∉ p.edges := by
+  simp_rw [isTrail_def, edges_concat, List.nodup_concat, and_comm]
+
+theorem IsTrail.concat (hp : p.IsTrail) (hadj : G.Adj v w) (hmem : s(v, w) ∉ p.edges) :
+    (p.concat hadj).IsTrail :=
+  isTrail_concat hadj |>.mpr ⟨hp, hmem⟩
+
+theorem IsTrail.reverse {u v : V} (p : G.Walk u v) (h : p.IsTrail) : p.reverse.IsTrail := by
+  simpa [isTrail_def] using h
+
+@[simp]
+theorem reverse_isTrail_iff {u v : V} (p : G.Walk u v) : p.reverse.IsTrail ↔ p.IsTrail := by
+  constructor <;>
+    · intro h
+      convert! h.reverse _
+      try rw [reverse_reverse]
+
+@[simp]
+theorem isTrail_append {u v w : V} (p : G.Walk u v) (q : G.Walk v w) :
+    (p.append q).IsTrail ↔ p.IsTrail ∧ q.IsTrail ∧ p.edges.Disjoint q.edges := by
+  simp [Walk.isTrail_def, List.nodup_append']
+
+theorem IsTrail.of_append_left {u v w : V} {p : G.Walk u v} {q : G.Walk v w}
+    (h : (p.append q).IsTrail) : p.IsTrail := by
+  simp_all
+
+theorem IsTrail.of_append_right {u v w : V} {p : G.Walk u v} {q : G.Walk v w}
+    (h : (p.append q).IsTrail) : q.IsTrail := by
+  simp_all
+
+theorem IsTrail.count_edges_le_one [DecidableEq V] {u v : V} {p : G.Walk u v} (h : p.IsTrail)
+    (e : Sym2 V) : p.edges.count e ≤ 1 :=
+  List.nodup_iff_count_le_one.mp h.edges_nodup e
+
+theorem IsTrail.count_edges_eq_one [DecidableEq V] {u v : V} {p : G.Walk u v} (h : p.IsTrail)
+    {e : Sym2 V} (he : e ∈ p.edges) : p.edges.count e = 1 :=
+  List.count_eq_one_of_mem h.edges_nodup he
+
+theorem IsTrail.length_le_card_edgeFinset [Fintype G.edgeSet] {u v : V}
+    {w : G.Walk u v} (h : w.IsTrail) : w.length ≤ G.edgeFinset.card := by
+  classical
+  let edges := w.edges.toFinset
+  have : edges.card = w.length := length_edges _ ▸ List.toFinset_card_of_nodup h.edges_nodup
+  rw [← this]
+  have : edges ⊆ G.edgeFinset := by
+    intro e h
+    refine mem_edgeFinset.mpr ?_
+    apply w.edges_subset_edgeSet
+    simpa [edges] using h
+  exact Finset.card_le_card this
+
+theorem IsPath.nil {u : V} : (nil : G.Walk u u).IsPath := by constructor <;> simp
+
+theorem IsPath.of_cons {u v w : V} {h : G.Adj u v} {p : G.Walk v w} :
+    (cons h p).IsPath → p.IsPath := by simp [isPath_def]
+
+@[simp]
+theorem cons_isPath_iff {u v w : V} (h : G.Adj u v) (p : G.Walk v w) :
+    (cons h p).IsPath ↔ p.IsPath ∧ u ∉ p.support := by
+  constructor <;> simp +contextual [isPath_def]
+
+protected lemma IsPath.cons {p : Walk G v w} (hp : p.IsPath) (hu : u ∉ p.support) {h : G.Adj u v} :
+    (cons h p).IsPath :=
+  (cons_isPath_iff _ _).2 ⟨hp, hu⟩
+
+@[simp]
+theorem isPath_iff_nil {u : V} {p : G.Walk u u} : p.IsPath ↔ p.Nil := by
+  cases p <;> simp [IsPath.nil]
+
+@[deprecated isPath_iff_nil (since := "2026-06-01")]
+theorem isPath_iff_eq_nil {u : V} {p : G.Walk u u} : p.IsPath ↔ p = nil := by
+  simp
+
+theorem IsPath.nil_iff_eq {u v : V} {p : G.Walk u v} (hp : p.IsPath) : p.Nil ↔ u = v := by
+  refine ⟨fun ⟨⟩ ↦ rfl, ?_⟩
+  rintro rfl
+  exact isPath_iff_nil.mp hp
+
+theorem _root_.SimpleGraph.Adj.isPath_toWalk (h : G.Adj u v) : h.toWalk.IsPath := by
+  simp [h.ne]
+
+theorem IsPath.reverse {u v : V} {p : G.Walk u v} (h : p.IsPath) : p.reverse.IsPath := by
+  simpa [isPath_def] using h
+
+@[simp]
+theorem isPath_reverse_iff {u v : V} (p : G.Walk u v) : p.reverse.IsPath ↔ p.IsPath := by
+  constructor <;> intro h <;> convert! h.reverse; simp
+
+theorem IsPath.of_append_left {u v w : V} {p : G.Walk u v} {q : G.Walk v w} :
+    (p.append q).IsPath → p.IsPath := by
+  simp only [isPath_def, support_append]
+  exact List.Nodup.of_append_left
+
+theorem IsPath.of_append_right {u v w : V} {p : G.Walk u v} {q : G.Walk v w}
+    (h : (p.append q).IsPath) : q.IsPath := by
+  rw [← isPath_reverse_iff] at h ⊢
+  rw [reverse_append] at h
+  apply h.of_append_left
+
+theorem isTrail_of_isSubwalk {v w v' w'} {p₁ : G.Walk v w} {p₂ : G.Walk v' w'}
+    (h : p₁.IsSubwalk p₂) (h₂ : p₂.IsTrail) : p₁.IsTrail := by
+  obtain ⟨_, _, h⟩ := h
+  rw [h] at h₂
+  exact h₂.of_append_left.of_append_right
+
+theorem isPath_of_isSubwalk {v w v' w' : V} {p₁ : G.Walk v w} {p₂ : G.Walk v' w'}
+    (h : p₁.IsSubwalk p₂) (h₂ : p₂.IsPath) : p₁.IsPath := by
+  obtain ⟨_, _, h⟩ := h
+  rw [h] at h₂
+  exact h₂.of_append_left.of_append_right
+
+lemma IsPath.of_adj {G : SimpleGraph V} {u v : V} (h : G.Adj u v) : h.toWalk.IsPath := by
+  aesop
+
+@[simp]
+theorem isPath_concat {p : G.Walk u v} (h : G.Adj v w) :
+    (p.concat h).IsPath ↔ p.IsPath ∧ w ∉ p.support := by
+  simp_rw [isPath_def, support_concat, ← List.concat_eq_append, List.nodup_concat, and_comm]
+
+@[deprecated (since := "2026-07-15")] alias concat_isPath_iff := isPath_concat
+
+theorem IsPath.concat {p : G.Walk u v} (hp : p.IsPath) (hw : w ∉ p.support)
+    (h : G.Adj v w) : (p.concat h).IsPath :=
+  (isPath_concat h).mpr ⟨hp, hw⟩
+
+lemma IsPath.take_of_take {n k} {p : G.Walk u v} (h : (p.take k).IsPath) (hle : n ≤ k) :
+    (p.take n).IsPath :=
+  isPath_of_isSubwalk (p.take_isSubwalk_take hle) h
+
+lemma IsPath.drop_of_drop {n k} {p : G.Walk u v} (h : (p.drop k).IsPath) (hle : k ≤ n) :
+    (p.drop n).IsPath :=
+  isPath_of_isSubwalk (p.drop_isSubwalk_drop hle) h
+
+lemma IsPath.take {p : G.Walk u v} (h : p.IsPath) (n : ℕ) :
+    (p.take n).IsPath :=
+  isPath_of_isSubwalk (p.isSubwalk_take n) h
+
+lemma IsPath.drop {p : G.Walk u v} (h : p.IsPath) (n : ℕ) :
+    (p.drop n).IsPath :=
+  isPath_of_isSubwalk (p.isSubwalk_drop n) h
+
+lemma IsPath.mem_support_iff_exists_append {p : G.Walk u v} (hp : p.IsPath) :
+    w ∈ p.support ↔ ∃ (q : G.Walk u w) (r : G.Walk w v), q.IsPath ∧ r.IsPath ∧ p = q.append r := by
+  refine ⟨fun hw ↦ ?_, fun ⟨q, r, hq, hr, hqr⟩ ↦ p.mem_support_iff_exists_append.mpr ⟨q, r, hqr⟩⟩
+  obtain ⟨q, r, hqr⟩ := p.mem_support_iff_exists_append.mp hw
+  have : (q.append r).IsPath := hqr ▸ hp
+  exact ⟨q, r, this.of_append_left, this.of_append_right, hqr⟩
+
+lemma IsPath.disjoint_support_of_append {p : G.Walk u v} {q : G.Walk v w}
+    (hpq : (p.append q).IsPath) (hq : ¬q.Nil) : p.support.Disjoint q.tail.support := by
+  have hpq' := hpq.support_nodup
+  rw [support_append] at hpq'
+  rw [support_tail_of_not_nil q hq]
+  exact List.disjoint_of_nodup_append hpq'
+
+lemma IsPath.ne_of_mem_support_of_append {p : G.Walk u v} {q : G.Walk v w}
+    (hpq : (p.append q).IsPath) {x y : V} (hyv : y ≠ v) (hx : x ∈ p.support) (hy : y ∈ q.support) :
+    x ≠ y := by
+  rintro rfl
+  have hq : ¬q.Nil := by
+    intro hq
+    simp [nil_iff_support_eq.mp hq, hyv] at hy
+  have hx' : x ∈ q.tail.support := by
+    rw [support_tail_of_not_nil q hq]
+    rw [mem_support_iff] at hy
+    exact hy.resolve_left hyv
+  exact IsPath.disjoint_support_of_append hpq
+UPSTREAM Mathlib/Combinatorics/SimpleGraph/Matching.lean
+/-
+Copyright (c) 2020 Alena Gusakov. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Alena Gusakov, Arthur Paulino, Kyle Miller, Pim Otte
+-/
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
+public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
+public import Mathlib.Combinatorics.SimpleGraph.Operations
+public import Mathlib.Data.Set.Card.Arithmetic
+public import Mathlib.Data.Set.Functor
+
+/-!
+# Matchings
+
+A *matching* for a simple graph is a set of disjoint pairs of adjacent vertices, and the set of all
+the vertices in a matching is called its *support* (and sometimes the vertices in the support are
+said to be *saturated* by the matching). A *perfect matching* is a matching whose support contains
+every vertex of the graph.
+
+In this module, we represent a matching as a subgraph whose vertices are each incident to at most
+one edge, and the edges of the subgraph represent the paired vertices.
+
+## Main definitions
+
+* `SimpleGraph.Subgraph.IsMatching`: `M.IsMatching` means that `M` is a matching of its
+  underlying graph.
+
+* `SimpleGraph.Subgraph.IsPerfectMatching` defines when a subgraph `M` of a simple graph is a
+  perfect matching, denoted `M.IsPerfectMatching`.
+
+* `SimpleGraph.IsMatchingFree` means that a graph `G` has no perfect matchings.
+
+* `SimpleGraph.IsCycles` means that a graph consists of cycles (including cycles of length 0,
+  also known as isolated vertices)
+
+* `SimpleGraph.IsAlternating` means that edges in a graph `G` are alternatingly
+  included and not included in some other graph `G'`
+
+## TODO
+
+* Define an `other` function and prove useful results about it (https://leanprover.zulipchat.com/#narrow/stream/252551-graph-theory/topic/matchings/near/266205863)
+
+* Provide a bicoloring for matchings (https://leanprover.zulipchat.com/#narrow/stream/252551-graph-theory/topic/matchings/near/265495120)
+
+* Tutte's Theorem
+-/
+
+@[expose] public section
+
+assert_not_exists Field TwoSidedIdeal
+
+open Function
+
+namespace SimpleGraph
+variable {V W : Type*} {G G' : SimpleGraph V} {M M' : Subgraph G} {u v w : V}
+
+namespace Subgraph
+
+/--
+The subgraph `M` of `G` is a matching if every vertex of `M` is incident to exactly one edge in `M`.
+We say that the vertices in `M.support` are *matched* or *saturated*.
+-/
+def IsMatching (M : Subgraph G) : Prop := ∀ ⦃v⦄, v ∈ M.verts → ∃! w, M.Adj v w
+
+/-- Given a vertex, returns the unique edge of the matching it is incident to. -/
+noncomputable def IsMatching.toEdge (h : M.IsMatching) (v : M.verts) : M.edgeSet :=
+  ⟨s(v, (h v.property).choose), (h v.property).choose_spec.1⟩
+
+set_option backward.isDefEq.respectTransparency.types false in
+theorem IsMatching.toEdge_eq_of_adj (h : M.IsMatching) (hvw : M.Adj v w) :
+    h.toEdge ⟨v, hvw.fst_mem⟩ = ⟨s(v, w), hvw⟩ := by
+  rw [IsMatching.toEdge, Subtype.mk_eq_mk, ← h hvw.fst_mem |>.choose_spec.right w hvw]
+
+theorem IsMatching.toEdge.surjective (h : M.IsMatching) : Surjective h.toEdge := by
+  rintro ⟨⟨x, y⟩, he⟩
+  exact ⟨⟨x, M.edge_vert he⟩, h.toEdge_eq_of_adj he⟩
+
+set_option backward.isDefEq.respectTransparency.types false in
+theorem IsMatching.toEdge_eq_toEdge_of_adj (h : M.IsMatching) (ha : M.Adj v w) :
+    h.toEdge ⟨v, ha.fst_mem⟩ = h.toEdge ⟨w, ha.snd_mem⟩ := by
+  rw [h.toEdge_eq_of_adj ha, h.toEdge_eq_of_adj ha.symm, Subtype.mk_eq_mk, Sym2.eq_swap]
+
+theorem IsMatching.mem_coe_toEdge (h : M.IsMatching) {v : V} (hv : v ∈ M.verts) :
+    v ∈ (h.toEdge ⟨v, hv⟩ : Sym2 V) :=
+  ⟨h hv |>.choose, rfl⟩
+
+set_option backward.isDefEq.respectTransparency.types false in
+theorem IsMatching.toEdge_preimage_singleton (h : M.IsMatching) (huv : M.Adj u v) :
+    h.toEdge ⁻¹' {⟨s(u, v), huv⟩} = {⟨u, huv.fst_mem⟩, ⟨v, huv.snd_mem⟩} := by
+  refine Set.ext fun w ↦ ⟨fun hw ↦ ?_, fun hw ↦ ?_⟩
+  · grind [h.mem_coe_toEdge w.property]
+  · rcases hw with rfl | rfl
+    · simp [h.toEdge_eq_of_adj huv]
+    · simp [h.toEdge_eq_of_adj huv.symm]
+
+lemma IsMatching.map_ofLE (h : M.IsMatching) (hGG' : G ≤ G') :
+    (M.map (Hom.ofLE hGG')).IsMatching := by
+  intro _ hv
+  obtain ⟨_, hv, hv'⟩ := Set.mem_image _ _ _ |>.mp hv
+  obtain ⟨w, hw⟩ := h hv
+  use w
+  simpa using hv' ▸ hw
+
+lemma IsMatching.eq_of_adj_left (hM : M.IsMatching) (huv : M.Adj u v) (huw : M.Adj u w) : v = w :=
+  (hM <| M.edge_vert huv).unique huv huw
+
+lemma IsMatching.eq_of_adj_right (hM : M.IsMatching) (huw : M.Adj u w) (hvw : M.Adj v w) : u = v :=
+  hM.eq_of_adj_left huw.symm hvw.symm
+
+lemma IsMatching.not_adj_left_of_ne (hM : M.IsMatching) (hvw : v ≠ w) (huv : M.Adj u v) :
+    ¬M.Adj u w := fun huw ↦ hvw <| hM.eq_of_adj_left huv huw
+
+lemma IsMatching.not_adj_right_of_ne (hM : M.IsMatching) (huv : u ≠ v) (huw : M.Adj u w) :
+    ¬M.Adj v w := fun hvw ↦ huv <| hM.eq_of_adj_right huw hvw
+
+lemma IsMatching.sup (hM : M.IsMatching) (hM' : M'.IsMatching)
+    (hd : Disjoint M.support M'.support) : (M ⊔ M').IsMatching := by
+  intro v hv
+  have aux {N N' : Subgraph G} (hN : N.IsMatching) (hd : Disjoint N.support N'.support)
+    (hmN : v ∈ N.verts) : ∃! w, (N ⊔ N').Adj v w := by
+    obtain ⟨w, hw⟩ := hN hmN
+    use w
+    refine ⟨sup_adj.mpr (.inl hw.1), ?_⟩
+    intro y hy
+    cases hy with
+    | inl h => exact hw.2 y h
+    | inr h =>
+      rw [Set.disjoint_left] at hd
+      simpa [(mem_support _).mpr ⟨w, hw.1⟩, (mem_support _).mpr ⟨y, h⟩] using @hd v
+  cases Set.mem_or_mem_of_mem_union hv with
+  | inl hmM => exact aux hM hd hmM
+  | inr hmM' =>
+    rw [sup_comm]
+    exact aux hM' (Disjoint.symm hd) hmM'
+
+lemma IsMatching.iSup {ι : Sort _} {f : ι → Subgraph G} (hM : (i : ι) → (f i).IsMatching)
+    (hd : Pairwise fun i j ↦ Disjoint (f i).support (f j).support) :
+    (⨆ i, f i).IsMatching := by
+  intro v hv
+  obtain ⟨i, hi⟩ := Set.mem_iUnion.mp (verts_iSup ▸ hv)
+  obtain ⟨w, hw⟩ := hM i hi
+  use w
+  refine ⟨iSup_adj.mpr ⟨i, hw.1⟩, ?_⟩
+  intro y hy
+  obtain ⟨i', hi'⟩ := iSup_adj.mp hy
+  by_cases heq : i = i'
+  · exact hw.2 y (heq.symm ▸ hi')
+  · have := hd heq
+    simp only [Set.disjoint_left] at this
+    simpa [(mem_support _).mpr ⟨w, hw.1⟩, (mem_support _).mpr ⟨y, hi'⟩] using @this v
+
+lemma IsMatching.subgraphOfAdj (h : G.Adj v w) : (G.subgraphOfAdj h).IsMatching := by
+  intro _ hv
+  rw [subgraphOfAdj_verts, Set.mem_insert_iff, Set.mem_singleton_iff] at hv
+  cases hv with
+  | inl => use w; aesop
+  | inr => use v; aesop
+
+lemma IsMatching.coeSubgraph {G' : Subgraph G} {M : Subgraph G'.coe} (hM : M.IsMatching) :
+    (Subgraph.coeSubgraph M).IsMatching := by
+  intro _ hv
+  obtain ⟨w, hw⟩ := hM <| Set.mem_of_mem_image_val <| (Subgraph.verts_coeSubgraph M).symm ▸ hv
+  use w
+  refine ⟨?_, fun y hy => ?_⟩
+  · obtain ⟨v, hv⟩ := (Set.mem_image _ _ _).mp <| (Subgraph.verts_coeSubgraph M).symm ▸ hv
+    simp only [coeSubgraph_adj, Subtype.coe_eta, Subtype.coe_prop, exists_const]
+    exact ⟨hv.2 ▸ v.2, hw.1⟩
+  · obtain ⟨_, hw', hvw⟩ := (coeSubgraph_adj _ _ _).mp hy
+    rw [← hw.2 ⟨y, hw'⟩ hvw]
+
+lemma IsMatching.exists_of_disjoint_sets_of_equiv {s t : Set V} (h : Disjoint s t)
+    (f : s ≃ t) (hadj : ∀ v : s, G.Adj v (f v)) :
+    ∃ M : Subgraph G, M.verts = s ∪ t ∧ M.IsMatching := by
+  use {
+    verts := s ∪ t
+    Adj := fun v w ↦ (∃ h : v ∈ s, f ⟨v, h⟩ = w) ∨ (∃ h : w ∈ s, f ⟨w, h⟩ = v)
+    adj_sub := by
+      intro v w h
+      obtain (⟨hv, rfl⟩ | ⟨hw, rfl⟩) := h
+      · exact hadj ⟨v, _⟩
+      · exact (hadj ⟨w, _⟩).symm
+    edge_vert := by grind }
+  simp only [Subgraph.IsMatching, Set.mem_union, true_and]
+  intro v hv
+  rcases hv with hl | hr
+  · use f ⟨v, hl⟩
+    simp only [hl, exists_const, true_or, exists_true_left, true_and]
+    rintro y (rfl | ⟨hys, rfl⟩)
+    · rfl
+    · exact (h.ne_of_mem hl (f ⟨y, hys⟩).coe_prop rfl).elim
+  · use f.symm ⟨v, hr⟩
+    simp only [Subtype.coe_eta, Equiv.apply_symm_apply, Subtype.coe_prop, exists_const, or_true,
+      true_and]
+    rintro y (⟨hy, rfl⟩ | ⟨hy, rfl⟩)
+    · exact (h.ne_of_mem hy hr rfl).elim
+    · simp
+
+protected lemma IsMatching.map {G' : SimpleGraph W} {M : Subgraph G} (f : G →g G')
+    (hf : Injective f) (hM : M.IsMatching) : (M.map f).IsMatching := by
+  rintro _ ⟨v, hv, rfl⟩
+  obtain ⟨v', hv'⟩ := hM hv
+  use f v'
+  refine ⟨⟨v, v', hv'.1, rfl, rfl⟩, ?_⟩
+  rintro _ ⟨w, w', hw, hw', rfl⟩
+  cases hf hw'.symm
+  rw [hv'.2 w' hw]
+
+@[simp]
+lemma Iso.isMatching_map {G' : SimpleGraph W} {M : Subgraph G} (f : G ≃g G') :
+    (M.map f.toHom).IsMatching ↔ M.IsMatching where
+  mp h := by simpa [← map_comp] using h.map f.symm.toHom f.symm.injective
+  mpr := .map f.toHom f.injective
+
+theorem IsMatching.verts_eq_biUnion_edgeSet {M : G.Subgraph} (h : M.IsMatching) :
+    M.verts = ⋃ e ∈ M.edgeSet, (e : Set V) := by
+  refine Set.ext fun v ↦ .trans ⟨fun hv ↦ ?_, fun ⟨e, he, hv⟩ ↦ ?_⟩ Set.mem_iUnion₂.symm
+  · have ⟨u, he, _⟩ := h hv
+    exact ⟨s(v, u), he, Sym2.mem_mk_left ..⟩
+  · exact mem_verts_of_mem_edge he hv
+
+theorem IsMatching.injOn_edgeSet : (Set.ofPred IsMatching).InjOn (edgeSet (G := G)) := by
+  refine fun M₁ h₁ M₂ h₂ h ↦ Subgraph.ext ?_ <| Sym2.fromRel_eq_fromRel_iff_eq .. |>.mp h
+  rw [h₁.verts_eq_biUnion_edgeSet, h₂.verts_eq_biUnion_edgeSet, h]
+
+theorem IsMatching.strictMonoOn_edgeSet : StrictMonoOn (edgeSet (G := G)) (Set.ofPred IsMatching) :=
+  edgeSet_monotone.monotoneOn _ |>.strictMonoOn_of_injOn injOn_edgeSet
+
+/--
+The subgraph `M` of `G` is a perfect matching on `G` if it's a matching and every vertex `G` is
+matched.
+-/
+def IsPerfectMatching (M : G.Subgraph) : Prop := M.IsMatching ∧ M.IsSpanning
+
+theorem IsMatching.support_eq_verts (h : M.IsMatching) : M.support = M.verts := by
+  refine M.support_subset_verts.antisymm fun v hv => ?_
+  obtain ⟨w, hvw, -⟩ := h hv
+  exact ⟨_, hvw⟩
+
+theorem isMatching_iff_forall_degree [∀ v, Fintype (M.neighborSet v)] :
+    M.IsMatching ↔ ∀ v : V, v ∈ M.verts → M.degree v = 1 := by
+  simp only [degree_eq_one_iff_existsUnique_adj, IsMatching]
+
+theorem IsMatching.even_card [Fintype M.verts] (h : M.IsMatching) : Even M.verts.toFinset.card := by
+  classical
+  rw [isMatching_iff_forall_degree] at h
+  use M.coe.edgeFinset.card
+  rw [← two_mul, ← M.coe.sum_degrees_eq_twice_card_edges]
+  simp [h, Finset.card_univ]
+
+theorem isPerfectMatching_iff : M.IsPerfectMatching ↔ ∀ v, ∃! w, M.Adj v w := by
+  refine ⟨?_, fun hm => ⟨fun v _ => hm v, fun v => ?_⟩⟩
+  · rintro ⟨hm, hs⟩ v
+    exact hm (hs v)
+  · obtain ⟨w, hw, -⟩ := hm v
+    exact M.edge_vert hw
+
+theorem isPerfectMatching_iff_forall_degree [∀ v, Fintype (M.neighborSet v)] :
+    M.IsPerfectMatching ↔ ∀ v, M.degree v = 1 := by
+  simp [degree_eq_one_iff_existsUnique_adj, isPerfectMatching_iff]
+
+theorem IsPerfectMatching.even_card [Fintype V] (h : M.IsPerfectMatching) :
+    Even (Fintype.card V) := by
+  classical
+  simpa only [h.2.card_verts] using IsMatching.even_card h.1
+
+lemma IsMatching.induce_connectedComponent (h : M.IsMatching) (c : ConnectedComponent G) :
+    (M.induce (M.verts ∩ c.supp)).IsMatching := by
+  intro _ hv
+  obtain ⟨hv, rfl⟩ := hv
+  obtain ⟨w, hvw, hw⟩ := h hv
+  use w
+  simpa [hv, hvw
+UPSTREAM Mathlib/Combinatorics/SimpleGraph/Girth.lean
+/-
+Copyright (c) 2023 Yaël Dillies. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Yaël Dillies
+-/
+module
+
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Combinatorics.SimpleGraph.Diam
+
+/-!
+# Girth of a simple graph
+
+This file defines the girth and the extended girth of a simple graph as the length of its smallest
+cycle, they give `0` or `∞` respectively if the graph is acyclic.
+
+-/
+
+@[expose] public section
+
+namespace SimpleGraph
+variable {α β : Type*} {G : SimpleGraph α} {G' : SimpleGraph β}
+
+section egirth
+
+
+/--
+The extended girth of a simple graph is the length of its smallest cycle, or `∞` if the graph is
+acyclic.
+-/
+noncomputable def egirth (G : SimpleGraph α) : ℕ∞ :=
+  ⨅ a, ⨅ w : G.Walk a a, ⨅ _ : w.IsCycle, w.length
+
+@[simp]
+lemma le_egirth {n : ℕ∞} : n ≤ G.egirth ↔ ∀ a (w : G.Walk a a), w.IsCycle → n ≤ w.length := by
+  simp [egirth]
+
+lemma Walk.IsCycle.egirth_le_length {a} {w : G.Walk a a} (h : w.IsCycle) : G.egirth ≤ w.length :=
+  le_egirth.mp le_rfl a w h
+
+@[deprecated (since := "2026-07-05")] alias egirth_le_length := Walk.IsCycle.egirth_le_length
+
+lemma Walk.IsCircuit.egirth_le_length {a} {w : G.Walk a a} (hwc : w.IsCircuit) :
+    G.egirth ≤ w.length := by
+  classical
+  by_contra! hlg
+  let w' : G.Walk a a := w.cycleBypass
+  have hwc' : w'.IsCycle := hwc.isCycle_cycleBypass
+  have hwlg' : w'.length < G.egirth := by
+    grw [w.length_cycleBypass_le_length]
+    exact hlg
+  exact not_le_of_gt hwlg' hwc'.egirth_le_length
+
+@[simp]
+lemma egirth_eq_top : G.egirth = ⊤ ↔ G.IsAcyclic := by simp [egirth, IsAcyclic]
+
+protected alias ⟨_, IsAcyclic.egirth_eq_top⟩ := egirth_eq_top
+
+lemma egirth_anti : Antitone (egirth : SimpleGraph α → ℕ∞) :=
+  fun G H h ↦ iInf_mono fun a ↦ iInf₂_mono' fun w hw ↦ ⟨w.mapLe h, hw.mapLe _, by simp⟩
+
+lemma exists_egirth_eq_length :
+    (∃ (a : α) (w : G.Walk a a), w.IsCycle ∧ G.egirth = w.length) ↔ ¬ G.IsAcyclic := by
+  refine ⟨?_, fun h ↦ ?_⟩
+  · rintro ⟨a, w, hw, _⟩ hG
+    exact hG _ hw
+  · simp_rw [← egirth_eq_top, ← Ne.eq_def, egirth, iInf_subtype', iInf_sigma',
+      ENat.iInf_natCast_ne_top, ← exists_prop, Subtype.exists', Sigma.exists', eq_comm] at h ⊢
+    exact ciInf_mem _
+
+lemma three_le_egirth : 3 ≤ G.egirth := by
+  simpa using fun _ _ h ↦ h.three_le_length
+
+@[simp] lemma egirth_bot : egirth (⊥ : SimpleGraph α) = ⊤ := by simp
+
+theorem egirth_top (h : 3 ≤ ENat.card α) : egirth (⊤ : SimpleGraph α) = 3 := by
+  classical
+  refine le_antisymm ?_ three_le_egirth
+  obtain ⟨s, hcard⟩ := Cardinal.exists_finset_eq_card <| Cardinal.ofNat_le_toENat.mp h
+  obtain ⟨x, y, z, hxy, hxz, hyz, -⟩ := s.card_eq_three.mp hcard.symm
+  set w : Walk ⊤ x x := .cons hxy <| .cons hyz <| .cons hxz.symm .nil with hw
+  have : w.IsCycle :=
+    { edges_nodup := by aesop
+      ne_nil := by aesop
+      support_nodup := by aesop }
+  grw [this.egirth_le_length]
+  simp [hw]
+
+open Walk in
+lemma egirth_le_two_mul_ediam_add_one (h : ¬ G.IsAcyclic) : G.egirth ≤ 2 * G.ediam + 1 := by
+  obtain ⟨u, w, hw, hwl⟩ := exists_egirth_eq_length.mpr h
+  have ⟨p, hp, _⟩ := (w.take (w.length / 2)).reachable.exists_path_of_dist
+  have half_g_le_edist : w.length / 2 ≤ G.dist u (w.getVert (w.length / 2)) := by
+    by_contra! hlt
+    have := hp.exists_isCycle_length_le_add_of_ne (hw.isPath_take (by lia)) (by grind [take_length])
+    grind [ENat.natCast_le_natCast, take_length, IsCycle.egirth_le_length]
+  have h2 : (w.length : ℕ∞) ≤ 2 * (w.length / 2 :) + 1 := by norm_cast; lia
+  grw [hwl, h2, half_g_le_edist, natCast_dist_le_edist, edist_le_ediam]
+
+@[gcongr only]
+lemma IsContained.egirth_le (h : G ⊑ G') : G'.egirth ≤ G.egirth := by
+  by_cases hacyc : G.IsAcyclic
+  · simp [hacyc.egirth_eq_top]
+  obtain ⟨a, w, hw, hwl⟩ := exists_egirth_eq_length.mpr hacyc
+  rw [hwl, ← w.length_map h.some.toHom]
+  exact hw.map h.some.injective |>.egirth_le_length
+
+@[gcongr only]
+lemma Iso.egirth_eq (f : G ≃g G') : G.egirth = G'.egirth :=
+  le_antisymm f.isContained'.egirth_le f.isContained.egirth_le
+
+end egirth
+
+section girth
+
+
+/--
+The girth of a simple graph is the length of its smallest cycle, or junk value `0` if the graph is
+acyclic.
+-/
+noncomputable def girth (G : SimpleGraph α) : ℕ :=
+  G.egirth.toNat
+
+lemma Walk.IsCycle.girth_le_length {a} {w : G.Walk a a} (h : w.IsCycle) : G.girth ≤ w.length :=
+  ENat.natCast_le_natCast.mp <| G.egirth.natCast_toNat_le_self.trans h.egirth_le_length
+
+@[deprecated (since := "2026-07-05")] alias girth_le_length := Walk.IsCycle.girth_le_length
+
+lemma natCast_girth_le_egirth : G.girth ≤ G.egirth :=
+  ENat.natCast_toNat_le_self _
+
+lemma three_le_girth (hG : ¬ G.IsAcyclic) : 3 ≤ G.girth :=
+  ENat.toNat_le_toNat three_le_egirth <| egirth_eq_top.not.mpr hG
+
+lemma girth_eq_zero : G.girth = 0 ↔ G.IsAcyclic :=
+  ⟨fun h ↦ not_not.mp <| three_le_girth.mt <| by lia, fun h ↦ by simp [girth, h]⟩
+
+protected alias ⟨_, IsAcyclic.girth_eq_zero⟩ := girth_eq_zero
+
+lemma girth_anti {G' : SimpleGraph α} (hab : G ≤ G') (h : ¬ G.IsAcyclic) : G'.girth ≤ G.girth :=
+  ENat.toNat_le_toNat (egirth_anti hab) <| egirth_eq_top.not.mpr h
+
+lemma Walk.IsCircuit.girth_le_length {a} {w : G.Walk a a} (hwc : w.IsCircuit) :
+    G.girth ≤ w.length :=
+  ENat.natCast_le_natCast.mp <| G.egirth.natCast_toNat_le_self.trans <| hwc.egirth_le_length
+
+lemma exists_girth_eq_length :
+    (∃ (a : α) (w : G.Walk a a), w.IsCycle ∧ G.girth = w.length) ↔ ¬ G.IsAcyclic := by
+  refine ⟨by tauto, fun h ↦ ?_⟩
+  obtain ⟨_, _, _⟩ := exists_egirth_eq_length.mpr h
+  simp_all only [girth, ENat.toNat_natCast]
+  tauto
+
+lemma girth_le_two_mul_ediam_add_one : G.girth ≤ 2 * G.ediam + 1 := by
+  by_cases h : G.IsAcyclic
+  · simp [girth_eq_zero.mpr h]
+  · exact le_trans natCast_girth_le_egirth <| egirth_le_two_mul_ediam_add_one h
+
+lemma girth_le_two_mul_diam_add_one (h : G.ediam ≠ ⊤) : G.girth ≤ 2 * G.diam + 1 := by
+  exact_mod_cast natCast_diam_eq_ediam_iff.mpr h ▸ girth_le_two_mul_ediam_add_one
+
+@[simp] lemma girth_bot : girth (⊥ : SimpleGraph α) = 0 := by
+  simp [girth]
+
+theorem girth_top (h : 3 ≤ ENat.card α) : girth (⊤ : SimpleGraph α) = 3 := by
+  simp [girth, egirth_top h]
+
+lemma IsContained.girth_le (h : G ⊑ G') (hG : ¬G.IsAcyclic) : G'.girth ≤ G.girth :=
+  ENat.toNat_le_toNat h.egirth_le <| egirth_eq_top.not.mpr hG
+
+lemma Iso.girth_eq (f : G ≃g G') : G.girth = G'.girth := by
+  simp [girth, f.egirth_eq]
+
+end girth
+
+end SimpleGraph
+
+TARGETED ARTIFACTS [('Even.trace', 287), ('Even.olean', 47768), ('Even.olean.server', 6288), ('Even.olean.private', 354456), ('Even.olean.hash', 16), ('Even.olean.server.hash', 16), ('Even.olean.private.hash', 16), ('Even.ilean', 9650), ('Even.ilean.hash', 16), ('Even.ir.sig', 176), ('Even.ir.sig.hash', 16), ('Even.ir', 4992), ('Even.ir.hash', 16)]
