@@ -1,0 +1,514 @@
+
+FILE write_lane.py 
+ import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+
+FILE source_get_guard.py 
+ """One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+
+FILE ROOT-PREP.json 
+ {
+  "utc": "2026-11-08T01:34:58.440657+00:00",
+  "lane": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1",
+  "mathdb_ids": [
+    338603,
+    338604
+  ],
+  "one_family": true,
+  "reservation_sha256": "4f2c014317a2128d8c90c512acdb3ba871653514f5a4e42a9976d3b5c50dcc10",
+  "frozen_count": 163,
+  "copied_inputs": 27,
+  "author_frozen_files": 124,
+  "helper_sha256": "20e1cc05bd236a184923e83ecf948ade4bba94fca49eaad20c52d7ee2e4860f8",
+  "inherited_denials_sha256": "ea4258e94913cfb5b319dd5671bbe9786051d1cd306d74cd9774cc191ce35e60",
+  "accepted": 55,
+  "credit": 0,
+  "role": "Independentordinarysource/math/prior/significance,noexecution",
+  "protected_active": [
+    "dominated-contraction-source-review-sol-r1",
+    "expanded-corpus-r410"
+  ]
+}
+
+
+FILE INPUT-ORIGINS.json 
+ {
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/FULLCANDIDATE.md": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/FULLCANDIDATE.md",
+    "sha256": "9aa0b266e8dd97b664830a0aac653442eb1f2aa0ac6f90afe1d0f4814aa7fa1c"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/DORMANT-SOL-FORMAL-PLAN.md": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/DORMANT-SOL-FORMAL-PLAN.md",
+    "sha256": "1e4c1e7d9050abcc7d0a1e8ccc33e61b17d2d828f5775399938a03b8daa53f98"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/SUSTAINED-DERIVATIONS.md": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/SUSTAINED-DERIVATIONS.md",
+    "sha256": "6801f2c79dcc1e2354d50ee275c514a11aa774086238f37a3208c8c0f1b6f512"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/originals/338603.jsonl": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/originals/338603.jsonl",
+    "sha256": "5b040dc75bcffdaedafec1b5d03808f1f7dd7d8cc33670454ddd8357974f19f7"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/originals/338604.jsonl": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/originals/338604.jsonl",
+    "sha256": "d6f855236e6f47e97d0c1d59bf903f73e4a2450ac176b35f5e8ea1823d3ef331"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/provenance.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/provenance.json",
+    "sha256": "c6d0462893c61b23685ebda4fbaa97c975c551494696568c14541acdb0c74096"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/ACTUALBRIEF.md": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/ACTUALBRIEF.md",
+    "sha256": "555a100dbeb8b7fe0e748e4ce6f94a121e59359e881c1ed228b4228adf384fa5"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/sources/chromatic-core.pdf": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/sources/chromatic-core.pdf",
+    "sha256": "82804b4372857916cfc354fd2d41085780691180fd73cf51967bb9482e18706f"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/texts/chromatic-core.txt": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/texts/chromatic-core.txt",
+    "sha256": "7d383e2ce2fae5a5c8dc0919915e7322cb8eff06e454c14724c9e5965e06271e"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/sources/core-version.html": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/sources/core-version.html",
+    "sha256": "9547cc5ad221367f52f90458cfd9a40795929f4aec3733d19894b49c99d2e34f"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/read-inventory.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/read-inventory.json",
+    "sha256": "17185d6bbb84ae30e6c9cbf11b830af85c77fc9c79e0c042e6f6ea813d6d3346"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/registry-inventory.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/registry-inventory.json",
+    "sha256": "36124708083308116e635d87cc3394c8193e3aafb5f27a0f37b8c2235b6af8b0"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/access-inventory.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/access-inventory.json",
+    "sha256": "a33c69f9bdf5ec4cd1dddd1faf38803c1ed457469dc56a7ca6eb21e669b517d7"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/search-inventory.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/search-inventory.json",
+    "sha256": "ad68f6a47402600a87642c62256918215958eaa9323c61cce8393ce0ed95c85a"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/guard-ledger.jsonl": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/guard-ledger.jsonl",
+    "sha256": "d98927e9c1a2a1d463b4d38d42307bbd356599c63d48683c2017e362b6729121"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/SHA256-MANIFEST.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/SHA256-MANIFEST.json",
+    "sha256": "d087c418d810722bdbd9222067d66c6879be5fea1ee459e496e1215a28ce31c6"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/search-plan-1.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/search-plan-1.json",
+    "sha256": "db871fc3a40cf536ed7ad67aeb85a2c0323aeb7ff0d4c02e39564288c5af0e43"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/search-response-1.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/search-response-1.json",
+    "sha256": "ff63b2736763402f4eed6053a2a437c6d3fd7815aec683226324f667be97102e"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/search-plan-2.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/search-plan-2.json",
+    "sha256": "4a336e06945f8aca07699861f8e7a79a10ace1e1fabe5bcaf9873992d4ab6e4a"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/search-response-2.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/search-response-2.json",
+    "sha256": "127ea0c8b54dfdde786319ab311dae3a78dfcc96aa94228dee6eee358fb0b6b5"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/search-plan-3.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/search-plan-3.json",
+    "sha256": "0b2e3255d7c3c9dacfdbc93e14bcc453f39a80a049ae5767679de4a0423aaee3"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/search-response-3.json": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/search-response-3.json",
+    "sha256": "c88161dffe598a2f88488ca75e5d06c19989aec9613e02c829908abdb4197016"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/sources/registry-deepmind.html": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/sources/registry-deepmind.html",
+    "sha256": "88ac8740e267a6e4b4e4b9d7f68db567862a2dc8593c017ecd8711b770c0a403"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/sources/registry-leanpool.html": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/sources/registry-leanpool.html",
+    "sha256": "217727e9910687226711826f1cd0ab53ee4ac82d45b08f07f399235e4fb3e8c6"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/sources/registry-openai.html": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/sources/registry-openai.html",
+    "sha256": "e470ad1290e35a78c4c8380be67f737d4a859a172dd6cc7e12f3dccff4ccc5bc"
+  },
+  "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/chromatic-core-product-source-review-sol-r1/inputs/sources/registry-tauceti.html": {
+    "source": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/expanded-corpus-r409/sources/registry-tauceti.html",
+    "sha256": "55f6424a1dd015ebd26304c467205d487b71da6fde1ab22d925b800aa7ddb144"
+  }
+}
+
+
+FILE search-budget.json 
+ {
+  "calls_used": 0,
+  "queries_used": 0,
+  "maximum_calls": 2,
+  "maximum_queries": 6,
+  "mutable_before_call_counter": true
+}
+
+
+FILE launch.json 
+ {
+  "taskId": "node:delegated-task:command%3Amcp%3A1766a63d-c930-49c6-b051-44ef897fc2b8%3Adelegate-task%3A40d62521-c1ef-46a6-bbea-8acbbc1d4838",
+  "childThreadId": "thread:delegated-task:command%3Amcp%3A1766a63d-c930-49c6-b051-44ef897fc2b8%3Adelegate-task%3A40d62521-c1ef-46a6-bbea-8acbbc1d4838",
+  "link": "<t3-thread://v2/9b050891-7aa5-4d41-ba93-e7f32a09449f/thread:delegated-task:command%3Amcp%3A1766a63d-c930-49c6-b051-44ef897fc2b8%3Adelegate-task%3A40d62521-c1ef-46a6-bbea-8acbbc1d4838>",
+  "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A1766a63d-c930-49c6-b051-44ef897fc2b8%253Adelegate-task%253A40d62521-c1ef-46a6-bbea-8acbbc1d4838:ordinal:1",
+  "childNodeId": "node:delegated-task:command%3Amcp%3A1766a63d-c930-49c6-b051-44ef897fc2b8%3Adelegate-task%3A40d62521-c1ef-46a6-bbea-8acbbc1d4838",
+  "status": "running",
+  "workState": "working",
+  "hasPendingChildRuns": false,
+  "latestTerminalRunId": null,
+  "latestTerminalStatus": null,
+  "latestTerminalSummary": null,
+  "latestTerminalResultContextTransferId": null,
+  "providerInstanceId": "codex",
+  "model": "gpt-6.1-sol",
+  "options": [
+    {
+      "id": "reasoningEffort",
+      "value": "high"
+    },
+    {
+      "id": "serviceTier",
+      "value": "default"
+    }
+  ],
+  "summary": null,
+  "resultContextTransferId": null,
+  "hasPendingQuestion": false,
+  "pendingApproval": null,
+  "waitTimedOut": false,
+  "next": "Completion wakes this thread, so end your turn. Do not wait on it or poll it."
+}
+
+
+FILE reservation.json 
+ {
+  "ids": [
+    338603,
+    338604
+  ],
+  "rows": [
+    {
+      "mathdb_id": 338603,
+      "canonical_url": "https://mathdb.com/p/338603/conjecture-on-chromatic-core-subgraphs-of-strong-graph-produ",
+      "title": "Conjecture on chromatic core subgraphs of strong graph products",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chromatic-number",
+        "graph-products",
+        "graph-theory"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1803.01505",
+      "finite_cue_count": 0
+    },
+    {
+      "mathdb_id": 338604,
+      "canonical_url": "https://mathdb.com/p/338604/conjecture-on-chromatic-core-subgraphs-of-general-graph-prod",
+      "title": "Conjecture on chromatic core subgraphs of general graph products",
+      "status": "open",
+      "post_type": "conjecture",
+      "statement_completeness": "full",
+      "screening_tags": [
+        "open_question_formulation"
+      ],
+      "review_priority_score": 23,
+      "reviewed": false,
+      "review_reason": "first_pass_tags_only_technical_review_pending",
+      "mathdb_tags": [
+        "chromatic-number",
+        "graph-products",
+        "graph-theory"
+      ],
+      "first_stated_year": 2018,
+      "source_url": "https://arxiv.org/abs/1803.01505",
+      "finite_cue_count": 0
+    }
+  ],
+  "role": "Independentordinarysource/math/prior/significancereview;onefamily;noformalexecution"
+}
+
+
+FILE model-policy-sol-only.json 
+ {
+  "utc": "2026-11-07T23:22:46.698062+00:00",
+  "user_instruction": "Do not use GLM5.3 for subagents now; only GPT6.1Sol",
+  "provider": "codex",
+  "model": "gpt-6.1-sol",
+  "options": {
+    "reasoningEffort": "high",
+    "serviceTier": "default"
+  },
+  "supersedes": "Prior2026-11-05PiGLMexecution/formalizationrouting; appliesallfutureandcontinuingsubagentsincludingexecution/replay/audit",
+  "preserve_existing_artifacts": true,
+  "accepted": 52
+}
+
+
+FILE registry-roots.json 
+ {
+  "urls": [
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures"
+  ],
+  "scope": "Only these4 explicit registry roots, optional fresh metadata. This is not an instruction to traverse another access/history file. Each helper GET charges every reserved ID."
+}
+
+
+INPUT FILES
+inputs/FULLCANDIDATE.md
+inputs/DORMANT-SOL-FORMAL-PLAN.md
+inputs/SUSTAINED-DERIVATIONS.md
+inputs/provenance.json
+inputs/ACTUALBRIEF.md
+inputs/read-inventory.json
+inputs/registry-inventory.json
+inputs/access-inventory.json
+inputs/search-inventory.json
+inputs/guard-ledger.jsonl
+inputs/SHA256-MANIFEST.json
+inputs/search-plan-1.json
+inputs/search-response-1.json
+inputs/search-plan-2.json
+inputs/search-response-2.json
+inputs/search-plan-3.json
+inputs/search-response-3.json
+inputs/target-results.json
+inputs/originals/338603.jsonl
+inputs/originals/338604.jsonl
+inputs/sources/chromatic-core.pdf
+inputs/sources/core-version.html
+inputs/sources/registry-deepmind.html
+inputs/sources/registry-leanpool.html
+inputs/sources/registry-openai.html
+inputs/sources/registry-tauceti.html
+inputs/texts/chromatic-core.txt
