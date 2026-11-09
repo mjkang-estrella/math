@@ -1,0 +1,2 @@
+# Decision: no discovery nomination
+The source question remains open to this lane. The explicit n28 matrix is regular, with exact sign intersection counts 0,128,0. This rules out treating two empty eigenspaces as a source counterexample; it does not classify every switching class with that spectrum. The rational-projector obstruction is only a diagnostic outside the Seidel category. Eight distinct breadth families screened; no ranked new survivor beyond the inherited Seidel lead. Zero credit requested. No PROOF.md because no full source candidate is proved.
