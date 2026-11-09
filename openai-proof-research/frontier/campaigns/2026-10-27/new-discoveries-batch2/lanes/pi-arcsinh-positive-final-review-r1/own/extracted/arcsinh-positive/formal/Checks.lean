@@ -1,0 +1,40 @@
+import SourceTheorem
+set_option autoImplicit false
+#check ArcsinhPositive.sourceIntegrand
+#print axioms ArcsinhPositive.sourceIntegrand
+#check ArcsinhPositive.sourceArcsinh
+#print axioms ArcsinhPositive.sourceArcsinh
+#check ArcsinhPositive.SourceConjecture
+#print axioms ArcsinhPositive.SourceConjecture
+#check ArcsinhPositive.entropyExpression
+#print axioms ArcsinhPositive.entropyExpression
+#check ArcsinhPositive.entropyExpression_eq_binEntropy
+#print axioms ArcsinhPositive.entropyExpression_eq_binEntropy
+#check ArcsinhPositive.entropyExpression_bounds
+#print axioms ArcsinhPositive.entropyExpression_bounds
+#check ArcsinhPositive.expKernel
+#print axioms ArcsinhPositive.expKernel
+#check ArcsinhPositive.hasDerivAt_logKernel
+#print axioms ArcsinhPositive.hasDerivAt_logKernel
+#check ArcsinhPositive.hasDerivAt_expKernel
+#print axioms ArcsinhPositive.hasDerivAt_expKernel
+#check ArcsinhPositive.hasDerivAt_entropyExpression
+#print axioms ArcsinhPositive.hasDerivAt_entropyExpression
+#check ArcsinhPositive.hasDerivAt_entropy_exp
+#print axioms ArcsinhPositive.hasDerivAt_entropy_exp
+#check ArcsinhPositive.kernelDerivative
+#print axioms ArcsinhPositive.kernelDerivative
+#check ArcsinhPositive.hasDerivAt_kernelDerivative
+#print axioms ArcsinhPositive.hasDerivAt_kernelDerivative
+#check ArcsinhPositive.expKernel_strictConcaveOn
+#print axioms ArcsinhPositive.expKernel_strictConcaveOn
+#check ArcsinhPositive.sourceIntegrand_eq_expKernel
+#print axioms ArcsinhPositive.sourceIntegrand_eq_expKernel
+#check ArcsinhPositive.sourceIntegrand_strictConcaveOn
+#print axioms ArcsinhPositive.sourceIntegrand_strictConcaveOn
+#check ArcsinhPositive.sourceIntegrand_continuousOn
+#print axioms ArcsinhPositive.sourceIntegrand_continuousOn
+#check ArcsinhPositive.sourceArcsinh_strictConcaveOn
+#print axioms ArcsinhPositive.sourceArcsinh_strictConcaveOn
+#check ArcsinhPositive.source_conjecture
+#print axioms ArcsinhPositive.source_conjecture
