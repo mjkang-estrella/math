@@ -1,0 +1,405 @@
+{
+  "schema": 1,
+  "about": "Curated by the monitor, NOT by the research team. Each repo_results entry cites a verbatim quote and Lean theorem names; the server re-checks every quote and theorem against the live files on each refresh and flags any that no longer match. The live findings/STATE/commits shown elsewhere are authoritative; this file only frames complexity and units so toy counts are never promoted to end-to-end speedups.",
+  "reviewed_at_commit": "7a2f5df",
+  "reviewed_on": "2026-10-07",
+  "reviewed_findings_through": "W017",
+  "problem": {
+    "name": "secp256k1 ECDLP (full-size key recovery)",
+    "statement": "Given public Q = [d]G on secp256k1 with prime group order n, recover d in [0, n).",
+    "order_source": "Research/Secp256k1.lean",
+    "order_symbol": "n",
+    "not_key_generation": "Key generation (choose d, compute Q=[d]G) is cheap: one scalar multiplication. All workloads here are for the inverse problem, key recovery."
+  },
+  "classical_references": [
+    {
+      "id": "exhaustive",
+      "method": "Exhaustive search",
+      "formula": "up to n group operations (worst case)",
+      "log2_from_order": {
+        "kind": "linear",
+        "coefficient": 1.0
+      },
+      "memory": "O(1) points",
+      "status": "textbook baseline",
+      "source": {
+        "label": "Handbook of Applied Cryptography ch. 3",
+        "url": "https://cacr.uwaterloo.ca/hac/about/chap3.pdf"
+      }
+    },
+    {
+      "id": "bsgs",
+      "method": "Baby-step giant-step (conventional)",
+      "formula": "about 2*sqrt(n) group operations worst case with m = ceil(sqrt(n)) stored points",
+      "log2_from_order": {
+        "kind": "sqrt",
+        "coefficient": 2.0
+      },
+      "memory": "about sqrt(n) = 2^128 stored points: the memory alone is physically infeasible",
+      "status": "textbook baseline (HAC alg. 3.56)",
+      "source": {
+        "label": "Handbook of Applied Cryptography ch. 3, alg. 3.56",
+        "url": "https://cacr.uwaterloo.ca/hac/about/chap3.pdf"
+      }
+    },
+    {
+      "id": "signed-bsgs",
+      "method": "Signed / negation-map BSGS",
+      "formula": "known constant-factor saving (order sqrt(2)) on additions; same sqrt(n) exponent",
+      "log2_from_order": null,
+      "memory": "about sqrt(n/2) stored points",
+      "status": "published constant-factor technique; repo has finite experiments only (W006/W012)",
+      "source": {
+        "label": "Galbraith, Wang, Zhang (AMC 2017)",
+        "url": "https://www.aimsciences.org/article/doi/10.3934/amc.2017038?viewType=HTML"
+      }
+    },
+    {
+      "id": "rho",
+      "method": "Pollard rho (with negation map)",
+      "formula": "on average approximately 0.886*sqrt(l) additions (SafeCurves; lists 2^127.8 for secp256k1)",
+      "log2_from_order": {
+        "kind": "sqrt",
+        "coefficient": 0.886
+      },
+      "memory": "small (distinguished points)",
+      "status": "best known generic attack; expected-case, randomized",
+      "source": {
+        "label": "SafeCurves: the rho method",
+        "url": "https://safecurves.cr.yp.to/rho.html"
+      }
+    },
+    {
+      "id": "generic-lower-bound",
+      "method": "Generic-group lower bound",
+      "formula": "Omega(sqrt(q)) group operations for any generic algorithm",
+      "log2_from_order": null,
+      "memory": "n/a",
+      "status": "theorem (Shoup 1997) for generic algorithms only; a break must exploit the representation",
+      "source": {
+        "label": "Shoup, Lower bounds for discrete logarithms",
+        "url": "https://www.shoup.net/papers/dlbounds1.pdf"
+      }
+    }
+  ],
+  "rounded_reference_log2": 128,
+  "rounded_reference_note": "The repo's own illustrative workload (Research/Goals.lean uses 2^128). SafeCurves' finer rho figure is 2^127.8 additions.",
+  "repo_results": [
+    {
+      "id": "exhaustive-proved",
+      "title": "Exhaustive orbit scan baseline",
+      "category": "proved",
+      "unit": "equality tests (abstract); point/field arithmetic and memory excluded",
+      "bound": "exactly d+1 equality tests, at most q",
+      "scope": "abstract cyclic problem; instantiated on a 7-point toy curve over F5",
+      "not_established": "no tape-step bound, no elliptic-curve arithmetic cost",
+      "evidence": {
+        "source": "README.md",
+        "quote": "proved to return every scalar d with exactly d+1 equality tests (at most q)",
+        "findings": [
+          "W001"
+        ],
+        "theorems": [
+          "Research.Baseline.scan_comparisons_le",
+          "Research.Baseline.solve_publicKey"
+        ]
+      }
+    },
+    {
+      "id": "bsgs-correct",
+      "title": "Conventional BSGS correctness (linear lookup)",
+      "category": "proved",
+      "unit": "none: correctness only",
+      "bound": "recovers every orbit scalar for every positive width; no cost bound",
+      "scope": "generic orbit arithmetic, incl. order one and duplicate babies (m>q)",
+      "not_established": "any total-cost bound",
+      "evidence": {
+        "source": "README.md",
+        "quote": "Lookup is linear; no total-cost bound is asserted (W005/W007).",
+        "findings": [
+          "W005",
+          "W007"
+        ],
+        "theorems": [
+          "Research.BSGS.solve_correct",
+          "Research.BSGSArithmetic.recover"
+        ]
+      }
+    },
+    {
+      "id": "sorted-bsgs-queries",
+      "title": "Sorted BSGS: correctness + lookup-query bound",
+      "category": "proved",
+      "unit": "lookup queries / binary-search probes / comparison calls ONLY",
+      "bound": "accumulated query comparisons bounded (generic proof)",
+      "scope": "every positive table width; toy runtime check on the order-7 curve",
+      "not_established": "construction, sorting, key generation, group arithmetic, memory are unpriced; not total work",
+      "evidence": {
+        "source": "README.md",
+        "quote": "Baby construction, sorting, key generation, group arithmetic and memory remain unpriced; this is not a total-work bound",
+        "findings": [
+          "W008",
+          "W009"
+        ],
+        "theorems": [
+          "Research.SortedBSGS.solve_correct",
+          "Research.SortedBSGS.solve_query_bounds"
+        ]
+      }
+    },
+    {
+      "id": "bsgs-toy-experiment",
+      "title": "Ordinary BSGS variants on toy curves",
+      "category": "experiment",
+      "unit": "API additions and point/key comparisons (no timing)",
+      "bound": "all 365 scalars of five synthetic curves (q = 7, 19, 31, 109, 199); linear lookup keeps d+1 comparisons",
+      "scope": "finite toy instances only",
+      "not_established": "asymptotics, timing, tape cost",
+      "evidence": {
+        "source": "research/findings/W004-bsgs-lookup.md",
+        "quote": "independently reviewed finite experiment and limited negative result",
+        "findings": [
+          "W004"
+        ],
+        "theorems": []
+      }
+    },
+    {
+      "id": "signed-bsgs-experiment",
+      "title": "Signed-block BSGS finite experiments",
+      "category": "experiment",
+      "unit": "instrumented event vectors (additions, sign handling, keys, sorting, lookup)",
+      "bound": "known constant-factor addition saving with added sign/key work",
+      "scope": "toy curves q = 7, 19, 31, 109, 199; W012 tuning on q = 7, 19, 31",
+      "not_established": "calibrated speed, exponent change, complete Lean signed solver",
+      "evidence": {
+        "source": "research/STATE.md",
+        "quote": "Known constant-factor addition saving accompanied by sign/key costs; no calibrated speed, exponent or complete Lean signed solver.",
+        "findings": [
+          "W006",
+          "W012"
+        ],
+        "theorems": []
+      }
+    },
+    {
+      "id": "signed-coverage",
+      "title": "Tight signed-block coverage, exact first hit",
+      "category": "proved",
+      "unit": "block-count arithmetic (not operations)",
+      "bound": "ceil(q/(2m-1)) centers suffice and are tight for sequential coverage",
+      "scope": "modular arithmetic + finite check q<=64, m<=32",
+      "not_established": "any speedup; unused-cap reduction does not change early-stopping work",
+      "evidence": {
+        "source": "research/findings/W015-tight-signed-coverage.md",
+        "quote": "Status: independently verified arithmetic/finite-check result; no speedup.",
+        "findings": [
+          "W015"
+        ],
+        "theorems": [
+          "Research.SignedTight.covers",
+          "Research.SignedTight.earlier_blocks_miss"
+        ]
+      }
+    },
+    {
+      "id": "word-machine",
+      "title": "Fixed-word abstract cost machine components",
+      "category": "proved",
+      "unit": "abstract word-action units (not bits, tape steps or hardware time)",
+      "bound": "fault-atomic steps, exact serialization, charged setup, fresh-run accounting",
+      "scope": "interpreter components; no query or solver program yet",
+      "not_established": "solver cost, hardware/tape refinement",
+      "evidence": {
+        "source": "research/findings/W017-fresh-run-accounting.md",
+        "quote": "These are only reviewed abstract word-action units.",
+        "findings": [
+          "W011",
+          "W013",
+          "W014",
+          "W017"
+        ],
+        "theorems": []
+      }
+    },
+    {
+      "id": "encoding-counterexamples",
+      "title": "Interface encoding counterexamples",
+      "category": "negative",
+      "unit": "n/a",
+      "bound": "secret-revealing or ambiguous encodings trivialize / break the goals",
+      "scope": "specification test, not an ECDLP algorithm",
+      "not_established": "n/a (negative specification result)",
+      "evidence": {
+        "source": "README.md",
+        "quote": "Secret-revealing encodings can satisfy its goals trivially",
+        "findings": [
+          "W002"
+        ],
+        "theorems": []
+      }
+    },
+    {
+      "id": "whole-solver-cost-proposal",
+      "title": "Whole-solver cost interpreter proposal",
+      "category": "rejected",
+      "unit": "n/a",
+      "bound": "proposal retained verbatim; flawed assumptions falsified",
+      "scope": "design review",
+      "not_established": "adopted cost model",
+      "evidence": {
+        "source": "research/findings/W010-cost-proposal-review.md",
+        "quote": "proposed whole-solver cost interpreter — NOT ACCEPTED",
+        "findings": [
+          "W010"
+        ],
+        "theorems": []
+      }
+    },
+    {
+      "id": "gpu-capacity-arith",
+      "title": "GPU capacity arithmetic (conditional)",
+      "category": "proved",
+      "unit": "assumed operations; units NOT tied to the repo's machine models",
+      "bound": "2^128 exceeds 1e6 workers x 19.3e9 ops/s x 1 week, even with a 1e16 speedup",
+      "scope": "conditional arithmetic on assumed numbers",
+      "not_established": "the 2^128 estimate itself, the benchmark, linear scaling, any tape mapping",
+      "evidence": {
+        "source": "README.md",
+        "quote": "The GPU arithmetic checks are **conditional calculations**.",
+        "findings": [],
+        "theorems": [
+          "Research.million_gpu_week_below_reference",
+          "Research.even_10_quadrillion_speedup_below_reference"
+        ]
+      }
+    },
+    {
+      "id": "complete-solver-cost",
+      "title": "Complete solver cost (any algorithm)",
+      "category": "open",
+      "unit": "unknown",
+      "bound": "UNKNOWN: unproved",
+      "scope": "required for any end-to-end claim",
+      "not_established": "everything end-to-end",
+      "evidence": {
+        "source": "research/STATE.md",
+        "quote": "Complete solver costs remain unproved.",
+        "findings": [],
+        "theorems": []
+      }
+    },
+    {
+      "id": "hardware-tape",
+      "title": "Hardware / tape refinement",
+      "category": "open",
+      "unit": "unknown",
+      "bound": "UNKNOWN: no mapping from repo cost units to GPU time",
+      "scope": "no repo algorithm has a hardware estimate",
+      "not_established": "any year/GPU figure for a repo algorithm",
+      "evidence": {
+        "source": "research/STATE.md",
+        "quote": "No speedup, whole BSGS cost or cryptographic/tape/hardware result is established.",
+        "findings": [],
+        "theorems": []
+      }
+    }
+  ],
+  "estimator": {
+    "default_log2_work": 128,
+    "default_ops_per_sec_per_gpu": 19300000000.0,
+    "default_gpus": 1000000,
+    "work_presets": [
+      {
+        "label": "2^128 (rounded generic reference)",
+        "log2": 128
+      },
+      {
+        "label": "2^127.8 (SafeCurves rho, secp256k1)",
+        "log2": 127.8
+      },
+      {
+        "label": "2^256 (exhaustive search)",
+        "log2": 256
+      },
+      {
+        "label": "2^64 (toy comparison: 128-bit order)",
+        "log2": 64
+      }
+    ],
+    "gpu_presets": [
+      1,
+      1000,
+      1000000,
+      1000000000
+    ],
+    "rate_source": {
+      "label": "RCKangaroo README: 19.3 GH/s on RTX 5090 (turbo kernels)",
+      "url": "https://github.com/RetiredC/RCKangaroo",
+      "units": "Reported kangaroo-method curve-walk steps per second on a bounded-range search. The README does not define one 'operation' precisely; treat as roughly one point addition-like step. Not a measurement of full-size rho."
+    },
+    "work_source": {
+      "label": "SafeCurves rho",
+      "url": "https://safecurves.cr.yp.to/rho.html"
+    },
+    "assumptions": [
+      "ILLUSTRATIVE EXTRAPOLATION, not a measured full-size attack.",
+      "Workload is key RECOVERY (inverse problem); ordinary key generation is a single cheap scalar multiplication.",
+      "Perfect linear scaling across GPUs, 100% utilization, no distinguished-point, memory, communication or failure overhead.",
+      "Expected (average) work for a randomized method, not a worst-case guarantee.",
+      "1 year = 365.25 days. GPU-years = years x GPUs (independent of GPU count under perfect scaling).",
+      "No repo algorithm has a validated mapping to these units; the repo's cost units (equality tests, query comparisons, word-actions) must not be plugged in here."
+    ],
+    "hardware": [
+      {
+        "id": "rtx5090",
+        "label": "RTX 5090",
+        "benchmarked": true,
+        "ops_per_sec": 19300000000.0,
+        "basis": "Reported by RCKangaroo (turbo kernels): 19.3 billion curve-walk steps per second.",
+        "source": {
+          "label": "RCKangaroo README",
+          "url": "https://github.com/RetiredC/RCKangaroo"
+        }
+      },
+      {
+        "id": "h200",
+        "label": "NVIDIA H200",
+        "benchmarked": false,
+        "ops_per_sec": null,
+        "basis": "No public secp256k1 Pollard-rho/kangaroo benchmark found. NVIDIA publishes AI FLOPS, memory and bandwidth, which do not convert into this workload's speed.",
+        "source": {
+          "label": "NVIDIA HGX H100/H200/B200 reference architecture",
+          "url": "https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory-h100-h200-b200/latest/components.html"
+        }
+      },
+      {
+        "id": "b200",
+        "label": "NVIDIA B200",
+        "benchmarked": false,
+        "ops_per_sec": null,
+        "basis": "No public secp256k1 Pollard-rho/kangaroo benchmark found. NVIDIA publishes AI FLOPS, memory and bandwidth, which do not convert into this workload's speed.",
+        "source": {
+          "label": "NVIDIA HGX H100/H200/B200 reference architecture",
+          "url": "https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory-h100-h200-b200/latest/components.html"
+        }
+      },
+      {
+        "id": "custom",
+        "label": "Custom measured rate",
+        "benchmarked": null,
+        "ops_per_sec": null,
+        "basis": "Enter a rate you have measured for this workload (curve steps per second per GPU)."
+      }
+    ],
+    "reference_hardware": "rtx5090",
+    "speed_multipliers": [
+      1,
+      10,
+      100,
+      1000
+    ],
+    "current_result": null,
+    "current_result_note": "Curated slot for a reviewed research result expressed in the same units (group operations for full-size key recovery). null means no such result exists, so the current estimate equals the published reference. Keyword claims in STATE.md never fill this slot."
+  }
+}
