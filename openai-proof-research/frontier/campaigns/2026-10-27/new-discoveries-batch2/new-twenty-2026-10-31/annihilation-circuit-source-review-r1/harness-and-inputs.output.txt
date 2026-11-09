@@ -1,0 +1,131 @@
+
+FILE run.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+
+FILE write_lane.py
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+
+FILE input/literal354377.json
+{
+  "mathdb_id": 354377,
+  "uuid": "a110a7d4-70e6-499c-a6dd-0d90beb5340d",
+  "canonical_url": "https://mathdb.com/p/354377/the-irreducible-annihilation-function-conjecture-for-minimal",
+  "title": "The irreducible annihilation function conjecture for minimal non-basic subsets",
+  "statement": "Let $[n]^3$ be the three-dimensional grid, and let $M\\subset [n]^3$ be a **minimal non-basic subset**, meaning that $M$ is non-basic and every proper subset of $M$ is basic. Suppose every layer of $[n]^3$ has a non-empty intersection with $M$. Let $f$ be the irreducible annihilation function of $M$.\n\n**Irreducible annihilation function conjecture.** The function $f$ satisfies\n\n$$\n\\sum\\limits_{\\mathcal X\\in M} |f(\\mathcal X)| = 2\\big(|M| - n\\big).\n$$\n\nThe conjecture describes a specific behavior observed in all known examples of minimal non-basic subsets meeting every layer. Its status is unresolved in the supplied source.",
+  "statement_completeness": "full",
+  "post_type": "conjecture",
+  "status": "open",
+  "tags": [
+    "combinatorics",
+    "finite-geometry",
+    "functional-decompositions"
+  ],
+  "importance": "corpus",
+  "source_name": "Khaydar Nurligareev and Ivan Reshetnikov, “Decompositions of functions defined on finite sets in R^d”, arXiv:2204.11084 (2022).",
+  "source_url": "https://arxiv.org/abs/2204.11084",
+  "first_stated_year": 2022,
+  "first_stated_year_source_url": "https://arxiv.org/abs/2204.11084",
+  "documented_by_year": null,
+  "documented_by_source_url": null,
+  "references": "Source: https://arxiv.org/abs/2204.11084\n\nStatus: no resolution is reported in the source (as of April 2022).",
+  "solutions": [],
+  "solution_count": 0,
+  "has_formal_statement": null,
+  "has_bounty": null,
+  "created_at": "2026-08-11T05:40:55.554390Z",
+  "edited_at": null,
+  "lastmod": "2026-10-03T00:00:07Z",
+  "in_sitemap": true,
+  "historical": false,
+  "retrieval_source": "probxiv_2026-09-29"
+}
+
+
+FILE input/raw354377.jsonl
+{"mathdb_id": 354377, "uuid": "a110a7d4-70e6-499c-a6dd-0d90beb5340d", "canonical_url": "https://mathdb.com/p/354377/the-irreducible-annihilation-function-conjecture-for-minimal", "title": "The irreducible annihilation function conjecture for minimal non-basic subsets", "statement": "Let $[n]^3$ be the three-dimensional grid, and let $M\\subset [n]^3$ be a **minimal non-basic subset**, meaning that $M$ is non-basic and every proper subset of $M$ is basic. Suppose every layer of $[n]^3$ has a non-empty intersection with $M$. Let $f$ be the irreducible annihilation function of $M$.\n\n**Irreducible annihilation function conjecture.** The function $f$ satisfies\n\n$$\n\\sum\\limits_{\\mathcal X\\in M} |f(\\mathcal X)| = 2\\big(|M| - n\\big).\n$$\n\nThe conjecture describes a specific behavior observed in all known examples of minimal non-basic subsets meeting every layer. Its status is unresolved in the supplied source.", "statement_completeness": "full", "post_type": "conjecture", "status": "open", "tags": ["combinatorics", "finite-geometry", "functional-decompositions"], "importance": "corpus", "source_name": "Khaydar Nurligareev and Ivan Reshetnikov, “Decompositions of functions defined on finite sets in R^d”, arXiv:2204.11084 (2022).", "source_url": "https://arxiv.org/abs/2204.11084", "first_stated_year": 2022, "first_stated_year_source_url": "https://arxiv.org/abs/2204.11084", "documented_by_year": null, "documented_by_source_url": null, "references": "Source: https://arxiv.org/abs/2204.11084\n\nStatus: no resolution is reported in the source (as of April 2022).", "solutions": [], "solution_count": 0, "has_formal_statement": null, "has_bounty": null, "created_at": "2026-08-11T05:40:55.554390Z", "edited_at": null, "lastmod": "2026-10-03T00:00:07Z", "in_sitemap": true, "historical": false, "retrieval_source": "probxiv_2026-09-29"}
+
+
+FILE input/CANDIDATE.md
+# Research candidate 354377 — ordinary refutation; zero credit
+
+This is a complete ordinary counterexample to the literal MathDB statement and arXiv:2204.11084v1 Conjecture 6.2, not a formal certificate or acceptance recommendation. Novelty, significance and publication-version fidelity remain HOLD. No Pi task was run.
+
+The source defines a finite set M as basic when every real-valued function on M is a sum of three functions of the separate coordinates. A layer is a coordinate hyperplane. An integer annihilation function has sum zero on each layer. Irreducible means that its integer values have gcd 1, not that all coefficients have the same sign. Minimal non-basic means non-basic with every proper subset basic. The source's Lemmas 1.5–1.6, their §2 linear-equation proofs, §5 primitive normalization and Conjecture 6.2 were read. The argument below supplies its own basic/minimality bridge.
+
+Put n=3 and use these eight distinct points:
+
+A=(2,2,2), B=(2,1,1), C=(1,2,1), D=(1,1,2),
+E=(3,3,3), F=(3,1,1), G=(1,3,1), H=(1,1,3).
+
+Give them coefficients (A,B,C,D,E,F,G,H)=(1,-1,-1,-1,-1,1,1,1).
+All coordinates lie in {1,2,3}. For x=2, y=2, z=2 the layer pairs are respectively {A,B}, {A,C}, {A,D}; their sums are zero. For x=3, y=3, z=3 the layer pairs are {E,F}, {E,G}, {E,H}; their sums are zero. For x=1 the layer is {C,D,G,H}, for y=1 it is {B,D,F,H}, and for z=1 it is {B,C,F,G}. Each has two coefficients -1 and two +1. These are all nine layers, and all are nonempty. Thus this is an annihilation function with full support and gcd 1.
+
+For completeness, every real annihilation vector is a multiple of this vector. Let its values at A and E be a and e. The six two-point layers force the values at B,C,D to be -a and those at F,G,H to be -e. The x=1 layer then gives -2a-2e=0, so e=-a. The other two layers impose no new restriction. Hence the kernel is exactly the line spanned by the displayed full-support vector. In particular every primitive integer annihilation vector is this vector or its negative: its value a at A is an integer, and the gcd of all eight values is |a|.
+
+Here is the full minimal-non-basic bridge. Let L:R^9 -> R^M send nine layer weights to their sum at each point. A linear functional on R^M with coefficient vector v kills im L exactly when the layer sums of v vanish. If M were basic, L would be onto; a nonzero functional could not kill its image. Our vector is nonzero and kills im L, so M is not basic. More explicitly, the indicator of A has pairing 1 with our vector and therefore cannot be in im L.
+
+For any proper subset K of M, a real annihilation vector on K extends by zero to an annihilation vector on M. The extended vector has a zero coordinate; the kernel characterization and the nonzero value of each of the eight displayed coefficients force its scalar a to be zero. Thus no nonzero functional on R^K kills the image of the corresponding layer-sum map. That map is onto: if its image were a proper subspace, extend a basis of the image to a basis of R^K and define a nonzero functional to vanish on the first basis and take value 1 on one added vector. This contradicts the absence of an annihilator. Hence every real function on K has coordinate-weight representation. Extend the three coordinate functions from {1,2,3} to R arbitrarily. Thus every proper subset is basic, as required, including the empty subset.
+
+Finally sum |f|=8, whereas 2(|M|-n)=2(8-3)=10. Therefore the conjectured equality fails. This is a counterexample to a universal equality with all its witness conditions paid; it is not a finite verification offered as a universal proof. No enumeration, linear algebra program or numerical calculation was used.
+
+Construction and adversarial checks: removing the center (1,1,1) from two copies of source Example 5.1, on coordinate levels {1,2} and {1,3}, and subtracting their relations motivates the vector. Merely adding the two relations without eliminating their center would give a nonminimal union and fails. Eliminating their common center does not by itself prove circuit minimality; the nine layer equations above pay that gap. The source Theorem 1.3 for two-or-zero points per layer is not directly applicable, because three layers here contain four points. The source lower-bound cycle construction has |M|=2n and satisfies the proposed equality; it does not refute it. The coefficient-growth construction Theorem 1.7 also is not automatically a counterexample: after independently relabeling its used coordinate levels to n=2m+2, its 6m+2 points have norm 8m, exactly 2((6m+2)-(2m+2)). Using its original larger coordinate alphabet would leave empty layers and violate the hypothesis. These failed shortcuts led to the full-support kernel proof above.
+
+Prior and scope limits: 2204.11084 has only v1 in the live arXiv history (23 April 2022). Journal DOI 10.1142/S0218216522500110 returned 403 on 7 November 2026; no alternate publisher route was attempted. Its potentially changed conclusion is not cleared by the arXiv text. The 2014 primary companion arXiv:1412.8078v1 was read at the basic-set criterion, Examples 1–3 and construction Propositions 4–5 with proofs. Its Proposition 5 moves a pair of points sharing two coordinates and proves non-basicness, not this equality failure with all-layer/minimality bridge. Its explicit eight-point Example 2 has different coordinate projection cardinalities (4,4,2), so independent coordinate relabelings do not make it this (3,3,3) witness. It cannot directly satisfy the equal-n all-layer hypothesis. A more general transformation/subsumption argument has not been excluded. Thus significance is unresolved; source Example 5.1 is a construction ingredient, not a theorem asserting the full counterexample.
+
+Rendered source pp13–14 were visually read at 850px: Fig7 has three n=3 pictures, Figs8–9 n=4 pictures, and the equality is visibly printed exactly as extracted. Coordinate-by-coordinate transcription of every plotted point was not performed; no claim of nonisomorphism with those diagrams is made. Source figures pp7–12 were not visually reviewed. This is an explicit figure-comparison limit.
+
+Three native search batches / nine queries were used globally; exact plans and summaries are saved. No exact public refutation surfaced, but that is not worldwide novelty clearance. Current registry root heads and pinned catalogue routing are recorded separately; proof-tree bodies are not exhaustively reviewed. No identified applicable unread theorem is silently declared absent. The journal version is a concrete remaining source HOLD. Independent fidelity/significance review is still required.
+
+## Dormant bounded Pi plan — no dispatch
+
+If root resolves publication-version, prior-art and significance holds, ask the authorized Pi model to formalize a self-contained finite witness over Fin 3 × Fin 3 × Fin 3, with the eight points translated from 1-based to 0-based coordinates. Define Basic using all real-valued functions and coordinate functions; define layer annihilation over integers, primitive via gcd, and minimal non-basic literally. End with existence of n,M,f satisfying minimality, all 3n layers nonempty, primitive annihilation, and sum absolute values unequal to 2(card M-n); then derive the negation of the exact universal statement. Include the real annihilator/onto bridge or explicit coordinate interpolation for every proper subset, not an unproved matrix-rank or source axiom. Prove finite membership/cardinality and the nine equations by transparent kernel-reducible finite simplification; prove arbitrary annihilator classification algebraically. No native_decide, CAS, oracle, added axiom, sorry/admit/unsafe, or floating point rank. Pin Lean/mathlib only at future execution time; no dependency version is claimed here. Bound initial implementation to one small module and a diagnostic build; stop on any unpaid semantic bridge. Independent source-fidelity review, #print axioms (only propext, Classical.choice, Quot.sound), clean extracted strict replay and root acceptance remain mandatory. This plan is dormant and earns zero credit.
+
