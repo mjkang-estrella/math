@@ -1,0 +1,231 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+1284:    To summarize the construction, we build a local set decom-         assign node to its nearest community center again. We keep
+1285: position tree by recursively partitioning a local set into two        doing this until the community centres converge after a few
+1286: disjoint local sets until that all the local sets are individual      iterations. This method is inspired from the classical k-means
+1287: nodes. We now show a toy example in Figure 11. In Partition           clustering; it also guarantees that two children local sets are
+1288: 1, we partition the entire node set S0,1 = V = {1, 2, 3, 4}           connected, but does not guarantees that they have the same
+1289: into two disjoint local sets S1,1 = {1, 2}, S1,2 = {3, 4}.            number of nodes.
+1290: Thus, V1 = {c1 1S1,1 + c2 1S1,2 , c1 , c2 ∈ R}. Similarly, in            In general, the proposed construction of local sets does not
+1291: Partition 2, we partition S1,1 into two disjoint connected sets       restrict to any particular graph partition algorithm; depending
+1292: S2,1 = {1}, S2,2 = {2}; in Partition 3, we partition S1,2 into        on the applications, the partition step can also be implemented
+1293: S2,3 = {3}, S2,4 = {4}. Thus, V2 = {c1 1S2,1 + c2 1S2,2 +             by many other existing graph partition algorithms.
+1294: c3 1S2,3 + c4 1S2,4 , c1 , c2 , c3 , c4 ∈ R} = R4 .                      Dictionary Representations. We collect local sets by level
+1295:    Graph Partition Algorithm. The graph partition is the              in ascending order in a dictionary, with atoms corresponding
+1296: key step to construct the local sets. From the perspective of                                                           i=T,j=2i
+1297:                                                                       to each local set, that is, DLSPC = {1Si,j }i=0,j=1        . We
+1298: promoting smoothness of graph signals, we partition a local set
+1299:                                                                       call it the local-set-based piecewise-constant dictionary. After
+1300: S into two disjoint local set S1 , S2 by solving the following
+1301:                                                                       removing empty sets, the dictionary has 2N − 1 atoms, that
+1302: optimization problem
+1303:                                                                       is, DLSPC ∈ RN ×(2N −1) ; each atom is a piecewise-constant
+1304:             minS1 ,S2     S∆,0 (S1 ) + S∆,0 (S2 )              (7)    graph signal with various sizes and localizing various parts of
+1305:           subject to :    S1 ∩ S2 = ∅, S1 ∪ S2 = S,                   a graph.
+1306:                           GS1 and GS2 are connected.                     Wavelet Basis. We construct a wavelet basis based on the
+1307:                                                                       local-set-based piecewise-constant dictionary. We combine two
+1308: Ideally, we aim to solve 7 to obtain two children local sets,         local sets partitioned from the same parent local set to form
+1309: however, it is nonconvex and hard to solve. Instead, we consider      a basis vector. Let the local sets Si+1,2j−1 , Si+1,2j have the
+1310: three relaxed methods to partition a graph.                           same parent local set Si,j , the basis vector combing these two
+1311:    The first one is based on spectral clustering [49]. We first       local sets is
+1312: obtain the graph Laplacian matrix of a local set and compute
+1313: the eigenvector corresponding to the second smallest eigen-                    s
+1314: value of the graph Laplacian matrix. We then set the median                         |Si+1,2j−1 ||Si+1,2j |
+1315:                                                                                                            
+1316:                                                                                                                  1
+1317: number of the eigenvector as the threshold; we put the nodes                                                            1S
+1318:                                                                                   |Si+1,2j−1 | + |Si+1,2j | |Si+1,2j−1 | i+1,2j−1
+1319: whose corresponding values in the eigenvector are no smaller                                        
+1320: than the threshold into a children local set and put the nodes                        1
+1321:                                                                                −            1Si+1,2j .
+1322: whose corresponding values in the eigenvector are smaller than                   |Si+1,2j |
+1323: the threshold into the other children local set. This method
+1324: approximately solves 7 by ignoring the second constraint; it
+1325: guarantees that two children local sets have the same number of       To represent in a matrix form, the wavelet basis is
+1326: nodes, but does not guarantee that they have the same number
+1327: of nodes are connected.
+1328:    The second one is based on spanning tree. To partition a local                       WLSPC = DLSPC D2 ,
+1329: 
+1330:                                                                                                                                                    17
+1331: 
+1332: 
+1333: 
+1334: where the downsampling matrix                                        Algorithm 1 Local-set-based Wavelet Basis Construction
+1335:            1
+inputs/accepted57-routing.json dict
+{'utc': '2026-11-08T08:17:20.392738+00:00', 'kind': 'Trusted57accepted statement scopes,39prior separately; metadata only', 'accepted_count': 57, 'prior39_not_audited_here': True, 'root_role': 'metadataextraction,notmathematicalduplicateclearance', 'limitation': 'CurrentimmutableMathDBstatementmetadataisnotacceptancecertificateaudit; exactsourceURLortitlematch/nonmatchdoesnotsettlefamilyoverlap. Protectedformalbodiesnotread.', 'records': [{'mathdb_id': 324342, 'title': 'Conference-matrix MDS code conjecture', 'statement': 'Let $p$ be a prime, and let ${\\mathbb C}$ be a code of length $p+1$ constructed from a generator matrix that is a conference matrix. **Conference-matrix MDS conjecture.** The code ${\\mathbb C}$ is an MDS code of dimension $\\frac{p+1}{2}$ and minimum Hamming distance $\\frac{p+3}{2}$. This would give an MDS code with parameters determined by the rank of a conference matrix over ${\\mathbb Z}_p$; the source provides no resolution of the claim.', 'source_url': 'https://arxiv.org/abs/1210.5725', 'tags': ['coding-theory', 'conference-matrices', 'mds-codes'], 'canonical_url': 'https://mathdb.com/p/324342/conference-matrix-mds-code-conjecture'}, {'mathdb_id': 330264, 'title': 'The spectral characterization of geodesic growth for right-angled Coxeter groups on trees', 'statement': "Let $T$ and $T'$ be trees. Assume that they are simultaneously co-spectral, their complements are co-spectral, and their line graphs are co-spectral. **Geodesic-growth conjecture.** Then $T$ and $T'$ have the same geodesic growth, meaning that the associated right-angled Coxeter groups $G(T)$ and $G(T')$ have the same geodesic growth series. The conjecture asks whether these three spectral data determine geodesic growth for right-angled Coxeter groups based on trees; the paper e
+inputs/prior39-routing.json dict
+{'kind': 'Trustedacceptedscopemetadataonly,nocertificateaudit', 'prior30': [{'number': 1, 'mathdb_id': 352508, 'path': 'candidates/fractional-binomial', 'title': 'Sharp converse fractional-binomial inequality', 'status': 'ACCEPT: full proof, source fidelity, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 67, 'discovery_count_credit': 1, 'scope': 'One combined resolution of Gerhold–Simon Conjecture 3.2; includes biased bound and optimality, no separate counts.', 'novelty_limit': 'No prior full sharp finite-sum resolution located. Alzer full article inaccessible; exact classical summand theorem and corollary types checked in two accessible primary successors. Absolute worldwide priority not certified.', 'packet': 'candidate-packets/352508-fractional-binomial-proof.zip', 'packet_sha256': 'baf26ba9f238e40f6fa3efa5a990b3c2b1a5a02dbdefa62cefd7a223ee9ebd15'}, {'number': 2, 'related_mathdb_id': 363319, 'mathdb_record_itself_resolved': False, 'source_target': 'Capitelli–Somma arXiv2405.19593v1 Section3 general all-odd nonconvergence assertion', 'path': 'candidates/odd-subtraction', 'title': 'Nonconvergence for every finite all-odd randomized subtraction set', 'status': 'ACCEPT: complete proof, source fidelity, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 37, 'discovery_count_credit': 1, 'scope': 'One source-question resolution, bypassing the separate root-simplicity conjecture. No separate counts for invariant, zigzag or known small-cardinality cases.', 'novelty_limit': 'No earlier full resolution or directly subsuming theorem found in inspected primary literature; finite searches do not certify absolute priority.', 'packet': 'candidate-pa
+inputs/author/search-response-1.json thesis  Q0 [m] and Q−10 [m], we get (51) ∞ X X X ∞ X hGrad F (Q0 , 0), Hi = hH, − αk mmt + βj Q−1 t −1 0 mm Q0 i k=1 m∈Mk (Q0 ) j=1 m∈Mj (Q−1 0 ) for positive αk and βj , namely Z ∞ −1 e−πmj (Q0 ) (52) αk = πe−πmk (Q0 )t tn/2 dt and βj = . 1 mj (Q−1 0 ) We notice that since H is orthogonal to Q−1 0 by hypothesis, the scalar product in (51) is zero if and only if the second member is parallel to Q−1 0 .\n 4 RENAUD COULANGEON AND GIOVANNI LAZZARINI The set of real symmetric matrices of size n is denoted by Sn (R). It is a vector space endowed with a canonical inner product given by the trace: (8) hA, Bi := Tr AB, A, B ∈ Sn (R). Finally, in this paper the expression \"Λ has (or holds) a (spherical) t-design on a layer\" means \"the whole set of points given by that layer is a t-design\". 2. Basics 2.1. Lattices and quadratic forms. A Euclidean lattice in Rn is a subset Λ ⊂ Rn , equipped with its standard inner product, with the property that there exists a basis {v1 , . . . , vn } of Rn such that Λ = Zv1 ⊕ · · · ⊕ Zvn , i.e. Λ consists of all integral linear combinations of the vectors v1 , . 
+inputs/author/search-response-1.json thesis  Q0 [m] and Q−10 [m], we get (51) ∞ X X X ∞ X hGrad F (Q0 , 0), Hi = hH, − αk mmt + βj Q−1 t −1 0 mm Q0 i k=1 m∈Mk (Q0 ) j=1 m∈Mj (Q−1 0 ) for positive αk and βj , namely Z ∞ −1 e−πmj (Q0 ) (52) αk = πe−πmk (Q0 )t tn/2 dt and βj = . 1 mj (Q−1 0 ) We notice that since H is orthogonal to Q−1 0 by hypothesis, the scalar product in (51) is zero if and only if the second member is parallel to Q−1 0 . Thus we have proved the following Theorem 10. Let Λ = AZn be a lattice of covolume 1 as above, and let Q = AAt be a Gram matrix for Λ. Then Λ is a stationary point for the height function h if and only if there exists λ ∈ R such that X∞ X X∞ X (53) − αk mmt + βj Q−1 t −1 0 mm Q0 = λQ0 , −1 k=1 m∈Mk (Q0 ) j=1 m∈Mj (Q−1 0 ) where the αk and βj are positive constants given by (52). To get Theorem 1, suppose ﬁrst that both Mk (Q0 ) and Mj (Q−1 0 ) are spherical 2-designs for every k (resp. j), then by Corollary 3 we have that for every k, X (54) mmt = ck Q−10 m∈Mk (Q0 ) and for every j (55) \u0010 \u0011 X X Q0−1 mmt Q0−1 = Q−1 0 mmt Q−1 −1 −1 −1 0 = Q0 dj Q0 Q0 = dj Q0 .-------------------------
+inputs/author/search-response-1.json thesis -------------------------------\nOptimal approximation by continued fractions (https://www.academia.edu/50270240/Optimal_approximation_by_continued_fractions)\nciteturn0search4 [wordlim: 200] Crawled: 4 months ago; It is shown that m-continued fractions can be used to study the multi-sequence synthesis problem. ... Instead of just truncating the continued fraction to generate approximations, we focus on: • how to parse the product of maps derived from the nearest integer continued fraction into a product of parabolic and elliptic Möbius maps and • on the collection of points on which these maps act.\n--------------------------------------------------------------------------------\nSignal Processing 195 (2022) 108505 (https://par.nsf.gov/servlets/purl/10321462)\nciteturn0search12 [wordlim: 200] Published: 10 months ago; Optimality criteria ... local set-based algorithm that relies on graph partitioning to im- \nprove convergence rate of bandlimited graph signals reconstruction ... Next, we study a Bayesian scenario where the graph signal is ... sub-optimal solution to this combi
+inputs/author/search-response-3.json 2019 e NPN sibling gives `2, 4, 14, 222` at `D = 1..4`. Witness: mrlymath::bang::counting::sequence, A000616, A000370.\n  * [Verified] The base-`q` design census at `D = 2` is the toroidal binary array count: Burnside over one dihedral group per residue axis gives `2, 6, 26, 805, 172112, 239123150, 1436120190288, 36028817512382026` at `q = 1..8`, with brute-force orbit closure agreeing at `q = 3, 4`. --------------------------------------------------------------------------------\nRandom Quantum Circuits Anticoncentrate in Log Depth (https://doi.org/10.1103/prxquantum.3.010333)\nciteturn2search6 [wordlim: 200] Published: 4.7 years ago; Crawled: last month; which is equal to the lemma statement, where in the first inequality we utilize , in the second inequality we use , and in the third inequality we use . ... Thus, for an approximate 2-design with , the collision probability is and thus -approximate unitary 2-designs in diamond norm anticoncentrate with . ... For nonlocal RQCs on the complete-graph architecture, the best known upper bounds on the 2-design circuit size are [Button: [13
+inputs/author/search-response-3.json thesis -------------------\nExploiting Structure In Data: Sampling and Signal Processing on Graphs (https://www.academia.edu/69800444/Exploiting_Structure_In_Data_Sampling_and_Signal_Processing_on_Graphs)\nciteturn2search1 [wordlim: 200] Published: 6.5 years ago; Crawled: 5 months ago; We consider a synthesis- based approach based on signal approximation via a graph-based representation basis while the second analysis-based approach solves an optimization problem that penalizes the signal’s varia- tion on the graph. ... Broader Impact: The goal of the proposed tools and frameworks is to provide solutions for real-world applications of graph-structured data. ... Furthermore, we conjecture that the proposed construction is the optimal orthonormal basis to promote sparsity for piecewise-constant graph signals.\n Another explanation is that when we recursively partition a node set into two local sets, each partition generates a wavelet basis vector. We still use Figure 4.8 as an example. In Partition 1, we partition the entire node set S0,1 = {1, 2, 3, 4} into S1,1 = {1, 2}, S1,2 = {3, 4} an
