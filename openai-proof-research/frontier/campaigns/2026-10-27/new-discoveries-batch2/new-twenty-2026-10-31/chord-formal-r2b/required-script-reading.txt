@@ -1,0 +1,295 @@
+# Genus ranges of chord diagrams (329080; Cahoon et al., arXiv:1410.6148, Def. 2.1).
+# Ribbon-graph model: backbone = cycle on the 2n endpoints, each endpoint has rotation
+# (N,P,C) if the band end is inside and (N,C,P) if outside; faces = cycles of rho o theta,
+# genus g = (2 + n - f)/2 (source Lemma 3.1).
+import sys,itertools,json,time
+def canon(w):
+    n=len(w); best=None
+    for v in (w,w[::-1]):
+        for s in range(n):
+            u=v[s:]+v[:s]; m={}; out=[]
+            for c in u:
+                if c not in m: m[c]=len(m)
+                out.append(m[c])
+            t=tuple(out)
+            if best is None or t<best: best=t
+    return best
+def prep(w):
+    L=len(w); partner=[0]*L; seen={}
+    for i,c in enumerate(w):
+        if c in seen: partner[i]=seen[c]; partner[seen[c]]=i
+        else: seen[c]=i
+    theta=[0]*(3*L)
+    for i in range(L):
+        j=(i+1)%L; theta[3*i]=3*j+1; theta[3*j+1]=3*i
+        theta[3*i+2]=3*partner[i]+2
+    return theta
+def faces(theta,L,mask):
+    # mask bit i = 1 -> endpoint i outside
+    rho=[0]*(3*L)
+    for i in range(L):
+        N,P,C=3*i,3*i+1,3*i+2
+        if (mask>>i)&1: rho[N]=C;rho[C]=P;rho[P]=N
+        else: rho[N]=P;rho[P]=C;rho[C]=N
+    seen=bytearray(3*L); f=0
+    for h in range(3*L):
+        if not seen[h]:
+            f+=1; x=h
+            while not seen[x]:
+                seen[x]=1; x=rho[theta[x]]
+    return f
+def genus_range(w,stop_max=None):
+    L=len(w); n=L//2; theta=prep(w); gs=set()
+    # global in/out swap is a mirror: fix bit 0 = 0
+    for mask in range(0,1<<L,2):
+        f=faces(theta,L,mask); g=(2+n-f)//2; gs.add(g)
+        if stop_max is not None and g>stop_max: return gs,False
+    return gs,True
+if __name__=='__main__':
+    for w in ['11','1212','1122','123123','123132','123321','12312345674675']:
+        t=tuple(int(c) for c in w); print(w,sorted(genus_range(t)[0]))
+# Check the 2n-dart face model against the 6n half-edge ribbon model (329080).
+# dart model: endpoints 0..2n-1; side(i)=mask bit; sigma(i)=next endpoint with same side, inner side in
+# increasing cyclic order, outer side in decreasing cyclic order; tau=partner.
+# faces = cycles(sigma o tau) + [no inner endpoint] + [no outer endpoint].
+import sys,pathlib,json
+sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
+from chord import prep,faces
+def words(n):
+    def rec(w,nxt):
+        if len(w)==2*n: yield tuple(w); return
+        if nxt<n: yield from rec(w+[nxt],nxt+1)
+        for c in [c for c in range(nxt) if w.count(c)==1]: yield from rec(w+[c],nxt)
+    yield from rec([],0)
+def dart_faces(w,mask):
+    L=len(w); partner=[0]*L; seen={}
+    for i,c in enumerate(w):
+        if c in seen: partner[i]=seen[c]; partner[seen[c]]=i
+        else: seen[c]=i
+    side=[(mask>>i)&1 for i in range(L)]
+    sig=[0]*L
+    for i in range(L):
+        s=side[i]; step=1 if s==0 else -1; j=(i+step)%L
+        while side[j]!=s: j=(j+step)%L
+        sig[i]=j
+    vis=[0]*L;f=0
+    for i in range(L):
+        if not vis[i]:
+            f+=1;x=i
+            while not vis[x]: vis[x]=1; x=sig[partner[x]]
+    f+= (0 in side)==False
+    f+= (1 in side)==False
+    return f
+bad=0;tot=0
+for n in range(1,6):
+    for w in words(n):
+        th=prep(w);L=2*n
+        for m in range(1<<L):
+            tot+=1
+            if faces(th,L,m)!=dart_faces(w,m): bad+=1
+print(json.dumps({'checked':tot,'mismatches':bad}))
+# List the class C_n (max genus <= 2) with genus ranges, n <= N.
+import sys,json,random,time,pathlib
+sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
+from chord import canon,prep,faces
+N=int(sys.argv[1])
+def rng_full(w,cap=2):
+    L=len(w); n=L//2; theta=prep(w); gs=set()
+    for mask in range(0,1<<L,2):
+        g=(2+n-faces(theta,L,mask))//2; gs.add(g)
+        if g>cap: return None
+    return gs
+C={(0,0):{0,1}}
+for n in range(2,N+1):
+    cand=set()
+    for w in C:
+        L=len(w)
+        for i in range(L+1):
+            for j in range(i,L+1):
+                u=list(w); u.insert(j,n-1); u.insert(i,n-1); cand.add(canon(tuple(u)))
+    C={}
+    for w in cand:
+        gs=rng_full(w)
+        if gs is not None: C[w]=gs
+    print('n=',n,len(C))
+    for w,gs in sorted(C.items()): print('  ',''.join(chr(97+c) for c in w),sorted(gs))
+# Full (non-hereditary) verification for 329080:
+#  (1) GR_n for n<=6 vs source Section 3.2 table;
+#  (2) bipartite interlace graph <=> min genus 0, n<=6;
+#  (3) the 5-chord base lemma F5: every 5-chord diagram with max genus <= 2 has a chord crossing
+#      no other chord, and the only one containing three pairwise crossing chords is (123123)(4455);
+#  (4) chord-deletion lemma: deleting a chord changes the face count by exactly +-1 (n<=5, all configs).
+import sys,json,itertools,pathlib
+sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
+from chord import canon,prep,faces
+def words(n):
+    # standard labelled double-occurrence words (first occurrences increasing): (2n-1)!! of them
+    def rec(w,used,nxt):
+        if len(w)==2*n: yield tuple(w); return
+        # positions: choose to open new letter or close an open one
+        open_=[c for c in range(nxt) if w.count(c)==1]
+        if nxt<n: yield from rec(w+[nxt],used,nxt+1)
+        for c in open_: yield from rec(w+[c],used,nxt)
+    yield from rec([],None,0)
+def crosses(w,a,b):
+    pa=[i for i,c in enumerate(w) if c==a]; pb=[i for i,c in enumerate(w) if c==b]
+    return (pa[0]<pb[0]<pa[1])!=(pa[0]<pb[1]<pa[1])
+def interlace(w):
+    n=len(w)//2; return {(a,b) for a in range(n) for b in range(a+1,n) if crosses(w,a,b)}
+def bipartite(n,E):
+    adj={i:set() for i in range(n)}
+    for a,b in E: adj[a].add(b);adj[b].add(a)
+    col={}
+    for s in range(n):
+        if s in col: continue
+        col[s]=0; st=[s]
+        while st:
+            v=st.pop()
+            for u in adj[v]:
+                if u not in col: col[u]=1-col[v]; st.append(u)
+                elif col[u]==col[v]: return False
+    return True
+def allg(w):
+    L=len(w);n=L//2;th=prep(w)
+    return [ (2+n-faces(th,L,m))//2 for m in range(1<<L)]
+out={}
+GR={}
+for n in range(1,7):
+    seen={}
+    for w in words(n):
+        c=canon(w)
+        if c in seen: continue
+        gs=allg(c); seen[c]=(min(gs),max(gs),sorted(set(gs)))
+    GR[n]=sorted({str(v[2]) for v in seen.values()})
+    # (2)
+    bad2=[]
+    for c,(mn,mx,s) in seen.items():
+        if (mn==0)!=bipartite(n,interlace(c)): bad2.append(c)
+    out[f'n{n}']={'classes':len(seen),'GR':GR[n],'bipartite_iff_min0_failures':len(bad2)}
+    if n==5:
+        lst=[]; f5_fail=[]
+        for c,(mn,mx,s) in seen.items():
+            if mx<=2:
+                E=interlace(c); iso=[a for a in range(5) if all((min(a,b),max(a,b)) not in E for b in range(5) if b!=a)]
+                tri=[t for t in itertools.combinations(range(5),3) if all((x,y) in E for x,y in itertools.combinations(t,2))]
+                lst.append({'word':''.join(chr(97+x) for x in c),'range':s,'isolated_chords':len(iso),'triangles':len(tri)})
+                if not iso: f5_fail.append(c)
+                if tri and c!=canon((0,0,1,1,2,3,4,2,3,4)): f5_fail.append(c)
+        out['F5']={'maxgenus_le2_classes':lst,'count':len(lst),'failures':len(f5_fail)}
+    print(n,out[f'n{n}'],flush=True)
+# (4) deletion lemma on all labelled words n<=5, all configurations
+dl_fail=0;dl_checked=0
+for n in range(2,6):
+    for w in words(n):
+        L=2*n; th=prep(w)
+        for x in range(n):
+            pos=[i for i,c in enumerate(w) if c==x]
+            w2=tuple(c if c<x else c-1 for c in w if c!=x); th2=prep(w2)
+            for m in range(1<<L):
+                m2=0;k=0
+                for i in range(L):
+                    if i in pos: continue
+                    if (m>>i)&1: m2|=1<<k
+                    k+=1
+                d=faces(th,L,m)-faces(th2,L-2,m2); dl_checked+=1
+                if abs(d)!=1: dl_fail+=1
+out['deletion_lemma']={'checked':dl_checked,'failures':dl_fail}
+print(out['deletion_lemma'])
+out['source_table_n1_7']={'1':['[0, 1]'],'2':['[0, 1]'],'3':['[0, 1]','[0, 1, 2]','[1, 2]'],'4':['[0, 1]','[0, 1, 2]','[1, 2]'],'5':['[0, 1]','[0, 1, 2]','[0, 1, 2, 3]','[1, 2]','[1, 2, 3]'],'6':['[0, 1]','[0, 1, 2]','[0, 1, 2, 3]','[1, 2]','[1, 2, 3]']}
+out['GR_matches_source']=all(sorted(out['source_table_n1_7'][str(n)])==GR[n] for n in range(1,7))
+print('GR matches source:',out['GR_matches_source'])
+pathlib.Path(sys.argv[1]).write_text(json.dumps(out,indent=1)+'\n')
+# Exhaustive search for chord diagrams with genus range {1,2} (329080).
+# Uses heredity: if D' is a sub-diagram of D (delete chords) then every thickening of D restricts
+# to a thickening of D' that is a subsurface, so max g(D') <= max g(D) and min g(D') <= min g(D).
+# Hence C_n = {D with n chords : max genus <= 2} is generated from C_{n-1} by adding one chord.
+import sys,json,random,time,pathlib
+sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
+from chord import canon,prep,faces
+N=int(sys.argv[1]); out=sys.argv[2]
+def maxg_ok(w,rng):
+    L=len(w); n=L//2; theta=prep(w); gs=set()
+    masks=list(range(0,1<<L,2)); rng.shuffle(masks)
+    for mask in masks:
+        g=(2+n-faces(theta,L,mask))//2; gs.add(g)
+        if g>2: return None
+    return gs
+rng=random.Random(1)
+C={(0,0):{0,1}}  # n=1
+res={'1':{'class_size':1,'gr12':[]}}
+t=time.time()
+for n in range(2,N+1):
+    cand=set()
+    for w in C:
+        L=len(w)
+        for i in range(L+1):
+            for j in range(i,L+1):
+                u=list(w); u.insert(j,n-1); u.insert(i,n-1); cand.add(canon(tuple(u)))
+    newC={}
+    for w in cand:
+        gs=maxg_ok(w,rng)
+        if gs is not None: newC[w]=gs
+    C=newC
+    gr12=[''.join(str(c+1) for c in w) for w,gs in C.items() if gs=={1,2}]
+    ranges={}
+    for gs in C.values(): ranges[str(sorted(gs))]=ranges.get(str(sorted(gs)),0)+1
+    res[str(n)]={'candidates':len(cand),'class_size':len(C),'ranges_in_class':ranges,'gr12':sorted(gr12)}
+    print(n,len(cand),len(C),ranges,sorted(gr12),f"t={time.time()-t:.1f}",flush=True)
+    pathlib.Path(out).write_text(json.dumps(res,indent=1)+'\n')
+# 329080 existence part: D_m = 123123 followed by m isolated chords at the end.
+# Record, over all side masks, the set of (faces - m, end-edge inner/outer sides on same face?).
+import sys,pathlib,json
+sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
+def dart_data(w,mask):
+    L=len(w); partner=[0]*L; seen={}
+    for i,c in enumerate(w):
+        if c in seen: partner[i]=seen[c]; partner[seen[c]]=i
+        else: seen[c]=i
+    side=[(mask>>i)&1 for i in range(L)]
+    sig=[0]*L
+    for i in range(L):
+        s=side[i]; step=1 if s==0 else -1; j=(i+step)%L
+        while side[j]!=s: j=(j+step)%L
+        sig[i]=j
+    comp=[-1]*L;f=0
+    for i in range(L):
+        if comp[i]<0:
+            x=i
+            while comp[x]<0: comp[x]=f; x=sig[partner[x]]
+            f+=1
+    extra=(0 not in side)+(1 not in side)
+    # dart i represents the boundary segment from endpoint i to sig(i) on side(i).
+    # end edge = backbone arc between endpoint L-1 and endpoint 0. Its inner side is the inner boundary
+    # segment from the largest inner endpoint l to the smallest inner endpoint a, traversed in the face
+    # cycle between darts tau(l) and a; its outer side is the outer segment from the smallest outer
+    # endpoint v to the largest outer endpoint u, traversed between tau(v) and u.  So compare comp[a], comp[u].
+    inner=[i for i in range(L) if side[i]==0]; outer=[i for i in range(L) if side[i]==1]
+    ein=comp[inner[0]] if inner else 'emptyIn'
+    eout=comp[outer[-1]] if outer else 'emptyOut'
+    return f+extra, ein==eout
+def state(w,mask):
+    f,same=dart_data(w,mask); return f-(len(w)//2-3),same
+# empirical check of the transfer rules: adding an isolated chord at the end edge
+#  in-in / out-out: (d,s)->(d,s); in-out (either order): (d,True)->(d,True), (d,False)->(d-2,True)
+viol=0;checked=0
+for m in range(0,5):
+    w=[0,1,2,0,1,2]
+    for k in range(m): w+=[3+k,3+k]
+    w2=tuple(w+[3+m,3+m]); w=tuple(w); L=len(w)
+    for mask in range(1<<(L+2)):
+        d,s=state(w,mask&((1<<L)-1)); d2,s2=state(w2,mask)
+        b1=(mask>>L)&1; b2=(mask>>(L+1))&1
+        exp=(d,s) if b1==b2 else ((d,True) if s else (d-2,True))
+        checked+=1
+        if (d2,s2)!=exp: viol+=1
+print('transfer rule check',checked,'violations',viol)
+res={}
+for m in range(0,7):
+    w=[0,1,2,0,1,2]
+    for k in range(m): w+= [3+k,3+k]
+    w=tuple(w); n=len(w)//2; S=set()
+    for mask in range(1<<len(w)):
+        f,same=dart_data(w,mask); S.add((f-m,same))
+    gs=sorted({(2+n-(fm+m))//2 for fm,_ in S})
+    res[m]={'pairs':sorted(S),'genera':gs}; print(m,sorted(S),gs,flush=True)
+pathlib.Path(sys.argv[1]).write_text(json.dumps({str(k):{'pairs':[list(p) for p in v['pairs']],'genera':v['genera']} for k,v in res.items()},indent=1)+'\n')
