@@ -1,0 +1,10 @@
+# Preserved failures and limitations
+
+1. Initial filename inventory ranged too broadly across the workspace; output truncated. It was a native shell inventory before the guard setup, not a scientific body read. Subsequent Python/helpers/search processing/hashing/copies ran through the requested guard. Native bounded reads and apply_patch were used as authorized. The broad initial inventory is a procedural deviation; no data from unrelated projects was used.
+2. Initial guessed input names `sol-fresh-source-discovery-r225` and `.../preliminary-review-r1/review` did not exist (ls exit2). Correct actual files are breadth-depth-r225/PROOF.md and preliminary-review-r1/review.md. Both frozen before scientific reading.
+3. First detailed read of the copied Cadlag file failed because it had not yet been selected. It was then hash-bound/copied before a successful body read. No original Cadlag body was consumed through that failed command.
+4. Several large tool displays truncated. Complete semantic/campaign hits and exact source copies are retained; no absence conclusion uses a truncated display.
+5. Overbroad half-space/killed and stable keyword matching selected irrelevant geometry/algebra files. These are compact individual file copies, not tree copies; preserved rather than silently rewritten. They provide no stable-process evidence. Supplemental targeted results isolate the probability meaning.
+6. The lane filename scan also matched this audit's own copied library. Its output is not evidence of a pre-existing campaign stable endpoint. Campaign semantic coverage is limited to the explicitly recorded roots/exclusions, not all old campaigns.
+7. No network was attempted. Inaccessible historical/publication/registry intervals remain unresolved; inherited denied-route failures are preserved in frozen FAILURES files. No HEAD loop or access-control bypass.
+8. Declaration reads are source inspection, not elaboration or a global axiom audit. No theorem of semantic absence, exhaustive imported-library coverage, or CPU/memory feasibility for future Lean builds is asserted.
