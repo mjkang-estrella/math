@@ -1,0 +1,13 @@
+# MathDB369163 — small mathematical dependency brief
+
+Ordinary obligations only; no code, API recommendation, dispatch or active-worker inspection. Credit 0; 52/60 unchanged. Read SINGLE-BLOCK-MILESTONE.md for the already preserved first milestone; PROOF.md is the complete expanded argument.
+
+1. Finite exponent facts: monomial x^a y^b has column degrees d=a+b and row count r=sum a. A swap y_i*x_j to x_i*y_j for i<j preserves d,r and lowers sum i*a_i. Its difference is -H times the original minor.
+2. Greedy normal exponents: g_i=min(d_i,max(0,r-prefix_i(d))). Prove prefix sums equal min(r,prefix capacity), then characterize terminal monomials by the first y-bearing column. This yields termination and unique N(d,r) without any formal confluence machinery.
+3. Monomial ideal certificate: telescope the finite swaps to M-N(d,r) in the original minor ideal. Cover empty and singleton blocks explicitly.
+4. Polynomial certificate and independence: group the ORIGINAL finite coefficients by (d,r), sum the certificates, and read grouped coefficients from the image monomials s^r*t^(D-r)*z^d. Distinct tuples have distinct exponents; no division or characteristic restriction. This proves the hard reverse kernel inclusion. Pair with generator annihilation for equality.
+5. Partition extension: factor out monomials using killed coordinates; normalize each surviving block while treating every other factor as a multiplier. The total local weight terminates. Record all local r_c separately and use disjoint s_c,t_c,z_v labels. Read grouped coefficients from simultaneous target exponents. This proves the exact original generator ideal is the kernel, including no-survivor and singleton cases.
+6. Primality: free polynomial target over K is a nontrivial domain (finite leading-exponent argument if needed). Kernel equality plus 1 maps to 1 proves properness; the domain product test proves primality.
+7. Actual graph ideal: equivalence classes of SameC on the surviving set partition it. Prove same block iff SameC and compare the original generators in both directions. Only then identify Pc(T) with the just-proved kernel. Family specialization uses the actual star-plus-isolate and two-edge partitions, not one shared row pair.
+
+Prefer finishing item 4 as a complete single-block reverse-kernel milestone before paying items 5-7. There is no need to revisit full-side coordinate primality. Radical decomposition, valid-cut classification exhaustiveness, minimal-prime separation, colon/lower-degree results, quartic witnesses and the literal final local-v theorem are separate unpaid formal obligations; this note does not expand into them.

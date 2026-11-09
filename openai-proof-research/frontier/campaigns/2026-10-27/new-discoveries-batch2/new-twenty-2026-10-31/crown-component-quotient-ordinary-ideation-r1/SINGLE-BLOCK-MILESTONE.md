@@ -1,0 +1,17 @@
+# MathDB369163 — completed single-block milestone
+
+Auxiliary ordinary mathematics; credit 0; supplied campaign count 52/60 unchanged. This file is preserved before widening to several blocks. No formal endpoint is claimed.
+
+Let A be any commutative ring with identity, m a nonnegative integer, S=A[x_i,y_i:1<=i<=m], and I=(x_i y_j-x_j y_i: i<j). Let F=A[s,t,z_1,...,z_m] and let phi fix A and send x_i to s z_i and y_i to t z_i. Then ker(phi)=I. In particular this holds for every field in every characteristic.
+
+For a monomial M=product x_i^{a_i}y_i^{b_i}, put d_i=a_i+b_i, r=sum a_i, D=sum d_i. Whenever i<j, b_i>0 and a_j>0, replace one factor y_i x_j by x_i y_j. The difference old minus new is -H(x_i y_j-x_j y_i), where H=M/(y_i x_j), so is in I. The weight sum i*a_i decreases by j-i>0. Thus reductions terminate after at most the original weight many unit swaps; repeated exponents cause no difficulty. The d_i and r are invariant.
+
+Define g_i=min(d_i,max(0,r-sum_{h<i}d_h)), and N(d,r)=product x_i^{g_i}y_i^{d_i-g_i}. The prefix identity sum_{h<=i}g_h=min(r,sum_{h<=i}d_h) follows by induction from this definition; hence sum g_i=r, and all g_i lie between zero and d_i. This monomial has no reducible pair. Conversely a terminal monomial equals N(d,r): if there is a least k with b_k>0, every earlier a_i=d_i and every later a_j=0 (otherwise k,j is reducible). Then a_k=r-sum_{i<k}d_i, which gives precisely the formula. If there is no such k, all a_i=d_i and r=D, again giving the formula. Thus every reduction path has the same terminal monomial, without a confluence assumption. We have an explicit finite certificate M-N(d,r)=sum epsilon_l H_l minor(i_l,j_l), with epsilon_l=-1 for the stated orientation, obtained by telescoping the actual reductions.
+
+Every polynomial has a unique finite monomial expansion f=sum_{a,b}c_{a,b} M(a,b), with arbitrary coefficients c_{a,b} in A. Define C_{d,r}=sum_{(a,b):a+b=d, sum a=r}c_{a,b}, where only the finite support of f is summed. Multiplying each finite monomial certificate by c_{a,b} and adding gives f-sum_{d,r}C_{d,r}N(d,r) in I. This pays polynomial ideal membership with arbitrary coefficients, including negative coefficients, zero divisors, and cancellations.
+
+The image of every monomial with invariants d,r is s^r t^{D-r} product z_i^{d_i}. Distinct pairs (d,r) give distinct target exponent vectors: z exponents recover d and the s exponent recovers r. The coefficient of this target monomial in phi(f) is exactly C_{d,r}. A polynomial is zero precisely when all of its monomial coefficients are zero, over any coefficient ring. Hence phi(f)=0 forces every C_{d,r}=0 and the certificate above gives f in I. Conversely each displayed minor maps to zero by commutativity, so every finite polynomial multiple and sum of generators maps to zero. Both kernel inclusions are proved.
+
+For m=0, S=A, I=0, and phi is the coefficient inclusion in A[s,t]; the sole domain monomial is 1, d is empty, r=0. For m=1 there are no minors and each (d,r), 0<=r<=d, has the unique monomial x_1^r y_1^{d-r}, so the same proof proves injectivity. No evaluation over field points, division, generic nonvanishing, squarefreeness, positivity or characteristic-zero hypothesis was used.
+
+Over a field K, F is a domain and phi(1)=1!=0, so I is proper and prime. An elementary domain proof, and the full disjoint-block/killed-coordinate proof, are supplied in the subsequent PROOF.md. The kernel result above itself does not depend on domain or primality facts.
