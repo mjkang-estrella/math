@@ -1,0 +1,65 @@
+import DefsR5_0020
+namespace Percolation.NReplay
+set_option maxRecDepth 100000
+set_option maxHeartbeats 0
+theorem rc_42608 : CNF.rup cl_42608 [cl_42458,cl_29840,cl_29811,cl_30947,cl_29042,cl_42488,cl_29831,cl_30780,cl_15310,cl_32732,cl_24072,cl_35094,cl_42607,cl_42605,cl_37448,cl_5377,cl_29917,cl_29916] = true := by decide
+theorem rc_42609 : CNF.rup cl_42609 [cl_42458,cl_29811,cl_29840,cl_42608,cl_42603,cl_37448,cl_5377,cl_29917,cl_29916,cl_15310,cl_7681,cl_30057,cl_31187,cl_31189] = true := by decide
+theorem rc_42610 : CNF.rup cl_42610 [cl_29831,cl_7681,cl_39727,cl_32285,cl_35838,cl_35634,cl_7964,cl_42556,cl_30866,cl_30870] = true := by decide
+theorem rc_42611 : CNF.rup cl_42611 [cl_42556,cl_30866,cl_30870] = true := by decide
+theorem rc_42612 : CNF.rup cl_42612 [cl_23819,cl_31796] = true := by decide
+theorem rc_42613 : CNF.rup cl_42613 [cl_41521,cl_37448,cl_39727,cl_32285,cl_42429,cl_7948,cl_35586,cl_42611,cl_7940,cl_42612] = true := by decide
+theorem rc_42614 : CNF.rup cl_42614 [cl_42577,cl_42458,cl_29840,cl_29811,cl_30947,cl_42609,cl_33625,cl_5377,cl_37448,cl_38817,cl_42610,cl_15310,cl_32732,cl_42613,cl_29042,cl_42488,cl_24072,cl_30780,cl_39394,cl_35094,cl_7940,cl_42607,cl_42611,cl_5633,cl_32313] = true := by decide
+theorem rc_42615 : CNF.rup cl_42615 [cl_24752,cl_42598] = true := by decide
+theorem rc_42616 : CNF.rup cl_42616 [cl_42515,cl_29811,cl_30469,cl_34935,cl_42591,cl_36174,cl_38133,cl_29840,cl_42458,cl_40156,cl_37432,cl_30907,cl_30947,cl_42497,cl_26574,cl_29873,cl_29851,cl_29875,cl_15914,cl_42594,cl_42554,cl_4481,cl_42604,cl_42606,cl_32140,cl_27435,cl_33362,cl_34581,cl_42561,cl_30984,cl_30796,cl_42614,cl_42615] = true := by decide
+theorem rc_42617 : CNF.rup cl_42617 [cl_42472,cl_42615,cl_37819] = true := by decide
+theorem rc_42618 : CNF.rup cl_42618 [cl_37342,cl_35569,cl_35435,cl_32875,cl_23214,cl_42586,cl_41733,cl_6529,cl_33839,cl_30109,cl_31796,cl_7960,cl_31508] = true := by decide
+theorem rc_42619 : CNF.rup cl_42619 [cl_42577,cl_32300,cl_42611,cl_36104,cl_30984,cl_42523,cl_42453,cl_42617,cl_29811,cl_7940,cl_42618,cl_4737,cl_37286,cl_7952,cl_39040,cl_31651,cl_42603,cl_6529,cl_42488,cl_29831,cl_24072,cl_15310,cl_35094] = true := by decide
+theorem rc_42620 : CNF.rup cl_42620 [cl_30796,cl_42542] = true := by decide
+theorem rc_42621 : CNF.rup cl_42621 [cl_31533,cl_42619] = true := by decide
+theorem rc_42622 : CNF.rup cl_42622 [cl_42577,cl_42453,cl_42451,cl_34890,cl_37286,cl_37433,cl_7952,cl_7960,cl_31651,cl_36366,cl_6529,cl_41548,cl_42586,cl_23214] = true := by decide
+theorem rc_42623 : CNF.rup cl_42623 [cl_31852,cl_37876] = true := by decide
+theorem rc_42624 : CNF.rup cl_42624 [cl_40156,cl_42604,cl_42577,cl_32300,cl_30469,cl_36104,cl_42620,cl_30984,cl_42543,cl_42523,cl_42515,cl_29811,cl_34935,cl_42591,cl_42617,cl_42451,cl_35629,cl_37482,cl_42621,cl_28014,cl_36748,cl_35199,cl_7553,cl_7954,cl_35388,cl_30839,cl_42622,cl_36357,cl_7939,cl_42623] = true := by decide
+theorem rc_42625 : CNF.rup cl_42625 [cl_32300,cl_42611,cl_40156,cl_28014,cl_36748,cl_42623,cl_7553,cl_42610,cl_42568,cl_32732,cl_35634,cl_42507] = true := by decide
+theorem rc_42626 : CNF.rup cl_42626 [cl_32300,cl_42611,cl_30469,cl_36104,cl_42620,cl_40156,cl_30984,cl_42543,cl_42523,cl_42453,cl_42515,cl_29811,cl_34935,cl_42591,cl_42617,cl_42451,cl_38133,cl_35629,cl_42497,cl_42554,cl_4481,cl_42577,cl_42604,cl_7940,cl_42624,cl_42625,cl_31533,cl_42618,cl_4737,cl_37286,cl_7952,cl_42507,cl_39040,cl_27188,cl_42603,cl_29831] = true := by decide
+theorem rc_42627 : CNF.rup cl_42627 [cl_42529,cl_6657,cl_30545] = true := by decide
+theorem rc_42628 : CNF.rup cl_42628 [cl_29811,cl_30469,cl_34935,cl_35629,cl_42626,cl_42627] = true := by decide
+theorem rc_42629 : CNF.rup cl_42629 [cl_30469,cl_36104,cl_42620,cl_42458,cl_40156,cl_30984,cl_42543,cl_42523,cl_42453,cl_42515,cl_30238,cl_29811,cl_34935,cl_42591,cl_42617,cl_42451,cl_36174,cl_38133,cl_35629,cl_42497,cl_32300,cl_42628,cl_35346,cl_29379,cl_42462,cl_42592,cl_42493,cl_4481,cl_42575,cl_42577,cl_42604,cl_7954,cl_7940,cl_42578,cl_42491,cl_35117,cl_31450,cl_39394,cl_7960,cl_7952,cl_36413,cl_31651,cl_4737,cl_6529,cl_35569,cl_42586,cl_23214] = true := by decide
+theorem rc_42630 : CNF.rup cl_42630 [cl_36748,cl_39013] = true := by decide
+theorem rc_42631 : CNF.rup cl_42631 [cl_42572,cl_42504] = true := by decide
+theorem rc_42632 : CNF.rup cl_42632 [cl_29840,cl_42483,cl_38133,cl_42525,cl_29809,cl_42427,cl_42519,cl_42540,cl_29834,cl_35629,cl_30238,cl_42451,cl_42590,cl_30469,cl_4353,cl_6913,cl_7425,cl_42616,cl_42497,cl_42458,cl_34883,cl_37857,cl_42630,cl_40156,cl_36104,cl_30984,cl_37432,cl_30907,cl_42543,cl_42523,cl_42453,cl_42515,cl_29811,cl_30947,cl_7952,cl_31651,cl_35118,cl_6529,cl_33982,cl_42586,cl_33841,cl_42556,cl_23214,cl_42631,cl_42629,cl_42552,cl_36361,cl_42477,cl_42457,cl_42488,cl_7964,cl_29371,cl_35537,cl_31791,cl_7553] = true := by decide
+theorem rc_42633 : CNF.rup cl_42633 [cl_42525,cl_29809,cl_42427,cl_42519,cl_42540,cl_29834,cl_35629,cl_30238,cl_42483,cl_42451,cl_42590,cl_30469,cl_4353,cl_6913,cl_38133,cl_7425,cl_42616,cl_42458,cl_37432,cl_30907,cl_29840,cl_29811,cl_30947,cl_42497,cl_34883,cl_37857,cl_42632,cl_42454,cl_6785,cl_42488,cl_42572,cl_36361,cl_42629] = true := by decide
+theorem rc_42634 : CNF.rup cl_42634 [cl_30521,cl_42554] = true := by decide
+theorem rc_42635 : CNF.rup cl_42635 [cl_42577,cl_32300,cl_36104,cl_30984,cl_42523,cl_42453,cl_42617,cl_29811,cl_29042,cl_42488,cl_29831,cl_32732,cl_24072,cl_42506,cl_6529,cl_31651,cl_42318,cl_35117,cl_7960,cl_7952,cl_42462,cl_36616,cl_42611,cl_31511,cl_7940,cl_4737,cl_42618] = true := by decide
+theorem rc_42636 : CNF.rup cl_42636 [cl_30469,cl_36104,cl_42620,cl_42543,cl_42523,cl_42453,cl_42515,cl_42617,cl_38133,cl_40156,cl_29811,cl_42497,cl_32300,cl_15264,cl_42634,cl_4481,cl_42577,cl_42604,cl_42635,cl_39727,cl_42578,cl_42454,cl_7954,cl_42592,cl_35388,cl_23888,cl_42611,cl_42603,cl_42507,cl_7940,cl_42573,cl_31796] = true := by decide
+theorem rc_42637 : CNF.rup cl_42637 [cl_35784,cl_7297,cl_37342] = true := by decide
+theorem rc_42638 : CNF.rup cl_42638 [cl_29811,cl_30469,cl_34935,cl_42591,cl_42525,cl_4353,cl_38133,cl_29840,cl_40156,cl_37432,cl_30907,cl_30947,cl_42497,cl_37857,cl_36104,cl_4993,cl_42453,cl_42523,cl_42543,cl_42636,cl_42572,cl_42631,cl_39727,cl_26612,cl_35118,cl_42454,cl_7952,cl_42462,cl_42573,cl_36616,cl_42627,cl_4225,cl_1144,cl_42574,cl_42586,cl_42637] = true := by decide
+theorem rc_42639 : CNF.rup cl_42639 [cl_35388,cl_23888,cl_7681,cl_15310,cl_5633,cl_29917,cl_29916] = true := by decide
+theorem rc_42640 : CNF.rup cl_42640 [cl_42620,cl_42483,cl_42458,cl_29811,cl_30947,cl_42572,cl_42631,cl_42503,cl_39727,cl_7553,cl_42578,cl_35634,cl_39897,cl_31879,cl_42639,cl_7954,cl_42480,cl_35317,cl_7959,cl_31665,cl_31796] = true := by decide
+theorem rc_42641 : CNF.rup cl_42641 [cl_31665,cl_31796] = true := by decide
+theorem rc_42642 : CNF.rup cl_42642 [cl_31193,cl_31191,cl_31187] = true := by decide
+theorem rc_42643 : CNF.rup cl_42643 [cl_30750,cl_30751] = true := by decide
+theorem rc_42644 : CNF.rup cl_42644 [cl_42604,cl_42451,cl_35629,cl_29809,cl_42427,cl_6913,cl_42577,cl_42620,cl_42540,cl_29834,cl_42519,cl_7425,cl_42515,cl_29811,cl_30469,cl_34935,cl_42591,cl_29840,cl_30947,cl_42617,cl_42483,cl_42458,cl_37432,cl_6529,cl_42640,cl_32300,cl_15264,cl_42611,cl_4865,cl_42642,cl_7940,cl_31796,cl_42641,cl_42603,cl_30780,cl_31667,cl_42488,cl_36361,cl_38418,cl_42643,cl_7941,cl_36342,cl_36383,cl_38189,cl_23214,cl_42552,cl_29889,cl_41548] = true := by decide
+theorem rc_42645 : CNF.rup cl_42645 [cl_29809,cl_42427,cl_42519,cl_42540,cl_29834,cl_35629,cl_30238,cl_42458,cl_42483,cl_36174,cl_42451,cl_42590,cl_6913,cl_38133,cl_7425,cl_42525,cl_30469,cl_4353,cl_42616,cl_42633,cl_42638,cl_42466,cl_29818,cl_29819,cl_30139,cl_42497,cl_42554,cl_4481,cl_42561,cl_29811,cl_34935,cl_34581,cl_29840,cl_37432,cl_27435,cl_42591,cl_40156,cl_30907,cl_30947,cl_42644,cl_28775,cl_42582,cl_36355,cl_42506,cl_15264,cl_42572,cl_42631,cl_42503,cl_39727,cl_40127,cl_7553,cl_42578,cl_35634,cl_42641,cl_36784,cl_7959,cl_31879] = true := by decide
+theorem rc_42646 : CNF.rup cl_42646 [cl_42451,cl_30238,cl_35629,cl_29809,cl_42427,cl_6913,cl_42483,cl_42525,cl_42540,cl_30469,cl_4353,cl_42590,cl_36174,cl_38133,cl_42458,cl_29834,cl_42519,cl_7425,cl_42616,cl_42633,cl_42638,cl_42466,cl_29818,cl_42645,cl_33853,cl_33850] = true := by decide
+theorem rc_42647 : CNF.rup cl_42647 [cl_39879,cl_30694,cl_30692] = true := by decide
+theorem rc_42648 : CNF.rup cl_42648 [cl_42462,cl_42533] = true := by decide
+theorem rc_42649 : CNF.rup cl_42649 [cl_42453,cl_37448,cl_39727,cl_42438,cl_42578,cl_42454,cl_42429,cl_42648,cl_7952,cl_39040,cl_31651,cl_35118,cl_31665,cl_36784,cl_37077,cl_7959] = true := by decide
+theorem rc_42650 : CNF.rup cl_42650 [cl_42649,cl_42488,cl_42490] = true := by decide
+theorem rc_42651 : CNF.rup cl_42651 [cl_42451,cl_30238,cl_35629,cl_29809,cl_42427,cl_6913,cl_42483,cl_42525,cl_42540,cl_30469,cl_4353,cl_42519,cl_29811,cl_34935,cl_42590,cl_42647,cl_36174,cl_38133,cl_29840,cl_42458,cl_40156,cl_29834,cl_37432,cl_30907,cl_30947,cl_42591,cl_42646,cl_42467,cl_42539,cl_5377,cl_37857,cl_42543,cl_42650] = true := by decide
+theorem rc_42652 : CNF.rup cl_42652 [cl_30469,cl_34935,cl_36174,cl_42458,cl_42497,cl_39040,cl_31651,cl_6529,cl_42570,cl_30333,cl_15310,cl_42627,cl_42500,cl_42592,cl_5249,cl_42575,cl_23358] = true := by decide
+theorem rc_42653 : CNF.rup cl_42653 [cl_42506,cl_35094] = true := by decide
+theorem rc_42654 : CNF.rup cl_42654 [cl_15264,cl_4993] = true := by decide
+theorem rc_42655 : CNF.rup cl_42655 [cl_36174,cl_29851,cl_42607,cl_1144,cl_5633,cl_42441] = true := by decide
+theorem rc_42656 : CNF.rup cl_42656 [cl_30469,cl_34935,cl_32732,cl_37432,cl_30907,cl_29840,cl_38133,cl_37857,cl_42543,cl_42523,cl_42515,cl_36174,cl_42458,cl_30947,cl_42497,cl_7952,cl_42462,cl_42573,cl_42630,cl_42627,cl_30731,cl_42554,cl_15310,cl_42653,cl_42637,cl_42655,cl_4993,cl_1144,cl_42441,cl_4225] = true := by decide
+theorem rc_42657 : CNF.rup cl_42657 [cl_31744,cl_31755] = true := by decide
+theorem rc_42658 : CNF.rup cl_42658 [cl_6529,cl_33987,cl_42318,cl_7960,cl_37433,cl_36413,cl_31515] = true := by decide
+theorem rc_42659 : CNF.rup cl_42659 [cl_37432,cl_30907,cl_29840,cl_38133,cl_37857,cl_42543,cl_42453,cl_42515,cl_30469,cl_42458,cl_40156,cl_29811,cl_30947,cl_29042,cl_42488,cl_34802,cl_42572,cl_29831,cl_30984,cl_42620,cl_24072,cl_42652,cl_42656,cl_42657,cl_25996,cl_37346] = true := by decide
+theorem rc_42660 : CNF.rup cl_42660 [cl_29840,cl_38133,cl_37857,cl_30469,cl_42458,cl_40156,cl_30947,cl_42497,cl_42656,cl_42653,cl_31651,cl_6529] = true := by decide
+theorem rc_42661 : CNF.rup cl_42661 [cl_30469,cl_34935,cl_42497,cl_29840,cl_42458,cl_40156,cl_35388,cl_42592,cl_23888,cl_7681,cl_36174,cl_42627,cl_15310,cl_38133,cl_42660,cl_30265,cl_42639,cl_42441,cl_42558,cl_30227] = true := by decide
+theorem rc_42662 : CNF.rup cl_42662 [cl_42458,cl_36174,cl_5377,cl_42430,cl_37432,cl_30907,cl_29840,cl_38133,cl_37857,cl_42543,cl_42453,cl_42515,cl_29811,cl_30469,cl_34935,cl_40156,cl_30947,cl_42497,cl_42659,cl_39727,cl_40292,cl_42578,cl_42454,cl_30984,cl_42620,cl_7954,cl_42592,cl_35388,cl_23888,cl_42627,cl_7681,cl_15310,cl_42661,cl_30377,cl_42639,cl_42582,cl_42506,cl_35094] = true := by decide
+theorem rc_42663 : CNF.rup cl_42663 [cl_27067,cl_32655] = true := by decide
+theorem rc_42664 : CNF.rup cl_42664 [cl_42527,cl_29811,cl_42497,cl_39727,cl_29492,cl_42578,cl_42620,cl_7954,cl_42592,cl_35388,cl_23888,cl_42627,cl_7681,cl_15310] = true := by decide
+theorem rc_42665 : CNF.rup cl_42665 [cl_42488,cl_15915,cl_30469,cl_38133,cl_42497,cl_26574,cl_29873,cl_29851,cl_42657,cl_15913,cl_29875,cl_15914,cl_15911,cl_15741,cl_29831,cl_36043,cl_15310,cl_23206,cl_42627,cl_42570,cl_42462,cl_6529,cl_7952,cl_31651] = true := by decide
+theorem rc_42666 : CNF.rup cl_42666 [cl_29811,cl_30469,cl_34935,cl_42663,cl_15915,cl_41429,cl_15925,cl_42527,cl_15920,cl_29937,cl_15930,cl_15722,cl_38133,cl_42497,cl_28467,cl_29840,cl_30947,cl_42617,cl_42515,cl_36174,cl_42458,cl_40156,cl_37432,cl_30907,cl_37857,cl_42453,cl_42523,cl_42543,cl_42662,cl_33033,cl_29807,cl_33611,cl_29917,cl_36360,cl_13745,cl_15822,cl_15823,cl_15824,cl_14075,cl_14079,cl_14089,cl_14084,cl_15918,cl_29916,cl_14077,cl_9839,cl_15919,cl_14078,cl_9893,cl_42664,cl_29042,cl_42488,cl_34675,cl_14083,cl_42620,cl_42665,cl_42572,cl_29831,cl_30984,cl_15911,cl_32300,cl_14071,cl_15934,cl_32732,cl_24072,cl_14094,cl_15310,cl_15907,cl_14067,cl_42627,cl_42500,cl_9973,cl_42462,cl_42592,cl_42491,cl_7954,cl_7960,cl_31450,cl_36413,cl_42657,cl_4737,cl_42507,cl_35435,cl_36043,cl_15913,cl_14073,cl_15931,cl_14091,cl_15741,cl_13603,cl_10006,cl_9883,cl_13588,cl_9950,cl_9866,cl_15922,cl_9999,cl_9960,cl_30644,cl_14068,cl_4225] = true := by decide
+theorem rc_42667 : CNF.rup cl_42667 [cl_29917,cl_29916] = true := by decide
+end Percolation.NReplay

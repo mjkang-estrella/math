@@ -1,0 +1,1 @@
+Unverified raw source drafts are excluded from source-only.zip. Raw NReplay024 failed the CPU cap, but its factored replacement is now included in the formal packet. The genuine unverified suffix begins with NReplay025, steps[12500]. The unconditional endpoint draft remains unverified.

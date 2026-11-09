@@ -1,0 +1,1 @@
+Generated drafts beyond addition 13,561 were not replayed. They are excluded from source-only.zip, module-order.txt and all claimed progress. The old target-17,500 endpoint and audit here are unverified drafts. Resume from normalized-progress.json, using the delivered generator as reference.

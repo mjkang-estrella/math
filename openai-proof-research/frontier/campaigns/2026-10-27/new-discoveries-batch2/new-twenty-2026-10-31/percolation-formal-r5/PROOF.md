@@ -1,0 +1,9 @@
+# Round 5 proof and exact continuation
+
+All 443 round 4 Lean sources are preserved byte for byte. inherited-source-comparison.json records their SHA256 hashes. The inherited proof establishes the literal finite projective plane PG5, threshold dynamics, controls, minimality constraints, normalization by incidence-preserving collineations, the normalized CNF bridge, every used input clause, and the first 12,500 normalized RUP additions. This work extends that prefix using the unchanged RUP soundness theorem.
+
+The generator reads normalized-trimmed.json and emits literal definitions, finite Boolean RUP equations proved by kernel reduction, then soundness theorems. Every hint names an existing input clause or an earlier retained addition. Weighted hint counts and clause lengths determine chunk boundaries. Each module imports its predecessor. Definitions, finite checks, and soundness proofs live in separate modules. Accumulated prefix soundness follows by list membership in the preceding prefix or the new sound chunk. There is no solver oracle in the proof.
+
+The round 5 endpoint is conditional. Its single hypothesis, RemainingSuffixUnsatR5, states that no Boolean assignment simultaneously satisfies normalizedCNF5 and the accumulated checked prefix. It is the exact frontier obligation for the unprocessed suffix, not an assertion that this suffix has been proved. Given this hypothesis, prefix soundness refutes normalizedCNF5 and the inherited normalization bridge yields the negation of Conjecture20.
+
+The actual verified endpoint, prefix length, next zero-based certificate step and next LRAT ID are in SUMMARY.md, results.json and normalized-progress.json. Only modules passing both the strict compiler and explicit-module checker count as progress. No unconditional nonexistence result or campaign acceptance is claimed.

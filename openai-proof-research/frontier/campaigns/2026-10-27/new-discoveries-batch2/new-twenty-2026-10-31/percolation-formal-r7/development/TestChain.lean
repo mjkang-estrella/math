@@ -1,0 +1,3 @@
+import MaskInputs0000
+mask_chain "999999|1006632960|4611686019534684160|34,1006632960,4611686019534684160,x,0"
+#print axioms Percolation.MaskChain.clause999999

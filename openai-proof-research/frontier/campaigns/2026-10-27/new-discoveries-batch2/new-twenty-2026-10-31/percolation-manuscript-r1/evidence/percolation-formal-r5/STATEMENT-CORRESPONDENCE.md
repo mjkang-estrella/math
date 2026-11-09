@@ -1,0 +1,7 @@
+# Statement correspondence
+
+Conjecture20 quantifies over every natural order q, every indexed projective plane P of order q, and every threshold r with 4 ≤ r ≤ q. It asks for an infection a which is minimal percolating and has exact percolation time 2. Minimal quantifies over every proper subset, and percolation allows any natural number of rounds. The underlying definitions and all inherited bridges are byte-identical to round 4.
+
+The specific obstruction is NoMinimalTwoRound5: no infection in PG5 is both minimal percolating at threshold 5 and of exact time 2. Taking q = r = 5 refutes the universal conjecture. Normalization transports any such infection to one containing the noncollinear triple 0, 25, 30. Thus it satisfies normalizedCNF5, the original CNF plus positive units 1, 26, 31. The inherited NormalizedExport module evaluates the actual Lean CNF; its output must match normalized.cnf byte for byte.
+
+This packet proves a conditional endpoint only: RemainingSuffixUnsatR5 → ¬ Conjecture20. The remaining hypothesis is literally the absence of an assignment satisfying normalizedCNF5 and the checked accumulated prefix. It has no extra geometric hypothesis. The still unprocessed certificate suffix is identified exactly in normalized-progress.json. Removing this last hypothesis requires replaying that suffix through the empty clause. Generated source, data, and any external SAT result are not substitutes for its kernel replay.

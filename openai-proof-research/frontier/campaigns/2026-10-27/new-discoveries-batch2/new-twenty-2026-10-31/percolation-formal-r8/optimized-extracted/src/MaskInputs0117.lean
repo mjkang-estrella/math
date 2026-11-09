@@ -1,0 +1,325 @@
+import MaskChainBuild
+namespace Percolation.MaskChain
+set_option maxRecDepth 100000
+set_option maxHeartbeats 0
+def inputClause14543 : CNF.NClause := [(25,true),(28,true),(927,false)]
+theorem inputList14543 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14543 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14543 = (containClause5 25 28) := by decide
+  rw [he]
+  exact input_contain 25 28 (by decide) v hb
+mask_input "14543|1134503866941667986143541334648056457619674836471095626110665786221268201568912028156408931347775536033476809532312754097331684299884724203331627335435786915422798797948806666521214607112348737236205441118127012028555106130125335760617903854636122194680820545543017511614811209728|301989888"
+def inputClause14544 : CNF.NClause := [(25,true),(29,true),(928,false)]
+theorem inputList14544 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14544 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14544 = (containClause5 25 29) := by decide
+  rw [he]
+  exact input_contain 25 29 (by decide) v hb
+mask_input "14544|2269007733883335972287082669296112915239349672942191252221331572442536403137824056312817862695551072066953619064625508194663368599769448406663254670871573830845597595897613333042429214224697474472410882236254024057110212260250671521235807709272244389361641091086035023229622419456|570425344"
+def inputClause14545 : CNF.NClause := [(25,true),(30,true),(929,false)]
+theorem inputList14545 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14545 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14545 = (containClause5 25 30) := by decide
+  rw [he]
+  exact input_contain 25 30 (by decide) v hb
+mask_input "14545|4538015467766671944574165338592225830478699345884382504442663144885072806275648112625635725391102144133907238129251016389326737199538896813326509341743147661691195191795226666084858428449394948944821764472508048114220424520501343042471615418544488778723282182172070046459244838912|1107296256"
+def inputClause14546 : CNF.NClause := [(26,true),(0,true),(930,false)]
+theorem inputList14546 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14546 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14546 = (containClause5 26 0) := by decide
+  rw [he]
+  exact input_contain 26 0 (by decide) v hb
+mask_input "14546|9076030935533343889148330677184451660957398691768765008885326289770145612551296225251271450782204288267814476258502032778653474399077793626653018683486295323382390383590453332169716856898789897889643528945016096228440849041002686084943230837088977557446564364344140092918489677824|67108865"
+def inputClause14571 : CNF.NClause := [(26,true),(25,true),(955,false)]
+theorem inputList14571 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14571 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14571 = (containClause5 26 25) := by decide
+  rw [he]
+  exact input_contain 26 25 (by decide) v hb
+mask_input "14571|304541062856249971261043199621099634714882089299843985214622076787904646586450815702050470808812820600790778632231520880733099058287596688955562103009770419360352428123639782183462176734064176511024987296225574339802674935168589842054573862983405175400866837597008673346307143437247315968|100663296"
+def inputClause14575 : CNF.NClause := [(26,true),(30,true),(960,false)]
+theorem inputList14575 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14575 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14575 = (containClause5 26 30) := by decide
+  rw [he]
+  exact input_contain 26 30 (by decide) v hb
+mask_input "14575|9745314011399999080353382387875188310876226857595007526867906457212948690766426102465615065882010259225304916231408668183459169865203094046577987296312653419531277699956473029870789655490053648352799593479218378873685597925394874945746363615468965612827738803104277547081828589991914110976|1140850688"
+def inputClause14576 : CNF.NClause := [(27,true),(0,true),(961,false)]
+theorem inputList14576 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14576 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14576 = (containClause5 27 0) := by decide
+  rw [he]
+  exact input_contain 27 0 (by decide) v hb
+mask_input "14576|19490628022799998160706764775750376621752453715190015053735812914425897381532852204931230131764020518450609832462817336366918339730406188093155974592625306839062555399912946059741579310980107296705599186958436757747371195850789749891492727230937931225655477606208555094163657179983828221952|134217729"
+def inputClause14601 : CNF.NClause := [(27,true),(25,true),(986,false)]
+theorem inputList14601 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14601 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14601 = (containClause5 27 25) := by decide
+  rw [he]
+  exact input_contain 27 25 (by decide) v hb
+mask_input "14601|653996952628336987883560210607911261328982429019490727199554680401825592727622145076415026132626866532955732981904996841544888480036812770751011814861973559810459458912611754481266760562888863640011851938052153014134639969934006809031100094365055109531933378765047739725368031717079125173169291264|167772160"
+def inputClause14605 : CNF.NClause := [(27,true),(30,true),(991,false)]
+theorem inputList14605 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14605 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14605 = (containClause5 27 30) := by decide
+  rw [he]
+  exact input_contain 27 30 (by decide) v hb
+mask_input "14605|20927902484106783612273926739453160362527437728623703270385749772858418967283908642445280836244059729054583455420959898929436431361178008664032378075583153913934702685203576143400536338012443636480379262017668896452308479037888217888995203019681763505021868120481527671211777014946532005541417320448|1207959552"
+def inputClause14606 : CNF.NClause := [(28,true),(0,true),(992,false)]
+theorem inputList14606 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14606 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14606
+  have he : decodeClause inputClause14606 = containClause5 28 0 := by decide
+  rw [he]
+  exact input_contain 28 0 (by decide) v hb
+mask_input "14606|41855804968213567224547853478906320725054875457247406540771499545716837934567817284890561672488119458109166910841919797858872862722356017328064756151166307827869405370407152286801072676024887272960758524035337792904616958075776435777990406039363527010043736240963055342423554029893064011082834640896|268435457"
+def inputClause14631 : CNF.NClause := [(28,true),(25,true),(1017,false)]
+theorem inputList14631 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14631 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14631
+  have he : decodeClause inputClause14631 = containClause5 28 25 := by decide
+  rw [he]
+  exact input_contain 28 25 (by decide) v hb
+mask_input "14631|1404447761611184302913519680303925573139044514798677009948672509044786529730476274474284979081308875165000889686495260606709295068862629863225370551870891596701311667381761603721111090634735110308227210563164107569048052205800491261514946176100212790338675864723330454999587858894372783631526221325189251072|301989888"
+def inputClause14635 : CNF.NClause := [(28,true),(30,true),(1022,false)]
+theorem inputList14635 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14635 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14635 = (containClause5 28 30) := by decide
+  rw [he]
+  exact input_contain 28 30 (by decide) v hb
+mask_input "14635|44942328371557897693232629769725618340449424473557664318357520289433168951375240783177119330601884005280028469967848339414697442203604155623211857659868531094441973356216371319075554900311523529863270738021251442209537670585615720368478277635206809290837627671146574559986811484619929076208839082406056034304|1342177280"
+def inputClause14636 : CNF.NClause := [(29,true),(0,true),(1023,false)]
+theorem inputList14636 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14636 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14636 = (containClause5 29 0) := by decide
+  rw [he]
+  exact input_contain 29 0 (by decide) v hb
+mask_input "14636|89884656743115795386465259539451236680898848947115328636715040578866337902750481566354238661203768010560056939935696678829394884407208311246423715319737062188883946712432742638151109800623047059726541476042502884419075341171231440736956555270413618581675255342293149119973622969239858152417678164812112068608|536870913"
+def inputClause14661 : CNF.NClause := [(29,true),(25,true),(1048,false)]
+theorem inputList14661 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14661 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14661 = (containClause5 29 25) := by decide
+  rw [he]
+  exact input_contain 29 25 (by decide) v hb
+mask_input "14661|3016028602530220424421062271578867838525126125874252890898307532480811172246863646685486789069132871854112712507200418582406770249989531589552959798883475511096677545853948017425342019529539590198394174553047792145043723038206885734470238620775335376572758801465612196212014773714996912064944617579072807182486470656|570425344"
+def inputClause14665 : CNF.NClause := [(29,true),(30,true),(1053,false)]
+theorem inputList14665 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14665 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14665 = (containClause5 29 30) := by decide
+  rw [he]
+  exact input_contain 29 30 (by decide) v hb
+mask_input "14665|96512915280967053581473992690523770832804036027976092508745841039385957511899636693935577250212251899331606800230413394637016647999665010865694713564271216355093681467326336557610944624945266886348613585697529348641399137222620343503047635864810732050328281646899590278784472758879901186078227762530329829839567060992|1610612736"
+def inputClause14666 : CNF.NClause := [(30,true),(0,true),(1054,false)]
+theorem inputList14666 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14666 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14666
+  have he : decodeClause inputClause14666 = containClause5 30 0 := by decide
+  rw [he]
+  exact input_contain 30 0 (by decide) v hb
+mask_input "14666|193025830561934107162947985381047541665608072055952185017491682078771915023799273387871154500424503798663213600460826789274033295999330021731389427128542432710187362934652673115221889249890533772697227171395058697282798274445240687006095271729621464100656563293799180557568945517759802372156455525060659659679134121984|1073741825"
+def inputClause14667 : CNF.NClause := [(30,true),(1,true),(1055,false)]
+theorem inputList14667 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14667 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14667
+  have he : decodeClause inputClause14667 = containClause5 30 1 := by decide
+  rw [he]
+  exact input_contain 30 1 (by decide) v hb
+mask_input "14667|386051661123868214325895970762095083331216144111904370034983364157543830047598546775742309000849007597326427200921653578548066591998660043462778854257084865420374725869305346230443778499781067545394454342790117394565596548890481374012190543459242928201313126587598361115137891035519604744312911050121319319358268243968|1073741826"
+def inputClause14668 : CNF.NClause := [(30,true),(2,true),(1056,false)]
+theorem inputList14668 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14668 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14668
+  have he : decodeClause inputClause14668 = containClause5 30 2 := by decide
+  rw [he]
+  exact input_contain 30 2 (by decide) v hb
+mask_input "14668|772103322247736428651791941524190166662432288223808740069966728315087660095197093551484618001698015194652854401843307157096133183997320086925557708514169730840749451738610692460887556999562135090788908685580234789131193097780962748024381086918485856402626253175196722230275782071039209488625822100242638638716536487936|1073741828"
+def inputClause14669 : CNF.NClause := [(30,true),(3,true),(1057,false)]
+theorem inputList14669 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14669 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14669
+  have he : decodeClause inputClause14669 = containClause5 30 3 := by decide
+  rw [he]
+  exact input_contain 30 3 (by decide) v hb
+mask_input "14669|1544206644495472857303583883048380333324864576447617480139933456630175320190394187102969236003396030389305708803686614314192266367994640173851115417028339461681498903477221384921775113999124270181577817371160469578262386195561925496048762173836971712805252506350393444460551564142078418977251644200485277277433072975872|1073741832"
+def inputClause14670 : CNF.NClause := [(30,true),(4,true),(1058,false)]
+theorem inputList14670 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14670 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14670
+  have he : decodeClause inputClause14670 = containClause5 30 4 := by decide
+  rw [he]
+  exact input_contain 30 4 (by decide) v hb
+mask_input "14670|3088413288990945714607167766096760666649729152895234960279866913260350640380788374205938472006792060778611417607373228628384532735989280347702230834056678923362997806954442769843550227998248540363155634742320939156524772391123850992097524347673943425610505012700786888921103128284156837954503288400970554554866145951744|1073741840"
+def inputClause14671 : CNF.NClause := [(30,true),(5,true),(1059,false)]
+theorem inputList14671 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14671 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14671
+  have he : decodeClause inputClause14671 = containClause5 30 5 := by decide
+  rw [he]
+  exact input_contain 30 5 (by decide) v hb
+mask_input "14671|6176826577981891429214335532193521333299458305790469920559733826520701280761576748411876944013584121557222835214746457256769065471978560695404461668113357846725995613908885539687100455996497080726311269484641878313049544782247701984195048695347886851221010025401573777842206256568313675909006576801941109109732291903488|1073741856"
+def inputClause14672 : CNF.NClause := [(30,true),(6,true),(1060,false)]
+theorem inputList14672 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14672 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14672
+  have he : decodeClause inputClause14672 = containClause5 30 6 := by decide
+  rw [he]
+  exact input_contain 30 6 (by decide) v hb
+mask_input "14672|12353653155963782858428671064387042666598916611580939841119467653041402561523153496823753888027168243114445670429492914513538130943957121390808923336226715693451991227817771079374200911992994161452622538969283756626099089564495403968390097390695773702442020050803147555684412513136627351818013153603882218219464583806976|1073741888"
+def inputClause14673 : CNF.NClause := [(30,true),(7,true),(1061,false)]
+theorem inputList14673 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14673 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14673 = (containClause5 30 7) := by decide
+  rw [he]
+  exact input_contain 30 7 (by decide) v hb
+mask_input "14673|24707306311927565716857342128774085333197833223161879682238935306082805123046306993647507776054336486228891340858985829027076261887914242781617846672453431386903982455635542158748401823985988322905245077938567513252198179128990807936780194781391547404884040101606295111368825026273254703636026307207764436438929167613952|1073741952"
+def inputClause14674 : CNF.NClause := [(30,true),(8,true),(1062,false)]
+theorem inputList14674 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14674 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14674
+  have he : decodeClause inputClause14674 = containClause5 30 8 := by decide
+  rw [he]
+  exact input_contain 30 8 (by decide) v hb
+mask_input "14674|49414612623855131433714684257548170666395666446323759364477870612165610246092613987295015552108672972457782681717971658054152523775828485563235693344906862773807964911271084317496803647971976645810490155877135026504396358257981615873560389562783094809768080203212590222737650052546509407272052614415528872877858335227904|1073742080"
+def inputClause14675 : CNF.NClause := [(30,true),(9,true),(1063,false)]
+theorem inputList14675 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14675 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14675
+  have he : decodeClause inputClause14675 = containClause5 30 9 := by decide
+  rw [he]
+  exact input_contain 30 9 (by decide) v hb
+mask_input "14675|98829225247710262867429368515096341332791332892647518728955741224331220492185227974590031104217345944915565363435943316108305047551656971126471386689813725547615929822542168634993607295943953291620980311754270053008792716515963231747120779125566189619536160406425180445475300105093018814544105228831057745755716670455808|1073742336"
+def inputClause14676 : CNF.NClause := [(30,true),(10,true),(1064,false)]
+theorem inputList14676 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14676 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14676
+  have he : decodeClause inputClause14676 = containClause5 30 10 := by decide
+  rw [he]
+  exact input_contain 30 10 (by decide) v hb
+mask_input "14676|197658450495420525734858737030192682665582665785295037457911482448662440984370455949180062208434691889831130726871886632216610095103313942252942773379627451095231859645084337269987214591887906583241960623508540106017585433031926463494241558251132379239072320812850360890950600210186037629088210457662115491511433340911616|1073742848"
+def inputClause14677 : CNF.NClause := [(30,true),(11,true),(1065,false)]
+theorem inputList14677 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14677 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14677
+  have he : decodeClause inputClause14677 = containClause5 30 11 := by decide
+  rw [he]
+  exact input_contain 30 11 (by decide) v hb
+mask_input "14677|395316900990841051469717474060385365331165331570590074915822964897324881968740911898360124416869383779662261453743773264433220190206627884505885546759254902190463719290168674539974429183775813166483921247017080212035170866063852926988483116502264758478144641625700721781901200420372075258176420915324230983022866681823232|1073743872"
+def inputClause14678 : CNF.NClause := [(30,true),(12,true),(1066,false)]
+theorem inputList14678 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14678 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14678
+  have he : decodeClause inputClause14678 = containClause5 30 12 := by decide
+  rw [he]
+  exact input_contain 30 12 (by decide) v hb
+mask_input "14678|790633801981682102939434948120770730662330663141180149831645929794649763937481823796720248833738767559324522907487546528866440380413255769011771093518509804380927438580337349079948858367551626332967842494034160424070341732127705853976966233004529516956289283251401443563802400840744150516352841830648461966045733363646464|1073745920"
+def inputClause14679 : CNF.NClause := [(30,true),(13,true),(1067,false)]
+theorem inputList14679 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14679 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14679 = (containClause5 30 13) := by decide
+  rw [he]
+  exact input_contain 30 13 (by decide) v hb
+mask_input "14679|1581267603963364205878869896241541461324661326282360299663291859589299527874963647593440497667477535118649045814975093057732880760826511538023542187037019608761854877160674698159897716735103252665935684988068320848140683464255411707953932466009059033912578566502802887127604801681488301032705683661296923932091466727292928|1073750016"
+def inputClause14680 : CNF.NClause := [(30,true),(14,true),(1068,false)]
+theorem inputList14680 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14680 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14680 = (containClause5 30 14) := by decide
+  rw [he]
+  exact input_contain 30 14 (by decide) v hb
+mask_input "14680|3162535207926728411757739792483082922649322652564720599326583719178599055749927295186880995334955070237298091629950186115465761521653023076047084374074039217523709754321349396319795433470206505331871369976136641696281366928510823415907864932018118067825157133005605774255209603362976602065411367322593847864182933454585856|1073758208"
+def inputClause14681 : CNF.NClause := [(30,true),(15,true),(1069,false)]
+theorem inputList14681 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14681 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14681 = (containClause5 30 15) := by decide
+  rw [he]
+  exact input_contain 30 15 (by decide) v hb
+mask_input "14681|6325070415853456823515479584966165845298645305129441198653167438357198111499854590373761990669910140474596183259900372230931523043306046152094168748148078435047419508642698792639590866940413010663742739952273283392562733857021646831815729864036236135650314266011211548510419206725953204130822734645187695728365866909171712|1073774592"
+def inputClause14682 : CNF.NClause := [(30,true),(16,true),(1070,false)]
+theorem inputList14682 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14682 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14682 = (containClause5 30 16) := by decide
+  rw [he]
+  exact input_contain 30 16 (by decide) v hb
+mask_input "14682|12650140831706913647030959169932331690597290610258882397306334876714396222999709180747523981339820280949192366519800744461863046086612092304188337496296156870094839017285397585279181733880826021327485479904546566785125467714043293663631459728072472271300628532022423097020838413451906408261645469290375391456731733818343424|1073807360"
+def inputClause14683 : CNF.NClause := [(30,true),(17,true),(1071,false)]
+theorem inputList14683 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14683 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14683
+  have he : decodeClause inputClause14683 = containClause5 30 17 := by decide
+  rw [he]
+  exact input_contain 30 17 (by decide) v hb
+mask_input "14683|25300281663413827294061918339864663381194581220517764794612669753428792445999418361495047962679640561898384733039601488923726092173224184608376674992592313740189678034570795170558363467761652042654970959809093133570250935428086587327262919456144944542601257064044846194041676826903812816523290938580750782913463467636686848|1073872896"
+def inputClause14684 : CNF.NClause := [(30,true),(18,true),(1072,false)]
+theorem inputList14684 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14684 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14684
+  have he : decodeClause inputClause14684 = containClause5 30 18 := by decide
+  rw [he]
+  exact input_contain 30 18 (by decide) v hb
+mask_input "14684|50600563326827654588123836679729326762389162441035529589225339506857584891998836722990095925359281123796769466079202977847452184346448369216753349985184627480379356069141590341116726935523304085309941919618186267140501870856173174654525838912289889085202514128089692388083353653807625633046581877161501565826926935273373696|1074003968"
+def inputClause14685 : CNF.NClause := [(30,true),(19,true),(1073,false)]
+theorem inputList14685 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14685 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14685
+  have he : decodeClause inputClause14685 = containClause5 30 19 := by decide
+  rw [he]
+  exact input_contain 30 19 (by decide) v hb
+mask_input "14685|101201126653655309176247673359458653524778324882071059178450679013715169783997673445980191850718562247593538932158405955694904368692896738433506699970369254960758712138283180682233453871046608170619883839236372534281003741712346349309051677824579778170405028256179384776166707307615251266093163754323003131653853870546747392|1074266112"
+def inputClause14686 : CNF.NClause := [(30,true),(20,true),(1074,false)]
+theorem inputList14686 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14686 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14686 = (containClause5 30 20) := by decide
+  rw [he]
+  exact input_contain 30 20 (by decide) v hb
+mask_input "14686|202402253307310618352495346718917307049556649764142118356901358027430339567995346891960383701437124495187077864316811911389808737385793476867013399940738509921517424276566361364466907742093216341239767678472745068562007483424692698618103355649159556340810056512358769552333414615230502532186327508646006263307707741093494784|1074790400"
+def inputClause14687 : CNF.NClause := [(30,true),(21,true),(1075,false)]
+theorem inputList14687 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14687 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14687 = (containClause5 30 21) := by decide
+  rw [he]
+  exact input_contain 30 21 (by decide) v hb
+mask_input "14687|404804506614621236704990693437834614099113299528284236713802716054860679135990693783920767402874248990374155728633623822779617474771586953734026799881477019843034848553132722728933815484186432682479535356945490137124014966849385397236206711298319112681620113024717539104666829230461005064372655017292012526615415482186989568|1075838976"
+def inputClause14688 : CNF.NClause := [(30,true),(22,true),(1076,false)]
+theorem inputList14688 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14688 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode
+  have he : decodeClause inputClause14688 = (containClause5 30 22) := by decide
+  rw [he]
+  exact input_contain 30 22 (by decide) v hb
+mask_input "14688|809609013229242473409981386875669228198226599056568473427605432109721358271981387567841534805748497980748311457267247645559234949543173907468053599762954039686069697106265445457867630968372865364959070713890980274248029933698770794472413422596638225363240226049435078209333658460922010128745310034584025053230830964373979136|1077936128"
+def inputClause14689 : CNF.NClause := [(30,true),(23,true),(1077,false)]
+theorem inputList14689 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14689 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14689
+  have he : decodeClause inputClause14689 = containClause5 30 23 := by decide
+  rw [he]
+  exact input_contain 30 23 (by decide) v hb
+mask_input "14689|1619218026458484946819962773751338456396453198113136946855210864219442716543962775135683069611496995961496622914534495291118469899086347814936107199525908079372139394212530890915735261936745730729918141427781960548496059867397541588944826845193276450726480452098870156418667316921844020257490620069168050106461661928747958272|1082130432"
+def inputClause14690 : CNF.NClause := [(30,true),(24,true),(1078,false)]
+theorem inputList14690 (v : SatVar → Bool) (h : ∀ d ∈ normalizedCNF5, CNF.Holds v d) : CNF.Holds (v ∘ decodeVar) inputClause14690 := by
+  have hb : ∀ d ∈ inputCNF5, CNF.Holds v d := fun d hd => h d (List.mem_append_left _ hd)
+  apply holds_decode v inputClause14690
+  have he : decodeClause inputClause14690 = containClause5 30 24 := by decide
+  rw [he]
+  exact input_contain 30 24 (by decide) v hb
+mask_input "14690|3238436052916969893639925547502676912792906396226273893710421728438885433087925550271366139222993991922993245829068990582236939798172695629872214399051816158744278788425061781831470523873491461459836282855563921096992119734795083177889653690386552901452960904197740312837334633843688040514981240138336100212923323857495916544|1090519040"
+end Percolation.MaskChain

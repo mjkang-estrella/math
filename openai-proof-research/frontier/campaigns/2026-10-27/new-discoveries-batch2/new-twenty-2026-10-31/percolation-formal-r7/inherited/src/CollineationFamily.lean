@@ -1,0 +1,96 @@
+import CollF00
+import CollF01
+import CollF02
+import CollF03
+import CollF04
+import CollF05
+import CollF06
+import CollF07
+import CollF08
+import CollF09
+import CollF10
+import CollF11
+import CollF12
+import CollF13
+import CollF14
+import CollF15
+import CollF16
+import CollF17
+import CollF18
+import CollF19
+import CollF20
+import CollF21
+import CollF22
+import CollF23
+import CollF24
+import CollF25
+import CollF26
+import CollF27
+import CollF28
+import CollF29
+import CollF30
+import CollG01
+import CollG02
+import CollG03
+import CollG04
+import CollG05
+import CollG06
+import CollG07
+import CollG08
+import CollG09
+import CollG10
+import CollG11
+import CollG12
+import CollG13
+import CollG14
+import CollG15
+import CollG16
+import CollG17
+import CollG18
+import CollG19
+import CollG20
+import CollG21
+import CollG22
+import CollG23
+import CollG24
+import CollG25
+import CollG26
+import CollG27
+import CollG28
+import CollG29
+import CollG30
+import CollH01
+import CollH02
+import CollH03
+import CollH04
+import CollH06
+import CollH07
+import CollH08
+import CollH09
+import CollH11
+import CollH12
+import CollH13
+import CollH14
+import CollH16
+import CollH17
+import CollH18
+import CollH19
+import CollH21
+import CollH22
+import CollH23
+import CollH24
+import CollH26
+import CollH27
+import CollH28
+import CollH29
+import CollH30
+namespace Percolation
+set_option maxRecDepth 100000
+set_option maxHeartbeats 0
+def familyF (x : Points 5) : Collineation5 := ([CollF00,CollF01,CollF02,CollF03,CollF04,CollF05,CollF06,CollF07,CollF08,CollF09,CollF10,CollF11,CollF12,CollF13,CollF14,CollF15,CollF16,CollF17,CollF18,CollF19,CollF20,CollF21,CollF22,CollF23,CollF24,CollF25,CollF26,CollF27,CollF28,CollF29,CollF30] : List Collineation5).getD x.val CollF00
+def familyG (x : Points 5) : Collineation5 := ([CollF00,CollG01,CollG02,CollG03,CollG04,CollG05,CollG06,CollG07,CollG08,CollG09,CollG10,CollG11,CollG12,CollG13,CollG14,CollG15,CollG16,CollG17,CollG18,CollG19,CollG20,CollG21,CollG22,CollG23,CollG24,CollG25,CollG26,CollG27,CollG28,CollG29,CollG30] : List Collineation5).getD x.val CollF00
+def familyH (x : Points 5) : Collineation5 := ([CollF00,CollH01,CollH02,CollH03,CollH04,CollF00,CollH06,CollH07,CollH08,CollH09,CollF00,CollH11,CollH12,CollH13,CollH14,CollF00,CollH16,CollH17,CollH18,CollH19,CollF00,CollH21,CollH22,CollH23,CollH24,CollF00,CollH26,CollH27,CollH28,CollH29,CollH30] : List Collineation5).getD x.val CollF00
+theorem familyF_spec : ∀ p : Points 5, (familyF p).p 0 = p := by decide
+theorem familyG_spec : ∀ p : Points 5, p ≠ 0 → (familyG p).p 0 = 0 ∧ (familyG p).p 25 = p := by decide
+theorem familyH_spec : ∀ p : Points 5, incidence p 30 = false → (familyH p).p 0 = 0 ∧ (familyH p).p 25 = 25 ∧ (familyH p).p 30 = p := by decide
+end Percolation
