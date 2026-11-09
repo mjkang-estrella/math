@@ -1,0 +1,1 @@
+HISTORICAL r1/r5 evidence only. Old predicates, endpoints, source archives and replay claims here are superseded by the operative r6 packet. Retained for source provenance and bounded prior-art history; no historical replay is presented as the repaired replay.

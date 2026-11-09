@@ -1,0 +1,11 @@
+# MathDB 365301 manuscript integration r2
+
+All six gate-D manuscript items are integrated in paper/contact-draft.md, PROOF.md and STATEMENT-CORRESPONDENCE.md as applicable. The operative endpoint is ContactPilot.refutationLocal, negating SourceConjectureLocal. The exact local quantifier order, fixed constants, arbitrary-function uniqueness, ordinary source-existence bridge, historical locality failure and diagnostic local order 2 are explicit.
+
+The PDF was regenerated with the unchanged copied builder under isolated Python and resource caps. All 10 pages were read as rendered images and text; changed pages were reread after final attribution edits. No clipping, overlaps or missing symbols were observed. qa/ retains images, extracted text, exact required grep checks, page receipts and evidence checks. Sections 2,3,8,9 are verbatim preserved. The initial missing-ReportLab failure and successful lane-local dependency workaround are logged.
+
+contact-source-only.zip is byte-identical to the r6 archive, SHA-256 e92d6eceaf79972064c2f142a9cd1c4b3df45b520d1eed0445f288cddc1270d6. Its 33 modules match r6; 28 historical modules match the preserved r5 archive. contact-full-dossier.zip includes the revised paper/source, proof/correspondence, regression, reviews, source receipts, r6 replay records and DOSSIER-MANIFEST.json. Historical r1/r5 evidence is explicitly labeled. results.json maps every change to gate D and records final hashes. All 890 named input files are unchanged under before/after SHA-256 manifests.
+
+No Lean or lake, child agents, git, network, browser tabs, external messages, uploads or shared-ledger edits were used. All writes and temporary/cache paths stayed in this lane. Heavy processes were serial with two-CPU affinity, CPU 120 s, wall 140 s, sampled total group RSS about 6 GiB and MALLOC_ARENA_MAX=2; no cap kill or background job remains.
+
+Root's decisive fresh replay is PENDING and is not claimed. Supplied r6 full-replay evidence and r3's bounded closure check are distinguished. The diagnostic and general existence correspondence remain ordinary arguments. Cached dependency binaries and inherited novelty/access limits remain. Integration is not acceptance: root decides; credit is zero and count remains 22/40 beyond 39.

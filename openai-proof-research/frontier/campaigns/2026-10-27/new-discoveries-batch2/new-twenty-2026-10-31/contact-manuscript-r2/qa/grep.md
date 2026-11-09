@@ -1,0 +1,1 @@
+Checked Markdown, PDF extracted text, PROOF and STATEMENT-CORRESPONDENCE for all five required literal patterns. No stale operative endpoint/count claims. The sole HasZeroSetContact occurrence in each document is explicitly HISTORICAL. The historical SourceConjecture name is parenthesized within that historical paragraph. See grep.json for exact lines.
