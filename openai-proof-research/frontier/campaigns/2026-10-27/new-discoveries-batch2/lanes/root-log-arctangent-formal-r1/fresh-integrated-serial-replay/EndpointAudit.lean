@@ -1,0 +1,6 @@
+import SourceTheorem
+set_option autoImplicit false
+set_option warningAsError true
+#check LogArctangentSource.source_conjecture37
+#print LogArctangentSource.SourceClaim
+#print axioms LogArctangentSource.source_conjecture37

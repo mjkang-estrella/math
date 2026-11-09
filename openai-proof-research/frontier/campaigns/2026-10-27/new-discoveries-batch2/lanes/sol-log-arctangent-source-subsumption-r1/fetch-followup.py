@@ -1,0 +1,5 @@
+exec((__import__('pathlib').Path(__file__).parent/'fetch.py').read_text().split('jobs=')[0])
+jobs=[('omega-Problems-current','https://github.com/the-omega-institute/trureturing/tree/5517865965160e8d20e4122aafe4e6c468c6c41d/Problems'),('omega-D5-current','https://github.com/the-omega-institute/trureturing/tree/5517865965160e8d20e4122aafe4e6c468c6c41d/D5'),('count-registry-current.json','https://raw.githubusercontent.com/suvrit/count-ex-machina/dbf673741a54c7dc9d88a6aec0e8148a538f4a3a/registry.json'),('strong-means.pdf','https://citeseerx.ist.psu.edu/document?doi=b058ec653ea08448bd60dd3aa84539b46daf5ba2&repid=rep1&type=pdf'),('new-means-2016.html','https://link.springer.com/article/10.1186/s13660-016-1150-9')]
+exec((D/'fetch.py').read_text().split('def fetch(job):')[1].split('with concurrent.futures.ThreadPoolExecutor')[0].join(['def fetch(job):','']))
+with concurrent.futures.ThreadPoolExecutor(max_workers=5) as ex:out=list(ex.map(fetch,jobs))
+(D/'followup-retrievals.json').write_text(json.dumps(out,indent=2));print(json.dumps(out,indent=2))

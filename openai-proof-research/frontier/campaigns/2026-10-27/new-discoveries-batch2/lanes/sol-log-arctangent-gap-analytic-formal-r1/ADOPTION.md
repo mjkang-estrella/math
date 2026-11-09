@@ -1,0 +1,7 @@
+# Formal investment — one prospective Conjecture37 outcome
+
+29 October2026 UTC. Root adopts INVEST after reading sol-log-arctangent-investment-review-r3: independently read actual published Conjecture37, source definitions and auxiliary between-means bridges; substantive PASS with bounded novelty limits. Original ordinary proof and replacement E24 certificate each independently PASS. Root-source5bd9a36b72, coefficient proof6825c748df/freezea92ad4bf2b, original88eb1b426c remain immutable.
+
+No acceptance or formal PASS; credit0,total33/60. Formal target is both parameter branches for all distinct positive inputs in the actual published resultant inequality, with genuine log/atan/rpow means. The strict sandwich may support stronger terminology but is never separate credit. Classical Stolarsky stabilization, finite Abel, derivatives, elementary bounds, and formal infrastructure uncredited. No worldwide novelty claim.
+
+Initial component: closed positivity of the literal E built from A,B and their genuine derivatives, using36finiteprefixsigns,actual iteratedDeriv24 identity and derivative ladder. Root then integrates actual source-centered functions, A/B positivity and zero limits, ratio monotonicity, both-branch stabilization and homogeneous transfer. No surrogate SourceClaim or residual coefficient/derivative hypotheses permitted at final endpoint. Pinned Lean4.34.1 andmathlibd13f23b...; std3only; strictsource-onlyreplay and exhaustive declaration audits.
