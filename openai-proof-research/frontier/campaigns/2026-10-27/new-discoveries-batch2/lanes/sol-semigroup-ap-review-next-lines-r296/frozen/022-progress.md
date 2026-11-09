@@ -1,0 +1,11 @@
+# Progress and exact residuals
+
+AP priority: complete all-parameter exclusion proof written in discovery.md, with an explicit dependency on the frozen r294 horizon12 exact order certificate. It leaves exactly Ugolini H7 and H4 in the whole specified AP domain. The new mechanism is a conductor-side two-row GAP overlap, not a false concatenation of positive layers. Translations by t change rank by t-2, allowing alignment to be enforced rather than guessed. Targeted checks exercise actual membership, rank and row ordering; no higher horizon or multiplicity extension was used as an outcome.
+
+Second support follow-up: for <a,2t,3t>, let s=2t-a, 0<2s<t. Source H2 is s=1,t=3k+1 and H15 is s=2,t=6k+5. The exact Apéry table remains A[jt mod a]=jt except A[t mod a]=(a+1)t. With F=(a+1)t-a, the three highest gaps, when s>=3, are F,F-a,F-2t. They are isolated with >=2 consecutive positive integers on each side: the next possible gap is at most F-min(2a,3t), so below F-2t the positive run has length at least min(2a-2t,t)-1>=2. The top-gap boundary observation then forces a=1 mod3 and s=1 mod3, hence t=1 mod3. Initial distinctness only requires a=t!=0 mod3. This eliminates the a=t=2 mod3 branch for s>=3, but DOES NOT prove s<=2. The surviving a=t=s=1 mod3 pairs form an infinite two-parameter residual. This is explicitly not a closed second support or credit.
+
+Third support untouched beyond the supplied exact three-choice Apéry identity: <a,a+t,3t>, a/2<t<2a/3, primitive. Source H3 has 2t-a=1,a=6k+1; H16 has 2t-a=2,a=12k+8. Necessity of 2t-a<=2 is still conjectural here.
+
+Other seven supports remain those in frozen r294 discovery: 2a+2b=3d; 3a=b+d; 3a=2d; 3a+b=3d; 4a=3b; 4a=3d; 4a+b=3d. Their retained segment congruences and primitive lattice parameters are unchanged. Vertices and independent arrangement coverage are not rerun. Full Ugolini Conjecture5.1 still needs ALL these nine supports, independent review, source/prior clearance and the later acceptance requirements. No Lean/manuscript was attempted.
+
+Eight additional scouts were retired on actual public successor bodies; original historical papers and complete current proof-registry bodies were not cleared. All-source/novelty/acceptance HOLD; root alone accepts; counts9/39/next40 unchanged.

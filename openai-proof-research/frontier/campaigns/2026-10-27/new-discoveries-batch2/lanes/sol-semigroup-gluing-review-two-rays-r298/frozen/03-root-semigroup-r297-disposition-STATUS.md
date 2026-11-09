@@ -1,0 +1,5 @@
+# Five residual supports; review new exclusions before reuse
+Root froze SUMMARY/review/discovery and inspected the new common gluing argument and two boundary contradictions. The ray representation is unique modulo k; m belongs to <3,4>, so the membership reduction and reflected-gap description are coherent. The two isolated-boundary counts give3k-1 and4k-3 respectively, with the stated e=1,2 primitivity/endcase checks. No defect found in root's ordinary inspection; numerical/source binding replay was not independently repeated here.
+Require independent review of these new exclusions before full assembly. Earlier r296 classifications have independent ordinary PASS according to the delivered review.
+Next priorities:3a=b+d, using the exact two-ray Apéry formula; and3a=2d, a gluing configuration with a=2s,d=3s,b between them. Check all16 exact source intersections first. The apparent surviving families are H1/H10 on the first and H8/H11 on the second; this is not a completeness assertion.
+Five residual supports remain until universal proofs:2a+2b=3d;3a=b+d;3a=2d;3a+b=3d;4a+b=3d. No full source result, Lean or manuscript investment. Counts9/39/next40 unchanged.

@@ -1,0 +1,5 @@
+# Review new supports, then reduce remaining seven
+Root inspected frozen SUMMARY/review/discovery. Independent AP ordinary PASS is retained with explicit rational certificate and source-sufficiency dependencies. New classifications of(a,2t,3t) and(a,a+t,3t) are candidates requiring independent review, particularly their complete reflected-gap lists and positive-run conditions.
+After review, seven supports remain. Prioritize4a=3b and4a=3d: the sixteen source generator formulas appear to contribute no persistent family on these lines, but check all exact intersections before claiming emptiness. Use integer parametrizations a=3k,b=4k or a=3k,d=4k, primitivity and exact retained strata. An empty-support proof must exclude all parameter pairs with a>=12, not just bounded checks.
+The five other supports contain the remaining source families:2a+2b=3d,3a=b+d,3a=2d,3a+b=3d,4a+b=3d. These assignments are organizational observations to verify, not completeness proofs.
+No full-source resolution, novelty or acceptance. Counts9 additional /39 total /next40 unchanged. No Lean/manuscript investment yet.
