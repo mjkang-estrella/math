@@ -1,0 +1,13 @@
+# r407 actual research handoff
+
+Personal GPT-6.1 Sol high/default research only, no children or fallback. Fixed20 preserved/read; reservation SHA7263ba273cf092ae51c39f340903ecfeb00449c1110879b950dd2ed47c0c8cc3 verified before extraction. All source-dependent qualifications are separate from literal metadata. No acceptance;55/60 beyond39,94total unchanged.
+
+343702 has a complete ordinary full-scope refutation: Cartesian square of the three-vertex path, all edge-side sizes6/3, three degree values and three transmission values. The sustained all-dimensional star-power mechanism is proved too. It is HOLD because the specific pre-target2017 Cartesian characterization is unread after403; it may make this a routine corollary. Full proof: SUSTAINED-DERIVATIONS.md. Literal candidate: FULLCANDIDATE.md. No formal execution: DORMANT-SOL-FORMAL-PLAN.md.
+
+343496 has a complete entropic49-point counterexample and a product-factor error diagnosis, but receives zero credit because an actual2015/2016 primary matrix family plus converse criterion supplies the complete prior bridge. Final2020 paper403 unread; no claim that its final version retains the error.343721 is an actual public source refutation, zero credit. Seventeen remaining IDs are separately parked or held, not generically excluded. In particular341585 has a specific Karu prior claim HOLD from the completed r404 summary; no claim that both parts are resolved.
+
+Read exact20-gates.json for nine separate gates per ID, literal statements and exact unpaid obligations. raw-provenance.json binds all full originals including newline bytes, corpus chunk path/hash, one-based line, raw-object hash, decoded statement hash and exact raw JSON statement-token hash. No reselection or padding.
+
+Three actual native search calls/nine queries, each charged before its call; full responses and immutable plans retained. Four shared registry roots charged to all20; actual head OIDs retained, metadata depth only. No novelty clearance from README/head/search miss. Ten guard GET hops in total; two403 failures retained without retry. Inherited denied artifacts/quarantine remained untouched. All writes stayed in this lane via writer, apart from immutable guard's own ledger/payload/lock and authorized bootstrap/verifier outputs. All jobs synchronously reaped; receipts preserve true exits including both failures. Frozen before/after and manifest provide the final audit; see inventories for exact scope and resource limitations.
+
+No Lean certificate, independent review, paper or acceptance is claimed. Source acquisition is not proof qualification. Named terminal exclusions in actual-sha256-manifest.json prevent circular self-hashing; they are final files, not silently omitted evidence.

@@ -1,0 +1,196 @@
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+
+FILE inputs/ACTUALBRIEF.md
+# r407 actual research handoff
+
+Personal GPT-6.1 Sol high/default research only, no children or fallback. Fixed20 preserved/read; reservation SHA7263ba273cf092ae51c39f340903ecfeb00449c1110879b950dd2ed47c0c8cc3 verified before extraction. All source-dependent qualifications are separate from literal metadata. No acceptance;55/60 beyond39,94total unchanged.
+
+343702 has a complete ordinary full-scope refutation: Cartesian square of the three-vertex path, all edge-side sizes6/3, three degree values and three transmission values. The sustained all-dimensional star-power mechanism is proved too. It is HOLD because the specific pre-target2017 Cartesian characterization is unread after403; it may make this a routine corollary. Full proof: SUSTAINED-DERIVATIONS.md. Literal candidate: FULLCANDIDATE.md. No formal execution: DORMANT-SOL-FORMAL-PLAN.md.
+
+343496 has a complete entropic49-point counterexample and a product-factor error diagnosis, but receives zero credit because an actual2015/2016 primary matrix family plus converse criterion supplies the complete prior bridge. Final2020 paper403 unread; no claim that its final version retains the error.343721 is an actual public source refutation, zero credit. Seventeen remaining IDs are separately parked or held, not generically excluded. In particular341585 has a specific Karu prior claim HOLD from the completed r404 summary; no claim that both parts are resolved.
+
+Read exact20-gates.json for nine separate gates per ID, literal statements and exact unpaid obligations. raw-provenance.json binds all full originals including newline bytes, corpus chunk path/hash, one-based line, raw-object hash, decoded statement hash and exact raw JSON statement-token hash. No reselection or padding.
+
+Three actual native search calls/nine queries, each charged before its call; full responses and immutable plans retained. Four shared registry roots charged to all20; actual head OIDs retained, metadata depth only. No novelty clearance from README/head/search miss. Ten guard GET hops in total; two403 failures retained without retry. Inherited denied artifacts/quarantine remained untouched. All writes stayed in this lane via writer, apart from immutable guard's own ledger/payload/lock and authorized bootstrap/verifier outputs. All jobs synchronously reaped; receipts preserve true exits including both failures. Frozen before/after and manifest provide the final audit; see inventories for exact scope and resource limitations.
+
+No Lean certificate, independent review, paper or acceptance is claimed. Source acquisition is not proof qualification. Named terminal exclusions in actual-sha256-manifest.json prevent circular self-hashing; they are final files, not silently omitted evidence.
+
+FILE inputs/target-result.json
+{
+  "id": 343702,
+  "title": "Degree and transmission values in quasi-$(\\lambda,n)$-distance-balanced graphs",
+  "literal_statement": "Let $G$ be a quasi-$\\lambda$-distance-balanced graph. For a vertex $u$ of $G$, write $\\deg(u)$ for its degree and $D(u)=\\sum_{v\\in V(G)}d(u,v)$ for its total distance (transmission). **Degree\u2013transmission conjecture.**\n\n$$\n\\left|\\{\\deg(u):u\\in V(G)\\}\\right|=\\left|\\{D(u):u\\in V(G)\\}\\right|=2.\n$$\n\nThe conjecture is motivated by the bipartite structure of quasi-$\\lambda$-distance-balanced graphs and the observed restrictions on the possible sizes of the sets $W_{uv}^{G}$. Its status is not resolved in the supplied source.",
+  "source_url": "https://arxiv.org/abs/1909.02634",
+  "raw_original": "originals/343702.jsonl",
+  "literal_gate": "PASS complete literal read after exact raw preservation, before prioritization",
+  "source_gate": "actual primary definitions/statements and applicable proof passages read; read-access inventory limits apply",
+  "math_gate": "FULL ordinary refutation; see sustained derivation",
+  "prior_gate": "HOLD_SPECIFIC_UNREAD_2017_CARTESIAN_THEOREM: full ordinary nine-vertex refutation plus arbitrary-dimensional star-power derivation. Exact earlier Cartesian theorem body403 unread; novelty and significance unpaid.",
+  "novelty_gate": "HOLD specific2017 body",
+  "significance_gate": "UNQUALIFIED; no significance acceptance",
+  "formal_gate": "NOT EXECUTED; discovery prohibition; dormant plan only",
+  "independent_gate": "NOT DONE; own contrary assessment is not independent review",
+  "acceptance_gate": "NOT ACCEPTED; credit0; root only",
+  "assessment": "HOLD_SPECIFIC_UNREAD_2017_CARTESIAN_THEOREM: full ordinary nine-vertex refutation plus arbitrary-dimensional star-power derivation. Exact earlier Cartesian theorem body403 unread; novelty and significance unpaid.",
+  "credit": 0
+}
+
+FILE inputs/registry-inventory.json
+[
+  {
+    "name": "openai",
+    "observed_head_candidates": [
+      "4eaee87548250b2682affda7d05d947c05554bae"
+    ],
+    "title": [
+      "GitHub - openai/math \u00b7 GitHub"
+    ],
+    "depth": "root HTML metadata and rendered text only; no theorem/proof body",
+    "proof_clearance": false
+  },
+  {
+    "name": "leanpool",
+    "observed_head_candidates": [
+      "45b5a1be4b778aa0d78b82671a7b67e649cd05f5"
+    ],
+    "title": [
+      "GitHub - LeanPool/lean-pool \u00b7 GitHub"
+    ],
+    "depth": "root HTML metadata and rendered text only; no theorem/proof body",
+    "proof_clearance": false
+  },
+  {
+    "name": "tauceti",
+    "observed_head_candidates": [
+      "e583e15d3be177d86491854d1db508f6edfe5ee7"
+    ],
+    "title": [
+      "GitHub - TauCetiProject/TauCeti: An AIs-welcome Lean library downstream of Mathlib: AI handle the implementation and review, humans write the roadmaps and review rubrics \u00b7 GitHub"
+    ],
+    "depth": "root HTML metadata and rendered text only; no theorem/proof body",
+    "proof_clearance": false
+  },
+  {
+    "name": "deepmind",
+    "observed_head_candidates": [
+      "2055e5adadae0b2e392365938faa82ef6f1464f0"
+    ],
+    "title": [
+      "GitHub - google-deepmind/formal-conjectures: A collection of formalized statements of conjectures in Lean. \u00b7 GitHub"
+    ],
+    "depth": "root HTML metadata and rendered text only; no theorem/proof body",
+    "proof_clearance": false
+  }
+]
+FILE inputs/get-qdb-prior-plan.json
+{
+  "url": "https://www.sciencedirect.com/science/article/pii/S0166218X17302202/pdfft",
+  "routes": [
+    "343702"
+  ],
+  "destination": "sources/qdb-prior.pdf",
+  "source_identity": "Abedi Alaeiyan Hujdurovic Kutnar Quasi lambda distance balanced graphs DAM2017",
+  "purpose": "Read pre-target Cartesian product theorem proof for precise routine bridge assessment"
+}
+SOURCE ENTRIES
+qdb.pdf
+qdb.txt
+registry-deepmind.html
+registry-deepmind.txt
+registry-leanpool.html
+registry-leanpool.txt
+registry-openai.html
+registry-openai.txt
+registry-tauceti.html
+registry-tauceti.txt
