@@ -1,0 +1,1 @@
+First actual polynomial variable-killing map proof and compile, no baseline rebuild or broad API search. Then prove BOTH kernel inclusions for coordinate span and use original r13 equalities for fullside Pc. General Pc(T) has minors; not equal coordinate ideal automatically. Full endpoint and remaining field cases unpaid.
