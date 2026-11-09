@@ -1,0 +1,3 @@
+# Parent disposition
+
+Read completed delegate transcript, SUMMARY.md, results.json and ROMAN-ATTEMPT.md. Verified all 50 reservation IDs are represented exactly and all formal/credit fields remain incomplete/zero. No mathematical acceptance and no new cumulative corpus coverage claimed (these were previously unfinished reservations). Preserve reported public-proof exclusions and metadata-only holds; do not promote them to full independent audits. Roman bondage is parked at the unproved separator lemma; finite diagnostics do not close it. Next assignment restores three other exact primary statements and attempts full proofs, with Lean mandatory. Count remains 0/20.
