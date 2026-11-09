@@ -1,0 +1,133 @@
+--- sym4/continue_sym2.py
++++ sym5/continue_sym2.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Bounded, checkpointed nd-sym continuation. All writes are confined to sym2/."""
++"""Bounded, checkpointed nd-sym continuation. All writes are confined to sym5/."""
+ import sys
+ sys.dont_write_bytecode = True
+ import argparse
+@@ -78,13 +78,13 @@
+ 
+ 
+ def reconcile():
+-    source = HD/'sym2/summary.json'
+-    previous = read(HD/'sym2/assignment.json')
++    source = HD/'sym4/summary.json'
++    previous = read(HD/'sym4/assignment.json')
+     keys = read(source)['open']
+-    assert len(keys)==134
++    assert len(keys)==95
+     save(HERE/'assignment.json',{'configurations':{k:previous['configurations'][k] for k in keys},
+                                 'source':str(source.relative_to(ROOT)),
+-                                'source_sha256':sha(source),'expected':134})
++                                'source_sha256':sha(source),'expected':95})
+     print('assigned',len(keys))
+ 
+ 
+@@ -99,7 +99,7 @@
+         seen.add(state)
+         if len(seen) > 200000:
+             raise Budget('slice enumeration')
+-        floor = max(3, valuation(K, 2) + 1 + extra_floor)
++        floor = max(MIN_FLOOR, valuation(K, 2) + 1 + extra_floor)
+         bad = next((i for i, x in enumerate(floors) if x < floor), None)
+         if bad is None:
+             result.add((K, cs, floor))
+@@ -122,7 +122,7 @@
+         seen.add(state)
+         if len(seen) > 200000:
+             raise Budget('distinct slice enumeration')
+-        floor = max(3, valuation(K, 2) + 1 + extra_floor)
++        floor = max(MIN_FLOOR, valuation(K, 2) + 1 + extra_floor)
+         bad = next((i for i, x in enumerate(floors) if x < floor), None)
+         if bad is None:
+             result.add((K, cs, floor))
+@@ -148,7 +148,7 @@
+         seen.add(state)
+         if len(seen) > 200000:
+             raise Budget('position slice enumeration')
+-        if p >= max(3, valuation(K, 2) + 1 + extra_floor):
++        if p >= max(MIN_FLOOR, valuation(K, 2) + 1 + extra_floor):
+             result.add((K, cs, p))
+             continue
+         todo.append((K, cs, p + 1))
+@@ -160,12 +160,13 @@
+ 
+ 
+ LIBRARY = {}
++MIN_FLOOR = 3
+ 
+ 
+ def library():
+     global LIBRARY
+     LIBRARY = {}
+-    previous = HD / 'sym2/kill_usage.json'
++    previous = HD / 'sym4/kill_usage.json'
+     for f, rec in read(previous).items():
+         m = rec['meta']
+         if m['scope'] != 'full':
+@@ -186,6 +187,8 @@
+ 
+ def search_worker(args):
+     name, rec, seconds, lifts, schedule, stage, extra_floor, pin_digits, precompute, modulus_digits, depth, distinct, positions = args
++    global MIN_FLOOR
++    MIN_FLOOR = max(3, pin_digits)  # SYM5: explicitly cover low positions
+     signal.signal(signal.SIGALRM, alarm)
+     signal.setitimer(signal.ITIMER_REAL, seconds)
+     start = time.monotonic()
+@@ -255,7 +258,7 @@
+          'precompute': a.precompute, 'modulus_digits': a.modulus_digits, 'depth': a.depth,
+          'distinct_fixed_positions': a.distinct_fixed,
+          'position_partition': a.position_slices,
+-         'keys': [j[0] for j in jobs], 'code_hashes': {f: sha(HERE / f) for f in ('gen_sym.py', 'gen_precomputed.py', 'check_sym.py', 'continue_sym2.py')}})
++         'keys': [j[0] for j in jobs], 'code_hashes': {f: sha(HERE / f) for f in ('gen_sym.py', 'gen_precomputed.py', 'check_sym5.py', 'continue_sym2.py')}})
+     print('jobs', len(jobs), 'seconds', a.seconds, 'workers', a.workers, flush=True)
+     # A barrier between dimensions ensures the smaller configurations run first.
+     with concurrent.futures.ProcessPoolExecutor(max_workers=a.workers,
+@@ -273,7 +276,7 @@
+ def check_worker(path):
+     before = sha(path)
+     start = time.monotonic()
+-    command = ['bash', '-c', 'ulimit -v 8000000; python3 -I "$@"', 'sym2-direct-check', str(HERE / 'check_sym.py'), str(path), '10']
++    command = ['bash', '-c', 'ulimit -v 8000000; python3 -I "$@"', 'sym2-direct-check', str(HERE / 'check_sym5.py'), str(path), '10']
+     try:
+         p = subprocess.run(command, text=True, capture_output=True, timeout=900)
+         parsed = json.loads(p.stdout.strip().splitlines()[-1])
+@@ -302,7 +305,7 @@
+         for line in data.splitlines():
+             entry = json.loads(line)
+             ledger['files'][entry['file']] = entry['record']
+-    ledger.update(checker_sha256=sha(HERE / 'check_sym.py'), brute_Lmax=10)
++    ledger.update(checker_sha256=sha(HERE / 'check_sym5.py'), brute_Lmax=10)
+     todo = [p for p in sorted(paths) if a.force_check or str(p) not in ledger['files']
+             or ledger['files'][str(p)]['result'] != 'PASS' or ledger['files'][str(p)]['sha256'] != sha(p)]
+     print('direct checks', len(todo), 'already checked', len(ledger['files']), flush=True)
+@@ -470,7 +473,7 @@
+ def main():
+     ap = argparse.ArgumentParser(description=__doc__)
+     ap.add_argument('mode', choices=('reconcile', 'search', 'check', 'audit'))
+-    ap.add_argument('--workers', type=int, default=12)
++    ap.add_argument('--workers', type=int, default=10)
+     ap.add_argument('--seconds', type=float, default=8)
+     ap.add_argument('--lifts', type=int, default=100000000)
+     ap.add_argument('--stage', default='broad8')
+@@ -488,15 +491,11 @@
+     ap.add_argument('--force-check', action='store_true')
+     ap.add_argument('--selection')
+     a = ap.parse_args()
+-    assert 1 <= a.workers <= 12 and a.seconds < 1200
++    assert 1 <= a.workers <= 10 and a.seconds < 1200
+     if a.mode == 'reconcile': reconcile()
+     elif a.mode == 'search': search(a)
+-    elif a.mode == 'check':
+-        subprocess.run(['bash','-c','ulimit -v 8000000; python3 -I "$@"','sym4-replay',
+-                        str(HERE/'replay_dual.py'),'--workers',str(a.workers)],check=True)
+-    else:
+-        subprocess.run(['bash','-c','ulimit -v 8000000; python3 -I "$@"','sym4-coverage',
+-                        str(HERE/'audit_coverage.py')],check=True)
++    elif a.mode == 'check': checks(a)
++    else: audit()
+ 
+ 
+ if __name__ == '__main__':

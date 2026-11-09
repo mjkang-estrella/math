@@ -1,0 +1,26 @@
+
+## 5. Coverage: configuration → slice → certificate (task 4)
+
+`f_cover.py` (own code; E's `e_enum.py` used only as a cross-check).
+
+1. **Model.** Digit strings `d_{L-1}…d_0` with digits in {1,2,3,4,6,7,8,9} (0 and 5 excluded since the product 14112 = 2^5·3^2·7^2 is nonzero and prime to 5). `n = (10^L−1)/9 + Σ (d_i−1)10^i`, so `9n = 10^L + K + Σ_{i≥3} A_i 10^i` with `K = 9·S_low − 1`, `S_low = Σ_{i<3}(d_i−1)10^i`, `A = 9(d−1)` ∈ {9,18,27,45,54,63,72}. Checked on **all 339 486 digit strings of length ≤ 9 with product 14112**: each lies in a configuration `(S_low, sorted far A's)` of my enumeration, and the identity holds exactly. (Lengths < 5 cannot reach product 14112; for `L ≥ 3` `n mod 1000 = 111 + S_low`.) The configuration key is unique per digit string. Configurations of target 14112: **1640**; my set equals E's exactly (`my config set == E's config set`).
+2. **Slices.** For K and the free far multiset R, my recursion `slices(K,R)` decides positions p = 3,4,… in increasing order: stop when `p ≥ max(3, v2(K)+1)` (all free positions are then `≥ p > t0`); otherwise either position p holds digit 1 (continue) or one of the distinct free digits (fix: `K += A·10^p`, remove A from R). This is a partition of all placements. Demo (even K, i.e. odd S_low): `S_low = 1` (K = 8, t0 = 3) gives pieces `(8,(9,18),qmin 4)`, `(9008,(18,),5)`, `(189008,(),5)`, `(18008,(9,),4)`; `S_low = 105` (K = 944, t0 = 4) gives 13 pieces.
+3. **Result for the 121 closed keys** (`summary.json["closed"]`):
+   * all 121 keys are real configurations (also: all 331 baseline keys, closed + BUDGET, are real configurations);
+   * **all 121 have S_low even, hence K = 9·S_low−1 odd, t0 = 0, and my recursion yields exactly ONE slice `(K, far multiset, qmin = 3)`** for each — there is *no v2 edge case* among the closed configurations (the 172 BUDGET configurations with odd S_low are the ones that would need them, and none was claimed closed);
+   * for each of the 121 slices there is exactly one certificate in `highdim/sym/certs/*/` with the same `K`, group multiset (coefficient → multiplicity) equal to the far multiset, `qmin = 3 ≤` slice qmin, `scope=full`, `domain=unordered`, root = (all-zero mod 1), `qmin > v2(K)`, and **my checker returns PASS with no declared solution**;
+   * my slice→certificate map equals M's `coverage_audit.json` map for **121/121**; the 121 certificates are pairwise distinct (max 1 configuration per file); 25 further certificate files in `certs/` (same four directories) are not used by any of the 121 closures (they are leftovers/other attempts; not relied on).
+   * **Domains match.** Cert domain: pairwise distinct positions `3 ≤ q < L`, one slot per far digit, groups by *coefficient value* — this is the "unordered" domain, so all orderings of different far digits are covered at once (the ordered-domain hole that E found in `checknd` certificates does not occur). The slice domain: far digits at pairwise distinct positions `≥ 3`, `L >` all positions (the leading digit at position L−1 may itself be a far digit). Equal.
+   * **L below the certificate floor.** A configuration with m far digits needs `L ≥ 3 + m ≥ 8`, while the certificate domain contains every `L ≥ 4`; so no point of these configurations lies below the certificate floor and no finite exception scan is needed for the 121 closures. (M additionally scanned to `Lmax = 21`.)
+4. **Independent end-to-end consistency.** `f_scan.py`: all 11 119 028 numbers `2^i 3^j 7^k < 10^200` were enumerated and their digit products read from the decimal string: the only one with product 14112 is **33718272** (config `161|18,18,54,63`, 4 far digits — *not* among the 121). So no counterexample to the claim "no member in the 121 closed configurations" exists below 10^200. (A consistency check; the proof is the certificates.)
+5. **Ledger status caveat (11 promoted keys).** 110 of the 121 keys have status `SLICE_COVER_CHECKED` in an `attack_*.json` ledger (decimal_full 71, broad_pin2 18, decimal5_high 15, decimal_pilot 11, with overlaps). The other **11** (`10|18,18,27,27,54,54`, `10|9,18,18,54,54,63`, `10|9,9,27,54,54,72`, `110|9,18,18,27,54,54`, `12|9,9,18,27,54,54`, `130|9,9,18,18,54,54`, `150|9,9,9,18,54,54`, `16|9,9,9,18,45,54`, `210|9,9,18,27,54,54`, `50|9,9,18,27,54,54`, `56|9,9,9,9,18,54`) are `BUDGET` in every stage ledger: the certificate file was completed just before the in-pipeline checker timed out and M promoted it after a standalone PASS (see the last PROVED paragraph of `notes/highdim_sym.md`). Because a file written at a timeout could in principle be truncated, I note explicitly that my checker verified these 11 files in full (completeness of the lift cover, reachability, every kill): all 11 PASS, so none is truncated or partial. The mapping used in the table below is `coverage_audit.json`'s, which I verified against my own slices.
+
+| stage dir | certificates used by the 121 | PASS (mine) |
+|---|---|---|
+| `decimal_full` | 52 | 52 |
+| `broad_pin2` | 37 | 37 |
+| `decimal5_high` | 26 | 26 |
+| `decimal_pilot` | 6 | 6 |
+| **total** | **121** | **121** |
+
+**Coverage conclusion: 121/121 configurations are covered by exactly one independently accepted certificate; no uncovered slice, no v2 edge case, no domain mismatch.**

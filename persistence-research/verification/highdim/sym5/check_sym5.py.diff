@@ -1,0 +1,36 @@
+--- sym4/check_sym.py
++++ sym5/check_sym5.py
+@@ -99,23 +99,27 @@
+         require(type(self.qmin) is int and self.qmin>self.t,'invalid 2-adic floor')
+         if self.pin2: require(self.qmin>=self.t+3,'invalid mod-8 floor')
+         self.pin_digits=m.get('pin_digits',0)
+-        require(type(self.pin_digits) is int and 0<=self.pin_digits<=min(3,self.qmin),'decimal pin depth')
++        # SYM5: the domain proves any decimal depth up to qmin.
++        require(type(self.pin_digits) is int and 0<=self.pin_digits<=self.qmin,'decimal pin depth')
+         self.pin_representatives=[]
+         self.target_cache={}
+         if self.pin_digits:
+             modulus=5**self.pin_digits*2**max(self.pin_digits-self.t,0)
+             def cycle(base):
+-                seq=[1]
++                seq=[1]; seen={1}  # SYM5: linear cycle membership
+                 v=base%modulus
+                 while v!=1:
+-                    require(v not in seq,'non-unit decimal cycle')
+-                    seq.append(v);v=v*base%modulus
++                    require(v not in seen,'non-unit decimal cycle')
++                    seq.append(v);seen.add(v);v=v*base%modulus
+                 return seq
+             seq3,seq7=cycle(3),cycle(7)
+             self.decimal_periods=(len(seq3),len(seq7))
++            # SYM5: exact join of the same Cartesian pairs, without quadratic scanning.
++            by_value=collections.defaultdict(list)
++            for wr,v in enumerate(seq7): by_value[v].append(wr)
+             for ar,u in enumerate(seq3):
+-                for wr,v in enumerate(seq7):
+-                    if u*v%modulus!=(self.K//2**self.t)%modulus: continue
++                wanted=(self.K//2**self.t)*pow(u,-1,modulus)%modulus
++                for wr in by_value[wanted]:
+                     if self.pin2 and pow(3,ar,8)*pow(7,wr,8)%8!=(self.K//2**self.t)%8: continue
+                     self.pin_representatives.append((ar,wr))
+         self.nodes={}
