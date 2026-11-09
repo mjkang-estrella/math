@@ -1,0 +1,12 @@
+import Mathlib
+#check Nat.even_or_odd
+#check Nat.even_or_odd'
+#check Matrix.IsHermitian.eigenvectorBasis
+#check Matrix.IsHermitian.mulVec_eigenvectorBasis
+#check Matrix.IsHermitian.eigenvalues
+#check Matrix.IsHermitian.spectral_theorem
+#check OrthonormalBasis.sum_inner_mul_inner
+#check Matrix.IsHermitian.eigenvalues_eq
+#check Matrix.IsHermitian.eigenvectorBasis_apply
+#check Matrix.mulVec_mulVec
+#check Matrix.pow_succ

@@ -1,0 +1,10 @@
+import Mathlib
+#check List.prod_eq_zero
+#check List.prod_eq_zero_iff
+#check Nat.factorial_pred
+#check Nat.factorial_succ
+#check List.mem_map
+#check List.prod_map_mul
+#check List.prod_map_div
+#check List.prod_div_distrib
+#check Nat.factorial_pos

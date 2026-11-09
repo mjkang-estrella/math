@@ -1,0 +1,13 @@
+import Mathlib
+#check composition_card
+#check Composition.blocks_eq_nil
+#check Equiv.sum_comp
+#check Fintype.sum_sigma
+#check Fin.sum_univ_succ
+#check Composition.ext
+#check Sigma.ext
+#check Nat.factorial_succ
+#check le_of_tendsto
+#check le_of_tendsto_of_tendsto
+#check Filter.Eventually.and
+#check Filter.Tendsto.eventually_lt_const
