@@ -1,0 +1,12 @@
+#!/bin/bash
+set -u
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+export TMPDIR="$ROOT/tmp" XDG_CACHE_HOME="$ROOT/cache"
+name="$1"; url="$2"
+mkdir "$ROOT/downloads/$name" || exit 1
+date -u +%FT%TZ > "$ROOT/downloads/$name/receipt"
+printf '%s\n' "$url" >> "$ROOT/downloads/$name/receipt"
+curl --max-time 40 --connect-timeout 15 --location --proto '=https' --proto-redir '=https' -sS -D "$ROOT/downloads/$name/headers" -o "$ROOT/downloads/$name/body" -w 'status=%{http_code} final=%{url_effective}\n' "$url" >> "$ROOT/downloads/$name/receipt" 2>&1
+printf 'curl_exit=%s\n' "$?" >> "$ROOT/downloads/$name/receipt"
+sha256sum "$ROOT/downloads/$name/body" >> "$ROOT/downloads/$name/receipt" 2>/dev/null
+cat "$ROOT/downloads/$name/receipt"

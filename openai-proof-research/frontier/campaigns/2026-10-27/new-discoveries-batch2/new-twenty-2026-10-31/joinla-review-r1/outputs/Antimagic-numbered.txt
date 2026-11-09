@@ -1,0 +1,327 @@
+     1	import Mathlib.Algebra.BigOperators.Fin
+     2	import Mathlib.Data.Fintype.BigOperators
+     3	import Mathlib.Tactic.FinCases
+     4	import Mathlib.Tactic.NormNum
+     5	import Mathlib.Tactic.Ring
+     6	import Mathlib.Algebra.Order.Group.Int.Sum
+     7	
+     8	namespace R159
+     9	open Finset
+    10	abbrev E := Fin 6 × Fin 5
+    11	abbrev V := (Fin 6 × Bool) ⊕ (Fin 2 × Bool)
+    12	
+    13	-- Six matching edges, three per component; four join edges at each matched pair.
+    14	def ends (e : E) : V × V :=
+    15	  match e.2.val with
+    16	  | 0 => (.inl (e.1, false), .inl (e.1, true))
+    17	  | 1 => (.inl (e.1, false), .inr (⟨e.1.val / 3, by omega⟩, false))
+    18	  | 2 => (.inl (e.1, false), .inr (⟨e.1.val / 3, by omega⟩, true))
+    19	  | 3 => (.inl (e.1, true), .inr (⟨e.1.val / 3, by omega⟩, false))
+    20	  | _ => (.inl (e.1, true), .inr (⟨e.1.val / 3, by omega⟩, true))
+    21	
+    22	def wt (f : E → ℤ) (v : V) : ℤ :=
+    23	  ∑ e : E, if (ends e).1 = v ∨ (ends e).2 = v then f e else 0
+    24	
+    25	def L (f : E → ℤ) (t : Fin 6) := f (t,0) + f (t,1) + f (t,2)
+    26	def R (f : E → ℤ) (t : Fin 6) := f (t,0) + f (t,3) + f (t,4)
+    27	def O (f : E → ℤ) (h : Fin 2) (b : Bool) :=
+    28	  ∑ j : Fin 3, (if b then f (⟨3*h.val+j.val, by omega⟩,2) +
+    29	    f (⟨3*h.val+j.val, by omega⟩,4)
+    30	    else f (⟨3*h.val+j.val, by omega⟩,1) + f (⟨3*h.val+j.val, by omega⟩,3))
+    31	
+    32	lemma wt_left (f : E → ℤ) (t : Fin 6) :
+    33	    wt f (.inl (t,false)) = L f t := by
+    34	  fin_cases t <;> simp [wt, ends, L, Fintype.sum_prod_type, Fin.sum_univ_succ] <;> ring
+    35	lemma wt_right (f : E → ℤ) (t : Fin 6) :
+    36	    wt f (.inl (t,true)) = R f t := by
+    37	  fin_cases t <;> simp [wt, ends, R, Fintype.sum_prod_type, Fin.sum_univ_succ] <;> ring
+    38	lemma wt_null (f : E → ℤ) (h : Fin 2) (b : Bool) :
+    39	    wt f (.inr (h,b)) = O f h b := by
+    40	  fin_cases h <;> cases b <;>
+    41	    simp [wt, ends, O, Fintype.sum_prod_type, Fin.sum_univ_succ]
+    42	
+    43	def Labeling (f : E → ℤ) : Prop :=
+    44	  Function.Injective f ∧ (∀ e, 1 ≤ f e ∧ f e ≤ 30)
+    45	def Proper (f : E → ℤ) : Prop :=
+    46	  ∀ e, wt f (ends e).1 ≠ wt f (ends e).2
+    47	
+    48	lemma total (f : E → ℤ) (hf : Labeling f) : ∑ e, f e = 465 := by
+    49	  have hi : (univ.image f) = Icc (1:ℤ) 30 := by
+    50	    apply eq_of_subset_of_card_le
+    51	    · intro x hx
+    52	      obtain ⟨e, _, rfl⟩ := mem_image.mp hx
+    53	      exact mem_Icc.mpr (hf.2 e)
+    54	    · rw [card_image_of_injective _ hf.1]
+    55	      norm_num
+    56	  have hh := sum_image (s := (univ : Finset E)) (f := id) (g := f)
+    57	    (fun a _ b _ h => hf.1 h)
+    58	  rw [hi] at hh
+    59	  norm_num at hh
+    60	  exact hh.symm
+    61	
+    62	lemma palette {a b c x y z w : ℤ}
+    63	    (hx : x=a ∨ x=b ∨ x=c) (hy : y=a ∨ y=b ∨ y=c)
+    64	    (hz : z=a ∨ z=b ∨ z=c) (hw : w=a ∨ w=b ∨ w=c)
+    65	    (hxy : x≠y) (hxz : x≠z) (hyz : y≠z) :
+    66	    w=x ∨ w=y ∨ w=z := by omega
+    67	
+    68	lemma pair_sum {a b c x y z : ℤ}
+    69	    (hx : x=a ∨ x=b ∨ x=c) (hy : y=a ∨ y=b ∨ y=c)
+    70	    (hz : z=a ∨ z=b ∨ z=c)
+    71	    (hab : a≠b) (hac : a≠c) (hbc : b≠c)
+    72	    (hxy : x≠y) (hxz : x≠z) (hyz : y≠z) :
+    73	    x+y+z=a+b+c := by omega
+    74	
+    75	lemma twelve_lower (f : E → ℤ) (hf : Labeling f)
+    76	    (s : Finset E) (hc : s.card = 12) : 78 ≤ ∑ e ∈ s, f e := by
+    77	  have hh := Finset.sum_range_le_sum (s := s.image f) (c := (1:ℤ))
+    78	    (by intro x hx; obtain ⟨e, _, rfl⟩ := mem_image.mp hx; exact (hf.2 e).1)
+    79	  rw [card_image_of_injective _ hf.1, hc] at hh
+    80	  rw [sum_image (fun a _ b _ h => hf.1 h)] at hh
+    81	  norm_num [Fin.sum_univ_succ, Finset.sum_range_succ] at hh
+    82	  exact hh
+    83	
+    84	#print axioms wt_left
+    85	#print axioms total
+    86	end R159
+    87	
+    88	namespace R159
+    89	open Finset
+    90	def M (f : E → ℤ) : ℤ := ∑ t : Fin 6, f (t,0)
+    91	def Mc (f : E → ℤ) (h : Fin 2) : ℤ :=
+    92	 ∑ j : Fin 3, f (⟨3*h.val+j.val, by omega⟩,0)
+    93	def pc (f : E → ℤ) (h : Fin 2) : ℤ :=
+    94	 ∑ j : Fin 3, (L f ⟨3*h.val+j.val, by omega⟩ + R f ⟨3*h.val+j.val, by omega⟩)
+    95	
+    96	lemma component_count (f : E → ℤ) (h : Fin 2) :
+    97	  pc f h = 2*Mc f h + O f h false + O f h true := by
+    98	 fin_cases h <;> simp [pc, Mc, O, L, R, Fin.sum_univ_succ] <;> ring
+    99	lemma all_count (f : E → ℤ) :
+   100	  (∑ e, f e) = M f + O f 0 false + O f 0 true + O f 1 false + O f 1 true := by
+   101	 simp [M, O, Fintype.sum_prod_type, Fin.sum_univ_succ]
+   102	 ring
+   103	lemma m_count (f : E → ℤ) : M f = Mc f 0 + Mc f 1 := by
+   104	 simp [M, Mc, Fin.sum_univ_succ]
+   105	 ring
+   106	lemma m_upper (f : E → ℤ) (hf : Labeling f) : M f ≤ 180 := by
+   107	 have hh := sum_le_sum (s := (univ : Finset (Fin 6)))
+   108	    (f := fun t => f (t,0)) (g := fun _ => (30:ℤ))
+   109	    (fun t _ => (hf.2 (t,0)).2)
+   110	 simpa [M] using hh
+   111	
+   112	lemma triangle_proper (f : E → ℤ) (hp : Proper f) (t : Fin 6) (b : Bool) :
+   113	 L f t ≠ R f t ∧ L f t ≠ O f ⟨t.val/3, by omega⟩ b ∧
+   114	 R f t ≠ O f ⟨t.val/3, by omega⟩ b := by
+   115	 have h0 := hp (t,0)
+   116	 have h1 := hp (t,1)
+   117	 have h2 := hp (t,2)
+   118	 have h3 := hp (t,3)
+   119	 have h4 := hp (t,4)
+   120	 simp [ends, wt_left, wt_right, wt_null] at h0 h1 h2 h3 h4
+   121	 cases b
+   122	 · exact ⟨h0,h1,h3⟩
+   123	 · exact ⟨h0,h2,h4⟩
+   124	
+   125	def Three (f : E → ℤ) : Prop :=
+   126	 ∃ a b c : ℤ, ∀ v, wt f v = a ∨ wt f v = b ∨ wt f v = c
+   127	
+   128	lemma canonical_palette (f : E → ℤ) (hp : Proper f) (ht : Three f) :
+   129	 ∀ v, wt f v = L f 0 ∨ wt f v = R f 0 ∨ wt f v = O f 0 false := by
+   130	 obtain ⟨a,b,c,h⟩ := ht
+   131	 intro v
+   132	 have h0 := h (.inl (0,false))
+   133	 have h1 := h (.inl (0,true))
+   134	 have h2 := h (.inr (0,false))
+   135	 rw [wt_left] at h0
+   136	 rw [wt_right] at h1
+   137	 rw [wt_null] at h2
+   138	 have p := triangle_proper f hp 0 false
+   139	 exact palette h0 h1 h2 (h v) p.1 p.2.1 p.2.2
+   140	
+   141	lemma null_same (f : E → ℤ) (hp : Proper f) (ht : Three f) (h : Fin 2) :
+   142	 O f h false = O f h true := by
+   143	 obtain ⟨a,b,c,hh⟩ := ht
+   144	 let t : Fin 6 := ⟨3*h.val, by omega⟩
+   145	 have h0 := hh (.inl (t,false))
+   146	 have h1 := hh (.inl (t,true))
+   147	 have h2 := hh (.inr (h,false))
+   148	 have h3 := hh (.inr (h,true))
+   149	 rw [wt_left] at h0
+   150	 rw [wt_right] at h1
+   151	 rw [wt_null] at h2 h3
+   152	 have p := triangle_proper f hp t false
+   153	 have q := triangle_proper f hp t true
+   154	 have he : (⟨t.val/3, by omega⟩ : Fin 2) = h := by apply Fin.ext; dsimp [t]; omega
+   155	 rw [he] at p q
+   156	 have := palette h0 h1 h2 h3 p.1 p.2.1 p.2.2
+   157	 omega
+   158	
+   159	lemma pair_total (f : E → ℤ) (hp : Proper f) (ht : Three f) (t : Fin 6) :
+   160	 L f t + R f t + O f ⟨t.val/3, by omega⟩ false =
+   161	 L f 0 + R f 0 + O f 0 false := by
+   162	 have h := canonical_palette f hp ht
+   163	 have h0 := h (.inl (t,false))
+   164	 have h1 := h (.inl (t,true))
+   165	 have h2 := h (.inr (⟨t.val/3, by omega⟩,false))
+   166	 rw [wt_left] at h0
+   167	 rw [wt_right] at h1
+   168	 rw [wt_null] at h2
+   169	 have p := triangle_proper f hp 0 false
+   170	 have q := triangle_proper f hp t false
+   171	 exact pair_sum h0 h1 h2 p.1 p.2.1 p.2.2 q.1 q.2.1 q.2.2
+   172	
+   173	end R159
+   174	
+   175	namespace R159
+   176	open Finset
+   177	def J (b : Fin 6 → Bool) (x : Fin 6 × Fin 2) : E :=
+   178	 (x.1, if b x.1 then (if x.2 = 0 then 3 else 4) else (if x.2 = 0 then 1 else 2))
+   179	def Qs (b : Fin 6 → Bool) : Finset E := univ.image (J b)
+   180	lemma j_inj (b : Fin 6 → Bool) : Function.Injective (J b) := by
+   181	 intro ⟨t,i⟩ ⟨u,j⟩ h
+   182	 have he : t=u := congrArg Prod.fst h
+   183	 subst u
+   184	 have h2 := congrArg Prod.snd h
+   185	 fin_cases i <;> fin_cases j <;> cases hb : b t <;> simp [J,hb] at h2 ⊢
+   186	lemma qcard (b : Fin 6 → Bool) : (Qs b).card = 12 := by
+   187	 rw [Qs, card_image_of_injective _ (j_inj b)]
+   188	 norm_num
+   189	lemma qidentity (f : E → ℤ) (b : Fin 6 → Bool) (z : ℤ)
+   190	 (hw : ∀ t, (if b t then R f t else L f t) = z) :
+   191	 6*z = M f + ∑ e ∈ Qs b, f e := by
+   192	 have hsel : ∀ t, f (t,0) + f (J b (t,0)) + f (J b (t,1)) = z := by
+   193	  intro t
+   194	  have hh := hw t
+   195	  cases hb : b t <;> simpa [hb,L,R,J] using hh
+   196	 have hh := congrArg (fun g : Fin 6 → ℤ => ∑ t, g t) (funext hsel)
+   197	 simp only [sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul] at hh
+   198	 rw [Qs, sum_image (fun a _ c _ h => j_inj b h), Fintype.sum_prod_type]
+   199	 simp only [Fin.sum_univ_two]
+   200	 dsimp [M]
+   201	 rw [← sum_add_distrib]
+   202	 simpa [add_assoc] using hh.symm
+   203	
+   204	lemma pc_total (f : E → ℤ) (hp : Proper f) (ht : Three f) (h : Fin 2) :
+   205	 pc f h + 3 * O f h false = 3 * (L f 0 + R f 0 + O f 0 false) := by
+   206	 have p0 := pair_total f hp ht 0
+   207	 have p1 := pair_total f hp ht 1
+   208	 have p2 := pair_total f hp ht 2
+   209	 have p3 := pair_total f hp ht 3
+   210	 have p4 := pair_total f hp ht 4
+   211	 have p5 := pair_total f hp ht 5
+   212	 norm_num at p0 p1 p2 p3 p4 p5
+   213	 fin_cases h <;> simp [pc, Fin.sum_univ_succ] <;> omega
+   214	
+   215	lemma common_choice (f : E → ℤ) (hp : Proper f) (ht : Three f) (z : ℤ)
+   216	 (hz : z=L f 0 ∨ z=R f 0 ∨ z=O f 0 false)
+   217	 (hn : ∀ t : Fin 6, O f ⟨t.val/3, by omega⟩ false ≠ z) :
+   218	 ∃ b : Fin 6 → Bool, ∀ t, (if b t then R f t else L f t) = z := by
+   219	 classical
+   220	 have h := canonical_palette f hp ht
+   221	 have hh : ∀ t : Fin 6, ∃ b : Bool, (if b then R f t else L f t) = z := by
+   222	  intro t
+   223	  have hx := h (.inl (t,false))
+   224	  have hy := h (.inl (t,true))
+   225	  have hnz := h (.inr (⟨t.val/3, by omega⟩,false))
+   226	  rw [wt_left] at hx
+   227	  rw [wt_right] at hy
+   228	  rw [wt_null] at hnz
+   229	  have p := triangle_proper f hp t false
+   230	  have notz := hn t
+   231	  have he : L f t=z ∨ R f t=z := by omega
+   232	  rcases he with he|he
+   233	  · exact ⟨false,he⟩
+   234	  · exact ⟨true,he⟩
+   235	 exact ⟨fun t => (hh t).choose, fun t => (hh t).choose_spec⟩
+   236	
+   237	set_option maxHeartbeats 800000 in
+   238	theorem no_three (f : E → ℤ) (hf : Labeling f) (hp : Proper f) : ¬ Three f := by
+   239	 intro ht
+   240	 have sumall := total f hf
+   241	 have ns0 := null_same f hp ht 0
+   242	 have ns1 := null_same f hp ht 1
+   243	 have c0 := component_count f 0
+   244	 have c1 := component_count f 1
+   245	 have ac := all_count f
+   246	 have mc := m_count f
+   247	 have p0 := pc_total f hp ht 0
+   248	 have p1 := pc_total f hp ht 1
+   249	 have tri := triangle_proper f hp 0 false
+   250	 norm_num at tri
+   251	 have hn := canonical_palette f hp ht (.inr (1,false))
+   252	 rw [wt_null] at hn
+   253	 by_cases he : O f 1 false = O f 0 false
+   254	 · omega
+   255	 · have hz : ∃ z, (z=L f 0 ∨ z=R f 0 ∨ z=O f 0 false) ∧
+   256	      (∀ t : Fin 6, O f ⟨t.val/3, by omega⟩ false ≠ z) ∧
+   257	      L f 0+R f 0+O f 0 false = O f 0 false+O f 1 false+z := by
+   258	    rcases hn with hn|hn|hn
+   259	    · refine ⟨R f 0, Or.inr (Or.inl rfl), ?_, ?_⟩
+   260	      · intro t; fin_cases t <;> norm_num <;> first | exact Ne.symm tri.2.2 | simpa [hn] using tri.1
+   261	      · omega
+   262	    · refine ⟨L f 0, Or.inl rfl, ?_, ?_⟩
+   263	      · intro t; fin_cases t <;> norm_num <;> first | exact Ne.symm tri.2.1 | simpa [hn] using (Ne.symm tri.1)
+   264	      · omega
+   265	    · exact False.elim (he hn)
+   266	   obtain ⟨z,hz,hnz,heq⟩ := hz
+   267	   obtain ⟨b,hb⟩ := common_choice f hp ht z hz hnz
+   268	   have qi := qidentity f b z hb
+   269	   have ql := twelve_lower f hf (Qs b) (qcard b)
+   270	   have mu := m_upper f hf
+   271	   omega
+   272	
+   273	#print axioms no_three
+   274	end R159
+   275	
+   276	namespace R159
+   277	-- Direct adjacency of the disjoint union of two joins 3P₂ ∨ O₂.
+   278	def sourceAdj : V → V → Prop
+   279	 | .inl (t,b), .inl (u,c) => t=u ∧ b≠c
+   280	 | .inl (t,_), .inr (h,_) => t.val/3=h.val
+   281	 | .inr (h,_), .inl (t,_) => t.val/3=h.val
+   282	 | .inr _, .inr _ => False
+   283	
+   284	instance (v w : V) : Decidable (sourceAdj v w) := by
+   285	 cases v with
+   286	 | inl x => cases w <;> simp only [sourceAdj] <;> infer_instance
+   287	 | inr x => cases w <;> simp only [sourceAdj] <;> infer_instance
+   288	
+   289	theorem vertex_count : Fintype.card V = 16 := by decide
+   290	theorem edge_count : Fintype.card E = 30 := by decide
+   291	theorem source_loopless : ∀ v, ¬sourceAdj v v := by decide
+   292	theorem source_symmetric : ∀ v w, sourceAdj v w ↔ sourceAdj w v := by decide
+   293	
+   294	set_option maxRecDepth 10000 in
+   295	set_option maxHeartbeats 800000 in
+   296	theorem edge_complete : ∀ v w, sourceAdj v w ↔
+   297	 ∃ e, ((ends e).1=v ∧ (ends e).2=w) ∨ ((ends e).1=w ∧ (ends e).2=v) := by
+   298	 decide
+   299	
+   300	set_option maxRecDepth 10000 in
+   301	theorem edge_unique : ∀ e d, ((ends e).1=(ends d).1 ∧ (ends e).2=(ends d).2) ∨
+   302	 ((ends e).1=(ends d).2 ∧ (ends e).2=(ends d).1) → e=d := by decide
+   303	
+   304	-- Labeling is an equivalent, finite formulation of bijection onto {1,...,30}.
+   305	theorem labels_bijective (f : E → ℤ) (hf : Labeling f) :
+   306	 Function.Injective f ∧ ∀ x : ℤ, (∃ e, f e=x) ↔ 1≤x ∧ x≤30 := by
+   307	 refine ⟨hf.1, ?_⟩
+   308	 have hi : (Finset.univ.image f) = Finset.Icc (1:ℤ) 30 := by
+   309	  apply Finset.eq_of_subset_of_card_le
+   310	  · intro x hx
+   311	    obtain ⟨e, _, rfl⟩ := Finset.mem_image.mp hx
+   312	    exact Finset.mem_Icc.mpr (hf.2 e)
+   313	  · rw [Finset.card_image_of_injective _ hf.1]; norm_num
+   314	 intro x
+   315	 have hh := congrArg (fun s : Finset ℤ => x ∈ s) hi
+   316	 simpa using hh
+   317	
+   318	theorem source_conjecture_4_1_counterexample :
+   319	 ¬ ∃ f : E → ℤ, Labeling f ∧ Proper f ∧
+   320	   ∃ a b c : ℤ, ∀ v : V, wt f v=a ∨ wt f v=b ∨ wt f v=c := by
+   321	 rintro ⟨f,hf,hp,ht⟩
+   322	 exact no_three f hf hp ht
+   323	
+   324	#print axioms source_conjecture_4_1_counterexample
+   325	#print axioms edge_complete
+   326	#print axioms edge_unique
+   327	end R159

@@ -1,0 +1,11 @@
+# Proof and dependency chain
+
+The universal conjecture includes r = s = 1 and m = 2. This graph consists of two copies of 3P2 ∨ O2, with 16 vertices and 30 edges. The formal general constructor, counts and no-isolation statements are in LauShiu and Counts.
+
+Assume the literal chiLA of this instance is 3. Its spectrum cannot be empty, because the natural infimum of the empty set is 0. Nat.sInf_mem therefore supplies an actual bijective edge labeling, local at every adjacent pair, with exactly three distinct weights. A three-element image is a palette of three natural numbers, hence of three integers after casting.
+
+The finite map vertexMap converts the packet's null Bool coordinate to Fin 2 and preserves matching vertices. It is bijective and preserves adjacency. indexedEdge sends each packet edge to the unordered pair of its mapped endpoints. The packet's complete and unique edge enumeration proves that indexedEdge is bijective onto the actual edge set. Composing it with the literal labeling and adding 1 gives an injective integer function bounded by 1 and 30. Reindexing the finite incidence sum proves every packet weight equals the corresponding literal weight, cast to integers. Hence this function satisfies R159.Labeling, Proper and Three, contradicting R159.no_three.
+
+For completeness, the imported obstruction splits according to whether the two components' null weights coincide. If they coincide at X, the total label sum 465 is even by the two component weight identities, contradiction. Otherwise let the distinct null weights be X,Y and the remaining weight Z, and let M be the six matching-label sum. Component counts and total sum give 5M = 465 + 12Z. Since M ≤ 180, 12Z ≤ 435. The six common-Z endpoints select twelve distinct join edges, sum Q ≥ 78, and 6Z = M + Q gives 5Q = 18Z − 465, hence 18Z ≥ 855. These inequalities contradict each other. The packet proves these identities and the exhaustive palette reduction without fixing color roles in advance.
+
+No external theorem of labeling existence is needed. Only propext, Classical.choice and Quot.sound occur in the endpoint's axiom report. No exact-value upper bound is used. Novelty, significance and acceptance remain root decisions.
