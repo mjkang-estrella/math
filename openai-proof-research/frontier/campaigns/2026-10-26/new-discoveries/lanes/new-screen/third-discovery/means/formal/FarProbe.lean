@@ -1,0 +1,14 @@
+import Mathlib
+#check Real.tendsto_rpow_atTop
+#check Real.tendsto_rpow_atTop_iff
+#check Filter.Tendsto.eventually
+#check eventually_gt_atTop
+#check Real.one_lt_rpow
+#check Real.one_lt_rpow_iff
+#check Real.mul_rpow
+#check Real.rpow_neg
+#check Real.rpow_neg_one
+#check Real.rpow_zero
+#check Filter.Eventually.exists
+#check Filter.eventually_ge_atTop
+#check Filter.eventually_gt_atTop

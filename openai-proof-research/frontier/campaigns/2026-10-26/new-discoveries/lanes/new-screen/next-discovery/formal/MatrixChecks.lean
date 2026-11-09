@@ -1,0 +1,4 @@
+import VendiMatrix
+#print axioms VendiMatrix.source_spectral_energy_bound
+#print axioms VendiMatrix.source_spectral_row_bound
+#print axioms VendiMatrix.source_min_le_row
