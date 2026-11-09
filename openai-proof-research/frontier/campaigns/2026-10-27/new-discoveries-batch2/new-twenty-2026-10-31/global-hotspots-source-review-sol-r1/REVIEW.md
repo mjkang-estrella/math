@@ -1,0 +1,56 @@
+# Independent review — MathDB346033
+GPT-6.1 Sol high/default; self only; ordinary mathematics/source/significance assignment. Credit 0. Campaign remains 53/60 beyond39. Root accepts separately.
+
+## Decision
+The full Route A ordinary proof survives independent checking against the actual arXiv v4 standing assumptions and global M. The auxiliary-primary-body hold is repaired with a different lawful primary work: David Marker, Introduction to Model Theory, MSRI Publications 39 (2000), Theorem 3.5 and Corollary 3.7, pp24-25, acquired under the immutable guard. The author’s unavailable Coste artifact was never queried, fetched or retried.
+
+This is NOT full campaign qualification. Final published-body equivalence remains HOLD: the actual publisher citation_pdf_url returned status200 and zero bytes; that artifact is unavailable, with no alternate delivery attempted. Prior/novelty and substantive credit remain HOLD; no literal Lean certificate or pinned API inventory exists. FULLCANDIDATE.md is a complete ordinary candidate under these explicit gates, not an eligibility/acceptance declaration. DORMANT-SOL-FORMAL-PLAN.md is non-dispatched.
+
+## Literal and source fidelity
+The full raw record input/original346033.jsonl was read. Its malformed '$amma$' is interpreted using the named primary source as Gamma; no typo correction is credited. Source: arXiv:2003.14335v4, 4 May2021, not an abstract or catalogue reconstruction.
+
+Sections2.1-2.3 give finite vertices/edges, positive finite edge lengths, oriented interval realization, explicit loops/parallel edges; continuous vertex values; edgewise H^2 with Kirchhoff sum of incoming derivatives zero; orientation-independent operator; discrete real spectrum with finite multiplicities and 0=mu1<mu2. Real eigenfunctions are explicitly stipulated; the entire eigenspace is explicitly included when mu2 is multiple. Assumption4.1 imposes connected compact finite graph throughout. Section2.3 defines M by existential eigenfunction and universal global maximum, and explicitly equates the min/max-union formulation through negation. Zero is not a nonzero eigenfunction; normalization in the reviewed proof excludes it exactly.
+
+No L2-unit convention is needed: unit Euclidean coefficients in a real basis represent precisely the same global maximizers. No generic simplicity, tree assumption, algebraic lengths or preferred orientation is introduced. All original endpoints and all edges are in the finite chart cover. A degenerate edgeless point is not an instance with a second eigenvalue in the source spectral setup; the formal graph model must encode the source’s nontrivial spectral setting rather than assert mu2 for a zero Hilbert space.
+
+Conjecture8.1 on p24 matches the literal target. Proposition4.4 is about M_loc and cannot alone pass to M. Its p16 proof uses local interpolation; the discussion after Conjecture8.1 explains the distant-global-maxima interaction. The reviewed proof explicitly quantifies over all charts using one coefficient vector and therefore pays this interaction. Question8.2 is stronger and is not proved.
+
+## Mathematical audit and repairs
+FULLCANDIDATE.md supplies a complete independent proof, including explicit polynomial formula and both directions of its equivalence to M. Added precision beyond the copied route:
+- H2-to-classical regularity and the ODE energy uniqueness argument justify closed-edge sinusoidal evaluation.
+- A concrete midpoint subdivision with kL/N<pi has a strict pole margin and includes endpoints.
+- The real-parameter tuple stays FREE during QE and is specialized afterward; no computability or algebraicity premise is inserted.
+- Unit coefficient normalization is proved both ways, with basis independence excluding zero.
+- The component argument is a finite cover by connected images, not a false assertion that an arbitrary subset of M_loc has finitely many components.
+- The metric-distance image proves uncountability without supposing components path-connected.
+
+Marker’s actual body defines parameter-definability before Proposition1.3 on pp17-18, discusses real semialgebraic sets and projection on p21, proves RCF QE as Theorem3.5 pp24-25 and states one-dimensional o-minimality in Corollary3.7 p25. Theorem3.1 explains uniform equivalence in free variables. These support arbitrary real parameters, including phase and tangent endpoints. No search snippet is substituted for this body. The printed proof’s endpoint notation permits infinities; when selecting a witness in an unbounded interval one chooses any finite field element inside it, rather than taking a literal midpoint involving infinity. This harmless expository shorthand does not affect the theorem used.
+
+The proof does not rely on a global semialgebraic length-coordinate graph, nor on infinitely many tangent charts. Each inverse chart is only required to be continuous. Gluing loops or vertices cannot increase the finite cover’s component bound. Source sign-changing properties ensure global maxima of nonzero second eigenfunctions are positive, but the formula does not need an extra positivity condition and does not accidentally count zero eigenfunctions.
+
+No unpaid ordinary lemma was found for the verified v4 statement relative to the cited spectral setup and real QE. This is a mathematical finding, not a worldwide-newness finding.
+
+## Prior and significance: full applicable reduction and contrary case
+The complete earlier-general-theorem-to-target reduction is in FULLCANDIDATE.md, steps1-7: the source finite eigenspace supplies finitely many real sinusoidal evaluation vectors; the explicit half-angle chart cover rationalizes them with arbitrary real constants; a unit vector and all-chart universal comparisons define exactly M; Marker3.5 gives real semialgebraicity; finite polynomial sign cells give finitely many connected pieces; continuous graph maps and vertex gluing give the literal target and distance-map dichotomy. Marker’s publication is2000, before the2020 question and2021 v4. Thus the real-algebraic engine is earlier mathematics. It is not an earlier published theorem explicitly about quantum graph global hot spots.
+
+Strongest routine-adaptation case: after the full reduction has been checked, no new elimination or topology theorem is required. The abstract finite rational-evaluation-atlas statement is a direct definability consequence of QE plus finite continuous images; the graph-specific input is its known sinusoidal finite-dimensional spectrum. This provides a serious substantive-credit objection, not merely 'the proof is short' or 'a classical theorem is used'.
+
+Strongest contrary substantive case: the paper explicitly leaves the GLOBAL all-eigenfunction problem open, while proving only its local analogue and identifying remote competing maxima as the obstruction. The finite-atlas polynomial formula handles every multiplicity and every remote comparison simultaneously, for arbitrary graph lengths. Identifying and rigorously verifying this reduction is actual analytic/model-theoretic work that addresses the exact named conjecture, rather than a helper, special instance, or endpoint correction. A general theorem being applicable does not establish that this application was previously known or lacks significance.
+
+Judgment: retain for root’s substantive adjudication, with HOLD_SIGNIFICANCE rather than recommend routine exclusion on the current bounded evidence. The exact potentially new content is the source-faithful global semialgebraic encoding and transfer to the graph, not QE itself. No complete earlier exact solution body was authenticated. No claimed automatic eligibility from an open label, no exclusion for shortness/tools, and no invented unknown-literature veto.
+
+Inherited prior-search1-3 were inspected for target-relevant passages (full responses remain copied). They route to the original source, planar-domain work, and topic metadata. Bañuelos-Pang's 'Level sets of Neumann eigenfunctions' appears as a lead about a single function’s planar level sets; its theorem body was NOT fetched or cleared here. Even the advertised per-function conclusion would not by itself control a union across an entire eigenspace or transfer a planar-domain theorem to a metric graph. Likewise source [44], 'On the hot spots of quantum trees' (2018), is only reference/source-description evidence here; its companion body remains unverified. Source Proposition4.3 proves finiteness on trees, a genuine restricted class, and its proof is not a full-graph reduction.
+
+The copied current-registry inventory gives four r400 root heads: openai/math 4eaee87548250b2682affda7d05d947c05554bae; LeanPool 45b5a1be4b778aa0d78b82671a7b67e649cd05f5; TauCeti e583e15d3be177d86491854d1db508f6edfe5ee7; formal-conjectures 2055e5adadae0b2e392365938faa82ef6f1464f0. These are bounded live-root metadata from r400, not theorem-body or atomic whole-tree clearance. No protected lanes or parent dependency bodies were followed.
+
+This lane’s two native search calls/six exact querystrings are planned and retained in full. Their returned results were mostly irrelevant, including numeric-ID noise; they authenticated no exact counterpart. No-match is not novelty evidence. No further search budget remains.
+
+## Process and delivery limits
+FIRST and SECOND commands matched the task. Frozen-before passed28/28. All subsequent subprocess reads, source conversions, GET clients and writes ran under runner.py. Authored text/plans use write_lane.py; no helper or cap was edited. Initial display probes are retained: inspect-interface succeeded into a log, show-interface succeeded but remained logged, display-interface failed because /dev/tty was unavailable. Thereafter runner children duplicated their already logged textual output to the runner's inherited stdout through /proc/<parent>/fd/1 so the review could read it; caps/logs were preserved. This is explicitly disclosed, not retroactive receipt invention. Some large displayed reads were truncated by tool budgets; later targeted reads recovered the material actually relied upon. No full unrelated-input or full-paper/figure audit is claimed.
+
+GET totals:2 hops, no redirects;1 primary body success;1 empty publisher-body failure, preserved true exit1. Inherited Coste timeout is separate and retained. No accounts, browser, HTTP substitute, retry, installs, git, publication, shared writes, children, mathematical programs, numerics, CAS, solvers, Lean or compilers were used. Python performed source/JSON/provenance/text/hash processing only.
+
+The PDF skill was read and applied to text-focused analytic source inspection and Poppler extraction. No figure geometry is used and no rendered-figure check is claimed. No native-resource telemetry exists; runner CPU/RSS data are measurements with sampling limitations, not cgroup-wide guarantees. All returned command sessions were reaped.
+
+See results.json for separate keyed gates, INVENTORIES.json for access/read/resource limits and actual completed receipt measurements, and MANIFEST.json for actual hashes. The final manifest includes completed receipts and frozen-after. Its named noncircular terminal exclusions are itself and the exact current terminal runner log/receipt, which complete after the snapshot. Those are not falsely self-hashed.
+
