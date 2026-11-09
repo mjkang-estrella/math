@@ -1,0 +1,1243 @@
+HARNESS run.py import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(120,120)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+import sys,subprocess,time,json,pathlib,datetime,signal
+lane=pathlib.Path(__file__).resolve().parent
+name=sys.argv[1]; code=sys.stdin.read(); start=time.monotonic(); utc=datetime.datetime.now(datetime.timezone.utc).isoformat()
+env=dict(os.environ,MALLOC_ARENA_MAX='2')
+prefix='import os,resource; os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2]); resource.setrlimit(resource.RLIMIT_CPU,(115,115)); resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3));\n'
+p=subprocess.Popen([sys.executable,'-I','-B','-c',prefix+code],cwd=lane,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+peak=0; samples=0; killed=None
+while p.poll() is None:
+ rss=0
+ for ent in pathlib.Path('/proc').iterdir():
+  if not ent.name.isdigit(): continue
+  try:
+   s=(ent/'stat').read_text().split(') ',1)[1].split()
+   if int(s[2])==p.pid:
+    rss+=int((ent/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')
+  except (OSError,ValueError,IndexError): pass
+ peak=max(peak,rss); samples+=1
+ if rss>6*1024**3 or time.monotonic()-start>130:
+  killed='rss' if rss>6*1024**3 else 'deadline'; os.killpg(p.pid,signal.SIGKILL); break
+ try: out,err=p.communicate(timeout=.08); break
+ except subprocess.TimeoutExpired: pass
+out,err=p.communicate(); wall=time.monotonic()-start
+r={'utc':utc,'name':name,'cwd':str(lane),'command':[sys.executable,'-I','-B','-c',prefix+code],'env_overrides':{'MALLOC_ARENA_MAX':'2'},'affinity':sorted(os.sched_getaffinity(0)),'cpu_limit_s':115,'as_limit_bytes':6*1024**3,'group_rss_guard_bytes':6*1024**3,'deadline_s':130,'wall_s':wall,'sampled_group_rss_peak_bytes':peak,'samples':samples,'exit':p.returncode,'killed':killed,'child_cpu_cumulative_s':resource.getrusage(resource.RUSAGE_CHILDREN).ru_utime+resource.getrusage(resource.RUSAGE_CHILDREN).ru_stime,'stderr':err.decode(errors='replace')}
+def write(n,s):
+ z=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),n],input=s,text=True,capture_output=True,env=env,timeout=10); assert z.returncode==0,z.stderr
+write(name+'.receipt.json',json.dumps(r,indent=2)); write(name+'.output.txt',out.decode(errors='replace'))
+print(out.decode(errors='replace')); print(json.dumps(r)); sys.exit(p.returncode)
+
+HARNESS write_lane.py import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+target.write_text(text)
+print(str(target))
+
+PDF SKILL ---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+PAGE prograph-source.txt 1                                                                              Set-Valued Young Tableaux
+                                                                          and Product-Coproduct Prographs
+                                                           Paul Drube1 , Maxwell Krueger2 , Ashley Skalsky3 , and Meghan Wren4
+
+
+
+
+arXiv:1710.02709v2 [math.CO] 19 Mar 2018
+                                                                                           1
+                                                                                         Valparaiso University
+                                                                                            2
+                                                                                          Muhlenberg College
+                                                                                3
+                                                                                  Minnesota State University Moorhead
+                                                                                          4
+                                                                                            SUNY Brockport
+
+                                                                               VERUM 2017, Valparaiso University
+                                                                           Research funded by NSF Grant DMS-1559912
+
+
+                                                                                                     Abstract
+                                                     Standard set-valued Young tableaux are a generalization of standard Young tableaux where cells can
+                                                 contain unordered sets of integers, with the added condition that every integer at position (i, j) must be
+                                                 smaller that every integer at both (i + 1, j) and (i, j + 1). In this paper, we explore properties of standard set-
+                                                 valued Young tableaux with three rows and a fixed number of integers in every cell of each row (referred to as
+                                                 set-valued tableaux with row-constant density). Our primary focus is on standard set-valued Young tableaux
+                                                 with 1 integer in each first-row cell, k − 1 integers in each second-row cell, and 1 integer in each third-row cell.
+                                                 For rectangular shapes λ = n3 , such tableaux are placed in bijection with closed k-ary product-coproduct
+                                                 prographs: directed plane graphs that correspond to finite compositions involving a k-ary product operator
+                                                 and a k-ary coproduct operator. That bijection is extended to three-row set-valued Young tableaux of non-
+                                                 rectangular and skew shape, and it is shown that a set-valued analogue of the Schützenberger involution
+                                                 on tableaux corresponds to 180-degree rotation of the associated prographs. As a set-valued analogue of
+                                                 the hook-length formula is currently lacking, we also present direct enumerations of three-row standard set-
+                                                 valued Young tableaux for a variety of row-constant densities and a small number of columns. We then
+                                                 argue why the numbers of tableaux with the row-constant density (1, k − 1, 1) should be interpreted as a
+                                                 one-parameter generalization of the three-dimensional Catalan numbers that mirrors the generalization of
+                                                 the (two-dimensional) Catalan numbers provided by the k-Catalan numbers.
+
+
+                                           1    Introduction: Standard Set-Valued Young Tableaux
+                                           Consider a non-increasing sequence of positive integers λ = (λ1 , . . . , λm ) that sum to N . Following the English
+                                           notation, a Young diagram Y of shape λ is a left-justified array of N cells with λi cells in the ith row from the
+                                           top of the array. Given a Young diagram of shape λ, a Young tableau of that shape is a bijection from the set
+                                           of integers [N ] = {1, . . . , N } to the cells of Y . For a Young tableau to be a standard Young tableau, the entries
+                                           in the tableau must increase left to right across each row and top to bottom down each column. We denote the
+                                           set of standard Young tableaux of shape λ as S(λ), and adopt the shorthand notation of S(nm ) in the case of
+                                           the m-row rectangular shape λ = (n, . . . , n). For a thorough introduction to Young tableaux, see Fulton [7].
+                                               The number of standard Young tableaux of arbitrary shape λ may be directly calculated using the hook-
+                                           length formula, as originally given by Frame, Robinson and Thrall [6]. A quick application of the hook-length
+                                                                                                                                         (2n)!
+                                           formula to the case of λ = (n, n) yields the well-known identity that |S(n2 )| = Cn = n!(n+1)!      , the nth Catalan
+                                           number. Generalizing to the d-row rectangular case of λ = (n, . . . , n) similarly yields |S(nd )| = Cd,n , where
+                                                       (d−1)!(dn)!
+                                           Cd,n = n!(n+1)!...(n+d−1)!     is the nth d-dimensional Catalan number.
+                                               Given an non-increasing sequence of positive integers λ = (λ1 , . . . , λm1 ) of N1 and a non-increasing sequence
+                                           of positive integers µ = (µ1 , . . . , µm2 ) of N2 , where 0 ≤ µi ≤ λi for all i, one can also define a skew Young
+                                           diagram of shape λ/µ by removing the µi leftmost cells in the ith row of the Young diagram of shape λ, for all
+
+
+                                                                                                          1
+
+PAGE prograph-source.txt 3                                                                                      k
+discussions, including a suggestion of additional combinatorial interpretations for Cd,n and a consideration of
+three- and four-row set-valued tableaux with densities other than ρ = (1, k − 1, 1).
+
+
+2     k-ary Product-Coproduct Prographs and Set-Valued Tableaux
+Let Tnk denote the set of full k-ary trees with kn + 1 vertices, drawn so that the root vertex lies at the bottom
+                                                                                            (kn)!
+of the tree. It is well-known that Tnk is enumerated by the k-Catalan number Cnk = (kn−n+1)!n!       . In the case of
+                                                               2         2
+k = 2, this prompts the well-studied bijection between Tn and S(n ) that associates entries in the top row of
+the tableau to left children and entries in the bottom row of the tableau to right children.
+     The bijection between Tn2 and S(n2 ) may be generalized to a bijection between Tnk and standard set-valued
+Young tableaux S(n2 , ρ) with row-constant density ρ = (k − 1, 1). As described by Heubach, Li and Mansour
+[8], this generalized bijection φk : Tnk → S(n2 , ρ) is defined as below. For an example of φk , see Figure 2.
+
+    1. For any T ∈ Tnk , label the edges of T with the integers {1, . . . , nk} according to a depth-left first search.
+    2. Place all integers that label rightmost-children of T in the bottom row of φ(T ) ∈ S(n2 , ρ), in increasing
+       order from left to right.
+    3. Place all remaining integers from {1, . . . , nk} in the top row of φ(T ), in increasing order from left to right
+       and ensuring that each cell in the top row receives precisely k − 1 integers.
+
+
+                                        3 4           8 9
+                                    2             7                       12 35 79
+                                              5   6             ⇔          4   6   9
+                                          1
+
+                        Figure 2: An example of the bijection φk : Tnk → S(n2 , ρ) for k = 3.
+
+    Following Borie [2], generalizing φk to three-row tableaux requires a consideration of prographs. For any
+finite collection G of formal operators, each of which is uniquely identified by its number of inputs and outputs,
+one may consider the set of all finite compositions that are freely constructed using elements of G (as well as
+the identity operator Id). Each of these compositions corresponds to a directed planted plane graph in which
+all edges are directed upward. In these graphs, each application of a non-identity operator corresponds to a
+non-initial, non-terminal vertex whose vertical placement (when read from bottom to top) corresponds to the
+stage at which the operator appears in the composition. See Figure 3 for a quick example. If one enforces a
+notion of equivalence for planted plane graphs with the added condition that all edges must maintain a strictly
+upward orientation, the resulting set PROG is referred to as the (free) prographs generated by G.
+    Let A denote a formal module. If G consists solely of an operator ∆k : A → A ⊗ · · · ⊗ A with 1 input and
+k outputs (a non-coassociative k-ary coproduct), elements of PROG are a directed variation of full k-ary trees
+where every edge has been directed upward and a single input edge has been added below the root vertex. The
+subset of these prographs with precisely n usages of ∆k are in bijection Tnk . For example, the 3-ary tree on the
+left side of Figure 2 corresponds the prograph shown in Figure 3.
+
+
+
+
+Figure 3: The prograph corresponding to the composition (∆3 ⊗ Id ⊗∆3 ) ◦ ∆3 , where ∆3 is a 3-ary coproduct.
+
+   Now consider the case where G consists of a (non-coassociative) k-ary coproduct ∆k : A → A ⊗ · · · ⊗ A
+with 1 input and k outputs, as well as a (non-associative) k-ary product µk : A ⊗ · · · ⊗ A → A with k inputs
+and 1 output. We refer to the resulting elements of PROG as k-ary (product-coproduct) prographs. The
+subset of these prographs that have a single terminal vertex are known as closed k-ary (product-coproduct)
+
+                                                            3
+
+PAGE prograph-source.txt 4 prographs. As all prographs have a single initial vertex, all closed k-ary prographs must feature the same
+number of product and coproduct nodes. We denote the set of all closed k-ary prographs with precisely n
+products and n product by PCk (n). See Figure 4 for an illustration of PC2 (2). Included in that figure is a
+representive from the equivalence class of compositions to which each prograph corresponds.
+
+
+
+
+         µ2 ◦ ∆2 ◦ µ2 ◦ ∆2             µ2 ◦ (µ2 ⊗ Id) ◦ (∆2 ⊗ Id) ◦ ∆2             µ2 ◦ (Id ⊗µ2 ) ◦ (Id ⊗∆2 ) ◦ ∆2
+
+
+
+
+                        µ2 ◦ (Id ⊗µ2 ) ◦ (∆2 ⊗ Id) ◦ ∆2            µ2 ◦ (µ2 ⊗ Id) ◦ (Id ⊗∆2 ) ◦ ∆2
+
+            Figure 4: The set PC2 (2) of closed 2-ary prographs with 2 products and 2 coproducts.
+
+                                                                                                  2(3n)!
+   Borie [2] argued that PC2 (n) is enumerated by the three-dimensional Catalan number C3,n = n!(n+1)!(n+2)! .
+This is accomplished by placing PC2 (n) in bijection with the three-row standard Young tableaux S(n3 ).
+   Our goal for the rest of this section is to generalize Borie’s bijection to PCk (n) for all k ≥ 2, where the
+appropriate k-generalization of S(n3 ) is standard set-valued Young tableaux S(n3 , ρ) with row-constant density
+ρ = (1, k−1, 1). We begin by introducing an algorithm for labelling the edges of any G ∈ PCk (n) that generalizes
+both the depth-left first labelling of k-ary trees and Borie’s depth-left search for elements of PC2 (n).
+
+  1. Take any G ∈ PCk (n), and begin by labelling the sole output of the initial node of G with the integer 0.
+  2. For each 0 ≤ i < nk, recursively define a subgraph Gi of G consisting solely of edges labelled by {1, . . . , i}.
+     Then let Vi denote the subset of nodes from G such that every input to that node lies in Gi and at least
+     one output from that node lies in G − Gi .
+  3. Identify the highest labelled edge from Gi that terminates at an element v of Vi (this needn’t be the edge
+     labelled i). Then label the leftmost unlabelled edge of that vertex v with i + 1 and return to Step #2.
+
+    See Figure 5 for an example of this procedure, which we henceforth refer to as our (generalized) depth-left
+first search. Colloquially, the procedure may be described as “staying as leftward as possible, with the restriction
+that all inputs to a node must be labelled before any output from that node may be labelled”. Also notice that
+this procedure directly generalizes to non-closed k-ary prographs: one merely needs to omit terminal nodes from
+the Vi and repeat the recursive part of the algorithm until all terminal edges are labelled.
+    We are now ready to place PCk (n) in bijection with an appropriate collection of standard set-valued Young
+tableaux. Observe that Theorem 2.1 directly recovers the result of Borie [2] in the case of k = 2.
+Theorem 2.1. Fix n ≥ 1 and k ≥ 2. Then | PCk (n)| = | S(λ, ρ)| for λ = n3 and ρ = (1, k − 1, 1).
+Proof. We provide a pair of well-defined functions Φ : PCk (n) → S(n3 , ρ), Φ2 : S(n3 , ρ) → PCk (n) and then
+show that Φ2 = Φ−1 . Our first map Φ : PCk (n) → S(n3 , ρ) is defined as below. See Figure 6 for an example.
+  1. For any G ∈ PCk (n), label the edges of G according to our depth-left first search.
+  2. Place integers that label leftmost coproduct children of G in the top row of Φ(G) ∈ S(n3 , ρ), in increasing
+     order from left to right.
+
+                                                            4
+
+PAGE prograph-source.txt 7                                                   10
+
+                                             6         9
+                                                                       1   5
+                                                             ⇔
+                                                 7 8
+                                                                      234 789
+                                                  5
+                                       1 2 3                           6   10
+                                                   4
+                                         0
+
+
+                Figure 6: An example of the bijection Φ : PCk (n) → S(n3 , ρ) for n = 2 and k = 4.
+
+                                                                           k
+    The purpose of this section is to develop closed formulas for C3,n       . Sadly, developing such a formula or
+deriving a multivariate generating function for arbitrary n ≥ 1, k ≥ 1 do not appear to be tractable problems.
+As such, we restrict our attention to cases of small n. See Table 1 of Appendix A for a table of known values of
+  k
+C3,n , which combines the explicit results of this section with computer calculations performed in Java.
+    In all that follows, notice that the “degenerate” k = 1 case corresponds to three-row tableaux with empty
+cells across their middle row. This means that the k = 1 enumerations reduce to pre-existing results about
+                            1
+two-row tableaux: that C3,n    = | S(n3 , ρ)| = |S(n2 )| = Cn for all n ≥ 1 with ρ = (1, 0, 1).          S
+    For all of our enumerations we recursively place S(λ, ρ) in bijection with a collection of sets S(λi , ρ) of
+strictly smaller shape yet equivalent density. Our technique is similar to pre-existing proofs for non-set-valued
+tableaux where the sub-shapes λi are determined via the removal of lower-right corners, corresponding to possible
+locations of the largest possible entry in a tableau of shape λ. The difference here is that we never remove entries
+from a cell without eliminating all entries in that cell. If the removed cell contains entries other than the largest
+entry in the tableau, this necessitates that we account for the ordering of those smaller entries relative to integers
+appearing elsewhere in the tableau.
+    Before proceeding, observe that |S(λ, ρ)| is easily calculable whenever λ = (n, 1, . . . , 1) is “hook-shaped”.
+In this case, one merely needs to count the ways of partitioning entries between the     rightward and downward
+“legs”, giving an enumeration in terms of a single binomial coefficient |S(λ, ρ)| = ab . See Figure 7 for examples.
+    For the rest of this section, an unfilled Young diagram of shape λ is used to denote the cardinality | S(λ, ρ)|,
+assuming ρ = (1, k − 1, 1).
+
+                                                                                  
+                                           k+1                                    k+3
+                                        =                                 =
+                                            1                                      3
+
+
+Figure 7: Cardinalities |S(λ, ρ)| for ρ = (1, k − 1, 1) and several hook-shapes λ. As 1 must lie at position (1, 1),
+one merely needs to determine which of {2, 3, . . .} lie in the remaining cells of the top row.
+
+                                                        k
+Proposition 3.1. Let ρ = (1, k − 1, 1). For any k ≥ 1, C3,2 = | S(23 , ρ)| = k 2 + 1.
+Proof. As the largest entry of any T ∈ S(23 , ρ) must lie at (3, 2), we investigate the integers a1 < . . . < ak−1
+lying at (2, 2) in an arbitrary set-valued tableaux T1 ∈ S(λ1 , ρ) of shape λ1 = (2, 2, 1). The only other entry in
+T1 that may be larger than any of the ai is the entry b at position (3, 1). The subset of S(λ1 , ρ) satisfying b ≤ ai
+for all i is then in bijection with S(λ2 , ρ) for λ2 = (2, 1, 1). If b > a1 , one must specify the ordering of b relative
+to a2 , . . . , ak−1 . So assume that j is the largest index such that aj < b (where 1 ≤ j ≤ k − 1). Each choice of j
+defines a subset of S(λ2 , ρ) that is in bijection with S(λ3 , ρ) for λ3 = (2, 1), since for any choice of j the k largest
+entries of such a tableau T1 ∈ S(λ1 , ρ) is split between positions (2, 2) and (3, 1). Combining these observations
+gives the string of equalities below.
+                                                                                 
+                                                                    k+1            k
+                       =          =              + (k − 1)       =       + (k − 1)    = k2 + 1
+                                                                     1             1
+
+
+
+                                                             7
+
+PAGE prograph-source.txt 9 Corollary 3.4. Fix ρ = (1, k − 1, 1), where k is indeterminate, and let λ = (a, b, c) satisfy both b ≥ 1 and
+a + c ≥ 2. If a = b = c, then | S((a, b, c), ρ)| is a polynomial in k of degree a + c − 2. If a > c, then | S((a, b, c), ρ)|
+is a polynomial in k of degree a + c − 1.
+Proof. That | S((a, b, c), ρ)| = p(k) is a polynomial in k follows directly from the recursion of Proposition 3.4.
+To demonstrate the degree of p(k), induct on i = a + b + c for i ≥ 3. The base case of i = 3 follows from
+| S((2, 1, 0), ρ)| = k and | S((1, 1, 1), ρ)| = 1. For the inductive case, take | S((a, b, c), ρ)| with a + b + c = i + 1.
+If b > c, the first case of Proposition 3.4 equates | S((a, b, c), ρ)| with a sum of polynomials (all with positive
+leading coefficient) whose maximal degree summand(s) all have degree a + c − 1. If b = c, the second case
+of Proposition 3.4 equates | S((a, b, c), ρ)| with a sum of polynomials whose sole maximal degree summand has
+degree a + (c − 1) − 1.
+   In the case of λ = n3 , notice that Corollary 3.4 implies that p(k) = | S(n3 , ρ)| has degree 2(n − 1). For several
+additional enumerations, Proposition 3.3 may be applied with the aid of a computer algebra system to derive
+the following polynomials for the k = 4 and k = 5 cases.
+Proposition 3.5. Let ρ = (1, k − 1, 1). For any k ≥ 1,
+
+                                                   256k 6 − 114k 5 + 217k 4 − 12k 3 + 121k 2
+                            k
+                           C3,4 = | S(43 , ρ)| =                                             +1
+                                                                      36
+Proposition 3.6. Let ρ = (1, k − 1, 1). For any k ≥ 1,
+
+                                    15625k 8 − 10092k 7 + 10258k 6 − 72k 5 + 5473k 4 − 204k 3 + 2628k 2
+             k
+            C3,5 = | S(53 , ρ)| =                                                                       +1
+                                                                   576
+
+4     Properties of k-ary Product-Coproduct Prographs
+In this section we prove a generalization of Theorem 2.1 that applies to non-closed k-ary prographs satisfying
+certain basic properties. We then explore one significant application of our bijection that generalizes an unproven
+proposition of Borie [2], showing that 180-degree rotation of prographs corresponds to a set-valued analogue of
+the Schützenberger involution on standard Young tableaux.
+
+4.1    Non-Closed k-ary Prographs and Set-Valued Tableaux
+We begin by generalizing the set PROG to finite compositions of formal operators where the initial input is the
+an x-fold tensor product A ⊗ · · · ⊗ A of the formal module A. The resulting directed plane graphs resemble
+prographs over G but now contain precisely x input strands, aligned horizontally across the bottom of the graph.
+Fixing G and m ≥ 1, we may enforce a notion of equivalence on the resulting set of directed plane graphs that
+is analogous to the equivalence relation on PROG from Section 2. We refer to the resulting set of equivalence
+classes PROG,x as the set of x-fold (free) prographs generated by G.
+    In the case where G consists of a k-ary coproduct ∆k and a k-ary product µk , we refer to the elements of
+PROG,x as x-fold k-ary (product-coproduct) prographs. We denote the subset of x-fold k-ary prographs
+with precisely n coproduct nodes, m product nodes, and x input strands by PCkx (n, m). Notice that these three
+parameters are sufficient to determine the number of output strands in any G ∈ PCkx (n, m). Explicitly,
+Proposition 4.1. Take any G ∈ PCkx (n, m). Then G has precisely y = (n − m)(k − 1) + x output strands. In
+particular, y ≡ x mod (k − 1).
+Proof. Observe that each k-ary coproduct increases the number of free edges by k − 1, while each k-ary product
+decreases the number of free edges by k − 1. If we begin with x free edges, after n coproducts and m products
+we have y = x + n(k − 1) − m(k − 1) outgoing free edges.
+    For any x ≡ 1 mod (k − 1), consider PCkx (n, m). There exists an injection j : PCkx (n, m) → PCk (n + k−1   x−1
+                                                                                                                    )
+that is defined by recursively joining incoming strands with k-ary coproducts, from left to right in sets of k,
+while recursively joining outgoing strands with k-ary products, from right to left in sets of k. See Figure 8 for an
+illustration. For any G ∈ PCkx (n, m), we call the image j(G) ∈ PCk (n + x−1
+                                                                         k−1 ) the justification of G. Assuming
+x ≡ 1 mod (k − 1), justification suggests the generalization of Theorem 2.1 given by Theorem 4.2.
+
+
+                                                              9
+
+PAGE prograph-source.txt 11                                       16
+                                               15
+                                                         14
+                                           6
+                                                       11
+                                  2                7
+                           j                                            Φ     1 2     5     6     χ          1 4      5
+                         ⇒            3
+
+                                               5
+                                                   8
+                                                       9
+                                                           10
+                                                                12 13   ⇒    3 4 7 8 9 10 12 13
+                                                                             11 14 15      16
+                                                                                                  ⇒     2 3 6 7 8 9 11 12
+                                                                                                        10
+                                           4
+
+                                               1
+                                                       0
+
+
+      Figure 9: An example of the bijection ψ : PCkx (n, m) → S(λ/µ, ρ) for k = 3, x = 3, n = 3, and m = 1.
+
+
+non-zero integers (including those labelling non-leftmost initial inputs of G) in the middle row. This is in fact
+that same tableau that results from the composite bijection of Theorem 4.2:
+Corollary 4.3. Let ψ : PCkx (n, m) → S(λ/µ, ρ) be as in the proof of Theorem 4.2. For any G ∈ PCkx (n, m) with
+x ≡ 1 mod (k − 1), τ (G) = ψ(G).
+Proof. Recall that justification of G introduces precisely x−1
+                                                            k−1 leftmost coproduct children that receive the first
+x−1                                                                    y−1
+k−1 nonzero labels in the depth-left first search on j(G), as well as k−1 product children that receive the final
+y−1
+k−1 labels the depth-left first search on j(G). As these are precisely the entries of Φ ◦ j(G) that are deleted in
+the final stage of ψ, we merely need to argue that the depth-left first search of Section 2 labels the remaining
+edges of j(G) in the same order that the x-fold depth-left first search labels the edges of G. In particular, we
+                                                                                                       x−1 th
+need to show that the ith edge from the x-fold depth-left first search on G corresponds to the (i + k−1    ) edge
+from our original depth-left first search on j(G).
+   Inducting on i, consider the two alogorithms after the labelling of the ith edge of G. If the set Vi is non-
+empty for G, the set V(i+ x−1 ) is non-empty for j(G). Since the inputs to the initial coproduct nodes that appear
+                          k−1
+only in j(G) have lower edge labels than all other edges in j(G), the element of Vi in G with the largest input
+corresponds to the element of V(i+ x−1 ) in j(G) with the largest input. This leads to equivalent placements of
+                                      k−1
+the next edge label in both graphs. Now if Vi is empty for G, it must be the case that V(i+ x−1 ) for j(G) consists
+                                                                                                      k−1
+
+solely of nodes from the justification’s x−1
+                                          k−1 initial coproducts. As the edge labels on the inputs to these initial
+coproducts always decrease from left to right, the next edge labelled in j(G) is always the leftmost output of
+the initial coproducts that has yet to be labelled. These initial coproduct children of j(G) precisely correspond
+to initial inputs in the non-justified graph G, implying that the next edge of G to be labelled by the x-fold
+depth-left first search is the equivalent (non-leftmost) initial input of G.
+
+4.2     The Schützenberger Involution
+For any rectangular shape λ ⊢ N , the Schützenberger involution is a map f : S(λ) → S(λ) that rotates T ∈ S(λ)
+by 180 degrees and then renumbers entries via a 7→ N − a + 1. As described by Drube [4], one may define an
+analogue of the Schützenberger involution for standard set-valued Young tableaux. For any rectangular shape λ
+and row-constant density ρ, the set-valued Schützenberger involution f : S(λ, ρ) → S(λ, ρ′ ) is similarly defined
+via 180-degree rotation of T ∈ S(λ, ρ), followed by a reversal in the order of entries in the resulting tableaux.
+Here ρ′ = (ρm , . . . , ρ1 ) if ρ = (ρ1 , . . . , ρm ), meaning only “vertically symmetric” densities are preserved by f .
+    Now define a rotation operator r : PCkx (n, m) → PCky (m, n) on (not-necessarily closed) k-ary prographs that
+corresponds to 180-degree rotation and a reversal in the orientation of all edges. In Theorem 4.5 we will show
+that a specialization of this operator to any closed k-ary prograph G is compatible with the Schützenbeger
+involution on the associated set-valued tableaux Φ(G) from Theorem 2.1, but first we need to analyze how
+rotation effects our edge-labelling algorithms. It is in fact that case that the x-fold depth-left first search of
+Subsection 4.1 labels the edges of r(G) ∈ PCky (m, n) in an order that exactly reverses the order in which it labels
+the corresponding edges of G ∈ PCkx (n, m):
+
+
+
+                                                                        11
+
+PAGE prograph-source.txt 14 5     Future Directions
+5.1     Non-Closed k-ary Prographs PCkx (n, m) for which x 6≡ 1 mod (k − 1)
+Subsection 4.1 entirely restricted its attention to sets PCkx (n, m) of x-fold k-ary prographs for which x ≡ 1
+mod (k − 1). Developing an analogue to Theorem 4.2 in the case of x 6≡ 1 mod (k − 1) is significantly more
+involved, as such prographs require a modification of the justification operator whose effect on the associated
+set-valued tableaux is more difficult to interpret. Although we stop short of proving an explicit bijection, we
+pause to outline how the techniques of Subsection 4.1 may be generalized to the case of general PCkx (n, m).
+    So let x ≡ a mod (k − 1), where 2 ≤ a ≤ k − 1, and consider the set PCkx (n, m). There exists an injection
+J : PCkx (n, m) → PCk (n + x+k−a−1
+                               k−1    ) in which k − a free strands are added on the left side of G ∈ PCkx (n, m),
+producing a prograph G  e ∈ PCx+k−a (n, m) in which the number of inputs is 1 mod (k − 1), and then the original
+                               k
+
+                                        e For G ∈ PCkx (n, m), we call the image J(G) ∈ PCk (n + x+k−a−1 ) the
+justification operator j is applied to G.                                                             k−1
+left-weighted justification of G. See Figure 13 for an example of left-weighted justification.
+
+
+
+
+                                                                       j
+                             G         ⇒                   G         ⇒                  G
+
+
+
+
+Figure 13: A non-closed prograph G ∈ PC42 (n, n−1) and its left-weighted justification J(G) ∈ PC4 (n+ 2+4−2−1
+                                                                                                        4−1   ).
+
+    Following the techniques of Theorem 4.2, left-weighted justification suggests that PCkx (n, m) may be placed
+in bijection with some subset of S(λ/µ, ρ) for λ = (n + x+k−a−1k−1   , n + x+k−a−1
+                                                                              k−1    , m) and µ = ( x+k−a−1
+                                                                                                       k−1   , 0, 0).
+The difficulty is in describing what subset of S(λ/µ, ρ) corresponds to left-justified prographs in which the k − a
+leftmost children of the initial coproduct terminate at the final product node.
+    Conjecture 5.1 describes the subset of S(λ/µ, ρ) that should lie in bijection with PCkx (n, m). The first
+condition below prevents the k − a leftmost children of the initial coproduct from terminating at a coproduct
+node. The second condition prevents those same edges from serving as an input to a product that isn’t the final
+product of the prograph.
+Conjecture 5.1. Assume x ≡ a mod (k − 1), where 2 ≤ a ≤ k − 1. Then consider PCkx (n, m) and S(λ/µ, ρ)
+with λ = (n + x+k−a−1
+                  k−1    , n + x+k−a−1
+                                 k−1   , m) and µ = ( x+k−a−1
+                                                        k−1   , 0, 0). For arbitrary T ∈ S(λ/µ, ρ), let b1 < b2 < . . .
+denote the middle-row entries of T and let c1 < c2 < . . . denote the bottom-row entries of T . Then PCkx (n, m)
+is in bijection with the subset of tableaux from S(λ/µ, ρ) satisfying
+    1. bi = i for all 1 ≤ i ≤ k − a, and
+    2. ci > b(k−1)i+2−(k−a) for all 1 ≤ i ≤ m − 1
+
+5.2     Additional Combinatorial Interpretations for S(n3 , ρ) with ρ = (1, k − 1, 1)
+It is natural to suppose that all combinatorial interpretations of the three-dimensional Catalan numbers admit
+one-parameter generalizations that lie in bijection with S(n3 , ρ) for ρ = (1, k − 1, 1). Below we briefly conjecture
+as to how several more of those interpretations may be k-generalized. See sequence A005789 of OEIS [12] for
+a full list of candidates. Beyond the interpretations discussed below, we are especially interested in how the
+pattern-avoiding permutations of Lewis [9] may be generalized using standard set-valued Young tableaux.
+
+    1. The three-dimensional Catalan number C3,n is known to count the number of walks in the first quadrant
+       of Z2 that start and end at (0, 0) and use 3n total steps from {(0, 1), (1, −1), (−1, 0)}. These walks are
+       known to lie in bijection with S(n3 ) via a map that associates (0, 1) steps with entries in the top row of the
+       corresponding tableau, (1, −1) steps with entries in the middle row of that tableau, and (−1, 0) steps with
+       entries in the bottom row of that tableau. We conjecture that this map may be generalized to a bijection
+
+                                                          14
+
+PAGE prograph-journal.txt 3                  P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54           31
+
+
+as “column-standardness” and “row-standardness”, respectively. We denote the set
+of standard set-valued Young tableaux of shape λ and density ρ as S(λ, ρ). See
+Figure 1 for a collection of standard set-valued Young tableaux with λ = (3, 3) = 32
+and ρ = (2, 1). Given a skew Young diagram of shape λ/μ, one may similarly deﬁne
+a standard skew set-valued Young tableau of shape λ/μ and (row-constant)
+density ρ. We denote the set of such skew tableaux by S(λ/μ, ρ).
+
+       12 45 67         12 35 78         12 34 58         12 34 56        12 45 78
+        3    8   9       4   6   9        6   7   9        7   8   9       3    6   9
+
+            Figure 1: Five of the twelve elements of S(32 , ρ) with ρ = (2, 1).
+
+    Set-valued Young tableaux were originally introduced by Buch [3] to study the K-
+theory of Grassmannians. Heubach, Li and Mansour [8] later provided standard set-
+valued Young tableaux with λ = n2 and row-constant density ρ = (k − 1, 1) as one of
+                                                                               (kn)!
+their many combinatorial interpretations of the k-Catalan numbers Cnk = (kn−n+1)!n!   .
+That work was directly expanded upon by Drube [4], who used standard set-valued
+Young tableaux with two rows to provide new combinatorial interpretations of the
+Raney numbers, the rational Catalan numbers, and the solution to the generalized
+tennis ball problem. For recent usages of set-valued Young tableaux in a more
+algebraic setting, see Reiner, Tenner and Yong [11] and Monical [10].
+    It is important to emphasize the current lack of a set-valued analogue to the
+hook-length formula. This makes the enumeration of S(λ, ρ) for arbitrary λ and ρ an
+extremely challenging problem, and comprehensive attempts at counting standard
+set-valued Young tableaux of arbitrary density ρ have only been attempted for two-
+row shapes λ = (a, b). See Drube [4] for calculations of |S(λ, ρ)| in the two-row
+rectangular case, enumerations that corresponded to various generalizations of the
+(two-dimensional) Catalan numbers.
+    With the two-row case relatively well-understood, this paper presents the ﬁrst
+thorough investigation of standard set-valued Young tableaux in the case of three-row
+shapes. Much as various choices of ρ allow | S(n2 , ρ)| to correspond to various gener-
+alizations of the two-dimensional Catalan numbers, | S(n3 , ρ)| and certain choices of
+ρ will correspond to various generalizations of the three-dimensional Catalan num-
+bers. To our knowledge, all three-dimensional Catalan generalizations discussed in
+this paper have yet to appear anywhere in the literature.
+
+1.1   Outline of Paper
+This paper proceeds as follows. In Section 2, we introduce k-ary product-coproduct
+prographs, a class of directed plane graphs that naturally extend existing combinato-
+rial interpretations for both the two- and three-dimensional Catalan numbers. Much
+of Section 2 may be seen as an extension and formalization of the work of Borie [2].
+This motivates our focus on the sets S(n3 , ρ) with ρ = (1, k − 1, 1), which are placed
+in bijection with k-ary product-coproduct prographs (Theorem 2.1). In Section 3,
+                                                                                     k
+we focus upon the enumeration of these tableaux, yielding a family of integers C3,n
+
+PAGE prograph-journal.txt 4                  P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54             32
+
+
+that function as a three-dimensional analogue of the k-Catalan numbers. Closed
+                k
+formulas for C3,n are derived for n ≤ 5 (Propositions 3.1, 3.2, 3.5, 3.6) and a general
+calculus is introduced to tackle the general case (Proposition 3.3). In Section 4, we
+further explore the bijection between our standard set-valued Young tableaux and k-
+ary product-coproduct prographs. Appropriately generalized prographs are placed in
+bijection with various sets of (non-rectangular and skew) standard set-valued Young
+tableaux (Theorem 4.2), and a 180-degree rotation of k-ary prographs is shown to
+correspond to a set-valued analogue of the Schützenberger involution on standard
+Young tableaux (Theorem 4.5). Section 5 closes the paper with a series of more cur-
+sory discussions, including a suggestion of additional combinatorial interpretations
+      k
+for Cd,n and a consideration of three- and four-row set-valued tableaux with densities
+other than ρ = (1, k − 1, 1).
+
+2     k-ary Product-Coproduct Prographs
+      and Set-Valued Tableaux
+Let Tnk denote the set of full k-ary trees with kn + 1 vertices, drawn so that the root
+vertex lies at the bottom of the tree. It is well-known that Tnk is enumerated by the
+                              (kn)!
+k-Catalan number Cnk = (kn−n+1)!n!   . In the k = 2 case, this prompts the well-studied
+                      2         2
+bijection between Tn and S(n ) that associates entries in the top row of the tableau
+to left children and entries in the bottom row of the tableau to right children.
+    The bijection between Tn2 and S(n2 ) may be generalized to a bijection between
+Tnk and standard set-valued Young tableaux S(n2 , ρ) with row-constant density ρ =
+(k − 1, 1). As described by Heubach, Li and Mansour [8], this generalized bijection
+φk : Tnk → S(n2 , ρ) is deﬁned as below. For an example of φk , see Figure 2.
+
+    1. For any T ∈ Tnk , label the edges of T with the integers {1, . . . , nk} according
+       to a depth-left ﬁrst search.
+
+    2. Place all integers that label rightmost-children of T in the bottom row of φ(T ) ∈
+       S(n2 , ρ), in increasing order from left to right.
+
+    3. Place all remaining integers from {1, . . . , nk} in the top row of φ(T ), in increas-
+       ing order from left to right and ensuring that each cell in the top row receives
+       precisely k − 1 integers.
+
+
+                            3 4         8 9
+                        2
+
+                              1
+                                    7
+                                  5 6
+                                               ⇔           12 35 79
+                                                            4 6 9
+
+
+         Figure 2: An example of the bijection φk : Tnk → S(n2 , ρ) for k = 3.
+
+    Following Borie [2], generalizing φk to three-row tableaux requires a consideration
+of prographs. For any ﬁnite collection G of formal operators, each of which is uniquely
+
+PAGE prograph-journal.txt 5                P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54         33
+
+
+identiﬁed by its number of inputs and outputs, one may consider the set of all ﬁnite
+compositions that are freely constructed using elements of G (as well as the identity
+operator Id). Each of these compositions corresponds to a directed planted plane
+graph in which all edges are directed upward. In these graphs, each application
+of a non-identity operator corresponds to a non-initial, non-terminal vertex whose
+vertical placement (when read from bottom to top) corresponds to the stage at which
+the operator appears in the composition. See Figure 3 for a quick example. Two
+planted plane graphs, drawn so that all edges maintain a strict upwards orientation,
+are considered equivalent if they represent equivalent formal operators. The resulting
+equivalence classes of such graphs constitute a set PROG that we refer to as the (free)
+prographs generated by G.
+    Let A denote a formal module. If G consists solely of an operator Δk : A →
+A ⊗ · · · ⊗ A with 1 input and k outputs (a non-coassociative k-ary coproduct),
+elements of PROG are a directed variation of full k-ary trees where every edge has
+been directed upward and a single input edge has been added below the root vertex.
+The subset of these prographs with precisely n usages of Δk are in bijection Tnk . For
+example, the 3-ary tree on the left side of Figure 2 corresponds the prograph shown
+in Figure 3.
+
+
+
+
+Figure 3: The prograph corresponding to the composition (Δ3 ⊗ Id ⊗Δ3 ) ◦ Δ3 , where
+Δ3 is a 3-ary coproduct.
+
+    Now consider the case where G consists of a (non-coassociative) k-ary coproduct
+Δk : A → A ⊗ · · · ⊗ A with 1 input and k outputs, as well as a (non-associative)
+k-ary product μk : A ⊗ · · · ⊗ A → A with k inputs and 1 output. We refer to
+the resulting elements of PROG as k-ary (product-coproduct) prographs. The
+subset of these prographs that have a single terminal vertex are known as closed
+k-ary (product-coproduct) prographs. As all prographs have a single initial
+vertex, all closed k-ary prographs must feature the same number of product and
+coproduct nodes. We denote the set of all closed k-ary prographs with precisely n
+products and n product by PCk (n). See Figure 4 for an illustration of PC2 (2).
+    Borie [2] argued that PC2 (n) is enumerated by the three-dimensional Catalan
+                     2(3n)!
+number C3,n = n!(n+1)!(n+2)! . This is accomplished by placing PC2 (n) in bijection
+with the three-row standard Young tableaux S(n3 ).
+    Our goal for the rest of this section is to generalize Borie’s bijection to PCk (n)
+for all k ≥ 2, where the appropriate k-generalization of S(n3 ) is standard set-valued
+Young tableaux S(n3 , ρ) with row-constant density ρ = (1, k − 1, 1). We begin by
+introducing an algorithm for labelling the edges of any G ∈ PCk (n) that generalizes
+both the depth-left ﬁrst labelling of k-ary trees and Borie’s depth-left search for
+elements of PC2 (n).
+
+PAGE prograph-journal.txt 10                 P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54            38
+
+
+                                   10
+
+
+
+                                             ⇔
+                               6         9
+                                   7 8
+                                                       1   5
+                                                      234 789
+                         1 23 5                        6   10
+                               4
+                           0
+
+Figure 6: An example of the bijection Φ : PCk (n) → S(n3 , ρ) for n = 2 and k = 4.
+
+3    Enumerating S(n3, ρ) for ρ = (1, k − 1, 1)
+Theorem 2.1 suggests that S(n3 , ρ) with ρ = (1, k−1, 1) generalizes S(n3 ) in a manner
+similar to how S(n2 , ρ ) with ρ = (k − 1, 1) generalizes S(n2 ). As the S(n2 , ρ ) are
+enumerated by the k-Catalan numbers Cnk , we henceforth refer to the cardinalities
+| S(n3 , ρ)| = C3,n
+                k
+                    as the three-dimensional k-Catalan numbers.
+                                                                      k
+    The purpose of this section is to develop closed formulas for C3,n  . Sadly, develop-
+ing such a formula or deriving a multivariate generating function for arbitrary n ≥ 1,
+k ≥ 1 do not appear to be tractable problems. As such, we restrict our attention to
+                                                                                       k
+cases of small n. See Table 1 of Appendix 5.3 for a table of known values of C3,n         ,
+which combines the explicit results of this section with calculations performed in
+Java.
+    In all that follows, notice that the “degenerate” k = 1 case corresponds to three-
+row tableaux with empty cells across their middle row. This means that the k = 1
+                                                                                    1
+enumerations reduce to pre-existing results about two-row tableaux: that C3,n            =
+      3             2
+| S(n , ρ)| = |S(n )| = Cn for all n ≥ 1 with ρ = (1, 0, 1).
+    For all ofour enumerations we recursively place S(λ, ρ) in bijection with a collec-
+tion of sets S(λi , ρ) of strictly smaller shape yet equivalent density. Our technique
+is similar to pre-existing proofs for non-set-valued tableaux where the sub-shapes
+λi are determined via the removal of lower-right corners, corresponding to possible
+locations of the largest possible entry in a tableau of shape λ. The diﬀerence here
+is that we never remove entries from a cell without eliminating all entries in that
+cell. If the removed cell contains entries other than the largest entry in the tableau,
+this necessitates that we account for the ordering of those smaller entries relative to
+integers appearing elsewhere in the tableau.
+    Before proceeding, note that |S(λ, ρ)| is easily calculable when λ = (n, 1, . . . , 1)
+is “hook-shaped”. In this case, one merely needs to count the ways of partitioning
+entries between the rightward and downward    a “legs”, giving an enumeration in terms
+of a single binomial coeﬃcient |S(λ, ρ)| = b . See Figure 7 for examples.
+    For the rest of this section, an unﬁlled Young diagram of shape λ is used to denote
+the cardinality | S(λ, ρ)|, assuming ρ = (1, k − 1, 1).
+Proposition 3.1. Let ρ = (1, k − 1, 1). For any k ≥ 1, C3,2
+                                                        k
+                                                            = | S(23 , ρ)| = k 2 + 1.
+Proof. As the largest entry of any T ∈ S(23 , ρ) must lie at (3, 2), we investigate
+the integers a1 < . . . < ak−1 lying at (2, 2) in an arbitrary set-valued tableaux
+
+PAGE prograph-journal.txt 13                     P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54            41
+
+
+Corollary 3.4. Fix ρ = (1, k − 1, 1), where k is indeterminate, and let λ = (a, b, c)
+satisfy both b ≥ 1 and a + c ≥ 2. If a = b = c, then | S((a, b, c), ρ)| is a polynomial
+in k of degree a + c − 2. If a > c, then | S((a, b, c), ρ)| is a polynomial in k of degree
+a + c − 1.
+
+Proof. That | S((a, b, c), ρ)| = p(k) is a polynomial in k follows directly from the
+recursion of Proposition 3.4. To demonstrate the degree of p(k), induct on i =
+a + b + c for i ≥ 3. The base case of i = 3 follows from | S((2, 1, 0), ρ)| = k and
+| S((1, 1, 1), ρ)| = 1. For the inductive case, take | S((a, b, c), ρ)| with a + b + c = i + 1.
+If b > c, the ﬁrst case of Proposition 3.4 equates | S((a, b, c), ρ)| with a sum of
+polynomials (all with positive leading coeﬃcient) whose maximal degree summand(s)
+all have degree a + c − 1. If b = c, the second case of Proposition 3.4 equates
+| S((a, b, c), ρ)| with a sum of polynomials whose sole maximal degree summand has
+degree a + (c − 1) − 1.
+    In the case of λ = n3 , notice that Corollary 3.4 implies that p(k) = | S(n3 , ρ)|
+has degree 2(n − 1). Proposition 3.3 may also be applied with the aid of a computer
+                                                                        k         k
+algebra system to derive the following polynomials, corresponding to C3,4  and C3,5 .
+
+Proposition 3.5. Let ρ = (1, k − 1, 1). For any k ≥ 1,
+
+                                   256k 6 − 114k 5 + 217k 4 − 12k 3 + 121k 2
+                  | S(43 , ρ)| =                                             + 1.
+                                                      36
+Proposition 3.6. Let ρ = (1, k − 1, 1). For any k ≥ 1,
+
+                  15625k 8 − 10092k 7 + 10258k 6 − 72k 5 + 5473k 4 − 204k 3 + 2628k 2
+ | S(53 , ρ)| =                                                                       + 1.
+                                                 576
+
+4     Properties of k-ary Prographs
+In this section we prove a generalization of Theorem 2.1 that applies to non-closed
+k-ary prographs satisfying certain basic properties. We then explore one signiﬁcant
+application of our bijection that generalizes an unproven proposition of Borie [2],
+showing that 180-degree rotation of prographs corresponds to a set-valued analogue
+of the Schützenberger involution on standard Young tableaux.
+
+4.1    Non-Closed k-ary Prographs and Set-Valued Tableaux
+We begin by generalizing the set PROG to ﬁnite compositions of formal operators
+where the initial input is the an x-fold tensor product A⊗· · ·⊗A of the formal module
+A. The resulting directed plane graphs resemble prographs over G but now contain
+precisely x input strands, aligned horizontally across the bottom of the graph. Fixing
+G and m ≥ 1, we may enforce a notion of equivalence on the resulting set of directed
+plane graphs that is analogous to the equivalence relation on PROG from Section 2.
+We refer to the resulting set of equivalence classes PROG,x as the set of x-fold (free)
+prographs generated by G.
+
+PAGE prograph-journal.txt 16                 P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54         44
+
+
+  2. After labelling the ith edge, determine the node subset Vi from the depth-left
+     ﬁrst search of Section 2. If Vi is non-empty, follow the procedure of Section
+     2 to ﬁnd the edge labelled i + 1. If Vi is empty, label the leftmost unlabelled
+     initial input of G with i + 1
+
+    Using the same terminology as Theorem 4.2, let τ (G) ∈ S(λ/μ, ρ) be the tableau
+that results from applying the x-fold depth-left ﬁrst search to G ∈ PCkx (n, m), plac-
+ing all integers labelling leftmost coproduct children of G in the top row, placing all
+integers labelling product children of G in the bottom row, and placing all remain-
+ing non-zero integers (including those labelling non-leftmost initial inputs of G) in
+the middle row. This is in fact that same tableau that results from the composite
+bijection of Theorem 4.2:
+
+Corollary 4.3. Let ψ : PCkx (n, m) → S(λ/μ, ρ) be as in the proof of Theorem 4.2.
+For any G ∈ PCkx (n, m) with x ≡ 1 mod (k − 1), τ (G) = ψ(G).
+
+Proof. Recall that justiﬁcation of G introduces precisely x−1
+                                                           k−1
+                                                               leftmost coproduct chil-
+                            x−1
+dren that receive the ﬁrst k−1 nonzero labels in the depth-left ﬁrst search on j(G),
+           y−1
+as well as k−1 product children that receive the ﬁnal y−1
+                                                       k−1
+                                                           labels in the depth-left ﬁrst
+search on j(G). As these are precisely the entries of Φ ◦ j(G) that are deleted in the
+ﬁnal stage of ψ, we merely need to argue that the depth-left ﬁrst search of Section 2
+labels the remaining edges of j(G) in the same order that the x-fold depth-left ﬁrst
+search labels the edges of G. In particular, we need to show that the ith edge from
+the x-fold depth-left ﬁrst search on G corresponds to the (i + x−1 k−1
+                                                                       )th edge from our
+original depth-left ﬁrst search on j(G).
+    Inducting on i, consider the two algorithms after the labelling of the ith edge of
+G. If the set Vi is non-empty for G, the set V(i+ x−1 ) is non-empty for j(G). Since
+                                                   k−1
+the inputs to the initial coproduct nodes that appear only in j(G) have lower edge
+labels than all other edges in j(G), the element of Vi in G with the largest input
+corresponds to the element of V(i+ x−1 ) in j(G) with the largest input. This leads
+                                     k−1
+to equivalent placements of the next edge label in both graphs. Now if Vi is empty
+for G, it must be the case that V(i+ x−1 ) for j(G) consists solely of nodes from the
+                                        k−1
+justiﬁcation’s x−1
+               k−1
+                   initial coproducts. As the edge labels on the inputs to these initial
+coproducts always decrease from left to right, the next edge labelled in j(G) is always
+the leftmost output of the initial coproducts that has yet to be labelled. These initial
+coproduct children of j(G) precisely correspond to initial inputs in the non-justiﬁed
+graph G, implying that the next edge of G to be labelled by the x-fold depth-left
+ﬁrst search is the equivalent (non-leftmost) initial input of G.
+
+4.2   The Schützenberger Involution
+For any rectangular shape λ N, the Schützenberger involution is a map f : S(λ) →
+S(λ) that rotates T ∈ S(λ) by 180 degrees and then renumbers entries via a → N −
+a + 1. As described by Drube [4], one may deﬁne an analogue of the Schützenberger
+involution for standard set-valued Young tableaux. For any rectangular shape λ
+
+PAGE prograph-journal.txt 17                 P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54            45
+
+
+and row-constant density ρ, the set-valued Schützenberger involution f : S(λ, ρ) →
+S(λ, ρ ) is similarly deﬁned via 180-degree rotation of T ∈ S(λ, ρ), followed by a
+reversal in the order of entries in the resulting tableaux. Here ρ = (ρm , . . . , ρ1 ) if
+ρ = (ρ1 , . . . , ρm ), meaning only “vertically symmetric” densities are preserved by f .
+    Now deﬁne a rotation operator r : PCkx (n, m) → PCky (m, n) on (not-necessarily
+closed) k-ary prographs that corresponds to 180-degree rotation and a reversal in
+the orientation of all edges. In Theorem 4.5 we will show that a specialization of
+this operator to any closed k-ary prograph G is compatible with the Schützenbeger
+involution on the associated set-valued tableaux Φ(G) from Theorem 2.1, but ﬁrst
+we need to analyze how rotation eﬀects our edge-labelling algorithms. It is in fact
+that case that the x-fold depth-left ﬁrst search of Subsection 4.1 labels the edges of
+r(G) ∈ PCky (m, n) in an order that exactly reverses the order in which it labels the
+corresponding edges of G ∈ PCkx (n, m):
+
+Proposition 4.4. For any k ≥ 2, n, m ≥ 0, x ≥ 1, set N = x + kn + m − 1 and
+consider the rotation operator r : PCkx (n, m) → PCky (m, n). For any edge e of G, if
+the x-fold depth-left first search labels e with the integer i, then the x-fold depth-left
+first search labels the corresponding edge of r(G) with N − i.
+
+Proof. We proceed by induction on the maximum edge label N ≥ 0. The N = 0
+case is immediate, as both G and r(G) consist of a single edge labelled 0. For N > 0,
+consider the edge e of G that receives the label N, which is always the rightmost
+output of G. There are three options: 1) e is a “free strand” that does not originate
+at a product or coproduct, 2) e is a product child, or 3) e is a rightmost coproduct
+child.
+    If e is a free strand, simply deleting e produces a valid prograph G with maximal
+edge label N −1. By the inductive hypothesis, the x-fold depth-left ﬁrst search labels
+corresponding edges in G and r(G) according to i → N −1−i. Inserting a free strand
+(labelled 0) on the left side of G recovers r(G), and eﬀects our edge labelling in that
+the label of all edges in r(G) are increased by 1. It follows that the x-fold depth-left
+ﬁrst search labels corresponding edges in G and r(G) according to i → N − i.
+    If e is a product child, we eliminate the product node at the source of e as in
+the ﬁrst row of Figure 10, yielding a prograph G with k − 1 additional outputs but
+maximal edge label N − 1. Applying the inductive hypothesis allows us to relate
+corresponding edge labels of G and r(G) by i → N − 1 − i. We then pre-compose
+r(G) with an additional coproduct whose outputs are the k leftmost inputs of r(G),
+as in the top row of Figure 10. This recovers r(G) and eﬀects our edge labelling in
+that all edges apart from the new coproduct input are increased by 1. It follows that
+the x-fold search labels corresponding edges in G and r(G) according to i → N − i.
+    Lastly, if e is a rightmost coproduct child we eliminate the coproduct node at
+the source of e as in the bottom row of Figure 10, identifying the input of that
+coproduct with its leftmost output while extending all remaining outputs of to the
+bottom of the prograph as k − 1 new inputs. As the resulting graph G has maximal
+edge label N − 1, we may once again relate corresponding edge labels of G and r(G)
+by i → N − 1 − i. Introducing a new product node into r(G) as in the bottom
+
+PAGE prograph-journal.txt 21                 P. DRUBE ET AL. / AUSTRALAS. J. COMBIN. 72 (1) (2018), 29–54             49
+
+
+subset of S(λ/μ, ρ) corresponds to left-justiﬁed prographs in which the k − a leftmost
+children of the initial coproduct terminate at the ﬁnal product node.
+    Conjecture 5.1 describes the subset of S(λ/μ, ρ) that should lie in bijection with
+PCkx (n, m). The ﬁrst condition below prevents the k−a leftmost children of the initial
+coproduct from terminating at a coproduct node. The second condition prevents
+those same edges from serving as an input to a product that isn’t the ﬁnal product.
+
+Conjecture 5.1. Assume x ≡ a mod (k − 1), where 2 ≤ a ≤ k − 1. Then
+consider PCkx (n, m) and S(λ/μ, ρ) with λ = (n + x+k−a−1  k−1
+                                                                , n + x+k−a−1
+                                                                        k−1
+                                                                              , m) and
+μ = ( k−1 , 0, 0). For arbitrary T ∈ S(λ/μ, ρ), let b1 < b2 < . . . denote the
+       x+k−a−1
+
+middle-row entries of T and let c1 < c2 < . . . denote the bottom-row entries of T .
+Then PCkx (n, m) is in bijection with the subset of tableaux from S(λ/μ, ρ) satisfying
+
+  1. bi = i for all 1 ≤ i ≤ k − a, and
+
+  2. ci > b(k−1)i+2−(k−a) for all 1 ≤ i ≤ m − 1.
+
+5.2 Additional Combinatorial Interpretations
+    for S(n3 , ρ) with ρ = (1, k − 1, 1)
+It is natural to suppose that all combinatorial interpretations of the three-dimensional
+Catalan numbers admit one-parameter generalizations that lie in bijection with the
+set S(n3 , ρ) for ρ = (1, k −1, 1). Below we brieﬂy conjecture as to how several more of
+those interpretations may be k-generalized. See sequence A005789 of OEIS [12] for a
+full list of candidates. Beyond the interpretations discussed below, we are especially
+interested in how the pattern-avoiding permutations of Lewis [9] may be generalized
+using standard set-valued Young tableaux.
+
+  1. The three-dimensional Catalan number C3,n is known to count the number of
+     walks in the ﬁrst quadrant of Z2 that start and end at (0, 0) and use 3n total
+     steps from {(0, 1), (1, −1), (−1, 0)}. These walks are known to lie in bijection
+     with S(n3 ) via a map that associates (0, 1) steps with entries in the top row
+     of the corresponding tableau, (1, −1) steps with entries in the middle row of
+     that tableau, and (−1, 0) steps with entries in the bottom row of that tableau.
+     We conjecture that this map may be generalized to a bijection between S(n3 , ρ)
+     with ρ = (1, k −1, 1) and walks in the ﬁrst quadrant of Z2 that start and end at
+     (0, 0) and which use (k + 1)n total steps from {(0, k − 1), (1, −1), (−k + 1, 0)}.
+     In this bijection, (0, k − 1) steps should correspond to entries in the top row
+     of the associated set-valued tableau, (1, −1) steps should correspond to entries
+     in the middle row of that tableau, and (−k + 1, 0) steps should correspond to
+     entries in the bottom row of that tableau.
+
+  2. C3,n is also known to count three-dimensional integer lattice paths from (0, 0, 0)
+     to (n, n, n) that use steps from {(1, 0, 0), (0, 1, 0), (0, 0, 1)} and that satisfy x ≥
+     y ≥ z at every lattice point (x, y, z) along the path. These lattice paths are
+     known to lie in bijection with S(n3 ) via a map that associates (1, 0, 0) steps
+
+results.json ['326976', '330333', '331083', '331152', '331228', '331622', '333410', '334440', '335100', '335147', '335884', '336386', '336403', '336974', '337113', '337157', '337265', '337290', '337898', '341410']
+raw-provenance.json ['326976', '330333', '331083', '331152', '331228', '331622', '333410', '334440', '335100', '335147', '335884', '336386', '336403', '336974', '337113', '337157', '337265', '337290', '337898', '341410']
+META http-primary.json [
+  {
+    "tag": "roots-source",
+    "url": "https://arxiv.org/pdf/1701.06884",
+    "utc": "2026-11-07T04:26:40.918490+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/pdf/1701.06884",
+    "bytes": 829203,
+    "sha256": "b45bcc2d03075afcae740621b599d27e8834b583842540bfaccbf749be2fa8cc",
+    "conversion_exit": 0
+  },
+  {
+    "tag": "lam-leung",
+    "url": "https://arxiv.org/pdf/math/9511209",
+    "utc": "2026-11-07T04:26:41.801233+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/pdf/math/9511209",
+    "bytes": 201910,
+    "sha256": "b010546db8230a39741997807a1110402c4f24fb7e897441e66fc355284ce1ab",
+    "conversion_exit": 0
+  },
+  {
+    "tag": "trees-source",
+    "url": "https://arxiv.org/pdf/1504.06239",
+    "utc": "2026-11-07T04:26:43.103405+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/pdf/1504.06239",
+    "bytes": 346984,
+    "sha256": "b13e9acb8e6438b5e3c09e55f697692432c04119a1aa3f3f2d47e094d77e9ec4",
+    "conversion_exit": 0
+  },
+  {
+    "tag": "prograph-source",
+    "url": "https://arxiv.org/pdf/1710.02709",
+    "utc": "2026-11-07T04:26:46.697732+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/pdf/1710.02709",
+    "bytes": 316394,
+    "sha256": "c3a7c531a93648f83d1296535a20561567ae5f92736dbc5a60e6adfc6328975e",
+    "conversion_exit": 0
+  },
+  {
+    "tag": "registry-pool",
+    "url": "https://github.com/LeanPool/lean-pool",
+    "utc": "2026-11-07T04:26:47.816117+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://github.com/LeanPool/lean-pool",
+    "bytes": 288934,
+    "sha256": "86d30ce4f1bf1e822ae7585986583a20623f4f9a08e5c8bef8ce632f16115af0"
+  },
+  {
+    "tag": "registry-tauceti",
+    "url": "https://github.com/TauCetiProject/TauCeti",
+    "utc": "2026-11-07T04:26:51.653176+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://github.com/TauCetiProject/TauCeti",
+    "bytes": 332868,
+    "sha256": "deb398bdbc03e36271b96cbea1cb50f077fff858310bd552ca40f2b35521bd25"
+  }
+]
+META http-versions.json [
+  {
+    "tag": "roots-v1",
+    "url": "https://arxiv.org/pdf/1701.06884v1",
+    "utc": "2026-11-07T04:28:08.488644+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/pdf/1701.06884v1",
+    "bytes": 358985,
+    "sha256": "fc2baf34b570b94260a845b81ca604476457833fc7c1dfb8fd777cb506da2f36",
+    "conversion_exit": 0
+  },
+  {
+    "tag": "roots-abs",
+    "url": "https://arxiv.org/abs/1701.06884",
+    "utc": "2026-11-07T04:28:08.859030+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1701.06884",
+    "bytes": 45320,
+    "sha256": "3dd75616ca69b23af23607fbdc797dd86785bf4eb93b32c11ed86fd3c037517f"
+  },
+  {
+    "tag": "trees-abs",
+    "url": "https://arxiv.org/abs/1504.06239",
+    "utc": "2026-11-07T04:28:09.068412+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1504.06239",
+    "bytes": 42212,
+    "sha256": "cc195bafc9139af1252f5b41d12df23967b679917f4054e4f410a0a0b97bf7b4"
+  },
+  {
+    "tag": "prograph-journal",
+    "url": "https://ajc.maths.uq.edu.au/pdf/72/ajc_v72_p029.pdf",
+    "utc": "2026-11-07T04:28:09.354861+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://ajc.maths.uq.edu.au/pdf/72/ajc_v72_p029.pdf",
+    "bytes": 232927,
+    "sha256": "be70b56f4b9cb850a9f9e5dff41bd39aa70d750279e2aa0842c81cce6ff01d9d",
+    "conversion_exit": 0
+  },
+  {
+    "tag": "prograph-abs",
+    "url": "https://arxiv.org/abs/1710.02709",
+    "utc": "2026-11-07T04:28:31.854676+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/1710.02709",
+    "bytes": 41844,
+    "sha256": "62726fbcf7355aa1adfa953dd1c8c95e084b99777e92336b1fb7a6b2fe1efbbb"
+  },
+  {
+    "tag": "lam-abs",
+    "url": "https://arxiv.org/abs/math/9511209",
+    "utc": "2026-11-07T04:28:33.510379+00:00",
+    "read_depth": "acquisition only",
+    "status": 200,
+    "final_url": "https://arxiv.org/abs/math/9511209",
+    "bytes": 37890,
+    "sha256": "7b4333a0da645ad9d8aba5f046756a41ad045689cdb03b3b687f44415160dbfb"
+  }
+]
+META search-receipts.json {
+  "utc_recorded": "2026-11-07T04:33:34.834815+00:00",
+  "transport": "web search; exact HTTP status/finalURL/bytes/hashes not exposed; no invented receipts",
+  "batches": [
+    {
+      "queries": [
+        "vanishing sums roots unity 105 weight 14 Lam Leung minimal sum",
+        "\"critical ideals\" \"trees\" \"Gr\u00f6bner\" conjecture",
+        "\"prographs\" \"set-valued\" 1710.02709 conjecture",
+        "LeanPool TauCeti formal conjectures GitHub"
+      ],
+      "observed": "Lam\u2013Leung arXiv math/9511209 primary lead; source 1710.02709; current registry repository roots; secondary minimal105 lead not used as proof"
+    },
+    {
+      "queries": [
+        "\"Critical ideals of trees\" \"conjecture\" reduced basis proved",
+        "\"Set-Valued Young Tableaux\" \"Conjecture 5.1\"",
+        "\"Combination Networks\" \"roots\" \"orbit\" conjecture",
+        "\"minimaj\" \"shape\" equidistribution Rhoades Wilson"
+      ],
+      "observed": "Final journal PDF at ajc.maths.uq.edu.au/pdf/72/ajc_v72_p029.pdf acquired and read. Rhoades author slides and crystal article are specific possible minimaj subsumers; bodies not acquired."
+    },
+    {
+      "queries": [
+        "\"1701.06884\" \"unity\"",
+        "\"prime\" \"orbit\" \"Wan\" \"Tuninetti\" roots",
+        "\"Critical ideals of trees\" Corrales Valencia journal 2017",
+        "\"1710.02709\" \"bijection\" conjecture 2026"
+      ],
+      "observed": "No authenticated new correction/refutation. Mixed output primarily tree preprint/source listings, no proof clearance. Protected/denied search-result links not followed."
+    }
+  ],
+  "limit": "Three batches total; snippets are not complete primary proofs. No unbounded followup loops."
+}

@@ -1,0 +1,7 @@
+# DORMANT — no dispatch or execution authorization
+
+Only if root clears prior/significance: use the user-authorized Pi GLM model for formal work. Preserve k=4,x=a=2,n=m=1, density (1,3,1), skew shape (2,2,1)/(1,0,0), exact b/c conditions and universal-negation endpoint.
+
+Define actual free ordered planar product/coproduct compositions with identities and tensor/composition equivalence. Prove a source-fidelity bridge from source graph classes to that quotient, using the finite-composition definition and the layer normalization in REVIEW; do not assume an arbitrary graph encoding has the same classes. Prove every two-node source graph is one of E_11,E_12,E_21,E_22 modulo equivalence, yielding a four-element surjection. Distinctness of these images is unnecessary. Independently define skew cells, row density, label set, all-entry row/column standardness and the exact constrained subset. Supply the five membership proofs and pairwise distinctions. Combine them to prove no bijection exists for the instance, then negate the universal claim. A natural-map obstruction or a theorem about a replacement syntax without a source bridge is insufficient.
+
+Pin Lean/mathlib. Kernel checking and transitive #print axioms may use only propext, Classical.choice, Quot.sound; no sorry/admit/added axiom/unsafe/native_decide. Independent fidelity review and extracted strict replay remain necessary. No certificate-size estimate is measured or asserted. Formal execution was not performed by this reviewer. Prior HOLD is not discharged by this brief.
