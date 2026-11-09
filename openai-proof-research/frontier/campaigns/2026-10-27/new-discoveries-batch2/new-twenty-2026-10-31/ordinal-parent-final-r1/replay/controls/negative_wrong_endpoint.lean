@@ -1,0 +1,3 @@
+import OrdinalLine
+set_option warningAsError true
+example : OrdinalSpaces366371.MajorizationConjecture := OrdinalSpaces366371.not_majorizationConjecture
