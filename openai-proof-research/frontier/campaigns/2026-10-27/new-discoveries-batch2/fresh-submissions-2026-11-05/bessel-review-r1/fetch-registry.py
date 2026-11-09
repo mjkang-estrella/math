@@ -1,0 +1,18 @@
+import urllib.request,json,hashlib,datetime,subprocess
+from pathlib import Path
+base=Path(__file__).parent
+urls={'registry-Problems_baricz-mehrez-2018-bessel-redheffer-lower-bound.md': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Problems/baricz-mehrez-2018-bessel-redheffer-lower-bound.md', 'registry-Problems_baricz-ponnusamy-2013-bessel-product-order-log-convexity.md': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Problems/baricz-ponnusamy-2013-bessel-product-order-log-convexity.md', 'registry-Problems_gaunt-2019-bessel-tail-conjecture.md': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Problems/gaunt-2019-bessel-tail-conjecture.md', 'registry-Problems_karp-vishnyakova-zhang-2025-bessel-ratio-log-concavity.md': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Problems/karp-vishnyakova-zhang-2025-bessel-ratio-log-concavity.md', 'registry-Library_Asymptotics_gaunt2019besselintegrals.md': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Library/Asymptotics/gaunt2019besselintegrals.md', 'registry-Library_Asymptotics_nist2026dlmfbesselkintegral.md': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Library/Asymptotics/nist2026dlmfbesselkintegral.md', 'registry-Library_Asymptotics_nist2026dlmfmodifiedbessel.md': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Library/Asymptotics/nist2026dlmfmodifiedbessel.md', 'registry-Reg_D5_S3_Analytic_BesselProductOrderLogConvexity_Result.lean': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Reg/D5/S3/Analytic/BesselProductOrderLogConvexity/Result.lean', 'registry-Reg_D5_S3_Analytic_BesselRedheffer_Expansion.lean': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Reg/D5/S3/Analytic/BesselRedheffer/Expansion.lean', 'registry-Reg_D5_S3_Analytic_BesselRedheffer_FirstZero.lean': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Reg/D5/S3/Analytic/BesselRedheffer/FirstZero.lean', 'registry-Reg_D5_S3_Analytic_BesselRedheffer_Result.lean': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Reg/D5/S3/Analytic/BesselRedheffer/Result.lean', 'registry-Reg_D5_S3_Analytic_BesselRedheffer_Series.lean': 'https://raw.githubusercontent.com/the-omega-institute/trureturing/5a97247bf6ad10485d8891db5430b9e34def4933/Reg/D5/S3/Analytic/BesselRedheffer/Series.lean'}
+rows=[]
+for label,url in urls.items():
+ r={'label':label,'url':url,'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'cap':6000000}
+ try:
+  with urllib.request.urlopen(url,timeout=30) as f: data=f.read(6000001);r['status']=f.status
+  if len(data)>6000000: raise ValueError('cap exceeded')
+  ext='pdf' if data.startswith(b'%PDF') else 'html'
+  p=base/'sources'/f'{label}.{ext}';p.write_bytes(data)
+  r.update(path=str(p),bytes=len(data),sha256=hashlib.sha256(data).hexdigest())
+  if ext=='pdf':subprocess.run(['pdftotext','-layout',str(p),str(p.with_suffix('.txt'))],check=True)
+ except Exception as e:r['error']=str(e)
+ rows.append(r)
+ (base/'registry-body-receipts.json').write_text(json.dumps(rows,indent=2))
+ print(label,r.get('status'),r.get('bytes'),r.get('error'))
