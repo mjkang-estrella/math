@@ -1,0 +1,9 @@
+# Preserved failures and limitations
+
+- First certificate.py run: HiGHS default threading aborted with `terminate called without an active exception`, exit 134 (guard reports child -6), sampled group RSS 92,307,456 bytes, ~0.76s. Cause not independently diagnosed; likely thread initialization under fixed address-space cap. No cap raised. Passing threads=1 to HiGHS succeeded (SciPy warned this option is passed through); exact verifier does not use HiGHS.
+- Diagnostic N=100 search's best gap 0.0358399999999999 was below initial conservative combined rounding allowance 0.047. It was not a proof. N=200 rational certificate gives a strict continuous separation after allowance 47/2000.
+- Author page https://sas.uwaterloo.ca/~wang/papers.html returned HTTP403. Stopped; no same-host alternative path, proxy, TLS change or browser retry.
+- The guessed identifier 1411.2014 was a wrong-paper retrieval (Link-State Based Decode-Forward Schemes for Two-way Relaying). Preserved and explicitly excluded from scientific dependencies. No reliance on its unrelated content.
+- Broad arXiv query `aggregation sets` was noisy and bounded to 30 results; not exhaustive. Narrow topic queries are also not a citing-index or complete literature screen. No evidence that silence establishes novelty.
+- The 2016 Wang–Wang joint-mixability original and Mao et al. 2019 original were not independently obtained; their quoted scope is attributed to actual source Example 3 / Proposition 2. Later joint-mixability and convolution primary bodies were obtained at the recorded scope.
+- Previously denied GitHub API/raw/codeload/diff/patch, ScienceDirect and Google challenge routes not retried. Current public proof-registry heads and inaccessible historical intervals remain unverified; no clearance claimed. No historical HEAD loops or recursive history duplication.
