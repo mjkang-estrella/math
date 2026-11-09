@@ -1,0 +1,22 @@
+import FeasibleG
+import IncidenceRealG
+import FacetDimension
+import MinorCore
+noncomputable section
+namespace FullereneGeometry
+theorem onG15v03 : pG 3 ∈ facetSection qG 15 := by
+ refine ⟨(facet_listed_vertices_G 3).1, ?_⟩
+ exact (real_incidence_G 15 3).mp (by decide +kernel)
+theorem onG15v04 : pG 4 ∈ facetSection qG 15 := by
+ refine ⟨(facet_listed_vertices_G 4).1, ?_⟩
+ exact (real_incidence_G 15 4).mp (by decide +kernel)
+theorem onG15v16 : pG 16 ∈ facetSection qG 15 := by
+ refine ⟨(facet_listed_vertices_G 16).1, ?_⟩
+ exact (real_incidence_G 15 16).mp (by decide +kernel)
+theorem dimension_G15 : affineDimension (facetSection qG 15) = 2 :=
+ section_dimension_eq_of_minor qG 15 (pG 3) (pG 4) (pG 16)
+  onG15v03 onG15v04 onG15v16 0 1 (by
+   rw [← TripleCertificates.pbindG 3, ← TripleCertificates.pbindG 4, ← TripleCertificates.pbindG 16]
+   exact TripleCertificates.minor_real _ _ _ (TripleCertificates.positiveG 3)
+    (TripleCertificates.positiveG 4) (TripleCertificates.positiveG 16) 0 1 (by decide +kernel))
+end FullereneGeometry

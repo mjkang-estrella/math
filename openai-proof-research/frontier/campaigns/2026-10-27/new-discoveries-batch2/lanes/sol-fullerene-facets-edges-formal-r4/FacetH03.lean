@@ -1,0 +1,22 @@
+import FeasibleH
+import IncidenceRealH
+import FacetDimension
+import MinorCore
+noncomputable section
+namespace FullereneGeometry
+theorem onH03v30 : pH 30 ∈ facetSection qH 3 := by
+ refine ⟨(facet_listed_vertices_H 30).1, ?_⟩
+ exact (real_incidence_H 3 30).mp (by decide +kernel)
+theorem onH03v31 : pH 31 ∈ facetSection qH 3 := by
+ refine ⟨(facet_listed_vertices_H 31).1, ?_⟩
+ exact (real_incidence_H 3 31).mp (by decide +kernel)
+theorem onH03v33 : pH 33 ∈ facetSection qH 3 := by
+ refine ⟨(facet_listed_vertices_H 33).1, ?_⟩
+ exact (real_incidence_H 3 33).mp (by decide +kernel)
+theorem dimension_H03 : affineDimension (facetSection qH 3) = 2 :=
+ section_dimension_eq_of_minor qH 3 (pH 30) (pH 31) (pH 33)
+  onH03v30 onH03v31 onH03v33 0 1 (by
+   rw [← TripleCertificates.pbindH 30, ← TripleCertificates.pbindH 31, ← TripleCertificates.pbindH 33]
+   exact TripleCertificates.minor_real _ _ _ (TripleCertificates.positiveH 30)
+    (TripleCertificates.positiveH 31) (TripleCertificates.positiveH 33) 0 1 (by decide +kernel))
+end FullereneGeometry

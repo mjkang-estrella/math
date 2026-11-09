@@ -1,0 +1,163 @@
+import IncidenceRealG
+import CompleteG
+import FacetStandard
+import FacetG00
+import FacetG01
+import FacetG02
+import FacetG03
+import FacetG04
+import FacetG05
+import FacetG06
+import FacetG07
+import FacetG08
+import FacetG09
+import FacetG10
+import FacetG11
+import FacetG12
+import FacetG13
+import FacetG14
+import FacetG15
+import FacetG16
+import FacetG17
+import FacetG18
+import FacetG19
+import FacetG20
+import FacetG21
+import FacetG22
+import FacetG23
+import FacetG24
+import FacetG25
+import FacetG26
+import FacetG27
+import FacetG28
+import FacetG29
+import FacetG30
+import FacetG31
+noncomputable section
+namespace FullereneGeometry
+open TripleCertificates
+theorem all_section_dimensions_G (i : Fin 32) : affineDimension (facetSection qG i) = 2 := by
+ fin_cases i
+ · exact dimension_G00
+ · exact dimension_G01
+ · exact dimension_G02
+ · exact dimension_G03
+ · exact dimension_G04
+ · exact dimension_G05
+ · exact dimension_G06
+ · exact dimension_G07
+ · exact dimension_G08
+ · exact dimension_G09
+ · exact dimension_G10
+ · exact dimension_G11
+ · exact dimension_G12
+ · exact dimension_G13
+ · exact dimension_G14
+ · exact dimension_G15
+ · exact dimension_G16
+ · exact dimension_G17
+ · exact dimension_G18
+ · exact dimension_G19
+ · exact dimension_G20
+ · exact dimension_G21
+ · exact dimension_G22
+ · exact dimension_G23
+ · exact dimension_G24
+ · exact dimension_G25
+ · exact dimension_G26
+ · exact dimension_G27
+ · exact dimension_G28
+ · exact dimension_G29
+ · exact dimension_G30
+ · exact dimension_G31
+theorem all_sections_facets_G (i : Fin 32) : GeometricFacet (poly qG) (facetSection qG i) := by
+ apply section_is_geometricFacet qG i
+ · fin_cases i
+   · exact ⟨_,onG00v00⟩
+   · exact ⟨_,onG01v00⟩
+   · exact ⟨_,onG02v22⟩
+   · exact ⟨_,onG03v29⟩
+   · exact ⟨_,onG04v41⟩
+   · exact ⟨_,onG05v18⟩
+   · exact ⟨_,onG06v24⟩
+   · exact ⟨_,onG07v12⟩
+   · exact ⟨_,onG08v10⟩
+   · exact ⟨_,onG09v37⟩
+   · exact ⟨_,onG10v44⟩
+   · exact ⟨_,onG11v15⟩
+   · exact ⟨_,onG12v00⟩
+   · exact ⟨_,onG13v01⟩
+   · exact ⟨_,onG14v02⟩
+   · exact ⟨_,onG15v03⟩
+   · exact ⟨_,onG16v04⟩
+   · exact ⟨_,onG17v08⟩
+   · exact ⟨_,onG18v06⟩
+   · exact ⟨_,onG19v07⟩
+   · exact ⟨_,onG20v22⟩
+   · exact ⟨_,onG21v30⟩
+   · exact ⟨_,onG22v26⟩
+   · exact ⟨_,onG23v32⟩
+   · exact ⟨_,onG24v33⟩
+   · exact ⟨_,onG25v34⟩
+   · exact ⟨_,onG26v41⟩
+   · exact ⟨_,onG27v18⟩
+   · exact ⟨_,onG28v44⟩
+   · exact ⟨_,onG29v12⟩
+   · exact ⟨_,onG30v47⟩
+   · exact ⟨_,onG31v15⟩
+ · exact all_section_dimensions_G i
+theorem all_geometric_facets_G (F : Set E) :
+ GeometricFacet (poly qG) F ↔ ∃ i, F = facetSection qG i := by
+ constructor
+ · exact geometricFacet_exhaustion qG
+ · rintro ⟨i,rfl⟩; exact all_sections_facets_G i
+theorem section_vertices_G (i : Fin 32) :
+ (facetSection qG i).extremePoints ℝ = pG '' (↑(incidentG i) : Set (Fin 60)) :=
+ section_extremePoints_image qG pG complete_vertices_G incidentG real_incidence_G i
+theorem section_vertex_count_G (i : Fin 32) :
+ ((facetSection qG i).extremePoints ℝ).ncard = if i ∈ pentagonIdsG then 5 else 6 := by
+ rw [section_vertices_G, Set.ncard_image_of_injective _ points_injective_G,Set.ncard_coe_finset]
+ exact incident_cardG i
+theorem sections_distinct_G : Function.Injective (facetSection qG) := by
+ intro i j he
+ by_contra hn
+ obtain ⟨v,hvi,hvj⟩ := incident_separateG i j hn
+ have hv : pG v ∈ facetSection qG i :=
+   ⟨(listed_vertices_G v).1,(real_incidence_G i v).mp hvi⟩
+ rw [he] at hv
+ exact hvj ((real_incidence_G j v).mpr hv.2)
+
+theorem facet_count_G : ({F : Set E | GeometricFacet (poly qG) F}).ncard = 32 := by
+ have he : {F : Set E | GeometricFacet (poly qG) F} = facetSection qG '' Set.univ := by
+  ext F; simp only [Set.mem_ofPred_eq,all_geometric_facets_G,Set.mem_image,Set.mem_univ,true_and]
+  exact exists_congr (fun i => eq_comm)
+ rw [he,Set.ncard_image_of_injective _ sections_distinct_G]
+ simp
+
+theorem polygon_facet_image_G (k : ℕ) :
+ {F : Set E | GeometricFacet (poly qG) F ∧ (F.extremePoints ℝ).ncard = k} =
+ facetSection qG '' (↑(Finset.univ.filter (fun i : Fin 32 => (if i ∈ pentagonIdsG then 5 else 6) = k)) : Set (Fin 32)) := by
+ ext F
+ constructor
+ · rintro ⟨hf,hk⟩
+   obtain ⟨i,rfl⟩ := (all_geometric_facets_G F).mp hf
+   exact ⟨i,by simpa [section_vertex_count_G] using hk,rfl⟩
+ · rintro ⟨i,hi,rfl⟩
+   exact ⟨all_sections_facets_G i, by simpa [section_vertex_count_G] using hi⟩
+
+theorem pentagonal_facet_count_G :
+ ({F : Set E | GeometricFacet (poly qG) F ∧ (F.extremePoints ℝ).ncard = 5}).ncard = 12 := by
+ rw [polygon_facet_image_G,Set.ncard_image_of_injective _ sections_distinct_G,Set.ncard_coe_finset]
+ decide +kernel
+
+theorem hexagonal_facet_count_G :
+ ({F : Set E | GeometricFacet (poly qG) F ∧ (F.extremePoints ℝ).ncard = 6}).ncard = 20 := by
+ rw [polygon_facet_image_G,Set.ncard_image_of_injective _ sections_distinct_G,Set.ncard_coe_finset]
+ decide +kernel
+
+
+theorem facets_standard_equivalence_G (F : Set E) :
+ GeometricFacet (poly qG) F ↔ MaximalProperFace (poly qG) F :=
+ geometricFacet_iff_maximalProperFace qG all_section_dimensions_G F
+
+end FullereneGeometry

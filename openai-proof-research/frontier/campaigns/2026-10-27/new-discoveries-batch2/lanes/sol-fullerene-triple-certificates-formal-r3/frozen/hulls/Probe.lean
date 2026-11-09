@@ -1,0 +1,11 @@
+import Geometry
+#check Basis.ofSpan
+#check Basis.ofSpan_subset
+#check Basis.reindex
+#check Module.finrank_eq_card_basis
+#check Module.dual_finrank_eq
+#check Subspace.dual_finrank_eq
+#check LinearIndependent.of_comp
+#check Fintype.equivFinOfCardEq
+#check Basis.fintypeIndex
+#check LinearMap.finrank_le_finrank_of_injective

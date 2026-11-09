@@ -1,0 +1,21 @@
+# Rejected attempts and repairs
+
+All compiler attempt logs/JSON records remain intact. A nonzero exit, resource rejection, panic, error, REJECTED diagnostic or disallowed axiom invalidates that attempt. Older experiments frozen from the prior lane remain historical evidence, not proof inputs.
+
+* The inherited RationalEnumeration.lean monolith failed rational `decide +kernel` reduction. Its source, generator and previous failure record are frozen. It is neither imported nor counted as a theorem.
+* Initial integer tables used vector notation without importing its syntax; explicit type annotations alone were insufficient. The final tables use total matches on `Fin.val`. No theorem was accepted from the failed table elaboration.
+* Initial RealCore proofs exposed sum association, finite-sum simplification and cast-normalization mistakes. Direct finite-coordinate identities and explicit casts repaired them. The list-membership proof was changed from an incorrectly flattened simp constructor to direct `List.mem_flatMap`/`List.mem_map` proofs.
+* CompletionCore initially tried rewriting under unapplied lambdas and unreduced vector indices. `congrArg` and `simpa` repair those proof steps without changing their statements.
+* The unsplit BindingsG attempt exceeded M2700 (interpreter memory exception, compiler exit -6). The binding proof was divided into four-row modules, retaining the same literal equations and resource caps.
+* The first split point bindings called `norm_num` while unfolding the entire literal point vector. Lean emitted `PANIC at Lean.Expr.appArg!` and `PANIC at Lean.Expr.appFn!`, despite returning zero. Those runs are REJECTED. The driver was stopped when this was discovered. The original logs remain; no object produced by a panic run is part of the source-only replay. The runner now hard-fails these diagnostics independently of process exit code.
+* The first replacement coordinate `change` expressions omitted explicit integer-to-real casts, which prevented definitional equality for zero and negative coordinates. The final statements explicitly display those casts, so normalization sees only the small scalar arithmetic expression and does not traverse the entire point vector. Four-point modules then compile without panic diagnostics.
+
+* The first AllG coverage proof by definitional equality imported the large real library and exceeded M2700. Moving the identical finite-index domain expression to the small integer-only Domain module let both G/H index-coverage equalities compile by reflexivity. No monolithic arithmetic decide was introduced.
+* Two hull wrapper attempts exceeded M2700 after the literal vertex theorems compiled. Reducing scalar binding proof terms alone did not resolve the limit. The new certificate record tables were then explicitly marked `noncomputable`, suppressing unnecessary executable code: the measured sample object shrank from255KB to31KB while its kernel arithmetic certificate still compiled. This changes no mathematical value or theorem statement.
+* A cons-chain proof packaging experiment compiled but increased object size; it was abandoned. A new-module interface experiment failed because Lean cannot import the unchanged legacy InstanceG from a `module` file; that experiment was reverted. No inherited module was converted or altered.
+
+The initial extracted run, including its failed assemblies, is preserved as replay/candidate, with candidate-source.zip and candidate source forms. Final replay starts again from a clean source-only extraction under replay/fresh after these changes, without using candidate compiled objects.
+
+The tool session was interrupted during the final H endpoint audit. Its attempt log has no completion JSON and is not accepted as a completed run. Process inspection found no remaining Lean/runner, and the single endpoint audit was rerun successfully. The orphan log is preserved and listed separately in the replay receipt/failure inventory.
+
+The actual inherited-origin audit found no partial or unsafe origin or transitive type/body dependency; no annotation repair, origin exclusion, ignorelist or inherited scientific edit was used. Final replay/audit failures, if any, remain in replay/fresh/attempt-* and prevent a PASS receipt. No caps were raised and no denied source-access route was retried.

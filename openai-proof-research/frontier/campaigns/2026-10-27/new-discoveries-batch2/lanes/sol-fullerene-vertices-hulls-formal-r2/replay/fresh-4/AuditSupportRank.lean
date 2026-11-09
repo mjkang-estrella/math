@@ -1,0 +1,39 @@
+import Lean
+import Lean
+set_option autoImplicit false
+set_option warningAsError true
+set_option pp.privateNames true
+open Lean Elab Command in
+elab "#literal_inventory" : command => do
+ let env ← getEnv
+ let mut todo : Array Name := #[]
+ for h : idx in [:env.header.moduleNames.size] do
+   if env.header.moduleNames[idx] == `Rank then
+     for name in env.header.moduleData[idx]!.constNames do
+       let some info := env.find? name | throwError m!"Missing declaration {name}"
+       logInfo m!"OWN_DECL {name}"
+       logInfo m!"OWN_MODULE {name} Rank"
+       logInfo m!"OWN_SAFETY {name} {info.isUnsafe}"
+       if info.isUnsafe then throwError m!"Rejected declaration {name}"
+       todo := todo.push name
+ let mut seen : NameSet := {}
+ while !todo.isEmpty do
+   let name := todo.back!
+   todo := todo.pop
+   if !seen.contains name then
+     seen := seen.insert name
+     if let some info := env.find? name then
+       if info.isUnsafe then throwError m!"Rejected transitive dependency {name}"
+       todo := todo ++ info.type.getUsedConstants
+       if let some v := info.value? then
+         todo := todo ++ v.getUsedConstants
+ logInfo m!"TRANSITIVE_SAFE_COUNT {seen.size}"
+open Lean Elab Command in
+elab "#audit_all" : command => do
+ let env ← getEnv
+ for h : idx in [:env.header.moduleNames.size] do
+   if env.header.moduleNames[idx] == `Rank then
+     for name in env.header.moduleData[idx]!.constNames do
+       elabCommand (← `(command| #check $(mkIdent name)))
+       elabCommand (← `(command| #print axioms $(mkIdent name)))
+
