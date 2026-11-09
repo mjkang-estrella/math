@@ -1,0 +1,17 @@
+from pathlib import Path
+import shutil,json
+R=Path(__file__).resolve().parents[1];S=R.parent/'kiraly-significance-review-r1'
+for src,dst in [('pap-revised.body','pap-tr-2011-revised.pdf'),('pap-author.body','pap-thesis-author.pdf'),('REVIEW.md','significance-REVIEW.md'),('review.json','significance-review.json'),('source-inventory.json','significance-source-inventory.json'),('live-receipts.json','significance-live-receipts.json'),('live-receipts-2.json','significance-live-receipts-2.json')]:shutil.copyfile(S/src,R/'sources'/dst)
+p=R/'paper/manuscript.tex';s=p.read_text()
+s=s.replace('Independent fidelity review has passed; novelty, significance and final acceptance remain separate assessments.','Independent fidelity review has passed, and a separate significance review gives a qualified bounded-prior PASS. This draft is not accepted and makes no worldwide-priority claim.')
+s=s.replace('Pap\'s November 2010 report',"Pap's January 2011 revision \\cite[Conjecture 1.2, p.~1]{PapRevised} directly states the separate-$p,q$ form, with both families nonideal on the left. Pap's November 2010 report")
+s=s.replace("Pap's thesis \\cite[Conjecture 3.4.5, pp.~70--71]{PapThesis}","Pap's thesis \\cite[Conjecture 3.4.5, pp.~70--71]{PapThesis}, also checked in the author-hosted copy listed in the bibliography,")
+s=s.replace('resolved by the thesis\'s explicit clause (ii) and the report\'s single-$h$ formulation.',"resolved directly by the January 2011 report and the thesis's explicit clause (ii), also consistent with the original report's single-$h$ formulation.")
+s=s.replace('Novelty and significance review are separate and remain pending in this draft. This manuscript and packet grant zero acceptance credit.',r'''The completed separate significance review \cite{Significance} reports source PASS, mathematical significance PASS and qualified novelty PASS under a bounded-prior standard. Its assessed contribution is the all-assignments obstruction on the full blocker, rather than the known object, nonideality or formalization. It found no demonstrated public subsumer in the investigated sources, but the original L\"utolf--Margot catalogue remains unread and later-literature coverage is incomplete. Neither catalogue chronology nor the historical ``open'' label clears those gaps. No worldwide priority is certified. These reviews did not review the finished manuscript and do not replace final acceptance by the parent investigator. This manuscript and packet grant zero acceptance credit.''')
+s=s.replace('\\bibitem{PapThesis}',r'''\bibitem{PapRevised} J\'ulia Pap, \emph{A note on a conjecture on clutters}, EGRES TR-2010-09, November 2010, revised January 2011. Definition 1.1 and Conjecture 1.2, p.~1. Exact revision retrieved by independent reviewer on 1 November 2026 UTC.\newline
+\url{https://egres.elte.hu/tr/egres-10-09.pdf}.
+\bibitem{PapThesis}''')
+s=s.replace('Conjecture 3.4.5, pp.~70--71. Original URL','Conjecture 3.4.5, pp.~70--71. Author-hosted copy, retrieved by independent reviewer on 1 November 2026 UTC: \\url{https://papjuli.github.io/assets/theses/julia_pap_phd_thesis.pdf}. Original URL')
+s=s.replace('\\end{thebibliography}',r'''\bibitem{Significance} Independent significance and bounded prior-art review, \emph{MathDB 388087}, completed 31 October 2026 local / 1 November UTC, lane \texttt{kiraly-significance-review-r1}, \texttt{REVIEW.md} and \texttt{review.json}. Copies with hashes in the dossier; qualified bounded-prior finding, not acceptance.
+\end{thebibliography}''')
+p.write_text(s)
