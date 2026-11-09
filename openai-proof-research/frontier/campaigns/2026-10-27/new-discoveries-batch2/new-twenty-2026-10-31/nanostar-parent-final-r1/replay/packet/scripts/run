@@ -1,0 +1,24 @@
+#!/bin/bash
+set -u
+ulimit -c 0
+D=$(cd "$(dirname "$0")/.." && pwd)
+export TMPDIR="$D/tmp" XDG_CACHE_HOME="$D/cache" PYTHONDONTWRITEBYTECODE=1 MALLOC_ARENA_MAX=2 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=2
+name=$1
+shift
+cpus=$(awk '/Cpus_allowed_list/ {print $2}' /proc/self/status)
+first=$(echo "$cpus" | cut -d, -f1 | cut -d- -f1)
+last=$((first+1))
+setsid timeout -k 2s 140s taskset -c "$first,$last" prlimit --cpu=120:120 --as=68719476736:68719476736 -- "$@" > "$D/logs/$name.log" 2>&1 &
+pid=$!
+peak=0
+while kill -0 "$pid" 2>/dev/null; do
+ rss=$(ps -o rss= -g "$pid" | awk '{s+=$1} END {print s+0}')
+ if [ "$rss" -gt "$peak" ]; then peak=$rss; fi
+ if [ "$rss" -gt 6291456 ]; then kill -KILL -- "-$pid" 2>/dev/null; fi
+ sleep .1
+done
+wait "$pid"
+rc=$?
+printf '{"exit":%s,"peak_group_rss_kib":%s,"cpu_s":120,"wall_s":140,"rss_cap_gib":6,"cpus":2}\n' "$rc" "$peak" > "$D/logs/$name.receipt.json"
+cat "$D/logs/$name.receipt.json"
+exit "$rc"

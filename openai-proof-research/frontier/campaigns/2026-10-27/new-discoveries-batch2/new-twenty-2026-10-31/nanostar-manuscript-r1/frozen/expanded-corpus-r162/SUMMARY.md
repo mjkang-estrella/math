@@ -1,0 +1,31 @@
+# r162 research handback
+
+ZERO accepted credit; root decides. Exactly 20 ID-keyed dispositions are in results.json, with literal statements, original chunk/line/raw/statement hashes and source receipts.
+
+The strongest lead is **349177**, the totient nanostar nonexistence conjecture. An explicit 88-vertex four-stage contracted nanostar is realized by totient orbits. The independent checker verifies all 87 edges, all factorizations, exact orbit closure from 23 generators, and the entire branch-layer pattern. The published Cambridge paper retains the conjecture. The cited Deutsch–Klavžar recursion and Figure 12 provide the general contracted-tree interpretation. See NANOSTAR.md, outputs/totient-stage4-certificate.json and lean-status.json for the final formal status. Root must review that interpretation and the significance/prior-art limits; this lane does not self-accept.
+
+A secondary ordinary obstruction for **344323** uses the directed 3-cycle and a two-point warm-up distribution to annihilate its nontrivial spectrum. Both comparison generators can have three states and delays can be strictly positive. It is **not promoted**: generic Laplace-zero failure and the source's own stationary-link observation give substantial zero-credit risk. No analytic Lean certificate is claimed; see INTERWEAVING.md.
+
+Source/prior resolutions found: 348660 (source Proposition 12), 342751 (source Theorem 2), 343279 (current source Section 16.1/Theorem 68), 354510 (source explicitly reports published counterexamples), 343907 (source reports the 2012 refutation; original body not fetched), 344692 (Goryainov–Krotov construction, exact parameters contradict the bound). The tiny 344813 failure is a formulation/remainder issue and receives no promotion.
+
+Completed finite diagnostics, with full scripts and outputs:
+
+- 342051: all 729 oriented four-vertex graphs, 186 cyclic; no failed cycle-polychromatic test.
+- 342134: all labeled simple cubic graphs on four and six vertices, 1 and 70, all properly 3-edge colorable.
+- 342666: exact ordinary/cyclic edge-order backtracking at five parameter pairs, both conjectured window and the next window; all agree with the conjecture.
+- 343781: all 32,768 labeled six-vertex graphs; 32,071 planar by forbidden-minor filtering, all pass the r = 2, five-color dynamic test.
+- 347959: 800 seeded random five-color complete graphs at orders 6, 10, 15 and 20, three S choices each; exact component set-cover tests find no failure. This is weak random coverage, not exhaustive.
+- 344049: exact integer-scaled reciprocal-square sums find permutations for n = 8, 9 and 10 after 17,479, 9,836 and 327,383 visits.
+- 349146: balanced cut/orientation certificates at dimensions 4, 7, 10 and 13; the last two exceed source examples. No uniform construction proved.
+- 344692: all complement-representative subsets of H(2,q), q = 2, 3, 4; no small failure, followed by locating the published refutation.
+- 349177: independent inverse-totient searches and checks at stages 2, 3 and 4. The first eager stage-4 run was capped; lazy assignment succeeds.
+
+Structural/infinite/continuous targets are parked with explicit gaps. No new projective-plane enumeration, infinite-cardinal proof, real-divisor rank computation or proof of a universal connected-matching constant is claimed. Review depth is uneven; not every cited or companion proof body has been exhausted. This handback is not a claim of several hours of exhaustive technical review or worldwide novelty clearance.
+
+All writes are lane-local. No child agents, git, shared-ledger edits, publication, upload, external messages, author contact or browser tabs. All Python/Lean processes ran through scripts/run: sampled process-group RSS kill at 6 GiB, taskset to two CPUs, CPU 120 seconds, wall 140 seconds, MALLOC_ARENA_MAX = 2. Lean has -M3500; final builds use one worker. Failures and retries are retained. No RSS, CPU or wall cap was raised. Address-space allowance was raised from 12 to the brief-permitted 64 GiB while RSS/CPU/wall caps remained unchanged. Some early Lean runs failed host thread creation; the monolithic edge certificate hit Lean's internal memory ceiling and was split into rows. Core dumps were disabled; no core file was found in the workspace.
+
+Source access limits: the chemistry PDF route returned 403 and was not retried or bypassed. The NUS report URL returned an HTTP 200 Incapsula challenge, identified by body inspection and not retried; only an indexed excerpt was read. TLS verification remained enabled. Exact arXiv current abstracts/PDFs, published retention evidence and current registry HEAD receipts are saved. Omega complete D5/Problems listings were path-screened at 4776067582b399a74bc434030f60589af4d4b11d; OpenAI/math HEAD remains 4eaee87548250b2682affda7d05d947c05554bae. Registry path screens do not clear uninspected proofs or deleted history. See outputs/search-notes.md and outputs/registry-screen.json. The initial historical regex screen had an invalid unescaped title; it was corrected by exact ID/title filtering and a successful no-ignore re-scan (logs/history-full-r2.log), which found only the launch note, a copied ledger and unrelated numerical counts.
+
+Further sustained route: **349146** now has a proposed uniform ordinary construction in HYPERCUBE.md. It selects a prescribed cut in the smaller cube from one parity class and one or two opposite-class vertices; when required, two protected vertices repair the balance-compatible crossing count. The argument covers every dimension 3k+1 >= 10, with explicit bases 1, 4 and 7. This is an unformalized draft with cut-spectrum/subsumption and significance review still open, and no Lean credit. Direct materializations and arithmetic bound diagnostics are in outputs/cube-uniform.json and logs/cube-uniform.log.
+
+The final OpenAI registry check additionally fetched the complete current preprints tree (13,578 paths, untruncated) and read the actual theorem statements of the two broad totient-title hits at pinned raw GitHub URLs. They address asymptotic totient counting and large fibers, not a prescribed finite iterated-totient tree rooted at 1. No direct subsumption bridge was found; full proof-body/possible-indirect-bridge clearance is not claimed.
