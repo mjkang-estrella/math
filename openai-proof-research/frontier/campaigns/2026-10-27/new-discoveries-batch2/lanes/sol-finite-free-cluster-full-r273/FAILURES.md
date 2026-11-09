@@ -1,0 +1,10 @@
+# Preserved failures and access limits
+
+- Initial repository-wide rg and initial ledger/prior-context output were truncated. Later guarded JSON parsing reads all snapshot bytes and records statuses; no full old scientific corpus reading is claimed.
+- symbolic.py initially used structural SymPy expression equality for the rank-one identity; equivalent coefficient grouping caused AssertionError at line11, guarded exit1, RSS68231168 bytes, wall0.320824076s. Corrected to expanded difference ==0; subsequent symbolic/replay checks pass. No mathematical counterexample was inferred from the representation mismatch.
+- Separated n3 rank-one near-miss with p=q=x²(x−1),r=x²(x−100) would violate a stronger l=1 pattern, but actual Conj2.5 requires l=2 for i2,j1,k2. Explicitly rejected, zero credit; exact polynomial/intervals preserved in separated-diagnostic.json.
+- Two finite two-cluster checks and the finite three-cluster check found no certified strict violation. This does not prove even their ambiguous interval cases, and does not resolve the universal statement.
+- Single-step rank-one interlacing cannot be subtracted to obtain the needed marginal comparison. Resetting the rank-one vector prevents a generic common-matrix interpretation. Source Proposition4.4/Theorem4.8 use extremal-root sign information that fails to identify interior ranks. No unsupported matrix or simple-root collision argument is used.
+- Empty/polluted metadata searches do not certify absence; no exhaustive specialist citation audit. Current registry HEAD remains unknown. All previously denied GitHub API/raw/codeload/diff/patch, ScienceDirect, Google challenge routes remain parked, with no retries or bypasses. New HTTP calls returned200.
+- pdftotext printed a font-type mismatch warning for2608.28520v1.pdf, but extracted the inspected theorem/proof text. Original PDF hash and extracted text hash retained. No uninspected extraction segment is certified error-free.
+- Optional eight-family fresh breadth not completed; retained target is explicitly reused. No manufactured new questions or count changes.
