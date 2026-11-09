@@ -1,0 +1,922 @@
+                                           Model Checking Quantum Continuous-Time
+                                           Markov Chains
+                                           Ming Xu
+                                           Shanghai Key Lab of Trustworthy Computing, East China Normal University, China
+                                           mxu@cs.ecnu.edu.cn
+                                           Jingyi Mei
+                                           Shanghai Key Lab of Trustworthy Computing, East China Normal University, China
+                                           mjyecnu@163.com
+                                           Ji Guan
+                                           State Key Lab of Computer Science, Institute of Software, Chinese Academy of Sciences, China
+                                           guanji1992@gmail.com
+                                           Nengkun Yu
+
+
+
+
+arXiv:2105.00382v1 [quant-ph] 2 May 2021
+                                           Centre for Quantum Software and Information, University of Technology Sydney, Australia
+                                           nengkunyu@gmail.com
+
+                                                 Abstract
+                                           Verifying quantum systems has attracted a lot of interests in the last decades. In this paper, we
+                                           initialised the model checking of quantum continuous-time Markov chain (QCTMC). As a real-time
+                                           system, we specify the temporal properties on QCTMC by signal temporal logic (STL). To effectively
+                                           check the atomic propositions in STL, we develop a state-of-art real root isolation algorithm under
+                                           Schanuel’s conjecture; further, we check the general STL formula by interval operations with a
+                                           bottom-up fashion, whose query complexity turns out to be linear in the size of the input formula by
+                                           calling the real root isolation algorithm. A running example of an open quantum walk is provided
+                                           to demonstrate our method.
+
+                                           2012 ACM Subject Classification Theory of computation → Verification by model checking; Com-
+                                           puting methodologies → Symbolic and algebraic algorithms; Theory of computation → Quantum
+                                           computation theory
+
+                                           Keywords and phrases Model Checking, Formal Logic, Quantum Computing, Computer Algebra
+
+                                           Digital Object Identifier 10.4230/LIPIcs.CVIT.2016.23
+
+
+                                            1      Introduction
+                                           Aiming to study nature, physicists use different mechanics depending on the scale of the
+                                           objects they are interested in. Classical mechanics describes nature at macroscopic scale (far
+                                           larger than 10−9 meters), while quantum mechanics is applied at microscopic scale (near
+                                           or less than 10−9 meters). A particle at this level can be mathematically represented by a
+                                           normalised complex vector |si in a Hilbert space H. The time evolution of a single particle
+                                           closed system is described by the Schrödinger equation
+
+                                                d |s(t)i
+                                                         = −ıH |s(t)i                                                                           (1)
+                                                   dt
+                                           with some Hamiltonian H (a Hermitian matrix on H), where |s(t)i is the state of the system
+                                           at time t. More practically, an open quantum system interacting with the surrounding
+                                           environment need to be considered. Suffering noises from the environment, the state of
+                                           the system cannot be completely known. Thus a density operator ρ (positive semidefinite
+                                           matrix with unit trace) on H is introduced to describe the uncertainty of the possible states:
+                                               P
+                                           ρ = i∈I pi |si ihsi |, where {(pi , |si i)}i∈I is a mixed state or an ensemble expressing that the
+                                                       © TBD;
+                                                       licensed under Creative Commons License CC-BY
+                                           42nd Conference on Very Important Topics (CVIT 2016).
+                                           Editors: John Q. Open and Joan R. Access; Article No. 23; pp. 23:1–23:17
+                                                              Leibniz International Proceedings in Informatics
+                                                              Schloss Dagstuhl – Leibniz-Zentrum für Informatik, Dagstuhl Publishing, Germany
+23:2   Model Checking Quantum CTMCs
+
+
+       quantum state is at |si i with probability pi , and hsi | is the complex conjugate and transpose
+       of |si i. In this case, the evolution is described by the Lindblad’s master equation:
+           dρ(t)
+                 = L(ρ(t))                                                                           (2)
+            dt
+       where ρ(t) stands for the (possibly mixed) state of the system, and L is a linear function of
+       ρ(t) (to be formally described in Subsection 2.2), which is generally irreversible.
+           To reveal physical phenomenon, physicists have intensively studied the properties of closed
+       and open quantum systems case by case in the last decades, such as long-term behaviors (e.g.
+       [18]) and stabilities (e.g. [10]). In recent years, the computer science community has stepped
+       into this field and adopted model checking technique to study quantum systems [16, 17].
+       Specifically, the quantum systems can be simulated by some mathematical models and a bulk
+       of physical properties can be reformulated as formulas in some temporal logic with atomic
+       propositions of quantum interpretation. In particular, a quantum discrete-time Markov chain
+       (QDTMC) (H, E) has been introduced as quantum generalisations of classical discrete-time
+       Markov chains (DTMC) to model the evolution in Eq. (2) in a single time unit:
+
+          ρ(t + 1) = E(ρ(t))                                                                         (3)
+
+       where E is a discretised quantum operation obtained from the Lindblad’s master equation,
+       usually called a super-operator in the field of quantum information and computation. Sev-
+       eral fundamental model checking-related problems for QDTMCs have been studied in the
+       literature, including limiting states [40, 21], reachability [45, 41], repeated reachability [14],
+       linear time properties [30], and persistence based on irreducible and periodic decomposi-
+       tion techniques [8, 21]. These techniques were equipped to solve real-world problems in
+       several different areas. For example, [15] proposed algorithms to model checking quantum
+       cryptographic protocols against a quantum extension of probabilistic computation tree logic
+       (PCTL); and linear temporal logic (LTL) was adopted to specify a bulk of properties of
+       quantum many-body and statistical systems, and corresponding model checking algorithm
+       was developed [20]. See [43, 44] for the comprehensive review of this research line.
+           However, to the best of our knowledge, there is no work on model checking the quantum
+       continuous-time system of Eq. (2). In contrast, there are fruitful results in the classical
+       counterpart, which is usually modelled by a continuous-time Markov chain (CTMC).
+           The seminal work on verifying CTMCs is Aziz et al.’s paper [3, 4]. The authors introduced
+       continuous stochastic logic (CSL) interpreted on CTMCs. Roughly speaking, the syntax of
+       CSL amounts to that of PCTL plus the multiphase until formula Φ1 U I1 Φ2 · · · U IK ΦK+1 , for
+       some K ≥ 1. Because [3] restricts probabilities in Pr>c to c ∈ Q, they can show decidability
+       of model checking for CSL using number-theoretic analysis. An approximate model checking
+       algorithm for a reduced version of CSL was provided by Baier et al. [6], who restrict path
+       formulas to binary until: Φ1 U I Φ2 . Under this logic, they successfully applied efficient
+       numerical techniques for transient analysis [5] using uniformisation [37]. The approximate
+       algorithms have been extended for multiphase until formulas using stratification [46, 47].
+       Xu et al. considered the multi-phase until formulas over the CTMC with rewards [42].
+       An integral-style algorithm was proposed to attack this problem, whose effectiveness is
+       ensured by number-theoretic results and algebraic methods. Recently, continuous linear logic
+       was introduced to specified on CTMCS, whose decidability was established [23]. Most the
+       above algorithms have been implemented in probabilistic model checkers, like PRISM [29],
+       Storm [13], and ePMC [24].
+           Unfortunately, these results from CTMCs cannot directly tackle the problem of auto-
+       matically verifying quantum continuous-time systems. The main obstacle is that the state
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                      23:3
+
+
+space of classical case is finite, while the space of quantum states in even a finite-dimensional
+Hilbert space is continuum (i.e., infinite). In this paper, we cross the difficulty by introducing
+quantum continuous-time Markov chains (QCTMC) to model the evolution of quantum
+continuous-time systems in Eq. (2) and converting them into a distribution transformer that
+preserves the laws of quantum mechanics. Then, we consider a wide logic, signal temporal
+logic (STL), to specify real-time properties against QCTMC. The STL is more expressible
+than LTL and CTL. Finally we present an exact method to decide the STL formula using
+real root isolation and interval operations, whose query complexity turns out to be linear in
+the size of the input formula by calling the real root isolation routine.
+    The key contributions of the present paper are three-fold:
+ 1. In the field of formal verification, the model checking on DTMC, QDTMC and CTMC
+    has been well studied in the past decades, but no work on checking QCTMCs as far as
+    we know. The first contribution is filling this blank.
+ 2. In order to solve the atomic propositions in STL, we develop a state-of-the-art real root
+    isolation algorithm for a rich class of real-valued functions based on Schanuel’s conjecture.
+ 3. We provide a running example—open quantum walk equipped with an absorbing boundary,
+    which drops the restriction on the underlying graph being symmetric/Hermitian. The
+    non-Hermitian structure brings real technical hardness. Fortunately, it is overcome by
+    Eq. (2) employed for describing the dynamical system of QCTMC.
+
+Organisation The rest of the paper is structured as follows. Section 2 review some notions
+and notations in quantum computing, the Lindblad’s master equation and number theory.
+In Sections 3 and 4, we introduce the model of quantum continuous-time Markov chains and
+the signal temporal logic (STL), respectively. We solve the atomic propositions in STL in
+Section 5, and decide the general STL formulas in Section 6. Section 7 is the conclusion.
+
+
+ 2     Preliminaries
+Here we will recall some useful notions and notations from quantum computing [34], the
+Lindblad’s master equation and number theory.
+
+
+2.1    Quantum Computing
+Let H be a Hilbert space with dimension d. We employ the Dirac notations that are standard
+in quantum computing:
+    |si stands for a unit column vector in H labelled with s;
+                †
+    hs| := |si is the Hermitian adjoint (complex conjugate and transpose) of |si;
+    hs1 |s2 i := hs1 | |s2 i is the inner product of |s1 i and |s2 i;
+    |s1 ihs2 | := |s1 i ⊗ hs2 | is the outer product, where ⊗ denotes tensor product; and
+    |s1 , s2 i := |s1 i |s2 i is a shorthand of the product state |s1 i ⊗ |s2 i.
+
+     A linear operator γ is Hermitian if γ = γ † ; and it is positive if hs| γ |si ≥ 0 holds for any
+                                                                Pm
+|si ∈ H. A projector P is a positive operator of the form i=1 |si ihsi | with m ≤ d, where
+                                                                                       Pm
+|si i are orthonormal. Clearly, there is a bijective map between projectors P = i=1 |si ihsi |
+and subspaces of H that are spanned by {|si i : 1 ≤ i ≤ m}. In sum, positive operators are
+Hermitian ones whose eigenvalues are nonnegative; and projectors are positive operators
+whose eigenvalues are 0 or 1. Besides, a linear operator U is unitary if UU† = U† U = I
+where I is the identity operator.
+23:4   Model Checking Quantum CTMCs
+
+                                                                    Pd
+           The trace of a linear operator γ is defined as tr(γ) := i=1 hsi | γ |si i for any orthonormal
+       basis {|si i : 1 ≤ i ≤ d} of H. A density operator ρ on H is a positive operator with unit trace.
+       It gives rise to a generic way to describe quantum states: if a density operator ρ is |sihs| for
+                                                                                          Pm
+       some |si ∈ H, ρ is said to be a pure state; otherwise it is a mixed one, i.e. ρ = i=1 pi |si ihsi |
+       with m ≥ 2 by spectral decomposition, where pi are positive eigenvalues (interpreted as
+       the probabilities of taking the pure states |si i) and their sum is 1. In other words, a pure
+       state indicates the system state which we completely know; a mixed state gives all possible
+       system states, with total probability 1, which we know. We denote by DH the set of density
+       operators on H. The subscript H of DH will be omitted if it is clear from the context.
+           The system evolution between pure states is characterised by some unitary operator U, i.e.
+       |s(t)ihs(t)| = U(t) |s(0)ihs(0)| U† (t) where U(t) comes from exp(−ıHt) for the Hermitian
+       operator H in Eq. (1); the system evolution between density operators (pure or mixed
+       states) is characterised by some completely positive operator-sum, a.k.a. super-operator, i.e.
+       ρ(t) = j=1 Lj (t)ρ(0)L†j (t) where Lj are linear operators satisfying the trace preservation
+               Pm
+       Pm       †
+          j=1 Lj Lj = I. The latter dynamical system is   obtained in such a way: an enlarged unitary
+                                                        Pm √                  Pm √
+       operator acts on the purified composite state ( i=1 pi |si , envi i)( i=1 pi hsi , envi |) with
+                Pm
+       ρ(0) = i=1 pi |si ihsi | for some orthonormal environment states |envi i [34, Section 2.5],
+       then the environment in the resulting composite state is traced out, which turns out to be
+       the aforementioned operator-sum form. We call it an open system as it interacts with the
+       environment. Whereas, the former dynamical system, independent from the environment, is
+       called a closed system. Open systems are more common than closed systems in practice.
+
+
+       2.2       Lindblad’s Master Equation
+       To characterise state evolution of the continuous-time open system with the memoryless
+       property, we employ the Lindblad’s master equation [31, 19] that is
+
+                                         m                                      
+                                               Lj ρL†j − 21 L†j Lj ρ − 12 ρL†j Lj ,
+                                         X
+             0
+          ρ = L(ρ) = −ıHρ + ıρH +                                                                      (4)
+                                         j=1
+
+
+       where H is a Hermitian operator and Lj are linear operators. The terms −ıHρ + ıρH
+       describe the evolution of the internal system; the terms Lj ρL†j − 21 L†j Lj ρ − 12 ρL†j Lj describe
+       the interaction between system and environment. In other words, to characterise the evolution
+       of an open system, it is necessary to use those linear operators Lj besides the Hermitian
+       operator H. It is known to be the most general type of Markovian and time-homogeneous
+       master equation describing (in general non-unitary) evolution of the system state that
+       preserves the laws of quantum mechanics (i.e., completely positive and trace-preserving for
+       any initial condition).
+           In the following, we will derive the solution of Eq. (4). We first define two useful functions:
+                        Pd Pd
+           L2V(γ) := i=1 j=1 hi| γ |ji |i, ji that rearranges entries of the linear operator γ on
+           the Hilbert space H with dimension d as a column vector; and
+                       Pd Pd
+           V2L(v) := i=1 j=1 hi, j| v |iihj| that rearranges entries of the column vector v as a
+           linear operator.
+       Here, L2V and V2L are read as “linear operator to vector” and “vector to linear operator”,
+       respectively. They are mutually inverse functions, so that if a linear operator (resp. its
+       vectorisation) is determined, its vectorisation (resp. the original linear operator) is determined.
+       Using the fact that D = ABC ⇐⇒ L2V(D) = (A⊗CT )L2V(B) holds for any linear operators
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                           23:5
+
+
+A, B, C, D, we can reformulate Eq. (4) as the linear ordinary differential equation
+                                                                                  
+                                    m                                           
+                                         Lj ⊗ L∗j − 12 L†j Lj ⊗ I − 21 I ⊗ LT
+                                    X
+ L2V(ρ0 ) = −ıH ⊗ I + ıI ⊗ HT +                                               ∗ 
+                                                                            j Lj     L2V(ρ)
+                                          j=1                                                        (5)
+
+            = M · L2V(ρ),
+                                                                                       Pm
+where ∗ denotes entry-wise complex conjugate. We call M = −ıH ⊗ I + ıI ⊗ HT + j=1 Lj ⊗
+L∗j − 12 L†j Lj ⊗ I − 21 I ⊗ LT  ∗
+                                   
+                              j Lj the governing matrix of Eq. (5). As a result, we get the desired
+solution L2V(ρ(t)) = exp(M · t) · L2V(ρ(0)) or equivalently ρ(t) = V2L(exp(M · t) · L2V(ρ(0)))
+in a closed form. It can be obtained in polynomial time by the standard method [27].
+
+2.3     Number Theory
+I Definition 1. A number α is algebraic, denoted by α ∈ A, if there is a nonzero Q-polynomial
+fα (z) of least degree, satisfying fα (α) = 0; otherwise α is transcendental.
+In the above definition, such a polynomial fα (z) is called the minimal polynomial of α. The
+degree D of α is degz (fα ). The standard encoding of α is the minimal polynomial fα plus an
+isolation disk in the complex plane that distinguishes α from other roots of fα .
+I Definition 2. Let µ1 , . . . , µm be irrational complex numbers. Then the field extension
+Q(µ1 , . . . , µm ) : Q is the smallest set that contains µ1 , . . . , µm and is closed under arithmetic
+operations, i.e. addition, substraction, multiplication and division.
+Here those irrational complex numbers µ1 , . . . , µm are called the generators of the field
+extension. A√field extension is simple if it has
+                                              √ only one generator. For instance, the field
+extension Q( 2) : Q is exactly the set {a + b 2 : a, b ∈ Q}.
+I Lemma 3 ([32, Algorithm 2]). Let α1 and α2 be two algebraic numbers of degrees D1 and
+D2 , respectively. There is an algebraic number µ of degree at most D1 D2 , such that the field
+extension Q(µ) : Q is exactly Q(α1 , α2 ) : Q.
+For a collection of algebraic numbers α1 , . . . , αm appearing in the input instance, by repeatedly
+applying this lemma, we can obtain a simple field extension Q(µ) : Q that can span all
+α1 , . . . , αm .
+I Lemma 4 ([11, Corollary 4.1.5]). Let α be an algebraic number of degree D, and g(z) an
+A-polynomial with degree Dg and coefficients taken from Q(α) : Q. There is a Q-polynomial
+f (z) of degree at most DDg , such that roots of g(z) are those of f (z).
+The above lemma entails that roots of any A-polynomial are also algebraic.
+I Theorem 5 (Lindemann (1882) [7, Theorem 1.4]). For any nonzero algebraic numbers
+                                                                            Pm
+β1 , . . . , βm and any distinct algebraic numbers λ1 , . . . , λm , the sum i=1 βi eλi with m ≥ 1
+is nonzero.
+I Conjecture 6 (Schanuel (1960s) [2]). Let λ1 , . . . , λm be Q-linearly independent complex
+numbers. Then the field extension Q(λ1 , eλ1 , . . . , λm , eλm ) : Q has transcendence degree at
+least m.
+   Let A[z1 , . . . , zm ] denote the ring that contains all A-polynomials in variables z1 , . . . , zm .
+Assuming Schanuel’s conjecture, we could get:
+I Corollary 7 ([9, Proposition 5]). Let λ1 , . . . , λm be Q-linearly independent algebraic numbers.
+Then two co-prime elements ϕ1 and ϕ2 in the ring A[t, exp(λ1 t), . . . , exp(λm t)] have no
+common root except for 0.
+23:6   Model Checking Quantum CTMCs
+
+
+        3     Quantum Continuous-Time Markov Chain
+       In this section, we propose the model of quantum continuous-time Markov chain (QCTMC).
+       We will reveal that it extends the classical continuous-time Markov chain (CTMC). To show
+       the practical usefulness, an example is further provided for modelling open quantum walk.
+           For the sake of clarity, we start with the QCTMC without classical states:
+
+       I Definition 8. A quantum continuous-time Markov chain Q is a pair (H, L), in which
+          H is the Hilbert space,
+          L is the transition generator function given by a Hermitian operator H and a finite set
+          of linear operators Lj on H.
+       Usually, a density operator ρ(0) ∈ D is appointed as the initial state of Q.
+
+           In the model, the transition generator function L gives rise to a universal way to describe
+       the bahavior of the QCTMC, following the generality of the Lindblad’s master equation. Thus
+       the state ρ(t) is given by the closed-form solution to Eq. (5), i.e., V2L(exp(M · t) · L2V(ρ(0))),
+       where M is the governing matrix for L, is a computable function from R≥0 to Cd×d . We
+       notice that 0 ≤ tr(Pρ(t)) ≤ 1 holds for any projector P on H, as ρ(t) is a density operator
+       on D. Considering computability, the entries of H, Lj and ρ(0) are supposed to be algebraic.
+           Next, we equip the QCTMC in Definition 8 with finitely many classical states.
+
+       I Definition 9. A quantum continuous-time Markov chain Q with a finite set S of classical
+       states is a pair (Hcq , L), in which
+           Hcq := C ⊗ H is the classical–quantum system with C = span({|si : s ∈ S}), and
+           L is the transition generator function given by a Hermitian operator H and a finite set
+           of linear operators Lj on the enlarged Hcq .
+       Usually, a density operator ρ(0) ∈ DHcq is appointed as the initial state of Q.
+
+           In fact, the models in Definitions 8 and 9 have the same expressibility: The QCTMC in
+       Definition 8 can be obtained by setting the singleton state set S = {s} of the QCTMC in
+       Definition 9; conversely, the QCTMC in Definition 9 can be obtained by setting the Hilbert
+       space as Hcq of the QCTMC in Definition 8. Hence, we can freely choose one of the two
+       definitions for convenience. As an immediate result, using Definition 9, we can easily see
+       that the QCTMC extends the CTMC by the following lemma:
+
+       I Lemma 10. Given a CTMC C = (S, Q), it can be modelled by a QCTMC Q = (C ⊗ H, L)
+       with C = span({|si : s ∈ S}) and dim(H) = 1.
+
+       Proof. It suffices to show that the states of a CTMC C can be obtained by those of some
+       QCTMC Q. The state x = (xs )s∈S of C is given by the dynamical system x0 (t) = x(t) · Q
+       or equivalently its closed-form solution x(t) = x(0) · exp(Q · t), where x(0) is a row vector
+       interpreted as the initial state. We construct the QCTMC by setting Hermitian operator
+       H = 0 and linear operators Ls,t = |tihs| ⊗ Q[s, t] in Q for each pair s, t ∈ S. It is not hard
+       to validate that the state ρ(t) of Q is diag(x(t)) of C, thus the lemma follows.            J
+
+       I Example 11 (Open Quantum Walk [35, 36]). Open quantum walk (OQW) is a quantum
+       analogy of random walk, whose system evolution interacts with environment. For the sake
+       of clarity, we suppose that a particle walking along the 2-dimensional hypercubic shown in
+       Figure 1. The position set is S = {s00 , s01 , s10 , s11 }, where s00 denotes the starting position,
+       a.k.a. the entrance, s01 and s10 denote transient positions, and s11 denotes the exit, an
+       absorbing boundary. The direction set is {F, S}, where F means the particle takes the
+       external transition along the first coordinate, while S means the particle takes the external
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                         23:7
+
+
+transition along the second coordinate. The particle will choose a direction at every moment
+by the inner quantum “coin-tossing” before being absorbed. This action
+                                                                     √     is implemented by
+the Hadamard operator H = |+ihF| + |−ihS| with |±i = (|Fi ± |Si)/ 2, which denotes √    a fair
+selection between F and S as the probability amplitudes of both directions are 12 = (±1/ 2)2 .
+    The OQW is modelled by a QCTMC Q1 = (C ⊗ H, L) with C = span({|si : s ∈ S}),
+where each position in S represents a classical state, and the transition function L is given
+by the Hermitian operator H = 0 and the unique linear operator
+
+     L = |s01 ihs00 | ⊗ |Sih−| + |s10 ihs00 | ⊗ |Fih+| + |s00 ihs01 | ⊗ |Sih−| +
+         |s11 ihs01 | ⊗ |Fih+| + |s00 ihs10 | ⊗ |Fih+| + |s11 ihs10 | ⊗ |Sih−| .
+
+For instance, when the particle is in the position |s00 i, we first apply the quantum coin-tossing
+H to the state in H, then we get the result F or S leading to the position |s10 i or |s01 i. The
+composite operations are (|FihF|)H = |Fih+| and (|SihS|)H = |Sih−|, which makes up the
+first two terms in the above L.
+    From L, we could get the governing matrix M = L ⊗ L∗ − 12 L† L ⊗ I − 12 I ⊗ LT L∗ . Let
+ρ(0) = |s00 ihs00 | ⊗ |FihF| be an initial state. Then the states ρ(t) of the OQW could be
+computed as V2L(exp(M · t) · L2V(ρ(0))) (we omit the detailed value due to space limit). J
+
+
+                              F
+                    s01               s11 exit            As an absorbing boundary s11 is intro-
+                                                          duced here, two transitions from it (in
+                              F                           dashed line) do not exist anymore. Ab-
+                S         S       S         S             sorbing boundaries makes it impossible
+                              F                           to characterise the system evolution by a
+                                                          closed system, i.e., using some Hermitian
+     entrance       s00               s10
+                                                          operator H only, as usual in [36]. Fortu-
+                              F                           nately, we could characterise it by an open
+                                                          system, i.e., using the linear operators Lj .
+         Figure 1 A sample OQW with an absorb-
+     ing boundary
+
+
+
+ 4      Signal Temporal Logic
+
+Here we recall the signal temporal logic (STL) [33], which is widely used to express real-time
+properties. Using it we could specify richer properties of QCTMC than linear temporal logic
+(LTL) and computation tree logic (CTL) in the time-bounded fragment.
+
+I Definition 12. The syntax of the STL formulas are defined as follows:
+
+     φ := Φ | ¬φ | φ1 ∧ φ2 | φ1 U I φ2
+
+in which the atomic propositions Φ, interpreted as signals, are of the form p(x) ∈ I where p
+is a Q-polynomial in x = (xs )s∈S and I is a rational interval, and I is a finite time interval.
+Here U is called the until operator, and φ1 U I φ2 is the until formula.
+
+I Definition 13. The semantics of the STL formulas interpreted on a QCTMC Q in
+23:8   Model Checking Quantum CTMCs
+
+
+       Definition 9 are given by the satisfaction relation |=:
+
+           ρ(t) |= Φ                   if p(x) ∈ I holds with xs = tr(Ps (ρ(t))),
+           ρ(t) |= ¬φ                  if ρ(t) 6|= φ,
+           ρ(t) |= φ1 ∧ φ2             if ρ(t) |= φ1 ∧ ρ(t) |= φ2 ,
+                         I
+           ρ(t) |= φ1 U φ2             if there exists a real number t0 ∈ I,
+                                       such that ∀ t1 ∈ [t, t + t0 ) : ρ(t1 ) |= φ1 and ρ(t + t0 ) |= φ2 ,
+
+       where Ps is the projector |sihs| ⊗ I onto classical state s.
+
+           From the semantics, we can see that Φ1 U I1 (Φ2 U I2 Φ3 ) and (Φ1 U I1 Φ2 )U I2 Φ3 have
+       different meanings: The former formula requires there exist t0 ∈ I1 and t00 ∈ I2 such that
+       ∀ t1 ∈ [t, t + t0 ) : ρ(t1 ) |= Φ1 , ∀ t2 ∈ [t + t0 , t + t0 + t00 ) : ρ(t2 ) |= Φ2 and ρ(t + t0 + t00 ) |= Φ3 ;
+       while the latter formula requires there exists a t00 ∈ I2 such that ρ(t + t00 ) |= Φ3 and for
+       each t1 ∈ [t, t + t00 ), there exists a t0 ∈ I1 such that ∀ t1 ∈ [t1 , t1 + t0 ) : ρ(t1 ) |= Φ1 and
+       ρ(t1 + t0 ) |= Φ2 . We usually use the parse tree to clarify the structure of an STL formula φ.
+           The logic is very generic. STL has more expressive atomic propositions than LTL, as
+       true ≡ p(x) ∈ (−∞, +∞) and false ≡ p(x) ∈ ∅. CTL has a two-stage syntax consisting
+       of state and path formulas. Negation and conjunction are allowed in only state formulas,
+       not path ones. Whereas, STL allows negation and conjunction in any subformulas. Besides
+       the standard Boolean calculus, we can easily obtain a few derivations: ♦I φ ≡ trueU I φ,
+       I φ ≡ ¬(♦I ¬φ), and φ1 RI φ2 ≡ ¬(¬φ1 U I ¬φ2 ) where R is the release operator.
+
+       I Example 14. Consider the open quantum walk Q1 described in Example 11. It is not
+       hard to get the probabilities of the particle staying respectively in s00 , s01 , s10 , s11 as follows:
+                                                        √                    √
+           x0,0 = tr(Ps0,0 (ρ(t))) = 12 exp(− 2+2 2 t) + 12 exp(− 2−2 2 t),
+                                           √                √         √            √
+           x0,1 = tr(Ps0,1 (ρ(t))) = − 42 exp(− 2+2 2 t) + 42 exp(− 2−2 2 t)
+                   + 14 [exp(− 23 t) − exp(− 12 t)] cos( 12 t) + 14 [exp(− 32 t) + exp(− 21 t)] sin( 12 t),
+                                           √                √         √            √
+           x1,0 = tr(Ps1,0 (ρ(t))) = − 42 exp(− 2+2 2 t) + 42 exp(− 2−2 2 t)
+                   − 14 [exp(− 23 t) − exp(− 12 t)] cos( 12 t) − 14 [exp(− 32 t) + exp(− 21 t)] sin( 12 t),
+                                                   √              √           √               √
+           x1,1 = tr(Ps1,1 (ρ(t))) = 1 + −1+2 2 exp(− 2+2 2 t) − 1+2 2 exp(− 2−2 2 t).
+
+       We can see that the probability of exiting via s11 would be one as t approaches infinity.
+       A further question is asking how fast the particle would reach the exit. This is actually
+       a question about convergence performance. It is worth monitoring the critical moment at
+       which the probability of exiting via s11 equals that of staying at transient positions s01 , s10 .
+       A requirement to be studied is like the following property.
+
+           Property A: At each moment t ∈ [0, 5], whenever the probability of staying at s01
+           or s10 is greater than 15 , the probability of exiting via s11 would overweight than that
+           of staying at s01 or s10 within the coming one unit of time.
+
+       We formally specify it with the rich STL formula
+
+           φ1 ≡ I1 (Φ1 → ♦I2 Φ2 ) ≡ ¬(true U I1 (Φ1 ∧ ¬(true U I2 Φ2 ))),
+
+       where I1 = [0, 5], I2 = [0, 1] are time intervals and Φ1 ≡ x0,1 +x1,0 > 15 , Φ2 ≡ x1,1 ≥ x0,1 +x1,0
+       are atomic propositions, a.k.a. signals.                                                         J
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                        23:9
+
+
+ 5      Solving Atomic Propositions
+As a basic step to decide the STL formula, we need to solve the atomic proposition Φ.
+That is, we will compute all solutions w.r.t. t, in which ρ(t) |= Φ holds. We achieve it
+by a reduction to the real root isolation for a class of real-valued functions, exponential
+polynomials. Although real roots of exponential polynomials have been studied in many
+existing literature [1, 9, 26], the ones to be isolated in this paper involve the complicated
+complex exponents. So we develop a state-of-the-art real root isolation for them, whose
+completeness is established on Conjecture 6.
+    Given an atomic proposition Φ ≡ p(x) ∈ I (assuming that I is bounded), we would like
+to determine the algebraic structure of
+
+     ϕ(t) = (p(x(t)) − inf I)(p(x(t)) − sup I),                                                   (6)
+
+with which we will design an algorithm for solving Φ ≡ p(x) ∈ I. The structure of ϕ(t)
+depends on that of xs (t) = tr(Ps (ρ(t))). We claim that each entry of ρ(t) is of the exponential
+polynomial form
+
+     β1 (t) exp(α1 t) + β2 (t) exp(α2 t) + · · · + βm (t) exp(αm t),                              (7)
+
+where β1 (t), . . . , βm (t) are nonzero A-polynomials and α1 , . . . , αm are distinct algebraic
+numbers. It follows the facts:
+ 1. The governing matrix M in the state ρ(t) = V2L(exp(M · t) · L2V(ρ(0))) of the QCTMC
+    takes algebraic numbers as entries.
+ 2. The characteristic polynomial of M is an A-polynomial. The eigenvalues α1 , . . . , αm of
+    M are algebraic, as they are roots of that A-polynomial by Lemma 4. Those eigenvalues
+    make up all exponents in (7).
+ 3. The entries of the matrix exponential exp(M · t) are in the form (7).
+The same structure holds for xs (t), as xs (t) = tr(Ps (ρ(t))) is simply a sum of some entries
+of ρ(t). Furthermore, ϕ(t) is also of the exponential polynomial form (7), since it is a
+Q-polynomial in x(t) = (xs (t))s∈S . If I is unbounded from below (resp. above), the left
+(resp. right) factor could be removed from (6) for further consideration.
+    Next, we will isolate all real roots λ1 , . . . , λn of ϕ(t) in a bounded interval B (to be
+specified in the next section). Before stating the core isolation algorithm—Algorithm 1, an
+overview of the isolation procedure is provided in Fig. 2. The instances to be treated can be
+roughly divided into two classes: one is trivial that can be solved by the classical methods,
+e.g., [12], for ordinary polynomials; the other is nontrivial that can be solved by Algorithm 1
+but should meet three requirements of the input in Algorithm 1. After the preprocesses
+Basis Finding, Polynomialisation and Factoring, the two classes of instances can be
+separated and solved by the corresponding methods.
+    The technical details along the flow chart in Fig. 2 are described below.
+    Basis Finding For a given set of algebraic numbers {α1 , . . . , αm } extracted from the
+    exponents of the input exponential polynomial ϕ(t), we can compute a simple extension
+    Q(µ) : Q = Q(α1 , . . . , αm ) : Q by Lemma 3, such that each αi = qi (µ) with qi ∈ Z[x] and
+    deg(qi ) < deg(µ); and further construct a Q-linearly independent basis {µ1 , . . . , µk } of
+    those exponents {α1 , . . . , αm } by [26, Section 3], such that each αi can be Z+ -linearly
+    expressed by {µ1 , . . . , µk }.
+    Polynomialisation Thus we can get a polynomial representation f (t, exp(µ1 t), . . . ,
+    exp(µk t)) of ϕ(t), where f is a (k + 1)-variate polynomial with algebraic coefficients. That
+    is, ϕ(t) is obtained by substituting t, exp(µ1 t), . . . , exp(µk t) (as k + 1 variables) into f .
+23:10   Model Checking Quantum CTMCs
+
+
+
+
+                Input: exponential polynomial !"t#                                  Output: pairwise disjoint isolation intervals I1 , ... , I
+                                                                                                                                                 n
+
+
+
+                         Basis Finding                                                                     Refinement
+           linearly independent      $1, ... , $k             isolation intervals    I1,1 , ... , I1, n                   isolation intervals    Il ,1 , ... , Il,
+           algebraic numbers                                                                          1                                                              nl
+
+                       Polynomialisation                Classical Method                    Algorithm 1               Classical Method                   Algorithm 1
+
+        multivariate polynomial    f (t, exp($1t), ... , exp($ t))
+                                                              k
+                                                             Yes                                      No                 Yes                                          No
+                           Factoring                                      Univariate?                           ...                      Univariate?
+
+             irreducible factors               !%"t#&'& f1
+                                                  ...
+                                               !l"t#&'& fl
+
+
+
+
+              Figure 2 Flow chart of the whole isolation procedure
+
+
+             Factoring Factoring ϕ(t) into irreducible factors ϕi (t) (1 ≤ i ≤ `) corresponds to
+             factoring the (k + 1)-variate A-polynomial f into irreducible factors fi (1 ≤ i ≤ `), which
+             has been implemented in polynomial time, e.g. [28].
+             Univariate? If the irreducible exponential polynomial ϕi (t) corresponds a univariate
+             polynomial fi , isolating the real roots of ϕi (t) can be treated by classical methods [12];
+             otherwise we will resort to Algorithm 1, for which we can infer:
+            1. The exponential polynomial ϕ(t) in the form (7) is plainly an analytic function that is
+                infinitely differentiable; and it is a real-valued function, or equivalently the imaginary
+                part of ϕ(t) is identically zero, since each variable xs (t) is exactly the real-valued
+                function tr(Ps ρ(t)). The same holds for any factor ϕi (t) of ϕ(t), which ensures the
+                first requirement of the input in Algorithm 1.
+            2. By Theorem 5, thanks to the irreducibility of ϕi (t), we have ϕi (λ) 6= 0 holds for any
+                λ ∈ A \ {0}, which ensures the second requirement of the input in Algorithm 1.
+            3. By Conjucture 6 and Corollary 7, each irreducible factor ϕi (t) and its derivative ϕ0i (t)
+                are co-prime, and thus have no common real root except for 0, which ensures the last
+                requirement of the input in Algorithm 1.
+              Refinement After performing Algorithm 1 with each individual irreducible factor ϕi (t)
+              of ϕ(t), we would obtain a list of disjoint isolation intervals Ii,1 , . . . , Ii,ni . The isolation
+              intervals of different irreducible factors may be overlapping. However, by Corollary 7
+              again, we have that each pair of co-prime factors of ϕ(t) has no common real root except
+              for 0. So all these isolation intervals Ii,1 , . . . , Ii,ni (1 ≤ i ≤ `) can be further refined to
+              be pairwise disjoint. That would be the complete list of isolation intervals I1 , . . . , In for
+              ϕ(t), and thereby completes the whole isolation procedure.
+
+
+
+        Soundness of Algorithm 1                                     We justify three groups of treatment in the loop body in turn.
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                      23:11
+
+
+      Algorithm 1 Real Root Isolation for a Real-valued Function
+
+                                         {I1 , . . . , In } ⇐ Isolate(ϕ, I)
+Input: ϕ(t) is a real-valued function defined on a rational interval I = [l, u], satisfying:
+    1. ϕ(t) is twice-differentiable,
+    2. ϕ(t) has no rational root in I, and
+    3. ϕ(t) and ϕ0 (t) have no common real root in I.
+Output: I1 , . . . , In are finitely many disjoint intervals, such that each contains exactly one
+    real root of ϕ in I, and together contain all.
+ 1: compute an upper bound M of {|ϕ0 (t)| : t ∈ I};
+ 2: compute an upper bound M 0 of {|ϕ00 (t)| : t ∈ I};
+ 3: i ← 0, N ← 2 and δ ← (u − l)/N ;           . Here N > 1 is a free parameter to indicate the
+    number of subintervals to be split. We predefine it simply as 2.
+ 4: while i ≤ N do
+ 5:     if |ϕ(l + iδ)| > M δ then i ← i + 1;                            . ϕ has no local real root
+ 6:     else if |ϕ(l + iδ + δ)| > M δ then i ← i + 2;                   . ϕ has no local real root
+ 7:     else if |ϕ0 (l + iδ)| ≥ M 0 δ then                               . ϕ is locally monotonic
+ 8:         if ϕ(l + iδ)ϕ(l + iδ + δ) < 0 then output (l + iδ, l + iδ + δ);
+ 9:          i ← i + 1;
+10:       else if |ϕ0 (l + iδ + δ)| ≥ M 0 δ then                      . ϕ is locally monotonic
+11:          if ϕ(l + iδ)ϕ(l + iδ + 2δ) < 0 then output (l + iδ, l + iδ + 2δ);
+12:          i ← i + 2;
+13:       else
+14:            Isolate(ϕ, [l + iδ, l + iδ + δ]);
+15:          i ← i + 1.
+
+
+1. If the condition in Line 5 (resp. 6) holds, ϕ has no real root in the neighborhood centered
+   at l + iδ (resp. l + (i + 1)δ) with radius δ. So we exclude the neighborhood.
+2. If the condition in Line 7 (resp. 10) holds, ϕ is monotonic in the neighborhood centered
+   at l + iδ (resp. l + (i + 1)δ) with radius δ. Then, if the condition in Line 8 (resp. 11) holds,
+   i.e. ϕ has different signs at endpoints of the neighborhood, the unique real root in the
+   neighborhood exists and should be output; otherwise we just exclude the neighborhood.
+3. If it is not in the two decisive cases listed above, we perform Algorithm 1 recursively in a
+   subinterval [l + iδ, l + (i + 1)δ] of [l, u].                                             J
+
+
+Completeness of Algorithm 1 The termination of Algorithm 1 entails the completeness.
+In other words, it suffices to show that for any real-valued function ϕ that satisfies the
+requirements, Algorithm 1 can always output all real roots of ϕ within a finitely many times
+of recursion. Since ϕ and ϕ0 are real-valued functions defined on the closed and bounded
+interval I and they have no common real root in I, there is a positive constant τ , such that
+either |ϕ| ≥ τ or |ϕ0 | ≥ τ holds everywhere of I. Then, at any point c in I, we can get a
+neighborhood with constant radius rad := min(τ /M, τ /M 0 ), in which either ϕ has no real
+root or is monotonic. So the two decisive cases must take place, provided that the subinterval
+has length not greater than rad. It implies that the recursion depth of Algorithm 1 is bounded
+by dlog2 (kIk/rad)e, where kIk = sup I − inf I. Hence the termination is guaranteed.             J
+    After obtaining all real roots λ1 , . . . , λn of ϕ(t) in the bounded interval B by Algorithm 1,
+23:12   Model Checking Quantum CTMCs
+
+
+        we have that on each interval Ji (0 ≤ i ≤ n) of the n + 1 intervals in B \ {λ1 , . . . , λn }:
+
+             [inf B, λ1 ), (λ1 , λ2 ), . . . , (λn−1 , λn ), (λn , sup B],                                 (8)
+
+        p(x(t)) ∈ I holds everywhere of t ∈ Ji or nowhere. Finally, we can obtain the desired solution
+        set J (to be used in the next section) of p(x(t)) ∈ I by a finite union as follows
+               [              [
+                     Ji ∪          {λi }.                                                          (9)
+               0≤i≤n             1≤i≤n
+             p(x(Ji ))⊆I       p(x(λi ))∈I
+
+        I Example 15. Reconsider Example 14. The exponential polynomial extracted from Φ1 is
+                                                              √              √   √       √
+             ϕ1 (t) = x0,1 (t) + x1,0 (t) − 15 = − 51 − 22 exp(− 2+2 2 t) + 22 exp(− 2−2 2 t),
+
+        and the exponential polynomial extracted from Φ2 is
+                                                          √                 √         √                 √
+           ϕ2 (t) = x1,1 (t) − x0,1 (t) − x1,0 (t) = 1 + ( 2 − 12 ) exp(− 2+2 2 t) − ( 2 + 12 ) exp(− 2−2 2 t).
+
+        To solve Φ1 and Φ2 in a bounded interval, say B = [0, 6], we need to determine the real roots
+        of ϕ1 and ϕ2 . Since both ϕ1 and ϕ2 are irreducible and their corresponding polynomial
+        representations are bivariate, they have no rational root, repeated real root, nor common
+        real root. After invoking Algorithm 1 on ϕ1 with B, we obtain two isolation intervals [0, 25       64 ]
+        (containing real root λ1 ≈ 0.352097) and [ 275    ,
+                                                       64 128
+                                                             575
+                                                                 ] (containing   λ2  ≈  4.49181), which could
+        be easily refined up to any precision. For ϕ2 , as ϕ2 (0) = 0, we make a slight shift on the left
+                                                        1
+        endpoint of B in the consideration, e.g., [ 1000    , 6]. After invoking Algorithm 1 on ϕ2 with
+        [ 1000 , 6], we could get the unique isolation intervals [ 125059
+           1                                                                 275117
+                                                                     64000 , 128000 ], which contains the real
+        root λ3 ≈ 2.14897. The three isolation intervals are pairwise disjoint.
+             Finally, we have that the solution set of Φ1 is (λ1 , λ2 ) in B, and the solution set of Φ2 is
+        {0} ∪ [λ3 , 6].                                                                                     J
+
+             Under Conjecture 6, we get the following computability result while the complexity is
+        still an open problem as left in existing literature [9, 26].
+
+        I Lemma 16. The atomic propositions in STL are solvable over QCTMCs.
+
+            In fact, Conjecture 6 is a powerful tool to treat roots of the general exponential polynomial.
+        For some special subclasses of exponential polynomials, there are solid theorems to treat
+        them: one is Theorem 5 that has been employed [1] for the exponential polynomials in the
+        ring Q[t, exp(t)], the other is the Gelfond–Schneider theorem employed [26, Subsection 4.1]
+        for the exponential polynomials in Q[exp(µ1 t), exp(µ2 t)] where µ1 and µ2 are two Q-linear
+        independent real algebraic numbers. In Example 15, the Gelfond–Schneider theorem is
+        sufficient to treat roots of the exponential polynomials ϕ1 and ϕ2 , thus the termination
+        is guaranteed. Algorithm 1 can isolate roots of elements in Q[t, exp(µ1 t), . . . , exp(µk t)] for
+        arbitrarily many Q-linear independent complex algebraic numbers µ1 , . . . , µk . Additionally,
+        Conjecture 6 has been employed to isolate simple roots of more expressible functions than
+        exponential polynomials [38, 39], but fails to find repeated roots. Hence, this paper makes a
+        trade-off between the expressibility of functions and the completeness of methodologies.
+
+         6       Checking STL Formulas
+        In the previous section, we have solved atomic propositions. Now we consider the general
+        STL formula φ. For a given formula φ, we compute the so-called post-monitoring period
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                        23:13
+
+
+mnt(φ), independent on the initial time t0 , such that the truth of ρ(t0 ) |= φ could be affected
+by those ρ(t) with t ∈ [t0 , t0 + mnt(φ)]. Then we decide φ with a bottom-up fashion. The
+complexity turns out to be linear in the size kφk of the input STL formula φ, which is defined
+as the number of logic connectives in φ as standard.
+    Given an STL formula φ, we need to post-monitor a time period to decide the truth
+of ρ(t0 ) |= φ at an initial time t0 , especially for the until formula φ1 U I φ2 . For example,
+according to the semantics of STL, to decide ρ(t0 ) |= φ2 with φ2 ≡ Φ1 U I1 (Φ2 U I2 Φ3 ), we
+have to monitor the states ρ(t) from time t0 to t0 + sup I1 + sup I2 . It inspires us to calculate
+the post-monitoring period mnt(φ) as
+            
+            
+            0                                            if φ = Φ,
+            
+            
+            mnt(φ )
+                   1                                      if φ = ¬φ1 ,
+   mnt(φ) =                                                                                      (10)
+            
+            
+            max(mnt(φ1 ), mnt(φ2 ))                      if φ = φ1 ∧ φ2 ,
+            
+             sup I + max(mnt(φ1 ), mnt(φ2 ))              if φ = φ1 U I φ2 .
+            
+
+
+I Lemma 17. Given an STL formula φ, the satisfaction ρ(t0 ) |= φ is entirely determined by
+the states ρ(t) with t0 ≤ t ≤ t0 + mnt(φ).
+
+Proof. We discuss it upon the syntactical structure of the STL formula φ.
+    For the atomic proposition Φ, ρ(t0 ) |= Φ is plainly determined by ρ(t0 ).
+    For the negation ¬φ1 , if ρ(t0 ) |= φ1 is determined by ρ(t) with t0 ≤ t ≤ t0 + mnt(φ1 ), so
+is ρ(t0 ) |= ¬φ1 .
+    For the conjunction φ1 ∧ φ2 , if ρ(t0 ) |= φ1 (resp. ρ(t0 ) |= φ2 ) is determined by ρ(t) with
+t0 ≤ t ≤ t0 + mnt(φ1 ) (resp. t0 ≤ t ≤ t0 + mnt(φ2 )), ρ(t0 ) |= φ1 ∧ φ2 is determined by the
+union of those states, i.e. ρ(t) with t0 ≤ t ≤ t0 + max(mnt(φ1 ), mnt(φ2 )).
+    For the until formula φ1 U I φ2 , if ρ(t0 ) |= φ1 (resp. ρ(t0 ) |= φ2 ) is determined by ρ(t) with
+t0 ≤ t ≤ t0 + mnt(φ1 ) (resp. t0 ≤ t ≤ t0 + mnt(φ2 )), ρ(t0 ) |= φ1 U I φ2 is determined by ρ(t)
+with t0 ≤ t ≤ t0 + sup I + max(mnt(φ1 ), mnt(φ2 )), where sup I is caused by the admissible
+transition at the latest time in the until formula, since then we have to determine ρ(t) |= φ1
+from time t0 to t0 + sup I and determine ρ(t0 + sup I) |= φ2 .                                      J
+
+    To decide ρ(0) |= φ, our method is based on the parse tree T of φ as follows.
+    Basically, for each leaf of T that represents an atomic proposition Φ, we compute the
+solution set J (possibly a union of maximal solution intervals J ) of Φ within the monitoring
+interval B := [0, mnt(φ)] by Algorithm 1.
+    Inductively, for each intermediate node of T that represents the subformula ψ of φ, we
+tackle it into three classes.
+    If ψ = ¬φ1 , supposing that J1 is the solution set of φ1 , the solution set J0 of ψ is B \ J1 .
+    If ψ = φ1 ∧ φ2 , supposing that J1 (resp. J2 ) is the solution set of φ1 (resp. φ2 ), the
+    solution set J0 of ψ is J1 ∩ J2 .
+    If ψ = φ1 U I φ2 , supposing that J1 (resp. J2 ) is the solution set of φ1 (resp. φ2 ), the
+    solution set J0 of ψ is
+
+       {t : (t0 ∈ I) ∧ ([t, t + t0 ) ⊆ J1 ) ∧ (t + t0 ∈ J2 )}.
+
+   directly from the semantics of the until formula φ1 U I φ2 in Definition 13, as
+      [t, t + t0 ) ⊆ J1 if and only if ∀ t1 ∈ [t, t + t0 ) : ρ(t1 ) |= φ1 , and
+      t + t0 ∈ J2 if and only if ρ(t + t0 ) |= φ2 .
+23:14   Model Checking Quantum CTMCs
+
+
+        Note that the inductive steps of the above procedure do not generally produce all solutions of
+        the subformula ψ in B. Since by Lemma 17 ρ(t0 ) |= ψ is entirely determined by ρ(t) with t0 ≤
+        t ≤ t0 +mnt(ψ), the resulting solution set J0 contains all solutions of ψ in [0, mnt(φ)−mnt(ψ)]
+        and possibly misses some solutions in the right subinterval (mnt(φ) − mnt(ψ), mnt(φ)].
+        Anyway, the subinterval [0, mnt(φ) − mnt(ψ)] has the left-closed endpoint 0, which suffices
+        to decide ρ(0) |= φ.
+            With a bottom-up fashion, we could eventually get the solution set J of φ, by which
+        ρ(0) |= φ can be decided to be true if and only if 0 ∈ J. Overall, the procedure costs kφk
+        times of the interval operations and at most kφk times of calling Algorithm 1 for getting the
+        solution set of an atomic proposition. That is, the query complexity of model checking STL
+        formulas is linear in kφk by calling Algorithm 1. The query complexity addresses the issue of
+        the number of calls to a black box routine with unknown complexities and is commonly used
+        in quantum computing, where the routine is usually called an oracle. For example, oracles
+        can be a procedure of encoding an entry of a matrix into a quantum state [25] or a quantum
+        circuit of preparing a specific quantum state [22].
+
+        I Example 18. For the STL formula φ1 ≡ ¬(true U I1 (Φ1 ∧ ¬(true U I2 Φ2 ))), the post-
+        monitoring period mnt(φ1 ) is sup I1 + sup I2 = 6 by Eq. (10), implying B = [0, 6] as used in
+        Example 15. We construct the parse tree of φ1 in Figure 3. Based on it, we could calculate
+        the solution sets of all nodes in a bottom-up fashion:
+           Basically, the solution set for Φ1 is (λ1 , λ2 ) where λ1 ≈ 0.352097 and λ2 ≈ 4.49181, the
+           solution set for Φ2 is {0} ∪ [λ3 , 6] where λ3 ≈ 2.14897, and the solution set for true is
+           plainly [0, 6]. The post-monitoring periods of the three leaves are 0. Since B is [0, 6], we
+           have got all the solutions in [0, 6].
+           The solution set for true U I2 Φ2 is [λ3 − 1, 6], and that for the negation is [0, λ3 − 1). The
+           post-monitoring periods of the two nodes are 1, thus we have got all solutions in [0, 5].
+           The solution set for Φ1 ∧ ¬(true U I2 Φ2 ) is (λ1 , λ3 − 1). Its post-monitoring period is 1,
+           thus we have got all solutions in [0, 5].
+           Finally, the solution set for true U I1 (Φ1 ∧ ¬(true U I2 Φ2 )) is [0, λ3 − 1), and that for
+           the negation (the root, representing the whole STL formula φ1 ) is [λ3 − 1, 6]. Their
+           post-monitoring periods are 6, thus we have got the solution in [0, 0].
+        Since 0 ∈
+                / [λ3 − 1, 6], we can decide ρ(0) |= φ1 to be false. Hence the particle walking along
+        Figure 1 does not satisfy the desired convergence performance—Property A.                   J
+
+
+          ¬          U I1          ∧           ¬          U I2          Φ2
+
+
+
+
+                                 true          Φ1                      true
+
+           Figure 3 Parse tree of the STL formula φ1
+
+
+
+           Finally, under Conjecture 6, we obtain the main result:
+
+        I Theorem 19. The STL formulas are decidable over QCTMCs.
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                     23:15
+
+
+ 7     Concluding Remarks
+In this paper, we introduced the model of QCTMC that extends CTMC, and established
+the decidability of the STL formulas over it. To this goal, we firstly solved the atomic
+propositions in STL by real root isolation of a wide class of exponential polynomials, whose
+completeness was based on Schanuel’s conjecture. Then we decided the general STL formula
+using interval operations with a bottom-up fashion, whose (query) complexity turns out to be
+linear in the size of the input formula by calling the developed state-of-art real root isolation
+routine. We demonstrated our method by a running example of an open quantum walk.
+    For future work, we would like to explore the following aspects:
+    how to apply the proposed method to verify non-Markov models in the real world [35];
+    how to design an efficient numerical approximation of the exact method in this paper;
+    and checking other formal logics, e.g. [3], over the QCTMC.
+
+
+     References
+ 1   M. Achatz, S. McCallum, and V. Weispfenning. Deciding polynomial–exponential problems.
+     In Proc. 33rd International Symposium on Symbolic and Algebraic Computation, ISSAC 2008,
+     pages 215–222. ACM Press, 2008.
+ 2   J. Ax. On Schanuel’s conjectures. Annals of Mathematics, 93(2):252–268, 1971.
+ 3   A. Aziz, K. Sanwal, V. Singhal, and R. Brayton. Verifying continuous time Markov chains. In
+     Computer Aided Verification: 8th International Conference, CAV’96, volume 1102 of LNCS,
+     pages 269–276. Springer, 1996.
+ 4   A. Aziz, K. Sanwal, V. Singhal, and R. Brayton. Model-checking continous-time Markov
+     chains. ACM Transactions on Computational Logic, 1(1):162–170, 2000.
+ 5   C. Baier, B. Haverkort, H. Hermanns, and J.-P. Katoen. Model-checking algorithms for
+     continuous-time Markov chains. IEEE Transactions on Software Engineering, 29(6):524–541,
+     2003.
+ 6   C. Baier, J.-P. Katoen, and H. Hermanns. Approximate symbolic model checking of continuous-
+     time Markov chains. In CONCUR’99 Concurrency Theory, volume 1664 of LNCS, pages
+     146–161. Springer, 1999.
+ 7   A. Baker. Transcendental Number Theory. Cambridge University Press, 1975.
+ 8   B. Baumgartner and H. Narnhofer. The structures of state space concerning quantum dynamical
+     semigroups. Reviews in Mathematical Physics, 24(02):article no. 1250001, 2012.
+ 9   V. Chonev, J. Ouaknine, and J. Worrell. On the Skolem problem for continuous linear dynamical
+     systems. In 43rd International Colloquium on Automata, Languages, and Programming, ICALP
+     2016, volume 55 of LIPIcs, pages 100:1–100:13. Schloss Dagstuhl, 2016.
+10   G. I. Cirillo and F. Ticozzi. Decompositions of Hilbert spaces, stability analysis and conver-
+     gence probabilities for discrete-time quantum dynamical semigroups. Journal of Physics A:
+     Mathematical and Theoretical, 48(8):article no. 085302, 2015.
+11   H. Cohen. A Course in Computational Algebraic Number Theory. Springer, 1996.
+12   G. E. Collins and R. Loos. Polynomial real root isolation by differentiation. In Proc. SYMSAC
+     1976, pages 15–25. ACM Press, 1976.
+13   C. Dehnert, S. Junges, J.-P. Katoen, and M. Volk. A Storm is coming: A modern probabilistic
+     model checker. In Computer Aided Verification - 29th International Conference, CAV 2017,
+     Part II, volume 10427 of LNCS, pages 592–600. Springer, 2017.
+14   Y. Feng, E. M. Hahn, A. Turrini, and S. Ying. Model checking ω-regular properties for
+     quantum Markov chains. In 28th International Conference on Concurrency Theory, CONCUR
+     2017, volume 85 of LIPIcs, pages 35:1–35:16. Schloss Dagstuhl, 2017.
+15   Y. Feng, N. Yu, and M. Ying. Model checking quantum Markov chains. Journal of Computer
+     and System Sciences, 79(7):1181–1198, 2013.
+23:16   Model Checking Quantum CTMCs
+
+
+        16   S. J. Gay, R. Nagarajan, and N. Papanikolaou. Probabilistic model-checking of quantum
+             protocols. In Proc. 2nd International Workshop on Developments in Computational Models,
+             2006. available at http://arxiv.org/abs/quant-ph/0504007.
+        17   S. J. Gay, R. Nagarajan, and N. Papanikolaou. QMC: A model checker for quantum systems.
+             In Computer Aided Verification, 20th International Conference, CAV 2008, volume 5123 of
+             LNCS, pages 543–547. Springer, 2008.
+        18   S. Goldstein, J. L. Lebowitz, R. Tumulka, and N. Zanghì. Long-time behavior of macroscopic
+             quantum systems. The European Physical Journal H, 35(2):173–200, 2010.
+        19   V. Gorini, A. Kossakowski, and E. C. G. Sudarshan. Completely positive dynamical semigroups
+             of n-level systems. Journal of Mathematical Physics, 17(5):821–825, 1976.
+        20   J. Guan, Y. Feng, A. Turrini, and M. Ying. Model checking applied to quantum physics.
+             CoRR, abs/1902.03218, 2019. URL: https://arxiv.org/abs/1902.03218.
+        21   J. Guan, Y. Feng, and M. Ying. Decomposition of quantum Markov chains and its applications.
+             Journal of Computer and System Sciences, 95:55–68, 2018.
+        22   J. Guan, Q. Wang, and M. Ying. An HHL-based algorithm for computing hitting probabilities
+             of quantum walks. Quantum Information and Computation, 2021(5&6):0395–0408, 2021.
+        23   J. Guan and N. Yu. Verification of continuous-time Markov chains. CoRR, abs/2004.08059,
+             2020. URL: https://arxiv.org/abs/2004.08059.
+        24   E. M. Hahn, Y. Li, S. Schewe, A. Turrini, and L. Zhang. iscasMc: A web-based probabilistic
+             model checker. In FM 2014: Formal Methods—19th International Symposium, volume 8442 of
+             LNCS, pages 312–317. Springer, 2014.
+        25   A. W. Harrow, A. Hassidim, and S. Lloyd. Quantum algorithm for linear systems of equations.
+             Physical Review Letters, 103(15):article no. 150502, 2009.
+        26   C.-C. Huang, J.-C. Li, M. Xu, and Z.-B. Li. Positive root isolation for poly-powers by exclusion
+             and differentiation. Journal of Symbol Computation, 85:148–169, 2018.
+        27   T. Kailath. Linear Systems. Prentice Hall, 1980.
+        28   E. Kaltofen. Polynomial-time reductions from multivariate to bi- and univariate integral
+             polynomial factorization. SIAM Journal on Computing, 14(2):469–489, 1985.
+        29   M. Kwiatkowska, G. Norman, and D. Parker. PRISM 4.0: Verification of probabilistic
+             real-time systems. In Computer Aided Verification: 23rd International Conference, CAV 2011,
+             volume 6806 of LNCS, pages 585–591. Springer, 2011.
+        30   L. Li and Y. Feng. Quantum Markov chains: Description of hybrid systems, decidability
+             of equivalence, and model checking linear-time properties. Information and Computation,
+             244:229–244, 2015.
+        31   G. Lindblad. On the generators of quantum dynamical semigroups. Communications in
+             Mathematical Physics, 48(2):119–130, 1976.
+        32   R. Loos. Computing in algebraic extensions. In Computer Algebra: Symbolic and Algebraic
+             Computation, pages 173–187. Springer, 1983.
+        33   O. Maler and D. Nickovic. Monitoring temporal properties of continuous signals. In Formal
+             Techniques, Modelling and Analysis of Timed and Fault-Tolerant Systems, volume 3253 of
+             LNCS, pages 152–166. Springer, 2004.
+        34   M. A. Nielsen and I. L. Chuang. Quantum Computation and Quantum Information. Cambridge
+             University Press, 2000.
+        35   C. Pellegrini. Continuous time open quantum random walks and non-Markovian Lindblad
+             master equations. Journal of Statistical Physics, 154:838–865, 2014.
+        36   I. Sinayskiy and F. Petruccione. Microscopic derivation of open quantum walks. Physical
+             Review A, 92(3):article no. 032105, 2015.
+        37   W. J. Stewart. Introduction to the Numerical Solution of Markov Chains. Princeton University
+             Press, 1994.
+        38   A. Strzeboński. Real root isolation for exp–log functions. In Proc. 33rd. International
+             Symposium on Symbolic and Algebraic Computation, ISSAC 2008, pages 303–313. ACM Press,
+             2008.
+M. Xu, J. Mei, J. Guan, and N. Yu                                                                     23:17
+
+
+39   A. Strzeboński. Real root isolation for tame elementary functions. In Proc. 34th International
+     Symposium on Symbolic and Algebraic Computation, ISSAC 2009, pages 341–350. ACM Press,
+     2009.
+40   M. M. Wolf. Quantum channels & operations: Guided tour. Lecture notes available at
+     http://www-m5.ma.tum.de/foswiki/pubM, 5, 2012.
+41   M. Xu, C.-C. Huang, and Y. Feng. Measuring the constrained reachability in quantum Markov
+     chains. Acta Informatica, online first, 2021.
+42   M. Xu, L. Zhang, D. N. Jansen, H. Zhu, and Z. Yang. Multiphase until formulas over Markov
+     reward models: An algebraic approach. Theoretical Computer Science, 611:116–135, 2016.
+43   M. Ying and Y. Feng. Model-checking quantum systems. National Science Review, 6(1):28–31,
+     2019.
+44   M. Ying and Y. Feng. Model Checking Quantum Systems: Principles and Algorithms. Cam-
+     bridge University Press, 2021.
+45   S. Ying, Y. Feng, N. Yu, and M. Ying. Reachability probabilities of quantum Markov chains.
+     In CONCUR 2013: Concurrency Theory—24th International Conference, volume 8052 of
+     LNCS, pages 334–348. Springer, 2013.
+46   L. Zhang, D. N. Jansen, F. Nielson, and H. Hermanns. Automata-based CSL model checking.
+     In Automata, Languages and Programming: 38th International Colloquium, ICALP 2011, Part
+     II, volume 6756 of LNCS, pages 271–282. Springer, 2011.
+47   L. Zhang, D. N. Jansen, F. Nielson, and H. Hermanns. Efficient CSL model checking using
+     stratification. Logical Methods in Computer Science, 8(2:17):1–18, 2012.
+

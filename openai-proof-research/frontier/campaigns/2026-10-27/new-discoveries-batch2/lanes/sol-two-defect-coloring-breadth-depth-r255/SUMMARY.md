@@ -1,0 +1,13 @@
+# r255 — RETIRE exact source question; local reproduction complete
+
+Counts unchanged: 9 additional / 39 total / next 40. Root alone accepts/counts. No discovery credit requested; no Lean/manuscript/shared/git/public/MathDB changes.
+
+**Decisive prior:** Goedgebeur–Jooken–Máčajová–Mattiolo–Mazzuoccolo–Ulyanov, arXiv:2608.10028v4 (30 September 2026), §5.3 Question 13 and the paragraph immediately following it, explicitly answer the literal Mattiolo–Mazzuoccolo–Mkrtchyan two-abnormal-edge question negatively, including both Putman 112-vertex graphs. The actual primary PDF/body was retrieved, frozen, hashed and read. This predates this campaign. Do not retain this as an unresolved target or claim the universal Petersen refutation alone answers it. Earliest version containing that paragraph was not determined; v4 already suffices to exclude novelty.
+
+The requested new palette-aware transfer succeeded computationally. On the printed F,C,L=4F+C,G=3L+C graph it reconstructs a proper five-edge-coloring with exactly two abnormal edges, (20,111) and (44,70), in construction labels. Both have color 0 and endpoint palettes {0,2,3} and {0,1,2}. All 168 edges were independently checked; the source relabeling gives dc16cc18600cf77c8661b7baf89c7019f265299308541961ff884ea7187b4e8b.
+
+The local exact zero-defect composition has no solutions. A second composer, with different join order and tuple states, independently repeats this result. Its base F/C tables were independently checked by enumerating all proper canonical colorings without defect pruning. Thus this is a local finite multipole replay of non-normal-colorability, **not** an independent DRAT replay. Putman's published Theorem 1.1 is also an inspected matching dependency. No huge archive was downloaded.
+
+Artifacts: discovery.md explains sufficiency, S5 orbits, the cut-space palette invariant and proof scope; two-defect-witness.json contains all colors; math-verification.json, exhaustive-verification.json, zero-verification.json and G-zero-result.json contain checks. SCOUTING.md screens eight additional distinct finite/arithmetic/algebraic families; no actionable new full-scope survivor is manufactured. Spectral energy remains retired and was not revisited.
+
+Current-source screening initially used overly broad/unquoted queries and returned irrelevant hits. Corrected exact queries found the decisive paper. This failed first search is preserved, not treated as clearance. Full live proof-registry heads and historical inaccessible intervals remain uncleared; denied routes were not retried. Final manifest excludes itself and its separate verification receipt.
