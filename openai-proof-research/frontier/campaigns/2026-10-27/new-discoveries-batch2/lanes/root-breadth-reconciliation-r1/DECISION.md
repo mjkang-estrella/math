@@ -1,0 +1,7 @@
+# Tyszka disposition and recent campaign reconciliation
+
+2026-10-30. Root adopts ordinary SOURCE/MATH PASS and routine-classical exclusion for full Tyszka Conjectures3 and5, following sol-tyszka-additive-preliminary-review-r1. ArbitraryG membership uses Smith form followed by finitely generated rational subgroup (1/h)Z and sharp bounded integer solutions; the independent review supplies the finite-quotient proof and square-system Cramer case. Residual compression uses bounded arrangement vertices, pointed-polyhedral decomposition and real-part projection. These are complete applicable bridges, not exclusion based on proof length or claims that FFP already stated both larger endpoints.
+
+Reviewer recovered/read actual BFRT1989 body from failed Claude lane; its full proof and matching assumptions now support the subgroup step. Earlier original-body access gaps remain historically preserved. Journal target correspondence and worldwide novelty stay unclosed; neither is represented as positive evidence. No Lean/manuscript or credit. No acceptance transaction. Counts9/39,next40.
+
+Shared NEXT.md updated with current dispositions, Richardson/Berg correction, Claude provider failures, active Sol scouts, and honest root verification backlog. Original scientific worker files remain unchanged. This is an administrative reconciliation plus mathematical adoption, not an exhaustive new hash/replay certification. New focused Sun4.4 investigation uses prior scout as a follow-up, not a fresh-screen count.
