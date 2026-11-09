@@ -1,0 +1,15 @@
+# Source fidelity review (not independent acceptance review)
+
+Source bodies read: hash-bound hereditary-trace-fresh-r1/sources/trace.txt, Section 2 in full, Lemma 3.2, Theorem 4.1, Remark 4.2 and Section 5; thesis reduction extraction and source definition inherited from r2. Additional hashes are in additional-source-bindings.json. Sources remain unchanged.
+
+Definition 2.5 requires a multihomogeneous full-matrix identity. Steps 2–5 require lexicographically minimal cyclic representatives, suffix substitution after six letters, recursive shortening, then expression in E. Conjecture 2.10 quantifies over choices of that reduction. Full-matrix FTI is stronger than the thesis restriction to six traceless arguments. There is no discovered conflict in these constraints. The source PDF extraction omits the sign in Definition 2.2, while Example 2.6 supplies the alternating convention; FTI overall sign does not affect the argument.
+
+The formal matrix theorem uses all 24 signed permutations. Its proof expands actual 3x3 matrix entries in Lean. It does not assume a formal trace identity or trace invariance as an axiom. The source generator definitions e1–e35 are the literal printed words of Lemma 3.2; the ten-term relation only uses these. The coefficients are multiplied by six to remove denominators. No ideal or CE proxy is substituted for the actual invariant kernel.
+
+The original verifier checks lower columns as stored data rather than reconstructing their identity witnesses. This is an independent-verification limitation, not currently a counterexample to the argument. check_lower_witnesses.py reconstructs all 243 columns as F(B1,B2,B3,B4) times a trace monomial, matching exactly. lower-witnesses.json records the witnesses. Only 24 enter the p certificate. The formal matrix relation uses those 24 plus the 16 q fundamental summands directly.
+
+The ordinary low-degree argument includes all weights through six, 45 generators, 80 nonempty components and 308 monomials. The independent enumeration bounds the number of factors by three because minimum generator weight is two. The scalar variable extension requires independent generic scalar parts, not merely selected numeric scalar evaluations. The abstract centered-trace change of coordinates is triangular; independence of the E linear forms follows from low-degree injectivity. These are plausible ordinary arguments, but remain unformalized here. Their formal proofs cannot be replaced by Python inverse checks.
+
+The fixed source list is the entire Theorem 4.1 plus letter permutations of Remark 4.2. Both degree-(3,2,2) tuples must be checked separately. Source table degree headings are not reliable degree data: word lengths must be used. The remaining ideal argument needs actual multigrading and homogeneous-component projection, not only a finite rank calculation. Those source definitions and semantic bridges are not yet formalized in this project.
+
+No fatal ordinary mathematical obstruction was established. This is not full validation or novelty clearance.
