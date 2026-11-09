@@ -1,0 +1,15 @@
+# Twenty additional MathDB solutions — 2026-10-31
+
+The current user explicitly requests twenty NEW mathematically significant solutions to MathDB problems, resuming research after the historical r731 stop. That new instruction supersedes the stop for this campaign only. Start at 0/20 beyond the 39 previously credited results; do not count previous results again. The older target of thirty additional is historical, not this campaign target.
+
+Retain ancestor source fidelity, mathematical significance, novelty, independent review, literal Lean endpoint, paper and strict extracted replay requirements. Each counted result must resolve an identified MathDB problem in its exact scope; nearby source questions alone are insufficient for this request. No publication is requested. Root orchestrates; assigned investigators perform mathematical work. Use two GPT-6.1 Sol workers and one Claude Opus 5.5 worker at high effort/default speed per the inherited allocation. No child delegation. Work only in your assigned lane; no git operations or shared ledger edits.
+
+Resume disjoint previously unfinished reservations, checking existing partial work before duplicating it. Prior rejections and protected IDs stay in force. Prefer sustained concrete proof attempts on the strongest tractable candidates to metadata-only screening. Known results, routine corollaries, endpoint corrections and parameter variants receive zero credit. A closed proof alone does not establish novelty or significance.
+
+## Explicit user requirement: Lean
+
+The user explicitly requires all twenty solutions to be formally proved using Lean. Acceptance requires a kernel-checked theorem matching the exact MathDB statement (or its exact negation for a refutation), all definitions and bridges included, pinned Lean/mathlib dependencies, independent statement-fidelity review, and a clean extracted rebuild. Audit transitive dependencies with #print axioms: only propext, Classical.choice, Quot.sound permitted. No sorry, admit, added axioms, unsafe or native_decide. Ordinary proofs and partial formalizations remain candidates with zero accepted credit. Formalization feasibility must inform candidate selection.
+
+## Latest user steering (2026-11-02): extend to forty
+
+After the twentieth acceptance the user asked to "go for 40". The campaign target is now FORTY new accepted solutions (20 more beyond the 20 already accepted on 2026-11-02), beyond the 39 prior results. All requirements above, including the explicit Lean requirement, the substantive credit standard, the model allocation (two GPT-6.1 Sol workers and one Claude Opus 5.5 worker, high effort, default speed) and the three-delegate cap, are unchanged. Already accepted results are not recounted; held and uncredited candidates (342414, 358158) need the full pipeline before credit.
