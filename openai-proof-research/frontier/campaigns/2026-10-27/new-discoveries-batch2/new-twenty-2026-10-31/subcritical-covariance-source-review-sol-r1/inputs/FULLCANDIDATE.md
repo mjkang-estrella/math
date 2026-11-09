@@ -1,0 +1,46 @@
+# 317413 — held ordinary proposal, not a qualified full-literal survivor
+
+Author-only mathematics; no independent PASS, acceptance, credit, or formal dispatch.
+The exact twenty original literals and immutable provenance are separate files.
+
+## Exact scope and source problem
+For every pair of fixed integers k,l>=2 the covariance polynomials of the joint Gaussian fluctuation limit should equal
+P_{k,l}(x)=p_{k+l}(x)-p_{k+1}(x)p_{l+1}(x)/x.
+Actual downloaded 0806.0252v1 (2 June 2008), p17, Conjecture5.11 asks this. The source explicitly says it suffices to establish E|S_k-ES_k|^4=O(n^2) when nt<=1/2. The argument below establishes this uniformly for each fixed k. It then pays the all-index polynomial bridge under the covariance-defined, n-normalized interpretation of the Gaussian polynomials.
+
+**Unresolved fidelity gate:** the same p17, visually inspected, prints AsN(n p_k(x),hat P_k(x)) without n in the variance, prints a degree bound2k-3 for hat P_k although its own displayed examples have degree4k-3, and prints hat P_2=2x^5, whereas Theorem5.9 gives n(2x^5-2x^4) at fixed nt. These are actual source conflicts, not OCR assumptions. Definitions via the Gaussian covariance and these examples cannot all be imposed literally at once. This packet does not silently repair the final source. Its final DOI10.1063/1.2982848 returned403 after redirect; the entire identified work is closed to ALL new deliveries, including original/version/author/cache/mirror/metadata aliases. Only this explicitly acquired pre-denial v1 and metadata are available; no final equivalence. Thus FULL literal/source qualification remains HOLD even though the intended ordinary mechanism is complete.
+
+## 1. Independent row resampling
+Let G have independent edges of probability p<=1/(2n). Put Z=S_k(G)=sum_C |C|^k. Partition its independent edge indicators into n rows R_i={edge(i,j):j>i}. Rows are independent (the last may be empty). Replace row i by an independent copy and call the resulting graph G^i and statistic Z^i. Let H_i=G union G^i and let C_i be its component containing i. Every changed edge is incident to i. Outside C_i, the components of G and G^i coincide. Each graph partitions C_i into components. For k>=1, the sum of kth powers of the sizes of a partition of C_i lies between0 and |C_i|^k. Hence |Z-Z^i|<=|C_i|^k. This is a deterministic all-graph statement, with no typical-event truncation.
+
+## 2. Uniform moments for the exceptional-root exploration
+In H_i all edges not incident to i have independent probability p. Incident edges have probability at most2p, and all distinct edges remain independent: only a subset of the incident edges was resampled. Explore C_i breadth first, exposing the root first. The number of root children is dominated by Bin(n,2p). For every later vertex, edges to i were already exposed at the root; each still untested edge has probability p. The number of fresh children is dominated by Bin(n,p). Pad candidate edges by independent fictitious trials to obtain independent dominating offspring variables. Collisions and already discovered vertices only decrease the real exploration. Thus |C_i| is dominated by total progeny of a branching process with root offspring Bin(n,2p) and other offspring Bin(n,p).
+
+This domination has a uniform exponential moment. Choose a=11/10 and theta=1/100. For the nonroot process truncated after h generations let T_h be total progeny. Induction gives E exp(theta T_h)<=a, since at h=0 e^theta<a, and
+ e^theta E[a^{Bin(n,p)}] <= exp(theta+np(a-1)) <= exp(.06)<1.1.
+The last strict inequality follows without numerical approximation: log(1.1)=integral_1^{1.1}1/u du >=.1/1.1=1/11>.06. Monotone convergence bounds the infinite progeny exponential moment by a. For the root the same calculation yields E exp(theta |C_i|)<= exp(theta+2np(a-1))<=exp(.11), uniformly in i,n,p. Extinction follows as well from finite exponential moment. The elementary inequality u^m<=m! theta^{-m} exp(theta u), u>=0, bounds every fixed integer moment uniformly. Consequently ||Z-Z^i||_4<=K_k for a finite constant depending only on k. n=1, p=0 and the empty last row satisfy the same bound trivially.
+
+## 3. Elementary fourth-moment martingale bound
+Let F_i=sigma(R_1,...,R_i), M_i=E[Z|F_i]-EZ, D_i=M_i-M_{i-1}. Integrating the new row and future rows gives E[Z^i|F_i]=E[Z|F_{i-1}], so D_i=E[Z-Z^i|F_i]. Conditional Jensen gives ||D_i||_4<=K_k=:K. All random variables are finite for each n, so all conditional expectations and expansions are integrable.
+
+Set A_i=E M_i^4. Expand (M_{i-1}+D_i)^4. The M_{i-1}^3 D_i term vanishes because E[D_i|F_{i-1}]=0. Hölder bounds the other mixed terms, yielding
+ A_i <= A_{i-1}+6 A_{i-1}^{1/2} K^2+4 A_{i-1}^{1/4}K^3+K^4.
+Induction proves A_i<=100 K^4 i^2: if m=i-1 and the bound holds, the increment is at most K^4(60m+4sqrt(10)sqrt(m)+1), which is <=100K^4(2m+1) for all integer m>=0 (m=0 immediate; for m>=1 use sqrt(m)<=m and 4sqrt(10)<13). The case K=0 is deterministic. At i=n this proves
+ E|S_k(G)-ES_k(G)|^4 <=100 K_k^4 n^2.
+No martingale moment theorem, concentration black box, enumeration or mathematical program is used.
+
+## 4. All-parameter polynomial bridge
+Choose ANY fixed c in (0,1/2), let t=c/n and p=1-exp(-t)<=1/(2n). Then x=(1-c)^(-1) lies in (1,2). Theorem3.4 gives ES_k=np_k(x)+O(1); its actual statement was read. The source joint normal construction in5.21-5.22/5.10, with the n-normalized covariance meaning, gives (S_k-np_k(x))/sqrt(n) jointly convergent to a centered Gaussian vector with covariance hat P_{k,l}(x). Source Theorem6.1 gives Cov(S_k,S_l)/n -> P_{k,l}(x); its actual proof was read, not inferred from an abstract.
+
+The fourth-moment bound gives sup_n E| (S_k-ES_k)/sqrt(n)|^4<infinity. Replacing ES_k by np_k(x) preserves this property because the normalized difference is O(n^-1/2). Products of any two coordinates have bounded second moments by Cauchy-Schwarz, so their first moments are uniformly integrable: E[|U|1_{|U|>R}]<=E U^2/R. Thus distributional convergence implies convergence of the mixed second moments. To justify this last step directly, truncate the continuous product at +/-R, apply bounded continuous convergence in distribution, and use the uniform tail bound; the Gaussian limit has finite moments too. Centered first moments similarly converge (or are exactly zero after centering). Therefore hat P_{k,l}(x)=P_{k,l}(x) for every c in (0,1/2), not merely finitely many test points.
+
+For fixed k,l their difference is a real polynomial. A nonzero polynomial has at most its degree many roots, proved inductively by division by x-a. It cannot vanish on the entire interval(1,2); hence the difference is identically zero. k,l were arbitrary, so all pairs are covered. The polynomial identity automatically extends beyond the interval, including x=1, without a new small-t variance assumption. No uniformity as k grows is asserted or needed. Near-critical t is covered only through this identity plus the source's Gaussian-polynomial definition, not through a uniform near-critical fourth moment claim.
+
+## Competing route and failed shortcuts
+Edge-by-edge L4 resampling is too weak: each of Theta(n^2) edge coordinates changes with probability Theta(1/n), giving L4 influence O(n^-1/4). Summing squared L4 influences would give a fourth moment of order n^3. Vertex rows remove this loss while keeping independent coordinates and a bounded-moment exceptional root; this is the central new deduction.
+Bounding S_k by n times a maximum component gives logarithmic losses and does not prove uniform integrability at the required normalization. The row argument avoids discarding rare events.
+A second route differentiates the linear fluctuation covariance from5.21, giving a triangular Lyapunov system Q'=AQ+QA^T+B, A_{k,j}=binom(k,j-1)p_{k+2-j}, with j=2,...,k and A_{k,k}=k/(1-c). Noise B is the double split sum from5.5. Proving that the explicit P solves this system requires an all-index binomial convolution identity; that identity has NOT been paid here and is not used. The completed row proof is independent of this failed algebraic shortcut.
+
+## Significance and unpaid gates
+Strong contrary-to-exclusion case: the actual source explicitly singles out the all-k fourth moment as an unresolved sufficient condition. A proof for every k,l is not a fixed-parameter instance. The row argument proves the condition personally rather than importing an unread general theorem. Strong routine-adaptation objection: uniform subcritical exploration tails and martingale resampling are classical tools; a specific primary theorem might already supply this exact moment bound. No such complete applicable primary bridge was authenticated in the bounded searches. Shortness or the word standard alone does not settle significance.
+Three live native searches/nine strings produced navigation, not a matching authenticated proof or worldwide novelty clearance. Four public registry roots remain inherited unavailable, with no refresh or alternate restoration. Current registry head/chronology, final source normalization, independent fidelity/ordinary/significance review and exact Lean endpoint are unpaid. No credits, no new acceptance, no claim source theorem proofs were all re-audited.
