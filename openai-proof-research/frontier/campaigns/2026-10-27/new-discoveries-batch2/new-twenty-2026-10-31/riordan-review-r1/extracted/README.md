@@ -1,0 +1,1 @@
+Candidate refutation of MathDB 338258, not accepted. Endpoint: Riordan.source_conjecture_false. Compile Core, Row0..Row14, Table, Endpoint, Audit with pinned Lean 4.34.1 and mathlib d13f23b723b8a846827a245b89c10fc7d3f11612. See lane scripts/replay.py and RIORDAN-PROOF.md. Cached upstream oleans are trusted, not rebuilt.
