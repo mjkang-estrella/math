@@ -1,0 +1,9 @@
+# Failures and access limits
+
+The proposed record classification was initially unproved. The first-threshold identity alone was insufficient; this lane supplied a complete suffix-boundary recurrence and global gap cover. No countermodel appeared; finite checks are diagnostics and are not the proof. No invalid preliminary classification was silently used.
+
+No network retrieval, browser operation, registry request or historical HEAD loop was attempted in this focused simplification lane. Existing denied GitHub API/raw/codeload/diff/patch, ScienceDirect and Google challenge routes remain parked and were not retried. No proxy, TLS change or access-control bypass was used. The 2017 Merta thesis and complete current citing corpus remain unread; this lane does not close those prior-art gaps. The full preliminary review's bounded chronology and retrieval limitations remain in force. The prompt allowed a targeted thesis read only if useful; the local suffix proof made it unnecessary.
+
+One initial native administrative inventory was overly broad and its output truncated. Subsequent scientific source reads were bounded and used verified immutable references. The initial proof/review read was frozen and hash-checked first. A later source-body output also exceeded the display budget; the exact missing Table 1 and Proposition 3 portions were then read separately. No failed computation, resource kill or cap raise occurred. No finite-prefix agreement is promoted to universal proof.
+
+This is the same candidate and a proposed proof simplification, not an additional discovery. No novelty or formal gate changed, and no campaign count was changed. Ordinary full-scope r242 already had independent mathematical PASS; that remains intact. This revision needs its own independent mathematical review.

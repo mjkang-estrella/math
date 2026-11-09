@@ -1,0 +1,7 @@
+# Reproduction and scope
+
+All helper execution used OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 and the prescribed absolute helper_guard.py from sol-edge-irregulator-manuscript-packet-r1/packet. Caps were unchanged: AS512MiB, sampled process-group RSS512MiB, CPU210s, wall230s. Native bounded reads and apply_patch were used as authorized.
+
+freeze.py snapshots immediate r240 discovery/proof bindings/checks and only the relevant primary files, comparing original/copy SHA256 before and after copy. Administrative files are snapshots, not scientific immutability assertions. No historical directory tree was recursively duplicated. New primary PDFs were hashed and frozen before scientific reading. pdftotext extracts were produced under the same guard. Source and copy postread hashes are checked separately by verify.py.
+
+checks.py validates the literal language against the DFA at1,048,575 positive indices, the first-threshold formulas for t3..16, and the state extrema/count recurrence through t500. The proof is an all-t induction plus pumping, not those finite checks. finalize.py reruns the diagnostics and writes the manifest excluding itself only in the sense that manifest.json is excluded (the finalize.py source IS included); verification-receipt.json is also excluded. Then a SEPARATE guarded verify.py invocation checks all files and both sides of each source binding and writes the receipt. The manifest includes verify.py. No source mutation is authorized.

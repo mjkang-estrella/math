@@ -1,0 +1,91 @@
+"""Separate final verifier; invoke with the prescribed 512MiB helper guard."""
+from pathlib import Path
+import hashlib, json, re, zipfile, datetime
+
+L = Path(__file__).resolve().parent
+def sha(p):
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+manifest = json.loads((L / 'manifest.json').read_text())
+actual = {str(p.relative_to(L)) for p in L.rglob('*') if p.is_file()
+          and p.name not in {'manifest.json', 'verification-receipt.json'}}
+assert actual == set(manifest)
+for rel, h in manifest.items():
+    assert sha(L / rel) == h, rel
+
+checks = 0
+for row in json.loads((L / 'freeze.json').read_text()):
+    assert sha(Path(row['original'])) == row['sha256'], row
+    assert sha(L / row['copy']) == row['sha256'], row
+    checks += 1
+review = L / 'frozen/sol-inverse-period-doubling-elementary-review-r2'
+for f in ['immutable-refs.json', 'library-bindings.json']:
+    for row in json.loads((review / f).read_text()):
+        for key in ['original', 'copy']:
+            p = Path(row[key])
+            if not p.is_absolute():
+                p = Path('/home/mj-kang/Documents/Dev/math') / p
+            assert sha(p) == row['sha256'], row
+        checks += 1
+
+pins = json.loads((L / 'packet/pins.json').read_text())
+assert sha(Path(pins['lean'])) == pins['lean_sha256']
+assert len(pins['packages']) == 9
+assert pins['packages'][0]['rev'] == 'd13f23b723b8a846827a245b89c10fc7d3f11612'
+assert pins['packages'] == json.loads((L / 'administrative/lake-manifest.json').read_text())['packages']
+with zipfile.ZipFile(L / 'source-only.zip') as z:
+    assert sorted(z.namelist()) == sorted(p.name for p in (L / 'packet').iterdir())
+    for entry in z.infolist():
+        assert entry.date_time == (1980, 1, 1, 0, 0, 0)
+        assert not entry.filename.endswith(('.olean', '.ilean'))
+        assert z.read(entry) == (L / 'packet' / entry.filename).read_bytes()
+        assert z.read(entry) == (L / 'fresh-replay' / entry.filename).read_bytes()
+
+mods = ['Source', 'Algebra', 'Recurrence', 'Automaton', 'Enumeration', 'Suffix']
+for mod in mods + ['Audit']:
+    result = json.loads((L / 'fresh-replay' / (mod + '.guard.json')).read_text())
+    assert result['exit_code'] == 0 and result['reason'] is None
+    assert result['sampled_peak_group_rss'] <= 2800 * 1024 ** 2
+    cmd = result['command']
+    assert all(x in cmd for x in ['-j1', '-M2700', '-DwarningAsError=true', '-DautoImplicit=false'])
+for mod in mods:
+    assert (L / (mod + '.lean')).read_bytes() == (L / 'packet' / (mod + '.lean')).read_bytes()
+    assert not re.search(r'\b(sorry|admit|axiom|unsafe|native_decide|partial)\b',
+                         (L / (mod + '.lean')).read_text())
+
+def audit(text):
+    names = re.findall(r'^DECL\|([^|]+)\|ORIGIN\|([^|]+)\|UNSAFE\|(\w+)$', text, re.M)
+    safety = dict(re.findall(r'^SAFETY\|([^|]+)\|(.+)$', text, re.M))
+    axioms = {}
+    for line in text.splitlines():
+        m = re.match(r"^'([^']+)' depends on axioms: \[(.*)\]$", line)
+        if m:
+            axioms[m[1]] = [re.sub(r'\.\{.*', '', x.strip()) for x in m[2].split(',') if x.strip()]
+        m = re.match(r"^'([^']+)' does not depend on any axioms$", line)
+        if m:
+            axioms[m[1]] = []
+    assert len(names) == len(set(n for n, _, _ in names)) == 295
+    assert {n for n, _, _ in names} == set(safety) == set(axioms)
+    rows = []
+    for n, origin, unsafe in names:
+        assert unsafe == 'false'
+        assert origin in mods
+        assert set(axioms[n]) <= {'propext', 'Classical.choice', 'Quot.sound'}
+        rows.append(dict(name=n, origin=origin, unsafe=False,
+                         partial=safety[n].endswith('.partial'), safety=safety[n],
+                         transitive_axioms=axioms[n]))
+    return rows
+
+rows = audit((L / 'fresh-replay/Audit.log').read_text())
+assert rows == json.loads((L / 'audit-inventory.json').read_text())
+assert sum(r['partial'] for r in rows) == 4
+assert all(not r['transitive_axioms'] for r in rows if r['partial'] and not r['name'].endswith('suffixValues._unsafe_rec'))
+assert not list(L.rglob('*.olean')) and not list(L.rglob('*.ilean'))
+receipt = dict(status='PASS scoped source component; item4 residual; novelty HOLD',
+               verified_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+               manifest_sha256=sha(L / 'manifest.json'), archive_sha256=sha(L / 'source-only.zip'),
+               scientific_binding_pairs=checks, audited_declarations=len(rows),
+               generated_partial_declarations=4, fresh_extracted_strict_replay=True,
+               counts_unchanged=[9, 39, 40], protocol_limits='See FAILURES.md')
+(L / 'verification-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+print(json.dumps(receipt, indent=2))

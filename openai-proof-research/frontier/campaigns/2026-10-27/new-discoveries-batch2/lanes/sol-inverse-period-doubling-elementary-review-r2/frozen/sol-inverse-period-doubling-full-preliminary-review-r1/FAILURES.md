@@ -1,0 +1,9 @@
+# Failures, limitations and controls
+
+- Initial native inventory accidentally included all of /home/mj-kang/Documents/Dev and was truncated. No scientific inference used it. A later native listing of ~/.cache/mathlib was also too broad and truncated; assessment was narrowed to the actual campaign mathlib Computability directory. These are preserved session failures, not hidden evidence.
+- An initial guessed r240 directory name sol-inverse-period-doubling-base2-r240 did not exist. The correct breadth-depth lane was identified by bounded inventory; no content depended on the missing path.
+- The fresh exact phrase query returned irrelevant papers and missed the target. It is not evidence of absence of a solution.
+- No scientific checker or HTTP retrieval failed in this review. Scientific diagnostics were independent and capped. Original candidate checker scripts were not executed. Inherited failures remain verbatim in the frozen r240/r242 FAILURES.md files.
+- No denied endpoint, historical interval, failed author hostname, or challenge route was retried. No current registry head, comprehensive alias/history interval or global literature clearance is claimed. A fresh current Durand PDF matched the inherited exact bytes; this is a bounded version check, not an audit of all corrections or all upstream references.
+- No Lean, manuscript, shared index, ledger, Git, MathDB or browser mutation, external message, public action or child agent occurred. Writes are confined to this lane. Native bounded reads/apply_patch were authorized; all Python, retrieval, edits by scripts and hashes used the prescribed absolute helper_guard.py with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1, AS/groupRSS512MiB CPU210s wall230s, no cap raises.
+- Administrative ledger/context/AGENTS files are snapshots only; final verification does not assert that their shared originals remain immutable.

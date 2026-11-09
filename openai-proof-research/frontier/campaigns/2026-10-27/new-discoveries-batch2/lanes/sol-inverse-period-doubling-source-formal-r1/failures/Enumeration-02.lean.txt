@@ -1,0 +1,153 @@
+import Automaton
+set_option autoImplicit false
+set_option warningAsError true
+namespace InversePeriodDoubling
+
+theorem zeros_infinite : Set.Infinite {n | u n = 0} :=
+  Set.infinite_of_injective_forall_mem (f := fun n : ℕ => 2 * n)
+    (by intro x y h; omega) u_even
+
+def onesWitness : ℕ → ℕ
+  | 0 => 1
+  | n + 1 => 4 * onesWitness n + 3
+
+theorem onesWitness_one (n : ℕ) : u (onesWitness n) = 1 := by
+  induction n with
+  | zero => exact u_one
+  | succ n ih => rw [onesWitness, u_four_three, ih]
+
+theorem onesWitness_strictMono : StrictMono onesWitness := by
+  apply strictMono_nat_of_lt_succ
+  intro n
+  rw [onesWitness]
+  omega
+
+theorem ones_infinite : Set.Infinite {n | u n = 1} :=
+  Set.infinite_of_injective_forall_mem onesWitness_strictMono.injective onesWitness_one
+
+theorem b_strictMono : StrictMono b := Nat.nth_strictMono zeros_infinite
+theorem a_strictMono : StrictMono a := Nat.nth_strictMono ones_infinite
+theorem b_mem (n : ℕ) : u (b n) = 0 := Nat.nth_mem_of_infinite zeros_infinite n
+theorem a_mem (n : ℕ) : u (a n) = 1 := Nat.nth_mem_of_infinite ones_infinite n
+
+theorem one_odd (n : ℕ) (h : u n = 1) : n % 2 = 1 := by
+  by_contra he
+  have hn : n = 2 * (n / 2) := by omega
+  rw [hn, u_even] at h
+  exact zero_ne_one h
+
+theorem a_bounds (j : ℕ) : j + 1 ≤ a j := by
+  have h := a_strictMono.id_le j
+  have h0 := a_strictMono.monotone (Nat.zero_le j)
+  have ho := one_odd (a 0) (a_mem 0)
+  have hh : StrictMono (fun j => a j - 1) := by
+    intro i j hij
+    have hi := a_strictMono hij
+    have hpos := a_strictMono.monotone (Nat.zero_le i)
+    omega
+  have hb := hh.id_le j
+  omega
+
+theorem c_strictMono : StrictMono c := by
+  apply strictMono_nat_of_lt_succ
+  intro j
+  have h := a_strictMono (Nat.lt_succ_self j)
+  have h1 := one_odd (a j) (a_mem j)
+  have h2 := one_odd (a (j + 1)) (a_mem (j + 1))
+  have hb := a_bounds j
+  have hb' := a_bounds (j + 1)
+  dsimp [c]
+  omega
+
+theorem b_step_le (n : ℕ) : b (n + 1) ≤ b n + 2 := by
+  let z := if b n % 2 = 0 then b n + 2 else b n + 1
+  have hz : b n < z ∧ z ≤ b n + 2 ∧ z = 2 * (z / 2) := by
+    dsimp [z]; split_ifs <;> omega
+  have hm : u z = 0 := by rw [hz.2.2, u_even]
+  by_contra h
+  have hlt : z < b (n + 1) := by omega
+  have hh := Nat.le_nth_of_lt_nth_succ (p := fun n => u n = 0) hlt hm
+  change z ≤ b n at hh
+  omega
+
+theorem gap_one_or_two (n : ℕ) : g n = 1 ∨ g n = 2 := by
+  have h := b_strictMono (Nat.lt_succ_self n)
+  have h' := b_step_le n
+  dsimp [g]
+  omega
+
+noncomputable def zrank (n : ℕ) : ℕ := Nat.count (fun i => u i = 0) n
+noncomputable def orank (n : ℕ) : ℕ := Nat.count (fun i => u i = 1) n
+
+theorem u_two (n : ℕ) : u n = 0 ∨ u n = 1 := by
+  have h : ∀ x : ZMod 2, x = 0 ∨ x = 1 := by decide
+  exact h _
+
+theorem rank_partition (n : ℕ) : zrank n + orank n = n := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rcases u_two n with h | h <;>
+      simp [zrank, orank, Nat.count_succ, h] at * <;> omega
+
+theorem orank_a (j : ℕ) : orank (a j) = j := Nat.count_nth_of_infinite ones_infinite j
+theorem zrank_b (j : ℕ) : zrank (b j) = j := Nat.count_nth_of_infinite zeros_infinite j
+
+theorem around_one (j : ℕ) : b (c j) = a j - 1 ∧ b (c j + 1) = a j + 1 := by
+  have ho := one_odd (a j) (a_mem j)
+  have hb := a_bounds j
+  have hm : u (a j - 1) = 0 := by
+    rw [show a j - 1 = 2 * ((a j - 1) / 2) by omega, u_even]
+  have hp : u (a j + 1) = 0 := by
+    rw [show a j + 1 = 2 * ((a j + 1) / 2) by omega, u_even]
+  have hr := rank_partition (a j)
+  have hr' := orank_a j
+  have hprev : zrank (a j) = zrank (a j - 1) + 1 := by
+    rw [show a j = (a j - 1) + 1 by omega]
+    simp only [zrank, Nat.count_succ, hm, ite_true]
+  have hnext : zrank (a j + 1) = zrank (a j) := by
+    simp [zrank, Nat.count_succ, a_mem]
+  have hc : zrank (a j - 1) = c j := by dsimp [c]; omega
+  have hc' : zrank (a j + 1) = c j + 1 := by omega
+  constructor
+  · rw [← hc]; exact Nat.nth_count hm
+  · rw [← hc']; exact Nat.nth_count hp
+
+theorem gap_at_c (j : ℕ) : g (c j) = 2 := by
+  have h := around_one j
+  have hb := a_bounds j
+  dsimp [g]
+  rw [h.1, h.2]
+  omega
+
+theorem gap_two_iff (n : ℕ) : g n = 2 ↔ ∃ j, n = c j := by
+  constructor
+  · intro hg
+    have hb := b_strictMono (Nat.lt_succ_self n)
+    have hstep : b (n + 1) = b n + 2 := by dsimp [g] at hg; omega
+    have hnz : u (b n + 1) ≠ 0 := by
+      intro h0
+      have hh := Nat.le_nth_of_lt_nth_succ (p := fun n => u n = 0)
+        (n := n) (by change b n + 1 < b (n + 1); omega) h0
+      change b n + 1 ≤ b n at hh
+      omega
+    have hone : u (b n + 1) = 1 := (u_two _).resolve_left hnz
+    let j := orank (b n + 1)
+    have haj : a j = b n + 1 := Nat.nth_count hone
+    have hr := rank_partition (b n + 1)
+    have hzr : zrank (b n + 1) = n + 1 := by
+      simp only [zrank, Nat.count_succ, b_mem, ite_true]
+      rw [show Nat.count (fun i => u i = 0) (b n) = n from zrank_b n]
+    refine ⟨j, ?_⟩
+    dsimp [c]
+    rw [haj]
+    dsimp [j]
+    omega
+  · rintro ⟨j, rfl⟩
+    exact gap_at_c j
+
+theorem enumeration_endpoint : EnumerationEndpoint :=
+  ⟨zeros_infinite, ones_infinite, b_strictMono, a_strictMono, c_strictMono,
+    gap_one_or_two, gap_two_iff⟩
+
+end InversePeriodDoubling

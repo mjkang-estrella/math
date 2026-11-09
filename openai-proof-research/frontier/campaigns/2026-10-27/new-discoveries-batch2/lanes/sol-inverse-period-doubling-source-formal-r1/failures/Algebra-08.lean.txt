@@ -1,0 +1,65 @@
+import Source
+import Mathlib.RingTheory.PowerSeries.Expand
+import Mathlib.Tactic.Ring
+
+set_option autoImplicit false
+set_option warningAsError true
+namespace InversePeriodDoubling
+open PowerSeries
+
+theorem square_eq_expand (P : PowerSeries (ZMod 2)) :
+    P ^ 2 = expand 2 (by decide) P := by
+  have h : frobenius (ZMod 2) 2 = RingHom.id (ZMod 2) := by
+    ext x
+    fin_cases x <;> decide
+  rw [← map_frobenius_expand 2 (by decide), h, map_id]
+  rfl
+
+theorem coeff_square (P : PowerSeries (ZMod 2)) (n : ℕ) :
+    (P ^ 2).coeff n = if 2 ∣ n then P.coeff (n / 2) else 0 := by
+  rw [square_eq_expand, coeff_expand]
+
+theorem D_quadratic_aux :
+    D + X ^ 2 * D + X ^ 1 * D ^ 2 + X ^ 3 * D ^ 2 + X = 0 := by
+  ext n
+  obtain ⟨k, hk⟩ : ∃ k, n = 2 * k ∨ n = 2 * k + 1 := ⟨n / 2, by omega⟩
+  rcases hk with rfl | rfl
+  · cases k with
+    | zero => simp [D, d]
+    | succ k =>
+      simp only [map_add, coeff_X_pow_mul', coeff_X, map_zero, coeff_square]
+      simp only [D, coeff_mk]
+      split_ifs <;> simp_all <;> try omega
+      all_goals
+        rw [show 2 * (k + 1) - 2 = 2 * k by omega]
+        simp [d_even]
+  · cases k with
+    | zero => simp [D, d, coeff_X_pow_mul', coeff_square]; decide
+    | succ k =>
+      simp only [map_add, coeff_X_pow_mul', coeff_X, map_zero, coeff_square]
+      simp only [D, coeff_mk]
+      split_ifs <;> simp_all
+      rw [show 2 * (k + 1) - 1 = 2 * k + 1 by omega,
+        show (2 * (k + 1) - 2) / 2 = k by omega, d_odd, d_odd]
+      ring_nf
+      simp only [show (2 : ZMod 2) = 0 from rfl, mul_zero, add_zero]
+
+theorem U_cubic :
+    X ^ 2 * U ^ 3 + X * U ^ 2 + (X ^ 2 + 1) * U + X = 0 := by
+  have hU : HasSubst U := HasSubst.substInvOfIsUnit D D_linear_unit
+  have h := congrArg (fun P : PowerSeries (ZMod 2) => P.subst U) D_quadratic_aux
+  have hz : (0 : PowerSeries (ZMod 2)).subst U = 0 := by
+    rw [← coe_substAlgHom hU, map_zero]
+  simp only [subst_add hU, subst_mul hU, subst_pow hU, subst_X hU, D_subst_U,
+    pow_one, hz] at h
+  convert h using 1 <;> ring
+
+theorem U_quartic : X ^ 3 * U ^ 4 + X ^ 3 * U ^ 2 + U + X = 0 := by
+  have h := congrArg (fun P : PowerSeries (ZMod 2) => X * U * P + P) U_cubic
+  simp only [mul_zero, add_zero] at h
+  ring_nf at h
+  have htwo : (2 : PowerSeries (ZMod 2)) = 0 := CharP.cast_eq_zero _ 2
+  simp only [htwo, mul_zero, add_zero] at h
+  convert h using 1 <;> ring
+
+end InversePeriodDoubling
