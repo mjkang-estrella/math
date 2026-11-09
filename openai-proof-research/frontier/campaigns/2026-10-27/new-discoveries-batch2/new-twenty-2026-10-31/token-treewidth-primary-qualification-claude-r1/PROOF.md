@@ -1,0 +1,124 @@
+# PROOF.md: independent reconstruction for MathDB 362080
+
+Written by the reviewer BEFORE inputs/author-candidate.md and inputs/author-formal-plan.md were opened.
+Independent verification, not independent invention: TASK discloses the mechanism (token sets containing a
+centroid; balanced separator; hand-off route congestion). Route II and the constant 2 below were derived here.
+No programs, enumeration or CAS were used.
+
+Notation. Graphs are finite and simple. F_k(G) is the k-token graph: vertices are k-subsets of V(G), and A~B iff
+A triangle B is an edge of G. N = binom(n,k). tw is treewidth.
+
+## Theorem (literal target)
+
+For every integer k >= 1 and every tree T on n >= k+1 vertices,
+
+    c_k n^(k-1) <= tw(F_k(T)) <= 2 n^(k-1) - 1,    c_k = 3 / (64 k^(2k+2) (k+1) 3^k).
+
+Constants depend on k only, so for fixed k, tw(F_k(T)) is Theta(n^(k-1)) uniformly over all trees.
+
+General form (answers Q1). For every connected G on n >= k+1 vertices with tw(G) = t,
+
+    c_k n^(k-1) <= tw(F_k(G)) <= 2 (t+1) n^(k-1) - 1.
+
+The upper bound needs no connectivity.
+
+## Standard facts used (short proofs included so nothing is imported silently)
+
+(F0) Balanced bag. If tw(H) <= w and |V(H)| = N, there is S with |S| <= w+1 such that every component of H-S has at
+most N/2 vertices. Proof: for an edge tt' of the decomposition tree let A(t,t') be the vertices appearing on the t'
+side and not in V_t. A(t,t') and A(t',t) are disjoint, so at most one has size > N/2. Orient t->t' if |A(t,t')|>N/2.
+Each edge carries at most one orientation, so some node t has no outgoing edge. Every component of H-V_t lies inside
+one A(t,t').
+
+(F1) tw(H)+1 <= |X| + max over components Z of H-X of (tw(Z)+1). Add X to every bag and join the decompositions.
+
+(F2) tw(G box H)+1 <= (tw(G)+1) |V(H)|. Replace each bag B by B x V(H).
+
+(F3) Treewidth is monotone under minors and spanning subgraphs; a disjoint union has the max treewidth of its parts.
+
+(F4) A tree on n vertices has a centroid c: every component of T-c has at most n/2 vertices.
+
+(F5) Flow bound. Let H have N vertices. Suppose every ordered pair (A,B), A != B, has an A-B walk, and every vertex
+of H lies on at most L of these walks. Then tw(H)+1 >= min(N/4, 3N^2/(16L)). Proof: take S from (F0), s=|S|. If
+s <= N/4, the ordered pairs outside S in different components of H-S number at least
+(N-s)(N-s-N/2) >= (3N/4)(N/4) = 3N^2/16, and each such walk meets S, so sL >= 3N^2/16.
+
+## Upper bound
+
+Claim U(k): for every tree T on n >= k vertices, tw(F_k(T))+1 <= 2 n^(k-1).
+
+k=1: F_1(T)=T, tw+1 <= 2. For k>=2 assume U(j) for j<k and induct on n. Let c be a centroid and X the k-sets containing
+c, so |X| = binom(n-1,k-1) <= n^(k-1)/(k-1)!. Let T_1,...,T_p be the components of T-c with sizes s_j <= n/2. A slide in
+F_k(T)-X never crosses c, so the count vector kappa(A) = (|A cap T_j|)_j is constant on components. Hence F_k(T)-X is
+the disjoint union over kappa of the products BOX_{j: kappa_j>0} F_{kappa_j}(T_j).
+
+- One supporting component: T_j carries all k tokens. Induction on n gives tw+1 <= 2 s_j^(k-1) <= 2 (n/2)^(k-1).
+- At least two supports: pick any support j1, kappa_{j1} < k. By (F2) and U(kappa_{j1}),
+  tw+1 <= 2 s_{j1}^(kappa_{j1}-1) * prod_{j != j1} binom(s_j, kappa_j) <= 2 (n/2)^(k-1), a product of k-1 factors each <= n/2.
+
+By (F1), tw(F_k(T))+1 <= n^(k-1) (1/(k-1)! + 2^(2-k)) <= 2 n^(k-1). For k=2 this reads (n-1)+n; for k>=3 the bracket is <= 1.
+
+General G with tw(G)=t. Same induction with S from (F0) on G in place of {c}: |X| <= (t+1) binom(n-1,k-1), base k=1 is
+tw(G)+1 <= t+1, and the components of G-S have treewidth <= t and at most n/2 vertices. The bound is
+tw(F_k(G))+1 <= (t+1) n^(k-1) (1/(k-1)! + 2^(2-k)) <= 2(t+1) n^(k-1).
+
+## Lower bound, Route I (hand-off; every connected G; no threshold on n)
+
+Fix a linear order on V and a path P(a,b) in G for every ordered pair. For A != B let m = |A\B|, a_1<...<a_m the elements of
+A\B, b_1<...<b_m those of B\A, and C_i = (A \ {a_1..a_i}) cup {b_1..b_i}. Phase i goes from C=C_{i-1} to C_i.
+
+Phase i. Let a=a_i in C, b=b_i not in C, P(a,b) = (p_0=a,...,p_t=b). Let j_0=0<j_1<...<j_r be the indices with p_j in C (t is not
+one of them), and put j_{r+1}=t. For l = r, r-1, ..., 0 slide the token from u=p_{j_l} along the path to w=p_{j_{l+1}}.
+
+Invariant: before slide l the configuration is D_l = C if l=r, and D_l = (C \ {w}) cup {b} if l<r. The interior of the segment
+contains no vertex of C and not b, and w is free in D_l, so each step is an edge of F_k(G). After slide l the
+configuration is (C\{u}) cup {b} = D_{l-1}. After slide 0 it is C_i.
+
+Every configuration on the slide is D = (D_l\{u}) cup {x} with x on the segment, that is:
+- l<r: D = (C\{u,w}) cup {x,b}, x != b, so C = (D\{x,b}) cup {u,w};
+- l=r: D = (C\{u}) cup {x}, so C = (D\{x}) cup {u}, and w=b.
+
+Counting. Fix D. Each (A,B) whose route contains D yields a record: m,i; the type; u,w in V; x in D; if l<r also b in D; a
+labelling of C into E=A cap B, the b-group {b_1..b_{i-1}} and the a-group {a_i..a_m} (at most 3^k labellings); the set
+{a_1..a_{i-1}}; the set {b_{i+1}..b_m}. The record recovers C, then A = E cup a-group cup {a_1..a_{i-1}} and
+B = E cup b-group cup {b_i..b_m}. For fixed m,i: type l<r has at most n^2 * k * k * 3^k * n^(i-1) * n^(m-i) records,
+type l=r at most n^2 * k * 3^k * n^(i-1) * n^(m-i). Thus at most (k^2+k) 3^k n^(m+1). Summing over i<=m<=k with n>=2:
+L <= 2 k^2 (k+1) 3^k n^(k+1).
+
+With N >= (n/k)^k, (F5) gives tw(F_k(G))+1 >= 3 n^(k-1) / (32 k^(2k+2) (k+1) 3^k); N/4 is larger than this. Since n >= k+1 and G is
+connected, F_k(G) has an edge, so tw >= 1 and tw >= (tw+1)/2. This gives c_k above.
+
+## Lower bound, Route II (no hand-off; shorter structure; n >= 4k^2)
+
+Derived by the reviewer as the answer to "is there a shorter route". It removes the hand-off entirely.
+
+Lemma A (edge partition). A tree with e >= 2mk edges, m>=1, contains k pairwise edge-disjoint subtrees Q_1..Q_k with at least m edges
+each. Root it. Take a deepest v whose subtree has >= m edges. Each branch at v has <= m edges; greedily group branches until
+>= m edges, giving a piece with m to 2m-1 edges sharing v. Remove it; the rest is a tree. Stop with < m edges left. If t pieces
+result, e <= t(2m-1)+m-1, so t >= k.
+
+Take m = floor((n-1)/(2k)). Edge-disjoint subtrees of a tree share at most one vertex, so Sh_i = V(Q_i) cap (union of the other V(Q_j)) has
+|Sh_i| <= k-1, and W_i = V(Q_i)\Sh_i has at least mu := m-k+2 vertices. W_i is disjoint from V(Q_j) for j != i. Assume mu>=1.
+
+Lemma B (relaxed source Lemma 9). Choose pi_i: V(Q_i) -> W_i, identity on W_i, with connected fibres, and let T_i' be Q_i contracted along
+the fibres, a tree on W_i. Then T_1' box ... box T_k' is a minor of F_k(T). Branch set of w=(w_1..w_k): the set {w_1..w_k}, together
+with all sets ({w_j: j != i} cup {s}) with s in Sh_i, pi_i(s)=w_i. Disjointness: a set with all tokens in the union of the W's has exactly
+one in each W_i and determines w; a set with one token s in a Sh has W_i empty for a unique i, which recovers i, the w_j and w_i=pi_i(s).
+Connectivity: slide the i-th token inside its fibre; the other tokens are in W_j, off Q_i. Adjacency along an edge of T_i' is one slide
+across the corresponding Q_i edge between fibres.
+
+Lemma C (generic product law). If G_1..G_k are connected with exactly mu vertices each, then tw(G_1 box ... box G_k)+1 >= 3 mu^(k-1)/(16k). Route (a)->(b)
+coordinate by coordinate along fixed paths. A vertex (b_1..b_{i-1},x,a_{i+1}..a_k) lies on routes determined by i and the free values
+a_1..a_{i-1}, b_{i+1}..b_k, a_i, b_i, so L <= k mu^(k+1). Apply (F5) with N = mu^k. Every tree on >= mu vertices contains a subtree on exactly mu vertices.
+
+For n >= 4k^2, mu >= n/(4k), so tw(F_k(T))+1 >= 3 n^(k-1) / (16 k (4k)^(k-1)). For fixed k the remaining n < 4k^2 are absorbed by tw >= 1.
+
+Route II uses T only through Lemma A; a connected G reduces to a spanning tree by (F3).
+
+## Scope check
+
+- k=1: tw(T)=1, Theta(1). Covered by the source range? Source Conjecture 20 prints 2<=k<=n-2; the MathDB literal prints 1<=k<=n-1; both are paid.
+- k=n-1: F_{n-1}(T) is isomorphic to T, tw=1. With k fixed this occurs only for n=k+1, one value of n, absorbed by c_k and consistent with the inequalities.
+  A reading with k growing as n-1 would make the Theta claim false; "fixed integer k" excludes it.
+- Uniformity over trees: every constant above depends only on k. No star/path case split.
+- Gaps found in my own reconstruction: none.
