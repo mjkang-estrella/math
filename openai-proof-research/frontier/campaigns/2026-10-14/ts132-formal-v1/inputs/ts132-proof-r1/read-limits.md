@@ -1,0 +1,9 @@
+# Actual reading and review limits
+
+Read in full: root AGENTS.md; sources/upstream.json; author original-scope.md, candidate.md, checkpoint.md, operation-comparison.md, source-receipt.json; source README.md and all four mathematical sections 00-introduction.tex, 01-construction.tex, 02-recurrences.tex, 03-separation.tex. The two long source reads returned complete text without truncation. Candidate bytes read before final author seal are recorded in authentication.json and will be compared with the final supplied anchor.
+
+Source build/paper.tex and references.bib were byte-authenticated, not semantically read. All seven non-PDF blobs of this source family were compared against the root complete preprints tree, with truncated=false. No third-party source bytes are copied here. The full tree was processed as an identity inventory, not read as mathematical prose.
+
+The author's source operations and comparison were read as context. External primary PDFs/texts, author local diagnostics and any Lean code were not read or replayed; none is a premise of this proof verdict. No source truth was audited. All new deductions were checked in prose, including full raw-coordinate symmetry and every all-input ordinary/joint recurrence. No floating-point test or finite search substitutes for proof. No contribution, exclusion-chain eligibility, priority, formal-support, manuscript, or publication verdict is supplied.
+
+Final packet follow-up: read the complete author manifest, README.md, verify_packet.py, updated checkpoint.md and reading-and-rights.md. Replayed the author verifier with the externally supplied anchor. Candidate and scope hashes match the initially inspected bytes. Author mathematical diagnostics remain unexecuted. A requested freeze-receipt.json does not exist in this packet; chronology instead appears explicitly in original-scope.md and reading-and-rights.md, and no separate timestamp receipt is claimed.

@@ -1,0 +1,11 @@
+# Fresh structural discovery r27
+
+Active pre-freeze screen. Own only this directory; no nested agents, shared edits, git, public actions or premature formalization. Campaign goal remains ten substantial independently accepted results; current parent report seven, CDF098 release preparation. Exact target/operation history and source bodies must be read before nomination. Exclusions include all accepted/old developed chains, CDF098/B8C, AB194 technical, family178 r26 girth retention and329 compact entropy technical. Concurrent analytic families278/359 reserved elsewhere. No candidate frozen and no count claimed. Myeongjin Kang, no affiliation; prose CC BY4.0/code MIT; primary bodies private.
+
+## History correction
+Family189 is closed before freeze: actual proposals/combinatorics.md §B (lines90–118 read) develops its multicolour/cycle-spectrum chain; r23 reading-and-rights.md already records exclusion. The initial iterations-only query missed this. Actual source introduction/reduction/terminal sections were read, but no new theorem is asserted. Primary 1903.10891v1 was read through Lemma4 and Theorem1 in HTML; its large-cycle clique-factor induction does not supply the full equality range. Family149 is also excluded by developed I138/I141/I144 intermittent-rate chain (matched actual report excerpts).
+
+Next bounded pre-screen: family132, possible transitive sensitivity separation; no target/mechanism or eligibility claim yet.
+
+## Frozen target and completed author proof
+After the full pinned body and closest primary operation screen, TS132 was frozen at original-scope.md SHA2564f4f5103561d77dd475a5b8f50bbcd0d8989e102c18392ace80cb0b52a735984. The parent received this anchor before the complete proof and finite checks. The proposed new operation is first-difference labelling of the four-fold lexicographic Paley tournament: uniform81-row bound and affine row-position transitivity for the same labels. Full every-C and fixed-power proofs are now in candidate.md. Exact finite controls are in local-checks.json. Meiburg cyclotomic symmetry, source recurrences and standard powering remain credited. Parent now reports8/10 after R030; no TS132 count or independent verdict is claimed. Independent reviews are next.
