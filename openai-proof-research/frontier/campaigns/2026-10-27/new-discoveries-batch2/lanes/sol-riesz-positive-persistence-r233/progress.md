@@ -1,0 +1,7 @@
+# Completed research work and remaining gaps
+
+Completed: ancestor/batch rules and administrative snapshots; assigned source freezing; actual original proof-body reading; guarded current primary metadata/prior query; early assigned-alias and canonical historical SUMMARY/discovery screening; two mathematical routes;112 coefficient cases; eight additional family screens; lane-only reports and reproducible helpers.
+
+Remaining: resolve intended equivalent-metric/invariance scope from an explicit primary definition; prove all-mode positive-exponent persistence or construct a counterexample satisfying every retained hypothesis; complete current-registry and broader prior-art screening before nomination. No full proof or counterexample exists in this packet. No acceptance/integration/public/Lean/manuscript work authorized or performed.
+
+Resource discipline: every executed Python/retrieval/helper/hash/edit script uses the specified immutable helper_guard.py, OPENBLAS_NUM_THREADS=1, OMP_NUM_THREADS=1, PYTHONDONTWRITEBYTECODE=1. Guard fixes address space and group RSS512MiB, CPU210s and wall230s without raising caps. Native bounded reads/apply_patch were used as authorized. No children, git, shared writes, browser, public posts, messages or MathDB edits. Retrieval requests are bounded and not retried through blocked paths. Scientific original/copy hashes are verified before reading and again in the final distinct verifier; administrative files are snapshots, not immutable-current assertions.

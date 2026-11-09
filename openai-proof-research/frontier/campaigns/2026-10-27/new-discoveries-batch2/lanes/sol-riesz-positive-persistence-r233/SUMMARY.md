@@ -1,0 +1,7 @@
+# r233: unresolved, no outcome nomination
+
+Read frozen actual 2410.22104v1 Theorem8/Remarks6–7 and UP24 2504.04845v1 Question5.1. Also retrieved/read the nearest 2409.16508v1 coefficient proof. ATTACK.md distinguishes the survey's undefined “equivalent distance” from the original zonal/two-point homogeneous setting and broader arbitrary-metric conjecture. No permission to change metrics was inferred. The exact intended invariance/equivalence meaning remains a source ambiguity; it is not silently resolved in favor of a counterexample.
+
+Two routes: fixed projective-geodesic Jacobi sign persistence, with112 bounded parameter checks through64 modes and the actual Rodrigues sufficient-range bridge; and positive-kernel powers, with a complete generic matrix-power obstruction but no admissible metric counterexample. Neither settles the full source question. No PROOF.md, Lean, manuscript or acceptance claim. Eight distinct additional analysis/geometry families screened in SCOUTING.md; no novelty-cleared extra survivor ranked.
+
+Guarded live arXiv metadata and author/object prior search retained; current public proof-registry head unavailable. An unrelated mathdb.org response is preserved as a failed registry identification. Original/copy SHA256 checks, primary PDF/text bindings and scientific failures retained. Manifest excludes itself and verification receipt; verifier runs separately after content writes. Only this assigned lane was written. Root alone accepts/counts:9 additional/39 total/next40 unchanged.
