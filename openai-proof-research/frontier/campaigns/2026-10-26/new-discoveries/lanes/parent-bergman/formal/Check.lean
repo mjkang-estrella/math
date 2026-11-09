@@ -1,0 +1,12 @@
+import Mathlib
+#check Polynomial.finset_sum_coeff
+#check Polynomial.finset_sum_eval₂
+#check Polynomial.eval₂_finset_sum
+#check Polynomial.reflect_add
+#check Polynomial.reflect_zero
+#check Polynomial.reflect_map
+#check Nat.cast_injective
+#check Polynomial.coeff_map
+#check Polynomial.monomial_eq_C_mul_X
+#check Polynomial.reflect_C_mul_X_pow
+#check Int.toNat_le_toNat
