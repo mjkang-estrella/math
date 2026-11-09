@@ -1,0 +1,1 @@
+Original p4 visually shows a PRIME on f'_(1,j) in Definition2.5(iii). Earlier report draft called it unprimed; preserved draft and corrected final report retain the error transparently. Application counts actual sigma_1 incidences directly, so no proof depends on that mistaken transcription. Five native image presentations total; resource peaks unknown.

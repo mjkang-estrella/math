@@ -1,0 +1,10 @@
+# Dormant plan — 378413 only
+NOT DISPATCHED. Author ordinary proposal, scientific PARK, zero credit. Only GPT-6.1 Sol high/default is authorized; no child or alternate model. No Lean was run.
+
+First require independent adversarial review of FULLCANDIDATE.md, including dimension/rank, quotient partial order, all four diamond cases, right-to-left T convention, exact type-I definition, source finality, domain significance and bounded prior art. Do not infer orientation from dimension. Resolve NETWORK-STOP.md qualifications before any later source work. A root ruling is needed before formalization.
+
+Possible literal theorem: there exists a finite bounded ranked poset K of dimension3 whose rank-two intervals each have two intermediate elements and a maximal flag f with sigma1(f)=T^[30](f). Derive the exact negation of every-odd-dimensional zero-signature statement using the source-defined type-I count. Include all definitions and equivalences, not merely a permutation gadget theorem.
+
+Implement quotient unit cubical cells of the100-periodic3-grid by the finite glide action. Prove the10-coset normal form and displacement/local-lift lemmas algebraically. Avoid enumerating the large flag set. Alternatively use integral-cover cells with a finite quotient proof; either representation needs an explicit bridge to the source poset. Prove all four local thinness cases, maximal-chain length, finite flag set, sigma adjacency and quotient equivariance. Prove the three symbolic T steps and their translation induction, then the glide identity and positive count. No residual quotient-incidence assumptions or imported fresh axioms.
+
+Only propext/Classical.choice/Quot.sound may appear. No sorry/admit/added axioms/unsafe/native_decide, no evaluation certificate as a substitute for the bridges. Pin dependencies and provide independent body/fidelity audit plus fresh source-only strict replay and root acceptance before any credit. Do not count variants, different periods, helpers, orientation repair or formalization separately.

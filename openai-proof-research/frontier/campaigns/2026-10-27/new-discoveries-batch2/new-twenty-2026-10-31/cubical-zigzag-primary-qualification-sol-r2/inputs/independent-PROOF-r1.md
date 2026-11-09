@@ -1,0 +1,53 @@
+# Independent ordinary proof for 378413
+
+This reconstruction was recorded before opening FULLCANDIDATE.md. No mathematical computation, enumeration, formal tool, or child was used. It is an ordinary proof, not a certificate or acceptance claim.
+
+## Source endpoint
+
+Deza--Dutour, supplied math/0405279v1 PDF, pp.2--5: a d-complex is a finite bounded ranked poset with maximal-chain length d+2 and two intermediate elements in every rank-two interval. Length counts strict steps. Dimension is rank minus one. No standing connectedness, flag-connectedness, orientability, lattice, spherical, or simplicial condition is imposed. The diamond clause's intended intermediate rank is confirmed by the immediately following unique alternative-face operator. Bottom and top are retained. Definition 2.1 separately defines orientability by bipartiteness of the flag graph. Definition 2.3 has T=sigma_(d+1)...sigma_1, ordinary composition applying sigma_1 first; it changes ranks 1 through d+1 successively. Definition 2.5(i) tests sigma_1(f) membership in the same oriented orbit for type I, in the reversed orbit for type II. Self-intersections count pairs of incident flags: the displayed p.4 length formula has coefficient 2. We need only one genuine unordered pair, not a whole signature.
+
+## Group, not just one glide
+
+Let Q consist of all products whose factors are integer singletons or unit integer intervals in R^3. They are the closed cells of the unit cubulation. Let t_a be translation by 100a for a in Z^3 and let g(x,y,z)=(11-x,y+10,z+10). Conjugation by g sends t_(a,b,c) to t_(-a,b,c); g^2 translates by (0,20,20), and g^10=t_(0,1,1). Thus every group element has the unique form t_(a,b,c)g^k with a,b,c integers and 0<=k<10. Existence follows by commuting translations left and reducing powers by g^10. Uniqueness follows because the y displacement modulo 100 determines k, after which the three translation coordinates are unique. For k even the map is (x+100a,y+100b+10k,z+100c+10k). For k odd it is (11-x+100a,y+100b+10k,z+100c+10k).
+
+For k not zero, distance of 10k to 100Z is at least 10; consequently EVERY point is moved by at least 10 in sup norm, irrespective of x and of translation cancellation. For k=0 a nonidentity element translates by a nonzero 100-vector, hence moves every point at least 100. This proves a uniform 10 bound for all nonidentity elements, including even powers. In particular the action on points, cells, and flags is free: a cell mapped to itself would have a vertex moved within that cell, distance at most 1. All transformations preserve the cubulation and incidence.
+
+## Finite quotient poset and its local lifting
+
+Take the cell orbits and adjoin distinct bottom and top. Set [A]<=[B] precisely when some representatives satisfy inclusion. This is independent of representatives. Transitivity: if A' subset B' and B'' subset C', move the first pair by a deck transformation sending B' to B'', then compose inclusions. Dimension is orbit-invariant and nondecreasing; inclusion in equal dimensions is equality. This proves antisymmetry (and reflexivity is immediate). Translations alone give finitely many cells modulo 100 in each coordinate, with eight choices of which coordinates are intervals; passing to a larger group preserves finiteness.
+
+Here is the stronger local fact needed to avoid false quotient diamonds. Fix a cell D. The union of all cofaces of D lies in the box obtained by extending each coordinate range of D by 1 in both directions, of width at most 3. Two distinct cells in that box cannot be equivalent: if h maps one to the other, choose a vertex v of the first; v and h(v) are in the same box, distance at most 3, contradicting the 10 bound. Faces of a fixed cell obey the same statement, in a box of width 1.
+
+Every quotient coface [C]>=[D] has a representative containing the fixed D, by moving an incidence witness. It is unique by the preceding box argument. Every quotient face of a fixed C similarly has a unique representative inside C. These bijections PRESERVE AND REFLECT incidences among cofaces of D or faces of C. For example, if A,B contain D and [A]<=[B], choose A' subset B representing [A]. Then A' and A are both inside the common width-at-most-3 box for cofaces of D (A' is inside B), so A'=A. The face version is identical with the width-1 box. Thus compatible local lifts exist uniquely; the argument is not inferred from free vertex action alone.
+
+A quotient cell of dimension j has rank j+1: a cubical full face chain supplies this many steps; strict inclusions cannot exceed dimension differences. Bottom has rank 0, top rank 5. Any missing rank between cells can be inserted after lifting an inclusion; bottom gaps can be filled with vertices and top gaps with a cube containing the given cell. Hence every maximal chain has all six elements bottom, vertex, edge, square, cube, top, and length 5=3+2. The quotient is pure of source dimension 3, not the boundary of a 3-polytope (source dimension 2).
+
+The four rank-two interval types are: bottom--edge (two vertices), vertex--square (two incident edges), edge--cube (two squares containing the edge), square--top (two cubes on the two sides). For the first three fix the upper cell and use the face bijection, including reflection of incidence with the lower face. For the last fix the square and use the coface bijection. The two intermediates remain distinct by the small-box argument, and every quotient intermediate lifts; there are no extra global incidences. This proves precisely the source complex axioms.
+
+## Flags and adjacency
+
+Every quotient flag lifts by fixing its cube and using the unique compatible faces inside it. Two such lifts differ by a single deck transformation. Conversely the quotient of a cover flag is a flag. Thus quotient flags are exactly deck orbits of cover flags, not merely tuples of orbit names of unknown compatibility. Each sigma_i on a lifted flag has one alternative by cubical incidence; the local bijections show that its quotient is exactly the unique alternative in the quotient complex, including sigma_4 across a square. Consequently q sigma_i = sigma_i q and every deck map commutes with each sigma_i and T. The quotient flag set is finite and each sigma_i an involution, so T is a permutation with finite cyclic orbits.
+
+Optional stronger connectivity: within a cube, signed coordinate orders give all 48 flags, connected by vertex flips and successive exchanges of coordinate choices. Across a square, sigma_4 crosses to the adjacent cube. The cube adjacency graph of Q is the connected integer grid; consequently the cover flag graph and its quotient are connected. Residues within a cell are connected by the same coordinate moves; residues above a vertex/edge/square are the corresponding orthant configurations and are connected; between two cells they are cube-face intervals and connected. Fixing a chain splits its residue into these intervals, with independent moves. Unique lifts anchored at one fixed cell transfer this assertion to the quotient. Thus even the usual strong flag connectivity costs no additional hypothesis. Geometrically the 10 displacement bound embeds small cubical neighborhoods; translations give compactness and the local model is R^3 without boundary. None of this is needed in place of the explicit poset proof.
+
+## Exact flag calculation with the source action order
+
+Suppress bottom/top. Write I=[0,1]. The starting flag is
+ f=((0,0,0), I x {0} x {0}, I x I x {0}, I x I x I).
+Apply sigma_1, sigma_2, sigma_3, sigma_4 in that order. After the four changes:
+ Tf=((1,0,0), {1} x I x {0}, {1} x I x I, [1,2] x I x I).
+The next four changes give
+ T^2 f=((1,1,0), {1} x {1} x I, [1,2] x {1} x I, [1,2] x [1,2] x I).
+The next four give
+ T^3 f=((1,1,1), [1,2] x {1} x {1}, [1,2] x [1,2] x {1}, [1,2]^3).
+Each line changes the vertex to the other endpoint, the edge to the other edge of the current square at that vertex, the square to the other face of the current cube at that edge, and finally the cube across that square. These four descriptions verify every intermediate operator and all four flag cells, rather than a vertex trace. Thus T^3 f=f+(1,1,1). Translation equivariance inductively gives T^(3m) f=f+(m,m,m) for all nonnegative m, in particular T^30 f=f+(10,10,10).
+
+The glide sends f to
+ gf=((11,10,10), [10,11] x {10} x {10}, [10,11]^2 x {10}, [10,11]^3).
+This is EXACTLY sigma_1(T^30 f); all edge/square/cube coordinates agree, as well as the changed vertex. Applying sigma_1 and using deck equivariance gives
+ sigma_1 q(f)=q(sigma_1 f)=q(T^30 f)=T^30 q(f).
+The two flags q(f), sigma_1 q(f) are distinct: their vertices are 0 and (1,0,0), whose sup distance is 1, and no nonidentity deck map can identify them. They lie in the same finite T orbit Z. The unordered pair is a type-I self-intersection by Definition 2.5(i); pairing incidences cannot turn a nonempty set into zero. Therefore n_I>=1 and signature(Z)!=(0,0). No assertion of its period, all orbit lengths, or full signature is needed.
+
+For completeness the reversed orbit is genuinely different here, so no reversal ambiguity spoils the count. The reversal of f has vertex (1,1,1), edge {1}x{1}xI, face {1}xIxI, and cube I^3. Its square has x normal. The forward orbit's three phases have edge/square-normal pairs (x,z), (y,x), (z,y); reversal has pair (z,x). Translations and our deck reflections preserve coordinate-axis labels, so no reversed flag can belong to the forward orbit. Reversal, commuting with deck maps, defines the source reverse on quotient flags. Identification of a zigzag with its reverse does not erase an already counted type-I pair.
+
+Finally this quotient cannot be orientable in the source sense: T has four adjacency factors and preserves any bipartite coloring, whereas sigma_1 swaps it; their displayed equality would contradict bipartiteness. The glide also reverses ambient orientation. This is a feature of the counterexample inside the printed domain, not an assumed orientability condition or an endpoint correction. It does not refute an independently restricted orientable/spherical/convex conjecture.
