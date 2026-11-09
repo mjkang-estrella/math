@@ -1,0 +1,13 @@
+# Reproduction
+
+All Python, retrieval, extraction subprocesses, writes and hashes ran under the fixed supplied helper, except permitted native bounded reads and apply_patch. No cap raises. Every invocation set OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1. Helper fixes AS and sampled process-group RSS at 512MiB, CPU at 210s and wall at 230s. Retrieval used bounded urllib reads and timeouts, no browser.
+
+```sh
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-tang-tang-stable-approximation-preliminary-review-r1/checks.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-tang-tang-stable-approximation-preliminary-review-r1/finalize.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1 python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py python /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/sol-tang-tang-stable-approximation-preliminary-review-r1/verify.py
+```
+
+Independent check run: exit0, sampled peak group RSS17174528 bytes, wall0.241s. Initial freeze exit0 /7962624bytes /0.041s. Main live retrieval exit0 /24887296bytes /22.883s (one recorded timeout). PDF extraction/admin parsing exit0 /36720640bytes /0.121s. Crossref/title retrieval exit0 /24031232bytes /0.922s. Publisher denial retrieval exit0 /24174592bytes /0.201s, transport success but scientific access failure. New retrieval URLs, dates, response hashes and status are in access.json, additional-access.json and published-access.json. All retrieved bodies were saved and hashed before scientific inspection. The numerical checks are not proofs of bounded transport width.
+
+Manifest creation is followed by a separate guarded verifier invocation. Its receipt is deliberately excluded from the manifest along with the manifest itself. Re-running checks changes check-results.json and requires finalization and verification again.
