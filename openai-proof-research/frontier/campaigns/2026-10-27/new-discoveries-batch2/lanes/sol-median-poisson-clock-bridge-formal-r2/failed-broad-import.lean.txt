@@ -1,0 +1,83 @@
+import FiniteCore
+import Mathlib.Probability.Distributions.Bernoulli
+import Mathlib.Probability.Distributions.Poisson.Basic
+import Mathlib.Probability.Independence.Basic
+import Mathlib.Tactic.FieldSimp
+
+set_option autoImplicit false
+set_option warningAsError true
+open MeasureTheory ProbabilityTheory
+open scoped BigOperators
+namespace MedianClock
+open MedianTemporal
+
+noncomputable def bias : unitInterval := ⟨2/5, by norm_num, by norm_num⟩
+noncomputable def spinLaw : Measure Bool := bernoulliMeasure true false bias
+noncomputable def initialLaw : Measure Config := Measure.pi (fun _ : Vertex => spinLaw)
+instance : IsProbabilityMeasure spinLaw := by unfold spinLaw; infer_instance
+instance : IsProbabilityMeasure initialLaw := by unfold initialLaw; infer_instance
+
+theorem spin_mass (b : Bool) : spinLaw.real {b} = if b then 2/5 else 3/5 := by
+  cases b <;> norm_num [spinLaw, bernoulliMeasure_real_apply, bias]
+
+theorem initial_independent : iIndepFun (fun i : Vertex => fun s : Config => s i) initialLaw := by
+  exact iIndepFun_pi (fun _ => measurable_id.aemeasurable)
+
+theorem initial_coordinate (i : Vertex) : initialLaw.map (fun s => s i) = spinLaw := by
+  exact (measurePreserving_eval (fun _ : Vertex => spinLaw) i).map_eq
+
+theorem initial_mass (s : Config) : initialLaw.real {s} = weight s / (5:ℝ)^10 := by
+  change (initialLaw {s}).toReal = _
+  rw [initialLaw, Measure.pi_singleton, ENNReal.toReal_prod]
+  change (∏ i : Vertex, spinLaw.real {s i}) = _
+  simp_rw [spin_mass]
+  calc
+    (∏ i : Vertex, if s i then (2:ℝ)/5 else 3/5) =
+        ∏ i : Vertex, (if s i then (2:ℝ) else 3) / 5 := by
+      congr 1; funext i; cases s i <;> rfl
+    _ = weight s / (5:ℝ)^10 := by rw [Finset.prod_div_distrib]; simp [weight]
+
+noncomputable def uniformMark : PMF Vertex :=
+  ⟨fun _ => (1/10:ℝ≥0∞), by simp [hasSum_fintype]⟩
+noncomputable def markLaw : Measure Vertex := uniformMark.toMeasure
+instance : IsProbabilityMeasure markLaw := by unfold markLaw; infer_instance
+noncomputable def prefixLaw (k : ℕ) : Measure (Fin k → Vertex) :=
+  Measure.pi (fun _ => markLaw)
+instance (k : ℕ) : IsProbabilityMeasure (prefixLaw k) := by unfold prefixLaw; infer_instance
+
+theorem mark_mass (i : Vertex) : markLaw.real {i} = 1/10 := by
+  norm_num [markLaw, uniformMark, measureReal_def, PMF.toMeasure_apply_singleton]
+
+theorem prefix_independent (k : ℕ) :
+    iIndepFun (fun i : Fin k => fun w : Fin k → Vertex => w i) (prefixLaw k) := by
+  exact iIndepFun_pi (fun _ => measurable_id.aemeasurable)
+
+theorem prefix_mass (k : ℕ) (w : Fin k → Vertex) :
+    (prefixLaw k).real {w} = (1/10:ℝ)^k := by
+  change ((prefixLaw k) {w}).toReal = _
+  rw [prefixLaw, Measure.pi_singleton, ENNReal.toReal_prod]
+  change (∏ i : Fin k, markLaw.real {w i}) = _
+  simp [mark_mass]
+
+/-- This is a count-and-prefix probability space, not a clock-path construction. -/
+noncomputable def countPrefixLaw (t : ℝ≥0) (k : ℕ) : Measure (ℕ × (Fin k → Vertex)) :=
+  (poissonMeasure (10*t)).prod (prefixLaw k)
+instance (t : ℝ≥0) (k : ℕ) : IsProbabilityMeasure (countPrefixLaw t k) := by
+  unfold countPrefixLaw; infer_instance
+
+theorem count_prefix_mass (t : ℝ≥0) (k : ℕ) (w : Fin k → Vertex) :
+    (countPrefixLaw t k).real ({k} ×ˢ {w}) =
+      Real.exp (-10*(t:ℝ)) * (t:ℝ)^k / (k.factorial:ℝ) := by
+  change ((countPrefixLaw t k) ({k} ×ˢ {w})).toReal = _
+  rw [countPrefixLaw, Measure.prod_prod, ENNReal.toReal_mul]
+  change (poissonMeasure (10*t)).real {k} * (prefixLaw k).real {w} = _
+  rw [poissonMeasure_real_singleton, prefix_mass]
+  push_cast
+  rw [mul_pow]
+  have h : (10:ℝ)^k * (1/10:ℝ)^k = 1 := by rw [← mul_pow]; norm_num
+  calc
+    Real.exp (-(10*(t:ℝ))) * (10^k * (t:ℝ)^k) / (k.factorial:ℝ) * (1/10:ℝ)^k =
+        Real.exp (-10*(t:ℝ)) * (t:ℝ)^k / (k.factorial:ℝ) * (10^k * (1/10:ℝ)^k) := by ring
+    _ = _ := by rw [h, mul_one]
+
+end MedianClock
