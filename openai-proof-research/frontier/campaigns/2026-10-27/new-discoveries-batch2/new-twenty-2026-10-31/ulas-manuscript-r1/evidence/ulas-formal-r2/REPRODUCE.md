@@ -1,0 +1,9 @@
+# Reproduction
+
+Extract ulas-source.zip into a new empty directory inside this lane and run `bash scripts/replay2.sh`. All writes, build products, TMPDIR and caches stay under the extraction. The pinned Lean 4.34.1 binary and mathlib package cache are read-only dependencies; no network is used. Module order and caps are in replay2.sh and run.sh. Each Lean/checker process uses at most CPUs 0 and 1, CPU 120 s, wall 140 s, monitored RSS 6 GiB, MALLOC_ARENA_MAX=2; Lean additionally uses -j1 -M3500 -DwarningAsError=true. Each process has unique stdout and time/resource stderr logs. Run strictly serially.
+
+The four frozen modules are UlasSeries, UlasFinal, UlasChecks and UlasAudit. UlasAudit2 separately exports all environment declarations in eight serial shards with opaque bodies enabled, checks LOCAL flags and transitive axioms, and records module constNames and extraConstNames. analyze_audit2.py checks exact equality with the UlasFinal2 import closure, computes every transitive axiom set, and separates LOCAL from upstream metadata. Audit modules are instrumentation outside the endpoint's dependency closure but are also rebuilt and kernel checked.
+
+The source archive excludes oleans and logs. fresh-replay is the retained extraction used for validation. The original frozen archive digest is 32ec01fb61b2f1526a837c909714eabe93ca267862449e75e8c25174909491ad. frozen-before.json and frozen-after.json record the four source hashes, which must match the archived bytes exactly.
+
+regression.py preserves round-1 checks; regression2.py independently checks F1, F4, the new polynomial, and general-j readout for finite ranges. These numerical checks are regressions only. Negative-control Lean files deliberately fail to elaborate wrong conclusions and cannot be used as proof modules. Kernel-checked controls in UlasChecks cover the false even constant, wrong colour convention and (conditionally on FifteenBound) a forbidden equality.

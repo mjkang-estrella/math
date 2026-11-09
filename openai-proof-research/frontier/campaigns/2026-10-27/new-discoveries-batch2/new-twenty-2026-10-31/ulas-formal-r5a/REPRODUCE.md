@@ -1,0 +1,9 @@
+# Reproduction
+
+The source-only ulas-source.zip contains src/ and scripts/; the explanatory documents are alongside the archive. Extract it into a new empty directory within this lane and run bash <extraction>/scripts/replay5a.sh. No network, lake update, git, browser, or external service is used.
+
+The replay builds all 27 modules strictly serially in dependency order, including all 21 byte-identical round-4 modules. Each Lean invocation uses Lean 4.34.1, -j1 -M3500 -DwarningAsError=true. The scripts then export eight full declaration-audit shards, run leanchecker on every module, verify import-closure equality and transitive axiom sets, run exact independent Python regressions, and require five negative controls to fail with type mismatch. The driver resumes completed build, audit and checker steps. Every heavy process has a unique stdout/stderr log.
+
+scripts/run.sh fixes CPUs 0 and 1, MALLOC_ARENA_MAX=2, CPU 120 seconds and wall 140 seconds, and scripts/bounded.py monitors RSS against 6 GiB. All TMPDIR, cache, build, and log paths are local to the extraction. No heavy processes run concurrently. The package tree is read-only at /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages, with supplied mathlib pin d13f23b723b8a846827a245b89c10fc7d3f11612. The Lean binaries are under /home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin.
+
+The audit traverses values with allowOpaque := true, includes generated declarations, checks unsafe and partial flags, _unsafe_rec names, implemented_by and extern metadata, and computes transitive axiom sets. LOCAL and upstream metadata are separate; upstream truth is not re-audited. Source and frozen hashes, endpoint status, and audit totals are in results.json. The fresh replay is under fresh-replay/; logs there are the replay evidence.

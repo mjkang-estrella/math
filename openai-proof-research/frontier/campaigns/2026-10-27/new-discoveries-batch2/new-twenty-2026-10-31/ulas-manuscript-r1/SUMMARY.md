@@ -1,0 +1,13 @@
+# DRAFT manuscript and reproducible dossier — root review required
+
+MathDB 342364 / Ulas–Żmija Conjecture 6.1. Zero accepted credit; no self-acceptance.
+
+Delivered the ten-page paper.pdf and editable paper.md, PROOF.md, literal raw MathDB line and hash provenance, cached source copies and receipts, assembly/round/review evidence, byte-identical ulas-source.zip, safe-extraction receipt, exact low-coefficient certificates and example verification, REPRODUCE.md, manifests, all page images and QA receipt, and ulas-full-dossier.zip.
+
+The full theorem includes all universal bounds, sufficient infinite equality families, the universal +7 fifteen-family bound and never equality. P1 is refuted; P2 is proved. The ordinary proof includes the actual-series integral operator bridge, Lemmas R/W, Pell/Kummer invariant, odd half-angle initialization, exact low polynomials, residue witnesses, readout and positivity. A sign in inherited transfer-integrality prose was corrected: the odd transfer uses U_N+U_(N−1), whereas the half-angle polynomial uses U_N−U_(N−1). There is no interpolation oracle. The exposition uses sufficient >=8 residue witnesses; the formal packet proves stronger >=11 by its distinct symbolic route.
+
+All ten final PDF pages were rendered and visually inspected. Safe extraction and exact ordinary checks passed; no Lean, lake or leanchecker was run. Initial dependency/font failures are retained. Local renderer dependencies/fonts were copied read-only from the supplied Chan-Levine model and system font; no network installation.
+
+The independent fidelity review is present: A–D PASS, E QUALIFIED_PASS, no required formal-source fixes; all seven manuscript items are mapped in gate-E-map.json. The root replay receipt is present and reports PASS for all 43 builds/checkers, audit, and 11 negative controls. This is an attributed report, not a replay by this lane. Root must still review the paper, reconcile the older exact equality sets wording with sufficient families, and decide novelty/access/substantive credit. No priority claim or new access clearance is made.
+
+Original, supplemental, and renderer frozen inputs are hash-bound before and after and unchanged. Source packet SHA-256: bafc3b63f6baba271680f2eed29334603149cee7c17a714bb7b4b1a04c37d3a1. Full ZIP hash is in DELIVERY.json. No children, git, network, external communication, browser, upload, publication, shared ledger edits, or other-lane writes. Heavy jobs were serial and capped; operations.json records that not every initial short read/authoring call used the wrapper. No running jobs remain. Root reads the paper and decides.

@@ -1,0 +1,10 @@
+import UlasSeries
+import Mathlib.NumberTheory.Padics.PadicVal.Basic
+#check Set.infinite_of_forall_exists_gt
+#check Set.Infinite.exists_gt
+#check PowerSeries.trunc_trunc_pow
+#check PowerSeries.coeff_coe
+#check PowerSeries.coeff_mul
+#check padicValInt.eq
+#check padicValInt
+#print PowerSeries.coeff_one_pow
