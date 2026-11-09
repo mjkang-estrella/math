@@ -1,0 +1,11 @@
+# Ordinary proof corresponding to the new Lean deductions
+
+Fix an interior binary transition matrix P and its positive stationary vector pi. The inherited law mixes independent forward/backward trajectories conditional on a common initial symbol a, with weight pi(a).
+
+Both trajectories start at a almost surely. Thus specifying a positive prefix p and a negative prefix q with p(0)=q(0) gives the product of the two conditional prefix probabilities. The mixture has only the term a=p(0). Detailed balance pi(a)P(a,b)=pi(b)P(b,a), iterated over every backward edge, moves the initial weight from zero to the left endpoint. Reversing the finite edge index and concatenating the products gives precisely pi(w0) times the chronological transition product on every interval containing zero.
+
+Sum over a missing leftmost symbol and use pi P=pi to delete a left endpoint; sum over a missing rightmost symbol and use row normalization to delete a right endpoint. Repeated deletion supplies every integer interval. Two finite measures agreeing on such blocks agree on every finite-coordinate cylinder: each finite coordinate set lies in a finite block and restriction factors through that finite block. Cylinder uniqueness then gives equality of the measures. Translating a block changes only its offset, so every integer translate of the constructed law is equal to itself.
+
+Summing block atoms compatible with an arbitrary subset assignment proves that actual subset probabilities are the inherited marginal. Applying the Shannon formula gives exactly sampleEntropy, and the uniform-subset expression gives exactly finiteIntricacy, without an asymptotic assertion.
+
+For positive p(a), K(a,b), log(pK)=log p+log K. Row normalization gives H(pK)=H(p)+sum_a p(a) H(K(a,-)). Applying this to the snoc decomposition of words gives the block entropy recursion. The last-symbol expectation equals the stationary expectation, by left consistency and the cons decomposition. Hence a block of n+1 coordinates has entropy H(pi)+n sum_a pi(a)H(P(a,-)). Direct expansion of binary entropy identifies this conditional entropy with H(l,t) in the chart. These are finite statements. Sparse selected-gap contractions, averaging/convergence, derivative control and all-law weak-topology coverage are still required for the conjecture.

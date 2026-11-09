@@ -1,0 +1,5 @@
+import WeakMarkov333569
+#print MathDB333569.OneStepMarkovLaw
+#print MathDB333569.actualIntricacy
+#check MathDB333569.fullySupported_stationary_oneStep_localMaximum
+#print axioms MathDB333569.fullySupported_stationary_oneStep_localMaximum
