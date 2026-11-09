@@ -1,0 +1,7 @@
+# One-family candidate; root decision required
+
+Claim: the literal universally quantified Conjecture4.2 in Hegarty–Martinsson–Wedin2018 is false, already at n=4. The witness is an actual finite192-match tournament, not merely an unattainable abstract map. Complete source-scoped argument and objections are in PROOF.md. Exact rational separation is positive. No assertion about the complete achievable region, strict honesty, or all n is needed.
+
+Two sustained mechanisms were completed. First: symmetry quotient and full-grid honesty LP;126 facet/state optimizations were rationally checked. Second: remove both the numerical optimizer and asymptotic approximation from the mathematical endpoint by integer table verification, interpolation, and a binomial-basis collapse. Direct small-round attempts1–24 fail to separate;32 works. Failures are preserved. None of these substeps is an extra discovery.
+
+Nearest source prior is the source's own discrete-map polytope method; its frugal-tournament theorem does not cover the all-pairs construction. Current narrow arXiv searches and446 hash-bound historical/catalogue references do not establish absence of public prior. No live registry head was available under inherited route blocks. Independent source/adversarial review and novelty/substantive review must precede Lean or manuscript investment. Root alone decides acceptance. Count credit requested now:0.

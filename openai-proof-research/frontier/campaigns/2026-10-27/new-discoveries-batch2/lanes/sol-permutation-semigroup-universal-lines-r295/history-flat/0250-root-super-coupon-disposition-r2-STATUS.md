@@ -1,0 +1,7 @@
+# Root disposition: retain ordinary proof, no formal investment yet
+
+Adopt SOURCE/MATH PASS for the fixed-r,s arXiv conjecture after independent detailed review. Retain substantive provisional PASS: no complete same-model routine subsumer was exhibited. The relative log-time pair estimate, calibrated via the model-specific stationary flux, is the essential bridge. The review correctly notes Keller already contains quantitative tails and must not be dismissed as merely weak convergence; its fixed-reference hypotheses still require a genuine triangular-family application. Abadi–Saussol absolute errors do not automatically suffice for the needed polynomially small pair tail.
+
+Source endpoints s=1 and r=s are classical/already proved; the prospective contribution is full2<=s<r, one family. Published-version correspondence, closest citing proof bodies and registry history remain HOLD. Formal development is NOT READY and likely material: killed-path semantics, analytic spectral estimates and expectation asymptotics must be provided. Do not launch a large Lean build merely because ordinary mathematics passes.
+
+Authorize a bounded published-source/prior investigation combined with complementary analytic breadth. Seek actual missing proof bodies and an explicit applicable classical theorem, preserving denials and avoiding another repetition of the completed mathematical review. If no new body/bridge is available, park the hold and spend remaining effort on genuinely fresh source families. No acceptance or count change9/39/next40.

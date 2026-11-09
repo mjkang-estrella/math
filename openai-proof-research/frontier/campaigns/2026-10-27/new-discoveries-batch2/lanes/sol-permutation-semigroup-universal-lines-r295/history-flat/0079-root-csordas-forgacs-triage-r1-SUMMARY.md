@@ -1,0 +1,11 @@
+# Research handback: one full ordinary endpoint; no count
+
+Rank1: **Csordas–Forgács Problem37 is false** for the literal sequence (k²+k+1)/k!. A degree72 rational polynomial f has f(1)<0 and positive leading coefficient, while Tf=r²+ε with deg r=36 and ε>0. Thus f has at least two real roots and Tf has none. The source requires every real polynomial, so this is a full refutation, not a bounded positive census. PROOF.md gives the exact certificate construction and a second, analytic moment-density route.
+
+Separate guarded direct verification PASS: direct rational convolution, reciprocal moment sum, coefficientwise T identity, all source hypotheses, signs and degrees. moment-witness.json contains every rational coefficient as signed hexadecimal numerator/denominator. witness-verification.json binds its hash. No numerical-root claim is used in the proof.
+
+Twelve distinct attributed primary-source families screened in SCOUTING.md, spanning2000–2023 and analysis, probability, arithmetic, algebra. Source-resolved, routine classical, previously screened and broad no-mechanism questions are removed explicitly. Only one candidate is ranked; no padded ranks2/3. The square-root factorial family from r224 is a different endpoint and is not being taken over.
+
+**Novelty/substantive credit HOLD.** The1995 Craven–Csordas reciprocal-moment criterion and their refutation of the unmodified quadratic sequence are genuine close prior proof bodies. The exact factorial denominator changes the moment matrix; the displayed bridge needs root adjudication. Current registry pages triggered the challenge detector, so no authenticated live head or exhaustive current proof-tree clearance is claimed. The journal version DOI10.1016/j.jmaa.2015.08.047 is identified but not fetched through prohibited ScienceDirect routes. Accessible arXiv latestv2 (26August2015) retains Problem37. Bounded arXiv searches found no exact successor, which does not establish priority.
+
+All work remained in this lane; solo, no children, git, public/browser/MathDB edits, Lean or manuscript. Counts unchanged:9 additional/39 total/next40; root alone accepts/counts. Fullerene independent review, literal Zeckendorf formal work and reserved Claude octahedron were left untouched.

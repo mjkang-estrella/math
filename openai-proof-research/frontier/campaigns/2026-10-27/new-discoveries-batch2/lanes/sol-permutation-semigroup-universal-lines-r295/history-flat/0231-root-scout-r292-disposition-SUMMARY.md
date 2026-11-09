@@ -1,0 +1,11 @@
+# Handoff: no fresh complete result
+
+Screened12 primary question families. Initial Das AP-sparsity refutation was a campaign duplicate: r245 already proved a stronger family, and a later lane formalized the fixed endpoint. The decisive dedup hit was missed in truncated output; this failure is explicit. PROOF.md preserves a valid repeat proof with zero fresh credit.
+
+The single bounded pivot was unique sepr-sequences,1807.04874v1 Conjecture3.8. Two mechanisms did not resolve it: published direct-sum masking satisfies the claimed criterion, while shared matching variables obstruct independent control of ambiguous minor signs. See pivot-sepr.md for the exact missing stronger sign-coherence lemma. No qualified survivor promoted; no claim of present worldwide openness from limited searches.
+
+SCOUTING.md gives exact source scopes, locations, duplicate status, actual predecessor/successor body comparisons and eligibility objections. All actual candidate primary PDFs/texts were frozen before inspection. Initial disposition/catalogue cold reads predated freezing and are disclosed. Administrative basename collision repaired; scientific bytes unchanged. access.json, bindings.json, provenance.json and failures.json preserve chronology, hashes and limitations.
+
+Exact capped checks: checks.py (retired AP search), structural_check.py (retired AP family), sepr_checks.py (fresh pivot deductions). Run each through the fixed helper_guard.py with OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1. Limits512MiB AS/groupRSS,210CPU,230wall; no cap raises. verify_integrity.py is a separate final guarded verifier after manifest sealing, and also independently replays the retired fixed AP endpoint by all directed cuts. verification-receipt.json records outcome; it does not certify novelty or solve the sepr question.
+
+Current registry head4eaee87548250b2682affda7d05d947c05554bae was obtained once via ordinary public HTML. It is not complete current proof coverage; no forbidden API/raw/codeload/diff/patch, ScienceDirect, Google or bypass route was used. No shared/git/public/browser/MathDB edits, no Lean/manuscript, no children. Counts remain9 additional /39 total /next40. Root alone accepts/counts.

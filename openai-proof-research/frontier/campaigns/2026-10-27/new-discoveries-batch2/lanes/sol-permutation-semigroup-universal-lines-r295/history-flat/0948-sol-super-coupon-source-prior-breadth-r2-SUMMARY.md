@@ -1,0 +1,5 @@
+Published source gap closed: Springer2025 article54 retains the exact dependent Conjecture2.4; correction article77 does not resolve it. A literal typo in the correction's introductory iid replacement is disclosed. Three additional closest primary proof bodies examined; no complete same-model theorem application found. Indexed citer body unavailable (HTTP202 empty), so citing/registry novelty HOLD remains.
+
+RENEWAL-BRIDGE.md supplies a complete ordinary non-spectral tail bridge using return cycles, occupation flux, repeat-entry control and Chernoff concentration. It requires independent review and strengthens the routine-adaptation concern; formal NOT READY and substantive provisional. No Lean or manuscript work.
+
+Ten fresh source families screened with actual theorem/proof neighborhoods; no ranked survivor. Counts unchanged:9 additional/39 total/next40; root alone accepts/counts. Exact URLs, UTC, hashes and limits in access.json/sourcebindings.json; failures preserved. Final manifest excludes itself and verification receipt; verify.py runs separately after writes.

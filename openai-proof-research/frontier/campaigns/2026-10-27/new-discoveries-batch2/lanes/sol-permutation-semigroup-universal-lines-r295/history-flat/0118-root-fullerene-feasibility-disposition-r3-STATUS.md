@@ -1,0 +1,12 @@
+# Root fullerene feasibility disposition
+30 October 2026. Counts unchanged: 9 additional / 39 total / next40.
+
+The audit supplies concrete rational dual/primal coordinates, avoiding a mathematical need for general Steinitz/Whitney or surface classification. Root independently checked 1920 dot inequalities, 60 independent active triples, 32 noncollinear facet sections and 496 facet-pair incidences for EACH saved realization, without importing the generator/verifier. The average dual vertex is exactly zero; vertex lists are distinct; 12 pentagonal and 20 hexagonal facet lists and 90 dual edges result. root_check.py/result record the scope. Root did not independently enumerate all 4960 triple intersections here or prove the general geometric completeness theorem in Lean.
+
+Authorize a bounded geometric certificate-soundness prototype. Define genuine real halfspace intersection P={x in R^3: all q_i dot x<=1}, with literal convex hull/facet/edge meaning. Prove compact full-dimensionality, complete vertex list and supporting-facet incidence, not just an arbitrary combinatorial complex or supplied degree sequence. Use exact rational realizations, finite rank and active-constraint proofs. Preserve the existing full source predicate: convex cubic 3-polytopes whose facets are pentagons/hexagons, dual graph actual facet adjacency. If full geometric endpoint is not yet closed, expose exact residuals and stop short of SourceClaim.
+
+A useful staged proof: sum q_i=0 and rank3 imply boundedness of P by strict positivity of max_i(q_i dot u) on the unit sphere; 0 is interior. Extreme points exactly feasible independent active-triple intersections. Completeness of hull follows by moving along a direction annihilating the active constraints to endpoints, increasing active rank, at most three times. Facet completeness and polygon/edge characterization remain explicit obligations, not an assumption disguised as a definition.
+
+Only the geometric component is authorized for Lean, no matrix-exponential formalization or manuscript in this task. Prior novelty remains HOLD: the 2026 degree-similar switching theorem is applicable machinery but no literal fullerene pair satisfying it has been supplied. Unread Godsil–Sun/Haemers–Spence bodies remain prior risks. The published predecessor change was reconciled and does not alter 2024 pointwise target.
+
+All source bytes bound before reading; separate root manifest verification. No shared/git/public/count changes.

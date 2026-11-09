@@ -1,0 +1,5 @@
+# CONTINUE: finite expectation induction remains
+Root froze and inspected the r5 SUMMARY. Its actual prefix/continuation laws, legal-type bound, early success lower bound and global compression injection close the source-specific prerequisites. Worker reports a strict fresh replay of 544 declarations and 2053 transitive dependencies; root has not independently recompiled this component.
+The finite moment inequality and resulting badMarksMass tail inequality remain unproved. Authorize a narrow successor to close exactly these on the actual completeDomain/P_N law, preserving inherited modules. Conditional independence must not be assumed.
+Use length-3j prefix partitions: the next block multiplies the conditional dyadic moment by at most 1-blockLower(n)/2; induct to J=N/6. Then finite Markov and actual_bad_marks_le_bad_success give the stated bound for every natural threshold, including zero.
+No full mixing theorem, novelty clearance or acceptance is asserted. Counts unchanged: 9 additional / 39 total / next 40.

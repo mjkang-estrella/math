@@ -1,0 +1,9 @@
+# No fresh complete result
+
+Initial AP-sparsity work reproduced Das Conjecture5.1, already refuted by r245 and formalized by sol-das-ap-irreducible-source-formal-r1. The early dedup output contained the exact hit; truncation concealed it from the initial inspection. This was a selection failure, not a fresh result. PROOF.md preserves the valid nine-entry witness and2n−1 family with a conspicuous duplicate label. The earlier4n−10 construction is stronger. No new claim is made from fewer entries or another family parametrization.
+
+One bounded pivot: Hogben–Lin–Olesky–van den Driessche1807.04874v1 Conjecture3.8, unique sepr-sequences. Two mechanisms were sustained: exact signed-matching analysis of the published direct-sum masking example, and common log-weight selection of dominant determinant matchings. The first satisfies the proposed characterization rather than refuting it. The second lacks a sign-coherent common weighting because ≥3 principal minors share entries. pivot-sepr.md states a stronger sufficient lemma without assuming uniqueness; it is not asserted equivalent to the original conjecture and is not proved. No full proof/refutation of this fresh endpoint was obtained.
+
+SCOUTING.md contains12 families with public resolutions and incomplete leads explicitly distinguished. No qualified survivor is promoted. Access/provenance limits, the missed duplicate, source cold-read exceptions and administrative snapshot repair are preserved. No novelty claim follows from absent search hits. Current registry head is only landing-page evidence, not a complete theorem-body screen. No forbidden access route was used or retried.
+
+Counts unchanged9 additional /39 total /next40. Root alone accepts/counts. No shared, git, public, browser or MathDB edits; no Lean/manuscript/children.

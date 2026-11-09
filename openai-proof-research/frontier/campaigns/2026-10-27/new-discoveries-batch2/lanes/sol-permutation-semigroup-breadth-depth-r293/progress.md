@@ -1,0 +1,3 @@
+# Progress
+
+Completed source freeze and original/copy hash checks; read administrative snapshots, r292 disposition and scout entry3; read Ugolini all16 families and relevant proofs; ran bounded live successor/citing screens; read nearest retrieved semigroup body and rejected semantic mismatch. Ran exact search, independent505-certificate membership replay, rational H4/H6/H8 chambers, boundary merge/residue screen, primitive-vertex tests, and boundary-window supplementary sweep. Preserved initial bad residue argument and output-truncation failures. Eight additional distinct question families body-screened and historical hits reconciled. Full conjecture, infinite retained-line analysis, novelty clearance and independent theorem review remain incomplete. No proof claim.

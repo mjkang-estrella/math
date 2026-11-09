@@ -1,0 +1,5 @@
+# r260 handoff
+
+Fourteen distinct primary-source families screened; exactly one ranked survivor. A finite table and exact ordinary computer-assisted proof refute Hegarty–Martinsson–Wedin1803.00823v1 Conjecture4.2: a symmetric honest four-player tournament with192 matches has top-two winning mass approximately0.4733611, whereas A*_4 requires at least1/2. Read PROOF.md, witness-table.csv and verify_finite.py. The separate standard-library verifier passes729 states and17,496 permutation checks, plus monotonicity and exact binomial arithmetic. A second expanded-state checker passes75,816 component checks.
+
+**Eligibility HOLD.** Independent review, current proof-registry clearance and substantive/classical-adaptation adjudication remain. The source already contains the generic discrete-LP/interpolation technique; these helpers receive no credit. No worldwide priority or acceptance claim. Counts unchanged9 additional/39 total/next40; root alone accepts/counts. No children, shared/git/public/browser/MathDB edits, Lean or manuscript. Final manifest excludes itself and its separately generated verification receipt.

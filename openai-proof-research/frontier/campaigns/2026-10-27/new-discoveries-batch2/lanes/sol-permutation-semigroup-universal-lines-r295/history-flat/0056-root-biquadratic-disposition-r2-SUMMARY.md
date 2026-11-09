@@ -1,0 +1,11 @@
+# Research handoff
+
+**No eligible discovery; no acceptance/count action.** Counts remain 9 additional, 39 total, next 40; root alone adjudicates.
+
+The focused source is publicly resolved: Siu Hang Man, arXiv:2307.04908v2 (6 May 2024), Section 4, Example 4.7, gives a quadratic indecomposable from the middle subfield Q(√26) in Q(√14,√91) that decomposes in the biquadratic field. PRIOR-RESOLUTION.md binds the literal 2020 question, quantifiers, theorem-type caveat, complete exact witness verification, proof mechanism and chronology. The primary PDF hash is c4448f8c39ca533923018e2c18641f4ae8448a393cd5535e4a49de483405d107. It was retrieved and hashed before its scientific body was read. No expensive duplicate search followed retirement.
+
+SCOUTING.md re-screens eight additional distinct attributed families, all honestly marked reused leads. A full routine graph existence endpoint is in PROOF.md and is expressly rejected as a discovery nomination. The remaining SONC dimension question is unresolved; discovery.md records circuit-span and vanishing-jet routes and the precise missing attainability/classification lemma. There is no full-scope SONC proof or biquadratic novelty claim.
+
+`checks.py` uses exact integer/Fraction arithmetic only. Its guarded run passed the four embedding positivity checks, quadratic indecomposability inequalities, and all-edge graph BFS control. These support the written proofs, not novelty. Every helper used the specified guard and fixed 512 MiB AS/group RSS, CPU210/wall230 caps; one initial web-search tool call bypassed the required guard and is recorded as a process deviation. No forbidden routes were retried. Live registry routes remain parked; their inaccessible intervals are not novelty clearance. Specialist follow-up was decisive for the main target and incomplete for the pivots.
+
+Flat original/copy bindings and administrative snapshots are in bindings.json/context. Retrieval status/URLs/hashes are in access.json and more-access.jsonl. provenance.md documents access limits and the initial search deviation. Final manifest excludes itself and final-verification.json; the separate guarded verifier checks all listed bytes, scientific originals/copies, fresh retrieval bindings and repeated exact controls. No shared, git, public, MathDB, Lean or manuscript action; no children.

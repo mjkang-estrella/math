@@ -1,0 +1,9 @@
+# Root disposition after independent preliminary review
+
+Retain candidate. SOURCE and ordinary MATH pass at this stage; independent diagnostics and full proof inspection support the literal negative answer to Question 6.5 under P_N. No acceptance or credit; counts remain 9 additional / 39 total / next 40.
+
+Root adopts provisional substantive retention, not final clearance. The source supplies diamond partitions, conditional Bernoulli laws and abundance. Those are not independent discoveries. The endpoint additionally requires quantitative anti-concentration, a controlled last-no-split suffix and an observable stopping event yielding maximal long-range covariance. No inspected predecessor supplies that full applicable endpoint bridge. The fact that the bridge is elementary does not by itself demonstrate routine subsumption; the serious source-adaptation objection remains attached for targeted review.
+
+Authorize bounded source/prior review and a literal formal-feasibility audit only. The prior work should inspect actual publication/successor/citer bodies and generic stopped-array mixing results where applicable, with exact coverage and stopping at denied routes. The feasibility audit should assess concrete library and finite-game interfaces, not promise completion from generic probability infrastructure. No full Lean proof campaign, manuscript or PDF work yet. The accompanying FINITE-CONCENTRATION.md proposes an elementary replacement for the Fourier step and must be independently checked before implementation.
+
+All-N quantitative refutation of sigma-algebra mixing remains distinct from Gaussianity and from the source's cylinder-only Question 6.6. Preserve full primary scope, root/worker contributions, independent review objections and current registry/history limitations. No shared ledger, NEXT, git or public changes.

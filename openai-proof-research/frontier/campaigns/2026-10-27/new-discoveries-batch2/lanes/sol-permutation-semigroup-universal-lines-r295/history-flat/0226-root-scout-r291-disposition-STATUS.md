@@ -1,0 +1,6 @@
+# PARK: rational definite summation
+Root froze and inspected SUMMARY, SCOUTING and discovery. No complete source endpoint is proved.
+Tsarev's slow-denominator argument does not cover arbitrary-growth algebraic pole functions. Arithmetic prime isolation also lacks a class-preserving universal isolation/specialization theorem over the source's arbitrary characteristic-zero coefficient field. The stated direct-sum lemma is equivalent to the target, not a difficulty-reducing solution.
+Park unless a specific new uniqueness or valuation mechanism becomes available. Retain exact scope distinctions: the full rhombus successor retires that question; partial Borwein and rise-Delta results do not settle their larger variants. No qualified survivor is promoted.
+The twelve-family screen includes already resolved and campaign-covered families; it is not twelve fresh open leads. Next scouting should prioritize explicit finite certificates and early semantic deduplication, rather than accumulating familiar resolved families.
+This root disposition is based on frozen report inspection, not an independent replay of every primary proof. Preserve disclosed custody/process deviations. Counts unchanged: 9 additional /39 total /next40. No shared edits or acceptance.

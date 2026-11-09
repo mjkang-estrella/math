@@ -1,0 +1,11 @@
+# Root disposition: Tang–Tang approximation
+
+Adopt substantive EXCLUDE; retain ordinary mathematics PASS for the intended exactly-2n Bernoulli, o(n) existence subquestion. No Lean or manuscript investment. Counts remain 9 additional / 39 total / next 40. No shared-ledger changes.
+
+Root read the full complementary review and bound James 0708.0618v4 text at equations (1.1), (2.6), and the surrounding definitions. At alpha=2/3 and theta=0 these supply exactly the candidate odds density and E[1/(1+lambda R)]=1/(1+lambda^alpha). Root also checked the independent positive-stable/Tonelli derivation in the review. This establishes the applicable identity without relying on the noisy extraction of Lamperti's 1958 formulas or on floating-point consistency checks.
+
+The full remaining bridge is explicit: choose midpoint quantiles of 1/(1+R), obtain the normalized cumulant F(t)=3 log((1+exp(2t/3))/2) by Riemann sums and the transform identity, use finite exponential tilting with O(1/n) tilted variances for both arrays, and compare their common strictly monotone tail rates. For any alleged separated quantile limits, choose two interior thresholds on the same side of the common mean; their strict rate ordering contradicts the quantile inequalities. This includes extreme quantile levels because the thresholds remain fixed inside the support. Root checked these steps, including the right-tail CDF reversal. No unresolved transport lemma is being hidden behind a named large-deviation theorem.
+
+The complete named-law specialization plus this generic tail/quantile bridge supports routine-classical-adaptation exclusion under campaign rules. This is not an earlier-printed-endpoint finding. The o(n) subquestion is a legitimate source target in its own right: being weaker than the separate O(1) question is NOT the exclusion reason. Neither O(1) approximation nor the other lower-bound question is claimed solved.
+
+Published Tang–Tang wording, Liggett's 2018 manuscript and current-registry priority remain HOLD. The reviewer-reported source typo and procedural/OCR limitations remain preserved. Root has not independently obtained those missing bodies or replayed the numerical quadratures. No acceptance or global-priority assertion follows from this disposition.
