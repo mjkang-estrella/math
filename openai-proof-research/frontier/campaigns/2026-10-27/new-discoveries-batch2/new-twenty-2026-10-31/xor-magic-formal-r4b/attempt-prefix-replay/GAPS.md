@@ -1,0 +1,5 @@
+# Remaining campaign gaps
+
+No r4b mathematical construction is intentionally left as an unproved hypothesis. The complement factorization and interpolation graph are proved for every EdgeTransport over a finite linearly ordered base. Fin m has that instance. Their only substantive external inputs are the inherited matching decompositions, base connectivity, lift connectivity and the lift's zero sums under its explicit product label. These are exactly the hypotheses assigned to the other lane or to later seed assembly.
+
+This packet does not prove the universal CorrectedAt theorem. The sibling r4a lane owns the particular affine scalar assignment, magic and connectivity of that lift, distinguished-cycle persistence and seed lifting. No r4a output is imported or assumed accepted here. A later assembly must combine the lanes, provide the recursive seeds, and carry out n -> n+2 induction and top-degree complement coverage. The inherited literal refutation and finite base cases remain unchanged. Root review and acceptance are outstanding; credit is zero.
