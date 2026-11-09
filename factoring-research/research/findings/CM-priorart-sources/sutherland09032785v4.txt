@@ -1,0 +1,1947 @@
+                                          MATHEMATICS OF COMPUTATION
+                                          Volume 00, Number 0, Pages 000–000
+                                          S 0025-5718(XX)0000-0
+
+
+
+
+                                                      COMPUTING HILBERT CLASS POLYNOMIALS
+                                                      WITH THE CHINESE REMAINDER THEOREM
+
+
+
+
+arXiv:0903.2785v4 [math.NT] 22 Nov 2013
+                                                                           ANDREW V. SUTHERLAND
+
+
+                                                   Abstract. We present a space-efficient algorithm to compute the Hilbert class
+                                                   polynomial HD (X) modulo a positive integer P , based on an explicit form of
+                                                   the Chinese Remainder Theorem. Under the Generalized Riemann Hypothesis,
+                                                   the algorithm uses O(|D|1/2+ǫ log P ) space and has an expected running time
+                                                   of O(|D|1+ǫ ). We describe practical optimizations that allow us to handle
+                                                   larger discriminants than other methods, with |D| as large as 1013 and h(D)
+                                                   up to 106 . We apply these results to construct pairing-friendly elliptic curves
+                                                   of prime order, using the CM method.
+
+
+
+
+                                                                               1. Introduction
+                                              Elliptic curves with a prescribed number of points have many applications, in-
+                                          cluding elliptic curve primality proving [2] and pairing-based cryptography [32].
+                                          The number of points on an elliptic curve E/Fq is of the form N = q + 1 − t, where
+                                                  √
+                                          |t| ≤ 2 q. For an ordinary elliptic curve, we additionally require t 6≡ 0 mod p, where
+                                          p is the characteristic of Fq . We may construct such a curve via the CM method.
+                                              To illustrate, let us suppose D < −4 is a quadratic discriminant satisfying
+                                          (1)                                     4q = t2 − v 2 D,
+                                          for some integer v, and let O denote the order of discriminant D. The j-invariant of
+                                          the elliptic curve C/O is an algebraic integer, and its minimal polynomial HD (X)
+                                          is the Hilbert class polynomial for the discriminant D. This polynomial splits com-
+                                          pletely in Fq , and its roots are the j-invariants of elliptic curves with endomorphism
+                                          ring isomorphic to O. To construct such a curve, we reduce HD mod p, compute
+                                          a root in Fq , and define an elliptic curve E/Fq with this j-invariant. Either E or
+                                          its quadratic twist has N points, and we may easily determine which. For more
+                                          details on constructing elliptic curves with the CM method, see [2, 13, 51].
+                                              The most difficult step in this process is obtaining HD , an integer polynomial
+                                          of degree h(D) (the class number) and total size O(|D|1+ǫ ) bits. There are several
+                                          algorithms that, under reasonable heuristic assumptions, can compute HD in quasi-
+                                          linear time [5, 12, 22, 27], but its size severely restricts the feasible range of D. The
+                                          bound |D| < 1010 is commonly cited as a practical upper limit for the CM method
+                                          [32, 44, 45, 68], and this already assumes the use of alternative class polynomials
+                                          that are smaller (and less general) than HD . As noted in [27], space is the limiting
+                                          factor in these computations, not running time. But the CM method only uses
+                                          HD mod p, which is typically much smaller than HD .
+
+                                             2000 Mathematics Subject Classification. Primary 11Y16; Secondary 11G15, 11G20, 14H52.
+
+                                                                                                                         ©2009 by the author
+
+                                                                                          1
+2                             ANDREW V. SUTHERLAND
+
+
+   We present here an algorithm to compute HD mod P , for any positive integer P ,
+using O(|D|1/2+ǫ log P ) space. This includes the case where P is larger than the
+coefficients of HD (for which we have accurate bounds), hence it may be used to
+determine HD over Z. Our algorithm is based on the CRT approach [1, 5, 17],
+which computes the coefficients of HD modulo many “small” primes p and then
+applies the Chinese Remainder Theorem (CRT). As in [1], we use the explicit
+CRT [8, Thm. 3.1] to obtain HD mod P , and we modify the algorithm in [5] to
+compute HD mod p more efficiently. Implementing the CRT computation as an
+online algorithm reduces the space required. We obtain a probabilistic algorithm
+to compute HD mod P whose output is always correct (a Las Vegas algorithm).
+   Under the Generalized Riemann Hypothesis (GRH), its expected running time
+is O(|D|1+ǫ ). More precisely, we prove the following theorem.
+Theorem 1. Under the GRH,        Algorithm 2 computes HD mod P in expected        time
+O |D| log5 |D|(log log |D|)4 , using O |D|1/2 (log |D| + log P ) log log |D| space.
+                                                                           
+
+In addition to the new space bound, this improves the best rigorously proven time
+bound for computing HD under the GRH [5, Thm. 1], by a factor of log2 |D|.
+Heuristically, the time complexity is O(|D| log 3+ǫ |D|). We also describe practical
+improvements that make the algorithm substantially faster than alternative meth-
+ods when |D| is large, and provide computational results for |D| up to 1013 and
+h(D) up to 106 . In our largest examples the total size of HD is many terabytes,
+but less than 200 megabytes are used to compute HD modulo a 256-bit prime.
+
+                                   2. Overview
+  Let O be a quadratic order with discriminant D < −4. With the CRT approach,
+we must compute HD mod p for many primes p. We shall use primes in the set
+(2)          PD = {p > 3 prime : 4p = t2 − v 2 D for some t, v ∈ Z>0 }.
+These primes√ split completely in the ring class field KO of O, split into principal
+ideals in Q[ D], and are norms of elements in O, see [2, Prop. 2.3, Thm. 3.2]. For
+each p ∈ PD , the positive integers t = t(p) and v = v(p) are uniquely determined.
+   We first describe how to compute HD mod p for a prime p ∈ PD , and then
+explain how to obtain HD mod P for an arbitrary positive integer P . Let us begin
+by recalling a few pertinent facts from the theory of complex multiplication.
+   For any field F , we define the set
+(3)                     EllO (F ) = {j(E/F ) : End(E) ∼
+                                                      = O},
+the j-invariants of elliptic curves defined over F whose endomorphism rings are
+isomorphic to O. There are two possibilities for the isomorphism in (3), but as
+in [5] we make a canonical choice and henceforth identify End(E) with O. For
+j(E) ∈ EllO (F ) and an invertible ideal a in O, let E[a] denote the group of a-
+torsion points, those points annihilated by every z ∈ a ⊆ O ∼
+                                                            = End(E). We then
+define
+                                 j(E)a = j(E/E[a]).
+The map j(E) 7→ j(E)a corresponds to an isogeny with kernel E[a] and degree
+equal to the norm of a. This yields a group action of the ideal group of O on the
+set EllO (KO ), and this action factors through the class group cl(O) = cl(D).
+               COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                       3
+
+
+   For a prime p ∈ PD , a bijection between EllO (Fp ) and EllO (KO ) arises from the
+Deuring lifting theorem, see [50, Thms. 13.12-14]. The following proposition then
+follows from the theory of complex multiplication.
+Proposition 1. For each prime p ∈ PD :
+      1. HD (X) splits completely over Fp . It has h(D) roots, which form EllO (Fp ).
+      2. The map j(E) 7→ j(E)a defines a free transitive action of cl(D) on EllO (Fp ).
+For further background, we recommend the expositions in [23] and [61], and also
+the material in [50, Ch. 10] and [63, Ch. II].
+   Let p be a prime in PD . Our plan is to compute HD mod p by determining its
+roots and forming the product of the corresponding linear factors. By Proposition 1,
+we can obtain the roots by enumerating the set EllO (Fp ) via the action of cl(D).
+All that is required is an element of EllO (Fp ) to serve as a starting point. Thus we
+seek an elliptic curve E/Fp with End(E) ∼  = O. Now it may be that very few elliptic
+curves E/Fp have this endomorphism ring. Our task is made easier if we first look
+for an elliptic curve that at least has the desired Frobenius endomorphism, even if
+its endomorphism ring might not be isomorphic to O.
+   For j(E) ∈ EllO (Fp ), the Frobenius endomorphism πE ∈ End(E) ∼          = O corre-
+sponds to an element of O with norm p and trace t. Let us consider the set
+(4)                       Ellt (Fp ) = {j(E/Fp ) : tr(πE ) = t},
+the j-invariants of all elliptic curves E/Fp with trace t. We may regard j ∈ Ellt (Fp )
+as identifying a particular elliptic curve E/Fp satisfying j(E) = j and tr(πE ) = t,
+since such an E is determined up to isomorphism [23, Prop. 14.19]. We have
+EllO (Fp ) ⊆ Ellt (Fp ), and note that Ellt (Fp ) = Ell−t (Fp ).
+   Recall that elliptic curves E/Fp and E ′ /Fp are isogenous over Fp if and only if
+               ′
+tr(πE ) = tr(πE   ), see [40, Thm. 13.8.4]. Given j(E) ∈ Ellt (Fp ), we can efficiently
+obtain an isogenous j(E ′ ) ∈ EllO (Fp ), provided v(p) has no large prime factors.
+   This yields Algorithm 1. Its structure matches [5, Alg. 2], but we significantly
+modify the implementation of Steps 1, 2, and 3.
+Algorithm 1. Given p ∈ PD , compute HD mod p as follows:
+      1. Search for a curve E with j(E) ∈ Ellt (Fp ) (Algorithm 1.1).
+      2. Find an isogenous E ′ with j(E ′ ) ∈ EllO (Fp ) (Algorithm 1.2).
+      3. Enumerate EllO (Fp ) from j(E ′ ) via the action of cl(D) (Algorithm 1.3).
+                                             Q
+      4. Compute HD mod p as HD (X) = j∈EllO (Fp ) (X − j).
+
+   Algorithm 1.1 searches for j(E) ∈ Ellt (Fp ) by sampling random curves and
+testing whether they have trace t (or −t). To accelerate this process, we sample a
+family of curves whose orders are divisible by m, for some suitable m|(p + 1 ± t).
+We select p ∈ PD to ensure that such an m exists, and also to maximize the size of
+Ellt (Fp ) relative to Fp (with substantial benefit).
+   To compute the isogenies required by Algorithms 1.2 and 1.3 we use the classical
+modular polynomial ΦN ∈ Z[X, Y ], which parametrizes elliptic curves connected
+by a cyclic isogeny of degree N . For a prime ℓ 6= p and an elliptic curve E/Fp ,
+the roots of Φℓ (X, j(E)) over Fp are the j-invariants of all curves E ′ /Fp connected
+to E via an isogeny of degree ℓ (an ℓ-isogeny) [71, Thm. 12.19]. This gives us a
+computationally explicit way to define the graph of ℓ-isogenies on the set Ellt (Fp ).
+4                              ANDREW V. SUTHERLAND
+
+
+   As shown by Kohel [47], the connected components of this graph all have a
+particular shape, aptly described in [30] as a volcano (see Figure 1 in Section 4).
+The curves in an isogeny volcano are naturally partitioned into one or more levels,
+according to their endomorphism rings, with the curves at the top level forming a
+cycle. Given an element of Ellt (Fp ), Algorithm 1.2 finds an element of EllO (Fp ) by
+climbing a series of isogeny volcanoes. Given an element of EllO (Fp ), Algorithm 1.3
+enumerates the entire set by walking along ℓ-isogeny cycles for various values of ℓ.
+   We now suppose we have computed HD modulo primes p1 , . . . , pn and consider
+how to compute HD mod P for an arbitrary positive integer P , using the Chinese
+Remainder Theorem. In order to do so, we need an explicit bound B on the largest
+coefficient of HD (in absolute value). Lemma 8 of Appendix 1 provides such a B,
+                              1/2+ǫ
+and it satisfies
+              Q log B = O(|D|       ).
+   Let M = pi , Mi = M/pi and ai ≡ Mi−1 mod pi . Suppose c ∈ Z is a coefficient
+of HD . We know the values ci ≡ c mod pi and wish to compute c mod P for some
+positive integer P . We have
+                                  X
+(5)                           c≡       ci ai Mi mod M,
+
+and if M > 2B we can uniquely determine c. This is the usual CRT approach.
+    Alternatively, if M is slightly larger, say M > 4B, we may apply the explicit
+CRT (mod P ) [8, Thm. 3.1], and compute c mod P directly via
+                                    X
+(6)                             c≡      ci ai Mi − rM mod P.
+                                     P
+Here r is the nearest integer to       ci ai /pi . When computing r it suffices to approx-
+imate each rational number ci ai /pi to within 1/(4n).
+    As noted in [27], even when P is small one still has to compute HD mod pi for
+enough primes to determine HD over Z, so the work required is essentially the
+same. The total size of the ci over all the coefficients is necessarily as big as HD .
+    However, instead of  Papplying the explicitP    CRT at the end of the computation,
+we update the sums          ci ai Mi mod P and        ci ai /pi as each ci is computed and
+immediately discard ci . This online approach reduces the space required.
+    We now give the complete algorithm to compute HD mod P . When P is large
+we alter the CRT approach slightly as described in Section 7. This allows us to
+efficiently treat all P , including P = M , which is used to compute HD over Z.
+Algorithm 2. Compute HD mod P as follows:
+                                             Q
+   1. Select primes p1 , . . . , pn ∈ PD with pi > 4B (Algorithm 2.1).
+   2. Compute suitable presentations of cl(D) (Algorithm 2.2).
+   3. Perform CRT precomputation (Algorithm 2.3).
+   4. For each pi :
+       a. Compute the coefficients of HD mod pi (Algorithm 1).
+       b. Update CRT sums for each coefficient of HD (Algorithm 2.4).
+   5. Recover the coefficients of HD mod P (Algorithm 2.5).
+   The presentations computed by Algorithm 2.2 are used by Algorithm 1.3 to
+realize the action of the class group. The optimal presentation may vary with pi
+(more precisely, v(pi )), but often the same presentation is used for every pi . Each
+presentation specifies a sequence of primes ℓ1 , . . . , ℓk corresponding to a sequence
+α1 , . . . , αk of generators for cl(D) in which each αi contains an ideal of norm ℓi .
+              COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                             5
+
+
+There is an associated sequence of integers r1 , . . . , rk with the property that every
+β ∈ cl(D) can be expressed uniquely in the form
+                                     β = αx1 1 · · · αkxk ,
+with 0 ≤ xi < ri . Algorithm 1.3 uses isogenies of degrees ℓ1 , . . . , ℓk to enumerate
+EllO (Fp ). Given the large size of Φℓ (X, Y ), roughly O(ℓ3 log ℓ) bits [21], it is critical
+that the ℓi are as small as possible. We achieve this by computing an optimal
+polycyclic presentation for cl(D), derived from a sequence of generators for cl(D).
+Under the Extended Reimann Hypothesis (ERH) we have ℓi ≤ 6 log2 |D|, by [4].
+This approach corrects an error in [5] which relies on a basis for cl(D) and fails to
+achieve such a bound (see Section 5.3 for a counterexample).
+   The rest of this paper is organized as follows:
+     • Section 3 describes how we find a curve with trace ±t (Algorithm 1.1),
+       and how the primes p1 , . . . , pn are selected (Algorithm 2.1).
+     • Section 4 discusses isogeny volcanoes (Algorithms 1.2 and 1.3).
+     • Section 5 defines an optimal polycyclic presentation of cl(D),
+       and gives an algorithm to compute one (Algorithm 2.2).
+     • Section 6 addresses the CRT computations (Algorithms 2.3, 2.4, and 2.5).
+     • Section 7 contains a complexity analysis and proves Theorem 1.
+     • Section 8 provides computational results.
+Included in Section 8 are timings obtained while constructing pairing-friendly curves
+of prime order over finite fields of cryptographic size.
+
+      3. Finding an Elliptic Curve With a Given Number of Points
+                                                  √
+    Given a prime p and a positive integer t < 2 p, we seek an element of Ellt (Fp ),
+equivalently, an elliptic curve E/Fp with either N0 = p + 1 − t or N1 = p + 1 + t
+points. This is essentially the problem considered in the introduction, but since we
+do not yet know HD , we cannot apply the CM method.
+    Instead, we generate curves at random and test whether #E ∈ {N0 , N1 }, where
+#E is the cardinality of the group E(Fp ). This test takes very little time, given the
+prime factorizations of N0 and N1 , and does not require computing #E. However,
+                                                                        √
+in the absence of any optimizations we expect to test many curves: 2 p + O(1), on
+average, for fixed p and varying t. Factoring N0 and N1 is easy by comparison.
+    For the CRT-based algorithm in [5], searching for elements of Ellt (Fp ) dominates
+the computation. In the example given there, this single step takes more than 50
+times as long as the entire computation of HD using the floating-point method
+of [27]. We address this problem here in detail, giving both asymptotic and constant
+factor improvements. In aggregate, the improvements we suggest can reduce the
+time to find an element of Ellt (Fp ) by a factor of over 100; under the heuristic
+analysis of Section 7.1 this is no longer the asymptotically dominant step.
+    These improvements are enabled by a careful selection of primes p ∈ PD , which
+is described in Section 3.3. Contrary to what one might assume, the smallest primes
+in PD are not necessarily the best choices. The expected time to find an element
+of Ellt (Fp ) can vary dramatically from one prime to the next, especially when one
+considers optimizations whose applicability may depend on N0 and N1 . In order
+to motivate our selection criteria, we first consider how we may narrow the search
+by our choice of p, which determines t = t(p) and therefore N0 and N1 .
+6                               ANDREW V. SUTHERLAND
+
+
+3.1. The density of curves with trace ±t. We may compute the density of
+Ellt (Fp ) as a subset of Fp via a formula of Deuring [26]. For convenience we define
+
+                                      H(4p − t2 )   # Ellt (Fp )
+(7)                       ρ(p, t) =               ≈              ,
+                                          p           #Fp
+
+where H(4p − t2 ) is the Hurwitz class number (as in [18, Def. 5.3.6] or [23, p. 319]).
+A more precise formula uses weighted cardinalities, but the difference is negligible,
+see [23, Thm. 14.18] or [52] for further details.
+   We expect to sample approximately 1/ρ(p, t) random curves over Fp in order to
+find one with trace ±t. When selecting primes p ∈ PD , we may give preference to
+primes with larger ρ-values. Doing so typically increase the average density by a
+factor of 3 or 4, compared to simply using the smallest primes in PD . It also makes
+N0 and N1 more likely to be divisible by small primes, which interacts favorably
+with the optimizations of the next section.
+   Using primes with large ρ-values improves the asymptotic results of Section 7
+by an O(log |D|) factor. Effectively, we force the size of Ellt (Fp ) to increase with p,
+even though the size of EllO (Fp ) is fixed at h(D). This process tends to favor primes
+in PD for which v(p) has many small factors, something we must consider when
+enumerating EllO (Fp ) in Algorithm 1.3.
+
+3.2. Families with prescribed torsion. In addition to increasing the density of
+Ellt (Fp ) relative to Fp , we can further accelerate our random search by sampling a
+subset of Fp in which Ellt (Fp ) has even greater density. Specifically, we may restrict
+our search to a family of curves whose order is divisible by m, for some small m
+dividing N0 or N1 (ideally both). We have some control over N0 and N1 via our
+choice of p ∈ PD , and in practice we find we can easily arrange for N0 or N1 to be
+divisible by a suitable m, discarding only a constant fraction of the primes in PD
+we might otherwise consider (making the primes we do use slightly larger).
+   To generate a curve whose order is divisible by m, we select a random point on
+Y1 (m)/Fp and construct the corresponding elliptic curve. Here Y1 (m) is the affine
+subcurve of the modular curve X1 (m), which parametrizes elliptic curves with a
+point of order m. We do this using plane models Fm (r, s) = 0 that have been
+optimized for this purpose, see [66]. For m in the set {2, 3, 4, 5, 6, 7, 8, 9, 10, 12}, the
+curve X1 (m) has genus 0, and we obtain Kubert’s parametrizations [48] of elliptic
+curves with a prescribed (cyclic) torsion subgroup over Q. Working in Fp , we may
+use any m not divisible p, although we typically use m ≤ 40, due to the cost of
+finding points on Fm (r, s) = 0.
+   We augment this approach with additional torsion constraints that can be quickly
+computed. For example, to generate a curve containing a point of order 132, it is
+much faster to generate several curves using X1 (11) and apply tests for 3 and 4 tor-
+sion to each than it is to use X1 (132). A table of particularly effective combinations
+of torsion constraints, ranked by cost/benefit ratio, appears in Appendix 2.
+   The cost of finding points on Fm (r, s) = 0 is negligible when m is small, but
+grows with the genus (more precisely, the gonality) of X1 (m), which is O(m2 ), by
+[43, Thm. 1.1]. For m < 23 the gonality is at most 4 (see Table 5 in [66]), and
+points on Fm (r, s) can be found quite quickly (especially when the genus is 0 or 1).
+   Provided that we select suitable primes from PD , generating curves with pre-
+scribed torsion typically improves performance by a factor of 10 to 20.
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                         7
+
+
+3.3. Selecting suitable primes. We wish to select primes in PD that maximize
+the benefit of the optimizations considered in Sections 3.1 and 3.2. Our strategy is
+to enumerate a set of primes
+(8)                       Sz = {p ∈ PD : 1/ρ(p, t(p)) ≤ z}
+that is larger than we need, and to then select a subset S ⊂ Sz of the “best” primes.
+We require that S be large enough to satisfy
+                               X
+                                   lg p > b = lg B + 2,
+                               p∈S
+
+where B is a bound on the coefficients of HD (X), obtained via Lemma 8, and “lg”
+denotes the binary logarithm. We typically seek to make Sz roughly 2 to 4 times
+the size of S, starting with a nominal value for z and increasing it as required.
+   To enumerate Sz we first note that if 4p = t2 − v 2 D for some p ∈ Sz , then
+                         1           p              p
+                               =             =            ≤ z.
+                       ρ(p, t)   H(4p − t2 )   H(−v 2 D)
+Hence for a given v, we may bound the p ∈ Sz with v(p) = v by
+(9)                                  p ≤ zH(−v 2 D).
+To find such primes, we seek t for which p = (t2 − v 2 D)/4 is a prime satisfying (9).
+This is efficiently accomplished by sieving the polynomial t2 − v 2 D, see [24, §3.2.6].
+To bound v = v(p) for p ∈ Sz , we note that p > −v 2 D/4, hence
+(10)                            −v 2 D < 4zH(−v 2 D).
+For fixed z, this inequality will fail once v becomes too large. If we have
+                                   v             44zH(−D)
+(11)                                          ≥             ,
+                           (log log(v + 4))2        −D
+then (10) cannot hold, by Lemma 9 of Appendix 1.
+Example. Consider the construction of Sz for D = −108708, for which we have
+H(−D) = h(D) = 100. We initially set z to −D/(2H(−D)) ≈ 543. For v = 1 this
+yields the interval [−v 2 D/4, zH(−v 2D)] = [−D/4, −D/2] = [27177, 54354],√which
+we search for primes of the form (t2 − D)/4 by sieving t2 − D with t ≤ −2D,
+finding 17 such primes. For v = 2 we have H(−v 2 D) = 300 and search the interval
+[−D, −3D/2] = [108708, 163062] for primes of the form (t2 − 4D)/4, finding 24 of
+them. For v = 3 we have H(−v 2 D) = 400 and the interval [−9D/4, −2D] is empty.
+The interval is also empty for 3 < v < 39, and (11) applies to all v ≥ 39.
+   At this point Sz is not sufficiently large, so we increase z, say by 50%, obtaining
+z ≈ 814. This expands the intervals for v = 1, 2 and gives nonempty intervals
+for v = 3, 4, and we find an additional 74 primes. Increasing z twice more, we
+eventually reach z ≈ 1831, at which point Sz contains 598 primes with total size
+around 11911 bits. This is more than twice b = lg B + 2 ≈ 5943, so we stop. The
+largest prime in Sz is p = 5121289, with v(p) = 12.
+   Once Sz has been computed, we select S ⊂ Sz by ranking the primes p ∈ Sz
+according to their cost/benefit ratio. The cost is the expected time to find a curve
+in Ellt (Fp ), taking into account the density ρ(p, t) and the m-torsion constraints
+applicable to N0 and N1 , and the benefit is lg p, the number of bits in p. Only a
+small set of torsion constraints are worth considering, and a table of these may be
+precomputed. See Appendix 2 for further details.
+8                              ANDREW V. SUTHERLAND
+
+
+  The procedure for selecting primes is summarized below. We assume that h(D)
+has been obtained in the process of determining B and b = lg B + 2, which allows
+H(−D) and ρ(p, t) to be easily computed (see (26) and (27) in Appendix 1).
+Algorithm 2.1. Given D, b, and parameters k > 1, δ > 0, select S ⊂ PD :
+    1. Let z = −D/(2H(−D)).
+    2. Compute Sz = {p ∈ PD : 1/ρ(p, t(p)) ≤ z}.
+         P
+    3. If p∈Sz lg p ≤ kb, then set z ← (1 + δ)z and go to Step 2.
+    4. Rank the primes in Sz by increasing cost/benefit ratio as p1 , . . . , pnz .
+                                                                 P
+    5. Let S = {p1 , . . . , pn }, with n ≤ nz minimal subject to p∈S lg p > b.
+    In Step 3 we typically use k = 2 or k = 4 (a larger k may find better primes),
+and δ = 1/2. The complexity of Algorithm 2.1 is analyzed in Section 7, where it
+is shown to run in expected time O(|D|1/2+ǫ ), under the GRH (Lemma 4). This is
+negligible compared to the total complexity of O(|D|1+ǫ ) and very fast in practice.
+    In the D = −108708 example above, Algorithm 2.1 selects 313 primes in Sz , the
+largest of which is p = 4382713, with v = 12 and t = 1370. This largest prime is
+actually a rather good choice, due to the torsion constraints that may be applied
+to N0 = p + 1 − t, which is divisible by 3, 4, and 11. We expect to test the orders
+of fewer than 40 curves for this prime, and on average need to test about 60 curves
+for each prime in S, fewer than 20,000 in all.
+    For comparison, the example in [5, p. 294] uses the least 324 primes in PD , the
+largest of which is only 956929, but nearly 500,000 curves are tested, over 1500
+per prime. The difference in running times is even greater, 0.2 seconds versus 18.5
+seconds, due to optimizations in the testing algorithm of the next section.
+3.4. Testing curves. When p is large, the vast majority of the random curves we
+generate will not have trace ±t, even after applying the optimizations above. To
+quickly filter a batch of, say, 50 or 100 curves, we pick a random point P on each
+curve and simultaneously compute (p + 1)P and tP . Here we apply standard multi-
+exponentiation techniques to scalar multiplication in E(Fp ), using a precomputed
+NAF representation, see [20, Ch. 9]. We perform the group operations in parallel
+to minimize the cost of field inversions, using affine coordinates as in [46, §4.1]. We
+then test whether (p + 1)P = ±tP , as suggested in [5], and if this fails to hold we
+reject the curve, since its order cannot be p + 1 ± t.
+   To each curve that passes this test, we apply the algorithm TestCurveOrder.
+                                          √            √
+In the description below, Hp = [p+ 1 − 2 p, p+ 1 + 2 p] denotes the Hasse interval,
+and the index s ∈ {0, 1} is used to alternate between E and its quadratic twist Ẽ.
+Algorithm TestCurveOrder. Given an elliptic curve E/Fp and factored inte-
+gers N0 , N1 ∈ Hp with N0 < N1 and N0 + N1 = 2p + 2:
+    1. If p ≤ 11, return true if #E ∈ {N0 , N1 } and false otherwise.
+    2. Set E0 ← E, E1 ← Ẽ, m0 ← 1, m1 ← 1, and s ← 0.
+    3. Select a random point P ∈ Es (Fp ).
+    4. Use FastOrder to compute the order ns of the point Q = ms P , assuming
+       ns divides Ns /ms . If this succeeds, set ms ← ms ns and proceed to Step 5.
+       If not, provided that m0 |N1 , m1 |N0 , and N0 < N1 , swap N0 and N1 and go
+       to Step 3, but otherwise return false.
+    5. Set a1 ← 2p + 2 mod m1 and N ← {m0 x : x ∈ Z} ∩ {m1 x + a1 : x ∈ Z} ∩ Hp .
+       If N ⊆ {N0 , N1 } return true, otherwise set s ← 1 − s and go to Step 3.
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                         9
+
+
+   TestCurveOrder computes integers ms dividing #Es by alternately comput-
+ing the orders of random points on E and Ẽ. If an order computation fails (this
+happens when ns ∤ Ns /ms ), it rules out Ns as a possibility for #E. If both N0
+and N1 are eliminated, the algorithm returns false. Otherwise a divisor ns of Ns is
+obtained and the algorithm continues until it narrows the possibilities for #E to a
+nonempty subset of {N0 , N1 } (it need not determine which). The set N computed
+in Step 5 must contain #E, since m0 divides #E and m1 divides #Ẽ (the latter
+implies #E ≡ 2p + 2 mod m1 , since #E + #Ẽ = 2p + 2). The complexity of the
+algorithm (and a proof that it terminates) is given by Lemma 6 of Section 7.
+   A simple implementation of FastOrder appears below, based on a recursive al-
+gorithm to compute the order of a generic group element due to Celler and Leedham-
+Green [16]. By convention, generic groups are written multiplicatively, and we do
+so here, although we apply FastOrder to the additive groups E(Fp ) and Ẽ(Fp ).
+The function ω(N ) counts the distinct prime factors of N .
+Algorithm FastOrder. Given an element α of a generic group G and a factored
+integer N , compute the function A(α, N ), defined to be the factored integer M = |α|
+when M divides N , and 0 otherwise.
+                                                i
+    1. If N is a prime power pn , compute αp for increasing i until the identity is
+       reached (in which case return pi ), or i = n (in which case return 0).
+    2. Let N = N1 N2 with N1 and N2 coprime and |ω(N1 ) − ω(N2 )| ≤ 1.
+       Recursively compute M = A(αN2 , N1 ) · A(αN1 , N2 ) and return M .
+
+This algorithm uses O(log N log log N ) multiplications (and identity tests) in G. A
+slightly faster algorithm [64, Alg. 7.4] is used in the proof of Theorem 1. In practice,
+the implementation of TestCurveOrder and FastOrder is not critical, since
+most of the time is actually spent performing the scalar multiplications discussed
+above (these occur in Step 3 of Algorithm 1.1 below).
+   We now give the complete algorithm to find an element of Ellt (Fp ). For reasons
+discussed in the next section, we exclude the j-invariants 0 and 1728.
+Algorithm 1.1. Given p ∈ PD , find j ∈ Ellt (Fp ) − {0, 1728}.
+    1. Factor N0 = p + 1 − t and N1 = p + 1 + t, and choose torsion constraints.
+    2. Generate a batch of random elliptic curves Ei /Fp with j(Ei ) ∈   / {0, 1728}
+       that satisfy these constraints and pick a random point Pi on each curve.
+    3. For each i with (p + 1)Pi = ±tPi , test whether #Ei ∈ {N0 , N1 } by calling
+       TestCurveOrder, using the factorizations of N0 and N1 .
+    4. If #Ei ∈ {N0 , N1 } for some i, output j(Ei ), otherwise return to Step 2.
+
+The torsion constraints chosen in Step 1 may be precomputed by Algorithm 2.1
+in the process of selecting S ⊂ PD . In Step 2 we may generate Ei with m-torsion
+as described in Section 3.2; as a practical optimization, if X1 (m) has genus 0 we
+generate both Ei and Pi using the parametrizations in [3]. In Step 3 the point Pi
+can also be used as the first random point chosen in TestCurveOrder. The
+condition (p+1)Pi = ±tPi is tested by performing scalar multiplications in parallel,
+as described above; when torsion constraints determine the sign of t, we instead
+test whether (p + 1 − t)Pi = 0 or (p + 1 + t)Pi = 0, as appropriate.
+10                            ANDREW V. SUTHERLAND
+
+
+                              4. Isogeny Volcanoes
+   The previous section addressed the first step in computing HD mod p: finding an
+element of Ellt (Fp ). In this section we address the next two steps: finding an element
+of EllO (Fp ) and enumerating EllO (Fp ). This yields the roots of HD mod p. We
+utilize the graph of ℓ-isogenies defined on Ellt (Fp ). We regard this as an undirected
+graph, noting that the dual isogeny [62, §III.6] lets us traverse edges in either
+direction. We permit self-loops in our graphs but not multiple edges.
+Definition 1. Let ℓ be prime. An ℓ-volcano is an undirected graph with vertices
+partitioned into levels V0 , . . . , Vd , in which the subgraph on V0 (the surface) is a
+regular connected graph of degree at most 2, and also:
+    1. For i > 0, each vertex in Vi has exactly one edge leading to a vertex in Vi−1 ,
+       and every edge not on the surface is of this form.
+    2. For i < d, each vertex in Vi has degree ℓ + 1.
+   The surface V0 of an ℓ-volcano is either a single vertex (possibly with a self-loop),
+two vertices connected by an edge, or a (simple) cycle on more than two vertices,
+which is the typical case. We call Vd the floor of the volcano, which coincides with
+the surface when d = 0. For d > 0 the vertices on the floor have degree 1, and in
+every case their degree is at most 2; all other vertices have degree ℓ + 1 > 2.
+   We refer to d as the depth of the ℓ-volcano. The term “height” is also used [55],
+but “depth” better suits our indexing of the levels Vi and is consistent with [47].
+
+
+
+
+        Figure 1. A 3-volcano of depth 2, with a 4-cycle on the surface.
+
+Definition 2. For a prime ℓ 6= p, let Γℓ,t (Fp ) be the undirected graph with vertex
+set Ellt (Fp ) that contains the edge (j1 , j2 ) if and only if Φℓ (j1 , j2 ) = 0.
+   Here Φℓ denotes the classical modular polynomial. With at most two exceptions,
+the components of Γℓ,t (Fp ) are ℓ-volcanoes. The level at which j(E) ∈ Ellt (Fp )
+resides in its ℓ-volcano is determined by the power of ℓ dividing the conductor of
+End(E).
+   The discriminant D may be written as D = u2 DK , where DK is the discriminant
+of the maximal order OK containing O, and u = [OK : O] is the conductor of O.
+We also have the discriminant
+(12)                        Dπ = t2 − 4p = v 2 D = w2 DK
+              COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                           11
+
+
+of the order Z[π] ⊆ OK with conductor w = uv, generated by the Frobenius
+endomorphism π with trace t (note π = πE for all j(E) ∈ Ellt (Fp )). The order
+O contains Z[π], and for any j(E) ∈ Ellt (Fp ) we have Z[π] ⊆ End(E) ⊆ OK .
+Curves with End(E) ∼ = Z[π] lie on the floor of their ℓ-volcano, while those with
+End(E) ∼= OK lie on the surface. More generally, the following proposition holds.
+Proposition 2. Let p ∈ PD and let ℓ 6= p be a prime. The components of Γℓ,t (Fp )
+that do not contain j = 0, 1728 are ℓ-volcanoes of depth d = νℓ (w). Each has an
+associated order O0 , with Z[π] ⊆ O0 ⊆ OK and ℓ ∤ [OK : O0 ], and we have
+                           j(E) ∈ Vi     ⇐⇒      End(E) ∼
+                                                        = Oi ,
+where Oi is the order of index ℓi in O0 .
+   Here νℓ denotes the ℓ-adic valuation (so ℓd |w but ℓd+1 ∤ w). The proposition
+follows essentially from [47, Prop. 23]. See [30, Lemmas 2.1-6] for additional details
+and [71, Thm. 1.19, Prop. 12.20] for properties of Φℓ .
+   We have excluded j = 0, 1728 (which can arise only when DK = −3, −4) for
+technical reasons, see [71, Rem. 12.21]. However a nearly equivalent statement
+holds; only the degrees of the vertices 0 and 1728 are affected.
+
+4.1. Obtaining an element of EllO (Fp ). Given j(E) ∈ Ellt (Fp ) − {0, 1728}, we
+may apply Proposition 2 to obtain an element of EllO (Fp ). Let u and uE be the
+conductors of O and End(E) respectively; both u and uE divide w, the conductor of
+Dπ = t2 − 4p. Suppose νℓ (uE ) 6= νℓ (u) for some prime ℓ. If we replace j = j(E) by
+a vertex at level νℓ (u) in j’s ℓ-volcano, we then have νℓ (uE ) = νℓ (u). Proposition 2
+assures us that this “adjustment” only affects the power of ℓ dividing uE . Repeating
+this for each prime ℓ|w, we eventually have uE = u and j(E) ∈ EllO (Fp ).
+   To change location in an ℓ-volcano we walk a path, which we define to be a
+sequence of vertices j0 , . . . , jn connected by edges (jk , jk+1 ), such that jk−1 6= jk+1
+for all 0 < k < n (this condition is enforced by never taking a backward step).
+   Paths in Γℓ,t (Fp ) are computed by choosing an initial edge (j0 , j1 ), and for k > 0
+extending the path j0 , . . . , jk by picking a root jk+1 of the polynomial
+                        f (X) = Φℓ (X, jk )/(X − jk−1 )e ∈ Fp [x].
+Here e is the multiplicity of the root jk−1 in Φℓ (X, jk ), equal to one in all but a
+few special cases (see [30, Lemma 2.6 and Thm. 2.2]). If f (X) has no roots in Fp ,
+then jk has no neighbors other than jk−1 and the path must end at jk .
+   When a path has jk ∈ Vi and jk+1 ∈ Vi+1 , we say the path descends at k. Once
+a path starts descending, it must continue to do so. If a path descends at every
+step and terminates at the floor, we call it a descending path, as in [30, Def. 4.1].
+   We now present an algorithm to determine the level of a vertex j in an ℓ-volcano,
+following Kohel [47, p. 46]. When walking a path, we suppose neighbors are picked
+uniformly at random whenever there is a choice to be made.
+Algorithm FindLevel. Compute the level of j in an ℓ-volcano of depth d:
+    1. If deg(j) 6= ℓ + 1 then return d, otherwise let j1 6= j2 be neighbors of j.
+    2. Walk a path of length k1 ≤ d extending (j, j1 ).
+    3. Walk a path of length k2 ≤ k1 extending (j, j2 ).
+    4. Return d − k2 .
+12                                ANDREW V. SUTHERLAND
+
+
+If FindLevel terminates in Step 1, then j is on the floor at level d. The paths
+walked in Steps 2 and 3 are extended as far as possible, up to the specified bound.
+If j is on the surface, then these paths both have length d, and otherwise at least
+one of them is a descending path of length k2 . In both cases, j is on level d − k2 .
+     We use the algorithms below to change levels in an ℓ-volcano of depth d > 0.
+Algorithm Descend. Given j ∈ Vk 6= Vd , return j ′ ∈ Vk+1 :
+      1. If k = 0, walk a path (j = j0 , . . . , jn ) to the floor and return j ′ = jn−d+1 .
+      2. Otherwise, let j1 and j2 be distinct neighbors of j.
+      3. Walk a path of length d − k extending (j, j1 ) and ending in j ∗ .
+      4. If deg(j ∗ ) = 1 then return j ′ = j1 , otherwise return j ′ = j2 .
+
+Algorithm Ascend. Given j ∈ Vk 6= V0 , return j ′ ∈ Vk−1 :
+      1. If deg(j) = 1 then let j ′ be the neighbor of j and return j ′ ,
+         otherwise let j1 , . . . , jℓ+1 be the neighbors of j.
+      2. For each i from 1 to ℓ:
+          a. Walk a path of length d − k extending (j, ji ) and ending in j ∗ .
+          b. If deg(j ∗ ) > 1 then return j ′ = ji .
+      3. Return j ′ = jℓ+1 .
+The correctness of Descend and Ascend is easily verified. We note that if k = 0
+in Descend, then the expected value of n is at most d + 2 (for any ℓ).
+    We now give the algorithm to find an element j ′ ∈ EllO (Fp ), given j ∈ Ellt (Fp ).
+We use a bound L on the primes ℓ|w, reverting to a computation of the endomor-
+phism ring to address ℓ > L, as discussed below. This is never necessary when D
+is fundamental, but may arise when the conductor of D has a large prime factor.
+Algorithm 1.2. Let p ∈ PD , let u be the conductor of D, and let w = uv, where
+v = v(p). Given j ∈ Ellt (Fp ) − {0, 1728}, find j ′ ∈ EllO (Fp ):
+      1. For each prime ℓ|w with ℓ ≤ L = max(log |D|, v):
+          a. Use FindLevel to determine the level of j in its ℓ-volcano.
+          b. Use Descend and Ascend to obtain j ′ at level νℓ (u) and set j ← j ′ .
+      2. If u is not L-smooth, verify that j ∈ EllO (Fp ) and abort if not.
+      3. Return j ′ = j.
+The verification in Step 2 involves computing End(E) for an elliptic curve E/Fp
+with j(E) = j. Here we may use the algorithm in [10], or Kohel’s algorithm [47].
+The former is faster in practice (with a heuristically subexponential running time)
+but for the proof of Theorem 1 we use the O(p1/3 ) complexity bound of Kohel’s
+algorithm, which depends only on the GRH.
+   For p ∈ S, we expect v to be small, O(log3+ǫ |D|) under the GRH, and heuristi-
+cally O(log1/2 |D|). Provided u does not contain a prime larger than L, the running
+time of Algorithm 1.2 is polynomial in log |D|, under the GRH.
+   However, if u is divisible by a prime ℓ > L, we want to avoid the cost of computing
+ℓ-isogenies. Such an ℓ cannot divide v (since L ≥ v), so our desired j ′ must lie on
+the floor of its ℓ-volcano. When ℓ is large, it is highly probable that our initial j is
+already on the floor (this is where most of the vertices in an ℓ-volcano lie), and this
+will still hold in Step 2. Since L ≥ log |D| is asymptotically larger than the number
+              COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                              13
+
+
+of prime factors of u, the probability of a failure in Step 2 is o(1). If Algorithm 1.2
+aborts, we call Algorithm 1.1 again and retry.
+   If DK is −3 or −4, then j may lie in a component of Γℓ,t (Fp ) containing 0 or 1728.
+However, provided we never pick 0 or 1728 when choosing a neighbor, FindLevel,
+Descend, and Ascend will correctly handle this case.
+4.2. Enumerating EllO (Fp ). Having obtained j0 ∈ EllO (Fp ), we now wish to
+enumerate the rest of EllO (Fp ). We assume h(D) > 1 and apply the group action
+of cl(D) to the set EllO (Fp ). Let ℓ be a prime not dividing the conductor u of D
+with ( Dℓ ) 6= −1. Then ℓ can be uniquely factored in O into conjugate prime ideals
+as (ℓ) = aā, where a and ā both have norm ℓ. The ideals a and ā are distinct when
+( Dℓ ) = 1, and in any case the ideal classes [a] and [ā] are inverses. The orders of
+[a] and [ā] in cl(D) are equal, and we denote their common value by ordD (ℓ). The
+following proposition follows immediately from Propositions 1 and 2.
+Proposition 3. Let ℓ 6= p be a prime such that ℓ ∤ u and ( Dℓ ) 6= −1. Then every
+element of EllO (Fp ) lies on the surface V0 of its ℓ-volcano, and #V0 = ordD (ℓ).
+   If ordD (ℓ) = h(D), then EllO (Fp ) is equal to the surface of the ℓ-volcano contain-
+ing j0 , but in general we must traverse several volcanoes to enumerate EllO (Fp ).
+We first describe how to walk a path along the surface of a single ℓ-volcano.
+   When ℓ does not divide v, every ℓ-volcano in Γℓ,t (Fp ) has depth zero. In this
+case walking a path on the surface is trivial: for #V0 > 2 we choose one of the two
+roots of Φℓ (X, j0 ), and every subsequent step is determined by the single root of
+the polynomial f (X) = Φℓ (X, ji )/(X − ji−1 ). The cost of each step is then
+(13)                                O(ℓ2 + M(ℓ) log p)
+operations in Fp , where M(n) is the complexity of multiplication (the first term is
+the time to evaluate Φℓ (X, ji ), the second term is the time to compute X p mod f ).
+   While it is simpler to restrict ourselves to primes ℓ ∤ v (there are infinitely many ℓ
+we might use), as a practical matter, the time spent enumerating EllO (Fp ) depends
+critically on ℓ. Consider ℓ = 2 versus ℓ = 7. The cost of finding a root of f (X)
+when f has degree 7 may be 10 or 20 times the cost when f has degree 2. We much
+prefer ℓ = 2, even when the 2-volcano has depth d > 0 (necessarily the case when
+(D
+ 2 ) = 1). The following algorithm allows us to handle ℓ-volcanoes of any depth.
+Algorithm WalkSurfacePath. Given j0 ∈ V0 in an ℓ-volcano of depth d and a
+positive integer n < #V0 , return a path j0 , j1 . . . , jn contained in V0 :
+    1. If deg(j0 ) = 1 then return the path j0 , j1 , where j1 is the neighbor of j0 .
+       Otherwise, walk a path j0 , . . . , jd and set i ← 0.
+    2. While deg(ji+d ) = 1, replace ji+1 , . . . , ji+d by extending the path j0 , . . . , ji
+                                                                            ′
+       by d steps, starting from a random unvisited neighbor ji+1              of ji .
+    3. Extend the path j0 , . . . , ji+d to j0 , . . . , ji+d+1 , then set i ← i + 1.
+    4. If i = n then return j0 , . . . , jn , otherwise go to Step 2.
+When d = 0 the algorithm necessarily returns a path that is contained in V0 .
+Otherwise, the path extending d + 1 steps beyond ji ∈ V0 in Step 3 guarantees that
+ji+1 ∈ V0 . The algorithm maintains (for the current value of i) a list of visited
+neighbors of ji to facilitate the choice of an unvisited neighbor in Step 2.
+   To bound the expected running time, we count the vertices examined during its
+execution, that is, the number of vertices whose neighbors are computed.
+14                                ANDREW V. SUTHERLAND
+
+
+Proposition 4. Let the random variable X be the number of vertices examined by
+WalkSurfacePath. If #V0 = 2 then E[X] = d + 1 + ld/2, and otherwise
+
+                                E[X] ≤ d + (1 + (ℓ − 1)d/2)n.
+
+Proof. If d = 0 then WalkSurfacePath examines exactly n vertices and the
+proposition holds, so we assume d > 0 and note that deg(j0 ) > 1 in this case. We
+partition the execution of the algorithm into phases, with phase -1 consisting of
+Step 1, and the remaining phases corresponding to the value of i. At the start of
+phase i ≥ 0 we have ji ∈ V0 and the path j0 , . . . , ji+d . Let the random variable Xi
+be the number of vertices examined in phase i, so that X = X−1 + X0 + · · · + Xn .
+We have X−1 = d and Xn = 0. For 0 ≤ i < n we have Xi = 1 + md, where m
+counts the number of incorrect choices of ji+1 (those not in V0 ).
+   We first suppose #V0 = 2. In this case exactly one of the ℓ + 1 neighbors of j0
+lies in V0 . Conditioning on m we obtain
+                ℓ                        m−1                      ℓ
+                                                  ℓ−k
+                                                           
+                X               1   Y                            X   1 + md
+     E[X0 ] =         1 + md                                   =              = 1 + ld/2.
+                m=0
+                                ℓ+1−m            ℓ+1−k             m=0
+                                                                        ℓ+1
+                                          k=0
+
+This yields
+                      E[X] = E[X−1 ] + E[X0 ] + E[X1 ] = d + 1 + ld/2,
+
+as desired. We now assume #V0 > 2. Then two of j0 ’s neighbors lie in V0 and we
+find that E[X0 ] = 1 + (ℓ − 1)d/3. For i > 1 we exclude the neighbor ji−1 of ji and
+obtain E[Xi ] = 1 + (ℓ − 1)d/2. Summing expectations completes the proof.         
+
+    Using an estimate of the time to find the roots of a polynomial of degree ℓ in
+Fp [X], we may apply Proposition 4 to optimize the choice of the primes ℓ that we
+use when enumerating EllO (Fp ), as discussed in the next section. As an example,
+if ( D
+     2 ) = 1 and ν2 (v) = 2, then we need to solve an average of roughly 2 quadratic
+equations for each vertex when we walk a path along the surface of a 2-volcano in
+Γℓ,t (Fp ). This is preferable to using any ℓ > 2, even when ℓ ∤ v. On the other hand,
+if ( D      D
+     5 ) = ( 7 ) = 1 and 5|v but 7 ∤ v, we likely prefer ℓ = 7 to ℓ = 5.
+   We now present Algorithm 1.3, which, given j0 ∈ EllO (Fp ) and suitable lists of
+primes ℓi and integers ri , outputs the elements of EllO (Fp )−{j0 }. It may be viewed
+as a generalization of WalkSurfacePath to k dimensions.
+Algorithm 1.3. Given j0 ∈ EllO (Fp ), primes ℓ1 , . . . , ℓk with ℓi ∤ u and ( D
+                                                                               ℓi ) 6= −1,
+and integers r1 , . . . , rk , with 1 < ri ≤ ordD (ℓi ):
+      1. Use WalkSurfacePath to compute a path j0 , j1 , . . . , jrk −1 of length rk − 1
+         on the surface of the ℓk -volcano containing j0 , and output j1 , . . . , jrk −1 .
+      2. If k > 1 then for i from 0 to rk − 1 recursively call Algorithm 1.3 using ji ,
+         the primes ℓ1 , . . . , ℓk−1 , and the integers r1 , . . . , rk−1 .
+
+    Proposition 2 implies that Algorithm 1.3 outputs a subset of EllO (Fp ), since
+j0 , j1 , . . . , jrk −1 all lie on the surface of the same ℓk -volcano (and this applies recur-
+sively). To ensure that Algorithm 1.3 outputs all the elements of EllO (Fp ) − {j0 },
+we use a polycyclic presentation for cl(D), as defined in the next section.
+              COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                             15
+
+
+          5. Polycyclic Presentations of Finite Abelian Groups
+   To obtain suitable sequences ℓ1 , . . . , ℓk and r1 . . . , rk for use with Algorithm 1.3,
+we apply the theory of polycyclic presentations [38, Ch. 8]. Of course cl(D) is a
+finite abelian group, but the concepts we need have been fully developed in the
+setting of polycyclic groups, and conveniently specialize to the finite abelian case.
+   Let α = (α1 , . . . , αk ) be a sequence of generators for a finite abelian group G,
+and let Gi = hα1 , . . . , αi i be the subgroup generated by α1 , . . . , αi . The series
+                         1 = G0 ≤ G1 ≤ · · · ≤ Gk−1 ≤ Gk = G,
+is necessarily a polycyclic series, that is, a subnormal series in which each quotient
+Gi /Gi−1 is a cyclic group. Indeed, Gi /Gi−1 = hαi Gi−1 i, and α is a polycyclic
+sequence for G.QWe say that α is minimal if none of the quotients are trivial.
+   When G = hαi i, we have Gi /Gi−1 ∼          = hαi i and call α a basis for G, but this
+is a special case. For abelian groups, Gi /Gi−1 is isomorphic to a subgroup of hαi i,
+but it may be a proper subgroup, even when α is minimal.
+   The sequence r(α) = (r1 , . . . , rk ) of relative orders for α is defined by
+                                     ri = |Gi : Gi−1 |.
+                        Q
+We necessarily have   ri = |G|, and if α is minimal then ri > 1 for all i. The
+sequences α and r(α) allow us to uniquely represent every β ∈ G in the form
+                                  β = αx = αx1 1 · · · αxk k .
+Lemma 1. Let α = (α1 , . . . , αk ) be a sequence of generators for a finite abelian
+group G, let r(α) = (r1 , . . . , rk ), and let X(α) = {x ∈ Zk : 0 ≤ xi < ri }.
+    1. For each β ∈ G there is a unique x ∈ X(α) such that β = αx .
+    2. The vector x such that αri i = αx has xj = 0 for j ≥ i.
+Proof. See Lemmas 8.3 and 8.6 in [38].                                                     
+The vector x is the discrete logarithm (exponent vector) of β with respect to α.
+The relations αri i = αx are called power relations, and may be used to define a
+(consistent) polycyclic presentation for an abelian group G, as in [38, Def. 8.7].
+   We now show that a minimal polycyclic sequence for cl(D) provides suitable
+inputs for Algorithm 1.3.
+Proposition 5. Let α = (α1 , . . . , αk ) be a minimal polycyclic sequence for cl(D)
+with relative orders r(α) = (r1 , . . . , rk ), and let ℓ1 , . . . , ℓk be primes for which αi
+contains an invertible ideal of norm ℓi . Given j0 ∈ EllO (Fp ), the primes ℓi , and the
+integers ri , Algorithm 1.3 outputs each element of EllO (Fp ) − {j0 } exactly once.
+Proof. As previously noted, Proposition Q      2 implies that the outputs of Algorithm 1.3
+are elements of EllO (Fp ). Since         ri = # cl(D) = # EllO (Fp ), by Proposition 1,
+we need only show that the outputs are distinct (and not equal to j0 ).
+   To each vertex of the isogeny graph output by Algorithm 1.3 we associate a
+vector x ∈ X(α) that identifies its position relative to j0 in the sequence of paths
+computed. The vector (x1 , . . . , xk ) identifies the vertex reached from j0 via a path
+of length xk on the surface of the ℓk -volcano, followed by a path of length xk−1 on
+the surface of the ℓk−1 -volcano, and so forth. We associate the zero vector to j0 .
+   Propositions 1 and 2 imply that the vector x = (x1 , . . . , xk ) corresponds to the
+action of some βx ∈ cl(D). For each integer tk in the interval [0, rk ), the set of
+vectors of the form (∗, . . . , ∗, tk ) corresponds to a coset of Gk−1 in the polycyclic
+16                                ANDREW V. SUTHERLAND
+
+
+series for G = cl(D). These cosets are distinct, regardless of the direction chosen
+by Algorithm 1.3 when starting its path on the ℓk -volcano (note that αk and α−1                 k
+have the same relative order rk ). Proceeding inductively, for each choice of inte-
+gers ti , ti+1 , . . . , tk with tj ∈ [0, rj ) for i ≤ j ≤ k, the set of vectors of the form
+(∗, . . . , ∗, ti , ti+1 , . . . , tk ) corresponds to a distinct coset of Gi−1 , regardless of the
+direction chosen by Algorithm 1.3 on the surface of the ℓi -volcano. Each coset of the
+cyclic group G0 corresponds bijectively to a set of vectors of the form (∗, t2 , . . . , tk ).
+It follows that the βx are all distinct. The action of cl(D) is faithful, hence the
+outputs of Algorithm 1.3 are distinct.                                                            
+
+5.1. Computing an optimal polycyclic presentation. Let γ = (γ1 , . . . , γn ) be
+a sequence of generators for a finite abelian group G, ordered by increasing cost
+(according to some cost function). Then γ is a polycyclic sequence, and we may
+compute r(γ) = (r1 , . . . , rn ). If we remove from γ each γi for which ri = 1 and let
+α = (α1 , . . . , αk ) denote the remaining subsequence, then α is a minimal polycyclic
+sequence for G. We call α the optimal polycyclic sequence derived from γ. It has
+α1 = γ1 with minimal cost, and for i > 1 each αi is the least-cost element not
+already contained in Gi−1 = hα1 , . . . , αi−1 i.
+   We now give a generic algorithm to compute r(γ) and a vector s(γ) that encodes
+the power relations. From r(γ) and s(γ), we can easily derive α, r(α), and s(α).
+We define s(γ) using a bijection X(γ) → {z ∈ Z : 0 ≤ z < |G|} given by:
+                                X                             Y
+(14)                   Z(x) =         Nj xj ,   where Nj =         ri .
+                              1≤j≤n                                1≤i<j
+
+For each power relation γiri = γ x , we set si = Z(x). The formula
+(15)                                 xj = ⌊si /Nj ⌋ mod rj
+recovers the component xj of the vector x for which si = Z(x).
+Algorithm 2.2. Given γ = (γ1 , . . . , γn ) generating a finite abelian group G:
+     1. Let T be an empty table and call TableInsert(T, 1G ) (so T [0] = 1G ).
+     2. For i from 1 to n:
+     3.      Set β ← γi , ri ← 1, and N ← TableSize(T ).
+     4.      Until si ← TableLookup(T, β) succeeds:
+     5.          For j from 0 to N − 1: TableInsert(T, β · T [j]).
+     6.          Set β ← βγi and ri ← ri + 1.
+     7. Output r(γ) = (r1 , . . . , rn ) and s(γ) = (s1 , . . . , sn ).
+   The table T stores elements of G in an array, placing each inserted element in
+the next available entry. The function TableLookup(T, β) returns an integer j
+for which T [j] = β or fails if no such j exists (when j exists it is unique). In
+practice lookups are supported by an auxiliary data structure, such as a hash table,
+maintained by TableInsert. When group elements are uniquely identified, as with
+cl(D), the cost of table operations is typically negligible.
+
+                                            P |G| non-trivial group operations,
+Proposition 6. Algorithm 2.2 is correct. It uses
+makes |G| calls to TableInsert, and makes      ri calls to TableLookup.
+Proof. We will prove inductively that T [Z(x)] = γ x , and that each time the loop
+in Step 4 terminates, the values of ri and si are correct and T holds Gi .
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                          17
+
+
+    When i = 1 the algorithm computes T [r1 ] = γ1r1 T [0] for r1 = 1, 2, . . ., until
+  r1
+γ1 = T [0] = 1, at which point r1 = |γi |, s1 = 0, and T holds G1 , as desired.
+    For i > 1 we have N = Ni−1 and T holds Gi−1 with T [Z(x)] = γ x , by the
+inductive hypothesis. For ri = 1, 2, . . ., if β = γiri is not in T , the algorithm
+computes T [ri N + j] = γiri T [j], for 0 ≤ j < N , placing the coset γiri Gi−1 in T .
+When it finds γiri = T [si ], the table T contains all cosets of the form γiri Gi−1 (since
+G is abelian), hence T holds Gi . It follows that ri = |Gi : Gi−1 | and si is correct.
+   When the algorithm terminates, T holds Gn = G, and every element of G is in-
+serted exactly once. A group operation is performed for each call to TableInsert,
+but in each execution of Step 5 the first of these is trivial, and we instead count
+the non-trivial group operation in Step 6. The number of calls to TableLookup
+is clearly the sum of the ri , which completes the proof.                            
+
+   The complexity of Algorithm 2.2 is largely independent of γ. When γ contains
+every element of G, Algorithm 2.2 is essentially optimal. However, if γ has size
+n = o(|G|1/2 ), we can do asymptotically better with an O(n|G|1/2 ) algorithm.
+This is achieved by computing a basis α for G via a generic algorithm (as in
+[14, 64, 65, 67]), and then determining the representation of each γi = αx in this
+basis using a vector discrete logarithm algorithm (such as [64, Alg. 9.3]). It is then
+straightforward to compute |Gi | for each i and from this obtain ri = |Gi : Gi−1 |.
+The power relations can then be computed using discrete logarithms with respect
+to γ. In the specific case G = cl(D), one may go further and use a non-generic
+algorithm to compute a basis α in subexponential time (under the ERH) [35], and
+apply a vector form of the discrete logarithm algorithm in [69].
+
+5.2. Application to cl(D). For the practical range of D, the group G = cl(D) is
+relatively small (typically |G| < 108 ), and the constant factors make Algorithm 2.2
+faster than alternative approaches; even in the largest examples of Section 8 it
+takes only a few seconds. Asymptotically, Algorithm 2.2 uses O(|D|1/2+ǫ ) time and
+O(|D|1/2 log2 |D|) space to compute an optimal polycyclic sequence for cl(D). In
+fact, under the GRH, we can compute a separate polycyclic sequence for every v(p)
+arising among the primes p ∈ S that are selected by Algorithm 2.1 (Section 3.3)
+within the same complexity bound, by Lemma 3 (Section 7).
+   We uniquely represent elements of cl(D) with primitive, reduced, binary qua-
+dratic forms ax2 + bxy + cy 2 , where a corresponds to the norm of a reduced ideal
+representing its class. For the sequence γ we use forms with a = ℓ prime, con-
+structed as in [15, Alg. 3.3]. Under the ERH, restricting to ℓ ≤ 6 log2 |D| yields
+a sequence of generators for cl(D), by [4]. To obtain an unconditional result, we
+precompute h(D) and extend γ dynamically until Algorithm 2.2 reaches N = h(D).
+   We initially order the elements γi of γ by their norm ℓi , assuming that this
+reflects the cost of using the action of γi to enumerate EllO (Fp ) via Algorithm 1.3
+(Section 4.2). However, for those ℓi that divide v(p) we may wish to adjust the
+relative position of γi , since walking the surface of an ℓi -volcano with nonzero
+depth increases the average cost per step. We use Proposition 4 to estimate this
+cost, which may or may not cause us to change the position of γi in γ. In practice
+just a few (perhaps one) distinct orderings suffice to optimally address every v(p).
+   Note that we need not consider the relative orders ri when ordering γ. If i is less
+than j, then Algorithm 1.3 always takes at least as many steps using ℓi as it does
+using ℓj . Indeed, the running time of Algorithm 1.3 is typically determined by the
+18                             ANDREW V. SUTHERLAND
+
+
+choice of α1 : at least half of the steps will be taken on the surface of an ℓ1 -volcano,
+and if ( ℓD1 ) = 1, almost all of them will (heuristically).
+
+5.3. Why not use a basis? Using a basis to enumerate EllO (Fp ) is rarely optimal,
+and in the worst case it can be a very poor choice. The ERH does imply that cl(D)
+is generated by the classes of ideals with prime norm ℓ ≤ 6 log2 |D|, but this set of
+generators need not contain a basis. As a typical counterexample, consider
+                            D1 = −10007 · 10009 · 10037,
+the product of the first three primes greater than 10000. The class group has order
+h(D1 ) = 22 ·44029, where 44029 is prime, and its 2-Sylow subgroup H is isomorphic
+to Z/2Z × Z/2Z. Every basis for cl(D1 ) must contain a non-trivial element of H,
+and these classes have reduced representatives with norms 10007, 10009, and 10037,
+all of which are greater than 6 log2 |D1 | ≈ 4583.
+   By comparison, Algorithm 2.2 computes an optimal polycyclic sequence for
+cl(D1 ) with ℓ1 = 5 and ℓ2 = 37 (and relative orders r1 = 88058 and r2 = 2).
+
+                            6. Chinese Remaindering
+   As described in Section 2, for each coefficient c of the Hilbert class polynomial
+we may derive the value of c mod P (for any positive integer P ) from the values
+ci ≡ c mod pi appearing in HD mod pi (for pi ∈ S), using an explicit form of the
+Chinese Remainder Theorem (CRT). We apply
+                                  X
+(6)                            c≡     ci ai Mi − rM mod P,
+
+                   pi , Mi = M/pi , ai = Mi−1 mod pi , and r is the closest integer to
+               Q
+wherePM =
+s=      ci ai /pi . Recall that S ⊂ PD is chosen so that M > 4B, where B bounds
+the coefficients of HD , via Lemma 8. It suffices to approximate each term in the
+sum s to within 1/(4n),      where n = #S. If pM denotes the largest pi , we need
+O log(n(pM + log n)) = O(log pM ) bits of precision to compute
+                                                            P        r.
+   To minimize the space required, we accumulate C =           ci ai Mi mod P and an
+approximation of s as the ci are computed. This uses O(log P + log pM ) space per
+coefficient. We have h(D) coefficients to compute, yielding
+                                                       
+(16)                            O h(D)(log P + log pM )
+as our desired space bound.
+   To achieve this goal without increasing the time complexity of our algorithm, we
+consider two cases: one in which P is small, which we take to mean
+(17)                              log P ≤ µ log3 |D|,
+for some absolute constant µ, and another in which P is large (not small). The
+former case is typical when applying the CM method; P may be a cryptographic-
+size prime, but it is not unreasonably large. The latter case most often arises when
+we actually want to compute HD over Z. When P ≥ M there is no need to use the
+explicit CRT and we apply a standard CRT computation. To treat the intermediate
+case, where P is large but smaller than M , we use a hybrid approach.
+   The optimal choice of µ depends on the relative cost of performing h(D) multi-
+plications modulo P versus the cost of computing HD mod pi ; we want the former
+to be small compared to the latter. In practice, the constant factors allow us to
+make µ quite large and the intermediate case rarely arises.
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                        19
+
+
+6.1. Fast Chinese remaindering in linear space. Standard algorithms for fast
+Chinese remaindering can be found in [70, §10.3]. We apply similar techniques, but
+use a time/space trade-off to achieve the space bound in (16). These computations
+involve a product tree built from coprime moduli. In our setting these are the primes
+pi ∈ S, which we index here as p0 , . . . , pn−1 .
+   We define a product tree as a leveled binary tree in which each vertex at level k is
+either a leaf or the product of its two children at level k+1 (we require levels to have
+an even number of vertices and add a leaf to levels that need one). It is convenient
+to label the vertices by bit-strings of length k, where the root at level 0 is labeled
+by the empty string and all other vertices are uniquely labeled by appending the
+string “0” or “1” to the label of their parent.
+   Let d = ⌊lg(n − 1)⌋ + 1 be the number of bits in the positive integer n − 1. For
+integers i from 0 to n − 1, we let b(i) ∈ {0, 1}d denote the bit-string corresponding
+to the binary representation of i. The products mx are defined by placing the
+moduli in leaves as mb(i) = pi , setting mx = 1 for all other leaves, and defining
+mx = mx0 mx1 for all internal vertices.
+   The modular complements mx = m/mx mod mx are then obtained by setting
+m0 = m1 mod m0 and m1 = m0 mod m1 , and defining
+           mx0 = mx mx1 mod mx0          and      mx1 = mx mx0 mod mx1 .
+In terms of Mi = M/pi , we then have m = M and mb(i) = Mi mod pi .
+   Let Ik denote the labels at level k, for 1 ≤ k ≤ d (and otherwise Ik is empty).
+One way to compute md is as follows:
+    1. For k from d to 1, compute mx for x ∈ Ik .
+    2. For k from 1 to d, compute mx for x ∈ Ik .
+This uses O(M(log M ) log n) time and O(log M log n) space. Alternatively:
+    1. For k from 1 to d:
+    2. For j from d to k, compute mx for x ∈ Ij (discard my for y ∈ Ij+1 ).
+    3. Compute mx for x ∈ Ik (discard my for y ∈ Ik and mz for z ∈ Ik−1 ).
+This uses O(M(log M ) log2 n) time and O(log M ) space. In general, storing ⌈logω n⌉
+levels uses O(M(log M ) log2−ω n) time and O(log M logω n) space, for 0 ≤ ω ≤ 1.
+                                                                              3
+6.2. Applying the explicit CRT when P is small. Assume         Q log P ≤ µ log |D|.
+We index the set S ⊂ PD as S = {p0 , . . . , pn−1 } and let M = pi and Mi = M/pi .
+As above, we define products mx and modular complements mx = m/mx mod mx ,
+and similarly define modular complements m′x = m/mx mod P .
+Algorithm 2.3 (precompute). Given S = {p0 , . . . , pn−1 } and P :
+    1. Compute mx and m′x . Save M mod P .
+    2. Use mb(i) ≡ Mi mod pi to set ai ← Mi−1 mod pi .
+    3. Use m′b(i) ≡ Mi mod P to set di ← ai Mi mod P .
+    4. Set Cj ← 0 and sj ← 0 for j from 0 to h(D).
+Using the time/space trade-off described above, Algorithm 2.3 has a running time
+of O(M(log M ) log2 n), using O(log M + n log P ) space.
+   We now set δ = ⌈lg n⌉ + 2, which determines the precision of the integer sj ≈ 2δ r
+we use to approximate the rational number r in (6).
+20                             ANDREW V. SUTHERLAND
+
+
+Algorithm 2.4 (update). Given HD mod pi with coefficients cj :
+     1. For j from 0 to h(D):
+     2.     Set Cj ← Cj + cj di mod P .
+     3.     Set sj ← sj + ⌊2δ cj ai /pi ⌋.
+The total running time of Algorithm 2.4 over all pi ∈ S may be bounded by
+                                                             
+(18)             O nh(D)M(log P ) + h(D)M(log M + n log n) .
+Typically the first term dominates, and it is here that we need log P = O(log3 |D|).
+The space complexity is O(h(D)(log P + log pM + log n)).
+Algorithm 2.5 (postcompute). After computing HD mod pi for all pi ∈ S:
+     1. For j from 0 to h(D):
+     2.     Set Cj ← Cj − ⌊3/4 + 2−δ sj ⌋M mod P .
+     3. Output HD mod P with coefficients Cj .
+Algorithm 2.5 uses O(h(D)M(log P )) time and O(h(D) log P ) space. The formulas
+used by Algorithms 2.4 and 2.5 are taken from [8, Thm. 2.2] (also see [7]).
+6.3. Applying the CRT when P is large. When P is larger than M , we simply
+compute HD ∈ Z[X] using a standard application of the CRT. That is, we compute
+HD mod pi for pi ∈ S, and then apply
+                                X
+(5)                         c≡      ci ai Mi mod M
+to compute each coefficient of HD using fast Chinese remaindering [70, §10.3].
+Since M > 2B, this determines HD ∈ Z[X]. Its coefficients lie in the interval
+(−P/2, P/2), so we regard this as effectively computing HD mod P . The total
+time spent applying the CRT is then O(h(D)M(log M ) log n), and the space needed
+to compute (5) is O(log M log n), which is easily smaller than the O(h(D) log M )
+bound on the size of HD (so no time/space trade-off is required).
+   When P is smaller than M but log P > µ log3 |D|, we combine the two CRT
+approaches. We group the primes p0 , . . . , pn−1 into products q0 , . . . , qk−1 so that
+log qj ≈ log P (or qj > log P is prime). We compute HD mod qj by applying the
+usual CRT to the coefficients of HD mod pi , after processing all the pi dividing qj .
+If qj is prime no work is involved, and otherwise this takes O(M(log P ) log n) time
+per coefficient. We then apply the explicit CRT to the coefficients of HD mod qj ,
+as in Section 6.2, discarding the coefficients of HD mod qj after they have been
+processed by Algorithm 2.4. This hybrid approach has a time complexity of
+(19)     O(h(D)(log M/ log P )M(log P ) log n) = O(h(D)M(log M ) log n),
+                                
+and uses O h(D)(log P + log pM ) space.
+
+                              7. Complexity Analysis
+   We now analyze the complexity of Algorithms 1 and 2, proving Theorem 1
+through a series of lemmas. To do so, we apply various number-theoretic bounds
+that depend on some instance of the extended or generalized Riemann hypothesis.
+We use the generic label “GRH” to identify all statements that depend (directly or
+indirectly) on one or more of these hypotheses. As noted in the introduction, the
+GRH is used only to obtain complexity bounds, the outputs of Algorithms 1 and 2
+are unconditionally correct.
+               COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                      21
+
+
+  Let M(n) denote the cost of multiplication, as defined in [70, Ch. 8]. We have
+(20)                            M(n) = O(n log n llog n),
+by [58], where llog(n) denotes log log n (and we use lllog(n) to denote log log log n).
+We focus here on asymptotic results and apply (20) throughout, noting that the
+larger computations in Section 8 make extensive use of algorithms that realize this
+bound. See Section 7.1 for a practical discussion of M(n).
+   Let us recall some key parameters. For a discriminant D < −4, we define
+(2)             PD = {p > 3 prime : 4p = t2 − v 2 D for some t, v ∈ Z>0 },
+where t = t(p) and v = v(p) are uniquely determined by p. We select a subset
+                       S ⊆ Sz = {p ∈ PD : p/H(−v(p)2 D) ≤ z},
+                Q
+that satisfies p∈S p > 4B, where B bounds the absolute values of the coefficients
+of HD . We also utilize prime norms ℓ1 , . . . , ℓk arising in a polycyclic presentation
+of cl(D) that is derived from a set of generators.
+(GRH) For convenient reference, we note the following bounds:
+      (i) h = h(D) = O(|D|1/2 llog |D|) (see [53]).
+  (ii) b = lg B + 2 = O(|D|1/2 log |D| llog |D|) (Lemma 8).
+  (iii) n = #S = O(|D|1/2 llog |D|) (follows from (ii)).
+  (iv) ℓM = max{ℓ1 , . . . , ℓk } = O(log2 |D|) (see [4]).
+  (v) z = O(|D|1/2 log3 |D| llog |D|) (Lemma 2).
+  (vi) pM = max S = O(|D| log6 |D| llog8 |D|) (Lemma 3).
+ (vii) vM = max{v(p) : p ∈ S} = O(log3 |D| llog4 |D|) (Lemma 3).
+
+   The first three parameters have unconditional bounds that are only slightly larger
+(see [5, §5.1]), but the last four depend critically on either the ERH or GRH.
+Heuristic bounds are discussed in Section 7.1.
+   To prove (v) we use an effective form of the Chebotarev density theorem [49].
+Recall that PD is the set of primes (greater than 3) that split completely in the ring
+class field KO of O. For a positive real number x, let π1 (x, KO /Q) count the primes
+p ≤ x that split completely in KO . Equivalently, π1 (x, KO /Q) counts primes whose
+image in Gal(KO /Q) under the Artin map is the identity element [23, Cor. 5.21].
+Applying Theorem 1.1 of [49] then yields
+                                                                                  !
+                                        x1/2 log |D|h(D) x2h(D)
+                                                                
+                         Li(x)                                              h(D)
+(21) π1 (x, KO /Q) −             ≤ c1                             + log(|D|      ) ,
+                        2h(D)                    2h(D)
+
+as in [5, Eq. 3], where the constant c1 is effectively computable.
+Lemma 2 (GRH). For any real constant c3 there is an effectively computable
+constant c2 such that z ≥ c2 h(D) log3 |D| implies #Sz ≥ c3 h(D) log3 |D|.
+
+Proof. Let h = h(D). We apply (21) to x = c0 h2 log4 |D|, with c0 to be determined.
+We assume D < −4 and log c0 ≥ 2, which implies log x < 4 log c0 log |D| (using
+22                             ANDREW V. SUTHERLAND
+
+
+h < |D| and log |D| < |D|1/2 ), and Li(x) > x/ log x, for all x ≥ 1. Negating the
+expression within the absolute value, we obtain from (21) the inequality
+                                               √
+                                                        
+                                    c0
+               π1 (x, KO /Q) ≥            − 5c1 c0 log c0 h log3 |D|.
+                                 8 log c0
+Thus given any constant c4 we may effectively determine c0 ≥ e2 (using c1 ) so that
+                             π1 (x, KO /Q) ≥ c4 h log3 |D|.
+For the set Rx of primes in PD bounded by x, we have #Rx = π1 (x, KO /Q) − 2.
+   Let v0 be the least integer such that at least half the primes in Rx have v(p) ≤ v0 .
+There are v0 positive integers less √than or equal to v0 , and any particular value√
+                                                                              √
+v(p) ≤ v0 can arise for at most 2 x primes p ∈ Rx , since t(p) < 2 p ≤ 2 x.
+              √
+Therefore 2v0 x ≥ #Rx /2, and this implies
+             √
+          2v0 c0 h log2 |D| ≥ (c4 h log3 |D| − 2)/2 > (c4 /2 − 1)h log3 |D|.
+                                                           √
+We thus obtain v0 > c5 log |D|, where c5 = (c4 /2 − 1)/ 4c0 , and assume c4 > 2.
+   For primes p ∈ Rx with v(p) ≥ v0 , the lower bound in Lemma 9 implies
+               p                  p                 x
+                         ≤                ≤                = (c0 /c5 )h log3 |D|.
+         H(−v(p)2 D)        v(p)H(−D)         c5 h log |D|
+If z ≥ c2 h log3 |D|, with c2 = c0 /c5 , then Sz contains at least half the primes in Rx .
+Setting c4 = max{2c3 +2, 3} determines c0 , c5 , and c2 , and completes the proof. 
+  The primes p ∈ Sz areP enumerated by Algorithm 2.1 (Section 3.3), which grad-
+ually increases z until p∈Sz lg p > 2b, where b = lg B + 2.
+Lemma 3 (GRH). When Algorithm 2.1 terminates, for every prime p ∈ Sz we
+have the bounds p = O(|D| log6 |D| llog8 |D|) and v(p) = O(log3 |D| llog4 |D|).
+Proof. Let D = u2 DK , where u is the conductor of D. The upper bound in
+Lemma 9, together with the bound (i) on h(D), implies that for a suitable constant
+c2 and sufficiently large |D|, the bound
+     H(−v 2 D) ≤ 12uvH(−DK ) llog2 (uv + 4)) ≤ c2 v|D|1/2 llog |D| llog2 (v|D|)
+holds for all positive integers v.
+   Lemma 2, together with bounds (i) and (ii), implies that Algorithm 2.1 achieves
+                                       3               1/2
+                                                           log3 |D| llog |D|). Thus for
+P
+   p∈Sz lg p > 2b with z = O(h(D) log |D|) = O(|D|
+a suitable constant c3 and sufficiently large |D|, the bound
+(22)      p ≤ zH(−v(p)2 D) ≤ c3 v(p)|D| log3 |D| llog2 |D| llog2 (v(p)|D|)
+                                            p
+holds for all p ∈ Sz . We also have v(p) ≤ 2 p/|D|, since 4p = t(p)2 − v(p)2 D.
+Applying this inequality to (22) yields p = O(|D| log6 |D| llog8 |D|), which then
+implies v = O(log3 |D| llog4 |D|).                                              
+   We could obtain tighter bounds on pM and vM by modifying Algorithm 2.1 to
+only consider primes in Rx ∩ Sz , but there is no reason to do so. Larger primes will
+be selected for S only when they improve the performance.
+   To achieve the space bound of Theorem 1, we assume a time/space trade-off is
+made in the implementation of Algorithm 2.1. We control the space used to find
+the primes in Sz , by sieving within a suitably narrow window. This increases the
+running time by a negligible poly-logarithmic factor.
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                       23
+
+
+Lemma 4 (GRH). The expected running time of Algorithm 2.1 is O(|D|1/2+ǫ ),
+using O(|D|1/2 log |D| llog |D|) space.
+Proof. When computing Sz , it suffices to consider v up to an O(log3+ǫ |D|) bound,
+by Lemma 3 above. For each v we sieve the polynomial f (t) = t2 − v 2 D to find
+f (t) = 4p with p prime. The bound on p implies that we need only sieve to an
+L = O(|D|1/2 log3+ǫ |D|) √  bound on t. We may enumerate the primes up to L in
+O(L √ llog L) time using O(   L log L) = O(|D|1/4+ǫ ) space √
+                                                            (we sieve with primes up
+to L to identify primes up to L using a window of size L).
+    For each of the π(L) primes ℓ ≤ L, we compute a square root of −v 2 D modulo ℓ
+probabilistically, in expected time O(M(log ℓ) log ℓ), and use it to sieve f (t). Here
+we sieve using a window of size O(|D|1/2 log |D| llog |D|), recomputing each square
+root O(log 2+ǫ |D|) times in order to achieve the space bound.
+    For each v, the total cost of computing square roots is O(π(L) log 4+ǫ |D|), which
+dominates the cost of sieving. Applying π(L) = O(L/ log L) and summing over v
+yields O(|D|1/2 log9+ǫ |D|), which dominates the time to select S ⊂ Sz .
+    To stay within the space bound, if we find that increasing z in Step 3 by a factor
+of 1 + δ causes Sz to be too large (say, greater than 4b bits), we backtrack and
+instead increase z by a factor of 1 + δ/2 and set δ ← δ/2. We increase z a total of
+O(log |D|) times (including all backtracking), and the lemma follows.               
+
+   In practice we don’t actually need to make the time/space tradeoff described in
+the proof above. Heuristically we expect pM = O(|D| log1+ǫ |D|), and in this case
+all the primes in Sz can be found in a single pass with L = O(|D|1/2 log1/2+ǫ |D|).
+   We now show that all the precomputation steps in Algorithm 2 take negligible
+time and achieve the desired space bound. This includes selecting primes (Algo-
+rithm 2.1 in Section 3.3), computing polycyclic presentations (Algorithm 2.2 in
+Section 5.1), and CRT precomputation (Algorithm 2.3 in Section 6.2).
+Lemma 5 (GRH). Steps 1, 2, and 3 of Algorithm 2 take O(|D|1/2+ǫ ) expected
+time and use O(|D|1/2 (log |D| + log P ) llog |D|) space.
+Proof. The complexity of Step 1 is addressed by Lemma 4 above. By Proposition 6,
+Step 2 performs h(D) operations in cl(D), each taking O(log2 |D|) time [9]. Even if
+we compute a different presentation for every v ≤ vM , the total time is O(|D|1/2+ǫ ).
+The table used by Algorithm 2.2 stores h(D) = O(|D|1/2 llog |D|) group elements,
+by bound (i), requiring O(|D|1/2 log |D| llog |D|) space.
+   As described in Section 6.2, when log P ≤ µ log3 |D| the complexity of Algo-
+rithm 2.3 is O(M(log M ) log2 n) time and O(log M + n log P ) space, and we have
+                      X
+              log M =     log p ≤ n log pM = O(|D|1/2 log |D| llog |D|),
+                       p∈S
+
+according to bounds (iii) and (vi) above. As discussed in Section 6.3, the same time
+and space bounds for precomputation apply when log P > µ log3 |D|.                 
+
+   We next consider TestCurveOrder (Section 3.4), which is used by Algo-
+rithm 1.1 to find a curve in Ellt (Fp ). We assume [64, Alg. 7.4] is used to implement
+the algorithm FastOrder which is called by TestCurveOrder.
+Lemma 6. TestCurveOrder runs in expected time O(log2 p llog2 p).
+24                            ANDREW V. SUTHERLAND
+
+
+Proof. For s = 0, 1 the integer ms computed by TestCurveOrder is the lcm of
+the orders of random points in Es (Fp ). By [64, Thm. 8.1] we expect O(1) points
+yield ms = λ(Es (Fp )), the group exponent of Es (Fp ). For p > 11, Theorem 2 and
+Table 1 of [25] then imply N ⊆ {N0 , N1 }, forcing termination. We thus expect to
+execute each step O(1) times. We now bound the cost of Steps 2-5:
+    2. The non-residue used to compute Ẽ can be probabilistically obtained using
+       an expected O(log p) operations in Fp , via Euler’s criterion.
+    3. With Es in the form y 2 = f (x), we obtain a random point (x, y) by comput-
+       ing the square-root of f (x) for random x ∈ Fp , using an expected O(log p)
+       operations in Fp to compute square roots (probabilistically).
+    4. Computing Q = ms P uses O(log p) group operations in Es (Fp ). The fac-
+       torization of Ns /ms is obtained by maintaining ms in factored form. Im-
+       plementing FastOrder via [64, Alg. 7.4] uses O(log p llog p/ lllog p) group
+       operations on Es (Fp ), by [64, Prop. 7.3].
+    5. The intersection of two arithmetic sequences can computed with the ex-
+       tended Euclidean algorithm in time O(log2 p), by [70, Thm. 3.13].
+Step 4 dominates. The group operation in Es (Fp ) uses O(1) operations in Fp , each
+with bit complexity O(M(log p)), and this yields the bound of the lemma.         
+
+  We are now ready to bound the complexity of Algorithm 1 (Section 2), which
+computes HD mod p using Algorithm 1.1 (Section 3.4), Algorithm 1.2 (Section 4.1),
+and Algorithm 1.3 (Section 4.2).
+Lemma 7 (GRH). For p ∈ S, Algorithm 1 computes HD mod p with an expected
+running time of O(|D|1/2 log5 |D| llog3 |D|), using O(|D|1/2 log |D| llog |D|) space.
+Proof. Ignoring the benefit of any torsion constraints, Algorithm 1.1 expects to
+sample p/H(−v 2 D) ≤ z random curves over Fp to find j ∈ Ellt (Fp ). The cost of
+testing a curve is O(log2 p llog2 p), by Lemma 6, and this bound dominates the cost
+of any filters applied prior to calling TestCurveOrder.
+   Applying bound (v) on z and bound (vi) on pM yields an overall bound of
+(23)                         O(|D|1/2 log5 |D| llog3 |D|)
+on the expected running time of Algorithm 1.1, and it uses negligible space.
+   Algorithm 1.2 finds j ∈ EllO (Fp ) in polynomial time if the conductor of D
+is small, and otherwise its complexity is bounded by the O(p1/3 ) = O(|D|1/3+ǫ )
+complexity of Kohel’s algorithm (under GRH). In either case it is negligible.
+   As shown in [4], the ERH yields an O(log2 |D|) bound on the prime norms needed
+to generate cl(D), even if we exclude norms dividing v (at most O(llog |D|) primes).
+It follows that every optimal polycyclic presentation used by Algorithm 1.2 has
+norms bounded by ℓM = O(log2 |D|). To bound the running time of Algorithm 1.3
+we assume ℓi ∤ v, since we use ℓi |v only when it improves performance.
+   The time to precompute each Φℓi is O(ℓ3+ǫ  i  ) = O(log6+ǫ |D|), by [28], and at
+most O(log |D|) are needed. These costs are negligible relative to the desired bound,
+as is the cost of reducing each Φℓi modulo p. Applying the bound on ℓM and
+bound (vi) on pM , each step taken by Algorithm 1.3 on an ℓi -isogeny cycle uses
+O(log4 |D|) operations in Fp , by (13). A total of h steps are required, and the
+bounds (i) on h and (vi) on p yield a bit complexity of O(|D|1/2 log5 |D| llog2+ǫ |D|)
+for Algorithm 1.3, using O(h lg p) = O(|D|1/2 log |D| llog |D|) space.
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                       25
+
+                                    Q
+   Step 4 of Algorithm 1 computes (X − j) over j ∈ EllO (Fp ) via a product tree,
+using O(M(h) log h) operations in Fp and space for two levels of the tree. Applying
+bound (i), this uses O(|D| log3+ǫ |D|) time and O(|D|1/2 log |D| llog |D) space. 
+   The time bound in Lemma 6 may be improved to O(|D|1/2 log5 |D| llog2 |D|) by
+arguing that a random point on a random elliptic curve over Fp has order greater
+      √
+than 4 p with probability 1 − O(1/ log p).
+Theorem 1 (GRH). Algorithm 2 computes HD mod P in O(|D| log5 |D| llog4 |D|)
+expected time, using O(|D|1/2 (log |D| + log P ) llog |D|) space.
+Proof. Lemma
+           Q 5 bounds the cost of Steps 1–3. As previously noted, if we have
+P > M = p∈S p, we set P = M and compute HD over Z.
+   Algorithm 1 is called for each p ∈ S, of which there are n = O(|D|1/2 llog |D|),
+by bound (iii). Applying Lemma 7, Algorithm 1 computes HD mod p for all p ∈ S
+within the time and space bounds stated in the theorem.
+   Recalling (18) from Section 6.2, for log P ≤ µ log3 |D| the total cost of updating
+the CRT sums via Algorithm 2.4 is bounded by
+                                                             
+(24)                  O nhM(log P ) + hM(log M + n log n) .
+We have log M ≤ n log pM = O(|D|1/2 log |D| llog |D|), by bounds (iii) and (vi),
+thus (24) is bounded by O(|D| log3+ǫ |D|), using bound (i) on h. The cost of Algo-
+rithm 2.5 in Step 5 is O(hM(log P )) = O(|D|1/2+ǫ ), with log P = O(log3 |D|). The
+space required is O(h(log |D| + log P )), which matches the bound in the theorem.
+   For log P > µ log3 |D|, we apply the hybrid approach of Section 6.3, whose costs
+are bounded in (19). Using the bounds on log M , n, and h, we again obtain an
+O(|D| log3+ǫ |D|) time for all CRT computations, and the space is as above.      
+   The CRT approach is particularly well suited to a distributed implementation;
+one simply partitions the primes in S among the available processors. The precom-
+putation steps in Algorithm 2 have complexity O(|D|1/2+ǫ ), under the GRH, and
+this is comparable to the complexity of Algorithm 1. Parallelism can be applied
+here, but in practice we are happy to repeat the precomputation on each processor.
+   When log P is polynomially bounded in log |D|, the postcomputation can be
+performed in time O(|D|1/2+ǫ ) by aggregating the CRT sums, with the final result
+HD mod P available on a single node. When P is larger, as when computing HD
+over Z, we may instead have each processor handle the postcomputation for a subset
+of the coefficients of HD , leaving the final result distributed among the processors.
+   We do not attempt a detailed analysis of the parallel complexity here, but note
+the following corollary, which follows from the discussion above.
+Corollary 1 (GRH). There is a parallel algorithm to compute HD mod P on
+O(|D|1/2+ǫ ) processors that uses O(|D|1/2+ǫ ) time and space per processor.
+7.1. A heuristic analysis. To obtain complexity estimates that better predict
+the actual performance of Algorithms 1 and 2, we consider a naı̈ve probabilistic
+model. We assume that each positive integer m is prime with probability 1/ log m,
+and that for each prime ℓ ∤ D we have ( Dℓ ) = 1 with probability 1/2. For a
+prime ℓ with ( Dℓ ) = 1 we further assume that if α, α−1 ∈ cl(D) are distinct classes
+containing an ideal of norm ℓ, then α corresponds to a random element of cl(D)
+uniformly distributed among the elements of order greater than 2. Most critically,
+26                              ANDREW V. SUTHERLAND
+
+
+we suppose that all these probabilities are independent. This last assumption is
+obviously false, but when applied on a large scale this model yields empirically
+accurate predictions.
+   Compared to the GRH-based analysis, these assumptions do not change the
+space complexity, nor bounds (i)–(iii), but significantly improve bounds (iv)–(vii).
+(H) Our heuristic model predicts the following:
+     (iv) ℓM = O(log1+ǫ |D|).
+     (v) z = O(|D|1/2 log1/2+ǫ |D|).
+     (vi) pM = O(|D| log 1+ǫ |D|).
+ (vii) vM = O(log1/2+ǫ |D|).
+   Applying these to the analysis of Section 7 yields an O(|D| log3+ǫ |D|) bound on
+the expected running time of Algorithm 2, matching the heuristic result in [5].
+   It is claimed in [5, §5.4] that applying the bounds (i) and (ii) to [27, Thm. 1.1]
+also yields a heuristic complexity of O(|D| log3+ǫ |D|) when using the floating-
+point method to compute HD . This is incorrect, the implied bound is actually
+O(|D| log4+ǫ |D|) (as confirmed by the author of [27]).
+   One may reasonably question how accurate our O(|D| log 3+ǫ |D|) estimate is in
+practice, since it assumes the Fast Fourier Transform (FFT) is used for all multi-
+plications. The cost M(n) arises in three distinct contexts:
+     (a) The cost of operations in Fp is bounded by O(M(log p)).
+                     Q of Φℓ (X, ji )/(X − ji−1 ) uses O(M(ℓ) log p) Fp -operations.
+     (b) Finding a root
+     (c) Computing (X − j) uses O(M(h) log h) Fp -operations.
+In case (a) we actually expect lg pM to be smaller than the word size of our CPU, so
+multiplications in Fp effectively have unit cost. For (b), ℓ is typically in the range
+where either schoolbook or Karatsuba-based multiplication should be used. It is
+only in case (c) that FFT-based algorithms may be profitably applied.
+   In order to better estimate the running time of Algorithm 1 (which effectively
+determines the running time of Algorithm 2) we break out the cost of each step,
+expressing all bounds in terms of Fp -operations.
+             Step                               Complexity (Fp -operations)
+             1. Find j ∈ Ellt (Fp )             O(|D|1/2 log3/2+ǫ |D|)
+             2. Find j ′ ∈ EllO (Fp )           negligible
+             3. Enumerate EllO (Fp )            O(|D|1/2 log1+ω+ǫ |D|)
+                                                O(|D|1/2 log2+ǫ |D|)
+                           Q
+             4. Compute j∈EllO (Fp ) (X − j)
+                  Table 1. (H) Heuristic complexity of Algorithm 1.
+   The value of ω depends on our estimate for M(ℓ). One can find values of D in
+the feasible range where ℓM is over 300, see [41, 42], and here it is reasonable to
+assume M(ℓ) = ℓω with ω = lg 3 ≈ 1.585. In the worst case, Step 3 dominates.
+   However, the critical parameter is ℓ1 , the least cost ℓi used by Algorithm 1.3. If
+ℓ1 ∤ D we expect it to be used in the overwhelming majority of the steps taken by
+Algorithm 1.3. As with ℓM , it is possible to find feasible D for which ℓ1 is fairly large
+(over 100), but such cases are extremely rare. If we average over D in some large
+interval, our heuristic model predicts ℓ1 = O(1) (in fact E[ℓ1 ] < 4). We typically
+have M(ℓ1 ) = O(1) and use ω = 0. In almost all cases, Step 4 dominates.
+               COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                               27
+
+
+   The relative cost of Step 4 is not significant for small |D|, due to the excellent
+constant factors in the algorithms available for polynomial multiplication, but its
+asymptotic behavior becomes evident as |D| grows (see Tables 3 and 4).
+
+                              8. Computational Results
+   To assess the performance of the new algorithm in a practical application, we
+used it to construct pairing-friendly curves suitable for cryptographic use, a task
+that often requires large discriminants. We constructed ordinary elliptic curves of
+prime order and embedding degree k over a prime field Fq such that either
+        k = 6 and 170 < lg q < 192,           or      k = 10 and 220 < lg q < 256.
+These parameters were chosen using the guidelines in [32], and have particularly
+desirable performance and security characteristics. For additional background on
+pairing-based cryptography we refer to [20, Ch. 24].
+   To obtain suitable discriminants we used algorithms in [45] (for k = 6) and [31]
+(for k = 10) that were optimized to search for q within a specified range. This
+produced a set DPF of nearly 2000 fundamental discriminants (1722 with k = 6
+and 254 with k = 10), with |D| ranging from about 107 to just over 1013 (almost
+all greater than 1010 ). We selected 200 representative discriminants from DPF for
+our tests, including those that potentially posed the greatest difficulty, due to an
+unusually large value of ℓ1 or h(D).
+   To each selected discriminant we applied the CM method, using Algorithm 2 to
+compute HD mod P (with P = q). After finding a root j of HD (X) over Fq , we
+construct an elliptic curve E with this j-invariant and ensure that the trace of E
+has the correct sign.1
+8.1. Implementation. The algorithms described in this paper were implemented
+using the GNU C/C++ compiler [29] and the GMP library [34] on a 64-bit Linux
+platform. Multiplication of large polynomials was handled by the zn poly library
+developed by Harvey [36], based on the algorithm in [37].
+   The hardware platform included sixteen 2.8 GHz AMD Athlon processors, each
+with two cores. Up to 32 cores were used in each test (with essentially linear
+speedup), but for consistency we report total cpu times, not elapsed times. Memory
+utilization figures are per core, and can be achieved using a single core.
+8.2. Distribution of test discriminants. To construct a curve of odd order over
+a field of odd characteristic we must have D ≡ 5 mod 8, and this necessarily applies
+to D ∈ DPF . We then have ( D    2 ) = −1, which implies ℓ1 ≥ 3, and also tends to
+make h(D) smaller than it would be for an arbitrary discriminant. Averaging over
+all discriminants up to an asymptotically large bound, we expect
+                                  πh(D)
+                     L(1, χD ) = p         −→ Cπ 2 /6 ≈ 1.45,
+                                      |D|
+where C = p 1 − 1/(p2 (p + 1)) , see [18, p. 296] (and see [41] for actual data).
+             Q                      
+
+Among the 1722 discriminants we found for k = 6, the average value of L(1, χD )
+is about 0.55, close to the typical value for D ≡ 5 mod 8. For k = 10 we have the
+further constraint ℓ1 ≥ 7, and the average value of L(1, χD ) is approximately 0.40.
+  1One may apply the method of [57], or simply compute N Q for a nonzero point Q ∈ E(F ),
+                                                                                               q
+where N is the desired (prime) order of E(Fq ), and switch to a quadratic twist of E if N Q 6= 0.
+28                                 ANDREW V. SUTHERLAND
+
+
+                                         Example 1            Example 2           Example 3
+ |D|                               13, 569, 850, 003 11, 039, 933, 587 12, 901, 800, 539
+ h(D)                                        20,203            11,280            54,706
+ L(1, χD )                                      0.54              0.34              1.51
+ b                                        2,272,566         1,359,136         5,469,778
+ n                                           63,682            39,640           142,874
+ z                                          755,637           734,040           905,892
+ ⌈lg pM ⌉                                         40                38                 43
+ vM                                               12                 8                 32
+ (ℓr11 , . . . , ℓrkk )                     (720203 )  (171128 , 1910 )     (327038 , 52 )
+ Step 1                                         0.0s                 0.0s                0.0s
+ Step 2                                         1.2s                 0.5s                4.0s
+ Step 3                                         0.6s                 0.3s                2.0s
+ Step 4                                      23,300s              26,000s             61,000s
+ Step 5                                         0.0s                 0.0s                0.0s
+ (Tf , Te , Tb )                          (57,32,11)            (51,47,2)          (53,20,27)
+ throughput                                 2.0Mb/s             0.6Mb/s              4.9Mb/s
+ memory                                       3.9MB               2.1MB                9.4MB
+ total data                                   5.7GB               1.9GB                 37GB
+ Solve HD (X) = 0 over Fq                       127s                  86s                 332s
+
+                             Table 2. Example computations.
+                                     (2.8 GHz AMD Athlon)
+
+
+   While we regard the discriminants in DPF as representative for the application
+considered, in order to assess the performance of Algorithm 2 in more extreme
+cases we also conducted tests using discriminants with very large values of L(1, χD ).
+These results are presented in Section 8.5.
+8.3. Examples. Table 2 summarizes computations for three discriminants of com-
+parable size, with |D| ≈ 1010 . These represent a typical case (Example 1) and two
+“worst” cases (Examples 2 and 3). The parameters appearing in the top section of
+the table are as defined in Section 7. The next section of the table contains timings
+for each step of Algorithm 2.
+   As predicted by the asymptotic analysis, essentially all of the time is spent in
+Step 4, which calls Algorithm 1 for each prime p ∈ S. There are three principal
+components in the running time of Algorithm 1:
+     Tf : time spent in Step 1 finding a curve in Ellt (Fp );
+     Te : time spent in Step 3 enumerating EllO (FQ  p );
+     Tb : time spent in Step 4 building HD (X) = j∈EllO (Fp ) (X − j) mod p.
+   These are listed in Table 2 as percentages of the total time T . The time spent
+elsewhere (T − Tf − Te − Tb ) is well under 1% of T .
+   The third section in Table 2 lists the throughput, memory utilization, and total
+data processed during the computation.2 The total data is defined as the product
+of the number of coefficients h(D) and the height bound b. This approximates the
+     2The suffixes Mb, MB, and GB indicate 106 bits, 106 bytes and 109 bytes, respectively.
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                      29
+
+
+                 |D|     h(D)      cpu secs   (Tf , Te , Tb ) Mb/s   memory      data
+         116, 799, 691   2, 112        156      (65,28,7)     2.6     0.5MB 52MB
+      1, 218, 951, 379   6, 320      1,650      (64,26,8)     2.5     1.1MB 520MB
+     13, 569, 850, 003 20, 203      23,400     (57,33,10)     2.0     3.9MB 5.7GB
+    126, 930, 891, 691 56, 282     195,000     (66,22,12)     2.0     9.5MB  50GB
+ 1, 009, 088, 517, 019 181, 584 2,160,000      (64,20,16)     2.0      34MB 535GB
+10, 028, 144, 961, 139 521, 304 20,600,000     (63,20,17)     1.9      84MB 5.0TB
+
+                   Table 3. Performance for typical D ∈ DPF .
+                                (2.8 GHz AMD Athlon)
+
+
+
+total size of HD , typically overestimating it by about 10% (the actual sizes of HD
+for the three examples are 5.3GB, 1.8GB and 34GB respectively). The throughput
+is then the total data divided by the total time. Memory figures include all working
+storage and overhead due to data alignment (to word boundaries and to powers of 2
+in FFT computations), but exclude fixed operating system overhead of about 4MB.
+The last row of the table lists the time to find a root of HD over Fq , although this
+task is not actually performed by Algorithm 2.
+   Example 1 represents a typical case: L(1, χD ) is close to the mean of 0.55, and
+ℓ1 = 7 is just above the median of 5 (over D ∈ DPF ). Example 2 has an unusually
+large ℓ1 = 17 (exceeded by fewer than 1% of D ∈ DPF ), while Example 3 has an
+unusually large L(1, χD ) ≈ 1.51 (exceeded by fewer than 1% of D ∈ DPF ).
+   In Example 2, the large ℓ1 increases Te substantially, despite the smaller h(D).
+The smaller L(1, χD ) tends to increase the running time of individual calls to Al-
+gorithm 1.1, but at the same time n decreases so that overall Tf decreases slightly.
+The smaller values of h(D) and n both serve to decrease Tb significantly.
+   In Example 3 the large L(1, χD ) decreases the cost of individual calls to Algo-
+rithm 1.1, but increases n substantially so that overall Tf increases. However, Te
+and Tb increase even more, especially Tb . Despite the longer running time, this
+scenario results in the highest throughput of the three examples.
+
+8.4. Scaling. Table 3 summarizes the performance of Algorithm 2 for D ∈ DPF
+ranging over six orders of magnitude. We selected examples whose performance
+was near the median value for discriminants of comparable size. We note the quasi-
+linear growth of T , and the increasing value Tb as a percentage of T , consistent
+with our heuristic prediction that this component is asymptotically dominant.
+   Up to 32 cores were applied to the computations in Table 3. In all but the
+smallest example we can effectively achieve a 32x speedup. The actual elapsed
+time for the largest discriminant was about 8 days, while the second largest took
+less than a day. As suggested by Corollary 1, these computations could be usefully
+distributed across many more processors. The low memory requirements provide
+headroom for much larger computations: each of our cores had 2GB of memory,
+but less than 100MB was used.
+   Below is an example of a curve constructed using D = −10, 028, 144, 961, 139,
+the largest discriminant listed in Table 3. The elliptic curve
+ y 2 = x3 − 3x + 3338561401570133202017008597803337396411439360229378547
+30                              ANDREW V. SUTHERLAND
+
+
+              |D|        h(D)      cpu secs (Tf , Te , Tb )   Mb/s memory       data
+  2, 093, 236, 031   100,000     98,800        (25,19,56)      7.5    18MB  93GB
+  8, 364, 609, 959   200,000    472,000        (24,17,59)      6.8    36MB 400GB
+ 17, 131, 564, 271   300,000 1,240,000         (20,15,65)      5.9    61MB 920GB
+ 30, 541, 342, 079   400,000 2,090,000         (21,16,63)      6.4    71MB 1.7TB
+ 42, 905, 564, 831   500,000 3,050,000         (22,17,61)      6.9    81MB 2.6TB
+ 67, 034, 296, 559   600,000 5,630,000         (18,14,68)      5.6   121MB 3.9TB
+ 82, 961, 887, 511   700,000 7,180,000         (19,14,67)      5.9   132MB 5.3TB
+113, 625, 590, 399   800,000 9,520,000         (19,15,66)      5.9   142MB 7.1TB
+133, 465, 791, 359   900,000 11,500,000        (20,15,65)      6.2   152MB 9.0TB
+170, 868, 609, 071 1,000,000 14,200,000        (20,16,64)      6.3   163MB 11.2TB
+                    Table 4. Performance when L(1, χD ) is large.
+                                  (2.8 GHz AMD Athlon)
+
+
+
+has embedding degree 6 over the finite field Fq with
+      q = 30518311673028635209000068713843412774183984182022701057.
+This curve has prime order N = q + 1 − t, where
+                        t = 5524338120809463560527395583.
+There are a total of h(D) = 521, 304 nonisomorphic curves with the same order
+that may be constructed using HD mod q. A complete list of curves for all the
+discriminants tested is available at http://math.mit.edu/~drew.
+
+8.5. Discriminants with large L(1, χD ). Table 4 shows the performance of Al-
+gorithm 2 on discriminants specifically chosen to make L(1, χD ) extremely large,
+between 6.8 and 7.8. These discriminants are not in DPF , and are likely the small-
+est possible for the class numbers listed (but we do not guarantee this). In each
+case we computed HD modulo a 256-bit prime P . The timings would not change
+significantly for larger P , but the space would increase.
+   The first discriminant D = −2, 093, 236, 031 in Table 4 also appears in Table 1 of
+[27]. Scaled to the same processor speed, Algorithm 2 computes HD mod P using
+less than half the cpu time spent by the floating-point approximation method to
+compute a class polynomial over Z for the same D (this polynomial would then
+need to be reduced mod P in order to apply the CM method). Most significantly,
+the memory required is about 20 MB versus 5 GB.
+   This comparison is remarkable, given that the height bound b = 7, 338, 789 for
+HD is nearly 28 times larger than the 264,727 bits of precision used in [27], where
+the class polynomial for the double-eta quotient w3,13 was computed instead of the
+Hilbert class polynomial. The difference in throughput is thus much greater than
+the difference in running times: 7.5 Mb/s versus 0.10 Mb/s.
+
+                                9. Acknowledgments
+   The author thanks Daniel J. Bernstein for initially suggesting this project, and
+also Gaetan Bisson, Reinier Bröker, Andreas Enge, David Harvey, Tanja Lange,
+and Kristin Lauter for their support and feedback on an early draft of this paper.
+I am also grateful to the referee for careful reading and many helpful suggestions.
+              COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                           31
+
+
+                                      Appendix 1
+   This appendix proves Lemma 8, which bounds the coefficients of the Hilbert
+class polynomial HD (X), and Lemma 9 which bounds the Hurwitz class number
+H(−v 2 D) in terms of v and H(−D).
+   Let B denote an upper bound on the absolute values of the coefficients of HD (X).
+In the literature one finds many values for B (or log B), but due to an unfortunate
+series of typographical errors, most are either incorrect [5, p. 285], exponentially
+larger than necessary ([2, Eq. 22] and [11, p. 151]), or heuristics that do hold for
+all D ([1, Eq. 3.1] and [12, p. 2431]). In [27, Thm. 1.2], Enge gives a rigorous and
+fully explicit value for B that is empirically accurate to within a constant factor,
+but still larger than desirable for practical application. Provided one is prepared
+to enumerate the elements of cl(D), a much tighter bound is given by the lemma
+below, whose proof is derived directly from Enge’s analysis in [27, §4].
+Lemma 8. For a quadratic discriminant D < 0, let (a1 , b1 , c1 ), . . . , (ah , bh , ch ) be
+the sequence of reduced, primitive binary quadratic forms ofpdiscriminant D with
+0 < a1 ≤ · · · ≤ ah , where h = h(D). Let Mk = exp(π |D|/ak ) + C, where
+C = 2114.567. Then the coefficients of HD (X) have absolute values bounded by
+                                             h
+                                      h       Y
+                              B=         Mh−m     Mk ,
+                                     m
+                                              k=1
+           j       k
+where m = Mh+1h +1
+                     . We also have log B = O(|D|1/2 log2 |D|), and under the GRH,
+log B = O(|D|1/2 log |D| llog |D|).
+Proof. We may write HD as
+                                           h
+                                           Y              
+                               HD (X) =         X − j(τk ) ,
+                                          k=0
+                   √
+where τk = (−bk + D)/2ak . With qk = e2πiτk , we have Mk = |1/qk | + C, where
+the constant C bounds |j(τk ) − 1/qk |, as shown in [27, p. 1094]. Thus |j(τk )| ≤ Mk ,
+and the absolute value of the coefficient of X n in HD (X) is bounded by
+                                          h−n
+                                          h Y
+(25)                            Bn =            Mk .
+                                          n
+                                                k=1
+
+We now argue that Bn ≤ B. For n > m we have n > (h + 1)/(Mh + 1) and
+                                        h−n+1
+                      .          
+                       h         h
+                                      =           < Mh .
+                       n       n−1          n
+This implies Bn < Bn−1 . For 0 < n ≤ m we have nh / n−1
+                                                  h 
+                                                         ≥ Mh , which implies
+    B0 ≤ B1 Mh /Mh ≤ B2 Mh−1 Mh /Mh2 ≤ · · · ≤ Bm Mh−m+1 · · · Mh /Mhm = B.
+It follows that B bounds every Bn .
+                                      2
+   The bound log B = O(|D|1/2    Plog1 |D|) follows from h = O(|D|1/2 log |D|), as
+                                                 2
+proven in [60], and the bound k ak = O(log |D|), proven in [59, Lemma 2.2].
+As shown in [5, Lemma 2], under the GRH the bound k a1k = O(log |D| llog |D|)
+                                                         P
+
+follows from [53], which yields log B = O(|D|1/2 log |D| llog |D|).             
+32                                    ANDREW V. SUTHERLAND
+
+
+   In practice the bound givenby Lemma      8Pis close to, and often better than,
+                            h
+                                 exp(π |D| k a1k ) that is sometimes used, even
+                                       p
+the heuristic bound B = ⌊h/2⌋
+though the latter bound is not actually valid for all D (such as D = −99).
+Lemma 9. Let D be a negative  Q discriminant, let v ≥ 2 be an integer, and let x
+be the largest prime for which p≤x p ≤ v, where p ranges over primes. Let H(n)
+denote the Hurwitz class number. The following bounds hold:
+                              H(−v 2 D)   Y p+1
+                      1 ≤               ≤       < 11 llog2 (v + 4).
+                              vH(−D)        p−1
+                                            p≤x
+
+Proof. Let u be the conductor of D, so that D = u2 D0 . Then
+                                                         X 2h(d2 D0 )
+(26)                      H(−v 2 D) = H(−(uv)2 D0 ) =                       ,
+                                                                w(d2 D0 )
+                                                         d|uv
+
+where w(d2 D0 ) = |Od∗2 D0 | is 2, 4, or 6 [18, Lemma 5.3.7]. We also have [18, p. 233]
+
+                         h(d2 D0 )
+                                                           
+                                         h(D0 ) Y        χp
+                                     =          d   1−        ,
+                         w(d2 D0 )      w(D0 )            p
+                                                   p|d
+                     
+                 D0
+where χp =       p        is −1, 0, or 1. Regarding D0 as fixed, we note that
+                                                          
+                                  2     2h(D0 ) X Y     χp
+                            H(−n D0 ) =          d   1−
+                                        w(D0 )          p
+                                                  d|n    p|d
+
+is a multiplicative function of n, which yields
+                          2h(D0 ) Y                                 
+           H(−n2 D0 ) =               1 + pνp (n) − 1 (p − χp )/(p − 1) .
+                          w(D0 ) p
+
+where νp (n) is the p-adic valuation. From (26) we obtain
+                                      νp (u)+νp (v)
+                           Q                                            
+            H(−v 2 D)        p 1+ p                 − 1 (p − χp )/(p − 1)
+(27)                    =                                              .
+             vH(−D)          v p 1 + pνp (u) − 1 (p − χp )/(p − 1)
+                               Q
+
+Fixing D = u2 D0 , we regard (27) as a multiplicative function of v. For v = pk :
+                               1 + pνp (u)+k − 1 (p − χp )/(p − 1)
+                                                                  
+              H(−p2 kD)
+                           = k                                     .
+               pk H(−D)
+                                                
+                             p 1 + pνp (u) − 1 (p − χp )/(p − 1)
+This value is minimized when χp = 1, in which case it is 1, yielding the first
+inequality in the lemma. It is maximized when χp = −1, in which case one finds
+
+                     1 + pνp (u)+k − 1 (p + 1)/(p − 1)
+                                                       
+                                                           p+1
+                                                       ≤     ,
+                     k
+                    p 1+ p    νp (u) − 1 (p + 1)/(p − 1)   p−1
+for all nonnegative integers k and νp (u). We thus obtain from (27)
+                               H(−v 2 D) Y p + 1   Y p+1
+                                        ≤        ≤       ,
+                               vH(−D)      p−1       p−1
+                                            p|v          p≤x
+             COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                      33
+
+
+proving the secondQinequality in the lemma. To prove the third inequality, we first
+note that for v ≥ p≤x p the inequality holds for each prime x < 41, by a machine
+calculation, so we assume x ≥ 41. We then have
+                                      X
+       Y p+1 X                    2            2       X1        X       1
+   log           =     log 1 +          ≤           =2       +2               .
+           p−1                  p−1          p−1           p         p(p − 1)
+      p≤x          p≤x                           p≤x              p≤x    p≤x
+
+We now apply the bound p≤x 1p < llog x + B1 + 1/(log x)2 from [56, 3.20], where
+                            P
+                             P     1
+B1 = 0.261497 . . ., and also p p(p−1) = 0.773156 . . . from [19], to obtain
+                                 Y p+1
+                           log                < 2 llog x + 2.218,
+                                       p−1
+                                 p≤x
+
+                                     p+1
+                                         < 9.189 · log2 x. We also have the bound
+                             Q
+valid for x ≥ 41. This yields p≤x p−1
+                 P
+x(1 − 1/ log x) < p≤x log p, valid for x ≥ 41, by [56, 3.16], which implies
+                         Y p+1
+                                       < 9.189 · log2 (1.369 · log v),
+                               p−1
+                         p≤x
+
+For x ≥ 41 we have log v > 30, and the RHS is then smaller than 11 llog2 (v +4). 
+
+
+                                         Appendix 2
+    Here we list some of the torsion constraints used to accelerate the search for an
+elliptic curve E/Fp with p + 1 ± t points, as described in Section 3. Each constraint
+has the form m = a · b · N , where a is a power of 2 and b is a power of 3. Curves
+with a point of order N are generated using a plane model for X1 (N ) as in [66],
+then filtered to ensure that the constraints implied by a and b are also met. When
+a or b is expressed in exponential notation, it is meant to control the exact power
+of 2 or 3 that divides #E. The torsion constraint 14 = 20 · 30 · 14, for example,
+indicates that #E is divisible by 14 but not divisible by 3 or 4.
+    Efficient methods for analyzing the Sylow 2-subgroup of E(Fp ) are considered
+in [54, 66], and for 3-torsion we use the 3-division polynomial [71, § 3.2]. For the
+sake of brevity, here we consider constraints on the Sylow 2-subgroup only up to
+4-torsion, but one may obtain minor improvements using 2k -torsion for larger k.
+    The benefit of each constraint is computed as 1/r, where r is the proportion of
+elliptic curves E/Fp that satisfy the constraint. We derive r using [39, Thm. 1.1],
+under the simplifying assumption that if N divides #E, then E(Fp ) contains a
+point of order N (necessarily true when the square part of N is coprime to p − 1).
+A more precise estimate may be obtained from [33, Thm. 3.15]. Table 5 assumes
+that p ≡ 1 mod 3 and p 6≡ 1 mod ℓ for primes ℓ > 3 dividing N . It is easily adjusted
+to other cases via [39, Thm. 1.1]; this will change the rankings only slightly.
+    The cost of each constraint was determined empirically (and is somewhat imple-
+mentation dependent). For a random set of primes p of suitable size (30-50 bits) we
+measured the average time to: (1) generate a curve E/Fp satisfying the constraint,
+(2) obtain a random point P ∈ E(Fp ), and (3) compute the points (p + 1)P and tP .
+This is compared to the cost of (2) and (3) alone (the “null case” for Algorithm 1.1,
+excluding TestCurveOrder which is rarely called). The parametrizations of [3]
+combine (1) and (2), enabling a cost of less than 1.0 in some cases.
+34                                ANDREW V. SUTHERLAND
+
+
+     m     torsion benefit      cost ratio           m      torsion benefit      cost ratio
+          0
+  33     2 · 3 · 11      80.0    2.3    34.3        44      4 · 11       24.0     1.8      13.0
+  39     20 · 3 · 13     96.0    3.0    31.5        93 20 · 3 · 31      240.0    18.9      12.7
+  51     20 · 3 · 17    128.0    4.4    29.0        34    21 · 17        64.0     5.0      12.7
+  15        20 · 15      32.0    1.2    26.4        28      2 · 14       14.4     1.2      12.4
+  11        20 · 11      30.0    1.2    25.9        52      4 · 13       28.8     2.4      12.2
+          0
+  57     2 · 3 · 19     144.0    5.7    25.4        18    20 · 18        26.2     2.2      12.0
+  66     21 · 3 · 11    106.7    4.3    24.7        36      2 · 18       15.7     1.3      12.0
+  21      20 · 3 · 7     48.0    2.1    23.1        68      4 · 17       38.4     3.4      11.2
+  69     20 · 3 · 23    176.0    7.8    22.4        38    21 · 19        72.0     6.7      10.8
+  78     21 · 3 · 13    128.0    5.8    22.0        10    20 · 10        16.0     1.5      10.7
+  13        20 · 13      36.0    1.6    21.8            1
+                                                   174 2 · 3 · 29       298.7    28.6      10.4
+   9          20 · 9     19.6    1.0    20.2        20      2 · 10        9.6     0.9      10.4
+          1
+ 102     2 · 3 · 17     170.7    8.5    20.0       348 4 · 3 · 29       179.2    18.0       9.9
+  42     20 · 3 · 14     64.0    3.2    20.0        76      4 · 19       43.2     4.4       9.9
+   7          20 · 7     18.0    0.9    19.6        46    21 · 23        88.0     9.2       9.5
+ 132      4 · 3 · 11     64.0    3.3    19.2        29    20 · 29        84.0     8.9       9.5
+  17        20 · 17      48.0    2.5    19.0        48      3 · 16       21.3     2.3       9.4
+ 156      4 · 3 · 13     76.8    4.2    18.2         3      20 · 3        8.0     0.9       9.2
+ 204      4 · 3 · 17    102.4    5.9    17.5        92      4 · 23       52.8     6.0       8.8
+ 114     21 · 3 · 19    192.0   11.0    17.4        12          12        6.4     0.7       8.8
+  30        21 · 15      42.7    2.5    16.9       186 21 · 3 · 31      320.0    36.9       8.7
+  84      2 · 3 · 14     38.4    2.3    16.5        31    20 · 31        90.0    11.5       7.8
+  19        20 · 19      54.0    3.3    16.4         6      20 · 6       10.7     1.4       7.4
+  22        21 · 11      40.0    2.5    16.2        16          16        8.0     1.1       7.2
+ 228      4 · 3 · 19    115.2    7.4    15.7        58    21 · 29       112.0    17.4       6.4
+  87     20 · 3 · 29    224.0   14.5    15.5       116      4 · 29       67.2    11.0       6.1
+ 138     21 · 3 · 23    234.7   15.3    15.4         8           8        4.0     0.7       5.9
+  26        21 · 13      48.0    3.3    14.4        62    21 · 31       120.0    23.0       5.2
+  23        20 · 23      66.0    4.7    14.2       124      4 · 31       72.0    14.2       5.1
+ 276      4 · 3 · 23    140.8   10.0    14.0         2      20 · 2        4.0     0.9       4.3
+  14        20 · 14      24.0    1.7    13.8         4           4        2.4     0.6       3.8
+  60          4 · 15     25.6    1.9    13.5         1      20 · 1        3.0     0.8       3.7
+   5          20 · 5     12.0    0.9    13.0
+
+              Table 5. Ranking of m-torsion constraints (for p ≡ 1 mod 3).
+         Dominated constraints are not listed, e.g. 3 · 4 · 31 is always inferior to 12.
+
+
+  The rankings in Table 5 assume each constraint is applicable to both N0 = p+1−t
+and N1 = p + 1 + t; if not, the effective ratio is about half the listed value (9/16, on
+average). For given values of p and t, we thus consider three possible constraints,
+one satisfied by N0 , one by N1 , and one by both, and pick the best of the three.
+
+                                        References
+ 1. Amod Agashe, Kristin Lauter, and Ramaranthnam Venkatesan, Constructing elliptic curves
+    with a known number of points over a prime field, High Primes and Misdemeanours: Lectures
+    in Honour of the 60th Birthday of Hugh Cowie Williams (A. J. van der Poorten and A. Stein,
+    eds.), Fields Institute Communications, vol. 41, AMS, 2004, pp. 1–17.
+               COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                                 35
+
+
+ 2. A.O.L. Atkin and François Morain, Elliptic curves and primality proving, Mathematics of
+    Computation 61 (1993), 29–68.
+ 3.          , Finding suitable curves for the elliptic curve method of factorization, Mathematics
+    of Computation 60 (1993), 399–405.
+ 4. Eric Bach, Explicit bounds for primality testing and related problems, Mathematics of Com-
+    putation 55 (1990), no. 191, 355–380.
+ 5. Juliana Belding, Reinier Bröker, Andreas Enge, and Kristin Lauter, Computing Hilbert class
+    polynomials, Algorithmic Number Theory Symposium–ANTS VIII (A. J. van der Poorten and
+    A. Stein, eds.), Lecture Notes in Computer Science, vol. 5011, Springer, 2008, pp. 282–295.
+ 6. Daniel J. Bernstein, Detecting perfect powers in essentially linear time, and other studies in
+    computational number theory, PhD thesis, University of California at Berkeley, 1995.
+ 7.          , Multidigit modular multiplication with the explicit chinese remainder theorem, 1995,
+    Chapter 4 of [6], available at http://cr.yp.to/papers.html#mmecrt.
+ 8. Daniel J. Bernstein and Jonathan P. Sorenson, Modular exponentiation via the explicit Chi-
+    nese Remainder Theorem, Mathematics of Computation 76 (2007), 443–454.
+ 9. Ingrid Biehl and Johannes Buchmann, An analysis of the reduction algorithms for binary
+    quadratic forms, Voronoi’s Impact on Modern Science (P. Engel and H. Syta, eds.), Insti-
+    tute of Mathematics, Kyiv, 1998, available at http://www.cdc.informatik.tu-darmstadt.
+    de/reports/TR/TI-97-26.ps.gz, pp. 71–98.
+10. Gaetan Bisson and Andrew V. Sutherland, Computing the endomorphism ring of an ordinary
+    elliptic curve over a finite field, Journal of Number Theory 113 (2011), 815–831.
+11. Ian Blake, Gadiel Seroussi, and Nigel Smart, Elliptic curves in cryptography, London Mathe-
+    matical Society Lecture Note Series, vol. 265, Cambridge University Press, 1999.
+12. Reinier Bröker, A p-adic algorithm to compute the Hilbert class polynomial, Mathematics of
+    Computation 77 (2008), 2417–2435.
+13. Reinier Bröker and Peter Stevenhagen, Efficient CM-constructions of elliptic curves over
+    finite fields, Mathematics of Computation 76 (2007), 2161–2179.
+14. Johannes Buchmann and Arthur Schmidt, Computing the structure of a finite abelian group,
+    Mathematics of Computation 74 (2005), 2017–2026.
+15. Johannes Buchmann and Ulrich Vollmer, Binary quadratic forms: an algorithmic approach,
+    Algorithms and Computations in Mathematics, vol. 20, Springer, 2007.
+16. Frank Celler and C. R. Leedham-Green, Calculating the order of an invertible matrix, Groups
+    and Computation II, DIMACS Series in Discrete Mathematics and Theoretical Computer
+    Science, vol. 28, American Mathematical Society, 1997, pp. 55–60.
+17. Jinhui Chao, Osamu Nakamura, Kohji Sobataka, and Shigeo Tsujii, Construction of secure
+    elliptic cryptosystems using CM tests and liftings, Advances in Cryptology–ASIACRYPT’98,
+    Lecture Notes in Computer Science, vol. 1514, Springer, 1998, pp. 95–109.
+18. Henri Cohen, A course in computational algebraic number theory, Springer, 1996.
+19.          , High precision computation of Hardy-Littlewood constants, 1999, available at http:
+    //www.math.u-bordeaux.fr/~ cohen/hardylw.dvi.
+20. Henri Cohen and Gerhard Frey et al., Handbook of elliptic and hyperelliptic curve cryptogra-
+    phy, Chapman and Hall, 2006.
+21. Paula Cohen, On the coefficients of the transformation polynomials for the elliptic modular
+    function, Math. Proc. of the Cambridge Philosophical Society 95 (1984), 389–402.
+22. Jean-Marc Couveignes and Thierry Henocq, Action of modular correspondences around CM
+    points, Algorithmic Number Theory Symposium–ANTS V (C. Fieker and D. R. Kohel, eds.),
+    Lecture Notes in Computer Science, vol. 2369, Springer-Verlag, 2002, pp. 234–243.
+23. David A. Cox, Primes of the form x2 + ny 2 : Fermat, class field theory, and complex multi-
+    plication, John Wiley and Sons, 1989.
+24. Richard Crandall and Carl Pomerance, Prime numbers: A computational perspective, second
+    ed., Springer, 2005.
+25. John E. Cremona and Andrew V. Sutherland, On a theorem of Mestre and Schoof, Journal
+    de Théorie des Nombres de Bordeaux 22 (2010), 353–358.
+26. Max Deuring, Die Typen der Multiplikatorenringe elliptischer Funktionenkörper, Abh. Math.
+    Sem. Hansischen Univ. 14 (1941), 197–272.
+27. Andreas Enge, The complexity of class polynomial computation via floating point approxima-
+    tions, Mathematics of Computation 78 (2009), 1089–1107.
+36                                ANDREW V. SUTHERLAND
+
+
+28.         , Computing modular polynomials in quasi-linear time, Mathematics of Computation
+    78 (2009), 1809–1824.
+29. Free Software Foundation, GNU compiler collection, January 2010, version 4.4.3, available at
+    http://gcc.gnu.org/.
+30. Mireille Fouquet and François Morain, Isogeny volcanoes and the SEA algorithm, Algorithmic
+    Number Theory Symposium–ANTS V (C. Fieker and D. R. Kohel, eds.), Lecture Notes in
+    Computer Science, vol. 2369, Springer, 2002, pp. 276–291.
+31. David Freeman, Constructing pairing-friendly elliptic curves with embedding degree 10, Al-
+    gorithmic Number Theory Symposium–ANTS VII (F. Hess, S. Pauli, and M. Pohst, eds.),
+    Lecture Notes in Computer Science, vol. 4076, Springer, 2006, pp. 452–465.
+32. David Freeman, Michael Scott, and Edlyn Teske, A taxonomy of pairing-friendly elliptic
+    curves, Journal of Cryptology (2009), DOI: 10.1007/s00145-009-9048-z, to appear in print.
+33. Ernst-Ulrich Gekeler, The distribution of group structures on elliptic curves over finite prime
+    fields, Documenta Mathematica 11 (2006), 119–142.
+34. Torbjörn Granlund and the GMP development team, GNU Multiple Precision Arithmetic
+    Library, September 2010, version 5.0.1, available at http://gmplib.org/.
+35. James L. Hafner and Kevin S. McCurley, A rigorous subexponential algorithm for computation
+    of class groups, Journal of the American Mathematical Society 2 (1989), no. 4, 837–850.
+36. David Harvey, zn poly: a library for polynomial arithmetic, 2008, version 0.9, http://cims.
+    nyu.edu/~ harvey/zn_poly.
+37.         , Faster polynomial multiplication via multipoint Kronecker substitution, Journal of
+    Symbolic Computation 44 (2009), no. 10, 1502–1510.
+38. Derek F. Holt, Bettina Eick, and Eamonn A. O’Brien, Handbook of computational group
+    theory, CRC Press, 2005.
+39. Everett W. Howe, On the group orders of elliptic curves over finite fields, Compositio Math-
+    ematica 85 (1993), 229–247.
+40. Dale Husemöller, Elliptic curves, Springer-Verlag, 1987.
+41. Michael J. Jacobson, Jr., S. Ramachandran, and Hugh C. Williams, Numerical results on
+    class groups of imaginary quadratic fields, Algorithmic Number Theory Symposium–ANTS
+    VII (F. Hess, S. Pauli, and M. Pohst, eds.), Lecture Notes in Computer Science, vol. 4076,
+    Springer, 2006, pp. 87–101.
+42.         , Supplementary tables for “Numerical results on class groups of imaginary qua-
+    dratic fields”, 2006, available at http://www.math.tu-berlin.de/~ kant/ants/Proceedings/
+    ramachandran-74/ramachandran-74-tables.pdf.
+43. Daeyeol Joen and Chang Heon Kim, On the arithmetic of certain modular curves, Acta
+    Arithmetica 130 (2007), no. 2, 181–194.
+44. Ezekiel J. Kachisa, Edward F. Schaefer, and Michael Scott, Constructing brezingweng pairing
+    friendly elliptic curves using elements in the cyclotomic field, Pairing-Based Cryptography-
+    Pairing 2008, Lecture Notes in Computer Science, vol. 5209, Springer, 2008, pp. 126–135.
+45. Koray Karabina and Edlyn Teske, On prime-order elliptic curves with embedding degrees
+    k = 3, 4, and 6, Algorithmic Number Theory Symposium–ANTS VIII (A. J. van der Poorten
+    and A. Stein, eds.), Lecture Notes in Computer Science, vol. 5011, Springer, 2008, pp. 102–117.
+46. Kiran S. Kedlaya and Andrew V. Sutherland, Computing L-series of hyperelliptic curves,
+    Algorithmic Number Theory Symposium–ANTS VIII (A. J. van der Poorten and A. Stein,
+    eds.), Lecture Notes in Computer Science, vol. 5011, Springer, 2008, pp. 312–326.
+47. David Kohel, Endomorphism rings of elliptic curves over finite fields, PhD thesis, University
+    of California at Berkeley, 1996.
+48. Daniel Sion Kubert, Universal bounds on the torsion of elliptic curves, Proceedings of the
+    London Mathematical Society 33 (1976), 193–237.
+49. J. C. Lagarias and A. M. Odlyzko, Effective versions of the Chebotarev density theorem,
+    Algebraic number fields: L-functions and Galois properties (Proc. Sympos., Univ. Durham,
+    Duram, 1975), Academic Press, 1977, pp. 409–464.
+50. Serge Lang, Elliptic functions, second ed., Springer-Verlag, 1987.
+51. Georg-Johann Lay and Horst G. Zimmer, Constructing elliptic curves with given group order
+    over large finite fields, Algorithmic Number Theory Symposium–ANTS I (L. M. Adleman and
+    M.-D. Huang, eds.), Lecture Notes in Computer Science, vol. 877, 1994, pp. 250–263.
+52. Hendrik W. Lenstra, Jr., Factoring integers with elliptic curves, Annals of Mathematics 126
+    (1987), 649–673.
+               COMPUTING HILBERT CLASS POLYNOMIALS WITH THE CRT                                    37
+
+                                                                   √
+53. J. E. Littlewood, On the class-number of the corpus P ( −k), Proceedings of the London
+    Mathematical Society 27 (1928), 358–372.
+54. J. Miret, R. Moreno, A. Rio, and M. Valls, Determining the 2-sylow subgroup of an elliptic
+    curve over a finite field, Mathematics of Computation 74 (2005), no. 249, 411–427.
+55. J. Miret, R. Moreno, D. Sadornil, J. Tena, and M. Valls, Computing the height of volcanoes
+    of l-isogenies of elliptic curves over finite fields, Applied Mathematics and Computation 196
+    (2008), no. 1, 67–76.
+56. J. B. Rosser and L. Schoenfeld, Approximate formulas for some functions of prime numbers,
+    Illinois Journal of Mathematics 6 (1962), 64–94.
+57. Karl Rubin and Alice Silverberg, Choosing the correct elliptic curve in the CM method, Math-
+    ematics of Computation 79 (2010), 545–561.
+58. Arnold Schönhage and Volker Strassen, Schnelle Multiplikation großer Zahlen, Computing 7
+    (1971), 281–292.
+59. René Schoof, The exponents of the groups of points on reductions of an elliptic curve, Arith-
+    metic Algebraic Geometry (G. van der Geer, F. Oort, and J. Steenbrink, eds.), Birkhäuser,
+    1991, pp. 325–335.
+60. I. Schur, Einige Bemerkungen zu der vorstehenden Arbeit des Herrn G. Polya: Über die
+    Verteilung der quadratischen Reste und Nichtreste, Nachr. Kon. Ges. Wiss. Göttingen, Math.-
+    phys. Kl. (1918), 30–36, in Gesammelte Abhandlungen, vol. II, pp. 239–245, Springer, 1973.
+61. Jean-Pierre Serre, Complex multiplication, Algebraic Number Theory (J.W.S. Cassels and
+    A. Fröhlich, eds.), Academic Press, 1967.
+62. Joseph H. Silverman, The arithmetic of elliptic curves, Springer, 1986.
+63.          , Advanced topics in the arithmetic of elliptic curves, Springer, 1999.
+64. Andrew V. Sutherland, Order computations in generic groups, PhD thesis, MIT, 2007, http:
+    //groups.csail.mit.edu/cis/theses/sutherland-phd.pdf.
+65.          , Structure computation and discrete logarithms in finite abelian p-groups, Mathemat-
+    ics of Computation 80 (2011), 477–500.
+66.          , Constructing elliptic curves over finite fields with prescribed torsion, Mathematics of
+    Computation 81 (2012), 1131–1147.
+67. Edlyn Teske, A space efficient algorithm for group structure computation, Mathematics of
+    Computation 67 (1998), 1637–1663.
+68. Frederik Vercauteren, Pairings on elliptic curves, Identity-Based Cryptography (M. Joye and
+    G. Neven, eds.), Cryptology and Information Security Series, vol. 2, IOS Press, 2008, pp. 13–
+    30.
+69. Ulrich Vollmer, Invariant and discrete logarithm computation in quadratic orders, PhD thesis,
+    Technische Universität Darmstadt, 2003.
+70. Joachim von zur Gathen and Jürgen Gerhard, Modern computer algebra, second ed., Cam-
+    bridge University Press, 2003.
+71. Lawrence C. Washington, Elliptic curves: Number theory and cryptography, second ed., CRC
+    Press, 2008.
+
+   Massachusetts Institute of Technology, Cambridge, Massachusetts 02139
+   E-mail address: drew@math.mit.edu
+

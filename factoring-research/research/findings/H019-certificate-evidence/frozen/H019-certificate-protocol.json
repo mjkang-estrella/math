@@ -1,0 +1,117 @@
+{
+  "schema": "H019-expanded-protocol-v1",
+  "controlling_preregistration": "research/hypotheses/H019.md",
+  "scope": "One mathematical diagnostic only; N-only odd inputs without composite, semiprime or hard-factor promises. No factorer, smoothness sample, field-admissibility claim, all-input geometry claim, population-frequency inference or verified factoring complexity improvement.",
+  "input_rule": {
+    "generator": "Python stdlib random.Random(1919), one persistent RNG, exactly four getrandbits calls in listed order",
+    "N": "(1 << (n-1)) | rng.getrandbits(n-1) | 1",
+    "seed": 1919,
+    "cases": [
+      {"id": "n4096-d15", "n": 4096, "d": 15},
+      {"id": "n16384-d22", "n": 16384, "d": 22},
+      {"id": "n65536-d34", "n": 65536, "d": 34},
+      {"id": "n262144-d52", "n": 262144, "d": 52}
+    ],
+    "worker_boundary": "One JSON object containing N_hex only. Degree is derived from N.bit_length by the frozen public map. Output paths and wall caps are public runner data. No factors or instance-selection advice.",
+    "archive": "Every generated N is stored in inputs.json and its N-only worker JSON before the immutable freeze manifest is written. Input-generation elapsed work is part of the 55 second wave."
+  },
+  "base_and_heights": {
+    "m": "floor(N^(1/d)); integer Newton starts at 2^ceil(bit_length(N)/d), monotonically descends, then corrects using exact powers",
+    "f": "ordinary ascending nonnegative base-m digits, verified actual degree d, leading coefficient 1, digits in [0,m), f(m)=N, and m^d <= N < (m+1)^d",
+    "hbits": "ceil(67473*n/(20000*d*d)) with exact integer division",
+    "H": "2^hbits",
+    "hstar": "ceil fifth root of H^4; verify (hstar-1)^5 < H^4 <= hstar^5",
+    "domain_failure": "unknown; keep N and d fixed"
+  },
+  "squarefree": {
+    "prime": 65537,
+    "prime_verification": "Reference trial divides 65537 by every integer from 2 through isqrt(65537)=256, exactly once in outer setup after source/input freeze; all remainders archived.",
+    "candidate": "Polynomial extended Euclidean algorithm modulo 65537 gives s*f+t*f'=1. Monicity and prime modulus imply square-free over Q.",
+    "reference": "Independently convolve Bezout polynomials with f and f' and reduce modulo 65537, checking constant 1 and every higher coefficient 0; if candidate modular gcd is nonunit independently compute modular gcd.",
+    "failure": "unknown, with no second modulus and no square-free-part substitution"
+  },
+  "global_count": {
+    "R": "2H+2",
+    "coefficient_index": "d-2",
+    "predicate": "f[d-2]*R^(d-2) > sum_(j != d-2) f[j]*R^j, exact integers",
+    "meaning": "Exactly d-2 roots inside R and two outside, no roots on the circle. All d-2 inside roots must also be covered by distinct certified one-root disks. This accounts for all d roots without locating the two exterior roots.",
+    "failure": "unknown"
+  },
+  "approximation": {
+    "polynomial": "degree-(d-2) truncation f[0:d-1] only for proposing centers; exact verification always uses full f",
+    "normalization": "Each integer coefficient divided by the maximum absolute coefficient using Python int/int true division before any direct floating conversion of an integer",
+    "arithmetic": "Python binary64 complex arithmetic, one deterministic simultaneous Aberth-Ehrlich iteration",
+    "cauchy_radius": "1 + max_(j<k) abs(a[j]/a[k]), k=d-2, a normalized coefficients",
+    "initial_centers": "Cauchy_radius * exp(2*pi*i*(j+1/2)/k), j=0,...,k-1",
+    "update": "Evaluate p and p' by complex Horner; Newton n_i=p(z_i)/p'(z_i); correction n_i/(1-n_i*sum_(j!=i)1/(z_i-z_j)). Compute every correction from the OLD vector, then subtract all corrections simultaneously.",
+    "max_sweeps": 500,
+    "stop": "Every correction modulus <= 2^-42 after a simultaneous sweep",
+    "failure": "Any collision, zero derivative or Aberth denominator, nonfinite value, arithmetic exception, or failure to converge yields unknown. No retries, alternative starts, precision, radius or methods.",
+    "rationalization": "Python round(real*2^40), round(imag*2^40), nearest with ties to even, numerator integers over Q=2^40",
+    "radius": "Exactly 2^-24 for every disk"
+  },
+  "exact_disks": {
+    "Q": 1099511627776,
+    "radius_denominator": 16777216,
+    "radius_times_Q": 65536,
+    "candidate_taylor": "Integer Gaussian Horner shifting. At extension level l, new[j]=(x+iy)*old[j]+Q*old[j-1], missing terms zero; new[0] additionally adds f_i*Q^l. Final coefficients A_j=Q^d f^(j)(z)/j!.",
+    "reference_taylor": "Direct binomial formula A_j=sum_(i=j)^d f_i*binom(i,j)*(x+iy)^(i-j)*Q^(d-i+j), precomputed Gaussian powers. No candidate Taylor or predicate helper is imported/called.",
+    "predicate": "max(abs(Re A_1),abs(Im A_1))*2^(24*(d-1)) > sum_(j!=1)(abs(Re A_j)+abs(Im A_j))*2^(24*(d-j)). Strict inequality proves exactly one full-f root.",
+    "disjointness": "Squared coordinate distance > (2*65536)^2 in numerator units for each pair",
+    "containment": "R*Q > 65536 and x^2+y^2 < (R*Q-65536)^2 for each inside disk",
+    "failure": "unknown, not root absence or positive supply",
+    "evidence": "All rational disks; Taylor SHA-256 over hex(real),hex(imag) newline for each A_j; exact disk comparison lhs/rhs hex, bit lengths and hashes"
+  },
+  "geometry_and_count": {
+    "r": 2,
+    "k": "d-2, must be at least 3",
+    "U_i": "max(1,abs(Re z_i)+abs(Im z_i)+2^-24)",
+    "L_ij": "max(0,max(abs(Re(z_i-z_j)),abs(Im(z_i-z_j)))-2*2^-24)",
+    "pair_lower": "L_ij/(U_i*U_j), all pairs archived as exact reduced rational numbers",
+    "kappa_cert": "(1/6)*min_(i<j<l) L_ij*L_il*L_jl/(U_i^2*U_j^2*U_l^2), positive, reduced exact rational x/y; ties retain first lexicographic triple",
+    "candidate_geometry": "Compare integer rational cross-products for all pairs/triples and reduce selected minimum by gcd",
+    "reference_geometry": "Independently reconstruct rational coordinates/U/L and all pair/triple fractions using Fraction",
+    "E": "5*d*(k-2)",
+    "equation_11": "(x*hstar)^E*N^9 >= y^E*[20736*2^r*12^d*(d+1)*H^(d+6)]^(5*d)",
+    "equality": "Accepted in equation 11; disk and global Rouche predicates remain strictly greater",
+    "reference_comparison": "Recompute using separate x^E and hstar^E factors and separately expanded 20736,2,12,d+1 factors; H power implemented by its exact binary shift",
+    "primitive_upper_count": "(hstar-1)*(2*hstar-1)^2+k, computed only as a theorem witness when prerequisites and equation 11 pass independent verification",
+    "population": "Genuine quadratics aX^2+bX+c with 1<=a<=H, |b|,|c|<=H, primitive and irreducible over Q, satisfying |Res(f,g)|^(5d)*N^9 <= [(3H)^d*(d+1)*A^2]^(5d), A=max f_i",
+    "qualifications": "No irreducibility of f asserted; square-free reducible f permitted for count. Reducibles, contents, zero norms and square-class parity remain separate as in H017. No numeric all-output bound from an unspecified O constant. H016 processing and H018 corrected degree model separate. Heuristic smoothness comparisons imply no useful supply, rank or factoring theorem."
+  },
+  "controls": {
+    "order": ["sqrt2-correct", "imaginary-correct", "zero-incorrect", "duplicate-disks", "repeated-polynomial"],
+    "center_generation_before_freeze": "Q=2^40. Let a=isqrt(2*Q^2); increment a iff 8*Q^2 > (2*a+1)^2, obtaining nearest integer to sqrt(2)*Q. Expanded integer centers are frozen in controls.json.",
+    "cases": [
+      {"id": "sqrt2-correct", "f": [-2,0,1], "disks": "[(a,0),(-a,0)]/Q", "expected_accept": true, "expected_gate": "accepted"},
+      {"id": "imaginary-correct", "f": [1,0,1], "disks": "[(0,Q),(0,-Q)]/Q", "expected_accept": true, "expected_gate": "accepted"},
+      {"id": "zero-incorrect", "f": [-2,0,1], "disks": "[(0,0),(-a,0)]/Q", "expected_accept": false, "expected_gate": "disk_rouche"},
+      {"id": "duplicate-disks", "f": [-2,0,1], "disks": "[(a,0),(a,0)]/Q", "expected_accept": false, "expected_gate": "disjointness"},
+      {"id": "repeated-polynomial", "f": [1,-2,1], "disks": "[(Q,0),(Q,0)]/Q", "expected_accept": false, "expected_gate": "squarefree"}
+    ],
+    "meaning": "Both candidate and independent reference must agree on each expected gate. Controls do not count as research-input passes."
+  },
+  "execution": {
+    "trials": 1,
+    "internal_seconds": 55,
+    "external_seconds": 60,
+    "controls_total_seconds": 3,
+    "research_worker_seconds": 12,
+    "final_evidence_reserve_seconds": 1,
+    "worker_cap": "min(public worker cap, internal deadline-now-1 second evidence reserve); kill entire fresh worker process group on timeout",
+    "accounting": "Outer monotonic clock begins before directory/input/control generation. Freeze file copies/hashes, prime check, process startup, controls, candidates, references, evidence I/O and sealing all charged. Source authoring/static syntax checks precede this single execution and are not candidate trials.",
+    "frozen_files": "Runner, candidate, independent reference, expanded protocol, generated full input list and each N-only JSON, expanded controls, H019 complete preregistration, full H017 proof/review, and required project instructions/checkpoint; SHA-256 manifest written before importing either arithmetic implementation",
+    "evidence_policy": "Exclusive-create evidence directory; refuse existing directory. Append progress logs and exclusive-create witnesses/results. Initial all-unstarted outcomes is atomically checkpointed during this one run. Preserve partial files and statuses if worker dies. Never rerun or modify original frozen source to improve outcomes.",
+    "statuses": ["pass", "unknown", "verification_failure", "error", "timeout", "unstarted"],
+    "partial_counters": "At timeout, retain last flushed stage/counters/times as partial lower observations; incomplete-stage work and further counters are unknown, not zero",
+    "implementation_rejection": "Any false acceptance or candidate/reference inconsistency rejects the implementation",
+    "continuation": "All five correct controls AND independently verified certificates on BOTH n=65536 and n=262144. Otherwise inconclusive at this fixed implementation/budget, except implementation rejection above. An individual valid certificate retains its finite count even if overall criterion fails.",
+    "postrun": "Read existing evidence and write finding only; no new experiment, modified-source rerun, package installation, shared changes, recursive delegation, commit, publication or scheduler. Parent runs shared project checks and commissions independent review."
+  },
+  "encodings": {
+    "huge_integers": "Signed Python hex strings, no decimal digit-limit override",
+    "large_product_hash": "SHA-256 of minimal unsigned big-endian bytes; zero uses empty bytes; bit_length also stored",
+    "factor_operands": "Every equation-11 product stores exact hexadecimal bases and integer exponents; huge fully multiplied products need not be serialized",
+    "file_hashes": "SHA-256 of raw file bytes"
+  }
+}

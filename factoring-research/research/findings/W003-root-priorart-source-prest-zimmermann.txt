@@ -1,0 +1,522 @@
+NON-LINEAR POLYNOMIAL SELECTION FOR THE NUMBER
+                  FIELD SIEVE
+
+                     THOMAS PREST AND PAUL ZIMMERMANN
+
+       Abstract. We present an algorithm to find two non-linear polynomials for the
+       Number Field Sieve integer factorization method. This algorithm extends Mont-
+       gomery’s “two quadratics” method; for degree 3, it gives two skewed polynomials
+       with resultant O(N 5/4 ), which improves on Williams O(N 4/3 ) result [12].
+
+
+
+                                   1. Introduction
+   The Number Field Sieve (NFS) is the best-known algorithm to factor integers
+with no small factor. Since the factorization of RSA-130 in 1996, it has been used
+to break new factorization records, the last one being the RSA-768 challenge [5]. To
+factor an integer N , the first stage of NFS finds two irreducible polynomials f, g ∈
+Z[x] with a common root modulo N ; this stage is known as “polynomial selection”.
+Much algorithmic progress has been done recently in the polynomial selection
+stage, due to the work of Murphy [9] and Kleinjung [3, 4]. Those algorithms
+produce a non-linear polynomial f — of degree 6 for the factorization of RSA-768
+— and a linear polynomial g. No efficient method is known to generate two non-
+linear polynomials, apart from Montgomery’s two-quadratics method, described in
+[1] and [9, Section 2.3.1], which is competitive for numbers up to 110 − 120 digits
+only [9]. This article presents an algorithm giving two non-linear polynomials
+with small coefficients, making progress towards the ultimate goal of generating
+two such polynomials whose resultant is N .
+   The plan of the article is the following. Section 1.1 defines the notations used
+and introduces some useful background on lattice reduction and resultants, then
+§2 recalls the current algorithms known, namely Montgomery’s two quadratics
+method (§2.2) and Williams algorithm (§2.4). We then present in §3 our main
+contributions, together with concrete examples, and conclude in §4.
+
+
+1.1. Notation and Background. Let N be the number we want to factor. We
+note ||a|| the Euclidean norm of a vector a. In the whole article we use some well-
+known results about lattice reduction. A lattice is a set of d independent vectors
+b1 , ..., bd over Zn , with n ≥ d. We represent a (column) vector bj by its transpose
+
+
+  Date: October 15, 2010. Affiliation: ENS Cachan and INRIA Nancy - Grand Est.
+                                             1
+2                           THOMAS PREST AND PAUL ZIMMERMANN
+
+[b1,j , ..., bn,j ]t , and a lattice by the corresponding matrix
+                                                                  
+                                           b1,1 ... b1,d
+                                          .    . . . .. 
+                                          ..
+                                       L=               .
+                                                       . 
+                                           bn,1 ... bn,d
+
+The volume of a lattice L (identifying a lattice and its matrix) is vol(L) =
+det(Lt L)1/2 , where Lt is the transpose of L. When d = n, we have vol(L) = | det L|.
+It is known that the LLL algorithm [6] can find a short non-zero vector of a d-
+dimensional lattice with norm at most 2(d−1)/4 vol(L)q1/d [2, Theorem 2]1.
+                                                                      √
+   It is known by Minkowski’s second theorem that λ1 (L)λ2 (L) ≤ γd vol(L)1/d ,
+where γd ≤ 1 + d/4 [10, Theorem 5 p. 35], λ1 (L) is the norm of the shortest non-
+zero vector of L, and λ2 (L) is the second minimum. Also, Theorem 9 p. 48 from
+[10] states that the second vector returned by LLL satisfies ||b2 || ≤ 2(d−1)/2 λ2 (L)
+with the parameter δ = 3/4 (used by default by most LLL implementations). This
+proves that LLL finds at least two short non-zero vectors of norm about vol(L)1/d ,
+with a constant multiplicative factor depending only on the dimension d. More
+details about lattice reduction and the LLL algorithm can be found in [10].
+
+1.1.1. Known Facts About Resultants.      In this article, we consider the resultant
+Res(f, g) of two polynomials f = di=0 ai xi and g = di=0 bi xi with integer coeffi-
+                                     P                  P
+
+cients. If we consider ai , bi as symbolic variables, the resultant in x is an homo-
+geneous polynomial of total degree 2d in the variables ad , . . . , a0 , bd , . . . , b0 . This
+can be seen easily since the resultant is the determinant of the Sylvester matrix
+associated to f and g [11, Chapter 6], which in this case is (here for d = 3):
+                                                                      
+                                       a3    0     0    b3   0     0
+                                                                      
+                                    a
+                                    2      a3     0    b2 b3      0 
+                                                                     
+                                                                      
+                                    a1     a2 a3 b 1 b 2 b 3 
+                                   
+                                                              
+                                                                      .
+                                    a0     a1 a2 b 0 b 1 b 2 
+                                                                      
+                                                             
+                                    0      a0 a1 0 b 0 b 1 
+                                                             
+                                                             
+                                        0    0    a0    0    0 b0
+The Sylvester matrix contains first d columns with coefficients from f , then d
+columns with coefficients from g. A decomposition by column of the determinant
+clearly shows the resultant is homogeneous of degree 2d. For example for d = 2
+the resultant is:
+            a20 b22 − a1 a0 b2 b1 + a2 a0 b21 + a21 b2 b0 − 2a2 a0 b2 b0 − a2 a1 b1 b0 + a22 b20 ,
+
+    1There is a typo in formula (6.1) of [2], where vol(L) should read vol(L)1/d .
+         NON-LINEAR POLYNOMIAL SELECTION FOR THE NUMBER FIELD SIEVE                                                   3
+
+and for d = 3:
+       a1 a20 b23 b2 − a30 b33 − a2 a20 b3 b22 + a3 a20 b32 − a21 a0 b23 b1 + 2a2 a20 b23 b1 + a2 a1 a0 b3 b2 b1
+  − 3a3 a20 b3 b2 b1 − a3 a1 a0 b22 b1 − a22 a0 b3 b21 + 2a3 a1 a0 b3 b21 + a3 a2 a0 b2 b21 − a23 a0 b31 + a31 b23 b0
+  − 3a2 a1 a0 b23 b0 + 3a3 a20 b23 b0 − a2 a21 b3 b2 b0 + 2a22 a0 b3 b2 b0 + a3 a1 a0 b3 b2 b0 + a3 a21 b22 b0
+  − 2a3 a2 a0 b22 b0 + a22 a1 b3 b1 b0 − 2a3 a21 b3 b1 b0 − a3 a2 a0 b3 b1 b0 − a3 a2 a1 b2 b1 b0 + 3a23 a0 b2 b1 b0
+  + a23 a1 b21 b0 − a32 b3 b20 + 3a3 a2 a1 b3 b20 − 3a23 a0 b3 b20 + a3 a22 b2 b20 − 2a23 a1 b2 b20 − a23 a2 b1 b20 + a33 b30 .
+
+
+   In the whole article we write x  y for x = O(y), x  y for y = O(x), and x ≈ y
+for x = Θ(y), where those big-O estimates might include constants depending on
+the degree d. When we write x mod N , we consider a symmetric remainder, for
+example −N/2 ≤ x mod N < N/2.
+
+                                          2. State of the Art
+  The first stage of NFS consists in finding two irreducible polynomials f, g ∈ Z[x]
+whose resultant equals N , or a small multiple of N . (Equivalently, f and g admit
+a common root m modulo N .) Assume both f and g have degree d. We also want
+f = di=0 ai xi and g = di=0 bi xi to have coefficients as small as possible. More
+      P                   P
+
+generally, we can use skewed polynomials, with |ai |, |bi | ≈ s−i |a0 |, and a skewness
+s ≥ 1, in which case we want to miminize maxi (|ai |si−d/2 , |bi |si−d/2 ). In the whole
+article, we use the following running example:
+    c59 = 71641520761751435455133616475667090434063332228247871795429
+
+2.1. The base-(`, m) method. For the sake of completeness, we recall this method,
+which is currently the best-known one [3]. It was used for the factorization of RSA-
+768 [5]. It produces a polynomial f = ad xd + · · · + a0 of degree d and a linear
+polynomial g = `x − m. Choose the leading coefficient ad > 0 of f , choose an
+integer ` > 0, and choose m near from (N/ad )1/d such that N ≡ ad md mod `.
+Then we can find a decomposition
+                        N = ad md + ad−1 md−1 ` + · · · + a1 m`d−1 + a0 `d ,
+such that |ad−1 | < dad + `, and the remaining coefficients |ai | for 0 ≤ i ≤ d − 2 are
+bounded by m + `. We then use the polynomials
+                                             d
+                                                   ai x i ,
+                                             X
+                                      f=                        g = `x − m.
+                                             i=0
+
+  For example with N = c59, d = 3, ad = 60, ` = 46189, we obtain with m =
+10608920182166101507:
+      f = 60x3 + 21156x2 − 4861197312110223827x − 1010717931351678842,
+whose resultant with g = `x − m equals −N .
+4                      THOMAS PREST AND PAUL ZIMMERMANN
+
+2.2. Montgomery’s “Two Quadratics” Algorithm. This algorithm, due to
+Montgomery, is described in [1]; see also [9, Section 2.3.1]. It yields two quadratic
+polynomials with coefficients of optimal size. So far, nobody has managed to
+generalize it to larger degrees, with Res(f, g) = |N |. The idea is the following: let
+f = a2 x2 + a1 x + a0 and g = b2 x2 + b1 x + b0 . We consider the vectors
+                                                     
+                                  a0                b0
+                             a = a1      and b = b1  .
+                                                  
+                                  a2                b2
+The polynomials f and g admit a common root m modulo N if and only if a and
+b are both orthogonal (over ZN ) to the vector
+                                             
+                                            1
+                                          
+                                           m  .
+                                               
+                                             2
+                                           m
+Montgomery’s two quadratics algorithm works as follows:
+                                                    !
+                                                 N
+  (1) choose a prime p such that p < N 1/2 and        = 1. The second condition
+                                                  p
+      guarantees the existence of a square root of N modulo p;
+  (2) let c be a square root of N modulo p such that |c − N 1/2 | ≤ p/2;
+  (3) the vector
+                                                     
+                       c0            p             1
+                      c1  := 
+                    c=              c      = p  m  mod N
+                                                 
+                       c2       (c2 − N )/p       m2
+        with m = c/p mod N , corresponds to a geometric progression (GP) modulo
+        N , whose terms satisfy ci = O(N 1/2 ), i = 0, 1, 2;
+    (4) let s = 1/c mod p. Then, with t = c2 s mod p, the vectors
+                                                                 
+                                          c             (ct − c2 )/p
+                                   a0 = −p and b0 =      −t
+                                                                 
+                                                                    
+                                          0                  1
+        are both orthogonal to c over ZN ;
+    (5) an LLL-reduction on {a’,b’} yields a short basis {a,b} with a = [a0 , a1 , a2 ]t
+        and b = [b0 , b1 , b2 ]t . We then consider the polynomials f = a2 x2 + a1 x + a0
+        and g = b2 x2 + b1 x + b0 .
+The volume of the lattice spanned by a0 and b0 is about cp, thus we can expect
+                                     √
+short vectors of norm about cp. If we take p = O(1), since c = O(N 1/2 ), this
+yields kak, kbk = O(N 1/4 ). Each prime p yields two distinct pairs of polynomials
+(indeed we have two possible choices for c, one for each square root of N modulo
+p). Therefore we can generate many pairs of polynomials, among which we just
+have to look for the best pair.
+Example. With N = c59:
+       NON-LINEAR POLYNOMIAL SELECTION FOR THE NUMBER FIELD SIEVE                        5
+                                                                           !
+                                                       N
+   (1) Let us choose for example p = 7; we indeed have   = 1.
+                                                       p
+   (2) This yields c = 267659337146589069735395147282; we indeed have c2 =
+       1 (mod
+            p) = N (mod p).                    
+                             7
+            267659337146589069735395147282 
+   (3) c =                                     
+            −106229264412112666619057115415
+             "                                 #       "                          #
+           267659337146589069735395147282        168123801856924135080091100649
+   (4) a =
+         0
+                         −7               , b0 =               −4
+                          0                                    1
+   (5) An LLL-reduction
+                        yieldstwo vectors:
+                                                            
+              −391799550615569               196400087271641
+       a=  −155498322989920 and b =  77947726478583 
+                                                           
+              −23601103928385              −671323072887913
+                                     2
+   (6) finally f = −23601103928385x − 155498322989920x − 391799550615569
+       and g = −671323072887913x2 +77947726478583x+196400087271641 admit
+       m = c/p as common root modulo N , and we have Res(f, g) = N .
+
+2.3. Using Geometric Progressions. In [9, page 38] Murphy presents another
+idea from Montgomery to find non-linear polynomials, based on a personal com-
+munication from Montgomery [7]; see also [8]. The starting point is a small GP of
+2d − 1 terms modulo N .
+   In fact, it turns out that a GP of d + 1 terms is enough. Given such a GP, we
+can obtain two non-linear polynomials of degree d with a common root modulo
+N as follows. Assume we have a GP c0 , c1 , . . . , cd of d + 1 terms, such that ci =
+c0 mi mod N . We then form the matrix:
+                                                                     
+                                 1        0     ...        0     0
+                         
+                                0        1     ...        0     0    
+                                                                      
+                                 0        0     ...        0     0
+                                                                     
+                                                                     
+                                 ..       ..    ..         ..    ..
+                                                                     
+                       L=
+                                 .        .       .        .     .   .
+                                                                      
+                                                                     
+                         
+                                0   0          ...  1     0          
+                                                                      
+                                 0   0          ...  0     1
+                                                                     
+                                                                     
+                                Kc0 Kc1         ... Kcd−1 Kcd
+For K a large enough integer, LLL-reducing this matrix gives short vectors of the
+form [a0 , a1 , ..., ad−1 , ad , 0]t , since the last coordinate has to be a multiple of K,
+and for K larger than the expected norm of the shortest vector, the only possible
+multiple of K is zero. Since the last coordinate is zero, it yields a0 c0 +· · ·+ad cd = 0,
+thus f = ad xd + · · · + a0 admits m as root modulo N .
+   The volume of the lattice generated by L is given by
+                                      q
+                    det(Lt L)1/2 =        K 2 (c20 + · · · + c2d ) + 1 ≈ Kc,
+6                       THOMAS PREST AND PAUL ZIMMERMANN
+
+if c denotes the maximal value of the |ci |. We can thus expect short vectors of norm
+about (Kc)1/(d+1) . To ensure the last coordinate is zero, we need K  (Kc)1/(d+1) ,
+i.e., K  c1/d . This gives short vectors of norm about c1/d , which gives a resultant
+about c2 (see §1.1.1). With this method, if we want a resultant near N , we thus
+need to find a GP with terms O(N 1/2 ), independently of the degree d. This is easy
+with degree d = 2, but seems more difficult for degree d ≥ 3.
+   Reciprocally, assume we have found two polynomials f, g of degree d with com-
+mon root m modulo N and small coefficients. Then a = [a0 , a1 , . . . , ad ]t and
+b = [b0 , b1 , . . . , bd ]t are both orthogonal to [1, m, . . . , md ]t modulo N . Thus the GP
+ci = mi mod N should yield the short vectors a and b by the above algorithm.
+However there is no reason why the mi mod N would be small, thus we are not
+sure the “small GP” idea can generate optimal polynomials for d ≥ 3.
+   Note that if c0 = 1, we can remove the first column and the first row of the
+matrix L, and replace K by 1. Indeed, if [a1 , . . . , ad , a1 c1 + · · · + ad cd ]t is a short
+vector, then it suffices to take a0 = −a1 c1 − · · · − ad cd . We use that simpler form,
+following Williams (see below).
+2.4. Williams Algorithm. In [12, §4.2], Williams presents another algorithm
+producing two O(N 1/4 ) quadratic polynomials. It works as follows. First take
+r1 = bN 1/2 e + k with |k| small, and r2 = r12 mod N . Then LLL-reduce the matrix
+                                                      
+                                          r1 r2
+                                    L =  −1 0 
+                                        
+                                                .
+                                           0 −1
+Since det(Lt L) = r12 +r22 +1, we can expect short vectors of norm about det(Lt L)1/4 ≈
+N 1/4 . A short vector [a0 := a1 r1 + a2 r2 , −a1 , −a2 ]t corresponds to a polynomial
+f = a2 x2 +a1 x+a0 with root r1 modulo N . In fact, it is easy to see that Williams al-
+gorithm corresponds to Montgomery’s two quadratics method with p = 1. Indeed,
+for p = 1, we have s = t = 0 in Montgomery’s algorithm, which leads to the vectors
+a0 = [c, −1, 0]t and b0 = [−c2 mod N, 0, 1]t . With r1 = c and r2 = c2 mod N , this
+is essentially Williams algorithm.
+   In [12, §4.3], Williams proposes yet another algorithm, producing two O(N 2/9 )
+cubics, which proceeds along the same lines. Choose r1 = bN 1/3 e + k with |k|
+small, then compute r2 = r12 mod N and r3 = r13 mod N , and reduce the matrix
+                                                          
+                                     r1 r2 r3
+                                    −1 0  0 
+                                 L=          .
+                                             
+                                    0 −1 0 
+                                     0  0 −1
+The determinant of Lt L is r12 + r22 + r32 + 1 = O(N 4/3 ), thus the short vectors
+have norm O(N 2/9 ). Let [a0 , a1 , a2 , a3 ]t be a short vector, then by construction
+we have a0 = −a1 r1 − a2 r2 − a3 r3 , thus a3 r3 + a2 r2 + a1 r1 + a0 = 0, i.e., f =
+a3 x3 + a2 x2 + a1 x + a0 admits r1 as root modulo N .
+        NON-LINEAR POLYNOMIAL SELECTION FOR THE NUMBER FIELD SIEVE                            7
+
+  For example, with N = c59, take r1 = dN 1/3 e = 41532518328905347816, the
+LLL-reduced matrix is:
+                             8342133927919 −7843456792789
+                                                                               
+              8794918866367
+             4558622527656   −12431783167 15752444867166 
+                                                           .
+                                                          
+             −4793408682249 9745365241781   1613475175274 
+            
+
+               3460228261843 −7034907821749 −1164722804033
+
+If we consider the first two columns, this yields the polynomials
+
+f = 3460228261843x3 − 4793408682249x2 + 4558622527656x + 8794918866367,
+g = 7034907821749x3 − 9745365241781x2 + 12431783167x − 8342133927919,
+
+whose resultant is a 79-digit number, multiple of N , and about N 1.33 .
+
+
+                                 3. Our Contribution
+3.1. Heuristic Evidence. Before we present our algorithm, we give heuristic ev-
+idence that their exist pairs of polynomials of degree d with coefficients O(N 1/(2d) ),
+and whose resultant is N . Consider two polynomials of degree d, say f = ad xd +
+· · · + a0 and g = bd xd + · · · + b0 . As seen in §1.1.1, their resultant is an homoge-
+neous polynomial of total degree 2d in the variables ad , . . . , a0 , bd , . . . , b0 . Assume
+we choose ad , . . . , a0 , bd , . . . , b0 to be random O(N 1/(2d) ) values, then the resultant
+is O(N ). Since we have 2d + 2 coefficients, there are ≈ N 1+1/d different choices for
+the coefficients, and we expect ≈ N 1/d resultants to be equal to N , assuming uni-
+formity of the resultant values. This uniformity assumption does not seem to hold
+exactly in practice. For example if we consider all 28 choices for a3 , ..., a0 , b3 , ..., b0
+modulo 2 for d = 3, then in 160 cases (62.5%) of them the resultant is divisible by 2,
+and in only 96 cases (37.5%) it is 1 mod 2. For p = 3 we have the following proba-
+bilities for the three residue classes: 40.7% for 0 mod 3, and 29.6% for {1, 2} mod 3.
+For p = 5 we have 23.2% for 0 mod 5 and 19.2% for {1, 2, 3, 4} mod 5. For exam-
+ple, with N = 1000003, d = 3, and 0 ≤ a3 , . . . , a0 , b3 , . . . , b0 ≤ 20 ≈ 2N 1/(2d) , we
+find 3744 resultants equal to N .
+
+3.2. Generalizing Montgomery’s Method. We present an algorithm which
+generalizes Montgomery’s “Two quadratics” method to higher degrees. This algo-
+rithm also generalizes Williams algorithm [12] (which corresponds to the particular
+case S = 1 of our algorithm). This algorithm is based on Montgomery’s GP idea
+(§2.3), but differs since we consider here a GP of d + 1 terms instead of 2d − 1, and
+also consider skewed polynomials. Consider the GP of d + 1 elements modulo N
+
+                                 1, c, ..., cd−2 , cd−1 , cd − N,
+8                       THOMAS PREST AND PAUL ZIMMERMANN
+
+where c is near from N 1/d , such that cd − N = O(N (d−1)/d ). We perform an
+LLL-reduction of the matrix
+                                 c ... cd−1 cd − N
+                                                  
+                              S ...
+                                        0      0  
+                                                   
+(1)                    L=
+                             
+                                ... ... ...    ... 
+                                                   .
+                              0 ... S d−1      0
+                                                  
+                                                   
+                                                 d
+                                 0 ...   0     S
+Assume we get a short vector [−a0 , Sa1 , S 2 a2 , . . . , S d ad ]t . Then by construction
+we have a0 + a1 c + a2 c2 + · · · + ad−1 cd−1 + ad (cd − N ) = 0, thus the polynomial
+f = ad xd + · · · + a1 x + a0 admits c as a root modulo N . Two short vectors yield
+two polynomials with common root c modulo N .
+  We detail below this algorithm in the case d = 3. The matrix we obtain is:
+                                    c c2 c3 − N
+                                                         
+                                   S 0     0   
+                                L=             .
+                                               
+                                   0 S 2
+                                            0   
+                                              3
+                                    0 0     S
+LLL-reducing this matrix yields a vector of the form:
+                                           −a0
+                                                 
+                                          a S 
+                                          1
+                                                  .
+                                                  
+                                          a2 S 2 
+                                         
+
+                                           a3 S 3
+If K is the norm of the shortest vector, the ai satisfy K ≈ |ai |S i , and our goal
+here is to minimize the medium size of the coefficients, which corresponds to
+√
+  a0 a3 ≈ KS −3/2 . From §1.1, we know that LLL can find a short non-zero vector
+of L with norm at most 2(d−1)/4 vol(L)1/d . Neglecting constant factors, we thus
+have K ≈ det(Lt L)1/6 where
+det(Lt L) = (N 2 +S 6 +S 4 c2 +S 2 c4 +c6 −2N c3 )S 6 = ((c3 −N )2 +S 6 +S 4 c2 +S 2 c4 )S 6 .
+Assume S  N 1/3 (we obtain a stronger condition on S below). In that case,
+the dominant term in S 6 + S 4 c2 + S 2 c4 is S 2 c4 , and det(Lt L) ≈ S 8 c4 . Thus
+K ≈ det(Lt L)1/6 ≈ S 4/3 N 2/9 . The medium coefficient value is then KS −3/2 ≈
+S −1/6 N 2/9 .
+How large can we choose S? To get the medium coefficient value (and thus the
+resultant) as small as possible, we want S as large as possible. With a1 = 1 and
+a2 = a3 = 0, we obtain the vector [c, S, 0, 0]t , which corresponds to the linear
+polynomial x − c. Since we are looking for non-linear polynomials, we want to
+avoid finding this polynomial, thus the expected norm of the short vectors should
+be smaller than the norm of this vector, which is about c ≈ N 1/3 (recall S  N 1/3 ).
+We thus need K  N 1/3 , i.e., S 4/3 N 2/9  N 1/3 , which gives S  N 1/12 . This
+yields for S ≈ N 1/12 a medium coefficient value O(N 5/24 ), and a resultant O(N 5/4 ).
+       NON-LINEAR POLYNOMIAL SELECTION FOR THE NUMBER FIELD SIEVE                       9
+
+Example. If we take N = c59, c = dN 1/3 e = 41532518328905347816, S = 4 · 104 ,
+we obtain:
+       f = 42044x3 − 58243x2 + 216589713956652x + 309824665860518028,
+      g = 189599x3 − 262649x2 − 11115144906243x − 3123165185295940301,
+whose resultant is a 73-digit number, multiple of N , and about N 1.22 . The obtained
+resultant is 6 digits less than with Williams algorithm. On the 91-digit input from
+[12], with the same value of c used by Williams (denoted r1 in [12]) and S = 108 ,
+we get a resultant of 113 digits instead of 120 digits.
+3.3. Analysis of the Generic Case. In the case of degree d, the determinant of
+Lt L in Eq. (1) has the general form:
+                S e+2d + S e+2d−2 c2 + · · · + S e+2 c2d−2 + S e (N − cd )2 ,
+where e = d(d − 1) and c ≈ N 1/d . Since N − cd ≈ cd−1 , the last term is ≈ S e c2(d−1) .
+Assuming S  N 1/d , the largest term in the sum S e+2d +S e+2d−2 c2 +· · ·+S e+2 c2d−2
+is S e+2 c2d−2 , which is larger than S e c2(d−1) for S  1. The determinant is thus
+about S e+2 c2d−2 ≈ S e+2 N 2−2/d . Since the shortest vector has norm about K =
+                                                              2                    2
+det(Lt L)1/(2d) , we have K 2d ≈ S e+2 N 2−2/d , thus K ≈ S (d −d+2)/(2d) N 1/d−1/d . The
+                                                           2
+medium coefficient value is KS −d/2 ≈ S 1/d−1/2 N 1/d−1/d . The norm corresponding
+to the linear polynomial x − c is about c ≈ N 1/d , to avoid it we need K  N 1/d ,
+           2                  2                                        2
+thus S (d −d+2)/(2d) N 1/d−1/d  N 1/d , which gives S  N 2/d/(d −d+2) . (This is
+in accordance with our assumption S  N 1/d .) With the maximal value of S,
+                                                      2       3  2
+we finally get a medium coefficient value ≈ N (d −2d+2)/(d −d +2d) , and a resultant
+        2          2
+≈ N 2(d −2d+2)/(d −d+2) . This yields N 5/4 for d = 3, N 10/7 for d = 4 and N 17/11 for
+d = 5. (With S = 1, we would get a resultant ≈ N 2(d−1)/d , i.e., respectively N 4/3
+for d = 3 — which is Williams result —, N 3/2 for d = 4 and N 8/5 for d = 5.)
+
+                             4. Concluding Remarks
+   We have presented a new algorithm that generates two non-linear polynomials
+for the Number Field Sieve integer factorization algorithm. This algorithm extends
+Montgomery’s two quadratics method to higher degrees, and improves on Williams
+algorithm in the two-cubics case, where it finds two polynomials with resultant
+O(N 5/4 ) instead of O(N 4/3 ). We have analyzed the generic case of degree d.
+   We have made progress towards the goal of producing two optimal non-linear
+polynomials, i.e., with resultant O(N 1+ε ). Our algorithm might still be improved:
+in the example at the end of §3.2 the coefficient of x2 is much smaller than what
+is allowed by the skewness bound; if we knew how to produce a larger coefficient
+of x2 , we can hope it could decrease the size of the other coefficients, and thus
+decrease the size of the resultant.
+   Another open question is how to produce two non-linear polynomials of different
+degrees, say degrees d and d − 1. This might be interesting for several reasons.
+10                      THOMAS PREST AND PAUL ZIMMERMANN
+
+Firstly, going from two polynomials of degree d − 1 to two polynomials of degree
+d yields an increase of 2 in the sum of the degrees, which is the main complexity
+parameter of NFS. If we know how to generate good polynomials of degrees d and
+d − 1, we would increase the degree sum by 1 only. Secondly, when using lattice
+sieving, we could use special-q’s on the degree-d side, which might leave cofactors
+of comparable size on the degree-d side — after dividing out by the special-q —
+and on the degree-(d − 1) side.
+Acknowledgements. This work was initiated while the second author visited Peter
+L. Montgomery in June 2009; this visit was partly supported by Microsoft Re-
+search. Both authors thank Peter L. Montgomery and Damien Stehlé for very
+fruitful discussions about non-linear polynomial selection and lattice reduction al-
+gorithms. We thank Jason Papadopoulos who pointed out Williams work [12].
+The second author is grateful to Joachim von zur Gathen who influenced his re-
+search, in particular during his sabbatical visit at the University of Paderborn in
+1994-1995, and of course for the wonderful book [11].
+                                      References
+ [1] Elkenbracht-Huizing, M. An implementation of the number field sieve. Experimental
+     Mathematics 5, 3 (1996), 231–253.
+ [2] Hanrot, G. The LLL Algorithm. Survey and Applications. In Nguyen and Vallée [10], 2010,
+     ch. LLL: A Tool for Effective Diophantine Approximation, pp. 215–263.
+ [3] Kleinjung, T. On polynomial selection for the general number field sieve. Mathematics of
+     Computation 75 (2006), 2037–2047.
+ [4] Kleinjung, T. Polynomial selection. Slides presented at the CADO workshop, Nancy,
+     France, 2008. 30 pages, available at http://cado.gforge.inria.fr/workshop/slides/.
+ [5] Kleinjung, T., Aoki, K., Franke, J., Lenstra, A. K., Thomé, E., Bos, J. W.,
+     Gaudry, P., Kruppa, A., Montgomery, P. L., Osvik, D. A., te Riele, H., Tim-
+     ofeev, A., and Zimmermann, P. Factorization of a 768-bit rsa modulus. In CRYPTO
+     2010 Advances in Cryptology - CRYPTO 2010 (Santa Barbara, USA, 2010), T. Rabin, Ed.,
+     vol. 6223 of Lecture Notes in Computer Science, Springer-Verlag, pp. 333–350.
+ [6] Lenstra, A. K., Lenstra, H. W., and Lovász, L. Factoring polynomials with rational
+     coefficients. Mathematische Annalen 261 (1982), 515–534.
+ [7] Montgomery, P. L. Small geometric progressions modulo n. Unpublished note of 2 pages.
+     December 1993, revised 1995 and 2005.
+ [8] Montgomery, P. L. Searching for higher-degree polynomials for the general number field
+     sieve. http://www.ipam.ucla.edu/publications/scws1/scws1_6223.ppt, 2006. Power-
+     Point presentation, 34 pages.
+ [9] Murphy, B. A. Polynomial Selection for the Number Field Sieve Integer Factorisation
+     Algorithm. PhD thesis, Australian National University, 1999. 144 pages.
+[10] Nguyen, P. Q., and Vallée, B., Eds. The LLL Algorithm. Survey and Applications.
+     Springer-Verlag, 2010.
+[11] von zur Gathen, J., and Gerhard, J. Modern Computer Algebra, 2nd ed. Cambridge
+     University Press, 2003.
+[12] Williams, R. S. Cubic polynomials in the number field sieve. MSc Thesis, Texas Tech
+     University, 2010. 27 pages, http://www.math.ttu.edu/~cmonico/research/Williams_
+     Ronnie_Thesis.pdf.
+

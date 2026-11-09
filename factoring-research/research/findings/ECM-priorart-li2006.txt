@@ -1,0 +1,2290 @@
+             CERIAS Tech Report 2006-43
+
+ELLIPTIC CURVE FACTORING METHOD VIA FFTS WITH
+             DIVISION POLYNOMIALS
+
+                      by Zhihong Li
+
+           Center for Education and Research in
+            Information Assurance and Security,
+     Purdue University, West Lafayette, IN 47907-2086
+ELLIPTIC CURVE FACTORING METHOD VIA FFTS WITH DIVISION
+
+                      POLYNOMIALS
+
+
+
+
+                          A Thesis
+
+                  Submitted to the Faculty
+
+                              of
+
+                     Purdue University
+
+                              by
+
+                         Zhihong Li
+
+
+
+
+                 In Partial Fulfillment of the
+
+                Requirements for the Degree
+
+                              of
+
+                    Doctor of Philosophy
+
+
+
+
+                       December 2006
+                            ii
+
+
+
+
+To my parents and my wife
+                                                                                  iii
+
+
+
+
+                             ACKNOWLEDGMENTS
+
+   I wish to express my great gratitude to my advisor, Professor Samuel S. Wagstaff,
+Jr. whose expertise, understanding, encouragement, and patience, added consider-
+ably to my graduate study. I appreciate his profound knowledge in number theory
+and cryptography, and his guidance in my research. Discussion with him about
+problems and ideas is very valuable .
+   I am also grateful to Professor Bradley Lucier, Professor Freydoon Shahidi and
+Professor William Heinzer for being on my graduate committee. Their support and
+advice are highly appreciated.
+   I would like to thank my parents and my wife, Han for the support they provided
+me through my entire life. Their confidence on me and love helped me a lot during
+hard times.
+                                                                                         iv
+
+
+
+
+                              TABLE OF CONTENTS
+
+                                                                                     Page
+ABSTRACT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .         vi
+1 Introduction . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     1
+   1.1 Algorithms for Factoring Integers . . . . . . . . . . . . . . . . . . . .         1
+   1.2 ECM and an FFT Extension . . . . . . . . . . . . . . . . . . . . . . .            2
+   1.3 ECM by Division Polynomials . . . . . . . . . . . . . . . . . . . . . .           3
+   1.4 Organization of the Thesis . . . . . . . . . . . . . . . . . . . . . . . .        3
+2 Elliptic Curve Method . . . . . . . . . . . . . . . . . . . . . . . . . . . . .        5
+   2.1 Elliptic Curve and Its Arithmetic . . . . . . . . . . . . . . . . . . . .         5
+   2.2 The Order of Elliptic Curve over Finite Field . . . . . . . . . . . . . .         9
+   2.3 Smoothness and Dickman’s Function . . . . . . . . . . . . . . . . . .             10
+   2.4 Lenstra’s Algorithm . . . . . . . . . . . . . . . . . . . . . . . . . . . .       12
+   2.5 The Second Step of ECM          . . . . . . . . . . . . . . . . . . . . . . . .   14
+   2.6 Optimal Parameter Selection . . . . . . . . . . . . . . . . . . . . . . .         15
+3 Division Polynomials . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .       17
+   3.1 Definition and Properties . . . . . . . . . . . . . . . . . . . . . . . . .       17
+   3.2 Implied Univariate Division Polynomials . . . . . . . . . . . . . . . .           20
+   3.3 Algorithm to Effectively Generate Implied Division Polynomials . . .              22
+   3.4 Evaluating m-th Implied Division Polynomial . . . . . . . . . . . . .             26
+4 ECM with Division Polynomials . . . . . . . . . . . . . . . . . . . . . . . .          29
+   4.1 Factoring Algorithm by ECM with Division Polynomials . . . . . . .                29
+   4.2 The Fast Fourier Transform and its Applications . . . . . . . . . . . .           36
+   4.3 Cyclic Convolutions . . . . . . . . . . . . . . . . . . . . . . . . . . . .       40
+   4.4 Polynomial Evaluation . . . . . . . . . . . . . . . . . . . . . . . . . .         40
+   4.5 Complexity of the Factoring Algorithm . . . . . . . . . . . . . . . . .           45
+                                                                                       v
+
+                                                                                   Page
+   4.6 Optimization of the Factoring Algorithm for Some Specific Prime
+       Numbers . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .     45
+5 Implementation and Results . . . . . . . . . . . . . . . . . . . . . . . . . .       51
+   5.1 Multiple-Precision Arithmetic . . . . . . . . . . . . . . . . . . . . . .       51
+   5.2 Chinese Remainder Theorem and Its Application to the Algorithm . .              51
+   5.3 Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   52
+   5.4 Future Research Goals . . . . . . . . . . . . . . . . . . . . . . . . . .       54
+6 Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      55
+LIST OF REFERENCES . . . . . . . . . . . . . . . . . . . . . . . . . . . . .           56
+VITA . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   58
+                                                                                   vi
+
+
+
+
+                                   ABSTRACT
+
+Li, Zhihong. Ph.D., Purdue University, December, 2006. Elliptic Curve Factoring
+Method via FFTs with Division Polynomials. Major Professor: Samuel S. Wagstaff,
+Jr..
+
+
+   In 1985, H. W. Lenstra, Jr. discovered a new factoring method, the Elliptic Curve
+Method (ECM), which efficiently finds 20- to 30- digit prime factors. On January
+15, 2001, C. P. Schnorr proposed an idea to apply division polynomials for ECM. In
+this thesis, we modify and implement the idea in detail, analyze the complexity of
+the algorithm and the probability of success.
+   We first extend the concept of division polynomial to a univariate case with the
+parameter a in the Weierstrass form y 2 = x3 + ax + b as the variable. We generalize
+a result about the degree of this implied univariate division polynomial. Then we
+discover an algorithm to efficiently generate the m-th univariate division polynomial
+and determine the complexity of the algorithm.
+   We then present the main algorithm of this thesis, which is the main result of the
+thesis as well. We demonstrate in both algebraic and geometric ways the sufficient
+conditions for the algorithm to be successful. We analyze the probability of success
+and prove the related results. To demonstrate the structure of the main algorithm,
+we divide it to several parts and introduce every part in detail. Then we propose
+and prove a theorem about the complexity of the main algorithm.
+   We also present an optimization of the main algorithm for a family of numbers
+with specific form. This family is of great interest as well. We show that for this
+family, the optimal algorithm can factor numbers even faster and also remove the
+memory restriction of the multiple m of the point on the elliptic curves, which is
+also the index of the implied division polynomial being used.
+                                                                               vii
+
+   At the end, we address some issues related to the implementation of the algo-
+rithm. With the algorithm, we can find some 40-digit primes on a 1.86GHz 1066FBS
+PC with 4GB DDR2 SDRAM at 533MHz. It also finds some 50-digit primes. Now
+we are trying the algorithm on 60-digit primes and we hope that the algorithm will
+find some 70-digit primes.
+viii
+                                                                                      1
+
+
+
+
+                                  1. Introduction
+
+1.1     Algorithms for Factoring Integers
+
+      Integer factorization is a classical problem in number theory. It has been studied
+for centuries. It is stated in the Fundamental Theorem of Arithmetic that any
+positive integer can be uniquely factored into primes. A prime number is p > 1 such
+that the only divisor of p is 1 and p. Two main problems about prime numbers are
+primality proving and integer factorization. These two problems were studied by
+Gauss [10]. The latest algorithms for primality testing run in polynomial time while
+none of the integer factoring algorithms are that fast.
+      The solution of the integer factorization problem is not simple. Although re-
+markable progress has been achieved, the problem is still difficult.
+      Factoring large integers is a theoretical problem. However, many practical is-
+sues depend on it. One of them, which I will focus on, is cryptography or more
+precisely the public-key cryptosystem. RSA [18] is by far the easiest to understand
+and implement public-key cryptosystem. The security of RSA lies in the supposed
+intractability of factoring large integers. One can break RSA if one can find the
+factors of the integer n given as a public key.
+      The three most efficient factorization algorithms are Quadratic Sieve (QS), El-
+liptic Curve Method (ECM) and Number Field Sieve (NFS).
+      The NFS [12] is the fastest known method for factoring large integers. The
+Multiple Polynomial Quadratic Sieve (MPQS) [7] is faster than NFS for numbers up
+to 110 decimal digits.
+      ECM [13] is very similar to Pollard’s p − 1 algorithm [17]. The difference is that
+ECM uses elliptic curves instead of using powers of a constant modulo N in Pollard’s
+p − 1 algorithm. One advantage of ECM over Pollard’s p − 1 algorithm is that there
+                                                                                     2
+
+are many elliptic curve groups modulo p, where p is a prime factor of N . The run
+time for ECM depends strongly on the size of the least prime factor p of N and
+weakly on the size of N , while the run time of QS and NFS depend on the size of
+N only. The worst case for ECM occurs when N is the product of two primes with
+similar magnitude. ECM works better than QS and NFS for very large numbers as
+long as the least prime factor of N is reasonably small. However, we have no idea
+about the size of the factors of N before we factor it. So a good strategy is to try
+ECM first after some trial division, and switch to QS or NFS in case of failure after
+a reasonable amount of tries.
+
+
+1.2     ECM and an FFT Extension
+
+      In ECM, one chooses a random rational point P = (x0 , y0 ), then a. Finally, b is
+determined by b = y02 − x30 − ax0 (mod N ). Suppose that p 6= 2, 3 is a prime divisor
+of N . Denote the elliptic curve with parameters a, b by Ea,b . Then the rational
+points on Ea,b over Z/pZ form an Abelian group called the Mordell-Weil group. If
+                                                                             √
+we denote the order of the Mordell-Weil group as #Ea,b [p], we have p + 1 − 2 p <
+                     √
+#Ea,b [p] < p + 1 + 2 p by Hasse’s theorem. Then one evaluates the multiple M P ,
+where M is the product of the primes up to some pre-selected bound B1 , raised to
+some suitable power. If M P is the identity of Ea,b modulo p but not the identity of
+Ea,b modulo N , a prime factor p of N is found. If B1 is larger than the largest prime
+divisor of #Ea,b [p], ECM will usually succeed. However, the reason why ECM is not
+a deterministic algorithm is that people have no idea about #Ea,b [p]. This brings
+up an important issue about ECM, which is optimizing the parameter selection.
+Silverman and Wagstaff [22] have posed a very precise analysis about this.
+      Another major question is what to do if ECM fails to find a prime factor for the
+upper bound B1 . In this case, #Ea,b [p] might have the property that all its prime
+factors are less than B1 except for the largest prime factor to lie between B1 and some
+larger bound B2 . To discover such p, the two-step version of ECM was introduced.
+                                                                                      3
+
+Montgomery [15] applied the Fast Fourier Transform (FFT) for the second step and
+it is a great success. The algorithm generates two polynomials from the resulting
+multiples of the first step. It then finds the greatest common divisor of these two
+polynomial by FFT. This process either produces a polynomial that divides both
+polynomials or finds a factor of N .
+
+
+1.3     ECM by Division Polynomials
+
+      The Weierstrass form of elliptic curve is used through this thesis. It is not hard
+to transform other forms to Weierstrass form
+
+                                 Ea,b : y 2 = x3 + ax + b.                         (1.1)
+
+      The basic idea of ECM is hoping that some multiple m · P is the infinity of the
+elliptic curve modulo p while it is not the infinity of the elliptic curve modulo N . It
+turns out that it is sufficient to consider the x-coordinate only. Division polynomials
+are introduced in an elliptic curve and defined inductively. The x-coordinate of m · P
+has the square of the m-th division polynomial as its denominator. Denote by ψm the
+m-th division polynomial. Then the above goal will be achieved if ψm ≡ 0 (mod p)
+and ψm 6≡ 0 (mod N ) for some m. That is, gcd(ψm , N ) is non-trivial. Therefore,
+one can implement ECM by evaluating the division polynomials and checking the
+greatest common divisor between the values and N .
+      This thesis differs from the other work in that we evaluate division polynomials
+at many points all together by FFT and then check the gcd between the product
+and N . If the gcd is N , then we truncate the product. If the gcd is 1, we increase
+the index m of the division polynomial.
+
+
+1.4     Organization of the Thesis
+
+      Chapter 2 goes over some basic properties of elliptic curves and introduces ECM.
+                                                                                   4
+
+   We define division polynomials as well as implied univariate division polynomials
+of elliptic curves and demonstrate some facts about them in Chapter 3. We state and
+prove a theorem about their degrees and design an algorithm to efficiently generate
+high-order implied division polynomials.
+   Chapter 4 is the core chapter of this thesis. We explain the innovative main
+algorithm for factoring large integers by ECM thoroughly, propose some theorems
+about the conditions for the algorithm to be successful as well as the probability of
+success. Then prove the result about the complexity of the algorithm, which is the
+main result of this thesis. At the end of the chapter, we illustrate that the main
+algorithm can be optimized for prime numbers with some specific form. We then
+propose and analyze this optimized algorithm.
+   In Chapter 5 we demonstrate the main algorithm in more detail by focusing on
+how to implement and test it. Then we summarize the main results.
+   Chapter 6 suggests directions for further research.
+                                                                                        5
+
+
+
+
+                           2. Elliptic Curve Method
+
+2.1     Elliptic Curve and Its Arithmetic
+
+      Let K and L be two fields with K ⊆ L. We say α ∈ L is algebraic over K if
+there exists a nonconstant polynomial
+
+                             f (x) = xn + an−1 xn−1 + · · · + a0
+
+with a0 , . . . , an−1 ∈ K such that f (α) = 0.
+
+Definition 2.1.1 Given two fields K and L, L is said to be algebraic over K if
+every element of L is algebraic over K. A field K is called algebraically closed
+if every nonconstant polynomial g(x), with coefficients in K, has a root in K. An
+algebraic closure of K is the smallest algebraically closed field containing K and
+denoted by K.
+
+      The general form of an elliptic curve E over a field K is given by the following
+cubic equation:
+
+               Y 2 Z + a0 XY Z + a1 Y Z 2 = X 3 + b0 X 2 Z + b1 XZ 2 + b2 Z 3 .     (2.1)
+
+Notice that ∞ = (0, 1, 0) is a solution of (2.1). It is the basepoint and called a point
+at infinity. In (2.1), we require a0 , a1 , b0 , b1 , b2 ∈ K. If we set x = X/Z, y = Y /Z,
+(2.1) will become
+                         y 2 + a0 xy + a1 y = x3 + b0 x2 + b1 x + b2 .              (2.2)
+
+If char(K) 6= 2, 3, the replacement x → x − (a20 /4 + b0 )/3 and y → y − (a0 x + a1 )/2
+gives the Weierstrass form of an elliptic curve.
+
+Definition 2.1.2 The Weierstrass form is
+
+                                   E : y 2 = x3 + ax + b,                           (2.3)
+                                                                                        6
+
+where a, b ∈ K and 4a3 + 27b2 6= 0. The discriminant is ∆ = 4a3 + 27b2 . The
+j-invariant is defined by
+                                                4a3
+                                 j = 1728              .
+                                            4a3 + 27b2
+   Under the transform x∗ = α2 x and y ∗ = α3 y, with α be a nonzero element of the
+multiplicative group of K, the j-invariant is unchanged. In fact the two elliptic curves
+are isomorphic over an algebraically closed field if they have the same j-invariant.
+However, this is not the case for the non-algebraically closed field.
+   The elliptic curve in Weierstrass form is defined as the set of all the points in
+K × K satisfying (2.3) and the point at infinity ∞.
+   Now let’s consider the arithmetic of elliptic curves. If P = (x1 , y1 ), Q = (x2 , y2 )
+are two points on the elliptic curve E given by (2.3), the inverse of P is defined as
+−P = (x1 , −y1 ). The following is the idea for defining the sum. If Q = −P , define
+P + Q = ∞. If P + Q 6= ∞, then the line L through P and Q is not vertical so that
+it intersects with E at a third point −R. In this case, we define P + Q = R.
+   Let R = (x3 , y3 ), then we have the following formal definition for addition:
+
+  1. If Q = ∞, then R = P + ∞ = P .
+
+  2. If P = ∞, then R = Q + ∞ = Q.
+
+  3. If Q = −P , then R = P + (−P ) = ∞.
+
+  4. If x1 6= x2 , then define
+                                              y2 − y1
+                                        m=            ,                             (2.4)
+                                              x2 − x1
+                         x3 = m2 − x1 − x2 , y3 = m(x1 − x3 ) − y1 .
+
+  5. If x1 = x2 , y1 = y2 and y1 6= 0, which means P = Q, R = 2P , then define
+
+                                              3x21 + a
+                                        m=             ,                            (2.5)
+                                                2y1
+
+                            x3 = m2 − 2x1 , y3 = m(x1 − x3 ) − y1 .
+
+  6. If x1 = x2 , y1 = y2 and y1 = 0, then R = P + Q = 2P = ∞.
+                                                                                    7
+
+   It’s not hard to prove that the addition defined above satisfies the commutativity,
+existence of identity, existence of inverses. There are several ways to prove the
+associativity. It can be done by the formulas for addition. It can also be proved by
+algebraic geometry. Please refer to Section 3.2 of [21] for more details.
+
+Theorem 2.1.1 The points on the elliptic curve E with the addition defined above
+forms an abelian group with identity ∞. It is called the Mordell-Weil group.
+
+   Figure 2.1 is the graph of the elliptic curve determined by y 2 = x3 − x + 1. And
+it illustrates the way that addition and scalar multiplication are done for the points
+on an elliptic curve. In Figure 2.1,
+
+                     P = (0, 1) Q = (1, 1) P + Q = (−1, −1)
+
+                     2P = (1/4, −7/8)    − 2P = (1/4, 7/8)
+
+                     2P + Q = (1/4, −7/8) + (1, 1) = (5, −11)
+
+                     P + (P + Q) = (0, 1) + (−1, −1) = (5, −11)
+
+   To locate −P given P , just reflect P around the x−axis. To find P + Q, draw
+a line passing through P and Q. The intersection point of the line and the curve is
+−(P + Q) so that P + Q can be located by reflecting −(P + Q) around x−axis. To
+find 2P , draw the tangent line of the curve passing P , and the intersection point of
+the tangent line and the curve is −2P . Then we can find 2P = −(−2P ).
+   Notice that a multiple of a point P can be computed by several additions and
+fast multiplication. The calculation of Q = mP is as follows.
+
+  1. Let i = m, Q = ∞, R = P .
+
+  2. If i is even, let i = i/2. Set R = 2R = R + R.
+
+  3. If i is odd, let i = i − 1. Set Q = Q + R.
+
+  4. If i 6= 0, go to Step 2.
+
+  5. Return Q.
+                                                                           8
+
+
+
+
+                                     y2=x3−x+1
+     12
+     11                                                        −2P−Q
+     10
+      9
+      8
+      7
+      6
+      5
+      4
+      3
+      2
+            −P−Q           P         Q
+      1
+                               −2P
+y     0
+     −1
+            P+Q                2P
+     −2
+     −3
+     −4
+     −5
+     −6
+     −7
+     −8
+     −9
+    −10
+    −11
+    −12
+      −2   −1          0             1       2        3    4           5
+                                         x
+
+                   Figure 2.1. Graph of y 2 = x3 − x + 1
+                                                                                           9
+
+2.2     The Order of Elliptic Curve over Finite Field
+
+      An elliptic curve over a finite field is what we deal with in ECM. Its order is very
+important. If p is the prime factor of N , ECM will likely succeed if all prime factors
+of #Ea,b [p] are less than some upper bound B. In this case, the order is said to be
+smooth up to B. Two questions come up now. First, how to find the order #Ea,b [p]
+of the elliptic curve over Fp . Second, how to determine the size of the largest prime
+factor of an integer. We will answer the first question in this section and the second
+in the next section.
+
+Theorem 2.2.1 (Hasse’s Theorem) Let Ea,b [p] be an elliptic curve over the finite
+field Fp and its order be denoted by #Ea,b [p]. Then
+
+                                  √                         √
+                         p + 1 − 2 p ≤ #Ea,b [p] ≤ p + 1 + 2 p.
+
+                                                                                √
+      The proof can be found in Section 5.1 of [21]. For large p, the size of       p is much
+smaller than the size of p, so we can conclude that the order of the elliptic curve over
+                                                                     √              √
+Fp is close to p. Actually, for any integer K in interval [p + 1 − 2 p, p + 1 + 2 p],
+we can choose some specific parameters a, b such that K is the order of the elliptic
+curve y 2 = x3 + ax + b over Fp . Please see Deuring [8] for more details. This fact
+explains the advantage of ECM over Pollard’s p − 1 method [17]. Pollard’s p − 1
+method finds the prime factor p of N by evaluating gcd(aM −1, N ), where M is some
+suitable multiple of p − 1. So in order for the method to succeed, all prime factors
+of p − 1 have to be less than some suitable upper bound. This restricts the method
+to find those primes p for which p − 1 has no large prime factor. ECM works as long
+as all prime factors of #Ea,b [p] are less than some suitable upper bound. But the
+difference is that we have many choices of #Ea,b [p]. If one curve fails, we can choose
+another curve.
+      The following theorem by Cassels [5] describes the structure of an elliptic curve
+over finite field.
+                                                                                        10
+
+Theorem 2.2.2 Let Ea,b [p] be the elliptic curve over the finite field Fp . Then
+
+                       Ea,b [p] ≃ Zn    or        Ea,b [p] ≃ Zn1 ⊕ Zn2
+
+where n, n1 , n2 ≥ 1 are integers and n1 | n2 .
+
+
+2.3     Smoothness and Dickman’s Function
+
+      Now let’s answer the second question proposed in the previous section. In ECM,
+the factor p will be discovered by a curve Ea,b if the largest prime factor of #Ea,b [p]
+is smaller than B. The reason for this is that we evaluate M P with P ∈ Ea,b ,
+      Q
+M = ni=1 qiei , and q1 , . . . , qn are all the primes less than B. The algorithm will
+succeed if M P is the infinity of Ea,b [p] but not the infinity of Ea,b [N ]. So we need to
+get an estimation of the size of the largest prime factor of a given integer.
+
+Definition 2.3.1 A positive number n is called B-smooth if the largest prime factor
+of n is less than B.
+
+      If we denote the number of B-smooth integers in the interval [1, x] as λ(x, B),
+and denote by p(x, B) the probability that an integer in [1, x] is B-smooth, then we
+have p(x, B) = λ(x, B)/x.
+
+Definition 2.3.2 Dickman’s function ρ(t) for t ≥ 0 is defined as
+
+                        ρ(t) = lim p(x, x1/t ) = lim λ(x, x1/t )/x.
+                               x→∞                 x→∞
+
+
+      It is easy to prove the limit exists and derive ρ(t) = 1 for 0 ≤ t ≤ 1. Dickman [9]
+showed that
+                          ρ0 (t) = −ρ(t − 1)/t       for    t > 1.                   (2.6)
+
+Then we can get the following result for 1 ≤ t ≤ 2
+                Z t               Z t                   Z t
+                     0                ρ(s − 1)              1
+         ρ(t) =     ρ (s)ds = 1 −              ds = 1 −       ds = 1 − ln t.
+                 0                 1      s              1 s
+
+By (2.6) and integrating by parts, we can get the following important theorem.
+                                                                                        11
+
+                                           Rt
+Theorem 2.3.1 For t > 1, ρ(t) =             t−1
+                                                  ρ(s)ds/t.
+
+   A good approximation by Knuth and Trabb Pardo [11] is ρ(t) ≈ t−t . Now let’s
+consider the smoothness. If B = n1/t , then t = (ln n)/(ln B). We can conclude that
+the probability that #Ea,b [p] is B-smooth is
+
+                                                               ln #Ea,b [p]    ln p
+                   ρ(t) ≈ t−t         with              t=                  ≈       .
+                                                                  ln B        ln B
+
+   Dickman’s function can also be calculated with greater accuracy. Bach and Per-
+alta [2] gave an effective method by noticing that ρ(t) is analytic on [m − 1, m] for
+any integer m ≥ 1. There is an analytic function ρm (t) that is equal to ρ(t). Then
+they use a Taylor expansion for ρ(t) = ρm (t) = ρm (m − ξ) on [m − 1, m] to get
+                                                 ∞
+                                                 X  (m)
+                                          ρ(t) =   ci ξ i
+                                                       i=0
+
+where the coefficients are given by
+
+                              (1)               (1)
+                              c0 = 1,        ci = 0 for i > 0,
+
+                        (2)                           (2)      1
+                       c0 = 1 − ln 2,            ci =                for i > 0,
+                                                              i2i
+and
+                                           ∞    (m)
+                         (m)          1 X cj
+                        c0 =                                        for m > 2,
+                                    m − 1 j=1 j + 1
+                                    i−1 (m−1)
+                                    X
+                         (m)           cj
+                        ci =                                for i > 0, m > 2.
+                                    j=0
+                                          imi−j
+
+   G. Marsaglia, Zaman and J. C. W. Marsaglia [14] gave an even more accurate
+method by expanding ρ(t) at m − 12 instead of m.
+   In the next section, we will see that a second step can be added to ECM to make
+it more efficient. This step 2 deals with the case that #Ea,b [p] is B2 -smooth but its
+second largest prime factor is less than B1 (< B2 ).
+
+Definition 2.3.3 An integer n is called k-semismooth with respect to y and z if
+the largest prime factor of n is ≤ y and its (k + 1)st largest prime factor is ≤ z.
+                                                                                          12
+
+      Let λk (x, y, z) denote the number of k-semismooth integers in [1, x]. If we denote
+by pk (x, B2 , B1 ) the probability that an integer in [1, x] is k-semismooth with respect
+to B2 and B1 , then we have pk (x, B2 , B1 ) = λk (x, B2 , B1 )/x. Define
+
+                    ρ(t1 , t2 ) = lim p1 (x, xt2 /t1 , x1/t1 ) for t1 > t2 > 1.
+                                x→∞
+
+
+Knuth and Trabb Pardo [11] gave the functional equation for ρ(t1 , t2 ) as
+                                             Z t1 −1
+                                         1
+                        ρ(t1 , t2 ) =                ρ(t)dt
+                                      t1 − t2 t1 −t2
+
+where ρ(t) is Dickman’s function. The probability that the 2-step ECM with param-
+eters B1 , B2 succeeds in finding p is approximately ρ( lnlnBp1 , ln B2
+                                                                  ln B1
+                                                                        ).
+      Zhang [25] gave a rigorous proof for the recurrence formulae to limx→∞ pk (x, xt , xs )
+and some numerical results for calculating it.
+
+
+2.4     Lenstra’s Algorithm
+
+      In February 1985, H. W. Lenstra, Jr. [13] invented the ECM algorithm. He
+published it in 1987. It is obtained from Pollard’s p − 1 method by replacing the
+multiplicative group by the Mordell-Weil group. If the parameters are chosen prop-
+                                                              √
+erly, the expected number of group additions performed is L(p) 2+o(1) where
+                                             p
+                                  L(p) = exp( ln p ln ln p).
+
+Silverman and Wagstaff [22] suggested an optimal parameter selection technique and
+run-time guidelines for 2-step ECM. The worst case for ECM happens when N = p·q
+with p and q sharing the same order of magnitude. In this case, the complexity of
+ECM becomes L(N )1+o(1) .
+      Lenstra’s method revises the addition on elliptic curve over Z/N Z. Given P =
+(x1 , y1 ), Q = (x2 , y2 ), let R = (x3 , y3 ) = P + Q with xi , yi < N for i = 1, 2, 3, and
+that p|N is one of the prime factors for the number N we want to factor, the revised
+addition algorithm by Lenstra is
+                                                                                       13
+
+   1. If Q = ∞, then set R = P + ∞ = P and stop by asserting failure and choose
+      another point.
+
+   2. If P = ∞, then set R = Q + ∞ = Q and stop by asserting failure and choose
+      another point.
+
+   3. Calculate d = gcd(x1 − x2 , N ) by the extended Euclidean algorithm, we will
+      get the follow 3 subcases:
+
+       (a) If 1 < d < N , then set p = d and stop by declaring success for factoring.
+
+       (b) If d = 1, then the extended Euclidean algorithm gives (x1 − x2 )−1 modulo
+           N and we can apply (2.4) to get R.
+
+       (c) If d = N , then x1 = x2 . In this case, calculate d = gcd(y1 + y2 , N ) by the
+           extended Euclidean algorithm and we will get 3 more subcases here:
+
+             i. If 1 < d < N , then set p = d and stop by declaring success for
+                factoring.
+            ii. If d = N , then y1 = −y2 ⇒ Q = −P and set R = ∞ and stop by
+                asserting the failure for factoring.
+            iii. If d = 1, then by the symmetry, we can conclude y1 = y2 ⇒ P = Q.
+                The extended Euclidean algorithm gives (y1 +y2 )−1 = (2y1 )−1 modulo
+                N and we can apply (2.5) to get R.
+
+   In Lenstra’s method, a random point P = (x, y) with 1 ≤ x, y < N is selected
+first, then an elliptic curve Ea,b [N ] is chosen such that P ∈ Ea,b [N ] (this is done by
+choosing a < N randomly and letting b ≡ y 2 −x3 −ax(mod N )). Then one calculates
+     Q
+R = li=1 qiei · P , where q1 , . . . , ql are all the primes less than some suitable upper
+bound B and e1 , . . . , el are suitable powers. A good choice for the ei is the largest e
+             √                                                    e
+so that qie < N . Compute R by the formulas P0 = P , Pj = qj j · Pj−1 for 1 ≤ j < l,
+                                                       e
+and R = Pl . Use fast multiplication to compute qj j · Pj−1 . Each point addition or
+doubling in the fast multiplication is done using Lenstra’s revised addition algorithm.
+In case N is factored in Step 3(a) or 3(c)i, then of course R will not be computed.
+                                                                                        14
+
+If a failure is asserted in some step, then change a (x, y can also be changed but not
+necessarily) and start over. If R is successfully computed, save it and start step 2 of
+ECM.
+      Now let’s go back to the addition algorithm. Case 1 and case 2 will never happen
+for factoring algorithm since the algorithm will be stopped with asserting a failure
+when the ∞ of Ea,b [N ] is hit. Case 3(b) and case 3(c)iii will lead to the next step of
+computing R for the current curve. Case 3(c)ii asserts a failure and asks for a new
+curve. Case 3(c)i means x1 = x2 and y1 = −y2 if we reduce them to Ea,b [p]. That
+is, k · P = −P in Ea,b [p] for some k. Then (k + 1) · P = ∞ in Ea,b [p]. Case 3(a)
+means x1 = x2 in Ea,b [p]. That is, k · P = P or k · P = −P in Ea,b [p]. If k · P = P ,
+then (k − 1) · P = ∞. So if the algorithm succeeds, some multiple of P must hit the
+infinity of the elliptic curve over Fp but not the infinity of the curve over Z/N Z.
+
+
+2.5     The Second Step of ECM
+
+      Lenstra pointed out the possibility and necessity of adding a second step to his
+algorithm. Both Montgomery [16] and Brent [3] proposed methods to implement this
+second step. Both methods use the output of the first step in case of its failure. It’s
+a point R = m · P on Ea,b [N ]. Assume that #Ea,b [p] is 1-semismooth with respect
+to B2 and B1 and that the largest prime factor of #Ea,b [p] is q with B1 < q < B2 .
+Then #Ea,b [p]|mq ⇒ (mq) · P = ∞ of Ea,b [p]. So q · R is the infinity over Ea,b [p].
+      In the second step of each method, a sequence of multiples of R, {ni · R}ri=1 ,
+is computed so that for each prime q1 ∈ [B1 , B2 ] there exist integers i and j with
+q1 |(ni − nj ). When this happens, ni · R and nj · R are the same modulo p, and
+then p can be found if its largest prime factor q equals q1 since these two points are
+unlikely to be the same modulo N . If we consider the x-coordinates {xi }ri=1 of this
+sequence of points, the problem we will face in step 2 is to find xi and xj such that
+gcd(xi − xj , N ) is non-trivial. Montgomery [15] constructed a polynomial from these
+values and applied the FFT to implement checking for a match.
+                                                                                      15
+
+2.6     Optimal Parameter Selection
+
+      When applying ECM to factor a large number N , since we have no idea about
+the size of #Ea,b [p] or p, we have to find a way to optimally choose the parameter
+B1 , B2 and the number of curves L. Silverman and Wagstaff [22] elaborated on this
+issue and proposed a good way for choosing parameters and changing them after
+failure. They constructed a table and suggested values for B1 and B2 for each size
+of prime factor p expected to be found.
+      Up to now, we reviewed the basic idea of Lenstra’s ECM and the second step as
+well as the way to select parameters B1 , B2 . To finish this chapter and make things
+clearer, let’s quote the guidelines to implement ECM, provided by Silverman and
+Wagstaff [22].
+
+  1. Do trial division up to some prime around ln2 N .
+
+  2. Guess a possible size for the least prime factor of N based on the effort ex-
+        pended so far to try to factor N .
+
+  3. Select B1 and B2 based on this guess and run a 2-step ECM. If it succeeds,
+        then stop the algorithm. If it fails to find a prime factor, choose another curve
+        and run ECM with B1 and B2 again until the algorithm succeeds or a certain
+        number of curves have been tried.
+
+  4. If the algorithm fails at the end of Step 3, go back to Step 2.
+
+  5. If the previous 4 steps have not succeeded for a reasonable runtime, switch
+        ECM to MPQS.
+
+      This thesis tells how to do Step 3 efficiently with many curves computed simul-
+taneously. Our algorithm is most useful for factoring number N known to have no
+small prime factors.
+16
+                                                                                     17
+
+
+
+
+                            3. Division Polynomials
+
+3.1     Definition and Properties
+
+      The key point at which the elliptic curve factoring method proposed in this
+thesis differs from Lenstra’s method is the use of division polynomials. Division
+polynomials are defined inductively.
+
+Definition 3.1.1 For the Weierstrass form y 2 = x3 + ax + b, the m-th division
+polynomial ψm (a, b, x, y) ∈ Z[a, b, x, y] by
+
+                                     ψ1 = 1,    ψ2 = 2y,                           (3.1)
+
+                              ψ3 = 3x4 + 6ax2 + 12bx − a2 ,                        (3.2)
+
+                 ψ4 = 4y(x6 + 5ax4 + 20bx3 − 5a2 x2 − 4abx − 8b2 − a3 ),           (3.3)
+                                    3         3
+                      ψ2m+1 = ψm+2 ψm − ψm−1 ψm+1          (m ≥ 2),                (3.4)
+                                    2           2
+                  2yψ2m = ψm (ψm+2 ψm−1 − ψm−2 ψm+1 )         (m ≥ 3).             (3.5)
+
+Further, two more polynomials are defined by
+
+                                       2
+                                φm = xψm − ψm+1 ψm−1 ,                             (3.6)
+
+                                         2           2
+                            4yωm = ψm+2 ψm−1 − ψm−2 ψm+1 .                         (3.7)
+
+      Recall that ∆ = 4a3 + 27b2 .
+
+Theorem 3.1.1 For the division polynomial ψm , we have
+
+  1. ψm , φm , y −1 ωm (for m odd) and (2y)−1 ψm , φm , ωm (for m even) are poly-
+        nomials in Z[a, b, x, y 2 ]. Using the Weierstrass form y 2 = x3 + ax + b, these
+        polynomials may be considered in Z[a, b, x].
+                                                                                  18
+
+  2. The highest order terms with respect to x of φm (a, b, x) and ψm (a, b, x)2 are
+         2            2
+      xm and m2 xm −1 respectively.
+
+  3. If ∆ 6= 0, then φm (x) and ψm (x)2 are relatively prime.
+
+  4. If ∆ 6= 0 and P = (x, y), then
+                                  µ                             ¶
+                                    φm (a, b, x) ωm (a, b, x)
+                        m·P =                    ,                .             (3.8)
+                                    ψm (a, b, x)2 ψm (a, b, x)3
+
+  5. The endomorphism of Ea,b given by multiplication by m has degree m2 .
+
+   The proof of these properties can be found in Section 9.5 of Washington [24].
+(3.8) is the most important to the factoring method presented in this thesis. We
+sketch the proof of it here.
+   If ω1 , ω2 ∈ C are linearly independent over R, then call
+
+                      L = Zω1 + Zω2 = {n1 ω1 + n2 ω2 |n1 , n2 ∈ Z}
+
+a lattice. Then C/L is a torus. A doubly periodic function
+
+                                    f :C→C∪∞
+
+is one for which
+
+                   f (z + ω) = f (z) for all z ∈ C and all ω ∈ L.
+
+Now we consider a special doubly periodic function, called Weierstrass ℘-function
+and defined by
+
+                                    1     X µ        1     1
+                                                              ¶
+                   ℘(z) = ℘(z; L) = 2 +                  −      .               (3.9)
+                                   z    ω∈L,ω6=0
+                                                 (z − ω)2 ω 2
+
+In fact every doubly periodic function can be written as a rational function of ℘ and
+its derivative ℘0 . By setting
+                                            X
+                                   Gk =              ω −k ,
+                                          ω∈L,ω6=0
+                                                                                    19
+
+we can rewrite
+                                      X∞
+                                  1
+                           ℘(z) = 2 +     (2j + 1)G2j+2 z 2j .                  (3.10)
+                                 z    j=1
+
+And it is not hard to prove by direct calculation that
+
+                         ℘0 (z)2 = 4℘(z)3 − 60G4 ℘(z) − 140G6 .
+
+Therefore, we can regard (℘(z), 12 ℘0 (z)) as a point on an elliptic curve over C. Then
+we have the following important theorem about elliptic curves.
+
+Theorem 3.1.2 Let L be a lattice and E(C) be the elliptic curve y 2 = 4x3 −60G4 x−
+140G6 over C. The map
+                                       C/L → E(C)
+
+                                z 7→ (℘(z), ℘0 (z)), 0 7→ ∞
+
+is a group isomorphism.
+
+The proof can be found in Section 9.2 of Washington [24].
+   Now to finish the proof of (3.8), we define
+                                            Y
+                        fm (z)2 = m2                     (℘(z) − ℘(u))
+                                       u∈(C/L)[m],u6=0
+
+and can prove that fm (z) is a doubly periodic function. There are some relationships
+between ℘(z) and fm (z) such as
+                                               fn−1 (z)fn+1 (z)
+                            ℘(nz) = ℘(z) −                      ,               (3.11)
+                                                   fn (z)2
+                               f2n+1 = fn+2 fn3 − fn+1
+                                                   3
+                                                       fn−1 ,                   (3.12)
+                                               2           2
+                            ℘0 f2n = fn (fn+2 fn−1 − fn−2 fn+1 ),               (3.13)
+                                                   1
+                                fn (z) = ψn (℘(z), ℘0 (z)),                     (3.14)
+                                                   2
+                                                f 2n
+                                       ℘0 (nz) = 4 .                            (3.15)
+                                                 fn
+   (3.8) can be proved for an elliptic curve over C by noticing
+                                1                               1
+                 (x, y) = (℘(z), ℘0 (z)),   m · (x, y) = (℘(nz), ℘0 (nz))
+                                2                               2
+                                                                                       20
+
+for some z.
+      For an elliptic curve Ea,b over a field K with non-zero characteristic (not 2), the
+proof is done by constructing a homomorphism between RM and K(x, y), where
+R = Z[α, β, X, Y ] for α, β, X being independent transcendental elements of C, M
+is a maximal ideal of R, and RM is the localization of R at M . Then the multiple
+of (X, Y ) on the elliptic curve Y 2 = X 3 + αX + β over RM is equivalent with the
+multiple of (x, y) on the elliptic curve Ea,b [K]. It has been proved that (3.8) holds for
+the former case. Hence, (3.8) holds for elliptic curve over any field with characteristic
+not equal to 2.
+
+
+3.2     Implied Univariate Division Polynomials
+
+      Provided that the base field K is infinite, notice that for the same point P =
+(x, y), we can find infinitely many elliptic curves passing through it by changing the
+parameter a. So can we vary the elliptic curves passing through some fixed point
+by varying a. If we choose and fix the point P = (x, y), then we can regard the
+division polynomials as polynomials with a being the independent variable since b
+can be expressed by b = y 2 − x3 − ax. This polynomial is called the m-th implied
+univariate division polynomial and denoted by ψ̄m (a). It is obvious that (3.8)
+is also true for ψ̄m (a).
+      In the factoring algorithm I am presenting in this thesis, ψ̄m plays an important
+                                                   2
+role. Choose a number a. Then by (3.8) the value ψ̄m (a) gives the denominator of
+the x-coordinate of m · P . This value will tell us whether m · P is the infinity point
+of the elliptic curve with a as the parameter. To evaluate ψ̄m (a) efficiently, we need
+to know the degree of the implied univariate division polynomial. I have deduced
+the following theorem about the degree of ψ̄m .
+
+Theorem 3.2.1 If deg(ψ̄m ) denotes the degree of ψ̄m , then
+                       
+                        ( m − 1)( m + 1) = m2 − 1 if m is even
+                            2       2         4
+           deg(ψ̄m ) =                                                             (3.16)
+                        m−1 m+1 = m2 −1                if m is odd
+                                 2    2      4
+                                                                                        21
+
+Proof For future reference, let’s write out ψ̄m for m = 1, 2, 3, 4.
+
+                      ψ̄1 = 1,          ψ̄2 = 2y,                                   (3.17)
+
+                      ψ̄3 = −a2 + 6x2 a + 12xb + 3x4
+
+                           = −a2 + 6x2 a + 12x(y 2 − x3 − ax) + 3x4
+
+                           = −a2 − (6x2 )a + (12xy 2 − 9x4 ),                       (3.18)
+
+
+       ψ̄4 = 4y(x6 + 5x4 a + 20x3 b − 5x2 a2 − 4xab − 8b2 − a3 )
+
+            = 4y(x6 + 5x4 a + 20x3 (y 2 − x3 − ax) − 5x2 a2 − 4xa(y 2 − x3 − ax)
+
+                 −8(y 2 − x3 − ax)2 − a3 )
+
+            = −(4y)a3 − (36x2 y)a2 + (48xy 3 − 108x4 y)a
+
+                 +(144x3 y 3 − 108x6 y − 32y 5 ).                                   (3.19)
+
+We see that (3.16) is true for ψ̄1 , ψ̄2 , ψ̄3 , ψ̄4 .
+    Assume (3.16) is true for m ≤ 2k. It suffices to prove that (3.16) is true for
+m = 2k + 1 and m = 2k + 2.
+                                  3
+1). ψ̄2k+1 = ψ̄k+2 ψ̄k3 − ψ̄k−1 ψ̄k+1
+If k is even,
+
+   deg(ψ̄2k+1 ) = max(deg(ψ̄k+2 ) + 3 deg(ψ̄k ), deg(ψ̄k−1 ) + 3 deg(ψ̄k+1 ))
+                      µ                   µ 2       ¶                                   ¶
+                        (k + 2)2            k           (k − 1)2 − 1       (k + 1)2 − 1
+                = max             −1+3           −1 ,                 +3
+                            4                4                4                 4
+                                                                   2
+                                                         (2k + 1) − 1
+                = max(k 2 + k − 3, k 2 + k) = k 2 + k =                 .
+                                                                 4
+If k is odd,
+
+   deg(ψ̄2k+1 ) = max(deg(ψ̄k+2 ) + 3 deg(ψ̄k ), deg(ψ̄k−1 ) + 3 deg(ψ̄k+1 ))
+                      µ                                               µ            ¶¶
+                        (k + 2)2 − 1      k 2 − 1 (k − 1)2              (k + 1)2
+                = max                  +3         ,           −1+3               −1
+                              4               4        4                    4
+                                                         (2k + 1)2 − 1
+                = max(k 2 + k − 4, k 2 + k) = k 2 + k =                 .
+                                                                 4
+                                                                                           22
+
+2). ψ̄2k+2 = (2y)−1 ψ̄k+1 (ψ̄k+3 ψ̄k2 − ψ̄k−1 ψ̄k+2
+                                                2
+                                                    )
+If k is even,
+
+deg(ψ̄2k+2 ) = deg(ψ̄k+1 ) + max(deg(ψ̄k+3 ) + 2 deg(ψ̄k ), deg(ψ̄k−1 ) + 2 deg(ψ̄k+2 ))
+                  (k + 1)2 − 1
+                =               +
+                        µ4                  µ 2     ¶                 µ            ¶¶
+                           (k + 3)2 − 1       k       (k − 1)2 − 1      (k + 2)2
+                   max                   +2     −1 ,               +2            −1
+                                4             4            4               4
+                                   µ 2                 ¶
+                  k 2 + 2k           3k + 6k 3k 2 + 6k
+                =           + max             ,
+                      4                  4        4
+                                       2
+                              (2k + 2)
+                = k 2 + 2k =             − 1.
+                                  4
+If k is odd,
+
+  deg(ψ̄2k+2 ) = deg(ψ̄k+1 ) + max(deg(ψ̄k+3 ) + 2 deg(ψ̄k ), deg(ψ̄k−1 ) + 2 deg(ψ̄k+2 ))
+                      (k + 1)2
+                    =           − 1+
+                           4µ                                                    ¶
+                              (k + 3)2        k 2 − 1 (k − 1)2      (k + 2)2 − 1
+                       max             −1+2          ,         −1+2
+                                 4                4        4             4
+                        2
+                                          µ 2                2
+                                                                    ¶
+                      k + 2k − 3           3k + 6k + 3 3k + 6k + 3
+                    =              + max                 ,
+                            4                      4           4
+                                 (2k + 2)2
+                    = k 2 + 2k =           − 1.
+                                     4
+Now, by induction, (3.16) is true for every m. This proves the theorem.
+
+
+3.3     Algorithm to Effectively Generate Implied Division Polynomials
+
+      We need to evaluate the m-th implied univariate division polynomial in the fac-
+toring algorithm. Since division polynomials get large rapidly in the sense of the
+sizes of both coefficients and the degree as m gets larger, we need to find a technique
+to control this growth in order to save the storage in the memory.
+      First of all, the large numbers are stored in 1-dimensional arrays with the first
+element indicating the size and sign of the number and the radix being some appro-
+priate large number such as 230 . Assume the size of the array to be 50. To control
+the size of the coefficients, we implement all the calculations modulo N . To store the
+                                                                                                          23
+
+m-th implied univariate division polynomial, we need a 2-dimensional array with the
+      2
+size m4 × 50. Obviously we cannot store all the implied division polynomials up to
+some index m. The good news is that we only need several implied division polyno-
+mials with lower index in order to deduce the one with higher index. After carefully
+inspecting the inductive definition, we find that only 7 adjacent implied division
+polynomials have to be stored. Therefore, we can use dynamic memory allocation
+to save storage. The algorithm is given below.
+
+Algorithm 3.3.1 (Defining the m-th implied division polynomial) Given a positive
+integer m and a pair (x, y) ∈ ZN × ZN , the algorithm generates a 2-dimensional
+array which represents the coefficients of the m−th implied division polynomial.
+
+  1. [Initialization]
+
+     Factor m − 3, . . . , m + 3 to the form of d · 2e with d, e ∈ N and d being odd.
+     From these seven d values, select the smallest and call it d∗ ;
+
+     round=e (corresponding to d∗ );
+
+     if (d∗ ==1) {New (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 ) and initialize them by setting ψi =
+     ψ̄i for ψ̄i in (3.17), (3.18), (3.19), (3.4), (3.5);}
+
+     if (d∗ ==3) {New (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 ) and initialize them by setting ψ1 =1
+     and ψi = ψ̄i−1 for i = 2, . . . , 7 in (3.17), (3.18), (3.19), (3.4), (3.5);}
+
+     else {Find ψ̄d∗ −3 , ψ̄d∗ −2 , ψ̄d∗ −1 , ψ̄d∗ , ψ̄d∗ +1 , ψ̄d∗ +2 , ψ̄d∗ +3 by calling algorithm 3.3.1;
+
+     New (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 ) and initialize them by
+     (ψ̄d∗ −3 , ψ̄d∗ −2 , ψ̄d∗ −1 , ψ̄d∗ , ψ̄d∗ +1 , ψ̄d∗ +2 , ψ̄d∗ +3 ); }
+
+  2. [Loop]
+
+     for (i=0; i<round; i++) {New (ψ10 , ψ20 , ψ30 , ψ40 , ψ50 , ψ60 , ψ70 ) with size of (d∗ 2i −
+     2)(d∗ 2i −1), (d∗ 2i −1)2 , (d∗ 2i −1)(d∗ 2i ), (d∗ 2i )2 , (d∗ 2i )(d∗ 2i +1), (d∗ 2i +1)2 , (d∗ 2i +
+     1)(d∗ 2i + 2);
+
+     Map (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 ) to (ψ10 , ψ20 , ψ30 , ψ40 , ψ50 , ψ60 , ψ70 ) by the relation de-
+     scribed in (3.4),(3.5);
+                                                                                                           24
+
+      Free (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 );
+
+      New (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 ) with the same size as current
+      (ψ10 , ψ20 , ψ30 , ψ40 , ψ50 , ψ60 , ψ70 );
+
+      Copy (ψ10 , ψ20 , ψ30 , ψ40 , ψ50 , ψ60 , ψ70 ) to (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 );
+
+      Free (ψ10 , ψ20 , ψ30 , ψ40 , ψ50 , ψ60 , ψ70 ); }
+
+   3. [Selecting ψ̄m ]
+
+      Locate ψ̄m by checking the degree of the 7 polynomials;
+
+      Free (ψ1 , ψ2 , ψ3 , ψ4 , ψ5 , ψ6 , ψ7 );
+
+      return ψ̄m .
+
+    We must now show that Algorithm 3.3.1 is correct.
+
+Theorem 3.3.1 Algorithm 3.3.1 computes the m-th implied division polynomial.
+
+Proof Given ψ̄l , . . . , ψ̄l+6 for some positive integer l, we can get ψ̄2l+3 , . . . , ψ̄2l+9 in
+the first step by (3.4),(3.5). By the same argument, we can get ψ̄4l+9 , . . . , ψ̄4l+15 in
+the second step. Now I claim that we can get ψ̄index−3 , . . . , ψ̄index+3 in the i-th step,
+where
+                                                                                2i − 1
+     index = 2i l + 3(1 + 2 + 22 + . . . + 2i−1 ) + 3 = 2i l + 3                       + 3 = 2i (l + 3).
+                                                                                2−1
+We can prove this statement by induction. By the argument at the beginning, it is
+true for i = 1, 2. Assume it is true for the i-th step. This means that we have 7
+implied division polynomials ψ̄index−3 , . . . , ψ̄index+3 computed, where
+                                                                                2i − 1
+     index = 2i l + 3(1 + 2 + 22 + . . . + 2i−1 ) + 3 = 2i l + 3                       + 3 = 2i (l + 3).
+                                                                                2−1
+By (3.4) and (3.5), we can compute ψ̄2(index−3)+3 , . . . , ψ̄2(index−3)+9 in the (i + 1)-th
+step. By simplification, these 7 implied division polynomials are ψ̄2·index−3 , . . . , ψ̄2·index+3 .
+Therefore the corresponding value for index is
+
+                           index∗ = 2 · index = 2 · 2i (l + 3) = 2i+1 (l + 3).
+                                                                                           25
+
+This finishes the proof of the claim.
+   Notice that if any of ψ̄m−3 , . . . , ψ̄m+3 can be computed, ψ̄m can be computed also
+since the difference of indices is at most 3. Step 1 of the algorithm is just to make
+sure that the index has the form 2k (l + 3).
+   In step 2, l = d∗ − 3. Since the number of steps in the loop is round = e, the 7
+implied division polynomials we get at the last step of the loop are ψ̄m∗ −3 , . . . , ψ̄m∗ +3
+with m∗ = d∗ · 2e . And it has been shown that ψ̄m is one of them. So the algorithm
+works correctly.
+
+   The polynomial multiplication in this algorithm can be implemented by fast
+Fourier transform (FFT). Please see Chapter 4 for more details about FFT. Since
+dynamical memory allocation is used a lot in the algorithm, the memory consumption
+is reduced from O(m3 ) to O(m2 ) and storage is the main issue when we are dealing
+with division polynomials.
+   In Algorithm 3.3.1, we apply the dynamic programming technique in the com-
+putation. The algorithm uses only O(m2 ln m) arithmetic operations including addi-
+tions, subtractions and multiplications. We state this as the following theorem and
+prove it. This result is important for concluding the time complexity of the main
+algorithm in the thesis, which is Algorithm 4.1.1 in Chapter 4.
+
+Theorem 3.3.2 For any positive integer m, Algorithm 3.3.1 can compute the m-th
+implied division polynomial ψ̄m by O(m2 ln m) arithmetic operations.
+
+   To generate ψ̄m , we need to generate up to 5 implied division polynomials with
+indices around m/2. For these 5 adjacent polynomials to be generated, we need
+to compute up to 7 implied division polynomials with indices around m/4. So we
+only need to go through ln m recursion levels. The misleading way is to think that
+in each recursion level we need to apply FFT to do polynomial multiplications for
+polynomials with degree O(m2 ), so that the total time cost of the algorithm is
+O(m2 (ln m)2 ). This is not correct since in the early recursion levels, the degree of
+                                                                                          26
+
+the implied division polynomials are quite small. The following is the proof of the
+theorem.
+
+Proof Without losing generality, we assume m = 2e . Then there are e loops. In the
+i-th loop, the degree of the 7 implied division polynomials is O(22i ). We implement
+the polynomial multiplication by FFT. For degree 22i polynomials, the FFT can be
+done by O(22i ln 22i ) = O(i · 22i ) arithmetic operations. Therefore, the total time
+needed by the algorithm is
+
+          O(2 · 22·2 ) + O(3 · 22·3 ) + · · · + O(e · 22e ) = O(e · 22e ) = O(m2 ln m).
+
+
+
+
+3.4     Evaluating m-th Implied Division Polynomial
+
+      At the next stage of factoring after we get the m-th implied division polynomial
+by algorithm 3.3.1, we evaluate ψ̄m at m2 /4 values of a. We will choose a = 2i for
+0 ≤ i < m2 /4. For these values the evaluation can be done effectively by FFT.
+The polynomial evaluation algorithms will be discussed in the next chapter. In this
+section, I will only briefly discuss the feasibility of the factoring algorithm presented
+in this thesis. More details can be found in later chapters.
+      Given P = (x, y), by evaluating ψ̄m at m2 /4 values of a, we actually try to find
+m · P for m2 /4 different elliptic curves at the same time. In Lenstra’s method, m is
+the product of all the primes less than some upper bound B1 raised to some suitable
+power. But only one elliptic curve is tried at a time. An intuitive conclusion is
+that m in the algorithm shown in this thesis should be much smaller than the m in
+Lenstra’s ECM since we try many elliptic curves all at a time. Theoretically this
+conclusion is also reasonable. As discussed in chapter 2, ECM will succeed if #Ea,b [p]
+is B1 -smooth. By trying m2 /4 curves all together, we hope that some curve has its
+order over Fp being very smooth. That is #Ea,b [p] is B1 -smooth for some reasonably
+small B1 . Then the scalar multiple m does not have to be very large. We can choose
+                                                                                  27
+
+m to be the product of the primes less than B1 . Recalling Dickman’s function ρ(t),
+we need to inspect the distribution of ρ(t) for large t. Zhang [25] gave some good
+result about this.
+   Another concern is how hard it is to have #Ea,b [p] being very smooth given
+randomly chosen a. Lenstra [13] proved that #Ea,b [p] is well distributed in [p + 1 −
+ √            √
+2 p, p + 1 + 2 p] when the point P = (x, y) is fixed, a is chosen randomly and
+b = (y 2 − x3 − ax) mod N .
+   We will give some rigorous discussion about these issues in Chapter 4.
+28
+                                                                                      29
+
+
+
+
+                    4. ECM with Division Polynomials
+
+4.1     Factoring Algorithm by ECM with Division Polynomials
+
+      C. P. Schnorr [19] proposed a new idea to apply division polynomials in ECM
+on January 15, 2001. When it was proposed, it was believed that the new method
+required too much memory to work. In this thesis, we reconsider this new algorithm
+for factoring a large number N by ECM with division polynomials, solve the memory
+problem and make it work in a practical way. Now we state the main outline of the
+algorithm in this section. We will analyze the feasibility and go through some more
+details in the later sections.
+
+Algorithm 4.1.1 (Factoring N by ECM with division polynomials) Given a positive
+integer N , the algorithm finds a factor p of N or stops by asserting a failure to factor
+N.
+
+  1. [Selecting the point and s]
+
+        Choose 0 < x, y < N and a small prime s.
+
+  2. [Setting bound]
+
+        Choose an appropriate upper bound B. Let R be the set of primes less than B.
+                   Q
+        Define m = r∈R re(r) , where e(r) is some suitable exponent.
+
+  3. [Generating implied division polynomials]
+
+        Generate ψ̄m by Algorithm 3.3.1.
+
+  4. [Pretesting]
+                                                   2
+        Compute g = gcd(si − 1, N ) for 0 ≤ i < m4 . If 1 < g < N , declare success and
+        the factor p = g; If g = N , go to Step 1; If g = 1, go to Step 5.
+                                                                                              30
+
+  5. [Polynomial evaluation]
+                                       m2
+      Evaluate ψ̄m at s0 , s1 , . . . , s 4 −1 by Algorithm 4.4.1. Denote gi ≡ ψ̄m (si )
+                                 2
+      (mod N ) for 0 ≤ i < m4 .
+
+  6. [Locating p]
+                      Q m42 −1
+      Compute g = gcd( i=0     gi , N ). If 1 < g < N , declare success and the factor
+      p = g; If g = 1, go to Step 2 and increase B; If g = N , split the product
+      Q m42 −1
+        i=0    gi into two products each with half of the factors. Repeat Step 6 with
+      the two shorter products as input. The splitting procedure is implemented the
+      way as in Step 7.
+
+  7. [Binary Splitting]
+          Q m42 −1           Q m82 −1             Q m42 −1
+     Split i=0     gi by f1 = i=0     gi and f2 =      m2
+                                                           gi . If 1 < gcd(fi , N ) < N
+                                                             i= 8
+      for i = 1 or 2, call success and the factor p = gcd(fi , N ) for the respective i.
+                                                                                 Q m162 −1
+      If gcd(f1 , N )(or gcd(f2 , N ))= N , split f1 (or f2 ) and rename f1 = i=0          gi (or
+            Q 3m  2
+                    −1               Q m2
+                                          −1            Q m2
+                                                               −1
+      f1 =     16
+                 m2
+                       gi ) and f2 =    8
+                                          m2
+                                             gi (orf2 =     4
+                                                              3m2
+                                                                  gi ). Then repeat Step 7. In
+               i= 8                   i= 16                  i= 16
+      case further splitting is necessary, split the polynomial to two new polynomials
+      with half of the degree of the previous polynomial similar as the argument stated
+      above.
+
+   The following theorem states that under certain circumstances, the algorithm
+will successfully find a non-trivial divisor of N.
+
+Theorem 4.1.1 Let N, B ∈ Z, R = {r is a prime : r ≤ B}, e(r) = d lnlnBr e, m =
+Q       e(r)
+  r∈R r      and x, y ∈ Z/N Z. Let d be a small prime number, and ai = di mod N ,
+                                                     2
+bi = y 2 − x3 − ai x mod N for i = 0, 1, . . . , m4 − 1. Then P = (x, y) ∈ Eai ,bi [N ].
+Suppose that N has prime divisors p and q satisfying the following conditions
+                                                         2
+  1. gcd(6(4a3i + 27b2i ), N ) = 1 for i = 0, 1, . . . , m4 − 1;
+
+  2. ∃ai such that each prime number r dividing #Eai ,bi [p] satisfies r ≤ B so that
+      r | m;
+                                                                                            31
+
+   3. for the same ai as in Condition 2, m is not divisible by the largest prime number
+      dividing the order of Pqai ,bi , which is the point P considered in Eai ,bi [q].
+
+Then Algorithm 4.1.1 is successful in finding a non-trivial divisor of N .
+
+Proof From 2, if B is chosen sufficiently large, we can get (m · P )pai ,bi = ∞p . By
+(3.8), ψ̄m (ai ) ≡ 0 (mod p).
+   From 3, (m · P )aq i ,bi 6= ∞q . By (3.8), ψ̄m (ai ) 6≡ 0 (mod q). Therefore, p divides
+gcd(ψ̄m (ai ), N ). If gcd(ψ̄m (ai ), N ) 6= N , the algorithm succeeds in finding a divisor
+not less than p of N . If gcd(ψ̄m (ai ), N ) = N , since 2 and 3 are for the same ai , after
+sufficient truncation, a non-trivial divisor not less than p of N will be found.
+
+   In the algorithm, we have m2 /4 different elliptic curves. It is important to study
+the relationships between those curves before we use them to implement the factoring
+algorithm. There is a type of map between elliptic curves, which is called isogeny.
+
+Definition 4.1.1 An isogeny between two elliptic curves E1 and E2 over a field K
+is a homomorphism from E1 (K) to E2 (K) that is given by rational functions.
+
+By the above definition, we can see that ζ(P + Q) = ζ(P ) + ζ(Q) and ζ(m · P ) =
+m · ζ(P ) for all P , Q in E1 .
+   There is an important result about the structure of elliptic curves.
+
+Lemma 4.1.1 Let n1 and n2 be odd integers with gcd(n1 , n2 ) = 1. Let E be an
+elliptic curve defined over Zn1 n2 . Then there is a group isomorphism
+
+                                  E[n1 n2 ] ≃ E[n1 ] ⊕ E[n2 ].
+
+For more details of the proof, please refer to Section 2.10 of [24].
+
+Theorem 4.1.2 If p is a prime divisor of N and there exist i, j with 0 ≤ i < j <
+m2 /4 such that Eai ,bi [p] is isogenous to Eaj ,bj [p] and (m · P )pai ,bi = ∞api ,bi . Assume
+also that there exists an isogeny ζ between Eai ,bi [p] and Eaj ,bj [p] such that P = (x, y)
+is a fixed point under ζ, that is ζ(P ) = P . Furthermore, if Eai ,bi [N ] is not isogenous
+to Eaj ,bj [N ], then Algorithm 4.1.1 is successful in finding a non-trivial divisor of N .
+                                                                                                 32
+
+Proof Apply ζ to both sides of (m · P )pai ,bi = ∞pai ,bi , we can get
+
+                       (ζ(m · P ))apj ,bj = (ζ(∞pai ,bi ))apj ,bj = ∞apj ,bj .
+
+                                                                                 a ,b          a ,b
+The second equality is because ζ is an isogeny. Then (ζ(m · P ))pj j = (m · ζ(P ))pj j .
+Notice that P is a fixed point under ζ. Therefore,
+
+                         (m · P )apj ,bj = (m · ζ(P ))paj ,bj = ∞paj ,bj .                     (4.1)
+
+   If (m · P )aNi ,bi 6= ∞aNi ,bi , then by (3.8), p divides ψ̄m (ai ) but N does not divide
+ψ̄m (ai ). So Algorithm 4.1.1 succeeds in finding a non-trivial divisor of N .
+   Now assume that (m · P )aNi ,bi = ∞aNi ,bi . By Lemma 4.1.1,
+
+                            Eai ,bi [N ] ≃ Eai ,bi [p] ⊕ Eai ,bi [N/p]
+
+                           Eaj ,bj [N ] ≃ Eaj ,bj [p] ⊕ Eaj ,bj [N/p].
+
+Let P1 ∈ Eai ,bi [p] and P2 ∈ Eai ,bi [N/p]. Expand ζ to ζ ∗
+
+                             ζ ∗ : Eai ,bi [N ] −→ Eaj ,bj [N ]
+
+                                   (P1 , P2 ) 7−→ (ζ(P1 ), ζ(P2 )).
+
+We have
+
+                a ,b                a ,b                    a ,b     ai ,bi             a ,b
+        (m · P )Nj j = m · ζ ∗ (P )Nj j = (ζ ∗ (m · P ))Nj j = ζ ∗ (∞N      ) 6= ∞Nj j .
+
+The last equality is true because Eai ,bi [N ] is not isogenous to Eaj ,bj [N ]. Therefore,
+N does not divide ψ̄m (aj ). By (4.1), we can see that p divides ψ̄m (aj ). So Algorithm
+4.1.1 is successful in finding a non-trivial divisor of N .
+
+   From Theorem 4.1.1, for some chosen B, if one of the m2 /4 curves has B-smooth
+order over Fp and condition 3 in Theorem 4.1.1 is satisfied, then the algorithm is
+successful. Condition 3 can be fulfilled by choosing B properly. So in order to study
+the probability of success, we need to know the probability of a number to be B-
+smooth and some properties of Dickman’s function ρ(t). For definition and notation,
+please refer to Section 2.3. Here we denote λ(x, x1/t ) = λ1 (x, x1/t ).
+                                                                                     33
+
+   From results of Knuth and Trabb Pardo [11], we know that
+
+                                                 xσ(t)       x
+                        λ(x, x1/t ) = xρ(t) +          + O( 2 )                    (4.2)
+                                                  ln x     ln x
+
+where
+                                σ(t) = (1 − γ)ρ(t − 1)
+
+and γ = 0.5772 . . . is Euler’s constant. It was shown in Knuth [11] that if ρ is a good
+approximation to the smoothness distribution, then σ is a good approximation to
+the semismoothness distribution.
+   We can use this to deduce the probability of success of Algorithm 4.1.1. But
+we can get a more insightful view from the following result by Canfield, Erdös and
+Pomerance [4].
+
+Lemma 4.1.2 If ² > 0 is arbitrary and 3 ≤ t ≤ (1 − ²) ln x/ ln ln x, then
+                         · µ                                            ¶¸
+            1/t                                   ln ln t − 1
+      λ(x, x ) = x · exp −t ln t + ln ln t − 1 +              + E(x, t)
+                                                      ln t
+
+where
+                                                  (ln ln t)2
+                                |E(x, t)| ≤ c²
+                                                    ln2 t
+with c² being a constant that depends only on the choice of ².
+
+   Now let’s state and prove one of the most important theorems in this thesis. It
+is about the probability of Algorithm 4.1.1 to be successful.
+
+Theorem 4.1.3 Let N , p, B and m be defined as in Algorithm 4.1.1 and B = p1/t so
+                                                                                     2
+that t = ln p/ ln B. Then the success probability of Algorithm 4.1.1 is 1−(1−ε(t))m /4
+where
+                                    ε(t) = t−t · η(t)                              (4.3)
+
+with
+                               η(t) ≈ e(1−ln ln t)(t+t/ ln t) .                    (4.4)
+                                                                                              34
+
+Proof By Theorem 4.1.1, we can see that the probability of Algorithm 4.1.1 to
+succeed is the same as the probability that at least one elliptic curve has its order
+to be B-smooth.
+               √                                          √            √
+   There are 4b pc + 1 integers in the interval (p + 1 − 2 p, p + 1 + 2 p). Now let’s
+count the number of integers which are B-smooth in this interval. By the definition
+                                                    √                     √
+of λ(x), we can get that this number is λ(p + 1 + b2 pc, B) − λ(p + 1 − b2 pc − 1, B).
+                                          √                   √
+Here we use the approximation (p+1+b2 pc)1/t ≈ (p+1−b2 pc−1)1/t ≈ p1/t = B.
+By Lemma 4.1.2, we have
+                  √                           √
+     λ(p + 1 + b2 pc, B) − λ(p + 1 − b2 pc − 1, B)
+                    √                       √
+      = [(p + 1 + b2 pc) − (p + 1 − b2 pc − 1)] · e−t(ln t+ln ln t−1+ ln t ) · eE(x,t)
+                                                                     ln ln t−1
+
+
+
+            √
+      ≈ (4b pc + 1) · t−t · e−t(ln ln t−1)(1+1/ ln t)
+            √
+      = (4b pc + 1)ε(t).
+                                                                           √           √
+Therefore the probability that a random integer chosen from (p+1−2 p, p+1+2 p)
+                   √                    √
+is B-smooth is (4b pc + 1)ε(t)/(4b pc + 1) = ε(t).
+   Now we assume that the distribution of orders over Fp of different elliptic curves
+                  2
+for a = s0 , . . . , sm /4−1 are independent. If not, we can use another way of choosing a
+such as choosing m2 /4 a values randomly. Then we will use a different algorithm for
+polynomial evaluation with the same type of complexity. See Section 4.4 for more
+information.
+   Since we are assuming that different elliptic curves have independent probabilities
+of having their orders over Fp being B-smooth, the probability that at least one
+curve has B-smooth order over Fp , which is the probability that Algorithm 4.1.1 is
+successful, is
+
+         1 − the probability that any curve has non-B-smooth order over Fp
+                            2
+         = 1 − (1 − ε(t))m /4 .
+
+
+
+   Let’s put some more consideration to ε(t) before we move on. Notice
+                                                                          t     t ln ln t
+      f (t) = ln(ε(t)) = −t ln t + ln η(t) = −t ln t + t − t ln ln t +        −           .
+                                                                         ln t      ln t
+                                                                                     35
+
+We have
+                                                     2      ln ln t ln ln t
+                       f 0 (t) = − ln t − ln ln t − 2 −             + 2
+                                                   ln t       ln t      ln t ¶
+                               µ
+                             1    5       1          2 ln ln t ln ln t       1
+               f 00 (t) =         3 −      2 −1−         3     + 2 −             .
+                             t ln t ln t               ln t        ln t     ln t
+Let v = ln t, then
+                                                      2   ln v ln v
+                       f 0 (t) = g1 (v) = −v − ln v − 2 −      + 2
+                                                      v    v     v
+                                         µ                          ¶
+                  00                  −v   5   2 ln v   1   ln v 1
+                 f (t) = g2 (v) = e           − 3 − 2 + 2 − −1 .
+                                           v3    v      v    v    v
+Notice
+                                  2             1    1
+                    g1 (v) = − v − 2
+                                     − ln v(1 + − 2 )
+                                 v              v √ v           √
+                                  2             1+ 5         1− 5
+                        = − v − 2 − ln v(1 +           )(1 +       ).
+                                 v                2v          2v
+                    √                  √
+If v > 1 and 1 + 1−2v 5 > 0, i.e. v > 5−12
+                                             ≈ 0.6180 ⇔ t > 1.8553, g1 (v) < 0. In the
+algorithm, t is normally greater than 1.8553. Therefore, f 0 (t) < 0, so that f (t) is
+decreasing as t increases. Now set g2 (v) = 0 to find the inflection point candidates
+of f (t). We can solve the equation numerically. By using Matlab and checking the
+change of signs of g2 (v) while v passes the candidate points from left to right, we can
+see that t = 3.5177 is the inflection point. Therefore, f (t) is decreasing and concave
+up for t ∈ (1.8553, 3.5177) and concave down for t ∈ (3.5177, ∞). In the algorithm,
+t is normally greater than 3.5177. So we can conclude that while B increases, the
+probability of success of Algorithm 4.1.1 will increases. Now let’s see whether we
+can find a specific range of B values such that the success probability can have a
+lower bound. The following corollary of Theorem 4.1.3 answers this question.
+
+Corollary 4.1.1 Let N , p, B and m be defined as in Algorithm 4.1.1 and t =
+ln p/ ln B. Then the probability of Algorithm 4.1.1 to be successful is at least 1 −
+                                   2
+exp((−m2 (t−t )1+ln ln t/ ln t−1/ ln t )/4).
+
+Proof Consider ε(t). We can get
+                                                                    t    t ln ln t
+             ln ε(t) = −t ln t + ln η(t) = −t ln t + t − t ln ln t +   −
+                                                                  ln t      ln t
+                                   t ln ln t    1          ln ln t
+                     = −t ln t(1 +           − 2 ) + t(1 −         ).
+                                      ln t    ln t          ln t
+                                                                                           36
+
+Since 1 − lnlnlnt t = ln t−ln
+                          ln t
+                               ln t
+                                    > 0 and ln1 t > 0 for t > 1. we have ln ε(t) > −t ln t(1 +
+ln ln t
+ ln t
+        − ln12 t ). So that
+                                                                         2
+                                  ε(t) >e−t ln t(1+ln ln t/ ln t−1/ ln t)
+                                                                     2
+                                         =(t−t )1+ln ln t/ ln t−1/ ln t .
+By Taylor expansion and applying the above inequality, we have
+
+                              2      2                                        2
+            (1 − ε(t))m /4 ≤ e−m ε(t)/4 < exp((−m2 (t−t )1+ln ln t/ ln t−1/ ln t )/4).
+
+By Theorem 4.1.3, the probability of success of Algorithm 4.1.1 is greater than
+                                         2
+1 − exp((−m2 (t−t )1+ln ln t/ ln t−1/ ln t )/4). This concludes the proof.
+
+      In the following sections, we will analyze Algorithm 4.1.1 in some more details.
+We will go over the algorithms to do FFT and polynomial evaluations for both
+geometric progression and random chosen values. Then at the end of this chapter,
+we will come back to Algorithm 4.1.1 by analyzing its complexity and proposing a
+more efficient version for some specific type of p values.
+
+
+4.2     The Fast Fourier Transform and its Applications
+
+      The Fast Fourier Transform (FFT) is a fast algorithm to compute the discrete
+Fourier transform (DFT) of a vector. It is vastly used in both science and engineering.
+DFT can be defined over both the complex numbers and a commutative ring R.
+
+Definition 4.2.1 An element ω ∈ R is called a principal D-th root of unity if
+
+   1. ω 6= 1.
+
+   2. ω D = 1.
+        PD−1      ke
+   3.     k=0 ω        = 0, for 1 ≤ e < D.
+
+Definition 4.2.2 Let a = (a0 , a1 , . . . , aD−1 ) be a vector with elements from a com-
+mutative ring R, and suppose D has a multiplicative inverse in R. Let ω be a
+principal D-th root of unity. The vector DF T (a) = (a∗0 , a∗1 , . . . , a∗D−1 ), where a∗i =
+                                                                                           37
+
+PD−1         ik
+  k=0 ak ω  for 0 ≤ i < D, is called the discrete Fourier transform of a. The
+                                                                  PD−1
+vector DF T −1 (a) = (a00 , a01 , . . . , a0D−1 ), where a0i = D−1 k=0 ak ω −ik for 0 ≤ i < D,
+is called the inverse discrete Fourier transform of a.
+
+   It’s not hard to prove that DF T (DF T −1 (a)) = DF T −1 (DF T (a)) = a. The
+Fourier transform and inverse Fourier transform of a length-D vector can be com-
+puted in O(D2 ) time. However, we have a much faster algorithm with time O(D ln D),
+which is called the fast Fourier transform (FFT). If we consider the polynomial
+       P
+f (x) = D−1      i
+         i=0 ai x , then finding DF T (a) is equivalent to evaluating f (x) at D points
+
+ω 0 , ω 1 , . . . , ω D−1 . To evaluate f (x) at some given point ω i , we can divide f (x) by
+x − ω i . The remainder is f (ω i ).
+   Instead of dividing f (x) by each x − ω i , FFT does the division after multiplying
+some x − ω i together. Notice that after multiplying the x − ω i together in pairs,
+we will get D/2 polynomials. Then we do the same multiplication to these D/2
+polynomials, and so on. Finally we can get two polynomials, q1 and q2 . They are
+both with degree D/2. Now we divide f by q1 and by q2 . Denote the remainder
+by r1 and r2 respectively. If (x − ω i ) | q1 , then it is not hard to prove that f ≡ r1
+(mod x − ω i ). Similar result is true for q2 . Now dividing a polynomial of degree D
+by a linear term is reduced to dividing a polynomial of degree D/2 − 1 by the same
+term.
+   The principal D-th root of unity ω has a property that can make the multi-
+plication of x − ω i have a good form. Let d0 , d1 , . . . , dD−1 be a permutation of
+ω 0 , ω 1 , . . . , ω D−1 . Consider the case of D = 2α . If D is not a power of 2, we can
+add some higher degree term to the polynomial to make D a power of 2. For integer
+0 ≤ β ≤ α and an integer multiple of 2β s with 0 ≤ s < D, we define a polynomial
+                                            s+2 β
+                                              Y−1
+                                   qs,β =           (x − di ).
+                                             i=s
+                                                                                                                    38
+
+  All these qs,β ’s form a binary tree, with q0,0 = x − d0 , q1,0 = x − d1 , . . . , qD−1,0 =
+                                      QD−1
+x−dD−1 as the leaf nodes and q0,α = i=0     (x−di ) as the root. By simple calculation
+we can prove that
+                                     qs,β = qs,β−1 · qs+2β−1 ,β−1 .                                               (4.5)
+
+This result tells us that each node is the product of its two children. Constructing
+these polynomials is the way we multiply the x − ω i together in pairs.
+   Now we need to know how to rearrange ω 0 , ω 1 , . . . , ω D−1 to get d0 , d1 , . . . , dD−1
+with some desirable property. Let b0 b1 · · · bα−1 be the binary representation of the
+integer 0 ≤ i < D. Define ie to be the integer whose binary representation is
+                                e
+bα−1 bα−2 · · · b0 . Let di = ω i , then by induction, we can prove that
+
+                                                          β            gβ
+                                          qs,β = x2 − ω s/2 .                                                     (4.6)
+
+   We need to find the remainder of f (x) when divided by qs,0 for each 0 ≤ s < D.
+In FFT, we compute the remainder rs,β of f (x) when divided by each qs,β . We
+run the loop from β = α − 1 to β = 0. For β = 0, s will traverse all through
+0, 1, . . . , D − 1. From (4.5), we can prove that rs,β−1 is the same as the remainder of
+rs,β when divided by qs,β−1 and rs+2β−1 ,β−1 is the same as the remainder of rs,β when
+divided by qs+2β−1 ,β−1 .
+   The degree of rs,β is 2β − 1. By (4.6), qs,β−1 and qs+2β−1 ,β−1 are both binomials
+                                                                          Pβ
+x2 −c with degree 2β−1 and c be the corresponding constant. Let rs,β = 2i=0−1 ri xi .
+  β−1
+
+
+
+Then we have
+                  2β−1
+                   X−1                              2β−1
+                                                     X−1
+                                     i+2β−1
+         rs,β =          ri+2β−1 x            +               ri x i
+               i=0                      i=0
+                  β−1
+                 2X   −1                           2β−1
+                                                    X−1              2β−1
+                                                                      X−1
+                                        β−1
+             =                   i 
+                         ri+2β−1 x (x 2
+                                            − c) +                i
+                                                        cri+2β−1 x +      ri x i
+                       i=0                                              i=0                      i=0
+                                        
+                      2β−1
+                       X−1                                             2β−1
+                                                                        X−1
+                                         i        2β−1
+             =              ri+2β−1 x        (x          − c) +                (ri + cri+2β−1 )xi .
+                       i=0                                              i=0
+
+                                                               β−1              P2β−1 −1
+So the remainder of rs,β when divided by x2                            − c is      i=0     (ri + cri+2β−1 )xi .
+                                                                                           39
+
+   From the above analysis, we can get the following algorithm to implement FFT.
+For more details, please refer to Section 7.2 of [1]. The algorithm is for D = 2α for
+some integer α, but it works well for other D values just by adding sufficiently many
+zeros after aD−1 in the vector a.
+
+Algorithm 4.2.1 (Finding a discrete Fourier transform of a vector a by FFT)
+Given a vector a = (a0 , a1 , . . . , aD−1 ) with D = 2α for some integer α, the algo-
+rithm finds the discrete Fourier transform of a DF T (a) = (a∗0 , a∗1 , . . . , a∗D−1 ), where
+a∗i for 0 ≤ i < D is defined as in Definition 4.2.2.
+
+   1. [Initialization]
+                  P
+      Set r0,α = D−1         i
+                     i=0 ai x .
+
+
+   2. [Outer loop]
+
+      for (β = α − 1; β ≥ 0; β −−){
+
+   3. [Inner loop] for (s = 0; s < D; s = s + 2β+1 ){
+                                           P β+1
+      Compute the remainders rs,β+1 = 2i=0 −1 ai xi ;
+                 gβ ;
+      Generate s/2
+                     P2β −1          gβ
+      Define rs,β = i=0     (ai + ω s/2 ai+2β )xi ;
+                        Pβ              gβ
+      Define rs+2β ,β = 2i=0−1 (ai + ω s/2 +D/2 ai+2β )xi ;}
+      }
+
+   4. [finalization]
+
+      Set ae∗i = ri,0 for 0 ≤ i < D.
+
+   By Definition 4.2.2, if we replace ω by ω −1 in step 3 and divide ae∗i by D in step 4,
+we can get the algorithm to implement inverse FFT. We can to prove that the time
+complexities of Algorithm 4.2.1 and the corresponding algorithm for inverse FFT are
+both O(D ln D).
+   There are different ways to implement FFT. We can do it recursively, by bit
+operations. See Crandall and Pomerance [6] for more details.
+                                                                                               40
+
+4.3     Cyclic Convolutions
+
+      We need to evaluate the division polynomial at many points. A good way to
+achieve this is to use the cyclic convolution.
+
+Definition 4.3.1 Let x = (x0 , x1 , . . . , xD−1 ) and y = (y0 , y1 , . . . , yD−1 ) be two vec-
+tors with D elements. The cyclic convolution x ⊗ y is defined to be a vector
+z = (z0 , z1 , . . . , zD−1 ) with D elements where
+                                     X
+                         zk =                     xi yj   (0 ≤ k ≤ D − 1).
+                                i+j≡k   (mod D)
+
+If we consider vectors x, y as the coefficients of two D − 1-degree polynomials f, g
+with respect to the same variable t, we can prove that z = x ⊗ y gives the coefficients
+of the polynomial h = f g (mod (tD − 1)).
+      If we define an operation ? by x ? y = (x0 y0 , x1 y1 , . . . , xD−1 yD−1 ), we have
+
+                             x ⊗ y = DF T −1 (DF T (x) ? DF T (y)).                          (4.7)
+
+Therefore cyclic convolution can be done by 2 Fourier transforms and 1 inverse
+Fourier transform. So that the complexity of cyclic convolution is O(D ln D).
+
+
+4.4     Polynomial Evaluation
+
+      In Algorithm 4.1.1, we need to evaluate the m-th implied division polynomial at
+m2 /4 points. Crandall and Pomerance [6] (Section 9.6.3) gives several methods for
+different cases. In this thesis, we will use the following algorithm.
+
+Algorithm 4.4.1 (Evaluating a polynomial at several values with geometric pro-
+                                     PD−1     i
+gression) Given a polynomial f (x) =  i=0 ai x with degree D − 1 and a set of
+
+values {s0 , s1 , . . . , sD−1 } with s being some small prime number, the algorithm finds
+D values {f (s0 ), f (s1 ), . . . , f (sD−1 )}.
+
+   1. [Initialization]
+        Choose the smallest value D∗ = 2k such that D∗ ≥ 2D;
+                                                                                                               41
+
+      Redefine ai by ai = ai si(i+1)/2 for 0 ≤ i < D;
+      Zero-pad a = (ai )0≤i<D∗ so that a is a vector with length D∗ ;
+      Define another vector b = (s(D /2−i−1)(i/2−D /4) ) for 0 ≤ i < D∗ .
+                                                  ∗                      ∗
+
+
+
+
+   2. [Cyclic Convolution]
+      Let c = a ⊗ b.
+
+   3. [Finalization]
+      Return (f (si )) = (si(i−1)/2 cD∗ /2+i−1 ) for 0 ≤ i < D.
+
+   Now let’s see how the algorithm works.
+
+Theorem 4.4.1 Algorithm 4.4.1 evaluates f (x) at {s0 , . . . , sD−1 } correctly.
+
+Proof Notice that
+                       i(i + 1) j(j − 1)        (i − j)[(i − j) + 1]
+                               +         − ij =                      .
+                           2        2                     2
+Therefore
+                           D
+                           X
+                             ∗ −1                          D
+                                                           X
+                                                             ∗ −1
+
+                   j                    ij      j(j−1)/2
+               f (s ) =              ai s = s                         (ai si(i+1)/2 )s(j−i)(i−j+1)/2 .
+                            i=0                             i=0
+
+Now we just need to prove that
+                            D
+                            X
+                              ∗ −1
+
+                                     (ai si(i+1)/2 )s(j−i)(i−j+1)/2 = cD∗ /2+i−1                             (4.8)
+                             i=0
+
+for all 0 ≤ j < D. By the definition of cyclic convolution, the right-hand side of
+(4.8) is
+                           D
+                           X
+                             ∗ −1
+
+           cD∗ /2+j−1 =             (ai si(i+1)/2 )bD∗ /2+j−1−i
+                            i=0
+                           D
+                           X
+                             ∗ −1
+
+                                    (ai si(i+1)/2 )s(D /2−(D /2+j−1−i)−1)(D /2+j−1−i)/2−D /4
+                                                      ∗           ∗                    ∗                 ∗
+                       =
+                            i=0
+                           D
+                           X
+                             ∗ −1
+
+                       =            (ai si(i+1)/2 )s(i−j)(j−1−i)/2 .
+                            i=0
+
+This is the left-hand side of (4.8). So Algorithm 4.4.1 is correct.
+                                                                                        42
+
+    For length D vectors, the complexity of FFT is O(D ln D). So that the complexity
+of Algorithm 4.4.1 is also O(D ln D) since the main part of Algorithm 4.4.1 is the
+convolution which essentially is two times of FFT and one time of inverse FFT .
+    In the proof of Theorem 4.1.3, we require the probability distribution of suc-
+cessfully factoring N with different elliptic curves to be independent. We assumed
+the independence for the geometrical progression parameters for simplicity. How-
+ever, randomly choosing a is a more convincing way. These arguments rely on the
+following conjecture.
+
+Conjecture 4.4.1 The probability distribution of Algorithm 4.1.1 to be successful
+for any two elliptic curves with parameters a and a0 is independent as long as the
+two elliptic curves have different orders over Fp for the prime factor p of N .
+
+    If a more general way to choose the values is desirable such as choosing them
+totally randomly, which means we cannot use Algorithm 4.4.1 to implement poly-
+nomial evaluation any more, we can still do so with Algorithm 9.6.7 in [6]. Let’s
+demonstrate the rough idea of the algorithm here. Assume that D is a power of 2
+and we want to evaluate f (x) with degree D − 1 at D values x0 , x1 , . . . , xD−1 . Define
+
+                         g1 (x) = (x − x0 )(x − x1 ) . . . (x − xD/2−1 ),
+
+                      g2 (x) = (x − xD/2 )(x − xD/2+1 ) . . . (x − xD−1 ).
+
+Divide f (x) by g1 (x) and g2 (x), we can get
+
+                     f (x) = q1 (x)g1 (x) + r1 (x) = q2 (x)g2 (x) + r2 (x).
+
+Then f (ti ) = r1 (ti ) for 0 ≤ i < D/2 and f (ti ) = r2 (ti ) for D/2 ≤ i < D. Therefore,
+we reduce the polynomial degree in the evaluation problem to half of the original. By
+setting a break-over threshold and doing the evaluation recursively, we can implement
+the following algorithm with a good complexity.
+
+Algorithm 4.4.2 (Evaluating a polynomial at random values) Given a polynomial
+       PD−1
+f (x) = i=0 ai xi with degree D − 1 and a set of values X = {x0 , x1 , . . . , xD−1 }, the
+algorithm finds D values {f (x0 ), f (x1 ), . . . , f (xD−1 )}.
+                                                                                              43
+
+  1. [Initialization]
+     Choose the smallest value D∗ = 2k such that D∗ ≥ 2D;
+     Zero-pad a = (ai )0≤i<D∗ so that a is a vector with length D∗ ;
+     Zero-pad X at the end so that X has length D∗ ;
+     Set threshold τ = 4.
+
+  2. [Recursion]
+     eval(f, X){
+     Let d be the degree of f ;
+     If (d ≤ τ ), return (f (x0 ), f (x1 ), . . . , f (xd−1 ));
+     L = (x0 , x1 , . . . , xd/2−1 );
+     R = (xd/2 , xd/2+1 , . . . , xd−1 );
+             Q
+     g1 (x) = d/2−1
+                i=0 (x − xi );
+             Qd−1
+     g2 (x) = i=d/2 (x − xi );
+     r1 (x) = f (x) (mod g1 (x));
+     r2 (x) = f (x) (mod g2 (x));
+     Return eval(r1 , L) ∪ eval(r2 , R);
+     }
+
+In the algorithm, eval is the recursive function and ∪ is the concatenation operator.
+Algorithm 4.4.2 runs a bit longer than Algorithm 4.4.1 for the same D.
+
+Theorem 4.4.2 Algorithm 4.4.2 correctly evaluation a polynomial f (x) with degree
+D − 1 at D random values with time complexity O(D ln2 D).
+
+Proof Let’s prove that Algorithm 4.4.1 works first. Without losing generality, let’s
+assume D = D∗ = 2k . We will use induction on D.
+   If D = 4, then the algorithm returns f (x0 ), f (x1 ), f (x2 ), f (x3 ) directly. Suppose
+the algorithm works for D = 2i with 2 < i < k. Now let’s prove that it also works
+for D = 2i+1 . When the function eval is first entered, d = D = 2i+1 and we have
+
+                 L = (x0 , x1 , . . . , x2i −1 ),   R = (x2i , x2i +1 , . . . , x2i+1 −1 ),
+                                                                                                          44
+
+                                                                     i −1
+                                                                    2Y
+                           r1 (x) = f (x) (mod g1 (x) =                     (x − xj )),
+                                                                     j=0
+
+                                                                   2i+1
+                                                                     Y−1
+                           r2 (x) = f (x) (mod g2 (x) =                      (x − xj )).
+                                                                     j=2i
+
+So when eval(r1 , L) and eval(r2 , R) are entered, they both have d = 2i . By the induc-
+tion assumption and the argument before the algorithm, we see that eval(r1 , L) and
+eval(r2 , R) return f (x0 ), f (x1 ), . . . , f (xD/2−1 ) and f (xD/2 ), f (xD/2+1 ), . . . , f (xD−1 )
+respectively. Together, they return the values of f (x) on those D points. By in-
+duction, we see that Algorithm 4.4.2 works.
+    Now let’s prove the complexity to be O(D ln2 D). It suffices to assume D = 2k .
+The steps that take most of the operations are expanding g1 (x), g2 (x) and comput-
+                                                                PD−1
+ing r1 (x), r2 (x). First of all, we prove that expanding g(x) = i=0  (x − xi ) takes
+O(D ln2 D) field operations.
+    We calculate (x − x2i )(x − x2i+1 ) for i = 0, . . . , 2k−1 − 1. At this first step, the
+required numbers of additions and multiplications are both 1 ∗ D/2 = 2k−1 so that
+the total number of field operations is 2k . At the second step, there are 2 ∗ 22 ∗ D/22
+additions and multiplications totally. It’s not hard to see that at the i-th step, we
+need to do 2 ∗ i2 ∗ D/2i operations. The total number of operations we need to
+expand g(x) is
+           k
+           X               k
+                           X                         k−1
+                                                     X
+             i2 D                2 k−i           2                                          2      2
+       2              =2         i2      < 2(k             2i ) = 2(k 2 (2k − 1)) <         2 (D ln D).
+           i=1
+                 2i        i=1                       i=1
+                                                                                          ln 2
+
+Therefore it is O(D ln2 D).
+    In Section 8.5 of [1], Aho, Hopcroft, and Ullman prove that the total number of
+operations to implement polynomial remaindering modulo a polynomial with degree
+D is O(D ln D). So the totally operation we need in Algorithm 4.4.2 is
+                                  k−2
+                                  X   1
+                                           O(D ln2 D) = O(D ln2 D).
+                                  i=0
+                                      2i
+                                                                                     45
+
+4.5     Complexity of the Factoring Algorithm
+
+      After our review of important related issues, now let’s return to the main factor-
+ing algorithm in this thesis. The following crucial theorem tells the complexity of
+Algorithm 4.1.1.
+
+Theorem 4.5.1 If we choose values in a geometric progression to do polynomial
+evaluation, Algorithm 4.1.1 needs O(m2 ln m) arithmetic operations to succeed or
+report failure.
+
+Proof By Theorem 3.3.2, the complexity of step 3 in Algorithm 4.1.1 is O(m2 ln m).
+From Theorem 3.2.1, we can see that the degree of the m-th implied division poly-
+nomial is at most m2 /4 − 1. Therefore by Theorem 4.4.1 it will take O(m2 ln m)
+arithmetic operations to do the polynomial evaluation. So the total number of arith-
+metic operations Algorithm 4.1.1 needs is O(m2 ln m). This finishes the proof.
+
+By Theorem 4.4.2, we can get the following result.
+
+Corollary 4.5.1 In more general case, if we choose random values and implement
+polynomial evaluation by Algorithm 4.4.2, then Algorithm 4.1.1 requires O(m2 ln2 m)
+arithmetic operations to succeed or report failure.
+
+
+4.6     Optimization of the Factoring Algorithm for Some Specific Prime
+        Numbers
+
+      In Schnorr’s proposal [19], the memory cost is left arguable. Algorithm 4.1.1
+also has the same problem. The integer m is the multiple of the point P = (x, y)
+while m2 /4 is the number of curves being used. It is also the degree of the m-th
+implied division polynomial. Since every coefficient is stored as an array of integers,
+if m gets large, which is what the program requires since it is the multiple as well,
+the memory cost to store the m-th implied division polynomial will get huge and a
+memory overflow may happen.
+                                                                                  46
+
+   Intuitively, even though the multiple and the number of curves do have some
+relation, it should not be as explicit as shown by m vs m2 /4. In this section, we
+modify Algorithm 4.1.1 so that we could isolate the multiple and the number of
+curves. Before bringing up this innovative idea, let’s demonstrate the advantage of
+the Algorithm 4.1.1, which is also one of the reasons we developed it. Algorithm
+4.1.1, as well as the optimized one in this section, is appealing since it separates
+the factoring process to two parts: division polynomial generation and polynomial
+evaluation. The former takes longer than the latter. Therefore, we can apply parallel
+computation to optimize the algorithm. This will save a lot of time.
+   Notice that the m-th implied division polynomial has degree at most m2 /4. To
+evaluate ψ̄m at m2 /4 points, we use fast Fourier transform. Therefore, if we can
+control the degree of the implied division polynomials, we can reduce the memory
+cost as well as the runtime.
+   Consider a family Fn of numbers with the form sn ± 1 where s is some small
+prime number such as 2, 3, 5, 7, 11. These numbers are interesting and their study
+is important for the development of computational number theory. Two types of
+numbers known as the Mersenne numbers Mp = 2p − 1 and the Fermat numbers
+        n
+Fn = 22 + 1 are in Fn . Some good results have been concluded for these numbers
+and primality testing of them is of great interest.
+   The factoring algorithm in this thesis can be optimized for Fn . Let N = sn ± 1 ∈
+Fn , for some small prime number s, be the number we want to factor. Consider a
+degree n polynomial xn ± 1. We can get that
+
+                        (si )n ≡ 1 (mod N ) for 0 < i < n                       (4.9)
+
+for N = sn − 1 and
+
+                 (si )n ≡ −1 (mod N ) for 0 < i < n and i is odd               (4.10)
+
+for N = sn + 1. In the implied division polynomial generating algorithm (Algorithm
+3.3.1), if we do every polynomial operation modulo m(x) = xn ± 1, then the result of
+                                                                                          47
+
+Algorithm 4.1.1 will not change since p divides N and (4.9), (4.10). For the Fermat
+                  n
+number N = 22 + 1, we can make the degree even smaller. Since we evaluate the
+                                                            n−1
+m-th implied division polynomial modulo m(x) = x2                 + 1 at 2n−1 points 2i for
+0 ≤ i < 2n−1 , we can see that N divides m(2i ) for 0 < i < 2n−1 and i being odd.
+
+Algorithm 4.6.1 (Factoring N by ECM with division polynomials with N in some
+                       2
+specific form and b m
+                    4n
+                       c curves) Given a positive integer N = sn ± 1 with some small
+prime number s, the algorithm finds the factor p of N or stops by asserting a failure
+to factor N .
+
+  1. [Setting bound]
+
+      Choose an appropriate upper bound B, let R be the set of primes less than B.
+                 Q
+      Define m = r∈R re(r) , where e(r) ≥ 0 is some suitable exponent. Also define
+      a product calculation variable π = 1 and a variable κ = 0 to record the number
+      of loops.
+
+  2. [Selecting the point]
+
+      Choose 0 < x, y < N .
+
+  3. [Generating implied division polynomials]
+
+      Generate ψ̄m by calling modified Algorithm 3.3.1 with doing all the calculations
+      modulo xn ± 1.
+
+  4. [Pretesting]
+
+      Compute g = gcd(si − 1, N ) for 0 ≤ i < n. If 1 < g < N , call success and the
+      factor p = g; If g = 1, go to Step 5.
+
+  5. [Polynomial evaluation]
+
+      Evaluate ψ̄m at s0 , s1 , . . . , sn−1 by Algorithm 4.4.1. Denote gi ≡ ψ̄m (si ) (mod N )
+      for 0 ≤ i < n.
+                                                                                       48
+
+  6. [Locating p]
+                                                                  Qn−1
+      Define a temporary variable τ = π and set π = π ·            i=0 gi .   Compute g =
+      gcd(π, N ). If 1 < g < N , call success and the factor p = g; If g = 1, go to
+                              Q
+      Step 7; If g = N , split n−1
+                                i=0 gi , set π = τ , and repeat Step 6 with the truncated
+
+      product as the input value. The splitting procedure is implemented the same
+      way as Step 7 in Algorithm 4.1.1.
+
+  7. [Going back for another loop]
+                                2                             2
+      Set κ = κ + 1. If κ = b m
+                              4n
+                                 c, go to Step 8. If κ < b m
+                                                           4n
+                                                              c, go back to Step 2 and
+      choose a different pair of 0 < x, y < N .
+
+  8. [Renewing]
+
+      If the program runs within the expect runtime, go back to Step 1 and choose a
+      larger B. If not, quit and report failure.
+
+   In the algorithm, Step 7 is executed in order to make sure we try m2 /4 curves.
+                                           2
+Algorithm 4.6.1 calls Algorithm 3.3.1 b m
+                                        4n
+                                           c times. And in each call, the polynomials
+are all with degree n. By similar argument as the proof of Theorem 3.3.2, the total
+time for division polynomial generation is m2 O(n ln n ln m)/(4n) = O(m2 ln m ln n).
+The total time taken by polynomial evaluation is m2 O(n ln n)/(4n) = O(m2 ln n).
+Summing them up, we get the following theorem.
+
+Theorem 4.6.1 Algorithm 4.6.1 will factor N ∈ Fn with O(m2 ln m ln n) arithmetic
+operations or report failure.
+
+   For large m, m2 /4 is very large. In most cases, we don’t have to try that many
+curves. So we can ease the restriction of the number of curves a bit to get the
+following modified algorithm.
+
+Algorithm 4.6.2 (Factoring N by ECM with division polynomials with N in some
+specific form and k curves) Given a positive integer N = sn ± 1 with some small
+                                                                                     49
+
+prime number s, the algorithm finds the factor p of N or stops by asserting a failure
+to factor N .
+     In Step 1, choose an integer k. All the other parts of Step 1 are the same as Step
+1 in Algorithm 4.6.1. Step 2-6 and Step 8 are all the same as the ones in Algorithm
+                                                                                 2
+4.6.1, Step 7 is the same as Step 7 in Algorithm 4.6.1 except for changing b m
+                                                                             4n
+                                                                                c to
+b nk c.
+
+     By the similar arguments above Theorem 4.6.1 and in the proof of Corollary
+4.1.1, we can get the following theorem about the complexity of Algorithm 4.6.2.
+
+Theorem 4.6.2 Algorithm 4.6.2 will factor N ∈ Fn with O(k ln m ln n) arithmetic
+operations by using k elliptic curves or report failure. Let t = ln p/ ln B, then the
+                                           −t )1+ln ln t/ ln t−1/ ln2 t
+probability of success is at least 1 − e−k(t                              .
+
+     Notice that in Algorithm 4.1.1, 4.6.1 and 4.6.2, s does not have to be a prime.
+In fact, s can be any number as long as it has an inverse in the arithmetic domain.
+From the argument in Section 5.2, we can see that if s is not a multiple of any of
+the prime numbers we used to implement Chinese remainder theorem, then s can
+be used. Please refer to Section 5.2 for more details. Practically we choose s to be
+some small number in Algorithm 4.1.1. For Algorithm 4.6.1 and 4.6.2, we choose s
+to be the same as in N = sn ± 1.
+     This optimized algorithm makes the choice of the multiple m not being restricted
+by the memory cost so that we can use very large m to increase the probability of
+success without increasing the size of required memory at the same time.
+50
+                                                                                      51
+
+
+
+
+                      5. Implementation and Results
+
+5.1     Multiple-Precision Arithmetic
+
+      While implementing the algorithms in the thesis, most of the numbers are greater
+than 232 . We need a multiple-precision mechanism to deal with this. I used the
+Multi-Precise Arithmetic Package written by R. D. Silverman. C. Zhang modified it
+to support negative multi-precision integers. I modified some of the routines so that
+they could deal with some special cases such as zero exponent.
+      In the package, all the multiple-precision integers are stored in an array with
+some radix such as 230 , with most significant digits to the left and least to the right.
+The absolute value of first element in the array, denoted by array[0], is the length of
+the array including array[0]. The sign of it is the sign of the integer.
+
+
+5.2     Chinese Remainder Theorem and Its Application to the Algorithm
+
+      Since our purpose is to factor some large integer N , we can take the remainder
+modulo N and keep all the numbers in the algorithm less than N .
+
+Theorem 5.2.1 Let m1 , . . . , mt be positive integers with gcd(mi , mj ) = 1 for any
+                    Q
+1 ≤ i, j ≤ t and M = ti=1 mi . Let r1 , . . . , rt be any t integers. Then the system
+comprising the k congruences
+
+                             x ≡ ri   (mod mi ),          1≤i≤t
+
+has a unique solution in [0, M − 1]. Furthermore, this solution is given explicitly by
+the least nonnegative residue modulo M of
+                                       t
+                                       X
+                                              ri si M i
+                                        i=1
+
+where Mi = M/mi and si = Mi−1 (mod mi ) for 1 ≤ i ≤ t.
+                                                                                        52
+
+The complexity of implementing Chinese remainder theorem is O(t(ln M )3 ). See
+Section 5.3 of Wagstaff [23] for details.
+      The factoring algorithm in this thesis does all the computation modulo N . The
+reason we do this is that the coefficients of the implied division polynomials will get
+extremely large when the index is getting large and we need to restrict the values
+of them within some upper bound. This technique is similar with the one we use in
+Section 4.6 to optimize the algorithm for some integers with specific form.
+      The routines in the multiple-precision package to implement modular arithmetic
+are faster and easier if the modulus is a single-precision number rather than a
+multiple-precision number. So what we did is generating several primes p1 , . . . , pt
+                       Q
+less than 230 such that ti=0 pi > N . We implement Algorithm 3.3.1, 4.1.1, 4.2.1,
+4.4.1 all modulo pi for 1 ≤ i ≤ t. Then use Chinese remainder theorem to get the
+resulting value modulo N .
+      In Algorithm 4.4.1, the size of the vector in the FFT is D∗ . To ensure that the
+D∗ -th root of unity exists modulo pi , we use the following scheme to choose the pi .
+
+   1. By the size of N , determine the total number of primes that will be needed.
+        Denote it by t.
+
+   2. Set r = b229 /D∗ c.
+
+   3. Test the numbers D∗ ∗ (r + j) + 1 for j = 0, 1, 2, . . . , for primality until t such
+        primes have been found. Call them p1 , . . . , pt .
+
+
+5.3     Results
+
+      The algorithm is implemented on a 1.86GHz 1066FBS PC with 4GB DDR2
+SDRAM at 533MHz.
+      Within several minutes Algorithm 4.6.2 succeeded in finding a 13-digit prime
+p|N where p = 5625767248687 and N = 2139 − 1. The parameters are B = 146 and
+k ≈ 104 .
+                                                                                   53
+
+   With B = 719 and k ≈ 105 , a 20-digit prime
+
+                             p = 86656268566282183151
+
+is found for N = 2149 − 1 with 24 minutes.
+   By applying the optimized method in Section 4.6, N = 5430 + 1 is successfully
+factored within 1 week. The prime factor of it is a 47-digit number
+
+             p = 29523508733582324644807542345334789774261776361.
+
+The parameters used are B = 166810 and k ≈ 109 .
+   By using B = 12915 and k ≈ 107 , the algorithm also factors N = 2353 + 1 in
+about 20 hours. The prime factor is 37-digit
+
+                   p = 3803909572078746837295094051706948091.
+
+   A 48-digit prime factor
+
+            p = 694579497316894264425661243659806371972188318857
+
+from N = 2373 + 1 was found in about 10 days. The parameters are B = 63096 and
+k ≈ 1010 . For this number N , the first prime factor found by the algorithm is 60427.
+Then I tried the algorithm in Section 4.6 on N/60427 and it succeeded. Therefore,
+we can see that the method in Section 4.6 works as long as the number we want to
+factor divides some number in Fn .
+   My goal is to find some prime factor with more than 60 digits. Compare this suc-
+cess with the Web Page http://wwwmaths.anu.edu.au/~brent/ftp/champs.txt of
+Richard Brent. That page lists the all-time champions for factoring with conven-
+tional ECM. It represents the greatest successes of hundreds of people using tens of
+thousands of computers for hundreds of thousands of hours. It shows that the first
+48-digit prime discovered by ECM was found less than ten years ago. At that time,
+factorers had already spent tens of thousand of hours trying ECM. The current ECM
+record is a 67-digit prime factor.
+                                                                                    54
+
+5.4     Future Research Goals
+
+      We propose a new extension of ECM by using division polynomials. This algo-
+rithm only has one step. So far if we have a report for failure, we just start the
+whole algorithm all over for another B. But if we could add a second step to reuse
+the information we get from the failure, we can save a lot of resources and make the
+algorithm more efficient.
+      Another open problem is about the choice of the point. I’m still working on
+finding a relation between the point (x, y) and the property of the elliptic curve.
+Does the choice of (x, y) really not matter? Since every elliptic curve we use in
+the algorithm has to pass through (x, y), it has to have some specific property such
+that we can have enough elliptic curves with different order modulo p. But how to
+rationalize this property?
+      The last problem is the way we choose elliptic curves. That is the way we choose
+s in Algorithm 4.4.1. If we are dealing with N ∈ Fn or N dividing some number
+in Fn , then the best choice of s is just the same as the base of the specific number
+in Fn . But what s should we choose if we are trying to factor a random N ? By
+saying random, I mean we have no exact idea of the form of N after applying trial
+division to eliminate the small factors. At least we should pick s so that the elliptic
+curves we get have enough different orders modulo p. But we have no idea about
+p. We can use some methods such as Shanks’ [20] baby-step-giant-step algorithm to
+get some idea about the order. But I think this problem is still open and possesses
+some research interest.
+                                                                                 55
+
+
+
+
+                                 6. Summary
+
+We have demonstrated the new factoring method by applying division polynomials to
+ECM. It is a one step algorithm. Choosing a point P and an integer m, the algorithm
+finds the denominator in the x-coordinate of m · P on many elliptic curves at the
+same time. This process is implemented by evaluating the m-th implied division
+polynomial on many values. At the end, it evaluates the greatest common divisor of
+multiplication of the polynomial evaluation result and the number N which is to be
+factored.
+   We also proposed an optimization of the main algorithm, which works for numbers
+with the form sn ±1 with s being some prime number. With this optimized algorithm,
+we can choose much larger m without wasting much memory and the speed of the
+algorithm is faster.
+   With this new method, we can find 40-digit prime factors and several 50-digit
+prime factors. We are working on 60-digit primes and we expect to find some 70-digit
+prime factor soon.
+LIST OF REFERENCES
+                                                                                56
+
+
+
+
+                            LIST OF REFERENCES
+
+
+ [1] A. Aho, J. Hopcroft, and J. Ullman. The Design and Analysis of Computer
+     Algorithms. Addison-Wesley, 1974.
+ [2] E. Bach and R. Peralta. Asymptotic Semismoothness Probabilities. Math.
+     Comp., 65:1701-1715, 1996.
+ [3] R. P. Brent. Some integer factorization algorithms using ellpitic curves. Re-
+     search Report CMA-R32-85, Center for Mathematical Analysis, The Australian
+     National University, September 1985.
+ [4] E. R. Canfield, P. Erdös and C. Pomerance. On a problem of Oppenheim con-
+     cerning ”Factorisatio Numerorum”. J. Number Theory, 17:1-28, 1983.
+ [5] J. Cassels. Diophantine equation with special reference to elliptic curves. J.
+     London Math. Soc., 41:193-291, 1966.
+ [6] R. Crandall and C. Pomerance. Prime Numbers: A Computational Perspective.
+     Springer-Verlag, New York, 2001.
+ [7] J. A. Davis and D. B. Holdridge. Factorization using the quadratic sieve algo-
+     rithm. In D. Chaum, editor, Advances in Cryptology-CRYPTO’83, pages 103-
+     113, Plenum Press, New York, 1984.
+ [8] M. Deuring. Die Typen der Multiplikatorenringe elliptischer Funktionenkörper.
+     Abh. Math. Sem. Hansischen Univ., 14:197-272, 1941.
+ [9] K. Dickman. On the frequency of numbers containing prime factors of a certain
+     relative magnitude. Ark. Mat., Astronomi och Fysik, 22A, 10:1-14, 1930.
+[10] C. F. Gauss. Disquisitiones Arithmeticae. Yale University Press, New Haven,
+     English edition, 1966.
+[11] D. Knuth and L. Trabb Pardo. Analysis of a simple factorization algorithm.
+     Theoret. Comput. Sci., 3:321-348, 1976.
+[12] A. K. Lenstra and H. W. Lenstra, Jr. The Development of the Number Field
+     Sieve. Springer-Verlag, New York, 1993.
+[13] H. W. Lenstra, Jr. Factoring integers with elliptic curves. Ann. of Math.,
+     126:649-673, 1987.
+[14] G. Marsaglia, A. Zaman, and J. C. W. Marsaglia. Numerical solution of some
+     classical differential-difference equations. Math. Comp., 53:191-201, 1989.
+[15] P. Montgomery. An FFT extension of the elliptic curve method of factorization.
+     PhD thesis, University of California, Los Angeles, 1992.
+                                                                                    57
+
+[16] P. Montgomery. Speeding the Pollard and elliptic curve methods of factorization.
+     Math. Comp., 48:243-264, 1987.
+[17] J. M. Pollard. Theorems on factorization and primality testing. Proc. Cambridge
+     Philos. Soc., 76:521-528, 1974.
+[18] R. L. Rivest, A. Shamir, and L. Adleman. A method for obtaining digital sig-
+     natures and public-key cryptosystems. Comm. A. C. M., 21(2):120-126, 1978.
+[19] C. P. Schnorr. FFT-ECM for Finding Small Prime Factors. Fachbereich Math-
+     ematik/Informatik, Universität Frankfurt, Germany. January 15, 2001.
+[20] D. Shanks. Class number, a theory of factorization, and genera. In 1969 Number
+     Theory Institute, Stony Brook, N.Y., volume 20 of Proc. Sympos. Pure Math.,
+     pages 415-440. Amer. Math. Soc., 1971.
+[21] J. Silverman. The Arithmetic of Elliptic Curves. Springer-Verlag, 1986.
+[22] R. D. Silverman and S. S. Wagstaff, Jr. A practical analysis of the elliptic curve
+     factoring algorithm. Math. Comp., 61:445-462, 1993.
+[23] S. S. Wagstaff, Jr. Cryptanalysis of Number Theoretic Ciphers. Chapman and
+     Hall/CRC, Boca Raton, 2003.
+[24] L. C. Washington. Elliptic Curves: Number Theory and Cryptography. Chapman
+     and Hall/CRC, Boca Raton, 2003.
+[25] C. Zhang. An extension of the Dickman function and its application. PhD thesis,
+     Purdue University, June 2002.
+VITA
+                                                                              58
+
+
+
+
+                                      VITA
+
+
+
+   Zhihong Li, was born on March 8, 1978 in Xingtai, Hebei, P.R.China.
+   He went to the Mathematics Department of Peking University in 1995, majoring
+in mathematics. He got his bachelor’s degree in July of 1999. He started pursuing
+his Ph.D. in mathematics at Purdue University in 1999.
+   He earned his Master of Science degree in Mathematics (December, 2004) during
+the time he was studying for his Ph.D. at Purdue University.
+

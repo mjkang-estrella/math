@@ -1,0 +1,1896 @@
+      Fast Computation of Special Resultants
+
+
+    Alin Bostan a Philippe Flajolet a Bruno Salvy a Éric Schost b
+       a Algorithms Project, Inria Rocquencourt, 78153 Le Chesnay, France
+
+               b LIX, École polytechnique, 91128 Palaiseau, France
+
+
+
+
+Abstract
+
+We propose fast algorithms for computing composed products and composed sums,
+as well as diamond products of univariate polynomials. These operations correspond
+to special multivariate resultants, that we compute using power sums of roots of
+polynomials, by means of their generating series.
+
+
+
+
+1    Introduction
+
+
+Let k be a field and let f and g be monic polynomials in k[T ], of degrees m
+and n respectively. We are interested in computing efficiently their composed
+sum f ⊕ g and composed product f ⊗ g. These are polynomials defined by
+                    Y                                     Y
+           f ⊕g =         T − (α + β)       and   f ⊗g =          (T − αβ),
+                    α,β                                     α,β
+
+
+the products running over all the roots α of f and β of g, counted with
+multiplicities, in an algebraic closure k of k.
+
+More generally, given a bivariate polynomial H ∈ k[X, Y ], of degree less
+than m in X and less than n in Y , we study the fast computation of the
+diamond product f ⋄H g, which is the polynomial of degree D = mn defined by
+                                      Y               
+                           f ⋄H g =         T − H(α, β) ,                         (1)
+                                      α,β
+
+
+the product running over all the roots of f and g, counted with multiplicities.
+
+  Email addresses: Alin.Bostan@inria.fr (Alin Bostan),
+Philippe.Flajolet@inria.fr (Philippe Flajolet), Bruno.Salvy@inria.fr
+(Bruno Salvy), Eric.Schost@polytechnique.fr (Éric Schost).
+
+
+Preprint submitted to Elsevier Science                                   27 June 2005
+The operation ⋄H was introduced by Brawley and Carlitz (1987). They showed
+the following property: if k is finite, then for large families of polynomials H,
+the polynomial f ⋄H g is irreducible if and only if both f and g are irreducible
+and their degrees are coprime. Thus, diamond products are used for construct-
+ing irreducible polynomials of large degree over finite fields, see (Brawley et al.,
+1999; Shoup, 1990, 1994). They occur as subroutines in many other algorithms,
+including computations with algebraic numbers, symbolic summation and the
+study of linear recurrent sequences. We present these applications in Section 5.
+
+The polynomials f ⊕ g and f ⊗ g can be expressed by means of bivariate
+resultants, see for instance (Loos, 1983):
+
+(f ⊕g)(T ) = ResX (f (T −X), g(X)),    (f ⊗g)(T ) = ResX (X m f (T /X), g(X)).
+                                                                           (2)
+A similar formula also holds for the diamond product f ⋄H g:
+                                                                   
+           (f ⋄H g)(T ) = ResX ResY T − H(X, Y ), f (Y ) , g(X) .               (3)
+
+Formulae (2) and (3) show that f ⊗ g, f ⊕ g and f ⋄H g have coefficients
+in k. They also provide a way of computing these polynomials. Still, the com-
+plexity of the resulting√algorithms is not satisfactory. For instance, if f and g
+have degrees of order D, the fastest existing algorithms for bivariate resul-
+tants (Schwartz, 1980; Lickteig and Roy, 1996; Reischert, 1997; Lickteig
+                                                                      √       and
+Roy, 2001) based on Formulae (2) have complexity of order O(D  e   M( D))√field
+                                                                  e
+operations, while the one exploiting Formula (3) has complexity O(D    2
+                                                                         M( D)).
+
+In this article the symbol O  e indicates the omission of logarithmic terms, while
+M(d) stands for the number of operations in k required to perform the product
+of two polynomials of degree at most d. To prove complexity estimates, we
+implicitly use the inequality M(d1 ) + M(d2 ) ≤ M(d1 + d2 ) for all positive
+integers d1 , d2 . Using algorithms based on Fast Fourier Transform (Schönhage
+and Strassen, 1971; Schönhage, 1977; Cantor and Kaltofen, 1991), see also (von
+zur Gathen and Gerhard, 1999, Section 8.2), M(d) can be taken in O(d).   e     We
+also use a function denoted by M(n, d) which represents the complexity of
+multiplication of two power series in n variables and truncated at order d with
+respect to each variable. By a recent algorithm by Schost (2005), M(n, d) is in
+O(n2 M(d)dn log(d)). Using FFT yields M(n, d) = O(n    e 2 dn+1 ), which is almost
+                                      n
+optimal with respect to the size d of the support of the power series.
+
+Over fields of characteristic zero, an algorithm for computing composed sums
+and products was given by Dvornicich and Traverso (1989). The key idea is
+to represent polynomials by the power sums of their roots. We will call this
+the Newton representation. Dvornicich and Traverso gave formulae expressing
+f ⊕g and f ⊗g in terms of f and g in Newton representation. However, a direct
+application of their formulae, combined with the use of Newton formulae for
+
+
+                                        2
+conversions between Newton representation and the monomial one, lead to
+algorithms of complexity O(D 2 ) (which is slower than the resultant method).
+
+Brawley et al. (1999) proposed several algorithmic solutions for the composed
+product and sum over a finite field. Apart from the resultant method described
+above, their most efficient solution has quadratic complexity in the degree D
+of the output and works only under the assumption of an irreducible out-
+put. They also considered the problem of computing the diamond product.
+Their algorithm works over a finite field with q elements
+                                                     √      and has complexity
+e
+O(D  log(q) + D 3 ), if f and g have degrees of order D.
+
+
+Our contribution
+
+Our aim is to show that a better complexity can be achieved, in any char-
+acteristic. One of the keys of our approach is the use of fast algorithms due
+to Schönhage (1982) and Pan (2000) for converting a polynomial from the clas-
+sical monomial representation to its Newton representation, and backwards.
+
+Another crucial ingredient is our reformulation, in terms of generating series,
+of some formulae by Dvornicich and Traverso (1989) expressing f ⊗g and f ⊕g
+in their Newton representation. This approach enables us to give nearly op-
+timal algorithms for the composed product and the composed sum, provided
+the characteristic of k is zero or large enough. Our algorithms use mainly mul-
+tiplications, inversions and exponentiations of power series, for which nearly
+optimal algorithms are known (Sieveking, 1972; Kung, 1974; Brent, 1976), see
+also (Henrici, 1986, Section 13.9; Bini and Pan, 1994; Bürgisser et al., 1997,
+Chapter 2; von zur Gathen and Gerhard, 1999, Section 9.1). Throughout this
+article, “nearly optimal” means that the number of operations in k is linear
+in the size of the result, up to logarithmic factors.
+
+Our algorithm for the composed product can be slightly modified so as to work
+in small characteristic as well, but the situation is different for the composed
+sum. By introducing a new combinatorial idea, we reduce the computation of
+composed sums in small characteristic p to the multiplication of two multi-
+variate power series at order less than p in each variable. Combined with the
+algorithm given by Schost (2005) for multiplying multivariate power series
+with respect to partial truncation, this yields a nearly optimal algorithm for
+composed sums in small characteristic.
+
+We also propose a fast algorithm for computing the diamond product. The
+heart of our method consists in relating the Newton representation of f ⋄H g to
+the traces of multiplication by successive powers of H in the quotient algebra
+Q = k[X, Y ]/(f (X), g(Y )). This way, the computation of f ⋄H g mainly reduces
+to solving the power projection problem in Q: given an element x ∈ Q, compute
+the sequence ℓ(1), ℓ(x), . . . , ℓ(xN ), where ℓ is a linear form on Q and N ≥ 1.
+
+
+                                       3
+                                                           √                  
+For the latter problem, we propose an algorithm using O       D(M(D) + D ω/2 )
+operations in k. In this article ω denotes a feasible exponent of matrix mul-
+tiplication over the field k, that is, a positive real number such that any two
+n × n matrices over k can be multiplied using O(nω ) operations in k.
+
+The same complexity result for the bivariate power projection has already been
+given (in a slightly more general context) by Shoup (1994); see also (Kaltofen,
+2000). Shoup’s result is an existence theorem; we build upon his idea and we
+exhibit an explicit algorithm with this complexity. We refer to Section 4 for
+historical notes on this subject.
+
+Combining our algorithm for the power projection problem in the quotient
+k[X, Y ]/(f (X), g(Y )) with the fast conversion techniques mentioned above
+we√obtain an algorithm  for the diamond product whose complexity is in
+                    ω/2
+O     D(M(D) + D ) . Plugging the best upper bound known to this date
+ω ≈ 2.376 by Coppersmith and Winograd (1990), and using Fast Fourier
+Transform for the power series multiplication, we infer that the complexity of
+our algorithm is in O(D 1.688 ) 1 . For the time being, this complexity result has
+only a theoretical relevance, since the algorithm corresponding to ω ≈ 2.376 is
+of no practical use. In contrast, using Strassen’s (1969) algorithm for matrix
+multiplication, with exponent log2 (7) ≃ 2.807, yields a practical O(D 1.904) al-
+gorithm for the diamond product, whose experimental success is reported in
+Section 4. Even using naive matrix multiplication (ω = 3), our√algorithm is
+faster than previously known algorithms roughly by a factor of D.
+
+We encapsulate our complexity results in the following theorem. Our algo-
+rithms for the composed sums and products and for the diamond product
+work under no additional assumption if the base field has characteristic zero
+or large enough. Over fields of small positive characteristic, they require some
+mild assumptions, which are satisfied, for instance, if the output is squarefree.
+If these assumptions are not satisfied, then only a divisor of the correct result
+is returned.
+
+Theorem 1 Let k be a field of characteristic p and let f and g be two monic
+polynomials in k[T ] of degrees m and n. Let D = mn.
+
+(1) If p = 0 or p > D, then the composed operations f ⊗ g and f ⊕ g can be
+    performed using O(M(D)) operations in k.
+(2) If p < D is larger than all the
+                                   multiplicities
+                                                of theroots of f ⊗g, then f ⊗g
+                                    D      D
+    can be computed in O p M p log p + M(D) operations in k.
+(3) If p < D is larger than all the
+                                   multiplicities
+                                                ofthe rootsof f ⊕g, then f ⊕g
+    can be computed in O p M p log p + M log(D)
+                                    D      D
+                                                       log(p)
+                                                              , p operations in k.
+
+1  The exponent 1.688 may be slightly improved to 1.667 by using the faster algo-
+rithms for rectangular matrix multiplication by Huang and Pan (1998).
+
+
+                                        4
+Let H ∈ k[X, Y ] have degree less than m in X and degree less than n in Y .
+
+(4) If p is zero or larger than all the√
+                                        multiplicities
+                                                      of the
+                                                             roots of f ⋄H g,
+                                                        ω/2
+    then f ⋄H g can be computed in O     D M(D) + D             operations in k.
+
+Taking M(D) ∈ O(D)e                     e 2 dn+1 ) justifies our claims on the
+                        and M(n, d) ∈ O(n
+near optimality of our algorithms for the composed product and sum.
+
+
+Outline of the article
+
+In Section 2, we recall known fast algorithms for the translation between
+classical and Newton representation of univariate polynomials. In Section 3 we
+use these results to compute the composed product and sum, and we present
+the experimental behavior of the resulting algorithms. In Section 4 we study
+the fast computation of the diamond product f ⋄H g and provide experimental
+results. Section 5 presents applications of composed operations and describes
+two related questions: computation of resolvents and Graeffe polynomials.
+
+
+Notation
+
+– Ns (h) denotes the sth power sum of the roots of a polynomial h ∈ k[T ], i.e.,
+           P
+  the sum γ γ s , taken over all the roots of h in k, counted with multiplicities.
+                                                               P
+– The Newton series of h is the power series Newton(h) = s≥0 Ns (h)T s .
+– If P is a polynomial in k[T ] of degree at most
+                                                 n, we write rev(n, P ) for its
+  nth reversal, namely for the polynomial P T1 T n .
+                                                                                          Pn
+– For h > l ≥ 0, we use the operations ⌈.⌉h , ⌊.⌋l and [.]hl on P =                                  i
+                                                                                             i=0 pi T :
+
+                     h−1
+                     X                          n−l
+                                                X                             h−l−1
+                                                                               X
+           ⌈P ⌉h =         pi T i ,   ⌊P ⌋l =         pi+l T i ,   [P ]hl =           pi+l T i .
+                     i=0                        i=0                            i=0
+                                      P
+– Given a power series S = i≥0 si T i ∈ k[[T ]] and an integer m ≥ 1, we write
+                                              Pm−1
+  S mod T m for the truncated power series i≥0       si T i .
+– ⌊x⌋ and ⌈x⌉ respectively denote the largest integer less than or equal to x,
+  and the smallest integer larger than or equal to x.
+– For a k-vector space V , we denote by Vb its dual, that is, the k-vector space
+  of k-linear maps ℓ : V → k.
+
+
+
+2   Fast Conversion between Polynomials and Power Sums
+
+
+As mentioned in the introduction, the speed-up that we obtain in computing
+composed and diamond operations is based on the use of an alternative encod-
+
+
+                                                5
+ing for univariate polynomials, the Newton representation by power sums of
+roots. The use of the Newton representation for polynomials is classical. It is
+already present in (Le Verrier, 1840), and also in (Lascoux (1986); Dvornicich
+and Traverso (1989); Valibouze (1989); Giusti et al. (1989); Thiong Ly (1989);
+Schönhage (1993); González-Vega and Trujillo (1995a; 1995b); González-López
+and González-Vega (1998); Rouillier (1999); van Hoeij (2002); Briand and
+González-Vega (2002)). Pushing further an idea of (Dvornicich and Traverso,
+1989), we show that Newton representation provides the appropriate data
+structure for the efficient computation of composed and diamond operations.
+
+In characteristic zero or larger than D, any polynomial of degree D is uniquely
+determined by the first D power sums of its roots. Newton formulae provide a
+straightforward algorithm to perform these conversions, but its complexity is
+quadratic in D. Fortunately, faster conversion methods exist. We thus recall
+algorithms due to Schönhage and Pan in this section; they will be used as basic
+algorithmic bricks in the rest of our article. For the sake of completeness, we
+collected them under the shape of ready-to-implement pseudo-code.
+
+The structure of this section is as follows: we begin by recalling an algorithm for
+the direct conversion (from a polynomial to its Newton representation), which
+works in arbitrary characteristic. Next, we deal with the inverse conversion in
+characteristic zero or large enough. We conclude the section by presenting an
+algorithm for the inverse conversion in the positive characteristic setting.
+
+
+2.1 From monomial to Newton representation
+
+
+Schönhage (1982) was the first to propose an algorithm for the translation
+from monomial to Newton representation. It is based on the following result.
+
+Lemma 1 Let h be a monic polynomial in k[T ], of degree D. Then, the series
+Newton(h) is rational; moreover, the following formula holds:
+                                                 rev(D − 1, h′ )
+                                 Newton(h) =                     .
+                                                   rev(D, h)
+
+                                                                             QD
+Proof. Let γ1 , . . . , γD be the roots of h in k. Since h =                   i=1 (T − γi ), we have
+
+               X D
+                 X                      XX
+                                         D                            D
+                                                                       X      1       rev(D − 1, h′ )
+Newton(h) =                γis   T = s
+                                                     γis T s       =                =                 .
+               s≥0   i=1                 i=1   s≥0                     i=1 1 − γi T     rev(D, h)
+
+                                                                                                    
+
+Proposition 1 If h ∈ k[T ] has degree D and if N ≥ D, then the first N
+power sums of the roots of h can be computed in O N
+                                                  D
+                                                    M(D) operations in k.
+
+
+                                                6
+Proof. By Lemma 1, it is sufficient to prove that if a polynomial A has degree
+at most D − 1 and if a polynomial B has degree D, then the first N ≥ D coef-
+ficients of the rational series A/B can be computed within the announced run-
+ning time bound. The idea is to proceed by slices of size D. We first compute
+the first D coefficients of 1/B, using the Sieveking-Kung algorithm (Sieveking,
+1972; Kung, 1974), for a cost of O(M(D)) operations in k. Denote B0 the cor-
+responding polynomial, of degree D − 1. We let C0 = ⌈AB0 ⌉D and recursively
+define the polynomials
+                         l            mD
+               Cj+1 = − ⌊BCj ⌋D B0          , for 0 ≤ j ≤ ⌊N/D⌋ .
+
+                               A
+Then, it is easy to check that B = C0 + T D C1 + T 2D C2 + . . . and the result
+follows.                                                                     
+
+The corresponding algorithm is summarized in Figure 1.
+
+
+
+                  Input: a polynomial h of degree D.
+                  Output: Newton(h) at precision N ≥ D.
+
+                  A ← rev(D − 1, h′ )
+                  B ← rev(D, h)
+                         l mD
+                  B0 ← B1
+                              D
+                  C0 ←j ⌈AB
+                         k 0⌉
+                  l← N D
+                  for j from 0 to l do
+                                 l             mD
+                     Cj+1 ← − ⌊BCj ⌋D B0
+                         P
+                  return li=0 Ci T Di + O(T N )
+
+
+              Fig. 1. Computing the Newton series of a polynomial
+
+
+
+2.2 From Newton representation to monomial representation
+
+
+The converse direction is more difficult to handle: while in characteristic zero
+the Newton formulae give a one-to-one correspondence between power sums
+and elementary symmetric polynomials, in the positive characteristic case dis-
+tinct monic polynomials of the same degree may have equal power sums of
+roots (e.g., T 2 and T 2 + 1 over F2 ). Consequently, the treatment of this ques-
+tion should take into account the characteristic of the base field. Many efforts
+have been made to bypass this difficulty, see Subsection 2.2.2 for historical
+
+
+                                        7
+details. The content of the next subsections is encapsulated in the following
+proposition.
+
+Proposition 2 (Schönhage (1982); Pan (2000)) Let h be a polynomial
+of degree D in k[T ].
+
+(1) If k has characteristic zero or greater than D, then h can be computed
+    from the first D power sums of its roots within O(M(D)) operations in k.
+(2) Suppose that k has positive characteristic p and that all the roots of h have
+    multiplicities less than p. Then, the number of operations in k needed to
+    compute the polynomial h from the first 2D power sums of its roots is
+                                                               !
+                                       D     D
+                          O M(D) + p M   log                             .
+                                       p     p
+
+In Subsection 2.2.1 we treat the case of characteristic zero or large enough,
+since the ideas involved in that case are important and help understand the
+extension to the arbitrary positive characteristic case. The latter case is ad-
+dressed in Subsection 2.2.2, where technical details are intentionally omitted.
+Instead we preferred to write down complete pseudo-code, to simplify the task
+of reading Pan’s original article (Pan, 2000).
+
+
+2.2.1 The case of characteristic zero or large enough
+
+The exponential of a power series F of positive valuation over a field k is
+given by                
+                             P         s
+                            
+                                s≥0 F       /s!,       if char(k) = 0,
+                exp(F ) =
+                             Pp−1
+                                       s
+                                s=0 F       /s!,       if char(k) = p > 0.
+
+The next result is a converse of Lemma 1.
+
+Lemma 2 Let h be a monic polynomial of degree D in k[T ], where k is a field
+of characteristic zero or larger than D. Then the following formula holds:
+                                   Z                                   
+                                            1
+                 rev(D, h) = exp              · D − Newton(h)                 .
+                                            T
+
+
+Proof. Let γ1 , . . . , γD be the roots of h in k. By Lemma 1, it follows that:
+                                           XX        
+                rev(D, h)′ X −γi                  s+1
+                          =             =−       γi    Ts                             (4)
+                rev(D, h)   i 1 − γ i T    s≥0 i
+
+                                                                                 
+and, by definition, the right-hand side equals D − Newton(h) /T .
+
+
+                                             8
+As one can easily verify, for P ∈ k[T ] with constant coefficient 1, the formula
+         R ′
+P = exp( P /P ) holds as soon as k has characteristic zero. The same equality
+remains valid modulo T p if p = char(k) is larger than the degree of P . By
+applying this fact to P = rev(D, h), we conclude the proof of the lemma. 
+
+Corollary 1 A monic polynomial h of degree D over a field of characteristic
+zero or larger than D can be computed from the first D power sums of its roots
+within O(M(D)) base field operations.
+
+Proof. The primitive of the power series (D − Newton(h))/T can be computed
+at precision D in linear time. By Lemma 2, exponentiating the latter series
+gives the polynomial rev(D, h). This exponential can be computed within
+O(M(D))  field operations,
+                           (Brent, 1976). Finally, we recover the polynomial
+h = rev D, rev(D, h) .                                                     
+
+The first part of Proposition 2 is now proved. The resulting algorithm is pre-
+sented in Figure 2. For a polynomial P , we denote by Coeff(P, i) the coefficient
+of T i in P . We use a variant of the algorithm in (Brent, 1976) for power series
+exponential based on Newton iteration, but whose complexity has a better
+constant factor and which is similar to that of (Pan, 1997, Appendix A).
+
+
+
+                   Input: the first D terms of Newton(h).
+                   Output: the polynomial h.
+
+                   S ← (Newton(h) − D)/T
+                   R ← 1 − Coeff(S, 0)T
+                   n←2
+                   while n ≤ D do
+                                l   ′
+                                        m2n−1
+                      M ′ ← − RR + S
+                               P                 i
+                      M ← 1 + i Coeff(M ′ , i) Ti
+                      R ← ⌈RM⌉2n
+                      n ← 2n
+                   R ← ⌈R⌉D+1
+                   return rev(D, R)
+
+
+   Fig. 2. Recovering a polynomial from its Newton series in characteristic zero
+
+
+2.2.2 The small positive characteristic case – the Schönhage-Pan algorithm
+
+The conversion from Newton sums to coefficients in small characteristic is a
+more subtle problem. Historically, two kinds of approaches have been pro-
+
+
+                                        9
+posed 2 : on the one hand, the techniques of recursive triangulation originated
+in (Kaltofen and Pan, 1992, 1994), on the other hand, those using fundamental
+sets of power sums of (Schönhage, 1993; Pan, 1996, 2000). The best currently
+known solution is that of Pan (2000), which inherits ideas from Schönhage
+(1993) and from the algorithmic improvements in (Pan, 1996, 1997). The first
+approach was designed for parallel computations and its sequential complexity
+is not competitive with that of the second one; we thus focus on the latter.
+
+Let h be a polynomial of degree D over a field of characteristic 0 < p < D.
+To recover h from its first 2D power sums, Schönhage (1993) proposed the
+following method:
+
+(1) Compute a polynomial g = T d +g1 T d−1 +· · ·+gd of degree d > 2D whose
+    first d power sums equal those of h and such that gip = 0 for i ≥ 1.
+(2) Starting from g, recover the polynomial h.
+
+Intuitively, the polynomial g is obtained by applying to h those Newton for-
+mulae which do not involve division by p and setting the other coefficients
+to zero. This can be performed using O(D 2 ) operations in k. In (Schönhage,
+1993) this stage was completed using a reduction
+                                                 to a triangular linear system
+                                              2
+of size ⌊D/p⌋, for a cost of O M(D) + (D/p) operations in k. Subsequently,
+Pan (1996) gave an improved solution for the computation of g, by adapting
+Newton’s iteration in the algorithm of Corollary 1 to the positive characteristic
+case, leading to a cost of O (M(D)) operations in k for this first stage.
+
+Concerning the second stage, Schönhage (1993) proposed a solution based on
+the resolution of a linear system of equations of size ⌊D/p⌋. This step was
+accelerated by Pan (1997), who showed that it amounts to solving p − 1 Padé
+approximation problems of sizes at most (D/p, D/p).
+
+For technical details, we refer to the original articles (Schönhage, 1993; Pan,
+1996, 1997, 2000). We give in Figure 3 the algorithm we extracted from (Pan,
+2000). This algorithm takes as input the first 2D terms of the series Newton(h)
+and returns the polynomial h. We use the notation lcm(fi ) for the least com-
+mon multiple of a family of polynomials (fi ) and Pade(S, a, b) for the Padé
+approximant (A, B) of a power series (polynomial) S, that is the (unique) pair
+of polynomials A and B of minimal degrees such that B(0) = 1 and such that
+the following holds:
+
+             A − BS = 0 mod T a+b+1 , deg(A) ≤ a, deg(B) ≤ b.
+
+
+A conceptually simpler algorithm was given in (Bostan et al., 2002, Lemma 3).
+2  A third approach, specific to finite fields, has been recently developed by Bostan
+et al. (2005), but the input required by that algorithm is different.
+
+
+                                        10
+                     The Schönhage-Pan algorithm
+
+                Input: the first 2D terms of Newton(h).
+                Output: the polynomial h.
+
+                S ← (Newton(h) − D)/T
+                R ← 1 − Coeff(S, 0)T
+                n←2
+                while n ≤ 2D do
+                            l ′     m2n−1
+                     ′       R
+                   M ←− R       + S
+                             P                     i
+                   M ← 1 + p6 | i Coeff(M ′ , i) Ti
+                   g ← ⌊ 2n−1
+                           p ⌋
+                   if gp > n then
+                       A ← [R]gp−n+1
+                              1 P [M ]n
+                                         gp
+                                    g
+                       M ← M − i=⌈ n ⌉ Coeff(A, ip − n − 1)T ip
+                                        p
+                   R ← ⌈RM ⌉2n
+                   n ← 2n
+                for i from
+                         j 1 to
+                              k p − 1 do
+                           D−i
+                    di ←    p
+                           Pd+di
+                   Qi ← j=0 Coeff(R, jp + i)T j
+                   (Ai , Bi ) ← Pade(Qi , di , d)
+                   H0 ← lcm(Bi )
+                   Hi ← ⌈Qi H0 ⌉di +1
+                                 P
+                H ← H0 (T p ) + p−1i=1 Hi (T )T
+                                               p  i
+
+                return rev(D, H)
+
+Fig. 3. Recovering a monic polynomial from its Newton series in small characteristic
+
+
+It has complexity O(M(D) log(D)), and, for fixed p, it differs from that of the
+Schönhage-Pan algorithm only by a constant factor.
+
+
+
+
+3   Two Useful Resultants that Can Be Computed Fast
+
+
+Designing nearly optimal algorithms for general bivariate resultants is still
+an open problem, see (von zur Gathen and Gerhard, 1999, Research prob-
+lem 11.10). The results of the preceding section enable us to give such algo-
+rithms for the particular cases of the composed product f ⊗ g and composed
+sum f ⊕g. Our algorithms are based on formulae expressing the Newton series
+of f ⊗ g and of f ⊕ g in terms of those of f and g.
+
+
+                                        11
+3.1 Computing the composed product
+
+
+Lemma 3 Let f and g be two polynomials in k[T ]. Then:
+
+                 Newton(f ⊗ g) = Newton(f ) ⊙ Newton(g),
+
+where ⊙ denotes the Hadamard (term-wise) product of power series.
+                                                                 P
+Proof. For s ≥ 0, the sth power sum of the roots of f ⊗ g is α,β (αβ)s, the
+sumPrunning over all the roots α of f and β of g. This sum can be rewritten
+          s    P     s
+as    α α    ·   β β    , which is the product of the sth power sums of the roots
+of f and of g. This proves that the series Newton(f ⊗ g) is the Hadamard
+product of Newton(f ) and Newton(g).                                           
+
+As a corollary, we obtain the following algorithm for f ⊗ g. Given two monic
+polynomials f and g of degrees m and n, we first compute the power series
+Newton(f ) and Newton(g)
+                           up to precision
+                                           D = mn. Using Proposition 1, this
+                   D         D
+step requires O m M(m) + n M(n) operations in k. Then we perform, at a
+cost linear in D, the Hadamard product of Newton(f ) and Newton(g). By the
+preceding lemma, we thus obtain the Newton series of f ⊗ g at precision D.
+We recover the polynomial f ⊗ g by applying the conversion algorithms in
+Proposition 2. Summing up the costs of each stage proves the complexity
+results concerning f ⊗ g in the first two assertions in Theorem 1.
+
+
+
+3.2 Computing the composed sum in characteristic zero or large enough
+
+
+Let k be a field and E ∈ k[[T ]] be the power series exp(T ), with exp as defined
+in Section 2.2.1. Then our algorithm for f ⊕g is based on the following lemma:
+
+Lemma 4 Let f and g be two polynomials in k[T ]. Then
+
+(1) If the characteristic of k is zero, the following formula holds:
+                                                                        
+         Newton(f ⊕ g) ⊙ E = Newton(f ) ⊙ E · Newton(g) ⊙ E ;
+
+(2) If p > 0 is the characteristic of k, the following formula holds:
+                                                                  
+     Newton(f ⊕ g) ⊙ E = Newton(f ) ⊙ E · Newton(g) ⊙ E                  mod T p .
+
+Proof. We only treat the characteristic zero case; the arguments apply mutatis
+mutandis in characteristic p, since exp(F + G) = exp(F ) exp(G) mod T p .
+
+
+                                      12
+The definition of Newton series shows that
+                                                                          
+                                               X            X
+                          Newton(f ⊕ g) =                        (α + β)s  T s ,
+                                               s≥0          α,β
+
+
+the second sum running over the roots of f and g. The conclusion now reads
+                    P                              P                         P          
+                                    s                      s                           s
+            X           α,β (α + β)
+                                             X          αα
+                                                                      X             ββ
+                                      Ts =                  T s ·                     T s
+            s≥0              s!              s≥0        s!            s≥0           s!
+
+and we are done, as the latter equality simply translates the fact that
+     X                           X                    X                  
+           exp (α + β)T =                 exp αT             ·          exp βT        .         
+     α,β                              α                             β
+
+
+
+As a corollary, we obtain an algorithm for computing the composed sum of
+two monic polynomials f and g: first, compute Newton(f ) and Newton(g)
+to precision D, perform their Hadamard product with E, then compute the
+product in Lemma 4 to recover Newton(f ⊕ g) at precision D and finally
+convert the last Newton series to the polynomial f ⊕ g. Using Proposition 1
+and Proposition 2, this completes the proof of the first assertion in Theorem 1.
+
+
+3.3 Computing the composed sum in small characteristic
+
+
+In this section we treat the computation of composed sums in small charac-
+teristic. In the case of large characteristic, our solution involved an identity
+related to the exponential series. Because of non-invertible factorials, the def-
+inition of the exponential series is problematic in the present case. In what
+follows we overcome this difficulty by appealing to certain multivariate expo-
+nential generating series.
+
+We begin by giving the intuition behind our approach on a particular case.
+Suppose that f and g are polynomials over a field of characteristic p > 0;
+                                                                P
+our aim is to express the first p2 power sums of the roots α,β (α + β)ℓ in
+           P          P
+terms of α αℓ and β β ℓ . The first p of these sums can be determined using
+the method in the previous section, which amounts to exploiting the identity
+exp((α + β)T ) = exp(αT ) · exp(βT ). For ℓ between p and p2 − 1, this method
+fails, since one is not able to divide by p in k. In contrast, if ℓ is written as
+i + pj with i and j less than p, then the equality (α + β)ℓ = (α + β)i(αp + β p )j
+suggests the use of the bivariate identity
+                                          
+      exp (α + β)T + (α + β)p U = exp(αT + αp U) · exp(βT + β p U),
+
+
+                                                   13
+which translates into the following equality modulo (T p , U p )
+                                                                       
+    p−1  X                                p−1  X        i j     p−1  X              i j
+    X                            T i U j  X         i+pj T U 
+                                                                    X
+                                                                                    i+pj T U
+                    αi+pj                          β            =            (α+β)            ,
+    i,j=0       α                 i!j!     i,j=0  β         i!j!   i,j=0  α,β             i!j!
+
+helping us to find the first p2 power sums of f ⊕ g by means of a multiplication
+of bivariate power series. We now formalize this idea in the general case.
+
+Let k be a field of characteristic p > 0. For i ∈ N, we write ip = (i0 , . . . , is ) for
+its p-adic expansion, that is, the (unique) sequence of integers 0 ≤ iℓ < p such
+that i = i0 + i1 p + · · · + is ps . Let T be an infinite set of indeterminates (Ti )i≥0 .
+We define the p-exponential Ep ∈ k[[T]] as the multivariate power series
+
+                                                         X Ti p
+                                                Ep =                  ,
+                                                         i≥0   ip !
+
+where for ip = (i0 , . . . , is ), we note ip ! = i0 ! · · · is ! and Tip = T0i0 · · · Tsis . For
+f ∈ k[T ], we define the p-Newton series of f as the multivariate power series
+                                                             X
+                                       Newtonp (f ) =              Ni (f )Tip .
+                                                             i≥0
+
+
+By definition, in each variable, the degree of Newtonp (f ) is smaller than p.
+With this notation, our algorithm for f ⊕ g in small characteristic is based on
+the following results, which generalize Lemma 4.
+
+Lemma 5 Let k a field of characteristic p and let f ∈ k[T ]. Then:
+                                                                          s
+                                                                                          !
+                                                       X X                Y
+                                                                                     pℓ
+                          Newtonp (f ) ⊙ Ep =                                   exp(α Tℓ ) ,
+                                                       s≥0 f (α)=0        ℓ=0
+
+
+where ⊙ denotes the term-wise product of multivariate power series.
+
+Proof. By definition, the left-hand side equals
+                                                                                                        
+     X                                            X X                  i0 +i1 p+···+is p      s
+                                                                                                          
+                      Ni (f )        i0       is               X α                                       
+                                    T0 · · · Ts =                                        T0i0 · · · Tsis  .
+                    i0 ! · · · is !                                      i0 ! · · · is !                 
+     i≥0                                          s≥0 f (α)=0   0≤i0 <p
+ip =(i0 ,...,is )                                                    ···
+                                                                   0≤is <p
+
+
+
+The lemma follows, since all the summation indices iℓ vary independently and
+                                                   ℓ
+                                        X     αiℓ p iℓ         ℓ
+                                                    Tℓ = exp(αp Tℓ ).                                   
+                                       0≤iℓ <p iℓ !
+
+
+Lemma 6 Let k be a field of characteristic p > 0 and let f and g be two
+
+
+                                                        14
+monic polynomials in k[T ]. Then the following identity holds:
+                                                                                         
+Newtonp (f ⊕ g) ⊙ Ep =                Newtonp (f ) ⊙ Ep · Newtonp (g) ⊙ Ep                      mod (Tp ),
+
+where (Tp ) denotes the ideal generated by the monomials T0p , . . . Tsp , . . . in k[[T]].
+
+Proof. By Lemma 5, we can rewrite the left-hand side as
+                  X X                                                        s
+                                                                                        
+                                  exp (α + β)T0 · · · exp (α + β)p Ts
+                  s≥0 f (α)=0
+                         g(β)=0
+
+
+
+and the right-hand side as
+              X X                                                       s               s
+                           exp(αT0 ) exp(βT0 ) · · · exp(αp Ts ) exp(β p Ts ).
+             s≥0 f (α)=0
+                  g(β)=0
+
+
+
+The conclusion of the lemma follows, using the fact that the series
+                                           ℓ
+                                                              ℓ           ℓ
+                                                                                    
+                     exp (α + β)p Tℓ                = exp αp Tℓ + β p Tℓ
+
+is equal to exp(αp Tℓ ) exp(β p Tℓ ) modulo Tℓp for any ℓ ≥ 0.
+                     ℓ                  ℓ
+                                                                                                        
+
+Via the fast conversion algorithms in Section 2, the preceding lemma enables
+us to reduce the computation of the composed sum of characteristic p > 0 to
+a single multiplication of multivariate series involving a finite number of vari-
+ables and of degree less than p in each variable. Precisely, to recover the poly-
+nomial f ⊕g, only 2D terms of its Newton series suffice, where D = deg(f ⊕g),
+and this means that in the p-Newton series of f ⊕g, all we need to know are co-
+efficients of the monomials containing T0 , . . . , Ts , where s = ⌊log(2D)/ log(p)⌋.
+By Lemma 6, this can be done by multiplying two multivariate power series
+in at most log(2D)/ log(p) variables and of degree less than p in each variable.
+This completes the proof of part (3) in Theorem 1.
+
+Using the algorithm of Schost (2005), the last multivariate multiplication of
+                                 e
+power series can be performed in O(pD).  A simpler (but slower) alternative al-
+gorithm relies on Kronecker’s substitution, see (Kronecker, 1882, §4) and (von
+                                                                   1
+                                                         e   1+ log(p)
+zur Gathen and Gerhard, 1999, Section 8.4); its cost is O(D            ).
+
+
+3.4 Experimental results
+
+
+We have implemented the algorithms for the composed sum and product, in
+their versions for large or zero characteristic. We used the NTL C++ library
+as a basis (Shoup, 1996–2005).
+
+
+                                                    15
+Since our complexity estimates are stated in terms of the number of operations
+executed in the base field, we have chosen to experiment on finite fields of the
+form Z/pZ, with p prime. For such fields, NTL implements polynomial arith-
+metic using classical, Karatsuba and Fast Fourier Transform multiplications.
+
+For the tests 3 presented in Figure 4, the input polynomials have equal degrees
+m = n and their coefficients are chosen uniformly at random; the output has
+degree D = m2 . We let m vary from 1 to 500 by steps of 8, so that D varies
+from 1 to 250000; the base field is defined by a 32 bit prime. We stress the
+fact that such output degrees are met in applications, see Section 5.
+
+       60                                                        70
+                                            Product                                                       Sum
+
+       50                                                        60
+
+                                                                 50
+       40
+                                                                 40
+       30
+                                                                 30
+       20
+                                                                 20
+
+       10                                                        10
+
+        0                                                         0
+            0   50000   100000    150000      200000   250000         0       50000   100000   150000     200000   250000
+
+
+       Fig. 4. Composed product and sum. (Time in sec. vs output degree)
+
+In both cases (composed product and composed sum), the running times
+present an abrupt jump when the output degree D passes a power of 2. This
+feature is actually already present in polynomial multiplication, and is inherent
+in NTL’s use of the Fast Fourier Transform: see Figure 5, which displays the
+time for one polynomial multiplication, in the same degree range as Figure 4.
+We also plot the ratios between the times of composed sum (resp. product)
+and polynomial multiplication. For large degrees, the ratios do not exceed 5.
+
+       14                                                        6.5
+                           Polynomial multiplication                                                       Sum
+       12                                                             6                                 Product
+                                                                 5.5
+       10
+                                                                      5
+        8                                                        4.5
+        6                                                             4
+
+        4                                                        3.5
+                                                                      3
+        2
+                                                                 2.5
+        0                                                             2
+       -2                                                        1.5
+            0   50000   100000    150000      200000   250000             0   50000   100000   150000     200000   250000
+
+
+Fig. 5. Left: polynomial multiplication (Time in sec. vs output degree). Right: (Com-
+posed product or sum time) / (Multiplication time) vs output degree.
+
+
+We also implemented in NTL an algorithm based on Formulae (2), as well
+3 All our tests were performed on the computers of the MEDICIS resource center
+http://www.medicis.polytechnique.fr, using a 2 GB, 2200+ AMD Athlon processor.
+
+
+                                                            16
+as the algorithm by Dvornicich and Traverso (1989). The bivariate resultant
+computation relies on NTL’s built-in implementation of both quadratic and
+fast algorithms for univariate resultants. The latter is used for m larger than
+180, i.e. D larger than 32400. The experimental timings are given in Figure 6.
+A first observation is that, in accordance with theoretical estimates, the al-
+gorithm of Dvornicich and Traverso (1989) is slower than the resultant based
+algorithm. The main conclusion is that these experimental results show that
+for large degrees, the resultant computations take several hours, whereas our
+algorithms require approximately one minute.
+
+        35000                                                         60000
+                                 Resultant computation                                         Resultant computation
+                    Dvornicich and Traverso’s algorithm                           Dvornicich and Traverso’s algorithm
+        30000                                                         50000
+
+        25000
+                                                                      40000
+        20000
+                                                                      30000
+        15000
+                                                                      20000
+        10000
+
+         5000                                                         10000
+
+
+           0                                                             0
+                0   50000     100000    150000     200000   250000            0   50000     100000    150000     200000   250000
+
+
+Fig. 6. Composed product (left) and sum (right) by resultant computation, respec-
+tively by Dvornicich and Traverso (1989) algorithm. (Time in sec. vs output degree)
+
+
+4   Computing the Diamond Product
+
+
+We finally address the general case: computing the diamond product of f
+and
+  √g. In this section,
+                       we give an algorithm that computes f ⋄H g using
+O    D M(D) + D ω/2 operations in k. Anticipating the following section,
+f ⋄H g is the characteristic polynomial of the image of H in the quotient
+algebra k[X, Y ]/(f (X), g(Y )). This characterization of the diamond product
+enables us to reduce its computation to that of the power projections of H
+under the trace map, followed by a linearly generated sequence recovery.
+
+The origins of this approach can be traced back at least to Le Verrier (1840)
+who proposed a method for computing characteristic polynomials of matri-
+ces by means of traces of matrix powers and using Newton identities for the
+recovery step. The idea of using power projections for computing minimal
+polynomials in quotient algebras appears in (Thiong Ly, 1989; Rifà and Bor-
+rell, 1991) in the one variable case k[X]/(f (X)). A breakthrough was achieved
+by Shoup (1994), who was the first to notice that the power projection problem
+is dual to the modular composition problem.
+
+Combining a complexity result of Brent and Kung (1978) for the latter problem
+with an algorithmic theorem called Tellegen’s principle, Shoup proved the ex-
+istence of an algorithm solving the power projection problem within the same
+
+
+                                                                 17
+complexity as ours, even for the more general algebra k[X, Y ]/(f (X), g(X, Y )).
+Still, Shoup gave no explicit algorithm. In (Shoup, 1995, Section 4.1 and 7.5)
+he partially filled in this gap and proposed a “baby step/giant step” algo-
+rithm for the power projection in the univariate case, in the FFT polynomial
+multiplication setting; in a subsequent article (Shoup, 1999, Section 2.2), he
+extended his algorithm to the bivariate case, and independently of the poly-
+nomial multiplication model. Yet, in the complexity of algorithms in (Shoup,
+1995, 1999), the term D ω/2 is replaced by D 3/2 . Finally, Kaltofen (2000) de-
+scribes the bivariate power projection and its relation to modular composition.
+
+In this section, we follow the steps of Kaltofen and Shoup and we solve the
+power projection problem for the quotient algebra Q = k[X, Y ]/(f (X), g(Y ))
+within the complexity predicted by Tellegen’s principle. This is done by ap-
+plying effective transposition techniques by Bostan et al. (2003a) to Brent
+and Kung’s algorithm for modular composition in Q. We refer to Bostan et al.
+(2003b) for a description of the general multivariate power projection problem,
+and its applications to the context of polynomial system solving.
+
+
+4.1 Computations in the quotient algebra
+
+
+Let Q be the quotient algebra k[X, Y ]/(f (X), g(Y )). In the rest of this section,
+we repeatedly use the trace, which is a linear form defined on Q: the trace of
+A ∈ Q is defined as the trace of the map of multiplication by A in Q.
+
+Our algorithm for the diamond product is based on the following fundamental
+fact, which is sometimes referred to as Stickelberger’s Theorem, see (Cox et al.,
+1998, Proposition
+                   2.7): for
+                             any A in Q, the characteristic polynomial of A
+        Q
+equals α,β T − A(α, β) , where the product runs over all the roots of f
+and g counted with multiplicities. As a corollary, we have the following:
+
+Lemma 7 The polynomial f ⋄H g is the characteristic polynomial of H in Q.
+The sth power sum of the roots of f ⋄H g is the trace of H s in Q.
+
+The second part of Lemma 7 together with the fast conversion algorithms of
+Section 2 show that the proof of the final part of Theorem 1 amounts to giving
+a fast computation scheme for the first traces of H s in Q. This is the object
+of the following proposition.
+
+Proposition 3 Given N ≥ 1, the sequence
+
+                trace(1), trace(H), trace(H 2 ), . . . , trace(H N −1 )
+                            √                           
+can be computed within O         N M(D) + DN (ω−1)/2         base field operations.
+
+
+                                         18
+The proof of the complexity estimates in Theorem 1 follows directly: from
+Proposition 2, the number of traces√   to be computed is at most 2D and by
+Proposition 3, this has complexity O D(M(D)+D ω/2 ) . Then Proposition 2
+and the obvious inequality p M( Dp ) log( Dp ) ≤ M(D) log(D) show that the cost
+of recovering f ⋄H g from the power sums of its roots is negligible. Thus, we
+now concentrate on proving Proposition 3.
+
+
+4.2 Power projection
+
+
+Computing the traces of the first N powers of H is a particular instance of the
+power projection problem: given a linear form ℓ on the k-algebra Q, compute
+the image of ℓ under the linear map
+
+                           b →
+                           Q                 k[[T ]]<N
+                                   N
+                                   X −1
+                            ℓ 7→          ℓ(H i)T i + O(T N ).
+                                   i=0
+
+
+It is useful to notice that k[[T ]]<N naturally identifies, as a k-vector space, with
+the dual of the space k[T ]<N formed by polynomials of degree at most N − 1.
+Under this identification, the linear map defining the power projection is the
+transposed map of the modular composition (polynomial evaluation) by H
+
+                                   k[T ]<N →       Q
+                                      p       7→ p(H).
+
+Now, an algorithmic theorem called transposition principle, or Tellegen’s prin-
+ciple, states, roughly speaking, that for any algorithm computing a linear map
+there exists an algorithm that computes the transposed map using almost the
+same number of arithmetic operations (see the next proposition for a pre-
+cise statement). In our situation, this principle establishes a computational
+equivalence between the dual problems of modular composition and power
+projection. This observation is due to Shoup (1994); see also (Kaltofen, 2000).
+
+Tellegen’s principle can be phrased in terms of linear straight-line programs;
+these are “ordinary” straight-line programs, that use only linear operations, see
+Chapter 13 in (Bürgisser et al., 1997) for precise definitions. The complexity
+of a linear straight-line program is measured by its size, that is, the number
+of operations it uses.
+
+Proposition 4 (Bürgisser et al., 1997, Th. 13.20) Let M be a m × n matrix
+with zr zero rows and zc zero columns. For every linear straight-line program
+of size L that computes the matrix-vector product Mv there exists a linear
+
+
+                                            19
+straight-line program of size L − n + m − zr + zc that computes the transposed
+matrix-vector product Mtr v.
+
+Paterson and Stockmeyer (1973) proposed a “baby-step / giant-step” algo-
+rithm for the modular composition by H, requiring the computation
+√                                                                   √ of only
+  N√ powers of H. The key idea is to see p(H) as√a polynomial in H N of de-
+gree N . Computing its coefficients
+                              √ amounts to N modular compositions of
+polynomials of degree at most N by the same element H. Brent and Kung
+(1978, Algorithm 2.1) remarked√that these simultaneous√modular √ composi-
+tions can be performed
+               √       using D/   N  products of pairs of N  ×   N matrices.
+Adding the O( N ) multiplications in Q, the total cost of this algorithm is
+                          √                      
+                        O N M(D) + DN (ω−1)/2 .
+
+Tellegen’s principle
+                √ implies that the power projection problem can also be
+                                      
+solved within O N M(D) + DN (ω−1)/2 operations in k.
+
+We now make explicit and effectively transpose the maps involved in the algo-
+rithm forj√modular
+               k       composition described above. In order to simplify notations,
+set r =      N and G = H r . For a polynomial p = p0 + · · · + pN −1 T N −1 , set
+pei = p(i−1)r + · · · + pir−1 T r−1 . After precomputing the elements 1, H, . . . , H r ,
+Brent and Kung’s modular composition algorithm decomposes into three lin-
+ear maps, as follows:
+
+   k[T ]<N → k[T ]<r × · · · × k[T ]<r →                      Q ×···×Q                 →         Q
+                                                 
+    p(T ) 7→         pf1 (T ), . . . , pfr (T )
+                                                                                  
+                         (q1 , . . . , qr )           7→ q1 (H), . . . , qr (H)
+                                                                                            Pr          i−1
+                                                              (A1 , . . . , Ar )       7→    i=1 Ai G
+
+– The first one is a splitting map, so that no arithmetic operation is required.
+– The second map is M 7→ HM, where H is the r × D matrix whose columns
+  contain the coordinates of the first r − 1 powers of H.
+– The third map is computed using a Horner-like method.
+
+We now proceed to inspect the transposed maps. Concerning the last one, we
+first note that, by definition, the transpose of the usual product map B 7→ AB
+on Q is the map Q  b →Q  b that associates to ℓ ∈ Q b the linear form
+
+
+                                         A◦ℓ:Q → k
+                                                      B 7→ ℓ(AB).
+
+We use the classical denomination transposed product for the operation A ◦ ℓ.
+An important property is that it endows the dual Q b with a Q-module struc-
+ture. With this notation, transposing Horner’s rule amounts to computing
+
+
+                                                       20
+G ◦ ℓ, then G ◦ (G ◦ ℓ) and so on. The transpose of the second map is simply
+given by M 7→ Htr M and that of the first map can be computed for free.
+
+In summary, reversing the arrows in the previous diagram gives the following
+decomposition of the power projection map; recall that 1, H, . . . , H r−1 and
+G = H r are precomputed.
+
+       k[[T ]]<N           ← k[[T ]]<r × · · · × k[[T ]]<r ←              b ×···×Q
+                                                                          Q      b               b
+                                                                                                ←Q
+     Pr           (i−1)r
+       i=1 Si T            ←[         (S1 , . . . , Sr )
+                                                        
+                                    Pr−1        i    i
+                                     i=0 ℓj (H )T                  ←[      (ℓ1 , . . . , ℓr )
+                                                           1≤j≤r
+
+                                                                        (ℓ, . . . , Gr−1 ◦ ℓ) ←[ ℓ
+
+The corresponding algorithm for the power projection works as described in
+Figure 7 below; therein we denoted by M[i, j] the (i, j)th entry of a matrix M
+and by 1Q the unity of the algebra Q.
+
+
+                                  b N ≥ 1 in N.
+              Input: H in Q, ℓ in Q,
+                                 PN −1
+              Output: the series i=0 ℓ(H i)T i + O(T N ).
+                   √
+              r ← ⌊ N⌋, s ← ⌈N/r⌉
+              H0 ← 1Q
+                    for p from 1 to r do
+                   Hp ← H · Hp−1
+              M1 ← the D × r matrix whose pth column is Hp−1
+              ℓ0 ← ℓ
+                    for q from 1 to s − 1 do
+                   ℓq ← Hr ◦ ℓq−1
+              M2 ← the s × D matrix whose qth row is ℓq−1
+              M ← M2X  M1
+              return       M[i, j]T (i−1)r+j−1 + O(T N )
+                             1≤i≤s
+                             1≤j≤r
+
+
+
+
+                                Fig. 7. Bivariate power projection
+
+
+Apart from the √  computation of a product
+                                      √      of two rectangular matrices
+                                                                  √      M1
+and M2 of sizes N√× D and D × N , this algorithm requires N multi-
+plications in Q and
+                 √     N transposed products.√Decomposing the matrices M1
+and M2 into D/ N square    matrices of size N allows us to compute their
+product M2 M1 within O DN (ω−1)/2 operations in k. In the next sections,
+we give explicit algorithms for the product and the transposed product in Q,
+which have complexity O(M(D)). This concludes the proof of Proposition 3.
+
+
+                                                    21
+In contrast to Shoup’s (1999) algorithm for the power projection, our algo-
+rithm uses fast matrix arithmetic. Interestingly, in (Kaltofen and Shoup, 1998,
+Algorithm AP), a related question, the automorphism evaluation problem, is
+solved in a similar fashion.
+
+
+4.3 Representing the linear forms
+
+
+The quotient algebra Q has a canonical monomial basis: since f has degree m
+and g has degree n, then
+
+                   M = {xi y j , 0 ≤ i ≤ m − 1, 0 ≤ j ≤ n − 1}
+
+forms a monomial basis of Q, where x and y are the images of X and Y in Q.
+The linear forms will be given by their coefficients in the dual basis of M,
+that is, by the list of their values on the elements in M. Then the cost of a
+single evaluation is mn = D operations in the base field. As a preamble to our
+algorithm, it is necessary to compute the trace of all elements in the basis M.
+
+Let us thus consider i in 0, . . . , m − 1 and j in 0, . . . , n − 1. By Stickelberger’s
+                                        P
+theorem, the trace of xi y j equals α,β αi β j ; then Lemma 3 shows that this
+trace is the product of the coefficients of T i in Newton(f ) and T j in Newton(g).
+The series Newton(f ) and Newton(g) can be computed at precision respec-
+tively m and n in O(M(max(m, n))) base field operations. Then by the above
+reasoning, the value of the trace form on the canonical basis M can be com-
+puted for mn = D additional multiplications.
+
+
+4.4 Complexity of the product in Q
+
+
+Due to the very specific form of the ideal defining our quotient algebra Q =
+k[X, Y ]/(f (X), g(Y )), one can design the following algorithm for the product
+in Q. It takes as input two elements A, B in Q. To obtain AB in Q, we
+first compute their product as plain polynomials in k[X, Y ], then reduce this
+product modulo (f (X), g(Y )).
+
+We use Kronecker’s substitution X ← T, Y ← T 2m−1 to reduce the compu-
+tation of the product of A and B as polynomials in k[X, Y ] to a univariate
+multiplication of polynomials of degree at most 2mn − m − n < 2D. This can
+be done in complexity O(M(D)). The resulting product P = AB is a bivariate
+polynomial of degree at most 2m − 2 in X and at most 2n − 2 in Y . We next
+reduce it modulo the ideal (f (X), g(Y )); this is done in two steps.
+
+We first consider P as a polynomial in k[X][Y ] and we reduce all its coefficients
+
+
+                                          22
+Pj (X) modulo f , using the variant of Sieveking-Kung’s algorithm (Sievek-
+ing, 1972; Kung, 1974) described in (von zur Gathen and Gerhard, 1999,
+Algorithm 9.5): given Pj , compute Sj = ⌈u · rev(2m − 2, Pj )⌉m−1 , where
+u denotes the power series 1/rev(m, f ) at precision m; then Pj mod f is
+given by Pj − rev(m − 2, Sj ) · f . Besides the precomputation of u, whose
+cost is 3M(m) + O(m) base field operations, see (von zur Gathen and Ger-
+hard, 1999, Theorem 9.4), this algorithm uses at most 2n(2M(m) + O(m)) =
+4nM(m) + O(D) operations in k.
+
+We have obtained a bivariate polynomial of degree at most m − 1 in X and at
+most 2n − 2 in Y , which we now view in k[Y ][X]. The final step consists in re-
+ducing its coefficients modulo g(Y ). This is done using again Sieveking-Kung’s
+algorithm, within 2mM(n) + O(D) operations in k, plus the precomputation
+of 1/rev(n, g), of cost 3M(n) + O(n). As both mM(n) and nM(m) are at most
+M(mn) = M(D), our algorithm for the product in Q uses O(M(D)) operations
+in k. We give the corresponding pseudo-code in Figure 8 below.
+
+
+               Input: A, B ∈ Q = k[X, Y ]/(f (X), g(Y )).
+               Output: the product AB in Q.
+
+               C(T ) ← A(T, T 2m−1 ) · B(T, T 2m−1 )
+               u ← ⌈1/rev(m, f )⌉m−1
+               for j from 0 to 2n − 2 do
+                           P2m−2
+                     Pj ← i=0     Coeff(C, (2m − 1)j + i)X i
+                     Sj ← ⌈u · rev(2m − 2, Pj )⌉m−1
+                     Pj ← Pj − rev(m − 2, Sj ) · f
+               v ← ⌈1/rev(n, g)⌉n−1
+               for i from 0 to m − 1 do
+                           P2n−2
+                     Qi ← j=0     Coeff(Pj , i)Y j
+                     Ri ← ⌈v · rev(2n − 2, Qi)⌉n−1
+                     Qi ← Qi − rev(n − 2, Ri ) · g
+                        m−1
+                        X
+               return         Qi (Y )X i
+                        i=0
+
+
+                    Fig. 8. Bivariate modular multiplication
+
+
+4.5 Complexity of the transposed product
+
+
+In this section we propose an algorithm for the transposed product in Q,
+whose complexity is the same as that of the multiplication in Q. As noticed
+by Shoup (1994), Proposition 4 already implies that such an algorithm exists,
+our contribution is to exhibit a simple, ready-to-implement one. We derive
+it by applying the program transformation techniques introduced by Bostan
+
+
+                                           23
+et al. (2003a) to the algorithm of Section 4.4. Roughly, this works as follows.
+Given a program, we decompose it into “elementary” blocks of instructions,
+then go through from the bottom to the top and transpose each block. In this
+process, the ascending for loops are transformed into descending ones, and
+input and output are swapped. We refer to (Bostan et al., 2003a) for details.
+
+In our case, two main procedures have to be transposed: the bivariate poly-
+nomial multiplication using Kronecker’s substitution on the one hand, and
+Sieveking-Kung’s algorithm on the other hand. The latter is explicitly trans-
+posed by Bostan et al. (2003a). Since Kronecker’s substitution is the identity
+map in the canonical bases, transposing it is immediate, so it remains to
+transpose the univariate polynomial product involved in the bivariate multi-
+plication. The transposed map of the multiplication by a fixed polynomial P
+of degree m is the middle product defined by Hanrot et al. (2004): it sends Q
+of degree at most m + n to the polynomial [rev(m, P ) · Q]m+n+1
+                                                              m      , denoted
+mult (n, P, Q). By Proposition 4 it can be computed for the cost of one mul-
+tiplication of two polynomials of degree m and n, up to O(m) operations,
+see (Hanrot et al., 2004; Bostan et al., 2003a) for explicit algorithms. Note
+that the transposed Sieveking-Kung’s algorithm in Bostan et al. (2003a) also
+uses middle products. The corresponding algorithm goes as in Figure 9.
+
+
+                                                           b
+             Input: A in Q = k[X, Y ]/(f (X), g(Y )), ℓ in Q.
+             Output: the transposed product A ◦ ℓ.
+
+             v ← ⌈1/rev(n, g)⌉n−1
+             for i from m − 1 downto 0 do
+                         Pn−1
+                   Qi ← j=0    ℓ(xi y j )Y j
+                   Ri ← mult (n − 2, g, Qi)
+                   Qi ← Qi − X n ⌈Ri · v⌉n−1
+             u ← ⌈1/rev(m, f )⌉m−1
+             for j from 2n − 2 downto 0 do
+                         Pm−1
+                   Pj ← i=0    Coeff(Qi , j)X i
+                   Sj ← mult (m − 2, f, Pj )
+                   Pj ← Pj − X m ⌈Sj · u⌉m−1
+                         P2n−2             j
+             P (X, Y ) ←
+                         j=0 Pj (X)Y                           
+             C ← mult 2mn − m − n, A(T, T 2m−1 ), P (T, T 2m−1)
+                       X
+             return         Coeff(C, (2m − 1)j + i)X i Y j
+                     0≤i≤m−1
+                     0≤j≤n−1
+
+
+
+                      Fig. 9. Bivariate transposed product
+
+This program has been constructed by operating some transformation on the
+instructions of the program for the dual question in Section 4.4. Its correctness
+is guaranteed by the validity of these transformations techniques. However, we
+
+
+                                      24
+conclude this section by interpreting what is computed.
+
+The algorithm takes as input a linear form ℓ in Q.        b Since f (x) = 0 in Q,
+for any integer j ≥ 0, the sequence ℓ(xi y j )i≥0 satisfies a linear recurrence with
+constant coefficients, of characteristic polynomial f . The problem of extending
+such a linear recurrent sequence is dual to the division with remainder by f ,
+see (Bostan et al., 2003a, Section 5), so in the first for loop, the algorithm
+computes the values ℓ(xi y j ), for 0 ≤ j ≤ n − 1 and m ≤ i ≤ 2m − 2. Similarly,
+after the pass through the second for loop, all the values taken by ℓ on the
+monomials in the set M2 = {xi y j , 0 ≤ i ≤ 2m − 2, 0 ≤ j ≤ 2n − 2} are
+computed; these values are encoded in the polynomial P (X, Y ). By definition
+of the middle product, one can finally check that the algorithm outputs the
+part supported by M in the product A( X1 , Y1 )·P (X, Y ), that is, in the product
+                                             X
+                              1 1
+                        A      ,        ·                ℓ(xi y j )X iY j .
+                              X Y           xi y j ∈M2
+
+
+Proposition 1 in (Bostan et al., 2003b) shows that this part gives the coeffi-
+cients of A ◦ ℓ in the dual basis of M and this finishes an alternative proof of
+the correctness of our algorithm.
+
+
+4.6 Experimental results
+
+
+We implemented our diamond product algorithm in the NTL C++ li-
+brary (Shoup, 1996–2005); we implemented the version for large or zero char-
+acteristic, for base fields of type Z/pZ, with p prime. Our implementation
+uses Winograd’s variant of Strassen’s (1969) matrix multiplication algorithm;
+it also uses the implementation of transposed polynomial multiplication de-
+veloped by Bostan et al. (2003a).
+
+The data used to test the diamond product are similar to those of Section 3.4:
+the input polynomials f (X) and g(Y ) have equal degrees m = n and their
+coefficients are chosen uniformly at random; the output has degree D = m2 .
+The polynomial H is randomly chosen of degree less than m in both X and Y .
+We let m vary from 1 to 425; the base field is defined by a 32 bit prime.
+
+Figure 10 shows the time for the diamond product computation, using both
+classical and Strassen’s matrix multiplication. Again, the abrupt time jumps
+that occur at powers of 2 come from the Fourier transform. In Figure 11,
+we separate the times used in the polynomial multiplication and transposed
+multiplication step, on the one hand, and the linear algebra step, using respec-
+tively classical and Strassen multiplication, on the other hand. The polynomial
+multiplication step is predominant, but the ratio between this step and the
+linear algebra one actually reduces as the degree grows.
+
+
+                                               25
+    35000                                                   25000
+                  Using Strassen multiplication                                     Polynomial multiplications
+                  Using classical multiplication                        Linear Algebra, Strassen multiplication
+    30000                                                               Linear Algebra, classical multiplication
+                                                            20000
+    25000
+
+                                                            15000
+    20000
+
+    15000
+                                                            10000
+
+    10000
+                                                             5000
+     5000
+
+       0                                                       0
+            0   50000      100000        150000    200000           0         50000        100000        150000    200000
+
+
+    Fig. 10. Diamond product.                               Fig. 11. Respective times for polyno-
+    (Time in sec. vs output degree)                         mial multiplications & linear algebra
+                                                            by classical and Strassen’s algorithm.
+                                                            (Time in sec. vs output degree)
+
+Recall√ that the diamond product algorithm handles matrices whose size
+m = D varies from 1 to 425. It appears that for such sizes, using a fast ma-
+trix multiplication algorithm does have a practical significance on the whole
+diamond product computation time. Indeed we save a factor of up to 3 on the
+linear algebra phase, and more than 25% on the whole computation time.
+
+
+
+5     Applications and Related Questions
+
+
+To conclude this article, we present situations where composed operations,
+notably sums and products, are useful.
+
+Algebraic numbers. One may represent an algebraic number by its min-
+imal polynomial. If α and β are two algebraic numbers represented by their
+minimal polynomials f (x) and g(y), the sum α+β is represented by one of the
+irreducible factors of the composed sum f ⊕ g. The product αβ is represented
+by one of the irreducible factors of the composed product f ⊗ g (subtractions
+α−β and divisions α/β can be handled similarly). Thus the resultant methods
+described in (Loos, 1983; Cohen, 1993) can be replaced by our faster solutions,
+even though factoring the output remains necessary and is possibly costly.
+
+We mention that Kaltofen (2000) presents an alternative solution for this
+question: it consists in factoring f in the algebraic extension Q[y]/(g(y)) be-
+forehand, and then computing a power projection modulo a system of the form
+g(y) = 0, h(x, y) = 0. Thus, the factorization in degree deg(f )deg(g) over Q is
+replaced by a factorization in degree deg(f ) in a number field of degree deg(g).
+
+Algebraic functions. Our algorithms also adapt to operations over Puiseux
+series as it suffices to operate with a base field of the form k(z). As a matter
+
+
+                                                     26
+of fact, ideas similar to the ones developed in Section 3 prove useful in de-
+termining the generating function of walks over the half-line determined by a
+fixed finite set of allowed jumps; see the “Platypus Algorithm” [sic] and the
+discussion of (Banderier and Flajolet, 2002, pp. 56–58). (There the problem
+is to calculate the minimal polynomial satisfied by a product α1 · · · αk of k
+distinct branches of an algebraic function defined by P (z, α) = 0.)
+
+Dispersion set of polynomials. In many algorithms for symbolic sum-
+mation (e.g., Abramov, 1971; Gosper, 1978; Abramov, 1989; Petkovšek, 1992;
+Paule, 1995) one has to compute the dispersion set of two polynomials, that is,
+the set of the (integer) distances between their roots. Classically, this is done
+by computing the polynomial whose roots are the elements of the dispersion
+set. The latter polynomial is again a resultant of the particular form discussed
+in Section 3 and can be computed fast using our algorithms. Alternative meth-
+ods for determining the dispersion set have been designed by Man and Wright
+(1994); Gerhard et al. (2003). It would be interesting to carefully compare the
+(bit) complexities and the practical performances of these algorithms.
+
+Irreducible polynomials. Constructing irreducible polynomials of pre-
+scribed degree over finite fields is a useful but difficult task. It serves, for
+instance, to implement arithmetic in extension fields. The most efficient al-
+gorithm known is due to Shoup (1990, 1994): it consists in first constructing
+irreducible polynomials whose degree is a prime power, then combining them
+by means of composed products. In (Shoup, 1994), the second step is achieved 
+by a minimal polynomial computation, which has complexity O D (ω+1)/2 ,
+where D is the output degree. Thanks to our algorithm for the composed
+product, the cost of this step becomes linear in D, up to logarithmic factors.
+
+Point counting. Designing genus 2 hyperelliptic cryptosystems requires de-
+termining the cardinality of the Jacobian of genus 2 curves defined over finite
+fields. When the base field is a prime field of the form Z/pZ, a commonly
+used solution is the extension by Gaudry and Harley (2000) of Schoof’s (1985)
+algorithm for elliptic curves, which requires to compute torsion subgroups of
+the Jacobian.
+
+Working out the details, one is led to solve systems of the form
+
+                       f (x1 )   f (x2 )      h(x1 )   h(x2 )
+                               =         ,           =        ,
+                       g(x1 )    g(x2 )       g(x1 )   g(x2 )
+
+where f, g, h are univariate polynomials. Taking into account the symmetry in
+x1 , x2 , we wish to compute an eliminating polynomial for x1 + x2 . This can be
+done through a suitable resultant computation, but the denominators g(x1 )
+and g(x2 ) create high-degree spurious factors in this resultant, which should be
+
+
+                                         27
+found and removed. The parasites are powers of the composed sum of g with
+itself; in their cryptographic-size record, Gaudry and Schost (2004) encounter
+degrees in the range of several hundreds of thousands. To treat problems of
+such sizes, the use of our fast algorithms for composed sums becomes necessary.
+
+
+Linear recurrent sequences with infinitely many zeros. A classical
+result (Berstel and Mignotte, 1976) asserts that a linear recurrent sequence
+has infinitely many zero terms if its minimal polynomial f has a unitary pair,
+that is, if it has two roots whose ratio is a root of unity. Yokoyama et al.
+(1995) give algorithms to test this condition, and if so, to find the order of the
+multiplicative group generated by the corresponding roots of unity. The most
+time-consuming part of their algorithm is the computation of a polynomial
+whose roots are the ratios of all pairs of roots of f . This directly reduces to
+the computation of a composed product, for which our algorithms apply.
+
+
+Shift of polynomials. In (von zur Gathen and Gerhard, 1997), six algo-
+rithms for computing shifts of polynomials are proposed and their complexity
+is analyzed. A seventh algorithm can be deduced as a straightforward appli-
+cation of our algorithm for the composed sums, since f ⊕ (T + a) is the shift
+polynomial of f by a. In characteristic zero, the complexity of this algorithm
+is linear (up to logarithmic factors) in the degree of f , in terms of base field
+operations. Yet, the convolution method of Aho et al. (1975) is better by a
+constant factor. In small characteristic, the analysis has yet to be done.
+
+
+Construction of polynomials that are hard to factor. Our algorithms
+for composed sums can be used to compute the Swinnerton-Dyer polyno-
+                                          Q       √            √
+mials (Zippel, 1993, p. 305), defined as (T ± p1 ± · · · ± pn ), where the
+product runs over all 2n possible combinations of ± signs and p1 , . . . , pn are
+distinct primes. They also apply to the computation of their bivariate ana-
+logues (Zippel, 1993, p. 340), which are the √bivariate polynomials
+                                                              √     of total de-
+            n                       Q
+gree D = 2 defined by Sn (X, Y ) = (Y ± X + 1 ± · · · ± X + n). (These
+families of polynomials are known to exhibit the worst possible case for factor-
+ization algorithms, over Z[T ] and k[X, Y ], based on the “lift and recombine”
+strategy.) Without getting into details, an evaluation/interpolation scheme
+together with our algorithms for composed sums allow the computation of
+Sn (X, Y ) in O(D M(D)) operations in k, which is again nearly optimal in
+the size of the output. Similarly, one can compute all the “hard to factor”
+polynomials in (Kaltofen et al., 1983). Moreover, performing composed sums
+of polynomials of Swinnerton-Dyer type allows one to build polynomials of
+prescribed degrees which are irreducible in Z[T ], but reducible modulo any
+prime p. This yields a constructive proof of the result in (Brandl, 1986), in
+the case of nonsquarefree degrees.
+
+
+                                       28
+Resolvents. Resolvents are an important tool in Galois theory, notably for
+the direct problem of determining the Galois group of an irreducible polynomial
+f of degree m. Their factorization patterns help determine the Galois group of
+f . For h≤ m, an example of such a resolvent is the polynomial f +h of degree
+N= m     h
+           , whose roots are the sums αi1 +· · ·+αih , with 1 ≤ i1 < · · · < ih ≤ m,
+where (αi )1≤i≤m are the roots of f . This differs from the hth iterated composed
+sum, since repetitions of roots are not allowed here. Yet, the methods we have
+presented help answer some simple cases, as illustrated in the next example.
+
+Let f (T ) = T 7 − 7T + 3 be the Cartier polynomial introduced by Giusti
+et al. (1989), and F = f +3 the polynomial whose roots are all sums of h = 3
+distinct roots of f . To prove that the Galois group of f is not the symmetric
+group S7 , it is enough to check that F is not irreducible. The polynomial F
+has degree 35, so knowing its Newton series to order 35 suffices to recover it.
+To do this, we first decompose f ⊕3 = f ⊕ f ⊕ f as
+            Y                     Y                            3          Y                          6
+   f ⊕3 =       (T − 3α) ·                  T − (α + 2β)             ·                T − (α + β + γ) .
+            α                     α6=β                                   α6=β6=γ6=α
+
+                                               Q                                         
+Then, using the definition F =                     α6=β6=γ6=α       T −(α+β +γ) and the equalities
+                                                                                                            
+  Y                                                Y                                    f ⊕ f ⊗ (T − 2)
+      (T − 3α) = f ⊗ (T − 3) and                          T − (α + 2β) =
+  α                                                α6=β                                       f ⊗ (T − 3)
+
+enables us to express Newton(F ) as
+                                                                                                        
+1
+  Newton f ⊕3 + 2 Newton f ⊗ (T − 3) − 3 Newton f ⊕ f ⊗ (T − 2)    .
+6
+Using Lemmas 3 and 4, this series can be computed from the series Newton(f )
+and exp(T ) to order 35. The polynomial F is then recovered using the algo-
+rithms in Section 2. The CPU time used in a direct resultant computation is
+about 300 times the whole computation time using our approach.
+
+A straightforward generalization of this approach for an arbitrary h is not
+satisfactory, due to the combinatorial explosion of the number of terms in-
+volved. A faster method is presented by Casperson and McKay (1994) and
+has complexity O e (h2 N + N 2 ). It is based on the following recurrence rela-
+tion, expressing f +h in terms of f +j , for j < h:
+                                    h 
+                                      Y                                          (−1)i+1
+                           +h h
+                       f          =           f ⊗ (T − i) ⊕ f +(h−i)                          .
+                                      i=1
+
+Using this formula and the fast conversion algorithms presented in Section 2
+                          e (hN). Nevertheless, the degree of the output is N,
+reduces the complexity to O
+so an optimal algorithm for this question has yet to be found.
+
+
+                                                      29
+Characteristic polynomials in univariate quotient algebras. By defini-
+tion, the diamond product includes as a very particular case the characteristic
+polynomial of a univariate polynomial H(X) in an univariate
+                                                        √ quotient algebra
+k[X]/(b(X)). The latter can thus be computed using O( n(M(n) + nω/2 )) op-
+erations in k, where n = deg(b) > deg(H). The resulting algorithm is similar
+to that for minimal polynomials in (Shoup, 1999).
+
+Rothstein-Trager resultants. A special type of bivariate resultant occurs
+in algorithms for symbolic integration, see (Trager, 1976; Rothstein, 1977).
+Given a(X) and b(X) in k[X] of degree at most n, with b squarefree, these
+algorithms require the computation of r(Y ) = ResX (Y b′ (X) − a(X), b(X)),
+which has degree at most n. A direct evaluation-interpolation based algorithm
+has complexity O(n M(n) log(n)). A different approach is based on the fact
+that r(X) equals, up to the factor Res(b, b′ ), the characteristic polynomial of
+H(X) = a/b′ mod b in k[X]/(b), thus can be computed as explained in the
+preceding paragraph.
+
+Graeffe polynomials. Let f be a monic polynomial of degree m and N
+be a positive integer. We call Nth Graeffe polynomial of f the polynomial of
+degree m whose roots are the Nth powers of the roots of f .
+
+This polynomial can be obtained using O(M(mN)) operations in k, by comput-
+ing the composed product of f and X N − 1. Note that the same complexity
+result is announced in (Henrici, 1986, Section 13.8). This is nearly optimal
+with respect to m, but not to N. On the other hand, the Nth Graeffe poly-
+nomial of f is the characteristic polynomial of X N modulo f . Computing X N
+mod f has complexity O(M(m) log(N)), which is optimal in N, but then the
+characteristic polynomial computation has complexity more than linear in m.
+
+For comparison, Graeffe polynomials are computed by von Haeseler and
+Jürgensen (2001) by means of so-called decimation matrices, which are struc-
+tured (Toeplitz, quasi-circulant) N × N matrices with polynomial entries of
+degree at most m+NN
+                     . Using an evaluation-interpolation scheme, the cost of
+this method is dominated by the evaluation of m determinants of N × N
+scalar Toeplitz matrices. Over C, Toeplitz determinants can be evaluated in
+O(M(N) log N) operations, using the algorithm in (Kravanja and Van Barel,
+2000).
+
+Is there a way of reducing the cost to O(M(m) log(N))? If N is a power of 2,
+this can be achieved using binary powering, but the general case remains open.
+
+Acknowledgments. We wish to thank the referees of an earlier version of
+this article for their helpful scholarly comments. This work has been partly
+supported by the European Commission under the Future and Emerging Tech-
+nologies program of the Fifth Framework, Alcom-ft project IST-1999-14186.
+
+
+                                      30
+References
+
+Abramov, S. A., 1971. On the summation of rational functions. Akademiya
+  Nauk SSSR. Zhurnal Vychislitel′ noı̆ Matematiki i Matematicheskoı̆ Fiziki
+  11 (4), 1071–1075, english translation in U.S.S.R. Computational Mathe-
+  matics and Mathematical Physics, 324–330.
+Abramov, S. A., 1989. Rational solutions of linear differential and differ-
+  ence equations with polynomial coefficients. Akademiya Nauk SSSR. Zhur-
+  nal Vychislitel′ noı̆ Matematiki i Matematicheskoı̆ Fiziki 29 (11), 1611–
+  1620, 1757, english translation in U.S.S.R. Computational Mathematics and
+  Mathematical Physics, 7–12.
+Aho, A. V., Steiglitz, K., Ullman, J. D., 1975. Evaluating polynomials at fixed
+  sets of points. SIAM Journal of Computing 4 (4), 533–539.
+Banderier, C., Flajolet, P., 2002. Basic analytic combinatorics of directed lat-
+  tice paths. Theoretical Computer Science 281 (1-2), 37–80.
+Berstel, J., Mignotte, M., 1976. Deux propriétés décidables des suites
+  récurrentes linéaires. Bulletin de la Société Mathématique de France 104 (2),
+  175–184.
+Bini, D., Pan, V. Y., 1994. Polynomial and matrix computations. Vol. 1.
+  Birkhäuser Boston Inc., Boston, MA.
+Bostan, A., Flajolet, P., Salvy, B., Schost, É., Oct. 2002. Fast computation
+  with two algebraic numbers. Research Report 4579, Institut National de
+  Recherche en Informatique et en Automatique, 20 pages.
+Bostan, A., González-Vega, L., Perdry, H., Schost, É., 2005. From Newton
+  sums to coefficients: complexity issues in characteristic p. In: MEGA’05. To
+  appear.
+Bostan, A., Lecerf, G., Schost, É., 2003a. Tellegen’s principle into practice. In:
+  ISSAC’03. ACM Press, pp. 37–44.
+Bostan, A., Salvy, B., Schost, É., 2003b. Fast algorithms for zero-dimensional
+  polynomial systems using duality. Applicable Algebra in Engineering, Com-
+  munication and Computing 14 (4), 239–272.
+Brandl, R., 1986. Integer polynomials that are reducible modulo all primes.
+  The American Mathematical Monthly 93 (4), 286–288.
+Brawley, J. V., Carlitz, L., 1987. Irreducibles and the composed product for
+  polynomials over a finite field. Discrete Mathematics 65 (2), 115–139.
+Brawley, J. V., Gao, S., Mills, D., 1999. Computing composed products of
+  polynomials. In: Finite fields: theory, applications, and algorithms (Water-
+  loo, ON, 1997). Vol. 225 of Contemp. Math. AMS, pp. 1–15.
+Brent, R. P., 1976. Multiple-precision zero-finding methods and the complexity
+  of elementary function evaluation. In: Analytic computational complexity
+  (Pittsburgh, 1975). Academic Press, pp. 151–176.
+Brent, R. P., Kung, H. T., 1978. Fast algorithms for manipulating formal
+  power series. Journal of the Association for Computing Machinery 25 (4),
+  581–595.
+Briand, E., González-Vega, L., 2002. Multivariate Newton sums: identities and
+
+
+                                        31
+  generating functions. Communications in Algebra 30 (9), 4527–4547.
+Bürgisser, P., Clausen, M., Shokrollahi, M. A., 1997. Algebraic complexity
+  theory. Vol. 315 of Grundlehren der Mathematischen Wissenschaften [Fun-
+  damental Principles of Mathematical Sciences]. Springer-Verlag, Berlin.
+Cantor, D. G., Kaltofen, E., 1991. On fast multiplication of polynomials over
+  arbitrary algebras. Acta Informatica 28 (7), 693–701.
+Casperson, D., McKay, J., 1994. Symmetric functions, m-sets, and Galois
+  groups. Mathematics of Computation 63 (208), 749–757.
+Cohen, H., 1993. A course in computational algebraic number theory. Vol. 138
+  of Graduate Texts in Mathematics. Springer-Verlag, Berlin.
+Coppersmith, D., Winograd, S., Mar. 1990. Matrix multiplication via arith-
+  metic progressions. Journal of Symbolic Computation 9 (3), 251–280.
+Cox, D., Little, J., O’Shea, D., 1998. Using algebraic geometry. Vol. 185 of
+  Graduate Texts in Mathematics. Springer-Verlag, New York.
+Dvornicich, R., Traverso, C., 1989. Newton symmetric functions and the arith-
+  metic of algebraically closed fields. In: AAECC-5 (Menorca, 1987). Vol. 356
+  of LNCS. Springer, pp. 216–224.
+von zur Gathen, J., Gerhard, J., 1997. Fast algorithms for Taylor shifts and
+  certain difference equations. In: ISSAC’97. ACM Press, pp. 40–47.
+von zur Gathen, J., Gerhard, J., 1999. Modern computer algebra. Cambridge
+  University Press, New York.
+Gaudry, P., Harley, R., 2000. Counting points on hyperelliptic curves over finite
+  fields. In: Proceedings of ANTS IV. Vol. 1838 of LNCS. Springer-Verlag, pp.
+  313–332.
+Gaudry, P., Schost, É., 2004. Construction of secure random curves of genus 2
+  over prime fields. In: Advances in Cryptology – EUROCRYPT 2004. Vol.
+  3027 of LNCS. Springer-Verlag, pp. 239–256.
+Gerhard, J., Giesbrecht, M., Storjohann, A., Zima, E. V., 2003. Shiftless de-
+  composition and polynomial-time rational summation. In: ISSAC’03. ACM
+  Press, pp. 119–126.
+Giusti, M., Lazard, D., Valibouze, A., 1989. Algebraic transformations of poly-
+  nomial equations, symmetric polynomials and elimination. In: ISSAC’88.
+  Vol. 358 of LNCS. Springer-Verlag, pp. 309–314.
+González-López, M.-J., González-Vega, L., 1998. Newton identities in the mul-
+  tivariate case: Pham systems. In: Gröbner bases and applications (Linz,
+  1998). Vol. 251 of London Mathematical Society Lecture Note Series. Cam-
+  bridge University Press, pp. 351–366.
+González-Vega, L., Trujillo, G., 1995a. Implicitization of parametric curves
+  and surfaces by using symmetric functions. In: ISSAC’95. ACM Press, pp.
+  180–186.
+González-Vega, L., Trujillo, G., 1995b. Using symmetric functions to describe
+  the solution set of a zero-dimensional ideal. In: AAECC-11 (Paris, 1995).
+  Vol. 948 of LNCS. Springer, pp. 232–247.
+Gosper, Jr., R. W., 1978. Decision procedure for indefinite hypergeometric
+  summation. Proceedings of the National Academy of Sciences of the United
+
+
+                                      32
+  States of America 75 (1), 40–42.
+von Haeseler, F., Jürgensen, W., 2001. Irreducible polynomials generated
+  by decimations. In: Finite fields and their applications (Augsburg, 1999).
+  Springer, pp. 224–231.
+Hanrot, G., Quercia, M., Zimmermann, P., 2004. The middle product algo-
+  rithm, I. Speeding up the division and square root of power series. Applicable
+  Algebra in Engineering, Communication and Computing 14 (6), 415–438.
+Henrici, P., 1986. Applied and computational complex analysis. Vol. 3. John
+  Wiley & Sons Inc., New York.
+van Hoeij, M., 2002. Factoring polynomials and the knapsack problem. Journal
+  of Number Theory 95 (2), 167–189.
+Huang, X., Pan, V. Y., Jun 1998. Fast rectangular matrix multiplication and
+  applications. Journal of Complexity 14 (2), 257–299.
+Kaltofen, E., 2000. Challenges of symbolic computation: my favorite open
+  problems. Journal of Symbolic Computation 29 (6), 891–919.
+Kaltofen, E., Musser, D. R., Saunders, B. D., 1983. A generalized class of
+  polynomials that are hard to factor. SIAM Journal on Computing 12 (3),
+  473–483.
+Kaltofen, E., Pan, V., 1992. Processor-efficient parallel solution of linear sys-
+  tems II: the positive characteristic and singular cases. In: FOCS’92. IEEE
+  Computer Society Press, pp. 714–723.
+Kaltofen, E., Pan, V. Y., 1994. Parallel solution of Toeplitz and Toeplitz-like
+  linear systems over fields of small positive characteristic. In: PASCO ’94.
+  Vol. 5 of Lecture Notes Ser. Comput. World Sci. Publishing, pp. 225–233.
+Kaltofen, E., Shoup, V., 1998. Subquadratic-time factoring of polynomials
+  over finite fields. Mathematics of Computation 67 (223), 1179–1197.
+Kravanja, P., Van Barel, M., 2000. Coupled Vandermonde matrices and the su-
+  perfast computation of Toeplitz determinants. Numerical Algorithms 24 (1-
+  2), 99–116.
+Kronecker, L., 1882. Grundzüge einer arithmetischen Theorie der algebrais-
+  chen Grössen. Journal für die reine und angewandte Mathematik 92, 1–122.
+Kung, H. T., 1974. On computing reciprocals of power series. Numerische
+  Mathematik 22, 341–348.
+Lascoux, A., 1986. La résultante de deux polynômes. In: Séminaire d’algèbre
+  P. Dubreil et M.-P. Malliavin. Vol. 1220 of LNM. Springer, pp. 56–72.
+Le Verrier, U., 1840. Sur les variations séculaires des éléments elliptiques des
+  sept planètes principales : Mercure, Vénus, La Terre, Mars, Jupiter, Saturne
+  et Uranus. Journal de Mathématiques Pures et Appliquées 4, 220–254.
+Lickteig, T., Roy, M.-F., 1996. Cauchy index computation. Calcolo 33 (3-4),
+  337–351.
+Lickteig, T., Roy, M.-F., 2001. Sylvester-Habicht sequences and fast Cauchy
+  index computation. Journal of Symbolic Computation 31 (3), 315–341.
+Loos, R., 1983. Computing in algebraic extensions. In: Computer algebra.
+  Springer, pp. 173–187.
+Man, Y.-K., Wright, F., 1994. Fast polynomial dispersion computation and its
+
+
+                                       33
+  application to indefinite summation. In: ISSAC’94. ACM Press, pp. 175–180.
+Pan, V. Y., 1996. Parallel computation of polynomial GCD and some related
+  parallel computations over abstract fields. Theoretical Computer Science
+  162 (2), 173–223.
+Pan, V. Y., 1997. Faster solution of the key equation for decoding BCH error-
+  corecting codes. In: Proceedings STOC’97. ACM Press, pp. 168–175.
+Pan, V. Y., 2000. New techniques for the computation of linear recurrence
+  coefficients. Finite Fields and their Applications 6 (1), 93–118.
+Paterson, M. S., Stockmeyer, L. J., Mar. 1973. On the number of nonscalar
+  multiplications necessary to evaluate polynomials. SIAM Journal on Com-
+  puting 2 (1), 60–66.
+Paule, P., 1995. Greatest factorial factorization and symbolic summation.
+  Journal of Symbolic Computation 20 (3), 235–268.
+Petkovšek, M., 1992. Hypergeometric solutions of linear recurrences with poly-
+  nomial coefficients. Journal of Symbolic Computation 14 (2-3), 243–264.
+Reischert, D., 1997. Asymptotically fast computation of subresultants. In:
+  ISSAC’97. ACM Press, pp. 233–240.
+Rifà, J., Borrell, J., 1991. Improving the time complexity of the computation
+  of irreducible and primitive polynomials in finite fields. In: AAECC-9 (New
+  Orleans, 1991). Vol. 539. pp. 352–359.
+Rothstein, M., 1977. A new algorithm for the integration of exponential and
+  logarithmic functions. In: Proceedings of the 1977 MACSYMA Users Con-
+  ference. NASA Pub. CP-2012, pp. 263–274.
+Rouillier, F., 1999. Solving zero-dimensional systems through the Rational
+  Univariate Representation. Applicable Algebra in Engineering, Communi-
+  cation and Computing 9 (5), 433–461.
+Schönhage, A., 1977. Schnelle Multiplikation von Polynomen über Körpern
+  der Charakteristik 2. Acta Informatica 7, 395–398.
+Schönhage, A., 1982. The fundamental theorem of algebra in terms of compu-
+  tational complexity. Tech. rep., Univ. Tübingen, 73 pages.
+Schönhage, A., 1993. Fast parallel computation of characteristic polynomials
+  by Leverrier’s power sum method adapted to fields of finite characteristic.
+  In: Automata, languages and programming (Lund, 1993). Vol. 700 of LNCS.
+  Springer, pp. 410–417.
+Schönhage, A., Strassen, V., 1971. Schnelle Multiplikation großer Zahlen.
+  Computing 7, 281–292.
+Schoof, R., 1985. Elliptic curves over finite fields and the computation of square
+  roots mod p. Mathematics of Computation 44, 483–494.
+Schost, É., 2005. Multivariate power series multiplication. In: ISSAC’05. To
+  appear.
+Schwartz, J. T., 1980. Fast probabilistic algorithms for verification of polyno-
+  mial identities. Journal of the Association for Computing Machinery 27 (4),
+  701–717.
+Shoup, V., 1990. New algorithms for finding irreducible polynomials over finite
+  fields. Mathematics of Computation 54 (189), 435–447.
+
+
+                                       34
+Shoup, V., 1994. Fast construction of irreducible polynomials over finite fields.
+  Journal of Symbolic Computation 17 (5), 371–391.
+Shoup, V., 1995. A new polynomial factorization algorithm and its implemen-
+  tation. Journal of Symbolic Computation 20 (4), 363–397.
+Shoup, V., 1996–2005. NTL: A library for doing number theory.
+  http://www.shoup.net.
+Shoup, V., 1999. Efficient computation of minimal polynomials in algebraic
+  extensions of finite fields. In: ISSAC’99. ACM Press, pp. 53–58.
+Sieveking, M., 1972. An algorithm for division of powerseries. Computing 10,
+  153–156.
+Strassen, V., 1969. Gaussian elimination is not optimal. Numerische Mathe-
+  matik 13, 354–356.
+Thiong Ly, J.-A., 1989. Note for computing the minimum polynomial of el-
+  ements in large finite fields. In: Coding theory and applications (Toulon,
+  1988). Vol. 388 of LNCS. Springer, pp. 185–192.
+Trager, B. M., 1976. Algebraic factoring and rational function integration. In:
+  SYMSAC’76. ACM Press, pp. 219–226.
+Valibouze, A., 1989. Fonctions symétriques et changements de bases. In: EU-
+  ROCAL ’87 (Leipzig, 1987). Vol. 378 of LNCS. Springer, pp. 323–332.
+Yokoyama, K., Li, Z., Nemes, I., 1995. Finding roots of unity among quotients
+  of the roots of an integral polynomial. In: ISSAC’95. ACM Press, pp. 85–89.
+Zippel, R., 1993. Effective Polynomial Computation. Kluwer Academic Pub-
+  lishers, Boston.
+
+
+
+
+                                      35
+

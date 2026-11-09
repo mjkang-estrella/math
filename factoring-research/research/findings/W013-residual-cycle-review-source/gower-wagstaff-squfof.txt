@@ -1,0 +1,2516 @@
+MATHEMATICS OF COMPUTATION
+Volume 00, Number 0, Pages 000–000
+S 0025-5718(XX)0000-0
+
+
+
+
+                       SQUARE FORM FACTORIZATION
+
+                    JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+                    This paper is dedicated to the memory of Daniel Shanks.
+
+
+          Abstract. We present a detailed analysis of SQUFOF, Daniel Shanks’ Square
+          Form Factorization algorithm. We give the average time and space require-
+          ments for SQUFOF. We analyze the effect of multipliers, either used for a
+          single factorization or when racing the algorithm in parallel.
+
+
+
+
+                                       1. Introduction
+   SQUFOF, or SQUare FOrm Factorization, is an integer factoring algorithm in-
+vented by Daniel Shanks more than thirty years ago.
+   For each size of integer, there is a fastest general purpose algorithm (among
+known methods) to factor a number of that size. At present, the number field sieve
+(NFS) is best for integers greater than about 10120 and the quadratic sieve (QS)
+is best for numbers between 1050 and 10120 , etc. As new algorithms are discov-
+ered, these ranges change. On a 32-bit computer, SQUFOF is the clear champion
+factoring algorithm for numbers between 1010 and 1018 , and will likely remain so.
+It can split almost any composite 18-digit integer in less than a millisecond. The
+SQUFOF algorithm is extraordinarily simple, beautiful and efficient. Further, it is
+used in many implementations of NFS and QS to factor small auxiliary numbers
+arising when factoring a large integer.
+   Although Shanks [16], [18] described other new algorithms for factoring integers,
+he published nothing about SQUFOF. He did lecture [12] on SQUFOF and he
+explained its operation to a few people. Some works of others, such as [3], [11], [2],
+and [19], discuss the algorithm, but none contains a detailed analysis. After Shanks
+died in 1996, H. C. Williams discovered some of Shanks’ unpublished hand-written
+manuscripts [15], [14], [13], and eventually they appeared on the web [6].
+   The manuscript [15] is the closest Shanks ever came to a full description and
+analysis of SQUFOF. In [15], Shanks described the algorithm and began a heuristic
+argument for the following statement. Let N be a product of k distinct odd primes
+with N ≡ 3 mod 4. Then the average number of forms that SQUFOF must examine
+before finding a proper square form (one leading to a non-trivial factor of N ) is
+                                   √
+                                3 2 + 2 log 2 √
+                                          
+                                                 4
+                                                   N.
+                                   2 (2k − 2)
+
+    1991 Mathematics Subject Classification. 11A11, 11E16, 11R11, 11Y05.
+    Key words and phrases. Integer factorization, binary quadratic form.
+    This paper is based on the Ph.D. thesis [5] of the first author, supervised by the second author.
+Both authors are grateful for the support of the CERIAS Center at Purdue University and by the
+Lilly Endowment Inc.
+
+                                                                 c 1997 American Mathematical Society
+                                                 1
+2                   JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+The manuscript also contains a discussion of how to decide whether a square form is
+proper or not, but there is no proof for why this decision is always correct. Shanks
+also discusses the use of multipliers as a way to overcome a failure to factor N ,
+and the possibility of racing multipliers. It is clear from [15] and from discussions
+Shanks had with the second author and others that Shanks knew a lot of the content
+of this paper and much more about SQUFOF.
+   We give a detailed description and analysis of SQUFOF, and determine its time
+and space complexity. In Theorem 4.22, we complete the heuristic argument started
+by Shanks in [15], derive the average number shown above, and extend the argument
+to the cases N ≡ 1, 2 mod 4. The only variable-length storage SQUFOF uses is a
+queue data structure. In Theorem 4.24, we estimate the average number of entries
+placed in this queue. Theorems 5.4 and 5.8 give the time and space complexity of
+SQUFOF when multipliers are used to factor N . We give a detailed description
+of the process for deciding which square forms are proper, show how to modify it
+when multipliers are used, and prove that it works in all cases. We study SQUFOF
+as if it were a random walk on the principal cycle of binary quadratic forms of
+discriminant N or 4N . Our theorems about the complexity of SQUFOF are proved
+using reasonable and perhaps provable assumptions about this random walk.
+   In Section 2 we provide a minimum background for the sequel. We describe the
+algorithm in Section 3 and give some examples of it. Then in Section 4 we derive
+the average time and space requirements for the basic algorithm. Section 5 presents
+the time and space requirements for SQUFOF with multipliers. We give in Section
+6 the results of some experiments, which provide evidence that our simplifying
+assumptions are reasonable. Finally, we conclude in Section 7 with some questions
+for future research.
+   We thank Arunkumar Navasivasakthivelsamy and Rupak Sanjel for writing some
+programs we used in the experiments. We are grateful to an anonymous referee for
+improving the clarity of the paper.
+
+                                    2. Background
+2.1. Binary Quadratic Forms. We begin with a brief survey of binary quadratic
+forms. For a more detailed account of the theory see [2] or [3].
+
+2.1.1. Basic Definitions. Let f (x, y) = ax2 + bxy + cy 2 , a binary quadratic form in
+the variables x and y. The constants a, b, and c will be taken in Z. The discriminant
+of f is defined to be b2 − 4ac. A discriminant ∆ is called fundamental if either ∆
+is odd and square-free; or ∆ is even, ∆/4 is square-free, and ∆/4 ≡ 2 or 3 mod 4.
+The form f is called primitive if gcd (a, b, c) = 1.
+    We will frequently write f = (a, b, c), or just (a, b, ∗), where c can be computed
+if we know the discriminant of f . We shall also write f = (a, ∗, ∗) whenever b and
+c are either unknown or irrelevant. Note that if ∆ is the discriminant of the form
+f , then ∆ ≡ 0 or 1 mod 4, and b ≡ ∆ mod 2.
+    The form f is said to represent m ∈ Z if there exists x0 , y0 ∈ Z such that
+f (x0 , y0 ) = ax20 + bx0 y0 + cy02 = m. The representation is primitive if gcd (x0 , y0 ) =
+1.
+    We say that two forms f1 and f2 are properly equivalent, or just equivalent, if we
+can find α, β, γ, δ ∈ Z such that αδ − βγ = 1 and f1 (x, y) = f2 (αx + βy, γx + δy).
+We write f1 ∼ f2 when f1 and f2 are equivalent. If αδ − βγ = −1, then we say
+                              SQUARE FORM FACTORIZATION                                        3
+
+
+that f1 and f2 are improperly equivalent. Let Γ = SL2 (Z) be the classical modular
+group and define the action of Γ on the set of binary quadratic forms by
+                          
+                      α β
+                             · f (x, y) = f (αx + βy, γx + δy) .
+                      γ δ
+Then f1 ∼ f2 if and only if f1 and f2 are equivalent modulo the action of Γ. We
+make special note of the equivalence:
+                                         (a, b + 2na, a + nb + c) ∼ (a, b, c) for any
+                            1 n
+n ∈ Z, using the matrix             .
+                            0 1
+   The number of classes of forms of discriminant ∆ will be written h+ (∆) or just
+h . It can be shown that h+ (∆) is finite.
+ +
+
+   Forms with negative discriminant are called definite, while forms with positive
+discriminant are called indefinite. We will be concerned only with indefinite forms.
+   Any form (k, kn, c) is called ambiguous. There exists an ambiguous form (k, kn, c)
+of discriminant ∆ for each divisor k of ∆. We also refer to any form (a, b, a) as
+ambiguous since it is equivalent to (b + 2a, b + 2a, a).
+
+2.1.2. Indefinite Forms. Let ∆ be any non-square positive integer. Each class of
+indefinite forms of discriminant ∆ contains a set of canonical representatives, called
+                                                              √               √
+reduced forms. The form f = (a, b, c) is called reduced if      ∆ − 2|a| < b < ∆. It
+                                                       √                 √
+is not hard to see that f is reduced if and only if       ∆ − 2|c| < b < ∆, and that
+the number of reduced forms of a given discriminant is finite. For any indefinite
+form f = (a, b, c) with ac 6= 0 we define the standard reduction operator by
+                                                 r(−b, c)2 − ∆
+                                                              
+(2.1)                  ρ(a, b, c) = c, r(−b, c),                  ,
+                                                       4c
+where r(−b, c) is defined to be the unique integer r such that r + b ≡ 0 mod 2c and
+                                                   √
+                               −|c| < r ≤ |c| if     ∆ < |c| ,
+                        √                √              √
+                          ∆ − 2|c| < r < ∆ if |c| < ∆ .
+ρ(f ) is called the reduction of f and the result of n applications of ρ is written
+ρn (f ). It will be convenient to define the inverse reduction operator by
+                                        r(−b, a)2 − ∆
+                                                                  
+                      ρ−1 (a, b, c) =                 , r(−b, a), a ,
+                                              4a
+where r(−b, a) is defined as in the definition of ρ. Note that if the discriminant of
+f is ∆, then the discriminants of both ρ(f ) and ρ−1 (f ) are ∆.
+   If f is reduced, then both ρ(f ) and ρ−1 (f ) are reduced. If f is not reduced, then
+ n
+ρ (f ) is reduced for some finite n. Similarly f can be reduced after a finite number
+of applications of ρ−1 . The identities ρ(ρ−1 (f )) = ρ−1 (ρ(f )) = f hold only when
+f is reduced. The unique reduced form (1, b, c) is called the principal form.
+   We say that (a, b, c) and (c, b0 , c0 ) are adjacent if b + b0 ≡ 0 mod 2c. More
+specifically, we say that (a, b, c) is adjacent to the left of (c, b0 , c0 ) and (c, b0 , c0 ) is
+adjacent to the right of (a, b, c). It is easy to see that there is a unique reduced form
+adjacent to the right and to the left of any given reduced form, these forms being
+ρ(a, b, c) and ρ−1 (a, b, c), respectively. We now see that within each equivalence
+class of forms of discriminant ∆ > 0 there are cycles of reduced forms. The cycle
+4                   JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+that contains the principal form is called the principal cycle. The number of reduced
+forms in any cycle is always even.
+    The two forms (a, b, c) and (c, b, a) are said to be associated. If the form f1 and
+its associate f2 are in different cycles, then this will be the case for all forms in either
+cycle, and in this case the two cycles are said to be associated cycles. Furthermore,
+any cycle which contains an ambiguous form (called an ambiguous cycle) contains
+exactly two ambiguous forms and is its own associate. Conversely, a cycle which
+is its own associate contains exactly two ambiguous forms. The principal cycle is
+ambiguous since it contains the principal form (1, b, c).
+    The form (a, −b, c) is the opposite of the form (a, b, c). A form (a, b, c) is improp-
+erly equivalent to both its associate and its opposite. Hence, (a, b, c) is properly
+equivalent to the associate of its opposite: (a, b, c) ∼ (c, −b, a). Likewise, the oppo-
+site and the inverse of (a, b, c) are properly equivalent: (a, −b, c) ∼ (c, b, a).
+    If (a, b, c) is a form of discriminant ∆ which represents the integer r, then s2 ≡
+∆ mod 4r has a solution. Conversely, if a solution to s2 ≡ ∆ mod 4r exists, then r
+is represented     by some form of discriminant ∆.
+    Let rs be the       Jacobi symbol and define the quadratic characters χ(r) = −1
+                                                                                          
+                                                                                         r
+and ψ(r) = 2r . The generic characters of a discriminant ∆ are
+                   
+                             
+                              r
+                                    for all odd primes p that divide ∆ ,
+                              p
+                             χ(r) if ∆ is even and ∆/4 ≡ 3, 4, 7 mod 8 ,
+                          ψ(r)   if ∆ is even and ∆/4 ≡ 2 mod 8 ,
+                   χ(r) · ψ(r)   if ∆ is even and ∆/4 ≡ 6 mod 8 ,
+                χ(r) and ψ(r)    if ∆ is even and ∆/4 ≡ 0 mod 8 .
+These characters are multiplicative functions from Z to {±1}. Suppose the dis-
+criminant ∆ has n generic characters. Then for some arbitrary ordering we have a
+vector-valued function from Z to the n-tuples with ±1 entries. The n-tuple corre-
+sponding to an integer r is called the assigned value of r. It can be shown that all
+integers r which are representable by forms of a given equivalence class possess the
+same assigned values of generic characters. The set of classes of forms possessing the
+same assigned values of generic characters is called a genus of forms. The genus for
+which the assigned value is (1, 1, . . . , 1) is called the principal genus. The principal
+genus contains the principal form. An integer r is representable by some class of
+forms of discriminant ∆ if and only if the assigned values of the generic characters
+of r match the assigned values of characters of some genus of discriminant ∆. This
+is true if and only if the congruence s2 ≡ ∆ mod 4r is solvable.
+    The number of ambiguous classes (including the principal class) is equal to one-
+half the number of possible genera. If ∆ is a fundamental discriminant, then we
+know that the product of the assigned values for the characters for any genus is +1
+and that exactly half of the possible genera exist.
+2.1.3. Composition of Forms. We now define composition of forms. Let f1 =
+(a1 , b1 , c1 ) and f2 = (a2 , b2 , c2 ) be two forms with the same discriminant. Let
+β = (b1 + b2 ) /2, m = gcd (a1 , β), and n = gcd (m, a2 ). Solve a1 x + βy = m for x
+and y and                                    
+                                     b2 − b 1
+                      mz/n ≡ x                  − c1 y mod a2 /n for z .
+                                         2
+                             SQUARE FORM FACTORIZATION                                      5
+
+
+Then the composition of f1 and f2 , written f1 ◦ f2 is
+                            a1 a2 /n2 , b1 + 2a1 z/n, ∗ ,
+                                                       
+
+where the third coefficient may be determined by the discriminant formula. Al-
+though the composition is not unique, all compositions of given forms f1 and f2
+are equivalent. The class of f1 ◦ f2 depends only on the classes of f1 and f2 , and
+the classes form a group under composition. We note that even if f1 and f2 are
+reduced, their composition need not be reduced.
+   As a special case, we present the formula for the square f 2 = f ◦ f as follows.
+Suppose f = (a, b, c), n = gcd (a, b), and y is a solution for by/n ≡ 1 mod a/n.
+Then f 2 is equivalent to
+                                a2 /n2 , b − 2acy/n, ∗ .
+                                                      
+
+Note that if gcd (a, b) = 1, then
+                                          2
+                              (a, b, −ac) ∼ a2 , b, −c .
+                                                        
+
+Moreover, g is equivalent to an ambiguous form if and only if g ◦ g is equivalent to
+the principal  form. This implies that the square of g ◦ (a, b, −ac) is equivalent to
+ a2 , b, −c .
+           
+
+    Also note that if f is a square form on the principal cycle, then f must have
+a square root on the principal cycle. To see this, let f 1/2 be any square root of
+f . If neither f 1/2 nor ρn f 1/2 for all n > 0 is on the principal cycle, then f 1/2
+must be equivalent to some ambiguous form other than the principal form, say g.
+Then f 1/2 ◦ g is equivalent to the principal form, and its square is equivalent to f .
+Finally, we can reduce this form to an equivalent form on the principal cycle.
+    Observe that
+                           (1, b1 , c1 ) ◦ (a2 , b2 , c2 ) ∼ (a2 , b2 , c2 ) ,
+and that
+                  (a, b, c) ◦ (a, −b, c) ∼ (a, b, c) ◦ (c, b, a) ∼ (ac, b, 1) .
+In other words, under composition, the principal class is the identity and the as-
+sociate is the inverse. Also composition is commutative and associative. Thus the
+set of equivalence classes of forms of a given discriminant is an abelian group under
+composition.
+2.2. Periodic Continued Fractions. Let N > 0√be a positive integer, not a
+square. The simple continued fraction expansion of N is given by
+                           √                 1
+                             N = q0 +                  .
+                                               1
+                                       q1 +
+                                            q2 + · · ·
+We will always abbreviate the expansion as [q0 , q1 , . . . ]. The expansion is periodic
+beginning with q1 , meaning that for some j > 0 we will have ai = ai+j for all
+i√> 0, where j is the period of the continued fraction. In this case, we will write
+   N = [q0 , q1 , . . . , qj ].
+   The qi are called the partial quotients of the continued fraction. The rational
+ number [q0 , q1 , . . . , qn ] is called the nth convergent of the continued fraction. Define
+                                        
+                                        1
+                                                           if n = 0 ,
+                                 An = q0                    if n = 1 ,
+                                        
+                                           qn An−1 + An−2 if n ≥ 2 ,
+                                        
+6                   JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+and                           
+                              0
+                                                      if n = 0 ,
+                          Bn = 1                       if n = 1 ,
+                              
+                                qn Bn−1 + Bn−2         if n ≥ 2 .
+                              
+
+Then [q0 , q1 , . . . , qn ] = An+1 /Bn+1 for n ≥ 0.
+   We define the nth complete quotient by
+                                     (√
+                                        N               if n = 0 ,
+                               xn =
+                                      1/ (xn−1 − qn−1 ) if n ≥ 1 .
+                                         √
+It can be shown that xn = (Pn + N )/Qn for n ≥ 0, where
+                                    
+                                    0
+                                                        if n = 0 ,
+(2.2)                          P n = q0                  if n = 1 ,
+                                    
+                                      qn−1 Qn−1 − Pn−1 if n ≥ 2 ,
+                                    
+
+and
+                         
+                         1
+                                                           if n = 0 ,
+(2.3)                Qn = N − q02                           if n = 1 ,
+                         
+                           Qn−2 + (Pn−1 − Pn )qn−1          if n ≥ 1 .
+                         
+
+The qn can be computed using
+                                    j √ k
+                                    
+                                    
+                                       N           if n = 0 ,
+                                    
+(2.4)                        qn =               
+                                       q0 + P n
+                                                   if n > 0 .
+                                    
+                                    
+                                    
+                                           Qn
+Some important facts that we shall need are as follows.
+                             (−1)n Qn = A2n − Bn2 N ,
+                           √                  √       √
+                   An + B n N    An−1 + Bn−1 N         N + Pn
+                      √       =       p            · p         ,
+                        Qn              Qn−1           Qn−1 Qn
+                                  N = Pn2 + Qn Qn−1 ,
+                                                  √
+                                  0 ≤ P n , Qn < 2 N .
+See [11] for a proof of these facts. The first integer factoring algorithm with subex-
+ponential time complexity was based on continued fractions. See [1] for details.
+Shanks discovered SQUFOF [12], [15] while investigating the “failures” of the con-
+tinued fraction factoring algorithm.
+
+2.3. Real Quadratic Number Fields. Let N 6= 1 be a square-free integer, and
+define                           (
+                                   4N if N ≡ 2, 3 mod 4 ,
+                           ∆=
+                                   N    if N ≡ 1 mod 4 .
+                                                                    √
+Any finite extension of Q is called a number field. The extension Q( N )/Q is called
+the quadratic
+        √     number
+                   √ field of radicand N and discriminant ∆. We note in passing
+that Q( N) = Q( ∆).
+                           SQUARE FORM FACTORIZATION                                  7
+
+
+   Let K be any number field.
+                        √ The ring of integers OK of K is the integral closure
+of Z in K. When K = Q( N ) we have OK = Z[ω], where
+                          √
+                           N            if N ≡ 2, 3 mod 4 ,
+                                 √
+                     ω = 1+ N
+                                        if N ≡ 1 mod 4 .
+                                 2
+The odd rational primes p fall into three categories according to the value of the
+Legendre symbol
+                             
+                      
+                     ∆       0      if p is a ramified prime ,
+                          = 1        if p is a split prime ,
+                     p       
+                               −1 if p is a inert prime .
+                             
+
+When N ≡ 1 mod 4, the rational prime 2 is split whenever N ≡ 1 mod 8, and
+inert whenever N ≡ 5 mod 8. The ramified primes are precisely those that divide
+∆. A consequence of the √   Chebotarev density theorem (see [9]) is that the density
+of primes that split in Q( ∆) is 1/2. Since there are only finitely many ramified
+primes, it follows that the density of inert
+                                         √ primes is also 1/2.
+   A fractional ideal is a subset a of Q( ∆) such that
+    (1) for any α, β ∈ a and any λ, µ ∈ Z[ω] we have λα + µβ ∈ a.
+    (2) there exist a fixed ν ∈ Z[ω] such that for every α ∈ a we have να ∈ Z[ω].
+Two fractional ideals a, b are equivalent if there is some α ∈ Z[ω] such that a = (α)b,
+and narrowly equivalent if there is some α ∈ Z[ω] with positive norm such that
+a = (α)b. Both types of equivalences are indeed equivalence relations. The first
+equivalence leads to the class group I/P , where I is the set of fractional ideals and
+P is the set of principal ideals. Narrow equivalence leads to the narrow class group
+I/P +√, where P + is the set of principal ideals with positive norm. The class number
+of Q( ∆) is the order of I/P , while the narrow class number is the order of I/P + ,
+written h(∆) and h+ (∆), respectively. It is no coincidence that we use the same
+symbol to denote both the√number of classes of forms of discriminant ∆ and the
+narrow class number of Q( ∆), as it can be shown (see [3]) that they are equal.
+
+2.4. The Infrastructure of the Class Group. The theories of binary quadratic
+forms, continued fractions, and real quadratic number fields are closely related (see
+[4] or [3].) First, there is a correspondence between
+                                                   √ binary quadratic forms of
+discriminant N > 0 and the fractional ideals of Q( N ) defined by
+                                                  √ ! !
+                                           −b + N
+                      (a, b, c) ←→ aZ +                Z α,
+                                                2
+                                 √
+where α is any element of Q( N)× such that N (α) = sign(a). Under this corre-
+spondence, composition of forms corresponds with ideal multiplication.
+   There is also a correspondence between binary quadratic forms and continued
+fractions. The definitions for Pn and Qn in Section 2.2 satisfy
+                           N = Pn2 + Qn−1 Qn     for all n ,
+and so the binary quadratic form
+                        Fn = (−1)n−1 Qn−1 , 2Pn , (−1)n Qn
+                                                               
+8                  JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+has discriminant 4N . In fact, the sequence of forms F0 , F1 , . . . constitutes   the
+principal cycle of forms of discriminant 4N , where F0 = 1, 2q0 , q02 − N .
+                                                                          
+
+   Shanks defined the infrastructure of the class group [17] collectively as the inner
+structure within each cycle of reduced forms determined by ρ, the standard reduc-
+tion operator. Originally, Shanks defined the infrastructure distance between the
+form Fn and the principal form by the equation
+                                                √ 
+                              dn = log An + Bn N ,
+but this metric did not have all the desirable properties that one would like it to
+have, so he later [15] changed it to
+                                                √ !
+                                      An + B n N
+                            dn = log       √          .
+                                             Qn
+In [8], Lenstra independently proposed this same metric in a slightly different form
+as follows. Let f = (a, b, c) be a form of discriminant ∆. Then
+                                                    √
+                                           1     b+ ∆
+                             d (f, ρ(f )) = log     √    .
+                                           2     b− ∆
+That these two definitions agree follows from the facts at the end of Section 2.2.
+   Now by the laws of Khinchin, Gauss-Kuzmin, and Lévy [7], we can approximate
+dn by
+                                       √ !
+                             An + B n N           π2
+(2.5)                   log       √          ≈           n,
+                                    Qn          12 log 2
+where the constant π 2 / (12 log 2) is approximately 1.19.
+   More generally, one can define the infrastructure distance d(f, g) between two
+reduced quadratic forms by the following. Let a, b be the ideals corresponding
+to f, g respectively. If f and g are narrowly equivalent, then we can find γ with
+N (γ) > 0 such that a = γb. Define the infrastructure distance between f and g by
+                                          1      γ
+                                  d(f, g) = log       ,
+                                          2     σ(γ)
+                                     √           √         √
+where σ is the automorphism of Q( N ) taking N to − N . With this definition,
+if f is reduced, one can show that the distance between the reduction of f 2 and the
+principal form is twice the distance between f and the principal form. To see this,
+let a be the fractional ideal corresponding to f and let 1 denote the principal form.
+Writing a = γ · 1, we have a2 = γ 2 · 1, and
+                                                                 2
+                               1      γ2    1     γ
+                d(f 2 , 1) =     log    2
+                                           = log                     = 2 d(f, 1) .
+                               2     σ(γ )  2    σ(γ)
+More generally, let b1 = γ1 a1 and b2 = γ2 a2 , so that b1 b2 = γ1 γ2 a1 a2 . If reduced
+forms fi , gi correspond to ai , bi , respectively, then we have
+(2.6)                 d (g1 ◦ g2 , f1 ◦ f2 ) = d (g1 , f1 ) + d (g2 , f2 ) .
+Note that the forms g1 ◦ g2 and f1 ◦ f2 need not be reduced. See Proposition 5.8.4
+in Cohen [3] for the correction needed when they are not reduced.
+   Now suppose Fn is a square form on the principal cycle. Then we know that a
+square root of Fn must also lie on the principal cycle at a distance dn /2 from the
+                          SQUARE FORM FACTORIZATION                                 9
+
+
+principal form. But using the approximation (2.5), this form will be very close to
+Fn/2 . Likewise, the square roots of Fn in other cycles are a distance dn /2, all in
+the same direction, from an ambiguous form. Also note that Equation (2.6) can be
+used to show that an inverse square root of Fn is at a distance dn /2 in the reverse
+direction.
+
+                   3. The Description of the Algorithm
+   We now describe the algorithm in detail. We begin with a description of the
+fastest and most practical version. A more general version follows.
+3.1. Continued Fractions Description. In the analysis that follows, we will
+assume that N is a square-free positive integer. Our experience in factoring millions
+of integers with SQUFOF suggests that the algorithm works equally well when N
+is not square-free, but we don’t know how to extend our analysis to that case.
+   In most implementations of SQUFOF, we work with binary quadratic forms of
+discriminant ∆ = 4N . Unfortunately, if we do this when N ≡ 1 mod 4, then
+∆ is not a fundamental discriminant. Although the algorithm works for non-
+fundamental discriminants, the analysis of SQUFOF presented below will assume
+that ∆ is fundamental. Therefore, if N ≡ 1 mod 4 then we replace N with 2N .
+We may now assume that N ≡ 2 or 3 mod 4 for the remainder of this subsection.
+Finally, take ∆ = 4N which is then always a fundamental discriminant.
+   The principal form is F0 = (1, 2q0 , q02 − N ). We compute the forms on the
+principal cycle by
+                  Fn = ρn (F0 ) = (−1)n−1 Qn−1 , 2Pn , (−1)n Qn ,
+                                                                
+
+where Pn and Qn are calculated according to (2.2), (2.3), and (2.4). We seek a
+square form (∗, ∗, c2 ), which can only occur when n is even. Suppose we have found
+a square form Fn = (−Q, 2P, S 2 ), where Q > 0. Define F −1/2 = (−S, 2P, SQ),
+an inverse square root of Fn under composition of forms. This form may not be
+reduced so let G0 = (−S−1 , 2R0 , S0 ) be its reduction, where
+                                                               N − R02
+                                   
+                             q0 − P
+            R0 = P + S                ,    S−1 = S,       S0 =         .
+                                S                                S
+j Usingk Rm = tm−1 Sm−1 − Rm−1 , Sm = Sm−2 + tm−1 (Rm−1 − Rm ), and tm =
+ q0 +Rm
+    Sm   , for m ≥ 1, which are completely analogous to (2.2), (2.3), and (2.4), we
+generate a (hopefully) new sequence of forms
+                     Gm = (−1)m−1 Sm−1 , 2Rm , (−1)m Sm .
+                                                          
+
+  Now suppose we find m such that Rm = Rm+1 . We expect this to happen at
+approximately m ≈ n/2 for reasons explained at the end of Section 2.4. At this m
+                                     2
+we will have Rm = tm Sm /2 and N = Rm   + Sm−1 Sm , which gives
+                                               t2
+                                                 
+                          N = Sm Sm−1 + Sm m ,
+                                                4
+a possible factorization of N . We call the square form Fn improper if this factor-
+ization is trivial. If a non-trivial factor of N is found, then Fn is a proper square
+form.
+   One should note √   that all computations other than those of F0 and G0 are with
+numbers less than 2 N in magnitude. So if N is taken to be no larger than double
+10                 JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+the word size of the computer, then all computations (except F0 and G0 ) will be
+with single precision integers.
+   Three main issues arise at this point. First, we will need to test every other
+form for squareness. This is not a major obstacle since there are fast algorithms
+to test for squareness. A more serious issue is the possibility of finding only a
+trivial factorization. We could return to the last square form Fn , but this is time
+consuming. Instead, we will keep track of certain forms and use them in a test for
+proper square forms. Finally, there may be no proper square forms at all on the
+principal cycle. If this is so, then we can try SQUFOF on mN , for some small m.
+We shall see later that this is reasonable.
+3.2. Identifying Proper Square Forms. We begin with a few facts about square
+roots of square forms.
+Proposition 3.1. Suppose that a is a positive odd integer, b is a positive integer,
+gcd (a, b) = 1, and that a2 , 2b, −c is a square form on the principal cycle of
+                                              2
+discriminant 4N with c > 0. Then (−a, 2b, ac) ∼ a2 , 2b, −c .
+                                                             
+
+Proof. This  follows directly from the definition of composition of forms, noting that
+ a2 , 2b, −c is equivalent to any form a2 , 2β, ∗ , where β ≡ b mod a2 .              
+             j√ k                                                              j√ k
+   Let b =      N and 1 = (1, 2b, c) denote the principal form. Let b0 =          N or
+j√ k
+   N −1, whichever is odd, and let 2 denote the reduced ambiguous form (2, 2b0 , c0 ).
+By −1, −2 we mean the forms (−1, 2b, −c), (−2, 2b0 , −c0 ), respectively. It is easy
+to see that ±1 ◦ (α, 2β, γ) ∼ (±α, 2β, ±γ) and that ±2 ◦ (α, 2β, ∗) ∼ (±2α, 2β, ∗),
+when α is odd and ±2 ◦ (α, 2β, ∗) ∼ (±α/2, 2β, ∗), when α is even.
+Proposition 3.2. Suppose that a is a positive    odd integer, b is a positive integer,
+gcd (a, b) = 1, and that Fn = a2 , 2b, −c is a square form on the principal cycle of
+                                         
+
+discriminant 4N , with c > 0. Some form (α, 2β, ∗) appears on the principal cycle
+at position m < n with α ∈ {±a, ±2a} and β ≡ b mod a if and only if (−a, 2b, ac)
+is equivalent to one of the ambiguous forms ±1, ±2.
+Proof. First suppose that the form (a, 2β, ∗) appears as form Fm on the principal
+cycle with m < n. This form is equivalent to (a, 2b, −ac), and −1 ∼ (a, 2b, −ac) ◦
+−1 ∼ (−a, 2b, ac), so we are done. Similarly, if Fm = (−a, 2β, ∗) ∼ (−a, 2b, ac),
+then (−a, 2b, ac) ∼ 1.
+   Now suppose that the form (2a, 2β, ∗) appears as Fm . Then −2 ∼ (2a, 2β, ∗) ◦
+−2 ∼ (−a, 2β, ∗) ∼ (−a, 2b, ac). Finally, if Fm = (−2a, 2β, ∗), then 2 ∼ (−2a, 2β, ∗)◦
+2 ∼ (−a, 2β, ∗) ∼ (−a, 2b, ac).
+   Finally, suppose that there is no form (α, 2β, ∗) with α ∈ {±a, ±2a} with β ≡
+b mod a which appears on the principal cycle as a form Fm with m < n. The square
+root f = (−a, 2b, ac) cannot be equivalent to 1, since if it is then we can find a
+multiple of 2a that we can add to 2b to get an equivalent reduced form (a, 2β, ∗) on
+the principal cycle with β ≡ b mod a. But then this form is a square root of Fn and
+hence must appear on the principal cycle before Fn , since d (f, 1) = d (Fn , 1) /2.
+Therefore f cannot be equivalent to 1.
+   In fact, if f ∼ g with g ∈ {±1, ±2}, then f ◦ g ∼ 1, and f ◦ g = (α, 2β 0 , ∗)
+for α ∈ {±a, ±2a} and β 0 ≡ b mod a. But then f ◦ g is a square root of Fn ,
+and f ◦ g is equivalent to some reduced form (α, 2β, ∗) on the principal cycle with
+                          SQUARE FORM FACTORIZATION                                 11
+
+
+β ≡ β 0 ≡ b mod a. As before this form must appear on the principal cycle before
+Fn , a contradiction. So it must be that f is not equivalent to any of the forms
+±1, ±2.                                                                        
+
+    We now describe Shanks’ method for determining when a square form is proper.
+For
+  p each  form Fm that is examined, we perform the following test. Define L =
+      √                                                                      
+2 2 N . If Qm is even and less than L, then put the pair Qm /2, Pm into a
+queue, where Pm is the least positive residue of Pm modulo Qm /2. If Qm is odd
+and less than L/2, then put the pair Qm , Pm into the queue, where Pm is the
+least positive residue of Pm modulo Qm . If we come to the square form Fn =
+                            −1                  −2                2
+ −a, 2b, c2 ∼ c2 , −2b, −a
+           
+                                 ∼ (−c, −2b, ac)     ∼ (ac, 2b, −c) , then we search
+the queue in the order that items are put into the queue for the pair (c, 2b mod c),
+taking c > 0. Proposition 3.2 says that if this pair is in the queue, then the
+form (ac, 2b, −c) is equivalent to one of the forms ±1, ±2; hence the square form
+is improper. If on the other hand the pair (c, 2b mod c) is not in the queue, then
+Proposition 3.2 says that (ac, 2b, −c) is not equivalent to one of the forms ±1, ±2;
+hence the square form is proper.
+    Note that the quantities placed in the queue will have one-quarter the precision
+of N . Hence, the queue entries will be relatively small and easy      to work with.
+Also note that if we have found a square form Fn = −a, 2b, c2 and also the pair
+                                                                  
+
+(c, 2b mod c) in the queue, then we may delete this pair along with all other pairs
+that precede it in the queue. This is possible since if we find another square form
+Fm with n < m, then any of its square roots appearing on the principal cycle
+must appear after the discovered square root for Fn because of the infrastructure
+explained in Section 2.4.
+
+3.3. The Algorithm. In the following description of the algorithm, the variable
+N is the integer to factor, S remembers q0 , q holds the current qi , P and P 0 hold
+two consecutive values of Pi , Q̂ and Q hold two consecutive values of Qi , and t is
+a temporary variable used in updating Q. The formulas (2.2), (2.3), and (2.4) are
+used to advance from one form to the next. Finally, B is an upper bound on the
+number of forms tested for being square forms before the algorithm gives up.
+     1. Initialize:
+          Read the odd positive integer N to be factored. If N is the square of
+        an integer, output the square root and stop. If N ≡ 1 mod
+                                                               j√ 4, k then set
+        D ← 2N ; otherwise, set D ← N . In any case, set S ←       D , Q̂ ← 1,
+                                     j p √ k
+        P ← S, Q ← D − P · P , L ← 2 2 D , B ← 2 · L, and i ← 0.
+          At this point the principal form is (1, 2P, −Q) = (1, 2q0 , −(D − q02 )).
+     2. Cycle forward to find a proper square form:
+          Steps 2a through 2e are repeated for i = 1, 2, 3, . . ..
+         2a: Set q ← b(S + P )/Qc and P 0 ← q · Q − P .
+         2b: If Q ≤ L, then:
+            If Q is even, put the pair (Q/2, P mod (Q/2)) onto the QUEUE; oth-
+            erwise, if Q ≤ L/2, then put the pair (Q, P mod Q) onto the QUEUE.
+         2c: Set t ← Q̂ + q · (P − P 0 ), Q̂ ← Q, Q ← t, and P ← P 0 .
+            Here the current form is (−Q̂, 2P, Q) if i is even, and it is (Q̂, 2P, −Q)
+            if i is odd.
+12                JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+          2d: If i is odd, go to Step 2e. If Q  √ is not the square of an integer, go
+              to Step 2e. Otherwise, set r ← Q, a positive integer. If there is no
+              pair (r, t) in the QUEUE for which r divides P − t, then go to Step 3.
+              If r > 1 and there is a pair (r, t) in the QUEUE for which r divides
+              P − t, then remove all pairs from the beginning of the QUEUE up
+              to and including this pair and go to Step 2e. If r = 1 and there is
+              a pair (1, t) in the QUEUE, then the algorithm fails because we have
+              traversed the entire principal period of quadratic forms of discriminant
+              4N without finding a proper square form.
+          2e: Let i ← i + 1. If i > B, give up. Otherwise, go to Step 2a.
+     3. Compute an inverse square root of the square form:
+           Here we have found a square form F = (−Q̂, 2P, r2 ). Its inverse square
+        root is F −1/2 = (−r, 2P, rQ̂).
+           Set Q̂ ← r, P ← P + r · b(S − P ) /rc, and Q ← (D − P · P ) /Q̂. (This
+        last division is exact.)
+           Now the reduced inverse square root is the form (−Q̂, 2P, Q).
+     4. Cycle in the reverse direction to find a factor of N :
+          4a: Set q ← b(S + P ) /Qc and P 0 ← q · Q − P .
+          4b: If P = P 0 , then go to Step 5.
+          4c: Set t ← Q̂ + q · (P − P 0 ), Q̂ ← Q, Q ← t, and P ← P 0 and go to
+              Step 4a.
+     5. Print the factor of N :
+           If Q is even, set Q ← Q/2. Output the factor Q of N .
+   The algorithm fails if the QUEUE overflows. For virtually all successful fac-
+torizations, a QUEUE size of 50 is adequate. In Theorem 4.24, we show that the
+average maximum queue size is about 1 or 2.
+   Step 4 is executed approximately half as many times as Step 2.
+   In Step 2b, Q almost always exceeds L. Also, Q is almost never a square in Step
+2c. Thus, the time spent inserting pairs into the QUEUE and searching for them
+in it is negligible compared to the total time for Step 2.
+
+
+3.4. Examples. We give one complete example of the SQUFOF algorithm.         p √ We
+                                                 √
+will factor N = 22117019 = D. Note that D ≈ 4702.873483 and 2 2 D ≈
+193.948447. Thus P = S = 4702, Q = D − P 2 = 8215, and L = 193 in Step 1.
+   Table 1 shows the forms computed in Step 2 of SQUFOF and their infrastructure
+distances for N = 22117019. (The algorithm begins with form F1 , but F0 is shown
+here because it is Shanks’ origin for infrastructure distance. Of course, the SQUFOF
+algorithm computes no infrastructure distances.) In the algorithm descriptions, the
+form is represented by Q̂, P , Q. Note that Q̂ and Q in the algorithm are the absolute
+values of the numbers shown in Table 1, and that the factors of 2 in the middle
+coefficients of the forms do not appear in P of the algorithm.
+   At the end of Table 1 we have found the square form F18 = (−6314, 2·1737, 552).
+Since nothing has been placed into the queue, this is a proper square form. We
+compute its inverse square root as (−55, 2 · 1737, 347270) and reduce it to get
+G0 = (−55, 2 · 4652, 8653).
+   Table 2 shows the forms computed in Step 4 of SQUFOF and their infrastructure
+distances for N = 22117019. In the algorithm descriptions, the form is represented
+                           SQUARE FORM FACTORIZATION                                13
+
+
+                                       Fi
+                 i (−1)i−1 Qi−1     2 · Pn (−1)i Qi         di
+                 0        −8215 2 · 4702           1 0.000000
+                 1             1 2 · 4702    −8215 4.642125
+                 2        −8215 2 · 3513       1190 5.608235
+                 3         1190 2 · 3627     −7531 6.631593
+                 4        −7531 2 · 3904        913 7.820150
+                 5           913 2 · 4313    −3850 9.390610
+                 6        −3850 2 · 3387       2765 10.298666
+                 7         2765 2 · 2143     −6338 10.790510
+                 8        −6338 2 · 4195        713 12.222178
+                 9           713 2 · 4361    −4346 13.860983
+                10        −4346 2 · 4331        773 15.456075
+                11           773 2 · 4172    −6095 16.864302
+                12        −6095 2 · 1923       3022 17.298591
+                13         3022 2 · 4121     −1699 18.658072
+                14        −1699 2 · 4374       1757 20.316978
+                15         1757 2 · 4411     −1514 22.037595
+                16        −1514 2 · 4673        185 24.912057
+                17           185 2 · 4577    −6314 27.062220
+                18        −6314 2 · 1737       3025 27.449888
+               Table 1. Step 2 (Cycle forward) for N = 22117019.
+
+
+
+                                       Gi
+                 i (−1)i−1 Si−1    2 · Rn (−1)i Si           di
+                 0         −55 2 · 4652        8653 2.607155
+                 1         8653 2 · 4001      −706 3.866041
+                 2        −706 2 · 4471        3013 5.705002
+                 3         3013 2 · 4568      −415 7.820150
+                 4        −415 2 · 4562        3145 9.913212
+                 5         3145 2 · 1728     −6083 10.298666
+                 6       −6083 2 · 4355         518 11.928441
+                 7          518 2 · 4451     −4451 13.724944
+                 8       −4451 2 · 4451         518
+              Table 2. Step 4 (Cycle in reverse) for N = 22117019.
+
+
+
+again by Q̂, P , Q. Once more Q̂ and Q in the algorithm are the absolute values of
+the numbers shown in Table 2.
+   Notice that the infrastructure distance covered in Step 4 (13.724944) is exactly
+half that covered in Step 2 (27.449888).
+   The algorithm does not actually compute the entire last form. As soon as it
+finds the middle coefficient P 0 of that form and notices that P 0 = P , the factor of
+N is at hand. Since Q = 4451 (the absolute value of (−1)i Si = −4451 in line 7 of
+Table 2) is odd, it is a factor of N and we find that N = 4451 · 4969.
+14                 JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+3.5. Sufficient List. Some implementations of SQUFOF do not use the previously
+described queue structure. Instead, when a form (∗, ∗, c) is discovered with |c| < L
+when c is even, or with |c| < L/2 when c is odd, then |c| is put into a list. Then
+any square form ∗, ∗, c2 is ignored if |c| is found to be in the list. This “sufficient
+list” is simpler, though potentially slower because some proper square forms may
+be skipped. For the running time analysis we will assume that the queue, and not
+the list, is used.
+
+
+3.6. Binary Quadratic Forms Description. In [3], Cohen presents a different
+version of SQUFOF entirely in the language of binary quadratic forms. It reduces to
+the continued fraction version of SQUFOF whenever N ≡ 2 or 3 mod 4. (However,
+the middle coefficients have their factors of 2 and the end coefficients have their
+proper signs.) Whenever N ≡ 1 mod 4 the algorithm defines ∆ = N and works
+with this fundamental discriminant of binary quadratic forms. Although it is slower
+than the previous algorithm, because each iteration of ρ requires several divisions,
+the methods we use to analyze the complexity apply to it as well.
+   The binary quadratic forms version of SQUFOF follows. For simplicity we use
+the sufficient list instead of the queue. The description is shorter than that of the
+continued fraction version given above because we use the ρ function defined earlier.
+     1. Initialize:
+           Read the odd positive integer N to be factored. If N is the square of
+        an integer, output thej square root and stop. If N ≡ 1 mod 4, then set
+                               √ k
+        D ← N , m ← 1, d ←       D , and b ← 2b(d − 1)/2c + 1. Otherwise (N ≡ 2
+                                                   j√ k
+        or 3 mod 4), set D ← 4 · N , m ← 2, d ←       D , and b ← 2bd/2c. Let
+                                            j√ k
+        F ← (1, b, (b2 − D)/4), i ← 2, L ←    d , and Bound ← 4 · L. Create an
+        empty list. Let g ← |(b2 − D)/4|/ gcd(|(b2 − D)/4|, m). If g ≤ L, add g to
+        the list.
+     2. Cycle forward to find a proper square form:
+          2a: Set F = (A, B, C) ← ρ(F ), where ρ was defined in 2.1.2.
+          2b: If i is even, go to Step 2d. If C is the square of an integer, let c > 0
+              be a square root. If c is not in the list, go to Step 3. If c = 1, stop
+              because the algorithm has gone through the entire principal period
+              without finding a proper square form.
+          2c: Let g ← |C|/ gcd(|C|, m). If g ≤ L, add g to the list.
+          2d: Let i ← i + 1. If i > Bound, give up. Otherwise, go to Step 2a.
+     3. Compute an inverse square root of the square form:
+           Set G = (a, b, c) ← ρ((cA, −B, −C)).
+     4. Cycle in the reverse direction to find a factor of N :
+          4a: Set b0 ← b and G = (a, b, c) ← ρ(G).
+          4b: If b = b0 , then go to Step 5, else go to Step 4a.
+     5. Print the factor of N :
+           If c is even, let c ← c/2. Output |c| as a non-trivial factor of N .
+  We give an example to illustrate the binary quadratic forms version of SQUFOF
+                                                                           √
+and factor an N ≡ 1 mod 4. We factor N = 633003781, with D = N , D ≈
+25159.566391, d = 25159, b = 25159, (b2 − D)/4 = −7125, and L = 158.
+                                   SQUARE FORM FACTORIZATION                            15
+
+
+   The first two square forms we find in the forward cycle, F154 = (−11923, 1509, 1152)
+and F184 = (−4009, 21359, 1052), had square roots c already in the list, so we contin-
+ued cycling forward. We eventually find the square form F242 = (−18765, 23479, 332),
+which is proper because 33 is not in the list. The inverse square root of F242 is the
+form (−33, −23479, 619245), which reduces to G0 = (−33, 25129, 11645). The form
+G124 = (−15735, 8821, 8821) is ambiguous and gives the factor 8821 of N . The
+infrastructure distance covered in Step 4 (152.770486) is exactly half that traversed
+in Step 2 (305.540972).
+
+                     4. SQUFOF Time and Space Complexity
+   To preserve the continuity of the complexity analysis of SQUFOF we collect in
+the next subsection some general lemmas we will need later.
+
+4.1. Helpful Lemmas. The following lemmas will aid in computing the average
+numbers of reduced and square forms on the principal cycle. We will find the
+asymptotic behavior of many quantities, all of which depend on N , the number we
+are trying to factor, or on ∆, which is either N or 4N . We will write f (N ) ∼ g (N )
+if g(N ) 6= 0 for N > 0 and limN →∞ f (N )/g(N ) = 1.
+    Lemmas 4.2 to 4.4 below are easily proved by mathematical induction, beginning
+with an identity of the form
+                          X           X           X
+                               h(c) =      h(c) −      h(ac) ,
+                             c<x,a-c                  c<x       c<x/a
+
+and estimating the difference with the following simple lemma.
+Lemma 4.1. Let a > b > 0. Suppose f (∆) ∼ ah(∆) and g(∆) ∼ bh(∆), as
+∆ → ∞, where h(∆) 6= 0 for all ∆. Then f (∆) − g(∆) ∼ (a − b)h(∆), as ∆ → ∞.
+Lemma 4.2. Let ∆ be a positive integer and suppose p1 , . . . , pn , for n ≥ 0, are
+distinct small primes. Then, as ∆ → ∞,
+                                    √
+                                    ∆                               n
+                                    X             1                 Y p2 − 1
+                                                                          i
+                                                       ∼    log 2                   .
+                                    √             c                 i=1
+                                                                              p2i
+                                c= ∆/2
+                              2
+                             pi -c, i=1,...,n
+
+Lemma 4.3. Let ∆ be a positive integer and suppose p1 , . . . , pn , for n ≥ 0, are
+distinct small primes. Then, as ∆ → ∞,
+                                √
+                                4                           √
+                                ∆                                   n
+                               X             1                2 − 1 Y pi − 1
+                                                       ∼     √               .
+                              √    √         c2               4
+                                                                ∆ i=1 pi
+                         c= 4 ∆/ 2
+                        pi -c, i=1,...,n
+
+Lemma 4.4. Let ∆ be a positive integer and suppose p1 , . . . , pn , for n ≥ 0, are
+distinct small primes. Then, as ∆ → ∞,
+             √
+             4   √                       √
+                                         4
+               ∆/ 2                       ∆                               n
+               X                         X                      √ √
+                                                                4
+                                                                        Y   pi − 1
+                             1 −                       1    ∼    ∆  2−1             .
+                 c=1
+                                          √
+                                          4    √
+                                                                         i=1
+                                                                               pi
+                                     c= ∆/ 2
+          pi -c, i=1,...,n
+                                    pi -c, i=1,...,n
+16                  JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+4.2. Outline of the Complexity Analysis. As we have seen, once SQUFOF
+finds a proper square form Fn , it will find an ambiguous form (and factor N ) at
+                                               −1/2
+a distance of about n/2 forms away from Fn          . So we take the number of forms
+examined before finding a proper square form to be a fair measure of the running
+time. We omit from our analysis those N for which there is no proper square form
+in the principal cycle. SQUFOF cannot factor such N .
+   We have seen in Section 3 that SQUFOF generates several sequences depending
+on N . It looks for numbers with certain properties (proper squares). The complex-
+ity analysis is a heuristic argument based on several assumptions. Most of these
+assumptions say that these sequences of integers behave like random sequences of
+numbers of the same approximate size. Our first assumption, however, is not of this
+type. It simplifies the analysis by permitting the use of theorems about fundamental
+discriminants. It almost certainly holds in the most common uses of SQUFOF.
+Assumption 4.5. We assume that N is a square-free positive integer with k large
+odd prime divisors.
+   Assuming that N is square-free (that is, using Assumption 4.5) implies that
+                            (
+                              N     if N ≡ 1 mod 4,
+(4.1)                  ∆=
+                              4N if N ≡ 2 or 3 mod 4,
+is a fundamental discriminant. This allows us to use many results from the theory
+of binary quadratic forms. Recall that if we use the continued fraction version
+of SQUFOF described in Sections 3.1 and 3.3, then any N ≡ 1 mod 4 will be
+multiplied by 2 at once. The N ≡ 1 mod 4 case here implies that we are using the
+binary quadratic forms version of Section 3.6.
+   In any case, SQUFOF is used mainly as an auxiliary algorithm in larger factor-
+ization algorithms and hence SQUFOF will typically be used to factor integers of
+modest size with no small prime factors. Such integers are typically the product of
+a small number of distinct primes.
+4.3. Counting Reduced Forms. There is an obvious correspondence between
+forms of discriminant ∆ and solutions to the congruence
+(4.2)                                b2 ≡ ∆ mod 4c .
+When 0 < y − x < 4c, we will use the notation
+                N∆,c (x, y) = |{b mod 4c : (4.2) holds and x < b < y}|
+later. Given an integer c, we will need to know the average number of reduced
+forms (∗, ∗, c). It is clear that there will be no such forms if c is divisible by any
+inert prime, or if c is divisible by the square of a ramified prime. So we may assume
+that c is divisible by no inert primes and by ramified primes to at most the first
+power. Under these restrictions, the following three lemmas calculate the number
+of solutions to (4.2) from which the number of reduced forms will follow.
+                               √
+Lemma 4.6. Let 0 < c < ∆/2 and suppose c is divisible by no inert primes, by
+ramified primes to at most the first power, and by exactly l distinct split primes.
+Then there are 2l reduced forms (∗, ∗, c) of discriminant ∆.
+Proof. Suppose c = q1e1 · · · qlel r1 · · · rt , where the ri are ramified primes and the qj
+are split primes. For each odd ri , the congruence b2 ≡ ∆ mod ri has only the trivial
+                            SQUARE FORM FACTORIZATION                                 17
+
+
+solution. For each odd qj , the congruence b2 ≡ ∆ mod qj has exactly two solutions.
+Since these two solutions are both nonsingular, they each lift to a unique solution
+                   e
+of b2 ≡ ∆ mod qj j .
+   If c is odd, then we must count the number of solutions to b2 ≡ ∆ mod 4. Since
+∆ ≡ 0 or 1 mod 4, in either case we have two solutions. Finally, the Chinese
+Remainder Theorem gives 2l+1 solutions to (4.2).
+   Now suppose c is even. Either 2 is ramified (so that 2 exactly divides c) or 2 is
+split. If 2 is ramified, then we must count the number of solutions to b2 ≡ ∆ mod 8.
+Since N ≡ 2 or 3 mod 4, we see that ∆ ≡ 0 or 4 mod 8. There are two solutions
+to b2 ≡ 0 mod 8 and two solutions to b2 ≡ 4 mod 8, so once again the Chinese
+Remainder Theorem gives 2l+1 solutions to (4.2).
+   Finally, suppose 2 is a split prime and 2e exactly divides c, where e ≥ 1. We
+must count the number of solutions to b2 ≡ ∆ mod 2e+2 . In this case N ≡ 1 mod 8.
+The congruence b2 ≡ 1 mod 8 has four solutions. It is not hard to show that these
+four solutions lift to exactly four solutions of b2 ≡ ∆ mod 2e+2 for any e ≥ 1 (c.f
+Theorem 2.24 of [10].) For any of the other l − 1 odd split primes, we will have two
+                               e
+solutions to b2 ≡ ∆ mod qj j as before. Again, the Chinese Remainder Theorem
+gives 4 · 2l−1 = 2l+1 solutions to (4.2).
+                                                           √                    √
+   Recall that a form (a, b, c) is reduced if and only if    ∆ − 2|c| < b < ∆. By
+                      √              √              √                         √
+hypothesis 0 < c < ∆/2; hence ∆ − 2|c| = ∆−2c. The condition ∆−2c <
+     √
+b < ∆ defines an interval of length 2c. Now suppose 0 < b1 , b2 , . . . , b2l+1 < 4c are
+the 2l+1 solutions of (4.2) in the interval (0, 4c). Note that half of these solutions
+must be in (0,  √2c) and √ half must be in (2c, 4c). By translating
+                                                                  √ these √  solutions to
+the interval ( ∆ − 4c, ∆), we see that the 2l solutions in ( ∆ − 2c, ∆) lead to
+2l reduced forms (∗, ∗, c) of discriminant ∆. Finally, if (a, b, c) is a reduced form of
+discriminant ∆, then clearly b must be one of the translated bi . This finishes the
+proof of the lemma.                                                                    
+                     √
+Lemma 4.7. Let ∆ < c. There are no reduced forms (∗, ∗, c) of discriminant ∆.
+                                                     √                    √
+Proof. A form (a, b, c) is reduced if and only if      ∆ − 2|c| < b < ∆. No b can
+                               √                    √           √        √
+satisfy this condition since ∆ < c implies that ∆ < 2c − ∆ = ∆ − 2|c| . 
+
+   The previous two lemmas give us the  √ exact number
+                                                √         of reduced forms (∗, ∗, c)
+of discriminant ∆ whenever 0√< c < ∆/2√or ∆ < c. We must settle for an
+“average number” whenever ∆/2 < c < ∆. We make this notion precise as
+follows. Let ∆ be a fundamental discriminant in the interval (c2 , ∞) and let f (∆)
+denote a function of ∆. We say f (∆) has average value e(∆) if, as c → ∞,
+                          X                 X
+                                 f (∆0 ) ∼        e(∆0 ) .
+                           c2 <∆0 ≤∆         c2 <∆0 ≤∆
+
+We will write A[f ] for an average value e of f . Note that A[·] is asymptotically
+linear: If k is constant and f and g are two functions of ∆, then A[kf + g] ∼
+kA[f ] + A[g].
+   We make the following assumption regarding the distribution of quadratic residues
+in a complete system of residues modulo 4c.
+18                JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+Assumption 4.8. Let ∆ be a fundamental discriminant in the interval (c2 , 4c2 ).
+Then the average value of N∆,c (x, y), as c → ∞, is asymptotically
+                       y−x
+                           N∆,c(0, 2c) when 0 < x < y < 2c
+                        2c
+and
+                     y−x
+                         N∆,c (2c, 4c) when 2c < x < y < 4c.
+                      2c
+   In the following, when we write “∆ → ∞” we mean that ∆ → ∞ through
+fundamental discriminants. Often there will be other restrictions on ∆, such as
+that it lie in a certain residue class modulo 4. Remember that ∆ and N are always
+related by (4.1), so that we may write N → ∞ instead of ∆ → ∞.
+                     √              √
+Lemma 4.9. Let ∆/2 < c < ∆ and suppose c is divisible by no inert primes,
+by ramified primes to at most the first power, and by exactly l distinct split primes.
+Then, as ∆ → ∞, the average number of reduced forms (∗, ∗, c) of discriminant ∆
+is asymptotically
+                                         √     
+                                      2l    ∆−c
+                                                  .
+                                            c
+               √             √                  √                √
+Proof. Since ∆/2 < c < ∆, the condition ∆ − 2|c| < b < ∆ is equivalent to
+     √            √                                 √ √                   √        
+2c − ∆ < b < ∆. This defines the interval (2c − ∆, ∆) of length 2              ∆−c .
+We translate
+     √        the 2l+1 solutions of the congruence (4.2) in (0, 4c) to
+              √                                                        √ the interval
+                                                                                √
+(2c− ∆, 6c− ∆). Half of these solutions will √ be in the interval (2c−
+                                                                   √     ∆, 4c− ∆).
+We apply Assumption
+               √        4.8 with x = 2c − ∆ > 0 and y = ∆ < 2c. Then
+(y − x)/2c = ( ∆ − c)/c and N∆,c (0, 2c) = 2l . The number of    √ reduced √forms we
+              √ √the number of solutions to (4.2) with 2c − ∆ < b < ∆, that
+are counting equals
+is, N∆,c (2c − ∆, ∆). By Assumption 4.8,
+                                                          √        
+                X                 √    √          X          ∆0 − c
+                      N∆0 ,c (2c − ∆0 , ∆0 ) ∼                        2l
+              2                                 2
+                                                               c
+             c <∆ ≤∆
+                  0                             c <∆ ≤∆
+                                                     0
+
+
+
+as ∆ → ∞. This shows that the √     average number of reduced forms (∗, ∗, c) of
+                                  l
+discriminant ∆ is asymptotically 2 ( ∆ − c)/c, as ∆ → ∞, as claimed.          
+
+   Note that if (a, b, c) is a reduced form of discriminant ∆, then so is (−a, b, −c),
+so the previous three lemmas tell us the average number of forms (∗, ∗, −c) for
+c > 0. For c > 0 we let Yc = Yc (∆) be the number of reduced forms (a0 , b0 , c0 ) of
+discriminant ∆ with |c0 | = c. We will not compute this quantity for every possible
+value of c. Instead we compute the average value A[Yc ] of Yc . The previous three
+lemmas can be used to compute this quantity.  √
+   The fraction of non-ramified primes p < ∆ that split is asymptotically 1/2, as
+∆ → ∞, by the Chebotarev density theorem.
+
+Proposition 4.10. Suppose c > 0 is an integer divisible by ramified primes to
+at most the first power, and let Yc be the number of reduced forms (∗, ∗, c0 ) of
+                            SQUARE FORM FACTORIZATION                                 19
+
+
+discriminant ∆ with |c0 | = c. Then, as ∆ → ∞,
+                                                        √
+                               2 √
+                                            if 0 < c < ∆/2 ,
+                                                √             √
+                       A[Yc ] ∼ 2( ∆−c) if ∆/2 < c < ∆ ,
+                                   c           √
+                                 0           if ∆ < c .
+                               
+                                √
+Proof. First suppose 0 < c < ∆/2 and that c is divisible by l non-ramified primes.
+By the remark above, the fraction of c divisible by no inert prime is 2−l . Lemma
+4.6 says that if c is divisible by no inert primes, by ramified primes to at most
+the first power, and by exactly l split primes, then there will be 2l reduced forms
+(∗, ∗, c) of discriminant ∆. So we have, as ∆ → ∞,
+                        A[Yc ] ∼ 2 2−l · 2l + (1 − 2−l ) · 0 = 2 ,
+                                                            
+
+where we multiply by two since (a, b, c) is a reduced form of discriminant ∆ if and
+only if (−a, b, −c) is a √
+                         reduced form √of discriminant ∆.
+    Now suppose that ∆/2 < c < ∆, and that c is divisible by l non-ramified
+primes. Again, the fraction of c divisible by no inert prime is 2−l . Lemma 4.9
+implies that if c is divisible by no inert primes, by ramified primes
+                                                                  √ to at most the
+first power, and by exactly l split primes, then we expect 2l ( ∆ − c)/c reduced
+forms (∗, ∗, c) of discriminant ∆. So we have, as ∆ → ∞,
+                                √                            √     
+                              2l   ∆−c                         2    ∆−c
+            A[Yc ] ∼ 2 2−l ·              + (1 − 2−l ) · 0 =            .
+                                    c                               c
+                       √
+    Finally, suppose ∆ < c. Lemma 4.7 implies that there are no reduced forms
+(∗, ∗, c) of discriminant ∆; hence A[Yc ] = 0.                                    
+4.4. Successive Square Forms. We now use the results of the previous subsection
+to compute the average index-difference between successive square forms. Using
+similar techniques, we will count both the average number of reduced forms and
+the average number of reduced square forms on the principal cycle. Then the
+average number of steps between successive square forms will be the ratio of these
+two average numbers.
+    Let C be the group of equivalence classes of binary quadratic forms of discrimi-
+                                                                               √
+nant ∆. Recall that this group is isomorphic to√the narrow class group of Q( ∆);
+hence |C| = h+ , the narrow class number of Q( ∆). Let G be the group of genera
+of forms of discriminant ∆. There is a surjective group homomorphism φ : C → G
+taking an equivalence class to its genus, which we identify with its corresponding
+assigned value. The kernel of this homomorphism is the set of classes in the princi-
+pal genus. The first group isomorphism theorem implies that C/ ker φ ∼   = G; hence
+| ker φ| = h+ /|G|. It remains to compute the value of |G|.
+    Let κ = k when N ≡ 1 mod 4, ∆ = N and κ = k + 1 when N ≡ 2 or 3 mod 4,
+∆ = 4N . Then κ is the number of generic characters of ∆, as defined in Section
+2.1.2. Since the number of genera is equal to one half the possible assigned values,
+we see that |G| = 2κ−1 . Finally we see that the number of classes in the principal
+genus is h+ /2κ−1 .
+4.4.1. Number of Reduced Forms on the Principal Cycle. Let c > 0, Xc = Xc (∆) be
+the number of reduced forms (∗, ∗, c0 ) of discriminant ∆ with |c0 | = c on the principal
+cycle, and X = X(∆) be the total number of reduced forms with discriminant ∆
+20                  JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+                                      P
+on the principal cycle. Then X = 0<c Xc . We have seen (Lemma 4.7) that if
+                                           √
+(∗, ∗, c) is a reduced form, then 0 < |c| < ∆, so
+                                            √
+                                            ∆
+                                            X
+                                      X=          Xc .
+                                            c=1
+We will compute A[X], the average number of reduced forms on the principal cycle,
+and we have, as ∆ → ∞,               √
+                                     X ∆
+                              A[X] ∼     A[Xc ] .
+                                            c=1
+   We now make a few observations about the distribution of forms among the
+the h+ cycles. First observe that since the principal cycle is ambiguous, a non-
+ambiguous reduced form (a, b, c) will be on the principal cycle if and only if its
+associate (c, b, a) is on the principal cycle. But this means that (a, b, c) is on the
+principal cycle if and only if ρ−1 (c, b, a) = (a0 , b0 , c) is on the principal cycle. Ex-
+istence of the reduced forms (a, b, c), (a0 , b0 , c) implies the existence of the reduced
+forms (−a, b, −c), (−a0 , b0 , −c). These four forms will be collectively referred to as
+the quartet of forms associated with the form (a, b, c).
+   Suppose that one of the κ generic characters ξ associated to ∆ satisfies ξ(−1) =
+−1. Then the forms (a, b, c), (a0 , b0 , c) are on the principal cycle if and only if the
+forms (−a, b, −c), (−a0 , b0 , −c) are not on the principal cycle. (Here we are using
+Assumption 4.5.) Therefore, for a given c > 0, at most two forms from each quartet
+can be on the principal cycle. This leads us to make the following assumption.
+Assumption 4.11. Assume that, as ∆ → ∞ through values for which there is
+some generic character ξ associated with ∆ such that ξ(−1) = −1, we have
+(4.3)                             A[Xc ] ∼ A[Yc ]/2h+ .
+    Assumption 4.11 is reasonable because for each quartet of forms (∗, ∗, c0 ) with
+ 0
+|c | = c, at most two forms (that is, half of the forms in the quartet) may be on the
+principal cycle, and the principal cycle is one of the√h+ cycles. Since Proposition
+4.10 gives us an expression for A[Yc ] when 0 < c < ∆, Assumption 4.11 enables
+us to compute A[X].
+    Now suppose that ξ(−1) = 1 for all generic characters ξ associated to ∆. Then
+(a, b, c) is on the principal cycle if and only if its entire quartet is on the principal
+cycle. (Here we are using Assumption 4.5 again.) We now make the following
+assumption.
+Assumption 4.12. Assume that, as ∆ → ∞ through values for which ξ(−1) = 1
+for all generic characters ξ associated with ∆, we have
+                                  A[Xc ] ∼ A[Yc ]/h+ .
+   Assumption 4.12 is reasonable because either the entire quartet associated with
+(a, b, c) is on the principal cycle or not, and the principal cycle is one of the h+
+cycles. In summary, we have assumed that A[Xc ] ∼ νA[Yc ]/h+ , as ∆ → ∞, where
+                      (
+                        1
+                           if ξ(−1) = −1 for some generic character ξ of ∆ ,
+         ν = ν(∆) = 2
+                        1 if ξ(−1) = 1 for all generic characters ξ of ∆ .
+If N ≡ 3 mod 4, then some prime dividing N must be congruent to 3 modulo 4.
+In this case ν must equal 1/2 and so (4.3) holds. If N ≡ 1 or 2 mod 4, then we
+                           SQUARE FORM FACTORIZATION                                    21
+
+
+cannot know which value to use for ν, so we make the following assumption about
+the average value of ν.
+Assumption 4.13. Assume that when N ≡ 1 or 2 mod 4 we have, as ∆ → ∞,
+                                     1           2κ + 1
+                      A[ν] ∼ 1 − 2−κ · + 2−κ · 1 = κ+1 ,
+                                      2            2
+   Assumption 4.13 is reasonable because the κ generic characters associated with
+∆ should independently each take the value 1 at −1 about half of the time, so that
+all take the value 1 at −1 in about one case out of 2κ . Assumptions 4.11, 4.12 and
+4.13 together imply that when N ≡ 1 or 2 mod 4,
+                                                     (2κ + 1)A[Yc ]
+(4.4)                 A[Xc ] ∼ A[ν]A[Yc ]/h+ ∼                      .
+                                                        2κ+1 h+
+In any case, we can now calculate A[X].
+Proposition 4.14. As ∆ → ∞, the asymptotic average number of reduced forms
+of discriminant ∆ on the principal cycle is
+                        k       √
+                          2 + 1 N log 2
+                                             if N ≡ 1 mod 4 ,
+                       
+                       
+                               2 k h+
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                       
+                             k+1
+                                     √
+               A[X] ∼ 3 2        + 1 N log 2
+                       
+                                             if N ≡ 2 mod 4 ,
+                       
+                       
+                               2k+2 h+
+                       
+                          √
+                       
+                       
+                       
+                        3 N log 2
+                       
+                       
+                                             if N ≡ 3 mod 4 .
+                       
+                            2h+
+Proof. We assume that the odd prime divisors pi of N (all of which are ramified)
+are so large that the chance that c is divisible by p2i is negligibly small. This means
+that we shall use the results of Proposition 4.10 for all values of c, except when 2
+is ramified (N ≡ 2 or 3 mod 4.) When 2 is ramified, we will use A[Xc ] = 0 for any
+c divisible by 4.
+   Note that to get the result in the case of N ≡ 2 mod 4, we may multiply the
+result in the case of N ≡ 3 mod 4 by (2κ + 1) /2κ = 2k+1 + 1 /2k+1 , since the
+only difference is that we replace 1/2 with A[ν].
+        Case 1: (N ≡ 1 mod 4) In this case ∆ = N . We have
+              √         √
+              ∆          N
+                            2k + 1 A[Yc ]
+                                  
+              X         X
+    A[X] ∼     A[Xc ] ∼                             (using Equation (4.4))
+           c=1          c=1
+                              2k+1 h+
+                      √
+                       N
+              2k + 1 X
+            ∼ k+1 +     A[Yc ]
+             2 h c=1
+                     √              √         √          
+                        N/2          N     2        N −c
+              2k + 1  X             X
+            ∼ k+1 +         2 +                                (by Proposition 4.10)
+             2 h       c=1
+                                    √               c
+                                  c= N/2
+                      √     √
+                             N
+              2k + 1 N       X       1
+            ∼
+                 2 k h+      √       c
+                           c= N /2
+22                    JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+                    √
+              2k + 1 N log 2
+            ∼                            (using Lemma 4.2).
+                   2 k h+
+      Case 2: (N ≡ 3 mod 4) In this case ∆ = 4N , and 2 is a ramified prime. We
+        have
+              √                 √                          √
+              ∆                2XN                         N /2
+              X                                            X
+     A[X] ∼         A[Xc ] ∼         A[Yc ]/2h   +
+                                                      −           A[Y4c ]/2h+
+              c=1              c=1                         c=1
+                        (using Equation (4.3))
+                 √                √             
+                   2 N               N /2
+              1 X                  X
+           ∼ +          A[Yc ] −          A[Y4c ]
+             2h    c=1              c=1
+                 √            √       √         
+                    N         2XN 2 2 N −c
+              1 X
+           ∼ +         2 +
+             2h    c=1
+                               √           c
+                             c= N
+                     √             √          √          
+                        N/4          N /2 2 2 N − 4c
+                       X            X
+                   −        2 −                                           (by Proposition 4.10)
+                       c=1
+                                     √             4c
+                                  c= N/4
+                           √                √          
+                          2X N                N /2
+              1  √              1     √      X       1
+           ∼ + 4 N                  − N
+             2h             √ c               √       c
+                         c= N               c= N /4
+              √
+             3 N log 2
+           ∼               (using Lemma 4.2).
+                2h+
+                                                                                                    
+
+4.4.2. Number of Square Forms on the Principal Cycle. We can use the same meth-
+ods used in the previous subsection to count Xsq = Xsq (∆), the number of reduced
+square forms (∗, ∗, c2 ) on the principal cycle. As before, we will actually compute
+A[Xsq ], the average number
+                         P     of reduced square forms on the principal cycle. Here
+we begin with Xsq =        Xc2 /2, where we divide by two since square forms must
+have a positive right-end coefficient and exactly half of the Xc2 forms will satisfy
+this condition. Lemma 4.7 implies that
+                                                     √
+                                                     4
+                                                     X∆
+                                        Xsq =              Xc2 /2 .
+                                                     c=1
+
+Hence
+                                                     √
+                                                     4
+                                                     X∆
+                                     A[Xsq ] ∼             A[Xc2 ]/2 .
+                                                     c=1
+
+  As before, for a given c > 0 there are Yc2 reduced forms (a, b, c0 ) of discriminant
+∆ with |c0 | = c2 . Also, for each non-ambiguous form (a, b, c2 ) we have the associated
+quartet of forms: (a, b, c2 ), ρ−1 (c2 , b, a) = (a0 , b0 , c2 ), (−a, b, −c2 ), and (−a0 , b0 , −c2 ).
+We make the following assumption.
+                                 SQUARE FORM FACTORIZATION                                  23
+
+
+Assumption 4.15.
+                                  κ
+                                   2 +1
+                                       A[Yc2 ]       if N ≡ 1 or 2 mod 4,
+                                  4h+
+                                 
+                                 
+(4.5)                A[Xc2 ] ∼
+                                    κ−2
+                                 2
+                                 
+                                 
+                                        A[Yc2 ]       if N ≡ 3 mod 4.
+                                 
+                                   h+
+  We justify Assumption 4.15 as follows. When N ≡ 3 mod 4, reason as for As-
+sumption 4.11, noting that a square form has to lie on a cycle in the principal genus,
+and the principal cycle is one of the h+ /2κ−1 cycles in the principal genus. When
+N ≡ 1 or 2 mod 4, reason as for (4.4), with the same change noted.            √
+  Since Proposition 4.10 gives us an expression for A[Yc2 ] when 0 < c < 4 ∆, we
+can now compute A[Xsq ].
+
+Proposition 4.16. As ∆ → ∞, the asymptotic average number of reduced square
+forms of discriminant ∆ on the principal cycle is
+                        k      √       √
+                         2 +1       2−1 4N
+                                                  if N ≡ 1 mod 4 ,
+                       
+                       
+                                 2h+
+                       
+                       
+                       
+                       
+                       
+                                         √ √
+                       
+                       
+                       
+                        k+1      
+             A[Xsq ] ∼   2    +1 2− 2 4 N
+                                                  if N ≡ 2 mod 4 ,
+                       
+                       
+                                  4h+
+                       
+                               √ √
+                       
+                       
+                        k           4
+                       2 2 − 2        N
+                       
+                       
+                                                  if N ≡ 3 mod 4 .
+                       
+                              2h +
+
+Proof. As in the proof of Proposition 4.14, we assume that the odd prime divisors
+pi of N are so large that the fraction of c2 that are divisible by p2i is negligibly
+small. So we shall once again use the results of Proposition 4.10 for all values of
+c2 , except when 2 is ramified. When 2 is ramified, 2|c2 implies that 4|c2 , and hence
+A[Xc2 ] = 0. Also we can easily obtain the result for N ≡ 2 mod 4 once we have the
+result for N ≡ 3 mod 4 as in Proposition 4.14.
+        Case 1: (N ≡ 1 mod 4) In this case ∆ = N . We have
+              √
+              4                   √
+                                  4
+              ∆                    N
+             X                    X  (2κ + 1) A[Yc2 ]
+ A[Xsq ] ∼          A[Xc2 ]/2 ∼                            (by Equation (4.5))
+              c=1                 c=1
+                                            8h+
+                       √
+                       4
+                         N
+             2κ + 1 X
+           ∼              A[Yc2 ]
+              8h+ c=1
+                     √4    √            √        √              
+                                         4                      2
+               κ         N/ 2              N    2     N    −  c
+             2 +1       X              X
+           ∼                   2 +                                     (by Proposition 4.10)
+              8h+        c=1
+                                        √
+                                        4    √          c 2
+                                      c= N / 2
+                                                    √4
+                                                                    
+                                  √         √          N
+             2 κ + 1  √           4
+                                                     X           1
+           ∼               2−1         N + N                        
+              4h+                                    √      √   c 2
+                                                  c= 4 N / 2
+                        √          √
+             (2κ + 1) 2 − 1
+                                  4
+                                      N
+           ∼              +
+                                           (by Lemma 4.3).
+                       2h
+24                JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+        When N ≡ 1 mod 4, we have κ = k generic characters, one for each prime
+       divisor of N . Thus
+                                          √    √
+                                  2k + 1     2−1 4 N
+                        A[Xsq ] ∼                    .
+                                           2h+
+     Case 2: (N ≡ 3 mod 4) In this case ∆ = 4N .
+                          √
+                          4
+                          X∆
+              A[Xsq ] ∼        A[Xc2 ]/2
+                          c=1
+                          √ √4
+                                                  √
+                                                  4    √
+                           2 N                     N / 2 κ−2
+                           X        2κ−2 A[Yc2 ]   X    2    A[Y4c2 ]
+                      ∼                          −
+                          c=1
+                                       2h+         c=1
+                                                           2h +
+
+                                   (by Equation (4.5))
+                           √ √  4
+                                                 √4   √            
+                               2 N                  N/ 2
+                        2κ  X                      X
+                      ∼ +            A[Yc2 ] −             A[Y4c2 ]
+                       8h      c=1                  c=1
+                            4√         √ 4√       √          
+                                N         2 N 2 2 N − c2
+                        2κ  X           X
+                      ∼ +          2 +
+                       8h    c=1
+                                           √            c2
+                                        c= 4 N
+                                 √
+                                 4            √
+                                              4     √     √         
+                                   N /2         N / 2 2 2 N − 4c2
+                                  X             X
+                             −          2 −                           
+                                  c=1
+                                                √
+                                                4
+                                                              4c2
+                                                c=    N /2
+
+                                        (by Proposition 4.10)
+                                              4             √ √
+                        2κ    √ √
+                                   4
+                                          √  XN 1
+                                             2
+                      ∼ +     2− 2   N + 2 N       2
+                       4h                      √ c
+                                               4
+                                                             c= N
+                                                             √   √
+                                           √            √    4
+                                                              
+                                                               N/ 2
+                                  2− 2 4 √        N X 1
+                              −            N −
+                                     2           2    √
+                                                      4
+                                                           c2
+                                                   c= N /2
+                                √ √
+                        2κ 2 − 2 4 N
+                     ∼                     (by Lemma 4.3).
+                              4h+
+        In this case κ = k + 1, thus
+                                             √ √
+                                      2k 2 − 2 4 N
+                           A[Xsq ] ∼                .
+                                           2h+
+                                                                                   
+   The√Brauer-Siegel theorem (see pages 216 and 297 of [3]) says
+                                                             √ that log(R(∆)h(∆))
+∼ log( ∆) as ∆ → ∞, where R(∆)   √   is the regulator of Q(    N ). It is conjectured
+that R(∆) usually has size about ∆, so that h and therefore
+                                                     √         h+ are typically
+                                                                              √ very
+                                                             +
+small. In this “usual”
+                 √     case, we have X√ ≈ constant ·   N  /h   ≈  constant  ·  N and
+Xsq ≈ constant · 4 N/h+ ≈ constant · 4 N .
+
+4.4.3. Average Index-Difference between Successive Square Forms. SQUFOF be-
+gins with the first reduced form (1, 2P, −Q) following a (trivial) reduced square
+form (−Q, 2P, 12 ) in the principal cycle (using the continued fraction description).
+                          SQUARE FORM FACTORIZATION                              25
+
+
+It steps through the principal cycle until it finds the next reduced square form.
+Our measure of the time complexity of SQUFOF to factor N is the number of
+reduced forms it examines in the principal cycle. In our heuristic analysis we will
+approximate this number by the average number of reduced forms between succes-
+sive square forms in the principal cycle. Let D = D(∆) = X/Xsq = X(∆)/Xsq (∆)
+be this average number. The following assumption allows us to use Propositions
+4.14 and 4.16 to find the average index-difference A[D] between successive square
+forms.
+Assumption 4.17. Assume that, as ∆ → ∞, we have A[D] ∼ A[X]/A[Xsq ],
+   Assumption
+    √          4.17 is plausible because
+                                       √ we are using averages, A[X] is roughly
+                                                                           √    of
+size ∆ and A[Xsq ] is roughly of size 4 ∆, so that A[D] is roughly of size 4 ∆.
+   The following corollary allows us to compute A[D].
+Corollary 4.18. As N → ∞, we have
+                       √       √
+                           2 + 1 4 N log 2
+                                                   if N ≡ 1 mod 4 ,
+                      
+                      
+                      
+                      
+                              2k−1
+(4.6)         A[D] ∼
+                         √        √4
+                      3 2 + 2         N log 2
+                      
+                      
+                                                   if N ≡ 2 or 3 mod 4 .
+                      
+                                2 k+1
+
+Proof. We prove the case N ≡ 1 mod 4. The cases N ≡ 2 and 3 mod 4 are proved
+in the same way.
+      Case 1: (N ≡ 1 mod 4) Proposition 4.14 implies that
+                                             √
+                                       2k + 1 N log 2
+                           A[X] ∼                         ,
+                                            2 k h+
+        and Proposition 4.16 implies that
+                                            √         √
+                                    2k + 1        2−1 4 N
+                        A[Xsq ] ∼                             .
+                                              2h+
+        Thus, by Assumption 4.17,
+                           √           .
+                                                         √       √
+                      2k + 1 N log 2        2 k h+          2 + 1 4 N log 2
+          A[D] ∼            √       √ .            =                     .
+                   (2k + 1) 2 − 1 4 N            2h+            2k−1
+
+                                                                                 
+4.5. Proper Square Forms. In this subsection we will derive the average num-
+ber of square forms we must examine to successfully factor N . Recall that when
+SQUFOF finds a square form, it forms an inverse square root and follows its cycle
+to an ambiguous form, where there is a factor of N . Also, a proper square form is
+one that leads to an ambiguous form with a nontrivial divisor of N . As before, κ
+is the number of generic characters for ∆. We assume that any square form in the
+principal cycle is equally likely to lead to any ambiguous form.
+Assumption 4.19. Let f be one of the 2κ reduced ambiguous forms of discriminant
+∆. If one begins with a square form (∗, ∗, c2 ) on the principal cycle of reduced
+forms of discriminant ∆, computes its inverse square root as SQUFOF does, and
+follows its cycle to the first ambiguous form, then there is one chance in 2 κ that
+this ambiguous form will be f .
+26                JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+   Assumption 4.19 is reasonable because the square root of a square form on the
+principal cycle must lie in an ambiguous cycle, so we will reach one of the 2κ
+ambiguous forms, and f is one of them. Recall that we are modeling SQUFOF as
+a random walk. We are assuming that when we compute the inverse square root,
+we jump to a random ambiguous cycle.
+   We always assume that N is the product of k distinct primes. To prepare for
+multipliers in Section 5 we prove the next proposition in the case when ∆ contains
+not only the prime factors of N , but also those of an odd multiplier. The latter
+primes are small and known before SQUFOF begins. Furthermore, we will show
+later how to tell whether a square form on the principal cycle will lead to a divisor
+of twice the multiplier, so that SQUFOF with a multiplier can avoid finding a trivial
+factor of N .
+Proposition 4.20. The average asymptotic fraction of square forms that are proper
+is
+                                      2k − 2
+(4.7)                                         .
+                                        2k
+Proof. As we have seen, a square form leads to an ambiguous form f , hence to a
+factor of ∆. There are as many ambiguous classes as there are genera, and this latter
+quantity is known to be 2κ−1 . There are two ambiguous forms per ambiguous class;
+hence there are 2κ ambiguous forms. These forms  √ are in bijective correspondence
+with the square-free divisors d of ∆ with |d| < ∆.
+   Now suppose ∆ has n small ramified primes (known prime factors of a multiplier,
+or 2 when N ≡ 2 or 3 mod 4) and k large ramified primes (the factors of N ). Then
+κ = k + n and there will be 2n+1 improper squares
+                                                √     (one for each of the possible
+2n+1 square-free divisors d of ∆ with |d| < ∆ and divisible only by the small
+ramified primes). Thus, by Assumption 4.19, the fraction of square forms that are
+proper is
+                        2κ − 2n+1    2n+k − 2n+1     2k − 2
+                                   =              =         .
+                            2κ           2n+k          2k
+                                                                                   
+Corollary 4.21. The asymptotic average number of square forms that SQUFOF
+must examine before finding a proper square form is
+                                        2k
+(4.8)                                          .
+                                      2k − 2
+4.6. The Time Complexity of SQUFOF. We now have everything we need to
+compute the asymptotic behavior of the average number of forms SQUFOF must
+examine to find a proper square form.
+Theorem 4.22. Let W = W (N ) be the number of quadratic forms that SQUFOF,
+when factoring a square-free integer N having k prime factors, must examine before
+finding a proper square form. Then, as N → ∞, the asymptotic average value of
+W is                   √           √
+                         2 2 + 1 4 N log 2
+                                               if N ≡ 1 mod 4 ,
+                      
+                      
+                                 2k − 2
+                      
+                      
+                      
+              A[W ] ∼      √        √
+                         3 2 + 2 4 N log 2
+                      
+                      
+                      
+                                               if N ≡ 2 or 3 mod 4 .
+                      
+                      
+                               2 (2k − 2)
+                              SQUARE FORM FACTORIZATION                                     27
+
+                      √                         √
+            k   A[W ]/ 4 N, N ≡ 1 mod 4 A[W ]/ 4 N , N ≡ 2 or 3 mod 4
+            2            1.6734                     1.7749
+            3            0.5578                     0.5916
+            4            0.2391                     0.2536
+                                              √
+                                              4
+                  Table 3. Estimates of A[W ]/ N for k = 2, 3, 4.
+
+
+Proof. This is simply the product of (4.6) and (4.8).                       
+                                                √
+                                                4
+   Table 3 lists the predicted values for A[W ]/ N when N is a product of two,
+three, and four primes.
+4.7. Average Queue Size. Now that we have the average number of forms that
+SQUFOF will examine before finding a proper square form, it is a simple matter
+to calculate
+         √ the average queue√     size. If N ≡ 1 mod 4, then    √ (∗, ∗, c) will be enqueued
+                                                                                        √
+if |c| < 4 ∆. There are 2√4 ∆ integers c such that |c| < 4√       ∆, of which only 3 4 ∆/2
+satisfy 4 - c. There are 3 ∆/2 integers c such that |c| < ∆ and 4 - c. If we chose
+random
+    √ √integers c not divisible by    √ 4 with uniform distribution from√the interval
+(− ∆, ∆), about one in every√4 ∆ integers c would satisfy |c| < 4 ∆. We will
+assume that the same fraction 1/√4 ∆ of actual numbers c that arise when SQUFOF
+is used to factor N satisfy |c| < 4 ∆.                                                    √
+    Now consider the case N √  ≡ 2 or 3 mod 4. If a form (∗, ∗, c) is such that |c| < 4 ∆
+when c is odd, or √  |c/2| < 4 ∆ when c is even, then   √      SQUFOF will   √   enqueue this
+                     4                                   4                   4
+form. There are 2 ∆ integers c such that   √     |c| <     ∆,  and  only   3   ∆/2  such that
+                                            4
+4 - c as well. Of√ this latter quantity,√ ∆ of these c are odd, and so 4          √2c satisfies
+|c| = |2c/2| < 4 ∆. √So there are 5 4 ∆/2 integers c such that        √   |c|  <    ∆ when c
+                       4
+is odd,√ and  |c/2| <    ∆  when  c is even.   Finally, there   are 3   ∆/2    integers c with
+|c| < ∆ and 4 - c. If we chose random√ √      integers  c  not divisible  by   4 with uniform
+distribution from√  the√ interval √
+                                  (− ∆, ∆),  √ then the fraction
+                                                               √       of them such that c
+or c/2 is in (− 4 ∆, 4 ∆) is (5 4 ∆/2)/(3 ∆/2) = 5/(3 4 ∆). We will assume that
+the same fraction of actual numbers c that arise when SQUFOF is used to factor
+N satisfy this inequality. We summarize our assumptions this way.
+Assumption 4.23. Let W be the number of forms examined and Q = Q(N ) be
+the number of forms enqueued during the factorization of N . Then A[Q]/A[W √    ],
+                                                                           4
+the average
+     √      fraction of the examined forms that are enqueued, is either 1/   ∆ or
+5/(3 4 ∆), according as N ≡ 1 mod 4 or N ≡ 2 or 3 mod 4.
+Theorem 4.24. As N → ∞, the asymptotic average value of Q is
+                     √        
+                      2 2 + 1 log 2
+                                      if N ≡ 1 mod 4 ,
+                    
+                    
+                          2k − 2
+                    
+                    
+                    
+             A[Q] ∼    √       
+                      5 2 + 1 log 2
+                    
+                    
+                    
+                    
+                                     if N ≡ 2 or 3 mod 4 .
+                        2 (2k − 2)
+Proof.      Case 1: (N ≡ 1 mod 4.) Since ∆ = N , we have by Assumption 4.23,
+                            √      √       !              √
+                  √                              √
+                                                                  
+                  4      2 2 + 1 4 N log 2 . 4          2 2 + 1 log 2
+     A[Q] = A[W ]/ N =                             N=                  .
+                               2k − 2                        2k − 2
+28                   JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+                 k    A[Q], N ≡ 1 mod 4 A[Q], N ≡ 2 or 3 mod 4
+                 2          1.6734                 2.0918
+                 3          0.5578                 0.6973
+                 4          0.2391                 0.2988
+                      Table 4. Estimates of A[Q] for k = 2, 3, 4.
+
+
+
+     Case 2: (N ≡ 2 or 3 mod 4.) Since ∆ = 4N , we have by Assumption 4.23,
+                                         √      √        !
+                           √
+                           4        5 · 3 2 + 2 4 N log 2 .  √  4
+                                                                      
+      A[Q] = (5A[W ]) / (3 4N ) =                              3   4N
+                                          2 (2k − 2)
+               √       
+             5 2 + 1 log 2
+           =                 .
+                2 (2k − 2)
+                                                                                       
+  Table 4 lists the predicted values for A[Q] when N is a product of two, three,
+and four primes.
+
+                          5. The Effect of Multipliers
+   We now consider how multiplying N by small odd primes changes the running
+time of SQUFOF and the queue length. Our strategy will be similar to that of
+Section 4 in that we will compute A[X] and A[Xsq ] for p1 p2 · · · pn N for distinct
+small odd primes pi .
+5.1. The Time Complexity with Multipliers.
+Proposition 5.1. Let N be a square-free positive integer with k distinct large odd
+prime divisors and let p1 , . . . , pn be n distinct small odd primes (n ≥ 0) with pi - N
+for all i. Define ∆ by
+                     (
+                       p1 · · · pn N      if p1 · · · pn N ≡ 1 mod 4 ,
+                 ∆=
+                       4p1 · · · pn N if p1 · · · pn N ≡ 2 or 3 mod 4 .
+If X is the number of reduced forms on the principal cycle of discriminant ∆ then,
+as N → ∞, the asymptotic average value of X is
+                k+n         √               n
+                  2      + 1 N log 2 Y p2i − 1
+                                                               if ∆ ≡ 1 mod 4 and
+               
+               
+                         2k+n h+                   3/2
+               
+                                             i=1 pi
+               
+               
+               
+               
+                                                                   pi ≡ 1 mod 4 ∀i ,
+               
+               
+                 √
+               
+               
+                             n 2
+                   N   log 2     p    −  1
+               
+                            Y
+                                   i
+                                                               if ∆ ≡ 1 mod 4 and
+               
+               
+                      +
+                   h                3/2
+               
+               
+                            i=1  p  i
+       A[X] ∼                                                      ∃ pi ≡ 3 mod 4 ,
+                     k+n+1
+                                  √              n 2
+               
+                3  2         + 1       N  log 2 Y   p i  −  1
+                                                               if N ≡ 2 mod 4 and
+               
+               
+                          2k+n+2 h+                      3/2
+               
+                                                      p
+               
+               
+               
+               
+                                                i=1     i
+               
+                                                                  pi ≡ 1 mod 4 ∀i ,
+               
+                  √           n 2
+                 3   N  log 2     p     −  1
+               
+                             Y
+                                    i
+               
+                                                              otherwise.
+                    2h+                3/2
+               
+                              i=1   ip
+                            SQUARE FORM FACTORIZATION                                  29
+
+
+Proof. The proof of each case is similar to the corresponding proof in Proposition
+4.14. The main difference is that we will need Lemma 4.2 to handle several small
+ramified primes.                                                                 
+
+Proposition 5.2. Let N be a square-free positive integer with k distinct large odd
+prime divisors and let p1 , . . . , pn be n distinct small odd primes (n ≥ 0) with pi - N
+for all i. Define ∆ as in Proposition 5.1. If Xsq is the number of reduced square
+forms on the principal cycle of discriminant ∆ then, as N → ∞, the asymptotic
+average value of Xsq is
+                              √         √       n
+                 2k+n + 1           2 − 1 4 N Y pi − 1
+                                                               if ∆ ≡ 1 mod 4 and
+               
+               
+                               2h+                      3/4
+               
+                                                  i=1 pi
+               
+               
+               
+               
+                                                                   pi ≡ 1 mod 4 ∀i ,
+               
+               
+                       √            √
+               
+               
+                  k+n                4     n
+                 2        2−1           N     pi − 1
+               
+                                          Y
+                                                               if ∆ ≡ 1 mod 4 and
+               
+               
+               
+                        2h   +                  3/4
+                                           i=1 pi
+               
+               
+               
+     A[Xsq ] ∼                                                     ∃pi ≡ 3 mod 4 ,
+                   k+n+1
+                                             √
+                                          √  4       n
+               
+                 2        +1 2− 2               N   Y  pi − 1
+                                                               if N ≡ 2 mod 4 and
+               
+               
+                                 4h  +                     3/4
+               
+                                                     i=1 pi
+               
+               
+               
+               
+               
+                                                                  pi ≡ 1 mod 4 ∀i ,
+                              √  4   √
+               
+               
+                                            n
+               
+                   k+n
+                 2     2− 2             N     pi − 1
+               
+                                          Y
+               
+               
+                                                              otherwise.
+                         2h+                     3/4
+               
+                                           i=1 pi
+               
+
+Proof. The proof of each case is similar to the corresponding proof in Proposition
+4.16. The main difference is that we will need Lemmas 4.3 and 4.4 to handle several
+small ramified primes.                                                           
+
+Corollary 5.3. Let N be a square-free positive integer with k distinct large odd
+prime divisors and let p1 , . . . , pn be n distinct small odd primes (n ≥ 0) with pi - N
+for all i. Define ∆ as in Proposition 5.1. If D is the index-difference between
+successive square forms on the principal cycle, then, as N → ∞, the asymptotic
+average value of D is
+                    √             √           n
+                        2 + 1 4 N log 2 Y pi + 1
+                                                             if ∆ ≡ 1 mod 4 ,
+                   
+                   
+                   
+                   
+                   
+                   
+                               2k−1           i=1 2pi
+                                                      3/4
+
+           A[D] ∼
+                        √            √           n
+                     3 2 + 2 4 N log 2 Y pi + 1
+                   
+                   
+                   
+                                                             if ∆ ≡ 0 mod 4 .
+                   
+                   
+                                  2k+1                  3/4
+                   
+                                                 i=1 2p
+                   
+                                                   i
+
+Proof. Just as in Corollary 4.18, we obtain the result by computing A[X]/A[Xsq ].
+                                                                              
+
+Theorem 5.4. Let N be a square-free positive integer with k distinct large odd
+prime divisors and let p1 , . . . , pn be n distinct small odd primes (n ≥ 0) with pi - N
+for all i. Define ∆ as in Proposition 5.1. If W is the number of forms that SQUFOF
+must examine before finding a proper square form, then, as N → ∞, the asymptotic
+30                 JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+average value of W is
+                   √        √        n
+                    2 2 + 1 4 N log 2 Y pi + 1
+                                                          if   ∆ ≡ 1 mod 4 ,
+                  
+                  
+                  
+                  
+                  
+                  
+                         2k − 2      i=1 2pi
+                                             3/4
+
+          A[W ] ∼
+                      √      √        n
+                    3 2 + 2 4 N log 2 Y pi + 1
+                  
+                  
+                  
+                                                          if   ∆ ≡ 0 mod 4 .
+                  
+                  
+                        2 (2k − 2)           3/4
+                  
+                                      i=1 2p
+                  
+                                                   i
+
+Proof. As in Theorem 4.22, this is the product of the results from Corollaries 4.21
+(which allows multipliers) and 5.3.                                              
+5.2. Using the Queue with Multipliers. We begin with propositions analogous
+to Propositions 3.1 and 3.2.
+Proposition 5.5. Let N be a square-free positive integer with k distinct large odd
+prime divisors and let p1 , . . . , pn be n distinct small odd primes (n ≥ 0) with pi - N
+for all i. Define ∆ as in Proposition 5.1. Suppose that a is a positive odd integer,
+b is a positive integer, gcd (a, b) = 1, and that a2 , b, −c is a square form on the
+                                                                    2
+principal cycle of discriminant ∆ with c > 0. Then (−a, b, ac) ∼ a2 , b, −c .
+                                                                                 
+
+Proof. This follows directly from the definition of composition.                       
+   There are 2κ reduced ambiguous forms of discriminant ∆. The forms  √ (±d, ∗, ∗),
+where d is a square-free divisor of ∆ relatively prime to N with |d| < ∆, lead to
+trivial factorizations of N . Let ±d denote the reduced ambiguous form (±d, ∗, ∗).
+Proposition 5.6. Let N be a square-free positive integer with k distinct large odd
+prime divisors and let p1 , . . . , pn be n distinct small odd primes (n ≥ 0) with pi - N
+for all i. Define ∆ as in Proposition 5.1, and define µ = p1 · · · pn if ∆ ≡ 1 mod 4
+and
+√    µ = 2p1 · · · pn if ∆ ≡ 0 √ mod 4. Assume
+                                             √      that the pi are chosen so that µ3/4 <
+ 4                                    3/4    4
+   N when ∆ ≡ 1 mod 4, or 2µ              < N when ∆ ≡ 0 mod 4. Suppose that a is a
+positive odd integer, b is a positive integer, gcd (a, b) = 1, and that F n = a2 , b, −c
+is a square form on the principal cycle of discriminant ∆, with c > 0. Some form
+(α, β, ∗) appears on the principal cycle at position m < n with α ∈ {±da},      √ where
+d is a square-free divisor of ∆ that is relatively prime to N with |d| < ∆, and
+β ≡ b mod a if and only if (−a, b, ac) is equivalent to one of the ambiguous forms
+±d.
+Proof. The largest element in the set {±da} is µa. The inequality on µ in the
+hypothesis insures that each element of {±da} actually appears
+                                                          √       as an end coefficient
+                                                                                   √
+for some reduced form. To see this, suppose that a2 < ∆ and we want µa < ∆,
+too, so that the √  square root can appear as a √   reduced form in some
+                                                                       √ ambiguous
+cycle. Since a < 4 ∆, we can insure that µa < ∆ by taking µ < 4 ∆. Using the
+definitions of µ and ∆, we obtain the inequalities on µ in the hypotheses.
+   Suppose now that some form (α, β, ∗) appears on the principal cycle at position
+m < n with α =√da, where d is a square-free divisor of ∆ that is relatively prime
+to N with |d| < ∆, and β ≡ b mod a. Then we can write the form as (α, β, ∗) ∼
+(da, β, ∗). It is easy to see that −d ∼ (da, β, ∗) ◦ −d ∼ (−a, β, ∗) ∼ (−a, b, ac).
+   Conversely, suppose there is no form (α, β, ∗) appearing on the principal cycle
+before Fn with α ∈ {±da} and β ≡ b mod a. Let f = (−a, b, ac). If f is equivalent
+to some g ∈ {±d}, then f ◦ g ∼ 1 and f ◦ g is equivalent to some form (α, β 0 , ∗)
+                              SQUARE FORM FACTORIZATION                                 31
+
+
+with α ∈ {±da} and β 0 ≡ b mod a. But this square root is equivalent to a reduced
+square root (α, β, ∗), with α ∈ {±da} and β ≡ β 0 ≡ b mod a, that must be on the
+principal cycle. But then this reduced square root must appear before the form
+Fn , a contradiction. Therefore, f is not equivalent to any of the ambiguous forms
+±d.                                                                              
+
+   Proposition 5.6 says that when we have several small ramified primes, the test
+for whether a form is enqueued or not is the √following. First suppose N ≡ 1 mod 4.
+If a form (∗, b, c) is found such that |c0 | < 4 ∆, where c0 = c/ gcd (c, p1 · · · pn ),
+then SQUFOF will enqueue the pair (c0 , b mod c0 ). If N ≡ 2 or 3 mod 4, then the
+additional ramified prime 2 means that we should take c0 = c/ gcd (c, 2p1 · · · pn ).
+   We now describe the changes in the algorithm descriptions in Subsections 3.3 and
+3.6 needed if a multiplier is used. First, the multiplier m should be a square-free
+product of small odd primes, certainly smaller than any prime factor of N . The
+multiplier should also be small enough to imply the inequalities on µ in Proposition
+5.6.
+   Change Step 1 of the binary quadratic forms version to this:
+   Read the odd positive integer N to be factored. If N is the square of an integer,
+outputj the ksquare root and stop. If mN ≡ 1 mod 4, then set D ← mN , m0 ← m,
+       √
+d ←       D , and b ← 2b(d − 1)/2c + 1. Otherwise (N ≡ 2 or 3 mod 4), set
+                              j√ k
+D ← 4mN , m0 ← 2m, d ←           D , and b ← 2bd/2c. Let F ← (1, b, (b2 − D)/4),
+               j√ k
+i ← 2, L ←        d , and Bound ← 4 · L. Create an empty list. Let g ← |(b2 −
+D)/4|/ gcd(|(b2 − D)/4|, m0 ). If g ≤ L, add g to the list. (To use a queue, put
+(g, b mod g) onto the QUEUE here.)
+   In Step 2c, change m to m0 . (For a queue, put (g, B mod g) onto the QUEUE
+instead.)
+   Change Step 1 of the continued fraction version to this:
+   Read the odd positive integer N to be factored. If N is the square of an integer,
+output the square root and stop. If mNj≡ 1 mod      4, then set D ← 2mN ; otherwise,
+                                            √ k
+set D ← mN . In any case, set S ←             D , Q̂ ← 1, P ← S, Q ← D − P · P ,
+      jp √ k
+L←       2 D , B ← 2 · L, and i ← 0.
+   In the continued fraction version of SQUFOF, change Step 2b to:
+   Let g ← Q/ gcd(Q, 2m). If g ≤ L, put (g, B mod g) onto the QUEUE.
+   In Step 5 of the continued fraction version, replace Q by Q/ gcd(Q, 2m) before
+the factor Q is output. Likewise, any common factor of |c| and m0 is divided out
+from |c| before the factor |c| is written in the binary quadratic forms version.
+   We now turn to the task of computing the average number of forms enqueued in
+terms of N and the pi . The numbers |c0 | in the next proposition are the numbers
+g enqueued in Step 2b of the continued fraction version of SQUFOF.
+Proposition
+        √      5.7. Let N , ∆, p1 , . . √
+                                        . , pn , and µ√as in Proposition 5.6. Suppose that
+µ3/4 < 4 N when ∆ ≡ 1 mod 4, or 2µ3/4 < 4 N when ∆ ≡ 0 mod 4. Let S be the
+set of integers c with
+    (1) p2i - c √
+                for i = 1, 2, . . . , n, and either
+    (2) |c| < 4 ∆, or
+32                   JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+                 √                 √
+    (3) if |c| > 4 ∆, then |c0 | < 4 ∆, where c0 = c/ gcd (p1 · · · pn , c) when ∆ ≡
+        1 mod 4, and c0 = c/ gcd (2p1 · · · pn , c) when ∆ ≡ 0 mod 4.
+Define KS = KT = 1 when ∆ ≡ 1 mod 4, and KS = 5/3 and KT = 3/4 when
+∆ ≡ 0 mod 4. Then, as N → ∞,
+                                               n
+                                              Y    2pi + 1
+                           |S| ∼ |T| KS                    ,
+                                              i=1 i
+                                                    p +1
+where
+                                            n
+                                     √
+                                     4
+                                           Y p2 − 1
+                                               i
+(5.1)                         |T| ∼ 2 ∆ KT           ,
+                                           i=1
+                                                 p2i
+and T is the set of integers satisfying only the first two conditions above.
+Proof. We prove the theorem just for the case ∆ ≡ 1 mod 4. The only difference
+in the other case, when ∆ ≡ 0 mod 4, is that the prime 2 is ramified and behaves
+like the odd primes pi .
+   The asymptotic behavior of the cardinality of the set T is clear, as is the behavior
+of the cardinality of the set S when n = 0. We prove the asymptotic behavior of
+the cardinality of the set S for n > 0 by induction on n.
+   Suppose n = 1. Of the integers in T, the subset of integers c divisible by p1
+(given that c is not divisible by p21 ) has√size |T|/ (p1 + 1). None of these numbers
+can also appear as a c0 for some c > 4 ∆. The rest of the integers in the set T
+are not divisible by p1 , so if we multiply each of these by p1 , we get a new set of
+integers that must satisfy Conditions (1) and (3). Thus
+                                     1               p1           2p1 + 1
+                       |S| ∼ |T|         + 2 |T|          = |T|            .
+                                  p1 + 1          p1 + 1           p1 + 1
+   Now suppose that the claim holds for any choice of n − 1 primes and consider
+the case of n primes p1 , . . . , pn . Again, it is easy to see that |T| is given by Formula
+(5.1). The subset of these numbers divisible by pn has cardinality |T|/ (pn + 1).
+Each of these can be multiplied by some square-free product (perhaps trivial) of
+only the p1 , . . . , pn−1 . By the induction hypothesis, this subset leads to
+                                              n−1
+                                              Y 2pi + 1
+                                          1
+                                 |T|
+                                       pn + 1 i=1 pi + 1
+integers that satisfy either (1) and (2), or (1) and (3). The rest of the integers in T
+are not divisible by pn . Again, by the induction hypothesis, this subset leads to
+                                              n−1
+                                         pn   Y 2pi + 1
+                               2 |T|                     ,
+                                       pn + 1 i=1 pi + 1
+where we first count those numbers that we get by multiplying by some square-free
+product (perhaps trivial) of the p1 , . . . , pn−1 , then we double our count since for
+each of these we may multiply by either 1 or pn . Finally, |S|, the total number of
+integers that satisfy either (1) and (2), or (1) and (3) is
+                        n−1
+                        Y 2pi + 1                 n−1
+                                                  Y 2pi + 1         n
+                    1                        pn                    Y   2pi + 1
+     |S| ∼ |T|                     + 2 |T|                   = |T|             .
+                 pn + 1 i=1 pi + 1         pn + 1 i=1 pi + 1       i=1
+                                                                        pi + 1
+Thus the claim holds for all n ≥ 0.                                                      
+                            SQUARE FORM FACTORIZATION                                   33
+
+
+Theorem 5.8. Let N be a square-free positive integer with k distinct large odd
+prime divisors and let p1 , . . . , pn be n distinct small odd primes (n ≥ 0) with pi - N
+for all i. Define ∆ as in Proposition   √ 5.1 and µ as in Proposition
+                                                                    √ 5.6. Assume
+                                                                               √     that
+the pi are chosen so that µ3/4 < 4 N when ∆ ≡ 1 mod 4, or 2µ3/4 < 4 N when
+∆ ≡ 0 mod 4. If Q is the number of forms that SQUFOF enqueues before finding
+a proper square form, then, as N → ∞, the asymptotic average value of Q is
+                      √                     n
+                        2 2 + 1 log 2 Y 2pi + 1
+                                                           if ∆ ≡ 1 mod 4 ,
+                     
+                     
+                     
+                     
+                     
+                     
+                              2k − 2        i=1
+                                                   2pi
+             A[Q] ∼
+                          √                 n
+                     
+                       5 2 + 1 log 2 Y 2pi + 1
+                                                           if ∆ ≡ 0 mod 4 .
+                     
+                     
+                      2 (2k − 2)
+                     
+                                                   2pi
+                                             i=1
+
+Proof. The size |S| in Proposition 5.7 is the number of end coefficients that will lead
+          being enqueued. Let√Condition (2)0 denote Condition (2) of Proposition
+to a form √
+5.7 with 4 ∆ replaced with ∆, and let T 0 be the set of integers c satisfying
+Conditions (1) and (2)0 . Then, as in the proof of Proposition 5.7,
+                                     √          n
+                                               Y   p2i − 1
+                           |T 0 | ∼ 2 ∆ KT                 .
+                                               i=1
+                                                      p2i
+                                               √
+The number of end coefficients c with |c| < ∆ and c not divisible by the square
+of any ramified prime is given by |T 0 |. We take the ratio |S|/|T 0 | to be the fraction
+of forms enqueued. Finally, we take the product of this number with A[W ] to get
+A[Q], as in the proof of Theorem 4.24.                                                  
+5.3. Optimal Multipliers for SQUFOF. Recall that the continued fraction ver-
+sion of SQUFOF always works with N ≡ 2 or 3 mod 4, multiplying N by 2 whenever
+mN ≡ 1 mod 4, where m is the odd multiplier. Notice then that if the multiplier m
+is the product of the odd primes p1 , . . ., pn , the integer p1 · · · pn N ≡ 2 or 3 mod 4,
+where N has a factor of 2 if and only if p1 · · · pn N ≡ 1 mod 4 before the factor of
+2 was put in. In this situation the asymptotic average number of forms examined
+to find a proper square form, as N → ∞, is
+                                 √        √              n
+                              3 2 + 2 4 N log 2 Y pi + 1
+                     A[W ] =                                          .
+                                   2 (2k − 2)                  3/4
+                                                         i=1 2pi
+We seek pi that minimize this quantity, the last product being the factor by which
+SQUFOF factorization of p1 · · · pn N is faster or slower than that of N .
+Theorem 5.9. Let Ω be the set of all finite sets of distinct odd primes and define
+the mapping F : Ω → Z by F (∅) = 1 and
+                                                  n
+                                                 Y   pi + 1
+                        F ({p1 , . . . , pn }) =        3/4
+                                                            .
+                                                 i=1 2pi
+Then F is minimized at the set {3, 5, 7, 11} and
+                               F ({3, 5, 7, 11}) ≈ 0.7268 .
+Proof. It is easy to check that F ({3, 5, 7, 11}) ≈ 0.7268. We will show that for any
+other finite set of odd primes {p1 , . . . , pn }, we will have
+                         F ({p1 , . . . , pn }) > F ({3, 5, 7, 11}) ,
+34                   JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+                  p1 · · · pn   F ({p1 , . . . , pn }) G ({p1 , . . . , pn })
+                        3           0.8774                 1.1667
+                        5           0.8972                 1.1000
+                        7           0.9295                 1.0714
+                       11           0.9934                 1.0455
+                     3·5            0.7872                 1.2833
+                     3·7            0.8155                 1.2500
+                     3 · 11         0.8716                 1.2197
+                     5·7            0.8339                 1.1786
+                     5 · 11         0.8913                 1.1500
+                     7 · 11         0.9233                 1.1201
+                    3·5·7           0.7317                 1.3750
+                   3 · 5 · 11       0.7820                 1.3417
+                   3 · 7 · 11       0.8101                 1.3068
+                   5 · 7 · 11       0.8284                 1.2321
+                 3 · 5 · 7 · 11     0.7268                 1.4375
+            Table 5. Good candidate multipliers for N ≡ 2 or 3 mod 4.
+
+
+
+which will prove the claim. So suppose by way of contradiction that there exists a
+finite set of odd primes {p1 , . . . , pn } such that F ({p1 , . . . , pn }) < F ({3, 5, 7, 11}).
+Since F (∅) = 1, F is not minimized at ∅ and so n > 0.
+   It is easy to check that the function f (x) = (x + 1) /2x3/4 is strictly increasing
+on [3, ∞) and so for a given n, among all sets of n primes, F is minimized at
+{3, 5, 7, . . . , pn }, where pn is the nth odd prime. Straightforward computation shows
+that for sets of n primes with n = 1, 2, 3, 4, F is minimized at {3, 5, 7, 11}. Finally,
+one easily sees that (x + 1) /2x3/4 > 1 for x ≥ 13. This means that adding any
+additional primes to the set {3, 5, 7, 11} will increase the value of F at this new set.
+Therefore, F is minimized at the set {3, 5, 7, 11}.                                            
+
+   Theorem 5.9 shows that the optimal multiplier is 3 · 5 · 7 · 11 = 1155, and that
+in fact we can expect SQUFOF to find a non-trivial factor of N using 1155N in
+about 73% of the time that it would take using N . However, for practical reasons
+associated with the size of single precision integers, SQUFOF may actually run
+faster for smaller multipliers.                                       Qn
+   Let F be defined as in Theorem 5.9 and let G ({p1 , . . . , pn }) = i=1 2p2p
+                                                                              i +1
+                                                                                i
+                                                                                   be the
+factor by which the number of forms enqueued is larger when factoring p1 · · · pn N
+than when factoring N . Table 5 lists some good candidate multipliers, along with
+the associated values of F and G. Note that for the values of p1 · · · pn considered
+in Table 5, the value of G is no larger than 1.5. In other words, at worst we can
+expect a 50% increase in the number of forms enqueued when using one of these
+multipliers. However, the number of forms enqueued without using a multiplier
+is very small—about 2.1 forms. So even though the rules for enqueuing a form
+are more complicated (hence more time consuming) when using multipliers, this
+average time cost is negligible compared with the average time savings.
+
+5.4. Racing SQUFOF with Multipliers. The       √ original reason for using multi-
+pliers was to exploit the great variation in W/ 4 N , where W is the actual number
+                             SQUARE FORM FACTORIZATION                                    35
+
+
+of forms that SQUFOF must examine before finding a proper square form. Racing
+several multipliers succeeds when the first proper square form is found, which may
+appear early for at least one of the multiples of N . The results of the previous sub-
+section suggest that if we choose the multipliers wisely, we can expect the proper
+square form to come quickly for one multiplier,      √      so that the total work is less.
+   Our experiments suggest that A[W ]/ 4 N behaves like a random variable with an
+exponential distribution, since we find its mean and variance to be approximately
+the same, and the exponential distribution is the only common one with this prop-
+erty. Furthermore, the chance that any form in the principal period is a proper
+square form seems to be independent of whether any forms seen earlier in the pe-
+riod are proper square forms. This lack of memory is√another characteristic of the
+exponential distribution. We conjecture that A[W ]/ 4 N does have an exponential
+distribution.
+   To illustrate an implication of this conjecture, let N be a product of two primes.
+Let m1 , . . . , ms be distinct multipliers. Let A[Wi ] be the average number of forms
+that SQUFOF on mi N must examine to find the first proper square form. Let
+A[W1 , . . . , Ws ] = s · A[min(W1 , . . . , Ws )] be the average total number of forms
+that SQUFOF must examine to find the first proper square form when racing the
+multipliers m1 N, . . . , ms N . Let
+                                                           s
+                                                                 !−1
+                                                        1X 1
+                                  H(x1 , . . . , xs ) =
+                                                        s i=1 xi
+                                                                                            √
+be the harmonic mean of x1 , . . . , xs . Then an exponential distribution for A[W ]/ 4 N
+would imply that
+                                      √
+                                      4
+                                                           √
+                                                           4
+                                                                            √
+                                                                            4
+                  A[W1 , . . . , Ws ]/ N = H(A[W1 ]/ N, . . . , A[Ws ]/ N ).
+Our experimental data supports this formula. The minimum of several exponential
+random variables is again an exponential random variable, which is probably why
+we see this behavior when racing multipliers.
+   For example, our experiments for racing
+                                       √ the multipliers m1 = 11 and m2 = 3·5·7
+give the value 1.4687 for A[W1 , W2√]/ 4 N averaged over thousands
+                                                            √       of different
+                                                                             √   N.
+                                    4                        4               4
+The theory predicts
+               √       that A[W1 ]/ N = 0.9934 · A[W ]/ N and A[W2 ]/ N =
+0.7317 · A[W ]/ 4 N . Hence, the conjecture would predict that
+                      √
+                      4
+                                                  √4
+                                                                     √4
+          A[W1 , W2 ]/ N = H(0.9934 · A[W ]/ N , 0.7317 · A[W ]/ N)
+                                                           √
+                                                           4
+                            = H(0.9934, 0.7317) · A[W ]/ N
+                                               √
+                                               4
+                            = 0.8427 · A[W ]/ N .
+                                  √
+The theory predicts that A[W ]/ 4 N = 1.7749, so we multiply 0.8427 by 1.7749 to
+get 1.4957, which is close to the observed value 1.4687 from the experiment. Many
+other examples from [5] give similar approximate confirmation of the conjecture.
+
+                              6. Experimental Results
+   To test the conclusions of the heuristic arguments in the preceding two sections,
+we factored hundreds of thousands of integers N with SQUFOF. These numbers
+were all square-free with two, three or four prime factors. About one-third of the
+numbers had each number of prime factors. The size of N in our experiments
+ranged from about 109 to about 1015 , with a few larger N .
+36                  JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+   We used both the continued fraction and the binary quadratic forms versions
+of SQUFOF. Half of the numbers were ≡ 1 mod 4 and half were ≡ 3 mod 4. We
+used each one of the 16 divisors of 1155 = 3 · 5 · 7 · 11 as a multiplier m. Whenever
+mN ≡ 1 mod 4 and we were using the continued fraction version of SQUFOF, we
+factored 2mN , as specified in the heuristic argument. But we also tried to factor
+mN directly in these cases, even though the results of this paper do not apply
+there.
+   For each pair of multipliers m1 6= m2 , we raced SQUFOF on m1 N and m2 N
+until the first proper square form was found.
+   The queue in these experiments had space for 50 entries. It never overflowed.
+   In a small number of cases, SQUFOF could not factor N because the principal
+period contained no proper square forms. This happened less than 1% of the time
+for N near 109 or 1010 and even less frequently for N near 1015 .
+   For each number N successfully factored, we noted the number W of forms
+examined before finding the first proper square form and the total number Q of
+entries into the queue. For each case (number of prime factors of N , whether
+N ≡ 1 or 3 mod 4, version of SQUFOF used, multiplier m or pair m√        1 , m2 or racing
+                                                                        4
+multipliers), we computed the mean √   and  standard   deviation of W/      N and Q.
+   In every case the mean of W/ 4 N was close to the value predicted by Theorems
+4.22 and 5.4. Also, the mean of Q was close to the prediction given in Theorems 4.24
+and 5.8. In general, the experimental average values were closer to the theoretical
+predictions for larger N than for smaller N .                √
+   In all of our experiments, the standard deviation of W/ 4 N was close to the mean
+for that statistic, which supports the hypothesis of an exponential distribution for
+the random variable.
+   Table 6 gives a tiny sample of the extensive tables we generated. Each line in
+it gives the results of factoring 40,000 values of N , each the product of two primes
+near 1,000,000. Each N was factored using each multiplier in Table 5.
+   Let FWRD be the number of forms of discriminant ∆ that SQUFOF examines
+before finding a proper square form, divided by the fourth root of N . Let QUEUE
+be the total number of forms that SQUFOF enqueues during the search for a proper
+square form. We computed FWRD and QUEUE for each successful factorization.
+We then computed the average values FWRD and QUEUE, along with the standard
+deviations σ (FWRD) and σ (QUEUE). We also the computed the maximum and
+minimum value for FWRD and QUEUE, which gives the inequalities: 0.0008 ≤
+FWRD ≤ 34.4793 and 0 ≤ QUEUE ≤ 49. Table 6 compares the predicted and
+calculated values for FWRD and QUEUE.
+
+                                  7. Future Work
+     We conclude with some questions for further study.
+      1.) Non-fundamental discriminants: SQUFOF appears to work for non-
+         fundamental discriminants ∆. We have factored millions of N ≡ 1 mod 4
+         without multiplying by 2. The success rate was more than 99%, just as for
+         N ≡ 3 mod 4. In addition, we have factored tens of thousands of N having
+         an odd square factor > 8 with a similar success rate. We believe that an
+         analysis similar to that in this paper will yield the same time and average
+         number of forms enqueued for such ∆. In future work we will re-examine
+         the points where we assume ∆ to be a fundamental discriminant.
+                       SQUARE FORM FACTORIZATION                              37
+
+
+       A[W ]
+  m     √
+        4
+          N
+              FWRD σ (FWRD) A[Q] QUEUE σ (QUEUE)                       failures
+  1    1.7749 1.7587    1.7570     2.0918 2.4009       2.9398            111
+  3    1.5573 1.5294    1.5144     2.4404 2.3750       2.8554            103
+  5    1.5925 1.5822    1.5799     2.3009 2.3970       2.9107             74
+  7    1.6497 1.6193    1.6254     2.2412 2.3850       2.9285            102
+  11   1.7631 1.7460    1.7536     2.1868 2.3848       2.9158             49
+  15   1.3972 1.3744    1.3829     2.6844 2.3602       2.8420             68
+  21   1.4474 1.4273    1.4186     2.6147 2.3733       2.8655             78
+  33   1.5469 1.5421    1.5326     2.5513 2.3996       2.8646             84
+  35   1.4802 1.4664    1.4652     2.4653 2.4034       2.8916             51
+  55   1.5819 1.5616    1.5556     2.4055 2.3789       2.8545             52
+  77   1.6388 1.6304    1.6282     2.3430 2.4089       2.9155             55
+ 105   1.2987 1.2714    1.2747     2.8762 2.3666       2.8318             43
+ 165   1.3879 1.3773    1.3791     2.8064 2.3800       2.8723             55
+ 231   1.4378 1.4243    1.4332     2.7335 2.3767       2.8659             47
+ 385   1.4703 1.4565    1.4542     2.5773 2.4006       2.8811             50
+1155   1.2900 1.2770    1.2766     3.0069 2.3897       2.8553             55
+           Table 6. Two-prime statistics for FWRD and QUEUE.
+
+
+                                                                                   √
+  2.) Distributions of A[W ] and A[Q]: Our experiments suggest that A[W ]/ 4 N
+     may be a random variable with an exponential distribution, since we ob-
+     serve its mean and variance to be approximately the same. In future work,
+     we would like to prove this, and investigate the implications it holds for the
+     distribution of A[Q] and for racing several multipliers.
+  3.) Racing Multipliers: First, we would like to prove our experimental re-
+     sults for A[W ] for the case of racing multipliers. If we can do this, then we
+     will be able to give a good estimate for A[Wr ], the average number of forms
+     examined during a race between several multiples of N . We also hope to
+     discover the distribution of A[Qr ], the average number of forms enqueued
+     during a race between several multiples of N . Also, given that there are
+     several multipliers m such that we can expect to factor mN faster than we
+     can expect to factor N , it may be worthwhile to race several multiples of
+     N.
+  4.) Fast Return: Once we have found a proper square form and switched to
+     the cycle of its inverse square root, we know approximately how many forms
+     we must traverse to reach an ambiguous form with the factor of N . Namely,
+     it is close to half the number of forms considered before we found the proper
+     square form. Using a fast exponentiation algorithm with composition of
+     forms, we can swiftly compute a reduced form in this neighborhood. If it
+     is not ambiguous, then we can cycle through forms adjacent to this one
+     in both directions until we find an ambiguous form. This device greatly
+     reduces the time for Step 4 of the algorithm.
+  5.) 64-bit Architecture: Modern workstations which perform arithmetic
+     on 64-bit integers allow SQUFOF to factor integers as large as about 36
+     digits using only single precision operations. SQUFOF would take a few
+     seconds to a minute to factor a typical 36-digit integer on such a machine.
+38                   JASON E. GOWER AND SAMUEL S. WAGSTAFF, JR.
+
+
+         The elliptic curve algorithm would be a strong competitor to SQUFOF for a
+         number of that size, and faster for factoring larger integers. The cross-over
+         point should be investigated.
+
+                                         References
+ [1] J. Brillhart and M. A. Morrison. A Method of Factoring and the Factorization of F 7 . Math-
+     ematics of Computation, 29:183–205, 1975.
+ [2] Duncan A. Buell. Binary Quadratic Forms: Classical Theory and Modern Computations.
+     Springer-Verlag, 1989.
+ [3] Henri Cohen. A Course in Computational Algebraic Number Theory. Springer-Verlag, 1996.
+ [4] Harvey Cohn. A Second Course in Number Theory. John Wiley & Sons, Inc., 1962.
+ [5] Jason E. Gower. Square form factorization. PhD thesis, Purdue University, December 2004.
+ [6] David Joyner and Stephen McMath. http://cadigweb.ew.usna.edu/~wdj/mcmath/.
+ [7] A. Y. Khinchin. Continued Fractions. The University of Chicago Press, third edition, 1964.
+ [8] H. W. Lenstra, Jr. On the Calculation of Regulators and Class Numbers of Quadratic Fields.
+     In J. V. Armitage, editor, Journées Arithmétiques, 1980, volume 56 of Lecture Notes Series,
+     pages 123–150. London Mathematical Society, 1982.
+ [9] J. S. Milne. Algebraic Number Theory, 1998. available at http://www.math.lsa.umich.edu
+     /~jmilne.
+[10] Ivan Niven, Herbert S. Zuckerman, and Hugh L. Montgomery. An Introduction to the Theory
+     of Numbers. John Wiley & Sons, Inc., fifth edition, 1991.
+[11] Hans Riesel. Prime Numbers and Computer Methods for Factorization. Birkhaüser, second
+     edition, 1994.
+[12] D. Shanks. Analysis and Improvement of the Continued Fraction Method of Factorization.
+     Abstract 720-10-43. Amer. Math. Soc. Notices, 22:A–68, 1975.
+[13] Daniel Shanks. An Attempt to Factor N = 1002742628021. Manuscript, 3 pages, available
+     at [6].
+[14] Daniel Shanks. Notes for Analysis and Improvement of the Continued Fraction Method of
+     Factorization. Manuscript, 15 pages, available at [6].
+[15] Daniel Shanks. SQUFOF Notes. Manuscript, 30 pages, available at [6].
+[16] Daniel Shanks. Class Number, a Theory of Factorization, and Genera. In Proceedings of
+     Symposia in Pure Mathematics, volume 20, pages 415–440. American Mathematical Society,
+     1971.
+[17] Daniel Shanks. The Infrastructure of a Real Quadratic Field and its Applications. In Pro-
+     ceedings of the 1972 Number Theory Conference, pages 217–224, Boulder, Colorado, 1972.
+[18] Daniel Shanks. Five Number-Theoretic Algorithms. In Proceedings of the Second Manitoba
+     Conference on Numerical Mathematics, pages 51–70. Utilitas Mathematica, 1973. Number
+     VII in Congressus Numerantium.
+[19] Samuel S. Wagstaff, Jr. Cryptanalysis of Number Theoretic Ciphers. CRC Press, 2003.
+
+  Institute for Mathematics and its Applications, University of Minnesota, 424 Lind
+Hall, 207 Church St. S.E., Minneapolis, MN 55455-0436
+  E-mail address: gower@ima.umn.edu
+
+  Center for Education and Research in Information Assurance and Security, and
+Department of Computer Science, Purdue University, West Lafayette, IN 47907
+  E-mail address: ssw@cerias.purdue.edu
+

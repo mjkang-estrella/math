@@ -1,0 +1,824 @@
+Algorithmic Number Theory
+MSRI Publications
+Volume 44, 2008
+
+
+
+
+                            The number field sieve
+                               PETER STEVENHAGEN
+
+
+      A BSTRACT. We describe the main ideas underlying integer factorization using
+      the number field sieve.
+
+
+
+
+                                     C ONTENTS
+    1. Introduction                                                             83
+    2. Factoring by congruent squares                                           84
+    3. Number rings                                                             86
+    4. Sieving for smooth elements                                              88
+    5. Primes dividing a b˛                                                     90
+    6. Sieving and linear algebra                                               91
+    7. Nonmaximality of Z Œ˛                                                   93
+    8. Finiteness results from algebraic number theory                          95
+    9. Quadratic character columns                                              96
+   10. Square root extraction                                                   97
+   11. Running time                                                             98
+    References                                                                 100
+
+
+                                  1. Introduction
+   The number field sieve is a factoring algorithm that tries to factor a hard
+composite number by exploiting factorizations of smooth numbers in a well-
+chosen algebraic number field. It is similar in nature to the quadratic sieve
+algorithm, but the underlying number theory is less elementary, and the actual
+implementation involves a fair amount of optimization of the various parameters.
+   The key idea of the algorithm, the use of smooth numbers in number rings dif-
+ferent from Z , was proposed in 1988 by Pollard. Many people have contributed
+theoretical and practical improvements since then. An excellent reference for
+many of the details left out in this paper is [Lenstra and Lenstra 1993]. It contains
+
+                                          83
+84                            PETER STEVENHAGEN
+
+
+a complete bibliography of the early years of the number field sieve, as well as
+original contributions by most of the main developers of the algorithm.
+   Among the successes of the algorithm are the 2005 factorization of the 663-
+bit RSA challenge number
+                            RSA-200 D p100  q100
+into a product of two primes of 100 decimal digits each, and the factorization in
+2006 of the 275-digit Cunningham number
+                           6353     1 D 5  p120  p155
+into a product of 5 and two primes of 120 and 155 digits, respectively. Unlike
+RSA-200, the second number has a special form that can be exploited by the
+number field sieve. No other algorithm is currently capable of factoring integers
+of this size.
+   For the quadratic sieve algorithm and the elliptic curve method, the conjec-
+tural asymptotic expected running time for factoring a large number n is
+                                  p
+                              exp log n log log n;
+which is on a log-log scale halfway between exponential and polynomial. The
+number field sieve conjecturally improves this bound to
+.1:1/                   exp c.log n/1=3 .log log n/2=3 ;
+                                                      
+
+where the constant c D .64=9/1=3  1:93 can be lowered to .32=9/1=3  1:53
+if we are dealing with numbers n of the special form explained in section 3.
+
+                    2. Factoring by congruent squares
+   The number field sieve is one of the algorithms that tries to factor n by pro-
+ducing congruent squares modulo n, as explained in [Pomerance 2008]. For
+this we will assume from now on that n is odd, composite and not a power of
+a prime number. Note that each of these conditions can easily be checked for
+large n. One tries to find integers x and y satisfying x 6 ˙y mod n and
+.2:1/                             x 2  y 2 mod n:
+In this case, gcd.x y; n/ is a non-trivial factor of n. As at least half of all
+pairs .x; y/ of invertible residue classes modulo n satisfying .2:1/ satisfy x 6
+˙y mod n, we may expect to find a non-trivial factor of n within a few tries if
+we can produce solutions .x; y/ to .2:1/ in a pseudo-random way.
+   An old factoring algorithm based on this idea is the continued fraction method.
+It uses the convergents xi =yi 2 Q (i D 1; 2; : : :) occurring in the continued
+                                THE NUMBER FIELD SIEVE                         85
+                        p
+fraction expansion of n as defined in [Buhler and Wagon 2008]. These frac-
+tions, which can be computed from simple two-term recursive relations for the
+                                                                         p
+integers xi and yi , provide rational approximations to the real number n. The
+associated integers
+                                  Qi D xi2 nyi2
+                                  p
+are of absolute value at most 2 n, and we may hope to be able to find a fair
+number of these Qi which are smooth. As we saw in [Pomerance 2008], it is
+a matter of linear algebra over the field of two elements to construct a square
+from a sufficiently large
+                     Q set of integers that factor over a given factor base. From
+                2
+every square y D i2I Qi , we find a solution
+                               Y 2
+                                   xi  y 2 mod n
+                                   i2I
+
+to the congruence .2:1/.
+   The quadratic sieve replaces the integers Qi in the continued fraction algo-
+rithm by the values of the polynomial
+                               Q.X / D X 2 n:
+                              p
+For integers x satisfying jx    nj < M for some small bound M , the absolute
+                                           p
+value of Q.x/ is not much larger than 2M n. As M has to be large enough
+to allow for a reasonable supply of x-values, the numbers Q.x/ we encounter
+here are somewhat larger than the Qi above. However, the advantage of using
+values of the polynomial Q is that the values of x for which Q.x/ is smooth
+may be detected by sieving.
+   From the smooth values of Q, we construct a square y 2 D x2S Q.x/ and
+                                                            Q
+a solution
+                              Y 2
+                                  x  y 2 mod n
+                                   s2S
+to the basic congruence .2:1/ exactly as for the continued fraction algorithm.
+   The algebraic description one may give of both methods is as follows. We
+have constructed squares .x 2 ; y 2 / 2 Z  Z whose images under the reduction
+map
+                                         
+                            Z  Z  Z =nZ  Z =nZ
+                   .xi2 ; xi2      nyi2 /   ’   .xi2 ; xi2 /
+                      .x 2 ; x 2      n/    ’   .x 2 ; x 2 /
+lie in the diagonal. If we are lucky, .x; y/ does not land in
+                           D D f.x; ˙x/ W x 2 Z =nZ g
+86                              PETER STEVENHAGEN
+
+
+and we find a non-trivial factor of n. As .x 2 ; y 2 / is constructed in such a way
+that .x; y/ has no obvious reason to always end up in D, we expect to be lucky
+in at least half of all cases.
+   The construction of squares in the continued fraction and quadratic sieve
+                                                                          p
+methods requires many auxiliary numbers Qi or Q.x/ of size O. n/ to be
+smooth. Asymptotically, the superior performance of the number field sieve
+stems from the fact that it is a sieving method that requires smaller auxiliary
+numbers to be smooth: they are of size
+                           exp c 0 .log n/2=3 .log log n/1=3
+                                                             
+
+with c 0 D .64=3/1=3  2:77. Informally phrased, the length of these numbers
+is not half of the length of n, but only the 2=3-rd power of the length of n.
+This improvement is obtained by replacing Z  Z by Z  Z Œ˛ for a suitable
+number ring Z Œ˛ and producing squares .x 2 ; 2 / with diagonal image under
+the reduction map
+                                    
+                        Z  Z Œ˛  Z =nZ  Z =nZ :
+Exactly as before, this yields a solution
+.2:2/                           x 2  . /2 mod n
+to our basic congruence .2:1/.
+
+                                3. Number rings
+   A number field is a finite field extension of the field Q of rational numbers,
+and a number ring [Stevenhagen 2008] is by definition a subring of a number
+field. The basic type of number ring used in the number field sieve is the ring
+                               Z Œ˛ D Z ŒX =f Z ŒX 
+generated by a formal zero ˛ D .X mod f Z ŒX / of some irreducible polynomial
+f
+P 2 Z ŒX i of degree d  1. The elements of this ring are finite expressions
+   i0 ai ˛ with ai 2 Z . One may obtain an embedding Z Œ˛  C by taking ˛ to
+be a complex zero of f . Note that even though the field of fractions of a number
+ring is always of the form Q .˛/ for some root ˛ of an irreducible polynomial
+in Z ŒX , there are many number rings that are of finite rank over Z but not of
+the form Z Œ˛.
+   We will take f to be a monic irreducible polynomial in Z ŒX , such that
+                  Z Œ˛ D Z  1 ˚ Z  ˛ ˚ Z  ˛ 2 ˚ : : : ˚ Z  ˛ d 1
+is integral over Z . It is an order in the field of fractions Q .˛/ of Z Œ˛.
+    The norm
+                                   N W Q .˛/ ! Q
+                            THE NUMBER FIELD SIEVE                               87
+
+
+takes x 2 Q .˛/ to the determinant of the multiplication-by-x map on the Q -
+vector space Q .˛/. It is multiplicative, and for non-zero x 2 Z Œ˛, the absolute
+value
+                         jN .x/j D #.Z Œ˛=x Z Œ˛/ 2 Z
+of the norm of x measures the “size” of x.
+(3.1) Example. The best known example of a number ring with d D deg.f / > 1
+               ring Z Œi  of Gaussian integers obtained by putting f D X 2 C 1
+is probably thep
+and ˛ D i D       1. For this ring, the norm function is given by the simple
+formula
+                             N .a C bi/ D a2 C b 2 :                             //
+More generally, one can find the norm of an element x D a           b˛ 2 Q .˛/ from
+the irreducible polynomial f D diD0 ci X i of ˛ as
+                                P
+
+                                                Pd
+.3:2/             N .a   b˛/ D b d f .a=b/ D               i d i:
+                                                   iD0 ci a b
+
+For polynomial expressions g.˛/ in ˛ of higher degree the norm can efficiently
+be computed from the resultant of f and g, but we won’t need this.
+   For a number ring Z Œ˛ to be useful in factoring n, it needs to come with a
+reduction homomorphism
+
+                                W Z Œ˛ ! Z =nZ :
+
+Giving such a homomorphism amounts to giving a zero mD .˛/ of f modulo n.
+In order to have a small number ring Z Œ˛, one tries to choose a polynomial f of
+moderate degree — in practice d is usually between 3 and 10, although its op-
+timal value does slowly tend to infinity with n — and having small coefficients.
+This is not an easy problem, but for certain special n one can find very small f .
+(3.3) Example. For the Fermat number
+                                       9
+                         n D F9 D 22 C 1 D 2512 C 1
+
+the polynomial f D X 5 C 8 is irreducible in Z ŒX  and satisfies
+
+                     f .2103 / D 2515 C 8 D 8n  0 mod n:
+
+Similarly, for the record factorization of the Cunningham number n D 6353 1
+mentioned in the introduction, the polynomial f D X 6 6 is irreducible in Z ŒX 
+and satisfies
+                     f .659 / D 6354       6 D 6n  0 mod n:                     //
+88                                   PETER STEVENHAGEN
+
+
+For numbers n of the special form n D r e s, with r , s and e small, one can
+find a small polynomial f as in the example. For general n we cannot hope
+to be so lucky in finding f , and one has to deal with large number rings. The
+special and the general number field sieve stand for the versions of the algorithm
+corresponding to these two cases. As is to be expected, the special number field
+sieve has a somewhat better conjectural running time, and this is reflected by
+the size of the record factorizations for each of these versions.
+   We will mainly be concerned with the case of general integers n to be factored.
+For such n, the base m method yields a polynomial f of any desired degree d > 1
+such that m D m.d/ is a zero of f modulo n. One simply puts
+
+                                   m D integer part of n1=d
+
+and writes n in base m as
+                                              Pd
+                                                   iD0 ci m :
+                                        nD                 i
+
+
+Then f D diD0 ci X i is a polynomial in Z ŒX  satisfying f .m/ D n. In realistic
+           P
+situations n is much larger than d, which ensures that f will be monic; one may
+further assume that f is irreducible, as non-trivial factors of f yield non-trivial
+factors of n.
+   From jci j < m < n1=d we deduce that the discriminant .f / of f satisfies
+
+.3:4/                               j.f /j < d 2d n2 3=d :
+
+As j.f /j often exceeds n, we cannot hope to be able to factor .f /.
+
+                         4. Sieving for smooth elements
+  Having chosen d, f and m as above, we can combine the ordinary reduction
+map on Z with our reduction map on Z Œ˛ to obtain a ring homomorphism
+                                        
+                   Z  Z Œ˛                     Z =nZ  Z =nZ
+                 Pd 1                                        Pd 1
+                  iD0 ai ˛                                      iD0 ai m mod n :
+                             i                                          i
+                                                                             
+            x;                       ’            x mod n;
+
+By construction, the elements .a bm; a b˛/ have -image in the diagonal. In
+order to combine them into squares, we need to find sets S of coprime integer
+pairs .a; b/ for which we have
+                       Y
+(4.1)                       .a bm/ is a square in Z ;
+                        .a;b/2S
+                         Y
+(4.2)                              .a       b˛/     is a square in Z Œ˛.
+                        .a;b/2S
+                            THE NUMBER FIELD SIEVE                                 89
+
+
+As in the case of the quadratic sieve, this is in principle done by sieving for
+smooth elements .a bm; a b˛/ and combining them into a square via linear
+algebra methods over F2 . The details are however more involved.
+   Let us define an element .a bm; a b˛/ 2 Z  Z Œ˛ to be y-smooth if a bm
+is a y-smooth rational integer and a b˛ is a y-smooth algebraic integer in Z Œ˛.
+The latter condition simply means that the norm N .a b˛/ 2 Z is a y-smooth
+integer. On the rational side, the procedure to find a set S for which (4.1) holds
+is more or less standard. We pick a universe
+
+          U D f.a; b/ W jaj  u;    0<bu        and      gcd.a; b/ D 1g
+
+of coprime integer pairs .a; b/ depending on a parameter u.
+   Using the factor base B1 consisting of primes p  y and a sign-bit, we can
+determine the subset of pairs .a; b/ 2 U for which a bm is y-smooth by sieving.
+here we have a 2-dimensional array of pairs .a; b/ over which the sieving with
+the primes in B1 needs to be done. One may simply choose to sieve over a for
+each value of b, but there exist other methods than this straightforward line-by-
+line sieving. Recent record factorizations have used a combination of different
+sieving methods.
+   On the algebraic side, the pairs .a; b/ 2 U for which N .a b˛/ is y-smooth
+can also be found by sieving with the primes in B1 , since we see from (3.2) that
+the norms
+                                                 d
+                                                 X
+.4:3/              N .a    b˛/ D b d f .a=b/ D         ci ai b d i
+                                                 iD0
+
+are the .a; b/-values of the homogeneous polynomial f .X; Y /. But it is not suf-
+ficient to find elements a b˛ whose norm factors over ourQ factor base B1 . This
+information will only enable us to construct a product .a;b/2S .a b˛/ with
+square norm, which is far too weak to imply (4.2). A square in Z Œ˛ certainly
+has square norm, but the converse only holds in the trivial case Z Œ˛ D Z , where
+the norm of an element is the element itself.
+(4.4) Example. In the ring of Gaussian integers Z Œi  we have
+
+                      N .3 C 4i / D 32 C 42 D 52 D N .5/:
+
+Now 3 C 4i D .2 C i /2 is indeed a square, but 5 D .2 C i /.2        i / is not.   //
+The problem we encounter is that different prime divisors of an element x 2 Z Œ˛
+can give rise to the same prime factor p in its norm N .x/. This forces us to
+keep track of “prime factors” of x in the ring Z Œ˛.
+90                             PETER STEVENHAGEN
+
+
+                           5. Primes dividing a      b˛
+   The theory of prime divisors in number rings lies at the very heart of algebraic
+number theory, and understanding the workings of the number field sieve is not
+possible without entering this area. Rather than assuming the more extensive
+exposition on the arithmetic of number rings in [Stevenhagen 2008], we use the
+concrete example of our number ring Z Œ˛ to illustrate and motivate the more
+general statements of algebraic number theory in that paper.
+   Let R be any number ring. A prime in R is a non-zero prime ideal p  R.
+The residue class ring F D R=p of a prime is a finite field. We say that p divides
+an element x 2 R if x is contained in p. For the number ring Z the primes p Z
+correspond to the prime numbers p 2 Z . A prime p  R lies over a unique prime
+p Z D p \ Z of Z . The corresponding prime number p is the characteristic of
+the field F . It is the unique prime number contained in p. The degree of p is the
+degree of F over its prime field Fp .
+   A prime of degree 1 in Z Œ˛ is just the kernel p of a ring homomorphism
+
+                                  W Z Œ˛  Fp
+
+for some prime number p. As  may be specified by giving the rational prime p
+together with the zero rp D .˛/ 2 Fp of .f mod p/ to which ˛ is mapped, we
+use the ad hoc notation .pI rp / to denote p D ker .
+   Primes of degree 1 are the only primes we need for the number field sieve.
+Indeed, suppose that we have .a; b/ 2 U as in the previous section, and that p
+is a prime over p dividing a b˛. Then we have p - b, since pjb would imply
+a 2 p \ Z D p Z , contradicting the coprimality of a and b. From a D b˛ 2 F D
+Z Œ˛=p we find that rp D ˛ D ab 1 mod p is a zero of .f mod p/, and that
+
+                            p D p Z Œ˛ C .a   b˛/Z Œ˛
+
+is the kernel of the map
+                                   
+                            Z Œ˛  Fp
+                               ˛ ’ .ab 1 mod p/:
+
+Thus p is the prime .pI rp / of degree 1 that is generated by p and rp ˛, with
+rp D ab 1 mod p a zero of .f mod p/. Conversely, a prime .pI rp / of degree 1
+divides a b˛ if we have rp D ab 1 mod p.
+    From our norm formula .3:2/, we see that ab 1 mod p is a zero of .f mod p/
+if and only if N .a b˛/ is divisible by p. We conclude that for a rational prime
+number p, there is a prime divisor p of a b˛ in Z Œ˛ that lies over p if and only
+if p divides the norm N .a b˛/. If p divides N .a b˛/, the prime p D .pI rp /
+                             THE NUMBER FIELD SIEVE                               91
+
+
+with rp D .ab 1 mod p/ is the unique such prime, and we call
+                         ep .a   b˛/ D ordp .N .a    b˛//
+the exponent to which p occurs in a b˛. For the primes p of Z Œ˛ that do not
+divide a b˛, we put ep .a b˛/ D 0. We then have the following fundamental
+fact.
+(5.1) Lemma. For each prime p of degree 1, the exponent ep extends to a homo-
+morphism
+                            ep W Q .˛/ ! Z :
+
+This Lemma is slightly less innocent than it may appear at first sight, and we
+will define ep .x/ for arbitrary x 2 Q .˛/ in (7.4). There is actually no need to
+restrict to primes of degree 1, but we do so as we have not defined the exponent
+at other primes. For our purposes, it suffices to know that we have ep .x/ D 0
+whenever x is a product of elements a b˛ with .a; b/ 2 U and p is a prime of
+degree at least 2.
+
+                        6. Sieving and linear algebra
+     On the rational side, we already chose a factor base B1 consisting of the
+primes p  y and a sign bit. For the factorization of our numbers a b˛ in
+Z Œ˛, we choose a factor base B2 consisting of all primes .pI rp / with p 
+y prime and rp 2 Fp a root of .f mod p/. There may be several primes in
+B2 lying over a given rational prime p, and the notation .pI rp / enables us to
+distinguish between such primes, and to identify the prime that accounts for the
+p-contribution (if any) to N .a b˛/.
+     For each rational p, there are at most d D deg.f / values rp . On average,
+there is 1 root of .f mod p/ in Fp if we let y tend to infinity. This elegant result
+of Kronecker, which was generalized by Frobenius, is now often proved as a
+corollary of the Chebotarev density theorem [Stevenhagen and Lenstra 1996].
+We deduce that both B1 and B2 are of size y 1Co.1/ .
+     The combination of rational and algebraic sieving yields a subset U 0  U of
+pairs .a; b/ 2 U that give rise to a y-smooth factorization of a bm in Z and a
+y-smooth factorization of a b˛ in Z Œ˛. Such a pair .a; b/ 2 U 0 , together with
+the exponents of the rational primes p 2 B1 in a bm and the exponents of the
+algebraic primes p in a b˛, is usually referred to as a relation. All exponents
+are taken modulo 2, so they can be stored in a single bit.
+     In order to obtain dependencies between the exponent vectors of elements in
+U , the number #U 0 of relations should exceed #B1 C #B2 . For large factoriza-
+   0
+
+tions, collecting sufficiently many relations may take several years of computer
+92                                PETER STEVENHAGEN
+
+
+time. As different computers can independently test elements .a; b/ 2 U for
+smoothness, distribution of the computation over a large number of computers
+is usually necessary to perform this step of the algorithm in practice.
+   The set U 0 , which may consist of millions of relations, is often so large
+that the linear algebra step over F2 needs to be performed on a computer that
+is equipped to handle huge amounts of data. It is important that the matrix
+of exponents is a very sparse matrix, which can be transformed into a much
+smaller dense matrix before it is given to the reduction algorithm that yields
+the desired dependencies. A practical reduction algorithm, such as the so-called
+block Lanczos method, may run for several days on a single large computer. In
+this case, distribution of the problem over more computers is not an easy matter.
+   Every dependency in the matrix of exponent vectors coming from the pairs
+.a; b/ 2 U 0 corresponds to a subset S  U 0 such that the following two conditions
+are satisfied:
+         Y
+(6.1)          .a bm/ is positive with even exponents at all primes p 2 Z ;
+        .a;b/2S
+          Y
+(6.2)             .a   b˛/   has even exponents at all primes p  Z Œ˛.
+        .a;b/2S
+
+What we need is the validity of (4.1) and (4.2) in order to obtain the required
+square in Z  Z Œ˛. It is a simple and well known fact that .6:1/ implies .4:1/:
+requiring positivity is enough to produce true squares from integers having even
+exponents at all prime numbers. The situation is not so simple in Z Œ˛: several
+obstructions may prevent the validity of the implication .6:2/ ) .4:2/. Writing
+ˇ D .a;b/2S .a b˛/ for the element in (6.2), they are the following.
+     Q
+
+(6.3) The ring Z Œ˛ is possibly not the ring of integers O of Q .˛/. The ring of
+integers, which is the maximal order in Q .˛/, is the “textbook ring” for which
+the theorem of unique prime ideal factorization holds. If we have Z Œ˛ ¤ O, then
+(6.2) need not imply that ˇ O is the square of an ideal.
+(6.4) If ˇ O is the square of some ideal c, then c does not have to be a principal
+O-ideal. This is exactly the reason why unique prime element factorization has
+to be replaced by unique prime ideal factorization in general number fields.
+(6.5) If ˇ O is the square of some principal ideal O, we only have ˇ D 2 up
+to multiplication by units in O. This obstruction already occurs in the case for
+O D Z . Unlike Z , the ring O usually has infinitely many units.
+(6.6) If we do obtain an equality ˇ D 2 in O, we may have … Z Œ˛. If this
+happens, the reduction map  is not defined on and we do not obtain our final
+congruence (2.2).
+                              THE NUMBER FIELD SIEVE                                 93
+
+
+Algebraic number theory provides the tools for dealing with all of these obstruc-
+tions. In the next section, we will deal with the obstructions (6.3) and (6.6),
+which arise from the fact that Z Œ˛ may be strictly smaller than O. Section 8
+is devoted to the obstructions (6.4) and (6.5), which are classical and lie at
+the roots of algebraic number theory. It will be our aim to bound the index
+ŒV W .V \ Q .˛/ 2 / of the subgroup of true squares inside the group V  Q .˛/
+generated by the elements that meet condition (6.2).
+
+                           7. Nonmaximality of Z Œ˛
+   The ring of integers O  Q .˛/, which consists by definition of all elements of
+Q .˛/ that occur as the zero of some monic polynomial in Z ŒX , is the maximal
+order contained in Q .˛/. It is free of rank d D deg.f / over Z , and contains
+Z Œ˛ as a subring of finite index. There is the classical identity
+.7:1/                          .f / D ŒO W Z Œ˛2  
+relating the index ŒO W Z Œ˛ to the discriminant .f / of the polynomial f from
+(3.4) and the discriminant  of the number field Q .˛/. As  is known to be a
+non-zero integer, we find that ŒO W Z Œ˛ is bounded by j.f /j1=2 . As we do not
+want to factor the possibly huge number .f /, we may not be able to determine
+ŒO W Z Œ˛ or O. However, it is a standard fact that for any x 2 O, we have
+                                  f 0 .˛/  x 2 Z Œ˛:
+This is enough to deal with obstruction (6.6): we simply multiply our purported
+square in Z  Z Œ˛ by
+                              .f 0 .m/2 ; f 0 .˛/2 /:
+Then its square root gets multiplied by .f 0 .m/; f 0 .˛//, so it will lie in Z  Z Œ˛.
+In order to keep an element that is invertible modulo n, we need to assume that
+f 0 .m/ is coprime to n. This is not a serious restriction as this condition is always
+satisfied in practice; if it isn’t, we have found a factor of n without applying the
+number field sieve!
+(7.2) Example. Take f D X 2 C 16. Then the order Z Œ˛ D Z Œ4i  has index 4 in
+the maximal order O D Z Œi  in Q .i /. Example (4.4) shows that 3 C ˛ D 3 C 4i
+is a square in O, but its square root D 2 C 41 ˛ is not in Z Œ˛. However, the
+element f 0 .˛/  D 2˛  D 4˛ 8 does lie in Z Œ˛.                            //
+In order for an ideal c  O to be a square of some other ideal, it is necessary and
+sufficient that the exponents ordq .b/ are even at all primes q of O. This is an
+immediate corollary of the classical theorem of unique prime ideal factorization
+in O. Now the primes q of O coprime to the index ŒO W Z Œ˛ are “the same” as
+the ideals p of Z Œ˛ coprime to the index. By this we mean that there is a natural
+94                             PETER STEVENHAGEN
+
+
+bijection between the sets of such primes given by q ‘ p D q \ Z Œ˛. Moreover,
+if p and q are corresponding prime ideals, the inclusion map Z Œ˛  O induces
+an isomorphism of the local rings
+                                           
+.7:3/                             Z Œ˛p  Oq :
+Both rings are discrete valuation rings, and the exponent ep W Q .˛/ ! Z is in
+this case equal to the familiar prime ideal exponent eq for the ring of integers O,
+which is multiplicative on the set of all non-zero O-ideals, not just the principal
+ones.
+   For primes q of O dividing the index ŒO W Z Œ˛, the situation is more compli-
+cated. There may be more primes q lying above the same prime p D q \ Z Œ˛,
+and even if p has a single extension q in O, the natural map (7.3) need not be
+an isomorphism. If either of these happens, p is said to be a singular prime of
+Z Œ˛. The other primes are the regular primes of Z Œ˛.
+   For a prime p of Z Œ˛, we define the exponent at p as the homomorphism
+ep W Q .˛/ ! Z by
+                                    X
+.7:4/                      ep .x/ D      f .q=p/ eq .x/;
+                                     qp
+
+where the sum ranges over the primes q  O lying over p, and f .q=p/ is the
+degree of the residue field extension Z Œ˛=p  O=q. This definition provides
+the extension of the homomorphism ep occurring in Lemma 5.1. For regular
+primes p, formula (7.4) reduces to ep D eq .
+   We now consider, inside the subgroup of Q .˛/ that is generated by the
+elements a b˛ 2 Z Œ˛ having gcd.a; b/ D 1, the group V of those elements
+that have even exponents at the primes p of Z Œ˛. We let V1  V be the sub-
+group of elements x 2 V that have even exponents at all primes q of O, i.e., the
+elements x 2 V for which x O is the square of a O-ideal. We have an injective
+homomorphism
+                                       M
+                          V =V1             Z =2Z
+                                       qjŒOWZ Œ˛
+
+                                x ’ .eq .x/ mod 2/q ;
+so V =V1 is an F2 -vector space of dimension bounded by the number of primes q
+of O dividing the index ŒO W Z Œ˛. In view of (7.1), the number of rational primes
+dividing the index is no more than 21 log j.f /j. For each of these primes there
+are at most d D deg.f / primes q in O that divide it, so we find
+.7:5/                    dimF2 .V =V1 /  12 d  log .f /:
+This is a quantitative version of obstruction (6.3). Note that we have completely
+disregarded the fact that the elements of V have even exponents at the singular
+                             THE NUMBER FIELD SIEVE                                95
+
+
+primes of Z Œ˛. It is possible to obtain a slightly better upper bound for the index
+ŒV W .V \ Q .˛/ 2 / than that in 8.4 by taking this into account.
+
+          8. Finiteness results from algebraic number theory
+
+   Inequality (7.5) is the first step in bounding the successive F2 -dimensions of
+the quotient spaces in the filtration
+                                                           2
+                       V  V1  V2  V3 D V \ Q .˛/ :
+
+Here V1 is the subgroup from the previous section consisting of those x 2 V
+for which x O is an ideal square, and V2 is the subgroup of those x 2 V for
+which x O is the square of a principal O-ideal. Thus, the F2 -spaces V1 =V2 and
+V2 =V3 measure the obstructions (6.4) and (6.5), respectively. We can bound
+their dimensions using two fundamental finiteness results from algebraic number
+theory.
+   The first result says that the class group of Q .˛/, which is the group of all
+fractional O-ideals modulo the subgroup of principal O-ideals, is a finite abelian
+group. One can derive from [Lenstra 1992, Theorem 6.5] that its order h can be
+bounded in terms of the degree d and the discriminant .f / of f by
+
+                                       d   1 C log j.f /jd 1
+.8:1/               h < j.f /j1=2                           :
+                                              .d 1/!
+
+We can map V1 to the class group by sending x 2 V1 to the ideal class of the
+ideal a satisfying a2 D x O. This map has kernel V2 , so we find the dimension
+of the F2 -vector space V1 =V2 to be bounded by log h, yielding
+
+                                                 log h
+.8:2/                        dimF2 .V1 =V2 /          :
+                                                 log 2
+
+As the elements in V2 are squares in Q .˛/ up to multiplication by elements of
+the unit group O , the order of V2 =V3 does not exceed the order of O =O 2 . By
+the Dirichlet unit theorem [Stevenhagen 2008], the group O is the product of
+a finite cyclic group of roots of unity in Q .˛/ with a free abelian group of rank
+at most d 1. It follows that O =O 2 is finite of order at most 2d , and we find
+
+.8:3/                          dimF2 .V2 =V3 /  d:
+
+Putting the estimates (3.4), (7.5), (8.1), (8.2) and (8.3) together, we arrive after
+a short computation at the following theorem for the values of n and d that we
+need.
+96                             PETER STEVENHAGEN
+
+                                                                      2
+(8.4) Theorem. Let V be as above, and suppose we have n > d 2d > 1. Then
+the subgroup V3 D V \ Q .˛/ 2 of squares in V satisfies
+                           dimF2 .V =V3 /  .log n/3=2 :
+A more careful analysis using the information at the singular primes of Z Œ˛ as
+in [Lenstra and Lenstra 1993, Theorem 6.7, p. 61] shows that the exponent 3=2
+can be replaced by 1.
+
+                      9. Quadratic character columns
+   The algorithm described so far is only able to produce elements in Z  Z Œ˛ for
+which the second component is in V , but not necessarily in the subgroup V3 D
+V \ Q .˛/ 2 of squares. In order for an element x 2 V to be V3 , it is necessary
+and sufficient that all characters  W V =V3 ! F2 vanish on x. At most k D
+dim.V =V3 / characters are needed to span the dual space W D Hom.V =V3 ; F2 /,
+and an element x 2 V is a square if and only if all these spanning characters
+assume the value 1 on x. As there is no easy way to produce a spanning set
+of characters, we will use random quadratic characters instead. An elementary
+calculation shows that if W is any k-dimensional F2 -vector space, a randomly
+chosen set of k C e elements has probability at least 1 2 e of generating W .
+As this probability converges exponentially to 1 in the number e of extra random
+elements, we can be practically sure to generate W for moderate values of e.
+   We are now faced with the problem of exhibiting suffciently many “quadratic
+characters” on ZŒ˛. On Z , quadratic characters can be obtained from Legendre
+symbols x ‘ px , which are easily evaluated. If x 2 Z is not a square, we have,
+in a sense that is easily made precise,
+                                     x
+                                       
+                                     p D 1
+
+for about half of the primes p. More precisely, they are the odd primes p that
+                                     p
+remain prime in the number ring Z Œ x.
+(9.1) Example. We have p16 D 1 for all primes p  3 mod 4.
+                                
+                                                                                //
+
+Loosely speaking, we can say that an integer x ¤ 0 that satisfies px D 1 for t
+                                                                       
+
+randomly chosen primes p is a square with probability 1 2 t . We can use an
+analogue of this idea over Z Œ˛.
+   Every prime q D ker   .q; rq / of degree 1 of Z Œ˛ gives rise to a Legendre
+symbol                                   .q /
+                                  
+                         q W Z Œ˛  Fq  f˙1g [ f0g
+                           
+
+such that for non-square x 2 Z Œ˛, we have xq D 1 about half the time. For
+                                               
+
+y-smooth elements x 2 Z Œ˛, we can avoid the character value 0 by restricting
+                             THE NUMBER FIELD SIEVE                             97
+
+
+to Legendre symbols coming from primes q  .q; rq / of degree 1 with q > y. It
+is a consequence of the Chebotarev density theorem that the Legendre symbols
+coming from such q are equidistributed over Hom.V =V3 ; f˙1g/.
+   In the rational factor base B1 consisting of primes p  y, we incorporated
+a sign bit to ensure that the integers with even prime exponents at all primes p
+are actually squares. This sign bit for Z is nothing but the non-trivial chracter
+on the 1-dimensional F2 -vector space that becomes V =V3 if we replace Z by
+Z Œ˛.
+   In a similar way, we incorporate in our algebraic factor base B2 , which so
+far consisted of the primes .pI rp / with p  y, a sufficiently large number of
+F2 -valued characters q W V ! F2 coming from the Legendre symbols of primes
+q  .q; rq / of degree 1 with q > y. The character q is simply the Legendre
+symbol in additive notation, and the values q .a b˛/ for .a; b/ 2 U are treated
+exactly like the exponent values ep .a b˛/. In this way, we obtain a probabilistic
+algorithm for producing y-smooth elements x 2 V that do not only satisfy (6.2)
+but that are true squares. In this set-up the outcome of the linear algebra step,
+which reduces a matrix of approximate size y  y, consists of subsets S  U
+such that not only we have (6.1) and (6.2), but in addition
+                          Y                        Y            
+                   0   2                     0   2
+                 f .m/          .a bm/; f .˛/            .a b˛/
+                        .a;b/2S                     .a;b/2S
+
+is with very high probability a square .x 2 ;   2 / 2 Z  Z Œ˛.
+
+
+
+                         10. Square root extraction
+   The element .x 2 ; 2 / just found yields a solution to our basic congruence
+(2.1). In order to obtain a factorization of n, we now need the values .x mod n/
+and . / in Z =nZ . The gcd of n with their difference is hopefully a non-
+trivial factor of n. Thus, we need to compute a square root .x; / of our square
+.x 2 ; 2 / 2 Z  Z Œ˛. On the rational side, this is immediate since we know how
+to extract squares in Z . It is even possible to avoid computing the large number
+                                            Y
+                           x 2 D f 0 .m/2         .a bm/
+                                        .a;b/2S
+
+as we have a complete prime factorization of each of the elements a bm oc-
+curring in the product, and therefore a prime factorization of the product itself.
+   On the number field side, the situation is more complicated. The prime ideal
+factorization of                  Y
+                                        .a b˛/
+                                  .a;b/2S
+98                             PETER STEVENHAGEN
+
+
+is easily determined, but this is not immediately useful as prime ideals may not
+have generators at all and, moreover, we most likely will be unable to compute
+generators for the unit group O in the large number field Q .˛/. Only for the
+special number field sieve [Lenstra and Lenstra 1993, p. 21 ff.], which often
+yields rings of integers O with small units and trivial class group, one may be
+able to compute a square root of the element 2 2 Z Œ˛ using explicit generators
+of the primes in Z Œ˛.
+   For the general number field sieve, one can compute a root of the polynomial
+X2       2 in Q .˛/ by standard methods, such as successive approximation using
+
+Hensel’s lemma [Buhler and Wagon 2008] at an appropriate prime. Theoreti-
+cally, this can be done without affecting the expected asymptotic running time of
+the algorithm. In practice, it is feasible as well but rather cumbersome because of
+the size of the number 2 , which necessitates the handling of very large numbers
+in the final iterations. Montgomery’s method [1994] (see also [Nguyen 1998]),
+which uses complex approximations, has a better practical performance but has
+not yet been carefully analyzed.
+
+                              11. Running time
+   From the analysis given in [Pomerance 2008], it follows that the conjectural
+asymptotic expected running time the quadratic sieve takes to factor n is
+                                     p
+                       exp..1 C o.1// log n log log n/
+for n tending to infinity. The elliptic curve method has the same running time,
+which is halfway between exponential and polynomial.
+   For the number field sieve, we can do better if we carefully choose d and f ,
+and optimize the smoothness bound y and the parameter u for the size of the
+universe U of pairs .a; b/ accordingly. We briefly sketch how to find heuris-
+tically the asymptotic optimal values, disregarding all lower order terms that
+occur along the way.
+   The basic cost of the algorithm, which is computed as in [Pomerance 2008],
+is u2Co.1/ C y 2Co.1/ as n tends to infinity. The first term represents the sieving
+part of the algorithm, and equals the length of the sieve times a lower order
+factor. The second term is the matrix reduction part, which assumes that fast
+asymptotic methods are applied to a matrix of size at most y  y. In order to
+balance these contributions, we will take log u  log y.
+   The numbers a b˛ we consider are y-smooth if the integer .a bm/N .a
+b˛/ is, and using (4.3) and the size n1=d of m and of the coefficients of f , we
+may bound this integer by
+
+.11:1/               un1=d  .d C 1/ud n1=d  n2=d udC1 ;
+                             THE NUMBER FIELD SIEVE                                99
+
+
+Here we already take into account that d will be chosen in (11.3) to be of much
+smaller order than the other factors. The “uu -philosophy” in [Pomerance 2008]
+shows that a number x  n2=d ud C1 is y-smooth with probability r r , where
+r D log x= log y. In order to maximize this probability, we minimize the quantity
+                                                 
+                       log x    log x      2 log n 1
+.11:2/            rD                                 Cd C1
+                       log y    log u       log u d
+by taking the degree of f to be d D . 2log
+                                        log n 1=2
+                                           u /    .
+   In order to obtain sufficiently many relations from our pairs .a; b/ 2 U to
+create a dependent matrix, we need u2 r r  y. Taking logarithms and replacing
+log y by log u, we find log u  r log r or, equivalently, r  log u= log log u.
+Comparison with (11.2) for d as above now leads to
+                             2 log n 1=2
+                                   
+                                               log u
+                                                      ;
+                              log u          log log u
+and we take 2=3-rd powers to obtain log u.log log u/ 2=3  2.log n/1=3 . In
+order to rewrite this, we observe that if we have real quantities s; t satisfying
+s D t .log t /a for some a 2 R , then, as t tends to infinity, we have t D .1 C
+o.1//s.log s/ a . Applying this for t D log u and s D 2.log n/1=3 with a D 2=3
+we arrive at
+log y  log u  2.log n/1=3 . 31 log log n/2=3 D .8=9/1=3 .log n/1=3 .log log n/2=3 :
+With this choice of the basic parameters u and y, the asymptotic running time
+u2Co.1/ C y 2Co.1/ becomes
+                                           1=3           2=3 
+              exp .64=9/1=3 C o.1/ log n                          ;
+                                     
+                                                 log log n
+
+as claimed in (1.1). The optimal asymptotic value of the degree d of f comes
+out as
+                           2 log n 1=2      3 log n 1=3
+                                                  
+.11:3/               d                                 ;
+                            log u          log log n
+and we find that the size in (11.1) of the integers we require to be smooth is
+                                              2=3           1=3 
+              exp .64=3/1=3 C o.1/ log n                             :
+                                        
+                                                    log log n
+
+This bound, which we mentioned already in section 2, makes the number field
+sieve the fastest general purpose factoring algorithm that is currently known.
+   As with the quadratic sieve, there are various practical improvements to the
+basic number field sieve as we have described it here. The most important bells
+and whistles are mentioned in [Crandall and Pomerance 2001, Section 6.2.7].
+Although they do not significantly change the asymptotic running time of the
+100                             PETER STEVENHAGEN
+
+
+algorithm, they greatly enhance its practical performance, and they are instru-
+mental in completing the record factorizations that mark the borderlines of what
+is currently feasible in factoring.
+
+                                    References
+[Buhler and Wagon 2008] J. P. Buhler and S. Wagon, “Basic algorithms in number
+  theory”, pp. 25–68 in Surveys in algorithmic number theory, edited by J. P. Buhler
+  and P. Stevenhagen, Math. Sci. Res. Inst. Publ. 44, Cambridge University Press, New
+  York, 2008.
+[Crandall and Pomerance 2001] R. Crandall and C. Pomerance, Prime numbers: a
+   computational perspective, Springer, New York, 2001.
+[Lenstra 1992] H. W. Lenstra, Jr., “Algorithms in algebraic number theory”, Bull. Amer.
+   Math. Soc. .N.S./ 26:2 (1992), 211–244.
+[Lenstra and Lenstra 1993] A. K. Lenstra and J. H. W. Lenstra, The development of the
+   number field sieve, Lecture Notes in Mathematics 1554, Springer, Berlin, 1993.
+[Montgomery 1994] P. L. Montgomery, “Square roots of products of algebraic num-
+  bers”, pp. 567–571 in Mathematics of Computation 1943–1993: a half-century of
+  computational mathematics (Vancouver, 1993), edited by W. Gautschi, Proc. Sym-
+  pos. Appl. Math. 48, Amer. Math. Soc., Providence, RI, 1994.
+[Nguyen 1998] P. Nguyen, “A Montgomery-like square root for the number field
+  sieve”, pp. 151–168 in Algorithmic number theory, ANTS-III (Portland, OR, 1998),
+  edited by J. P. Buhler, Lecture Notes in Comput. Sci. 1423, Springer, Berlin, 1998.
+[Pomerance 2008] C. Pomerance, “Smooth numbers and the quadratic sieve”, pp.
+   69–81 in Surveys in algorithmic number theory, edited by J. P. Buhler and P.
+   Stevenhagen, Math. Sci. Res. Inst. Publ. 44, Cambridge University Press, New York,
+   2008.
+[Stevenhagen 2008] P. Stevenhagen, “The arithmetic of number rings”, pp. 209–266
+   in Surveys in algorithmic number theory, edited by J. P. Buhler and P. Stevenhagen,
+   Math. Sci. Res. Inst. Publ. 44, Cambridge University Press, New York, 2008.
+[Stevenhagen and Lenstra 1996] P. Stevenhagen and H. W. Lenstra, Jr., “Chebotarëv
+   and his density theorem”, Math. Intelligencer 18:2 (1996), 26–37.
+
+P ETER S TEVENHAGEN
+M ATHEMATISCH I NSTITUUT
+U NIVERSITEIT L EIDEN
+P OSTBUS 9512
+2300 RA L EIDEN
+T HE N ETHERLANDS
+   psh@math.leidenuniv.nl
+

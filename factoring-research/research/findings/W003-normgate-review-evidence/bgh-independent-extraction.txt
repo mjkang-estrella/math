@@ -1,0 +1,1844 @@
+        Space-Efficient Identity Based Encryption Without Pairings∗
+                      Dan Boneh†            Craig Gentry‡             Michael Hamburg
+                              {dabo,cgentry,mhamburg}@cs.stanford.edu
+                                         Stanford University
+
+
+
+                                                   Abstract
+            Identity Based Encryption (IBE) systems are often constructed using bilinear maps (a.k.a.
+        pairings) on elliptic curves. One exception is an elegant system due to Cocks which builds an
+        IBE based on the quadratic residuosity problem modulo an RSA composite N . The Cocks
+        system, however, produces long ciphertexts. Since the introduction of the Cocks system in 2001
+        it has been an open problem to construct a space efficient IBE system without pairings. In this
+        paper we present an IBE system in which ciphertext size is short: an encryption of an `-bit
+        message consists of a single element in Z/N Z plus ` + 1 additional bits. Security, as in the
+        Cocks system, relies on the quadratic residuosity problem. The system is based on the theory
+        of ternary quadratic forms and as a result, encryption and decryption are slower than in the
+        Cocks system.
+
+
+1       Introduction
+In an Identity Based Encryption (IBE) system any string can function as a public key [37]. IBE
+systems have found numerous applications in cryptography (see [13, 14, 7, 23, 42, 8, 11, 5] to name a
+few) and computer security [2, 41, 31, 32, 38]. There are currently two approaches for constructing
+IBE systems. The first approach builds IBE systems using bilinear pairings [9, 6, 40, 36]. The
+resulting systems are efficient both in performance and ciphertext size. The rich structure of bilinear
+maps enables various extensions such as Hierarchical IBE [29, 26], anonymous IBE [8, 1, 12, 25],
+and many others.
+    The second approach, due to Cocks [17], builds an elegant IBE system based on the standard
+quadratic residuosity problem [33, p.99] modulo an RSA composite N (in the random oracle model).
+Ciphertexts in this system contain two elements in Z/N Z for every bit of plaintext. Hence, the
+encryption of an `-bit message key is of size 2` · log2 N . For example, when encrypting a 128-
+bit message key using 1024-bit modulus, one ends up with a ciphertext of size 32678 bytes. For
+comparison, pairing based methods produce a 36 byte ciphertext for comparable security.
+    A long standing open problem since [17] is the construction of a space efficient IBE system
+without pairings, namely a system with short ciphertexts. We construct such a system — an
+encryption of an ` bit message consists of a single element in Z/N Z plus (` + 1) additional bits.
+Hence, ciphertext size is about ` + log2 N . When encrypting a 128-bit message key the result is
+    ∗
+      This paper is the full version of [10].
+    †
+      Supported by NSF and the Packard Foundation.
+    ‡
+      Supported by the Herbert Kunzel Stanford Graduate Fellowship.
+
+
+                                                       1
+a ciphertext of size 1024 + 129 = 1153 bits or 145 bytes. The system makes extensive use of the
+theory of quadratic forms [15]. In particular, encryption and decryption are based on an effective
+version of Legendre’s famous three squares theorem.
+     Our main proposed IBE system is presented in Section 6. The system is related to the Cocks
+system and security is similarly based on the quadratic residuosity (QR) problem. As in the
+Cocks system, our IBE proof of security makes use of the random oracle model. However, the
+random oracle model is needed only for proving that the underlying Rabin signature scheme is
+existentially unforgeable. To make this precise we first prove security in the standard model under
+the Interactive QR assumption (IQR), namely under the assumption that the QR problem is
+difficult in the presence of a hash square root oracle. We then note that IQR is equivalent to QR in
+the random oracle model. We observe that the system is an anonymous IBE under the quadratic
+residuosity assumption. (the Cocks system is known to not be anonymous, although a variant of it
+is [21]). In Appendix E, we describe a general framework for using hash proof systems (as defined
+in [19]) that have a trapdoor to construct IBE systems that are anonymous and secure against
+chosen-ciphertext attacks in the standard model under the Interactive Subset Membership (ISM)
+assumption, a generalization of the IQR assumption. We provide hash proof systems for quadratic
+residuosity, which induce a system based on IQR (in the standard model). We also provide a
+PKE system secure against chosen-ciphertext attacks under the QR assumption, which may be of
+independent interest.
+     Encryption time in our system is not ideal. Recall that encryption time in most practical public
+key systems such as RSA and existing IBE systems [9, 17] is cubic in the security parameter.
+Encryption time in our system is quartic in the security parameter per message bit. Decryption
+time, however, is cubic as in other systems. The bottleneck during encryption is the need to
+generate primes on the order of N . In Section 5.3 we show a time space tradeoff where the number
+of primes to generate can be significantly reduced at the cost of a modest increase in the ciphertext
+size.
+
+
+2    Definitions
+Recall from [37, 9] that an Identity Based Encryption system (IBE) consists of four algorithms:
+Setup, KeyGen, Encrypt, Decrypt. The Setup algorithm generates system parameters, denoted by
+PP, and a master key MSK. The KeyGen algorithm uses the master key to generate the private
+key dID corresponding to a given identity ID. The Encrypt algorithm encrypts messages for a given
+identity (using the system parameters) and the Decrypt algorithm decrypts ciphertexts using the
+private key.
+    An IBE must remain secure against an attacker who can request private keys for identities of
+his choice. This is captured in the standard IBE security game [9], which also captures chosen
+ciphertext attacks. Beyond the basic semantic security requirements for IBE encryption one can
+also require that the IBE be anonymous, namely that a ciphertext reveal no information about the
+identity used to create the ciphertext. Anonymous IBE is useful for a variety of applications such
+as searching on encrypted data [8, 1, 12, 38, 21]. Chosen ciphertext security, private key queries,
+and anonymity are captured in the following IBE security game:
+
+Setup: The challenger runs Setup(λ) and gives the adversary A the resulting public parameters PP.
+    It keeps MSK to itself. We set ID∗0 , ID∗1 ← ⊥ and C ∗ ← ⊥.
+
+
+                                                 2
+Queries: The adversary issues adaptive queries q1 , q2 , . . . where query qi is one of:
+
+        • Private key query hIDi i where IDi 6= ID∗0 , ID∗1 . The challenger responds by running
+          algorithm KeyGen(MSK, IDi ) and sends the resulting private key di to A.
+        • Decryption query (IDi , Ci ) where (IDi , Ci ) is neither (ID∗0 , C ∗ ) nor (ID∗1 , C ∗ ). The chal-
+          lenger responds by running algorithm KeyGen(MSK, IDi ) to generate a private key di
+          and then runs algorithm Decrypt(di , Ci ). It sends the resulting plaintext to the adversary.
+                                                                
+        • A single encryption query (ID0 , m0 ), (ID1 , m1 ) where ID0 , ID1 are distinct from all
+          previous private key queries and m0 , m1 are two equal length plaintexts. The challenger
+                                R
+          picks a random bit b ← {0, 1} and sets
+
+                          C ∗ ← Encrypt(PP, IDb , mb ) ,         ID∗0 ← ID0 ,    ID∗1 ← ID1
+
+           It sends C ∗ to the adversary.
+
+Guess: Eventually, the adversary outputs a guess b0 ∈ {0, 1}. The adversary wins if b = b0 .
+
+We define A’s advantage in attacking the scheme E as
+
+                                                                       1
+                                    IBEAdvA,E (λ) = Pr[b = b0 ] −
+                                                                       2
+
+The probability is over the random bits used by the challenger and the adversary. An adversary A
+in this game is called an ANON-IND-ID-CCA adversary. We will also consider three types of weaker
+adversaries:
+
+   • If A makes no decryption queries we say that A is an ANON-IND-ID-CPA adversary. This
+     models an anonymous IBE under a chosen plaintext attack.
+
+   • If in the single encryption query used to create the challenge ciphertext C ∗ , the adversary
+     uses ID0 = ID1 then we say that the adversary is an IND-ID-CCA adversary. This models a
+     chosen ciphertext secure IBE that is not necessary anonymous [9].
+
+   • An adversary that makes no decryption queries and sets ID0 = ID1 is said to be an IND-ID-CPA
+     adversary. This is the standard IBE security model under a chosen plaintext attack.
+
+Definition 2.1. Let S be one of {IND-ID-CPA, IND-ID-CCA, ANON-IND-ID-CPA}. We say that
+an IBE system E is S secure if for all polynomial time S adversaries A we have that IBEAdvA,E (λ)
+is a negligible function.
+
+Notation: throughout the paper we let IDλ denote the set of all identities ID. The size of the set
+grows with λ. As shorthand, we will often write ID instead of IDλ .
+
+2.1   Jacobi symbols and the QR assumption
+For a positive integer N , we use J(N ) to denote the set {x ∈ Z/N Z : Nx = 1}, where Nx is the
+                                                                                       
+
+Jacobi symbol of x in Z/N Z. We use QR(N ) to denote the set of quadratic residues in J(N ). We
+base the security of our system on the following computational assumption.
+
+
+
+                                                     3
+Definition 2.2 (Quadratic Residuosity Assumption (QR)). Let RSAgen(λ) be a PPT algorithm
+that generates two equal size primes p, q.
+   • Let PQR (λ) be the distribution:
+                                R                           R
+                          (p, q) ← RSAgen(λ), N ← pq, V ← QR(N ), output(N, V )
+
+    • Let PN QR (λ) be the distribution:
+                            R                           R
+                  (p, q) ← RSAgen(λ), N ← pq, V ← J(N ) \ QR(N ), output(N, V )
+We say that the QR assumption holds for RSAgen if for all PPT algorithms A, the function
+                      R                                         R
+        Pr[(N, V ) ← PQR (λ) : A(N, V ) = 1] − Pr[(N, V ) ← PN QR (λ) : A(N, V ) = 1]
+
+is negligible. We call this the QR advantage QRAdvA,RSAgen (λ) of A against RSAgen.
+   For completeness, we also prove our system secure without relying on random oracles. This,
+however, requires a stronger assumption we call the interactive QR assumption. Basically, the
+assumption says that the QR assumption holds relative to a square root oracle.
+Definition 2.3 (Interactive Quadratic Residuosity Assumption (IQR)). Let H be a hash function
+such that for every integer N the function HN (·) maps {0, 1}∗ to J(N ). Let O be a square root
+oracle: for every N which is a product of two odd primes, O picks a quadratic non-residue uN ∈
+J(N ); it maps an input pair (N, x) to one of HN (x)1/2 or (uN HN (x))1/2 in Z/N Z, depending on
+which value is a quadratic residue. The oracle O is chosen uniformly from the set of all such
+functions. We say that the Interactive QR assumption (IQR) holds for the pair (RSAgen, H)
+if for all PPT algorithms A, the function
+                  R                                             R
+       Pr[(N, V ) ← PQR (λ) : AO (N, V ) = 1] − Pr[(N, V ) ← PN QR (λ) : AO (N, V ) = 1]
+
+is negligible. We call this the IQR advantage IQRAdvA,(RSAgen,H) (λ) of A against RSAgen and H.
+Note that for IQR to hold, it must be difficult to find collisions in H, since each collision allows the
+adversary to factor N with probability 1/2.
+    Note that the oracle O is a Rabin signature oracle. For a messages m ∈ {0, 1}∗ and public key
+(N, uN ), the value O(N, m) is the Rabin signature on m.
+    When H is a full-domain hash function modeled as a random oracle, the QR assumption implies
+the IQR assumption. Hence, our system will be secure in the standard model based on IQR and
+in the random oracle model based on the standard QR assumption.
+Our IBE system also uses a pseudorandom function (PRF) as defined in [27].
+
+
+3    An abstract IBE system with short ciphertexts
+We begin by describing an abstract IBE system that produces short ciphertexts. The system uses
+a deterministic algorithm Q with the following properties.
+Definition 3.1. Let Q be a deterministic algorithm that takes as input (N, R, S) where N ∈ Z+
+and R, S ∈ Z/N Z. The algorithm outputs two polynomials f, g ∈ Z/N Z[x]. We say that Q is IBE
+compatible if the following two conditions hold:
+
+                                                   4
+   • (Condition 1) If R and S are quadratic residues, then f (r)g(s) is a quadratic residue for all
+     square roots r of R and s of S.
+
+   • (Condition 2) If R is a quadratic residue, then f (r)f (−r)S is a quadratic residue for all square
+     roots r of R.
+
+   We construct an IBE compatible algorithm Q in Sections 4 and 5. Condition 1 implies that
+the Legendre symbol (f (r)/N ) is equal to (g(s)/N ), a fact that will be used during decryption.
+Condition 2 will be used to prove security.
+
+A single bit system. As a warm up to our IBE construction, consider briefly the following
+simple IBE for one bit messages.
+                           R                                              R
+Setup(λ): generate (p, q) ← RSAgen(λ), N ← pq, and a random u ← J(N ) \ QR(N ). Output
+public parameters PP = (N, u, H) where H is a hash function H : ID → J(N ). The master key
+MSK is the factorization of N .
+KeyGen(MSK, ID): generate a private key by first setting R ← H(ID). If R ∈ QR(N ) set r ← R1/2
+and otherwise set r ← (uR)1/2 . Output r as the private key for ID. Note that the private key is
+essentially a Rabin signature on ID, as in the Cocks system.
+Encrypt(PP, ID, m): to encrypt m ∈ {±1} with public key ID pick a random s ∈ Z/N Z and
+compute S ← s2 . Let R ← H(ID). Run Q twice:
+
+                       (f, g) ← Q(N, R, S)     (f¯, ḡ) ← Q(N, uR, S)
+                                                and
+                                                                              
+                                                                           ḡ(s)
+and encrypt m using the two Jacobi symbols: c ← m · g(s)N   and c̄ ← m ·     N     . Output the
+ciphertext C ← (S, c, c̄).
+Decrypt(C, r): decrypt (S, c, c̄) using private key r. Let us first suppose that R = H(ID) is in
+QR(N ) so that r2 = R. The decryptor runs Q(N, R, S) to obtain (f, g). By condition (1) of
+Definition 3.1 we know that                              
+                                           g(s)       f (r)
+                                                  =
+                                            N          N
+                                                              
+Hence the plaintext is obtained by setting m ← c · fN      (r)
+                                                                 . If R is a non-residue then uR is a
+quadratic residue and r2 = uR. We decrypt by running Q(N, uR, S) and recovering m from c̄.
+Since Q is deterministic, both sender and receiver always obtain the same pairs (f, g) and (f¯, ḡ).
+
+This completes the description of the one bit abstract system. Condition (1) implies soundness.
+Condition (2) is used to prove semantic security under the QR assumption. We note that the Cocks
+system, reviewed in Appendix A, is not an instance of this system.
+
+Remark: Throughout the paper we let S, s be values chosen by the Sender (encryptor). We let
+R, r be values chosen by the Receiver (decryptor).
+
+
+
+
+                                                  5
+3.1    The Multi-Bit Abstract IBE System
+Observe that a single value S chosen by the encryptor can be used to encrypt multiple bits. To
+encrypt an `-bit message we hash ID multiple times by computing Ri ← H(ID, i) for i = 1, . . . , `.
+Now each pair (S, Ri ) can be used to encrypt one message bit. The ciphertext only grows by two
+bits (ci , c̄i ) per message bit. Hence, when encrypting an ` bit message, the complete ciphertext
+is C = (S, (c1 , c̄1 ), . . . , (c` , c̄` )) whose length is dlog2 (N )e + 2` bits. In Section 6 we show how to
+shrink the ciphertext length to dlog2 (N )e + (` + 1) bits.
+
+We describe the complete system, called “BasicIBE” in more detail.
+                              R                                                 R
+Setup(λ): Generate (p, q) ← RSAgen(λ), N ← pq, and a random u ← J(N ) \ QR(N ). Output
+public parameters PP = (N, u, H) where H is a hash function H : ID × [1, `] → J(N ).
+The master key MSK is the factorization of N and a random key K for a pseudorandom function
+FK : ID × [1, `] → {0, 1, 2, 3}.
+KeyGen(MSK, ID, `): Takes as input MSK, ID, and a message length parameter `. It generates a
+private key for decrypting encryptions of `-bit messages. For j = 1, . . . , ` do:
+            Rj ← H(ID, j) ∈ J(N )        and    w ← FK (ID, j) ∈ {0, 1, 2, 3}
+            let a ∈ {0, 1} be such that ua R    j ∈ QR(N )
+            let {z0 , z1 , z2 , z3 } be the four square roots of ua Rj in Z/N Z
+            Set rj ← zw
+Output the decryption key dID ← (PP, r1 , . . . , r` ). The PRF F ensures that the key generator
+always outputs the same square roots for a given ID, but an adversary cannot tell ahead of time
+which of the four square roots will be output.
+Encrypt(PP, ID, m): Takes as input PP, a user ID, and a message m = m1 . . . m` ∈ {−1, 1}` . It
+generates random s ∈ Z/N Z and sets S ← s2 . For j = 1, . . . , ` do:
+           (1) Rj ← H(ID, j) , (f, g) ← Q(N, Rj , S), and (f¯, ḡ) ← Q(N, uRj , S)
+                                                             
+                           gj (s)                     ḡj (s)
+           (2) cj ← mj ·            and c̄j ← mj ·                 .
+                             N                           N
+      Set c ← c1 · · · c` and c̄ ← c̄1 · · · c̄` and output the ciphertext C ← (S, c, c̄).
+
+Decrypt(C, dID ): Let dID = (PP, r1 , . . . , r` ). For j = 1, . . . , ` let Rj ← H(ID, j) and do:
+                                                                                          
+                                                                                    f (r )
+           if rj2 = Rj run (fj , gj ) ← Q(N, Rj , S) and set mj ← cj · jN j
+                                                                                     ¯       
+                                                                                       f (r )
+           if rj2 = uRj run (f¯j , ḡj ) ← Q(N, uRj , S) and set mj ← c̄j · jN j
+
+      Output m ← m1 . . . m` .
+
+This completes the description of BasicIBE. Soundness of decryption follows from Condition 1.
+
+Remark: The function H outputs elements in J(N ). This function can be easily implemented using
+a hash function H 0 that outputs elements in Z/N Z. Simply include in PP some element z ∈ Z/N Z
+whose Jacobi symbol (z/N ) is −1. Then, to compute H(ID, j) first compute x ← H 0 (ID, j). If
+x ∈ J(N ) output H(ID, j) = x, otherwise output H(ID, j) = xz. Either way, H(ID, j) ∈ J(N ) as
+required.
+
+                                                      6
+3.2    Security
+We prove security of the IBE system BasicIBE in the random oracle model based on the QR
+assumption.
+
+Theorem 3.2. Suppose the QR assumption holds for RSAgen and F is a secure PRF. Then the
+IBE system BasicIBE is IND-ID-CPA secure when H is modeled as a random oracle. In particular,
+suppose A is an efficient IND-ID-CPA adversary. Then there exist efficient algorithms B1 , B2 (whose
+running time is about the same as that of A) such that
+
+                IBEAdvA,BasicIBE (λ) ≤ 2 · QRAdvB1 ,RSAgen (λ) + PRFAdvB2 ,F (λ).
+
+    The proof is given in Appendix B as a sequence of games. We also describe the underlying
+public key encryption system and prove its semantic security with a simple reduction style proof
+to the QR assumption.
+    We note that the bounds in Theorem 3.2 are tight, and do not depend on the number of private
+key queries from the adversary. Since the theorem is set in the random oracle model, we could avoid
+the additional PRF assumption by implementing the PRF using the random oracle H. However,
+the proof is simpler and the result more concrete using a PRF.
+    The proof of Theorem 3.2 requires Condition (2) of Definition 3.1. Condition (2) is only used
+to satisfy the conditions of the following simple lemma, which is used to prove semantic security —
+it enables the challenger to create a challenge ciphertext that is well formed when S is in QR(N )
+but is random when S is not (see Appendix B).
+
+Lemma 3.3. Let N = pq be an RSA modulus, X ∈ QR(N ), and S ∈ J(N ). Let x be a random
+variable uniformly chosen from among the four square roots of X. Let f be a polynomial such that
+f (x)f (−x)S is a quadratic residue for all four values of x. Then:
+    • when S 6∈ QR(N ) the Jacobi symbol (f (x)/N ) is uniformly distributed in {±1};
+    • when S ∈ QR(N ) then (f (x)/N ) is constant, namely the same for all four values of x.
+
+Proof. Let x, x0 be two square roots of X such that x0 = x mod p, but               0
+                                                                                x = −x    mod q.Then the
+                                       0
+four square roots of X are {±x, ±x }. When S 6∈ QR(N ), we have                 f (x)
+                                                                                  p      = − f (−x)
+                                                                                                 p    , and the
+                                                        0                        0                    
+                                                        f (x )         f (x)          f (x )           f (x)
+same on q. By the Chinese Remainder Theorem,               p     =       p     but       q   = −1  ·     q     , so
+       0               
+that f (x
+        N
+           )
+             = −1 · fN(x)
+                            . So of the four values f (x), f (x0 ), f (−x), f (−x0 ), the first two must have
+different Jacobi symbols, as must the last two. Hence, among the four symbols, two are +1 and
+two are −1. When S ∈ QR(N ) all four symbols are equal.
+
+Remark: The system BasicIBE is CPA secure, but is not anonymous — there are instances of
+Q for which anyone can test which identity created a given ciphertext. In Section 6 we make the
+system anonymous. Moreover, we shrink the ciphertext length to dlog2 (N )e + (` + 1) bits. The
+resulting system can be proven secure in the standard model under the IQR assumption. The
+construction, however, cannot be based on a general IBE compatible algorithm Q. Instead, Q
+must satisfy additional properties. We view the construction in Section 6 as our main proposed
+construction.
+
+
+
+                                                        7
+4     Concrete instantiation: an IBE compatible algorithm
+To make our abstract system concrete, we need to give an IBE compatible algorithm Q. Recall
+that Q must generate polynomials f and g that meet Conditions 1 and 2 of Definition 3.1. The
+algorithm works as follows.
+Algorithm Q(N, R, S):
+
+      1.     Construct a solution (x, y) ∈ (Z/N Z)2 to the equation Rx2 + Sy 2 = 1         (∗)
+             In Section 5 we describe algorithms and optimizations for solving this equation.
+             Solving this equation is the main bottleneck in our system.
+      2.     Output the polynomials       f (r) ← xr + 1     and g(s) ← 2ys + 2.
+
+We show that Q is IBE compatible. Let R, S ∈ Z/N Z. Let r be a square root of R and s a square
+root of S, if one exists. Condition 1 is met, since
+
+      f (r) · g(s) = 2xrys + 2xr + 2ys + 2 + (Rx2 + Sy 2 − 1) = (xr + ys + 1)2               (mod N ) .
+
+Condition 2 is met, since       f (r) · f (−r) · S = (1 − Rx2 )S = (Sy)2 (mod N ).
+
+Hence we have a valid instantiation for Q.
+
+
+5     Algorithms and Optimizations
+The instantiation of algorithm Q in the previous section needs an algorithm that given an integer
+N and R, S ∈ Z/N Z outputs a pair (x, y) ∈ Z/N Z2 such that
+
+                                                   Rx2 + Sy 2 = 1                                         (1)
+
+Throughout the section we assume R 6= S and RS is in (Z/N Z)∗ . Recall that when encrypting an
+`-bit message using the abstract system (Section 3), the encryptor must solve 2` such equations.
+In particular, one needs pairs (xi , yi ), (x̄i , ȳi ) ∈ Z/N Z2 such that
+
+                          Ri · x2i + S · yi2 = 1      and     (uRi ) · x̄2i + S · ȳi2 = 1                (2)
+
+for i = 1, . . . , `. The decryptor needs a solution to ` of these equations.
+
+5.1        A product formula
+Although the encryptor needs solutions to the 2` equations in (2), we show that solving only ` + 1
+equations is sufficient. We do so using a product formula that, given a solution to two equations,
+builds a solution to a third equation.
+
+Lemma 5.1. For i = 1, 2 suppose (xi , yi ) is a solution to Ai x2 + By 2 = 1. Then (x3 , y3 ) is a
+solution to
+                                 (A1 A2 ) · x2 + B · y 2 = 1                                   (3)
+where x3 = (x1 x2 )/(By1 y2 + 1) and y3 = (y1 + y2 )/(By1 y2 + 1).
+
+
+                                                         8
+Proof. The proof is by direct substitution into (3).
+
+During encryption, the encryptor first finds solutions in Z/N Z to the ` + 1 equations
+
+                 u · x2 + S · y 2 = 1    and       Ri · x2 + S · y 2 = 1   for i = 1, . . . , `      (4)
+
+using the algorithms discussed in the next section. The encryptor can now use Lemma 5.1 to
+quickly find solutions to the remaining ` equations in (2). Simply apply Lemma 5.1 to the left
+equation in (4) and the ith right equation in (4) to obtain a solution to (uRi ) · x2 + S · y 2 = 1, as
+required. The same applies during decryption.
+    Overall, during encryption and decryption we need only to construct solutions to `+1 equations
+of the form (1). For convenience, from here on we set R0 = u.
+
+5.2   Computing Solutions to Rx2 + Sy 2 = 1 in Z/N Z
+Now we turn to solving (1). Pollard and Schnorr[35] provided, as part of their cryptanalysis of
+the Ong-Schnorr-Shamir signature scheme[34], a beautiful polynomial time algorithm (assuming
+the GRH) for finding solutions to the equation x2 − Sy 2 = R in Z/N Z. Clearly, a solution to
+the Pollard-Schnorr equation (with x 6= 0) also gives a solution to (1). The algorithm, however, is
+relatively slow requiring one to generate O(log log N ) primes on the order of N .
+    We, instead, take a different approach. We lift (1) to the integers and consider the ternary
+quadratic form
+                                        R̃x2 + S̃y 2 − z 2 = 0                                 (5)
+where R̃, S̃, x, y, z ∈ Z and R̃ = R, S̃ = S mod N . A solution to (5) in Z gives a solution to (1)
+in Z/N Z. Since N is odd, by adding multiples of N to R̃ and S̃ we can assume that
+
+                           gcd(R̃, S̃) = 1,    R̃ is odd,   and S̃ is 1 mod 4.                       (6)
+
+Then, by quadratic reciprocity, R̃ is a square mod S̃ if and only if S̃ is a square mod R̃. We let S 0
+denote an integer in [0, 4N ] such that S 0 = S mod N and S 0 = 1 mod 4. Then S̃ = S 0 mod 4N .
+    A classic result of Legendre [15] says that for R̃ and S̃ satisfying (6), equation (5) has a solution
+(x, y, z) in Z whenever there exist integers r, s such that
+
+                             r2 = R̃    (mod S̃)    and     s2 = S̃   (mod R̃)                       (7)
+
+Cremona and Rusin [20] present an effective version of Legendre’s theorem. They present several
+algorithms that take as input integers N, R̃, S̃, r, s satisfying (7) and output a solution to (5). At
+the heart of one of these algorithms is a lattice reduction in a simple 3-dimensional lattice of
+determinant 4R̃S̃. For completeness, we present the algorithm in Appendix C.
+    Consequently, solving (1) reduces to finding integers r, s satisfying (7). To do so, one can look
+for the smallest (probable) prime R̃ along the arithmetic progression R̃ = R mod N . Next one looks
+for the smallest (probable) prime S̃ along the arithmetic progression S̃ = S 0 mod 4N for which the
+Legendre symbol (S̃/R̃) = 1. Finally, one computes the appropriate modular square roots to find
+an r, s satisfying (7). Given r, s we obtain a solution to (5) which leads to a solution to (1) as
+required.
+    Fortunately, we do not need a full primality test – one can use a simple deterministic square
+root algorithm as a light weight primality test. If we obtain square roots r, s satisfying (7), we are
+
+                                                     9
+                          1024-bit Jacobi symbol:                     0.135 ms
+                          full 1024-bit exponentiation:               5.0 ms
+                          1536-bit 3x3 LLL lattice reduction:         6.8 ms
+                          1024-bit prime generation:                123.6 ms
+                          512-bit prime generation:                  11.0 ms
+
+
+                  Table 1: Running times on 2.015GHz AMD dual-core Athlon64
+
+
+done, even if R̃, S̃ are not primes. We give the details in Appendix C.1. Similarly, the number of
+candidates R̃, S̃ considered can be greatly reduced by sieving to eliminate all candidates divisible
+by small primes. To summarize, we obtain the following result:
+
+Lemma 5.2. There is a deterministic algorithm Q that on input N and R, S ∈ (Z/N Z)∗ finds a
+solution to (1). Q’s running time is dominated by the time to generate two primes R̃ = R mod N
+and S̃ = S 0 mod 4N satisfying (S̃/R̃) = 1.
+
+   We present the running times for various parts of the algorithm in Table 1. As expected, the
+bottleneck is prime
+                √ number generation. In Section 5.5 we show that it suffices to generate primes
+on the order of N corresponding to the last row in the table. These performance numbers were
+obtained using the SAGE library.
+
+5.2.1   Solving the system of ` + 1 equations
+Recall that in our system the encryptor must solve the ` + 1 equations in (4). Clearly one could
+apply Lemma 5.2 (` + 1) times. However, we would like to minimize the number of (expensive)
+prime generations needed by our system. We show that a single prime S̃ can be used to solve all
+` + 1 equations. Moreover, we can eliminate prime generation altogether during decryption.
+    As a preliminary optimization, instead of storing u in PP, we let ũ be the smallest prime such
+that ũ = u mod N and ũ = 3 mod 4, and we store ũ in PP. Let R̃0 = ũ. Below, we provide two
+methods for generating the other primes needed by the system.
+Method 1: The encryptor finds the smallest (probable) prime S̃ such that S̃ = S 0 mod 4N and
+(S̃/ũ) = 1. Then for i = 1, . . . , ` the encryptor finds the smallest (probable) prime R̃i ∈ Z+ such
+that                                                               !
+                                                                S̃
+                                    R̃i = Ri mod N and               =1
+                                                               R̃i
+                                                     
+Note that by quadratic reciprocity we also have R̃S̃i = 1 for i = 0, . . . , `. Using the primes (S̃, R̃i )
+the encryptor can find a solution to Ri x2 + Sy 2 = 1 mod N needed for encrypting the i’th bit of
+the message. Overall, the encryptor needs to generate (` + 1) primes.
+    On the decryption side, for all i = 1, . . . , `, the decryptor precomputes and stores the first few
+primes R̃i,1 , R̃i,2 , . . . that are congruent to Ri modulo N . Moreover, the encryptor can embed S̃ in
+the ciphertext and as a result, the decryptor can directly solve the equations Ri x2 +Sy 2 = 1 mod N
+for i = 0, . . . , ` without generating any primes. Consequently, decryption in this system is much
+faster than encryption. Note, however, that the decryptor must precompute and store about ` log2 `
+primes.
+
+
+                                                    10
+Method 2: We reduce the decryptor’s storage requirement to ` primes at the expense of slightly
+increasing the size of PP and the time needed to compute a solution to (5). In particular, we
+augment PP with values p1 , . . . , pt ∈ Z/N Z, where each Pj ← p2j mod N is a prime in Z congruent
+to 3 modulo 4. We can have t = O(log `). Let P = {P1 , . . . , Pt } and notice that P can be generated
+without knowledge of N ’s factorization.
+    The encryptor generates S̃ as before, except that S̃ = 3 mod 4. For i = 1, . . . , `, the encryptor
+finds the smallest (probable) prime R̃i ∈ Z+ such that R̃i = Ri mod N and R̃i = 3 mod 4. For all
+i = 0, . . . , ` there are two cases:
+
+   • If (S̃/R̃i ) = −1, then (R̃i /S̃) = 1 by quadratic reciprocity. The encryptor and decryptor
+     deterministically select a prime Pj ∈ P such that (Pj /R̃i ) = −1, and set S̃ 0 = S̃ · Pj . In
+     the unlikely event that no such Pj exists, the encryptor looks for the next suitable prime
+     along the arithmetic progression S̃ = S mod N . Note that S̃ 0 is a square modulo R̃i , and
+     vice versa by quadratic reciprocity. Moreover, S̃ 0 = 1 mod 4. For these reasons, and since
+     the factors of S̃ 0 and R̃i are known, the encryptor and decryptor can each find a solution to
+     R̃i x2 + S̃ 0 y 2 − z 2 = 0 in Z. This yields a solution (x/z, pj · y/z) to Ri x2 + Sy 2 = 1 in Z/N Z,
+     as needed for encrypting the i’th bit of the message.
+
+   • If (S̃/R̃i ) = 1, then (R̃i /S̃) = −1. Encryption and decryption proceed as in the first case,
+     except that we multiply R̃j by Pj ∈ P to obtain R̃0 = R̃j · Pj where (R̃0 /S̃) = 1.
+
+Since S̃ 0 has about twice as many bits as S̃, the lattice reduction step may take a little longer.
+However, empirically, the lattice reduction time is dictated by the smaller of the two coefficients
+(e.g., |R̃i | < |S̃ 0 |). In practice, the effect on lattice reduction time is therefore minimal. Since it takes
+                                                             1/2
+two full (log N )-bit exponentiations to compute R̃i mod S̃ 0 , this method impacts decryption time
+somewhat. But it has little impact on encryption time, which is dominated by prime generation.
+
+5.3    A time space tradeoff
+So far the encryption bottleneck is in generating √ the primes S̃, R̃1 , R̃2 , . . ..√This work can be greatly
+reduced by splitting the `-bit√plaintext into ` blocks each containing ` bits. We encrypt each
+block separately. Write t ← d `e.
+     For example, the encryptor may instantiate this idea with method 2, using the same values of
+R̃1 , . . . , R̃t with each block. For the i’th block, the encryptor generates S̃√i as in method 2, and
+encryption proceeds as usual. Overall, the encryptor generates only 2t = 2d `e primes, as opposed
+to ` + 1 primes as discussed in the previous section. The downside is that the ciphertext size
+increases from a single element in Z/N Z to t elements S1 , . . . , St in Z/N Z.
+     For concrete parameters, say ` = 128 bits, this approach reduces        √ the number of primes to
+generate during encryption from ` + 1 = 129 (as in method 2) to 2d `e = 24, about a factor of 5
+improvement. The ciphertext grows from one element in Z/N Z to 12 elements (S̃1 , . . . , S̃12 ).
+
+5.4    Hashing IDs to small elements in Z/N Z
+To further speed up prime generation, we can change slightly how the primes R̃1 , . . . , R̃` are gener-
+ated. Recall that R1 , . . . , R` ∈ Z/N Z are generated by hashing (ID, i) into Z/N Z for i = 1, . . . , `.
+We needed a a uniform distribution over Z/N Z for the random oracle simulation. In particular, we
+needed to generate random pairs (z, z 2 ) ∈ Z/N Z and then program the oracle so that H(ID, i) = z 2 .
+
+
+                                                      11
+    Gentry [24], building on work by Vallée [39] and Coron [18], shows how to generate pairs
+(z, z 2 ) ∈ Z/N Z where z 2 is indistinguishable from uniform in QR(N )∩[1, 8N 2/3 ] and z is a uniformly
+random square root of z 2 . Consequently, we can hash (ID, i) into [1, 8N 2/3 ] without hurting the
+simulation. This can potentially speed up prime number generation. We note that hashing into a
+shorter interval can become insecure due to the attacks of Desmedt and Odlyzko [22].
+    Let us assume that for i = 1, . . . , ` the Ri are in the range [1, 8N 2/3 ]. We can no longer look
+for primes R̃i along the arithmetic progression R̃i = Ri mod N since that will negate the benefit of
+having small Ri . Instead, we generate the R̃i by hashing (ID, i, v) for v = 1, 2, . . .. We define R̃i as
+the first prime along this sequence. Since the numbers are a little smaller than before (size 8N 2/3
+as opposed to N ), finding such a prime is faster than looking along the arithmetic progression.
+
+5.5    Hashing IDs to products of small primes
+Another way to speed up prime generation is to compute R̃i as the product k−1
+                                                                                        Q
+                                                                                          b=0 H(ID, i, b), where
+H outputs d(log N )/ke-bit primes, each with Jacobi symbol 1 modulo N . R̃0 = ũ can also be set
+in this way. Since prime generation takes quartic time (without sieving), generating R̃i in this way
+takes much less time for the sender – by a factor of O(k 3 ) – than generating R̃i as in Section 5.2.
+The PKG computes the private key value ri from R̃i mod N in the usual way.
+     When k = 2, this approach can be simulated very efficiently in the random oracle model. To
+                                                             R                    R
+define H(ID, i, b), the simulator generates random qi ← Z/N Z and ai ← {0, 1}, sets Qi ← uai qi2 ∈
+Z/N Z and uses continued fractions to find small numbers x, y ∈ Z/N Z such that Qi = x/y. It
+repeatedly picks new random (qi , ai ) until x and y are d(log N )/2e-bit primes coming from the
+appropriate distribution. Next, it sets ri ← qi · y and R̃i ← Qi · y 2 (= x · y). When queried, it
+returns H(ID, i, 0) ← x, H(ID, i, 1) ← y, and ri as the private key component for R̃i .
+     Moreover, when k = 2, we can construct a variant of our system that uses the faster approach
+to prime generation, without making the other steps (notably, the lattice reduction) much slower.
+In this variant, the PKG augments PP as in Method 3 in Section 5.2.1, except that each Pj ∈ P
+is a product of two d(log N )/2e-bit primes, each congruent to 3 modulo 4; let Pj,0 and Pj,1 denote
+the two factors of Pj . To instantiate H efficiently, H(ID, i, 0) is computed (using sieving) as the
+first prime following H 0 (ID, i, 0) that is congruent to 1 modulo 4, where H 0 outputs d(log N )/2e-bit
+integers; H(ID, i, 1) is computed identically, except it equals 3 modulo 4. To compute R̃i , the
+encryptor sets R̃i,0 ← H(ID, i, 0), R̃i,1 ← H(ID, i, 1), and R̃i ← R̃i,0 · R̃i,1 . The encryptor generates
+S̃ in the usual way. (This single large prime generation seems unavoidable.) For i = 0, . . . , `, if
+(R̃i,0 /S̃) = (R̃i,1 /S̃) = 1, the encryptor and decryptor compute a solution to R̃i x2 + S̃y 2 − z 2 = 0
+in the usual way. If (R̃i,0 /S̃) = −1 and (R̃i,1 /S̃) = 1, they select Pj , Pk ∈ P such that R̃i,0 · Pj,0 ,
+R̃i,1 and Pj,1 are all squares modulo S̃ 0 ← S̃ · Pk , and vice versa. Then, they solve the three
+equations T x2 + S̃ 0 y 2 − z 2 = 0, where T is one of R̃i,0 · Pj,0 , R̃i,1 , or Pj,1 . Afterwards, these three
+solutions can be combined to obtain a solution to R̃i0 x2 + S̃ 0 y 2 = 1 mod N for R̃i0 ← R̃i · Pj by
+using the product formula (Lemma 5.1) twice. Multiplying x by pj and y by pk gives a solution
+to Ri x2 + Sy 2 = 1 mod N , after which encryption and decryption proceed in the usual way. The
+remaining cases for (R̃i,0 /S̃) and (R̃i,1 /S̃) are similar.
+     Empirically, the time needed to reduce the lattice associated to the equation T x2 + S̃ 0 y 2 −z 2 = 0
+is dictated by the smaller of the two values T and S̃ 0 . Since lattice reduction takes cubic time, and
+since T is (log N ) bits once, and (log N )/2 bits twice, in the three equations above, the three lattice
+reductions take only about 1.25 times as long as one “normal” lattice reduction in our system. So,
+
+
+                                                      12
+aside from the generation of S̃, this approach allows significantly (8 times) faster prime generation
+almost for free.
+    Setting k > 2 is an interesting possibility, but it is unclear how to make the simulation efficient.
+                                                                               R                R
+Of course, the simulator could generate R̃i as follows: generate random ri ← Z/N Z and ai ← {0, 1},
+set R̃i ← uai ri2 , and try to factor R̃i , hoping that it is (roughly speaking) N 1/k -smooth. But this
+leads to an extremely loose reduction.
+
+
+6     Anonymous IBE and security without random oracles
+The product formula (Lemma 5.1) allows us to quickly compute Q(N, uRj , S) from Q(N, Rj , S).
+We show that for these derived solutions the decryptor can deduce the ciphertext bit c̄j from the
+bit cj . As a result, the bits (c̄1 , . . . , c̄` ) need not be included in the ciphertext. By eliminating the
+extra ciphertext bits we obtain an anonymous IBE and we can prove its security based on the IQR
+assumption without the random oracle model.
+    As in Section 3 we begin by stating the abstract properties needed for this construction. We
+then give an example instantiation and describe the resulting IBE system.
+
+Definition 6.1. Let Q0 be a deterministic algorithm that takes as input (N, u, R, S) where N ∈ Z+
+and u, R, S ∈ Z/N Z. The algorithm outputs polynomials f, f¯, g, τ ∈ Z/N Z[x]. We say that Q0 is
+Enhanced IBE Compatible if the following conditions hold:
+    • (Condition 1a) If R and S are quadratic residues, then f (r)g(s) is also a quadratic residue
+      for all square roots r of R and s of S.
+    • (Condition 1b) If uR and S are quadratic residues, then f¯(r̄)g(s)τ (s) is also a quadratic
+       residue for all square roots r̄ of uR and s of S.
+    • (Condition 2a) If R is a quadratic residue, then f (r)f (−r)S is also a quadratic residue for all
+      square roots r of R.
+    • (Condition 2b) If uR is a quadratic residue, then f¯(r̄)f¯(−r̄)S is also a quadratic residue for
+       all square roots r̄ of uR.
+    • (Condition 2c) If S is a quadratic residue, then τ (s)τ (−s)u is also a quadratic residue for all
+      square roots s of S.
+    • (Condition 3) τ is independent of R, that is, Q0 (N, u, R1 , S) and Q0 (N, u, R2 , S) produce the
+      same τ for all N, u, R1 , R2 , S.
+
+6.1        An enhanced IBE compatible example
+As an instance of such a Q0 , we proceed from Section 5.1 as follows. Algorithm Q0 (N, u, R, S):
+
+      1.    Construct a solution (x, y) ∈ (Z/N Z)2 to the equation Rx2 + Sy 2 = 1
+      2.    Construct a solution (α, β) ∈ (Z/N Z)2 to the equation u · α2 + S · β 2 = 1
+      3.    Output the polynomials:
+              f (r) ← xr + 1              f¯(r̄) ← 1 + Syβ + αxr̄
+              g(s) ← 2ys + 2              τ (s) ← 1 + βs.
+
+
+
+                                                     13
+This satisfies Conditions 1a, 2a and 2c as in Section 4, and trivially satisfies Condition 3. As for
+Conditions 1b and 2b, we note that, per Lemma 5.1, x̄ ← αx/(Syβ + 1) and ȳ ← (y + β)/(Syβ + 1)
+satisfy uR · x̄2 + S · ȳ 2 = 1, so that when uR and S are quadratic residues:
+
+               f¯(r̄)g(s)τ (s) = (1 + Syβ + αxr̄) · (2 + 2ys) · (1 + βs)
+                              = 2 · (1 + Syβ + αxr̄) · (1 + Syβ + ys + βs)
+                                                                   
+                                             αx                y+β
+                              = 2 · 1 + r̄            · 1+s             · (Syβ + 1)2
+                                           Syβ + 1            Syβ + 1
+                              = 2 · (1 + r̄x̄) · (1 + sȳ) · (Syβ + 1)2
+
+This is a quadratic residue: 2 · (1 + r̄x̄) · (1 + sȳ) is a quadratic residue as in Section 4, and so is
+(Syβ + 1)2 by definition. Similarly, if uR is a quadratic residue, then
+
+                             f¯(r̄)f¯(−r̄)S = (Syβ + 1)2 (1 + r̄x̄)(1 − r̄x̄)S
+
+is a quadratic residue as in Section 4.
+
+6.2   The modified IBE system
+With an Enhanced IBE Compatible Q0 we construct an IBE, which we call AnonIBE. Its Setup and
+KeyGen algorithms are the same as in the simpler system of Section 3.1.
+Encrypt(PP, ID, m): To encrypt a message m = m1 , m2 , . . . , m` ∈ {±1}` to some ID, pick a
+random s ∈ Z/N Zand compute S ← s2 mod N . Run Q0 (N, u, 1, S) to obtain the polynomial τ ,
+and compute k ← τN   (s)
+                          . Then for j ∈ [1, `], set Rj ← H(ID, j), run Q0 (N, u, Rj , S) to obtain gj ,
+                                
+                           g (s)
+and compute cj ← mj · jN . Set c = c1 , . . . , c` ; the ciphertext is then (S, k, c). The ciphertext
+size is now (log2 N + ` + 1) bits which is ` − 1 bits shorter than before.
+
+Decrypt(C, dID ): To decrypt a ciphertext C = (S, k, c) with a private key dID = (r1 , . . . , r` ), for
+j = 1, . . . , ` the receiver sets Rj ← H(ID, j) and runs Q0 (N, u, Rj , S) to obtain fj and f¯j .
+                                                                                       ¯         
+             2                          fj (rj )            2                              fj (rj )
+       if rj = Rj set mj ← cj ·                    ;    if rj = uRj set mj ← cj · k ·
+                                          N                                                  N
+
+Output m ← m1 . . . m` . Conditions 1a, 1b and 3 above guarantee that this correctly recovers the
+message.
+
+Security    We prove that the system is ANON-IND-ID-CPA based on the IQR assumption.
+
+Theorem 6.2. Let A be an efficient ANON-IND-ID-CPA adversary against AnonIBE. Then there
+exist efficient algorithms B1 , B2 , running in about the same time as A, such that
+
+                 IBEAdvA,AnonIBE (λ) ≤ PRFAdvB1 ,F (λ) + IQRAdvB2 ,(RSAgen,H) (λ)
+
+Proof. Let A be an ANON-IND-ID-CPA adversary attacking the IBE system AnonIBE. We wish to
+bound its advantage IBEAdvA,AnonIBE (λ). We present the proof as a series of games. We let Wi
+denote the event that the adversary wins Game i.
+
+                                                    14
+Game 0. The first game is identical to the ANON-IND-ID-CPA game defined in Section 2. Hence,
+we know that
+                                           1
+                               Pr[W0 ] −     = IBEAdvA,AnonIBE (λ)                                (8)
+                                           2
+
+Game 1. In Game 1 we slightly modify the challenger in Game 0. Instead of using a PRF FK
+to respond to A’s private key queries we use a truly random function f : ID × [1, `] → {0, 1, 2, 3}.
+Clearly, if F is a secure PRF, A will not notice the difference between Game 0 and Game 1. In
+particular, there exists an algorithm B1 (whose running time is about the same as that of A) such
+that
+
+                              |Pr[W1 ] − Pr[W0 ]| = PRFAdvB1 ,F (λ)                               (9)
+
+Game 2. In Game 2, we modify the challenger so that it does not need the factorization of N .
+We will work in the setting of the IQR assumption, so we assume a randomly chosen square root
+oracle O with its associated quadratic non-residue u as in Definition 2.3. As before, the challenger
+              R
+chooses p, q ← RSAgen(λ) and N ← pq, but now it does not need the factorization during the
+game.
+    The public parameters are (N, u, H); they are distributed as in Game 1. The challenger responds
+to private key queries using the oracle O. Given a private key query for ID the challenger must
+return ` values rj ∈ Z/N Z where rj2 = ua H(ID, j) for some a ∈ {0, 1}. This is precisely what the
+oracle does, enabling the challenger to respond to private key queries. The encryption query is
+unchanged.
+    Because the square root oracle is chosen at random (replacing the random function f ), the
+distributions of query responses are identical to those in Game 1. Therefore,
+
+                                         Pr[W2 ] = Pr[W1 ]                                       (10)
+
+Game 3. Game 3 proceeds exactly as Game 2 except that the encryption query is handled
+differently. To encrypt a message mb to a particular IDb , the challenger does:
+          construct the private key dIDb = (PP, r1 , . . . , r` ) using O
+                    R
+ (∗)      choose s ← Z/N Z and set S ← s2
+                   R                                              
+          choose k ← {±1}, and set cb ← Decrypt dIDb , (S, k, mb )
+Send the challenge ciphertext (S, k, cb ) to the adversary.
+    This process produces the same distribution for (S, k, cb ) as the real Encrypt in Game 2. Indeed,
+in Game 2 the quantity S is uniformly distributed among quadratic residues, and by Lemma 3.3,
+the bit k is independently uniformly distributed in {±1}. Furthermore, cb is the unique string such
+that (S, k, cb ) is an encryption of mb . Hence, (S, k, cb ) in Game 3 is distributed as in Game 2 and
+therefore
+
+                                         Pr[W3 ] = Pr[W2 ]                                       (11)
+
+Game 4. Game 4 proceeds exactly as Game 3 except that when creating the challenge ciphertext
+the challenger chooses S as a random non-residue. That is, we change the line marked (∗) in
+
+                                                    15
+              R
+Game 3 to S ← J(N )\QR(N ). Since this is the only change, under the IQR assumption, Game 4
+will be indistinguishable from Game 3. More precisely, there exists an algorithm B2 whose running
+in about the same time as A, such that
+
+                          |Pr[W3 ] − Pr[W4 ]| = IQRAdvB2 ,(RSAgen,H) (λ)                         (12)
+
+   We claim that the adversary wins Game 4 exactly half the time. We show that in Game 4
+the challenge ciphertext (S, k, c) is random and independent of b. The values S and k are clearly
+independent of b. To show that c = c1 . . . c` are independent of b, consider the jth bit cj . Since O
+was chosen at random, in the adversary’s view, rj is uniformly distributed among the four square
+roots of Rj = H(IDb , j) or uRj . Hence, since S is not a quadratic residue, Lemma 3.3 tells us
+that (fj (rj )/N ) or (f¯j (rj )/N ) is uniform in {±1}. Either way, the bit cj is uniform in {±1} and
+independent of b. Overall, (S, k, c) is independent of b and hence
+                                                       1
+                                          P r[W4 ] =                                             (13)
+                                                       2
+Combining equations (8) through (13), we obtain:
+
+                  IBEAdvA,AnonIBE (λ) ≤ PRFAdvB1 ,F (λ) + IQRAdvB2 ,(RSAgen,H) (λ)
+
+This is the desired bound.
+
+Note that the IQR assumption follows from the QR assumption where H (i.e., HN ) is a full-domain
+hash function modeled as a random oracle. The challenger picks some v ∈ J(n), and can replace
+                                R           R
+calls to HN (X) by choosing x ← Z/N Z, a ← {0, 1}, and returning HN (X) = v −a x2 . When queried
+for O(N, X), it returns x. If v is not a quadratic residue, this gives a properly random distribution
+of HN . If v is a quadratic residue, the results are still indistinguishable by the QR assumption. In
+summary, AnonIBE is secure in the standard model under the IQR assumption, and in the random
+oracle model under the QR assumption.
+
+
+7     Extensions and Open Problems
+7.1   Chosen ciphertext security
+In Appendix D, we review a generic construction that converts an IND-ID-CPA IBE system into an
+IND-ID-CCA IBE in the random oracle model [4], and discuss how it applies to our scheme.
+    More importantly, in Appendix E we build an ANON-IND-ID-CCA IBE system in the standard
+model. First, we describe a generic ANON-IND-ID-CCA system that uses hash proof systems (as
+defined in [19]) for a subset membership problem that has a trapdoor permitting private key
+generation. We prove this system secure under the interactive subset membership (ISM) assumption,
+a generic analogue to the IQR assumption. We then describe our hash proof systems for quadratic
+residuosity (employing the ideas described earlier in this paper) and show that these systems meet
+the requirements of our generic framework. As a result, we obtain an ANON-IND-ID-CCA-secure IBE
+system in the standard model under the IQR assumption. We also briefly describe an anonymous
+PKE system based on our hash proof systems that is anonymous in the multi-user setting and
+IND-CCA secure in the standard model under the (non-interactive) QR assumption.
+
+
+                                                 16
+7.2   Multivariate quadratics and higher residue symbols
+A possible way to extend our IBE system is to use a higher-order character in place of the Jacobi
+symbol. This may improve efficiency by allowing the sender and receiver to derive more than one
+bit of shared secret data with each computation. Another possible extension is to use multivariate
+polynomials f and g instead of univariate ones. This may improve efficiency if it allows us to
+replace Q by a faster algorithm.
+
+
+8     Conclusions
+We described a space-efficient anonymous IBE system without pairings based on the quadratic
+residuosity assumption in the random oracle model. In the standard model, the system is secure
+under the interactive quadratic residuosity assumption. Our system is more space efficient than
+Cocks’ IBE, but is less time efficient. Since the bottleneck in our system is due to algorithm Q it
+is natural to look for other instantiations of our abstract system that are more efficient. Another
+natural important problem is to design an IBE system secure without random oracles based on
+quadratic residuosity. Currently, both the Cocks system and ours need the random oracle model
+to argue that the underlying Rabin signature system is existentially unforgeable.
+
+
+Acknowledgments
+We thank Peter Montgomery for his comments on extensions to Section 4.
+
+
+References
+ [1] Michel Abdalla, Mihir Bellare, Dario Catalano, Eike Kiltz, Tadayoshi Kohno, Tanja Lange,
+     John Malone-Lee, Gregory Neven, Pascal Paillier, and Haixia Shi. Searchable encryption
+     revisited: Consistency properties, relation to anonymous ibe, and extensions. In CRYPTO,
+     pages 205–222, 2005.
+
+ [2] Dirk Balfanz, Glenn Durfee, Narendar Shankar, Diana Smetters, Jessica Staddon, and Hao-
+     Chi Wong. Secret handshakes from pairing-based key agreements. In Proceedings of the IEEE
+     Symposium and Security and Privacy, pages 180–196, 2003.
+
+ [3] Mihir Bellare, Alexandra Boldyreva, Anand Desai, and David Pointcheval. Key-privacy in
+     public-key encryption. In ASIACRYPT, volume 2248 of Lecture Notes in Computer Science,
+     pages 566–582. Springer, 2001.
+
+ [4] K. Bentahar, P. Farshim, J. Malone-Lee, and N.P. Smart. Generic constructions of identity-
+     based and certificateless kems. http://eprint.iacr.org/2005/058.
+
+ [5] John Bethencourt, Amit Sahai, and Brent Waters. Ciphertext-policy attribute-based encryp-
+     tion. In Proceedings of 2007 IEEE Symposium on Security and Privacy, 2007.
+
+ [6] Dan Boneh and Xavier Boyen. Efficient selective-ID identity based encryption without random
+     oracles. In Proceedings of Eurocrypt 2004, LNCS, pages 223–238. Springer-Verlag, 2004.
+
+
+                                                17
+ [7] Dan Boneh, Ran Canetti, Shai Halevi, and Jonathan Katz. Chosen-ciphertext security from
+     identity-based encryption. SIAM J. of Computing (SICOMP), 36(5):915–942, 2006.
+
+ [8] Dan Boneh, Giovanni Di Crescenzo, Rafial Ostrovsky, and Giuseppe Persiano. Public key
+     encryption with keyword search. In Proceedings of Eurocrypt ’04, 2004.
+
+ [9] Dan Boneh and Matt Franklin. Identity-based encryption from the Weil pairing. SIAM Journal
+     of Computing, 32(3):586–615, 2003. extended abstract in Crypto ’01.
+
+[10] Dan Boneh, Craig Gentry, and Michael Hamburg. Space-efficient identity based encryption
+     without pairings. In Proceedings of FOCS’07, 2007. full version at http://eprint.iacr.org/
+     2007/177.
+
+[11] Dan Boneh, Craig Gentry, and Brent Waters. Collusion resistant broadcast encryption with
+     short ciphertexts and private keys. In CRYPTO ’05, pages 258–275, 2005.
+
+[12] Xavier Boyen and Brent Waters. Anonymous hierarchical identity-based encryption (without
+     random oracles). In Crypto ’06, 2006.
+
+[13] Ran Canetti, Shai Halevi, and Jonathan Katz. A forward-secure public-key encryption scheme.
+     In Eli Biham, editor, Proceedings of Eurocrypt 2003, volume 2656 of LNCS. Springer, 2003.
+
+[14] Ran Canetti, Shai Halevi, and Jonathan Katz. Chosen-ciphertext security from identity-based
+     encryption. In Proceedings of Eurocrypt 2004, LNCS, 2004.
+
+[15] J. W. S. Cassels. Rational quadratic forms, volume 13 of London Mathematical Society Mono-
+     graphs. Academic Press, 1978.
+
+[16] T. Cochrane and P. Woods. Small solutions of the legendre equation. Journal of Number
+     Theory, 70(1):62–66, 1998.
+
+[17] Clifford Cocks. An identity based encryption scheme based on quadratic residues. In Pro-
+     ceedings of the 8th IMA International Conference on Cryptography and Coding, pages 26–8,
+     2001.
+
+[18] Jean-Sbastien Coron. Security proof for partial-domain hash signature schemes. In Proceedings
+     of Crypto ’02, LNCS, pages 613–626. Springer, 2002.
+
+[19] R. Cramer and V. Shoup. Universal hash proofs and a paradigm for chosen ciphertext secure
+     public key encryption. In Proceedings of Eurocrypt 2002, 2002.
+
+[20] J. Cremona and D. Rusin.      Efficient solution of rational conics.   Math. of computation,
+     72(243):1417–1441, 2003.
+
+[21] Giovanni Di Crescenzo and Vishal Saraswat. Searchable public-key encryption based on jacobi
+     symbols. manuscript, Feb. 2007.
+
+[22] Y. Desmedt and A. Oldyzko. A chosen text attack on the rsa cryptosystem and some dis-
+     crete logarithm schemes. In Proceedings of Crypto ’85, volume 218 of LNCS, pages 516–521.
+     Springer-Verlag, 1985.
+
+
+                                               18
+[23] Yevgeniy Dodis and Nelly Fazio. Public key broadcast encryption for stateless receivers. In
+     Proceedings of the Digital Rights Management Workshop 2002, volume 2696 of LNCS, pages
+     61–80. Springer, 2002.
+
+[24] Craig Gentry. How to compress rabin ciphertexts and signatures (and more). In Proceedings
+     of Crypto ’04, pages 179–200, 2004.
+
+[25] Craig Gentry. Practical identity-based encryption without random oracles. In Proceedings of
+     Eurocrypt ’06, volume 4004 of LNCS, pages 445–464, 2006.
+
+[26] Craig Gentry and Alice Silverberg. Hierarchical ID-based cryptography. In Yuliang Zheng,
+     editor, Proceedings of Asiacrypt 2002, volume 2501 of LNCS, pages 548–66, 2002.
+
+[27] Oded Goldreich. Modern Cryptography, Probabilistic Proofs and Pseudorandomness. Springer,
+     1999.
+
+[28] L. Lovasz H. Lensta, L. Lensta. Factoring polynomials with rational coefficients. Math. Ann.,
+     261:515–534, 1982.
+
+[29] Jeremy Horwitz and Ben Lynn. Towards hierarchical identity-based encryption. In Lars
+     Knudsen, editor, Proceedings of Eurocrypt 2002, volume 2332 of LNCS, pages 466–81. Springer,
+     2002.
+
+[30] K. Kurosawa and Y. Desmedt. A new paradigm of hybrid encryption scheme. In Proceedings
+     of Crypto ’04, volume 3152 of LNCS, pages 426–442. Springer, 2004.
+
+[31] Ninghui Li, Wenliang Du, and Dan Boneh. Oblivious signature-based envelope. In In proceed-
+     ings of PODC ’03, pages 182–189, 2003.
+
+[32] K. Mccusker, N.O’Connor, and D. Diamond. Low-energy finite field arithmetic primitives
+     for implementing security in wireless sensor networks. In Proceedings of 2006 conference on
+     Communications, Circuits and Systems, 2006.
+
+[33] Alfred J. Menezes, Paul C. Van Oorschot, and Scott A. Vanstone. Handbook of Applied Cryp-
+     tography. CRC Press, 1997.
+
+[34] H. Ong, C. P. Schnorr, and A. Shamir. An efficient signature scheme based on quadratic
+     equations. In Proceedings of STOC ’84, pages 208–216, 1984.
+
+[35] J. M. Pollard and C. P. Schnorr. An efficient solution of the congruence x2 + ky 2 = m(modn).
+     IEEE Transactions on Information Theory, 33(5):702–709, 1987.
+
+[36] R. Sakai and M. Kasahara. ID based cryptosystems with pairing over elliptic curve. http:
+     //eprint.iacr.org/2003/054, 2003.
+
+[37] Adi Shamir. Identity-based cryptosystems and signature schemes. In Advances in Cryptology—
+     CRYPTO 1984, volume 196 of LNCS, pages 47–53. Springer-Verlag, 1984.
+
+[38] Elaine Shi, John Bethencourt, T.-H. Hubert Chan, Dawn Song, and Adrian Perrig. Multi-
+     dimensional range query over encrypted data. In Proceedings of the IEEE Symposium and
+     Security and Privacy, 2007.
+
+                                               19
+[39] B. Vallee. Generation of elements with small modular squares and provably fast integer fac-
+     toring algorithms. Mathematics of Computation, 56(194):823–849, 1991.
+[40] B. Waters. Efficient identity-based encryption without random oracles. In Proceedings of
+     Eurocrypt 2005, LNCS, 2005.
+[41] Brent Waters, Dirk Balfanz, Glenn Durfee, and D. Smetters. Building an encrypted and
+     searchable audit log. In Proceedings of Network and Distributed System Security Symposium
+     (NDSS 2004), 2004.
+[42] Danfeng Yao, Nelly Fazio, Yevgeniy Dodis, and Anna Lysyanskaya. ID-based encryption for
+     complex hierarchies with applications to forward security and broadcast encryption. In Birgit
+     Pfitzmann, editor, Proceedings of the ACM Conference on Computer and Communications
+     Security 2004, pages 354–63, 2004.
+
+
+A     Review of Cocks IBE
+The Cocks cryptosystem [17] depends on the sender and receiver knowing solutions to public
+quadratic equations mod a large composite number N . Specifically:
+                           R                                            R
+Setup(λ) generates (p, q) ← RSAgen(λ), N ← pq, and a random u ← J(N ) \ QR(N ). It outputs
+public parameters PP = (N, u, H) where H is a hash function H : ID → J(N ). The master key
+MSK is the factorization of N .
+KeyGen(MSK, ID) generates a private key by first setting R ← H(ID). If R ∈ QR(N ) it sets
+r ← R1/2 and otherwise it sets r ← (uR)1/2 . It outputs r as the private key for ID.
+Encrypt(PP, ID, m): Let R ← H(ID). To encrypt an `-bit message m = m1 · · · m` choose 2`
+random tj,a ∈ Z/N Z for j ∈ {1, . . . , `} and a ∈ {0, 1}. Compute
+                                t2j,a + ua R
+                                                                              
+                                                                          tj,a
+                        dj,a ←                    and       cj,a ← mj ·
+                                       tj,a                                N
+                                           
+Output the 2` pairs C ← (dj,a , cj,a ) for j ∈ {1, . . . , `} and a ∈ {0, 1}.
+Decrypt(C, r): Set a ∈ {0, 1} such that r2 = ua R. For j = 1, . . . , ` set gj ← dj,a + 2r. Note that
+                              (tj,a + r)2                  g  t 
+                                                                j           j,a
+                        gj =                and hence                 =
+                                  tj,a                        N             N
+                                                 g 
+Therefore the receiver can compute mj ← cj,a · Nj and outputs m ← m1 · · · m` .
+
+
+B     Proof of Theorem 3.2
+We prove security of the abstract multi-bit IBE system from Section 3.1. We prove Theorem 3.2 in
+two steps. First, we present a public key system, called BasicPKE, that is semantically secure in the
+standard model under the quadratic residuosity (QR) assumption. Then we deduce security of the
+IBE system; however this second step requires the random oracle model. We note that BasicPKE
+may be of independent interest since it gives a CCA-secure system in the standard model based on
+the QR assumption (see Appendix E).
+
+                                                  20
+B.1     The public key system BasicPKE.
+Our public key system (PKE) allows multiple users to use the same modulus N , and we treat N
+as a common reference string. Hence, the PKE consists of four algorithms: a setup algorithm G to
+generate the common reference string C, a key generation algorithm K to generate private/public
+key pairs, and algorithms E, D to encrypt/decrypt. Note that if for some reason one does not want
+all users to share the same N then the pair of algorithms (G, K) can be viewed as a single key
+generation algorithm.
+Algorithms E = (G, K, E, D) work as follows:
+
+                                      R
+Algorithm G(λ): generate (p, q) ← RSAgen(λ), N ← pq, and output N as the common reference
+string. The factorization of N is erased.
+
+Algorithm K(N, `): Takes as input the common reference string N and a message length parameter
+                                              R
+`. For j = 1, . . . , ` it picks a random rj ← Z/N Z and sets Rj ← rj2 . It then outputs the public key
+PK ← (R1 , . . . , R` ) and private key SK ← (N, r1 , . . . , r` ).
+
+Algorithm E(N, PK, m): Let PK = (R1 , . . . , R` ) and m = m1 . . . m` ∈ {−1, 1}` . The algorithm
+picks a random s ∈ Z/N Z and sets S ← s2 . For j = 1, . . . , `, it does:
+                                                                             
+                                                                       gj (s)
+                       (fj , gj ) ← Q(N, Rj , S) and cj ← mj ·
+                                                                        N
+
+Set c ← c1 · · · c` and output the ciphertext C ← (S, c).
+
+Algorithm D(SK, C): Let SK = (N, r1 , . . . , r` ) and C = (S, c1 , . . . , c` ). For j = 1, . . . , ` do:
+                                                                                          
+                         2                                                        fj (rj )
+                 Rj ← rj , (fj , gj ) ← Q(N, Rj , S) , mj ← cj ·
+                                                                                    N
+
+Output m ← m1 . . . m` .
+
+    This completes the description of the PKE system BasicPKE. Soundness follows from condi-
+tion (1) of Definition 3.1.
+
+Security of BasicPKE. We now prove that BasicPKE is semantically secure without random
+oracles. The standard semantic security game proceeds by the challenger first running G(λ) to
+generate the common reference string C. It then runs K(C, `) to generate a public/private key pair
+                                                                                                 R
+(PK, SK) for `-bit messages. It sends (C, PK) to A. Finally, it picks a random b ← {0, 1}. Next,
+A gives the challenger two equal length messages m(0) , m(1) and gets back a challenge ciphertext
+C ∗ ← E(C, PK, m(b) ). Finally A outputs its guess b0 ∈ {0, 1} for the bit b. We say that A wins the
+game if b = b0 . We refer to such adversary A as an IND-CPA adversary. We define the adversary’s
+advantage in attacking the PKE scheme E as
+
+                                                                            1
+                                       PKEAdvE,A (λ) = Pr[b = b0 ] −
+                                                                            2
+
+The probability is over the random bits used by the challenger and the adversary.
+
+                                                        21
+Definition B.1. We say that a PKE system E is IND-CPA secure if for all polynomial time adver-
+saries A we have that PKEAdvE,A is a negligible function.
+We can now state and prove the security theorem of BasicPKE.
+Lemma B.2. The PKE system BasicPKE = (G, K, E, D) is IND-CPA secure in the standard model
+if the QR assumption holds for RSAgen. In particular, suppose A is a polynomial time IND-CPA
+adversary attacking BasicPKE. Then there exists an efficient QR algorithm B (whose running time
+is about the same as that of A) such that
+                             PKEAdvA,BasicPKE (λ) = QRAdvB,RSAgen (λ).
+Proof. The proof is by direct reduction to the QR assumption. Algorithm B is given a random tuple
+                               R
+(N, V ) where N = pq, (p, q) ← RSAgen(λ) and V ∈ J(N ). It tries to output 1 when V ∈ QR(N )
+and 0 otherwise. Algorithm B runs A and plays the role of challenger to A. First, B sets N as the
+common reference string and runs K(N, `) to obtain a public/private key pair (PK, SK) for `-bit
+messages. It gives A the pair (N, PK).
+   Adversary A now responds with two equal length messages m(0) , m(1) ∈ {±1}` . Now B creates
+                                                            R
+a challenge ciphertext C ∗ . It chooses a random b ← {0, 1} and creates an encryption of m(b) using
+the given V as follows:
+   • Let PK = (R1 , . . . , R` ) and let SK = (r1 , . . . , r` ).
+   • Write m(b) = m1 . . . m` ∈ {±1}` . For u = 1, . . . , `, do:
+                                                                                                
+                                                                                      fu (ru )
+                               (fu , gu ) ← Q(N, Ru , V )       and   cu ← mu ·
+                                                                                        N
+      Set c ← c1 · · · c` and send A the challenge ciphertext C ∗ ← (V, c).
+A now outputs a guess b0 ∈ {0, 1} for b. If b = b0 then B outputs 1. Otherwise it outputs 0. This
+completes the description of B.
+
+We argue that B breaks the QR assumption with the same advantage as A breaking the public key
+system. This will follow from the the following two claims.
+                           R
+Claim 1: When (N, V ) ← PQR (i.e. V is uniformly distributed in QR(N )) then
+                                        1                 1
+                 Pr[B(N, V ) = 1] −       = Pr[b = b0 ] −   = PKEAdvA,BasicPKE (λ)                   (14)
+                                        2                 2
+Proof. When (N, V ) are distributed in PQR then B emulates perfectly an IND-CPA challenger. The
+reference string N and public key PK are as in the real game. To see that the challenge ciphertext
+C ∗ is distributed as in the real attack game, let v be a square root of V , then by condition (1) of
+Definition 3.1 we have (gu (v)/N ) = (fu (ru )/N ) for all u = 1, . . . , `, as required. Hence, the claim
+follows.
+
+                           R
+Claim 2: When (N, V ) ← PN QR (i.e. V is uniformly distributed in J(N ) \ QR(N )) then
+                                                                          1
+                                    Pr[B(N, V ) = 1] = Pr[b = b0 ] =                                 (15)
+                                                                          2
+
+                                                         22
+Proof. When (N, V ) are distributed in PN QR we claim that the bit b is independent of A’s view.
+In particular, the challenge ciphertext C ∗ = (V, (c1 · · · c` )) is independent of b. To see why, con-
+sider the bit cu = mu · (fu (ru )/N ) ∈ {±1} for u = 1, . . . , `. Recall that PK = (R1 , . . . , R` ). The
+only information A has about ru is the value Ru ∈ Z/N Z. Hence, from A’s view, ru is uniformly
+distributed in the set of four square roots of Ru . Since V ∈J(N )            \ QR(N ), it follows by Con-
+                                                                       fu (ru )
+dition (2) of Definition 3.1 and Lemma 3.3 that the symbol               N        is uniformly distributed in
+{±1}. Hence, cu is independent of mu . The same argument holds for all j = 1, . . . , ` and therefore
+C ∗ is independent of the message being encrypted. Overall, when (N, V ) are distributed in PN QR
+we have Pr[B(N, V ) = 1] = Pr[b = b0 ] = 12 .
+
+
+   By combining (14) and (15) we obtain QRAdvB,RSAgen (λ) = PKEAdvA,BasicPKE (λ) as required.
+This completes the proof of Lemma B.2.
+
+B.2    Security of the IBE system
+Now, we turn to the proof of Theorem 3.2.
+
+Proof. Let A be an IND-ID-CPA adversary attacking the IBE system BasicIBE. We show that under
+the hypothesis of the theorem, IBEAdvA,BasicIBE (λ) is a negligible function. We present the proof
+as a sequence of games. We let Wi denote the event that the adversary wins game i.
+Game 0. The first game is identical to the IND-ID-CPA game defined in Section 2. Hence, we
+know that
+                                             1
+                                 Pr[W0 ] −     = IBEAdvA,BasicIBE (λ)                                   (16)
+                                             2
+
+The challenger picks the random oracle H : ID × [1, `] → J(N ) at random from the set of all such
+functions and allows A to query H at arbitrary points.
+Game 1. We slightly modify the challenger in Game 0. Instead of using a PRF to respond to A’s
+private key queries we use a truly random function f : ID × [1, `] → {0, 1, 2, 3}. Clearly, if F is
+a secure PRF, A will not notice the difference between Game 0 and Game 1. In particular, there
+exists an algorithm B1 (whose running time is about the same as that of A) such that
+
+                               |Pr[W1 ] − Pr[W0 ]| = PRFAdvB1 ,F (λ)                                    (17)
+
+Game 2. Recall that in Game 1 the public parameters PP given to A contain (N, u, H) where u
+is uniform in J(N ) \ QR(N ). Furthermore, in Game 1 the random oracle H is a random function
+H : ID × [1, `] → J(N ). In Game 2 we slightly change H. The challenger responds to a query to
+                                   R                 R
+H(ID, j) by picking random a ← {0, 1} and v ← Z/N Z and settings H(ID, j) = ua · v 2 . Clearly
+this challenger implements a random function H : ID × [1, `] → J(N ) as in Game 1.
+    Let Rj ← H(ID, j) for some (ID, j). Recall that in Game 1 the challenger responds to a private
+key query for ID by outputting a random square root of Rj or uRj for j = 1, . . . , `. Indeed, the
+value f (Rj ), which selects which square root to output, is uniform in the set {0, 1, 2, 3}.
+    In Game 2 let Rj ← H(ID, j) = ua · v 2 for some (a, v). The challenger responds to a private
+                                          1/2
+key query for ID by outputting either Rj = v (used if a = 0) or (uRj )1/2 = uv (used if a = 1)
+
+                                                     23
+for j = 1, . . . , `. Since v is uniform in Z/N Z this will produce a square root of Rj or uRj that
+is uniformly chosen from amongst the four square roots, as in Game 1. In summary, A’s view in
+games 1 and 2 is identical and therefore,
+                                             Pr[W2 ] = Pr[W1 ]                                               (18)
+Note that in Game 2 the challenger no longer needs the factorization of N to respond to A’s queries.
+Game 3. We slightly modify the challenger in Game 2 by choosing u uniformly in QR(N ) instead
+of in J(N ) \ QR(N ). Since this is the only change between games 2 and 3, adversary A will not
+notice the difference assuming the QR assumption holds for RSAgen. In particular, there exists an
+algorithm B2 (whose running time is about the same as that of A) such that
+                               |Pr[W3 ] − Pr[W2 ]| = QRAdvB2 ,RSAgen (λ)                                     (19)
+We note that since the random oracle is defined as H(ID, j) = ua · v 2 and u ∈ QR(N ) we now know
+that H(ID, j) always outputs elements in QR(N ). From here on we let u0 be a root of u.
+Game 4. We slightly change how the challenger picks the challenge ciphertext C ∗ . We pick C ∗
+as in the proof of Lemma B.2. To respond to the encryption query (ID, m(0) , m(1) ) from A the
+                        R
+challenger chooses b ← {0, 1} and does:
+            Ri ← H(ID, i) = uai · vi2 and ri ← ua0i · vi for i = 1, . . . , `
+                     (then ri is a root of Ri and u0 ri is a root of uRi )
+              R
+ (∗)        s ← Z/N Z        and        S ← s2
+            write m(b) = m1 . . . m` ∈ {±1}`
+            for k = 1, . . . , `, do:
+                   (fk , gk ) ← Q(N, Rk , S) and (f¯k , ḡk ) ← Q(N, uRk , S)
+                                                          ¯         
+(∗∗)               ck ← mk · fkN  (rk )
+                                           and c̄k ← mk · fk (uN0 rk )
+            c ← (c1 · · · c` ) and c̄ = (c̄1 · · · c̄` ). Send A the challenge ciphertext C ∗ ← (S, c, c̄)
+Since S, Rk , uRk are all in QR(N ) we know by condition (1) that (fk (rk )/N ) = (gk (s)/N ) for all
+k = 1, . . . , ` and that the same holds for (f¯k , ḡk ). Hence, the ciphertext C ∗ created in this way is
+identical to the challenge ciphertext created in Game 3. Therefore,
+                                             Pr[W3 ] = Pr[W4 ]                                               (20)
+It is important to note that s is not used in the creation of C ∗ .
+Game 5. Game 5 is identical to Game 4 except that the S used to create the challenge ciphertext
+C ∗ is chosen uniformly in J(N ) \ QR(N ) instead of QR(N ). That is we change the line marked
+with a (∗) in Game 4 to be
+               R
+ (∗)        S ← J(N ) \ QR(N )
+Since this is the only change from game 4 to game 5, adversary A will not notice the difference,
+assuming the QR assumption holds for RSAgen. In particular, there exists an algorithm B20 (whose
+running time is about the same as that of A) such that
+                               |Pr[W5 ] − Pr[W4 ]| = QRAdvB20 ,RSAgen (λ)                                    (21)
+
+                                                      24
+Game 6. We can now change Game 5 and make the challenge ciphertext C ∗ be independent of
+the challenge bit b. We change the line marked (∗∗) in Game 4 as follows:
+                                                                    ¯            
+                     R
+(∗∗)              zk ← {±1},     c k ← zk · f k N
+                                                (rk )
+                                                        and c̄k ← zk · fk (uN0 rk )
+
+
+As a result, the challenge ciphertext C ∗ is an encryption of a random message z1 . . . z` , independent
+of the bit b.
+    We argue that because S is a non-residue, Games 5 and 6 are indistinguishable due to Condi-
+tion (2) of Definition 3.1 and Lemma 3.3. The argument is similar to the argument in the proof
+of Lemma B.2. The challenge ciphertext is created using 2` elements {R1 , uR1 , . . . , R` , uR` } all in
+QR(N ). For each R in {R1 , . . . , R` } the adversary does not know which of the four square roots of
+R is used in the creation of C ∗ .                                     ¯           
+    Consider a specific k in {1, . . . , `} and let x = fkN
+                                                          (rk )
+                                                                  and y = fk (uN0 rk ) . Using Condition (2)
+of Definition 3.1 and the proof of Lemma 3.3 one can show that, when rk is chosen at random from
+among the four square roots of Rk , the pair (x, y) satisfies
+                                                                                                  
+  Pr (x, y) = (1, 1) = Pr (x, y) = (−1, −1) and Pr (x, y) = (1, −1) = Pr (x, y) = (−1, 1)
+
+It follows that the pair (x, y), which is an encryption of +1, is distributed identically as the pair
+(−x, −y), which is an encryption of −1. Hence, in the adversary’s view, the bits (ck , c̄k ) are
+distributed identically whether the plaintext is +1 or −1. Since this holds for all k = 1, . . . , ` it
+follows that C ∗ is distributed identically in Games 5 and 6. We obtain
+
+                                          Pr[W6 ] = Pr[W5 ]                                            (22)
+
+End. Clearly in Game 6 we have
+                                                         1
+                                             Pr[W6 ] =                                                 (23)
+                                                         2
+Now combining equations (16) through (23) proves the theorem.
+
+
+Remark 1: We point out that the reduction is tight, and in particular independent of the number
+of private key queries and oracle queries made by A.
+Remark 2: Recall that the element u in the public parameters is a random non-residue in J(N ).
+One might be tempted to set u = −1 and use a modulus N = pq which is a Blum integer (namely,
+p = q = 3 mod 4). This, however, would ruin our proof. In the transition from Game 2 to Game 3
+we switched u from a residue to a non-residue which caused the random oracle H to always output
+elements in QR(N ). This was necessary for a later part of the proof. Choosing u = −1 would
+preclude this step. We note however that the transition from Game 2 to Game 3 would go through
+with u = −1 if, in addition to QR, one also made the assumption that distinguishing N = pq with
+p = q = 3 mod 4 from p = q = 1 mod 4 is intractable. Clearly we recommend using a random
+non-residue u rather than u = −1.
+Remark 3: Key generation in our system outputs a random square root of H(ID, j). The reason
+for outputting a random root is evident in the transition from Game 2 to Game 3. That transition
+
+                                                    25
+would break if instead, the system used a deterministic square root algorithm (say by using N = pq
+with p = q = 3 mod 4). Indeed, a powerful adversary could distinguish Game 2 from Game 3 by
+testing whether the “correct” square root was given as a response to a private key query. We note
+a modified proof can work with a deterministic square root algorithm, but the reduction is very
+loose.
+
+
+C     Solving R · x2 + S · y 2 = z 2 in Z
+In section 5.2, we needed an algorithm to solve R · x2 + S · y 2 = z 2 . Here we describe such an
+algorithm. We are given integers R, S, r, s where
+    • gcd(R, S) = 1, R is odd, and S = 1 mod 4,
+
+    • r2 = R mod S and s2 = S mod R.
+We show how to construct a solution (x, y, z) ∈ Z3 to
+
+                                        R · x2 + S · y 2 − z 2 = 0                                (24)
+
+using an algorithm described in [20]. The algorithm presented here is based on the proof of Legen-
+dre’s theorem due to Mordell. Consider the three dimensional lattice L in Z3 containing all triples
+(x, y, z) satisfying
+
+                                           s·y =z     (mod R)
+                                          r·x=z       (mod S)
+                                             x=0      (mod 2)
+                                             y=z      (mod 2)
+
+It is easy to see that any point (x, y, z) in L satisfies
+
+                                   Rx2 + Sy 2 − z 2 = 0     (mod 4RS)
+
+We define the norm q(x, y, z) = |R|x2 + |S|y 2 + z 2 and look for the shortest vector v ∈ L under the
+norm q. A simple determinant calculation (and an application Minkowski’s theorem) shows that a
+vector v = (x0 , y0 , z0 ) ∈ L exists whose q-norm is less than 4RS. Then |Rx20 + Sy02 − z02 | < |4RS|.
+But since Rx20 + Sy02 − z02 = 0 mod 4RS, it follows that Rx20 + Sy02 − z02 = 0 holds over the integers,
+as required.
+    To find the short vector v ∈ L Cremona and Rusin [20] use the LLL algorithm [28]. They show
+that in three dimensions, one can easily derive the shortest vector from an LLL reduced basis.
+Cremona and Rusin present other algorithms for solving (24) that do not use LLL and are claimed
+to be twice as fast as the algorithm above. We also note that Cochrane and Mitchell [16] show that
+the lattice L without the 2-adic components already contains a solution to (24).
+
+C.1    Light weight primality tests
+We give more details regarding the heuristic light weight primality test discussed in Section 5.2. The
+idea is to implement the primality test via a deterministic square root algorithm. For convenience,
+we require that R̃ = 3 mod 4 and S̃ = 5 mod 8.
+
+                                                    26
+   We first look for a (probable) prime along the S̃ arithmetic progression by sequentially testing
+if 2(S̃−1)/2 = ±1 mod S̃ until we find the first such S̃.Once found, we treat S̃ as though it was
+prime. Next, we look for the first element along the R̃ arithmetic progression such that
+
+                          s ← S̃ (R̃+1)/4 mod R̃    satisfies   s2 = S̃ mod R̃                    (25)
+            S̃
+If R̃ and ( R̃ ) = 1 then s will be a square root of S̃ modulo R̃. Finally, we compute the square root
+of R̃ modulo S̃ assuming S̃ is prime. Since S̃ = 5 mod 8 the square root is one of
+                            (S̃+3)/8                        (S̃+3)/8
+                    r0 ← R 0           mod S̃   or r1 ← R0             · 2(S̃−1)/4 mod S̃         (26)
+We test if ri2 = R̃ mod S̃ for i = 0, 1. If not, then we start over by looking for the next prime along
+the S̃ arithmetic progression.
+
+
+D     IND-ID-CCA IBE With Random Oracles Based on QR
+We can construct an IND-ID-CCA system FullIBE from BasicIBE in the random oracle model using
+a generic method, such as Construction 3 in [4]. That construction uses hash functions H1 and H2 ,
+modeled as random oracles, and combines them with a generic probabilistic IBE scheme EID with
+algorithms EncryptID (ID, m; r) and DecryptID (dID , C). It outputs an ID-KEM scheme EID−KEM
+where EncryptID−KEM outputs (k, C) with C = EncryptID (ID, m; H1 (m)) and k = H2 (m), and
+DecryptID−KEM (dID , C) first checks that m ← DecryptID (dID , C) 6= ⊥, then checks that C =
+EncryptID (ID, m; H1 (m)), and finally outputs k = H2 (m). In our system, the second check does
+not require a complete encryption; rather, the recipient merely checks that randomness H1 (m)
+leads to the sender’s choice of S. Bentahar et al. prove (in the random oracle model) that if EID
+is one-way, then EID−KEM is secure against adaptive chosen ciphertext attack.
+
+
+E     ANON-IND-ID-CCA IBE Without Random Oracles Based on
+      Interactive Subset Membership Problems
+In this section, we describe how to achieve ANON-IND-ID-CCA security for our IBE system.
+
+E.1    Supplementary Definitions
+First, we review Cramer and Shoup’s universal hash proof framework [19].
+    Let X, Π, K and T be finite non-empty sets. Let H = {Hk : X → Π}k∈K be a set of functions.
+Let α : K → T be a function from K to T , which may be seen as a “projection.”
+Definition E.1 (Projective hash family (PHF)). Let H, K, X, Π, T , and α be as above. Then,
+for a given proper subset L ⊂ X, we refer to the tuple H = (H, K, X, L, Π, T, α) as a projective
+hash family for (X, L) if for all k ∈ K, the action of Hk on L is determined by α(k) – i.e., given
+α(k) and x ∈ L, Hk (x) is uniquely determined.
+Definition E.2 (-universal). PHF H above is -universal if, for all t ∈ T , x ∈ X \ L and π ∈ Π,
+it holds that
+                                Pr[Hk (x) = π | α(k) = t] ≤  ,
+i.e., the probability of guessing Hk (x) from x and α(k) is at most .
+
+                                                   27
+Definition E.3 (-smooth). PHF H above is -smooth if the statistical distance between the
+distributions of (x, t, Hk (x)) and (x, t, π) is at most  when k, x, and π are chosen uniformly at
+random from K, X \ L, and Π respectively, and t ← α(k).
+Definition E.4 (Strongly smooth). PHF H above is strongly smooth if it is 0-smooth.
+Definition E.5 (-universal2 ). PHF H above is -universal2 if, for all t ∈ T , distinct x, x∗ ∈ X \ L,
+and π, π ∗ ∈ Π, it holds that
+
+                             Pr[Hk (x) = π | Hk (x∗ ) = π ∗ ∧ α(k) = t] ≤  ,
+
+i.e., the probability of guessing Hk (x) from x, α(k) and Hk (x∗ ) is at most .
+Note that if H is -universal2 , it is -universal2 .
+Definition E.6 (Strongly universal2 ). PHF H above is strongly universal2 if it is (1/|Π|)-universal2 .
+Cramer and Shoup use universal hash proofs in connection with hard subset membership problems,
+defined as follows.
+Definition E.7 (Subset Membership Problem). A subset membership problem M specifies a collec-
+tion (Dλ )λ≥0 of distributions. For every value of the security parameter λ ≥ 0, Dλ is a probability
+distribution of instance descriptions. We let Gen(λ) be an algorithm that generates a random
+instance description according to the distribution Dλ in time polynomial in λ. Each instance
+description Λ specifies the following:
+   • Finite non-empty sets X, L and W , with L a proper subset of X.
+
+   • A binary relation R ⊂ X × W .
+M specifies some basic algorithms – i.e., for sampling instances, for generating an element x ∈ L
+together with a witness w, and for checking that a bit string is an element of X. We say that M is a
+hard subset membership problem if it is hard to distinguish whether an element x has been chosen
+at random from L or from X \ L. The subset membership assumption for M is the assumption
+that M is a hard subset membership problem.
+Definition E.8 (Hash Proof System). A hash proof system (HPS) P for subset membership prob-
+lem M associates with each instance Λ[X, L, W, R] of M a PHF H = (H, K, X, L, Π, T, α) for
+(X, L). The HPS provides some basic algorithms – e.g., to sample k ∈ K at random, to compute
+α(k) given k ∈ K, and to check that a bit string is an element of Π. The most important algo-
+rithms are the private evaluation algorithm, which allows one to efficiently compute Hk (x) from the
+instance Λ, k ∈ K and x ∈ X, and the public evaluation algorithm, which allows one to efficiently
+compute Hk (x) if x ∈ L when given the instance Λ, the value t (where t = α(k)), the value x and
+a witness w ∈ W for x’s membership in L.
+We introduce the following general notion, which we will use to construct an IBE system.
+Definition E.9 (Hash Proof System with Trapdoor). P is a HPS with trapdoor for subset mem-
+bership problem M if instances of M can be generated (with the appropriate distribution) together
+with a trapdoor MSK that enables an efficient lifting function σMSK : T → K that is pseudorandom
+among functions satisfying α(σMSK (t)) = t for t ∈ T .
+
+                                                        28
+We also introduce the following computational assumption, which is defined analogously to the
+IQR assumption.
+Definition E.10 (Interactive Subset Membership (ISM) Assumption). Let P be a hash proof
+system for subset membership problem M, as above. Let I be a set. Let Γ : I → T be a
+function. Let O be an oracle chosen uniformly from the set of all functions from I → K satisfying
+α(O(i)) = Γ(i) for all i ∈ I. We say the interactive subset membership assumption holds for
+(M, P, I, Γ) if for all PPT algorithms A, the function
+                        D              R                               D              R
+ISMAdvA (λ) = Pr[Λ ←λ Gen(λ); x ← L : AO (Λ, x) = 1] − Pr[Λ ←λ Gen(λ); x ← X \ L : AO (Λ, x) = 1]
+
+is a negligible function. If P and P̂ are two HPS’s for M, with associated sets I and I, ˆ functions
+Γ and Γ̂, and oracles O and Ô, we say the ISM assumption holds for (M, P, P̂, I, ˆ
+                                                                                  I, Γ, Γ̂) when A’s
+advantage is negligible when given access to both O and Ô.
+    Note that the ISM problem may not actually be hard unless Γ has at least minimal security
+properties, such as collision resistance.
+    Also, note that when Γ is a full-domain hash function onto T that is modeled as a random
+oracle and |α−1 (t)| is constant for all t ∈ T , the subset membership assumption for M implies the
+ISM assumption for (M, P, I, Γ). This is basically because the simulator can use its control over
+the random oracle to implement the oracle O; specifically, for i ∈ I, it chooses random ki ∈ K and
+sets O(i) ← ki and Γ(i) ← α(ki ).
+
+E.2    ANON-IND-ID-CCA Identity Based Encryption from Hash Proof Systems
+Here, we describe a simple generic construction of ANON-IND-ID-CCA identity based encryption
+using hash proof systems. The construction is analogous to Cramer and Shoup’s generic construc-
+tion of IND-CCA PKE from hash proof systems [19]. In Section E.3, we specify how to construct
+the necessary hash proof systems for quadratic residuosity.
+    Let P be a hash proof system with trapdoor for subset membership problem M, which for
+instance Λ[X, L, W, R] of M, has an associated PHF H = (H, K, X, L, Π, T, α) for (X, L) and pseu-
+dorandom lifting function σMSK : T → K. Let P̂ be an extended hash proof system with trapdoor
+for M, which for instance Λ̂[X̂, L̂, Ŵ , R̂] of M, has an associated PHF Ĥ = (Ĥ, K̂, X̂, L̂, Π̂, T̂ , α̂)
+for (X̂, L̂) and pseudorandom lifting function σ̂MSK : T̂ → K̂. (As in [19], “extended” simply
+means that X̂ = X × Y and L̂ = L × Y for some set Y , with straightforward modifications to the
+associated algorithms.)
+Our generic construction, FullIBE, is as follows.
+Setup(1λ ): Generate an instance Λ[X, L, W, R] of M, together with trapdoor MSK. Let Y = Π. It
+is required that Π be an abelian group (with operations + and −). Let ID be the set of possible
+identities, and let Γ : ID → T and Γ̂ : ID → T̂ be functions. Output the public parameters
+PP, which include Λ, P, P̂, Γ and Γ̂. The master secret is MSK (with the pseudorandom lifting
+functions σMSK and σ̂MSK ).
+KeyGen(PP,MSK,ID): Takes as input PP, MSK, and ID ∈ ID. It sets k ← σMSK (Γ(ID)) and
+k̂ ← σ̂MSK (Γ̂(ID)). It outputs the decryption key dID = (PP, k, k̂).
+Encrypt(PP,ID,m): Takes as input PP, an identity ID, and a message m ∈ Π. It generates a
+random x ∈ L together with a witness w for x, computes t ← Γ(ID) and t̂ ← Γ̂(ID), computes
+
+                                                    29
+π = Hk (x) using the public evaluation algorithm for P, sets e = m + π, computes π̂ = Ĥk̂ (x, e)
+using the public evaluation algorithm for P̂, and outputs the ciphertext C = (x, e, π̂).
+Decrypt(C,dID ): Takes as input ciphertext C and decryption key dID . It parses C and outputs ⊥
+if C does not encode some (x, e, π̂) ∈ X × Π × Π̂. Otherwise, it computes π̂ 0 = Ĥk̂ (x, e) using the
+private evaluation algorithm for P̂. If π̂ 0 6= π̂, it outputs ⊥. Otherwise, it computes π = Hk (x)
+using the private evaluation algorithm for P, and outputs m = e − π.
+The following theorem is analogous to Theorem 1 in [19].
+Theorem E.11. Let P be a strongly smooth HPS with trapdoor and P̂ be a strongly universal2
+extended HPS with trapdoor for the subset membership problem M. Let Γ : ID → T and Γ̂ :
+ID → T̂ be injective. Then, FullIBE is ANON-IND-ID-CCA secure (in the standard model) under
+the interactive subset membership assumption for (M, P, P̂, ID, ID, Γ, Γ̂).
+    As usual in IBE systems, we can set ID = {0, 1}∗ and remove the assumption that Γ and Γ̂ are
+injective by assuming that Γ and Γ̂ are collision-resistant and making the appropriate changes to
+the proof.
+    Note that it follows that FullIBE is also ANON-IND-ID-CCA secure in the random oracle model
+under the (non-interactive) subset membership problem for M when Γ and Γ̂ are full-domain hash
+functions.
+    We prove Theorem E.11 in Section E.4.
+    Following Kurosawa and Desmedt [30], we can modify the above IBE system into a more efficient
+IBE KEM-DEM. The generic IBE-KEM-DEM, called FullIBE-KD, is as follows.
+Setup(1λ ): Generate an instance Λ[X, L, W, R] of M, together with trapdoor MSK. Let Y = ∅.
+Define ID and Γ̂ as in FullIBE. Output the public parameters PP, which include Λ, P̂, Γ̂, a function
+F : Π̂ → {0, 1}d and a one-time symmetric encryption system SKE with algorithms SKE.Encrypt and
+SKE.Decrypt. SKE.Encrypt takes input 1λ , a d-bit key and a message. (We discuss the requirements
+on F and SKE later.) The master secret is MSK (with the pseudorandom lifting function σ̂MSK ).
+KeyGen(PP,MSK,ID): Takes as input PP, MSK, and ID ∈ ID. It sets k̂ ← σ̂MSK (Γ̂(ID)). It
+outputs the decryption key dID = (PP, k̂).
+Encrypt(PP,ID,m): Takes as input PP, an identity ID, and a message m ∈ Π. It generates a
+random x ∈ L together with a witness w for x, computes t̂ ← Γ̂(ID), computes π̂ = Ĥk̂ (x) using
+the public evaluation algorithm for P̂, and computes κ = F (π̂) and χ = SKE.Encrypt(1λ , κ, m).
+The ciphertext is C = (x, χ).
+Decrypt(C,dID ): Takes as input ciphertext C and decryption key dID . It parses C and outputs
+⊥ if C does not encode some (x, χ) with x ∈ X. Otherwise, it computes π̂ 0 = Ĥk̂ (x) using the
+private evaluation algorithm for P̂, κ0 = F (π̂ 0 ), and m0 = SKE.Decrypt(1λ , κ0 , χ). It outputs m0 if
+SKE.Decrypt does not register an error.
+The following theorem is analogous to Theorem 2 in [30].
+Theorem E.12. Let P̂ be a strongly universal2 extended HPS with trapdoor for the subset mem-
+bership problem M, Γ̂ : ID → T̂ be injective, F (π̂) be uniformly distributed over {0, 1}d if π̂ is
+uniformly distributed over Π̂, and SKE be secure in the sense of IND-CCA and -rejection secure
+for negligible . Then, FullIBE-KD is ANON-IND-ID-CCA secure (in the standard model) under the
+interactive subset membership assumption for (M, P̂, ID, Γ̂).
+
+                                                  30
+We say that SKE is -rejection secure if Pr[SKE.Decrypt(1λ , κ, χ) = reject] ≥ 1 −  for any bit-
+string χ, where the probability is taken over the choice of keys κ. We omit the proof of Theorem
+E.12, since it adapts the proof of Theorem E.11 in the same way that the proof of Kurosawa and
+Desmedt’s Theorem 2 adapts the proof of Cramer and Shoup’s Theorem 1.
+    To instantiate FullIBE and FullIBE-KD, we use the HPS’s defined in Section E.3 for quadratic
+residuosity. We claim the following lemmas are true.
+Lemma E.13. The HPS P, as defined in Section E.3, is a strongly smooth HPS with trapdoor.
+Lemma E.14. The HPS P̂, as defined in Section E.3, is a strongly univeral2 extended HPS with
+trapdoor.
+     We prove Lemmas E.13 and E.14 in Sections E.5 and E.6, respectively. In our proof of Lemma
+E.14, we assume (as in [19]) that a certain function Γ0 is injective. As mentioned in [19], it is
+straightforward to adapt the model account for the case that Γ0 is merely collision-resistant.
+     As an aside, we note that Gentry’s pairing-based anonymous IBE system [25] falls within the
+above framework for ANON-IND-ID-CCA IBE from hash proof systems (though his scheme has
+minor differences from our generic scheme). That scheme is secure in the standard model without
+interactive assumptions basically because the simulator can actually implement the oracles O and
+Ô itself by using an instance to a different subset membership problem M0 to build an instance of
+the problem M. However, we note that the size of the M0 -instance in [25] must be proportional
+to the total number of private key queries permitted to the adversary; otherwise, the simulator’s
+lifting function σ will not appear pseudorandom.
+
+E.3     Hash Proof Systems for Quadratic Residuosity
+Now, we define two HPS’s P and P̂ for the quadratic residuosity problem. When implemented with
+                                                                            ˆ
+these HPS’s, and when P̂ implements Γ0 as a collision-resistant hash with `-bit  output, ciphertexts
+in FullIBE are 1 + ` + `ˆ + log2 N bits, where ` is the message length parameter.
+
+E.3.1     A Strongly Smooth Universal Hash Proof System
+In our strongly smooth HPS P for quadratic residuosity, we generate an instance of the quadratic
+                                                                                                          R
+residuosity subset membership problem for security parameter λ by setting (p, q) ← RSAgen(λ),
+N = pq, X = J(N ) × {−1, 1}, L = QR(N ) × {−1, 1}; we say ((S, b), s) is a relation in R =
+X × W when S, s ∈ Z/N Z, S = s2 , and (τ (s)/N ) = b, where the polynomial τ is generated
+using Q0 as in Section 6. P uses the projective hash function H = (H, K, X, L, Π, T, α). We set
+K = {(r1 , . . . , r` ) ∈ (Z/N Z∗ )` }. T is a set of equivalence classes in (J(N ))` , where (R1 , . . . , R` ) ∼         =
+                                                                                             0
+(R10 , . . . , R`0 ) if there exists (r1 , . . . , r` ) such that Ri = u−ai ri2 and Ri0 = u−ai ri2 for ai , a0i ∈ {0, 1} for
+all i ∈ [1, `], where u is a fixed element of J(N ) \ QR(N ). The projection α : K → T is component-
+wise squaring – i.e., α(r1 , . . . , r` ) = (R1 , . . . , R` ) where Ri = ri2 , and where the rhs is understood
+to represent an equivalence class. Finally, Π = {−1, 1}` , where ` is the message length parameter.
+                                                                                             (1)     (2)         (1)    (2)
+Note Π is an abelian group with operation ‘+’ given by π (1) + π (2) = (π1 · π1 , . . . , π` · π` ),
+                         (1)      (1)                       (2)     (2)
+where π (1) = (π1 , . . . , π` ) and π (2) = (π1 , . . . , π` ) are elements of Π.
+     Now, we define the private and public evaluation algorithms for P. Let x = (S, b) ∈ X, let k =
+(r1 , . . . , r` ) ∈ K, and let t = α(k) = (u−a1 r12 , . . . , u−a` r`2 ) for aj ∈ {0, 1} be the class representative
+of α(k) (with some abuse of notation). To compute Hk (x) using the private evaluation algorithm,
+one does the following:
+
+                                                            31
+    • For each j = 1, . . . , `, use Q0 to generate fj (resp. f¯j ) for S and rj2 when aj = 0 (resp. when
+      aj = 1), as described in Section 6.
+                                                                                                ¯      
+                                                                                  f (r )           f (r )
+    • Output Hk (x) ∈ {−1, 1}` as the sequence B1 , . . . , B` , where Bj = jN j or Bj = b jN j ,
+      depending on whether aj equals 0 or 1.
+To compute Hk (x) using the public evaluation algorithm on input t, (S, b) ∈ L, and a witness s for
+(S, b) satisfying S = s2 and (τ (s)/N ) = b, one does the following:
+    • For j = 1, . . . , `, use Q0 to generate gj as described in Section 6.
+                                                                                                          
+                                                                                                  gj (s)
+    • Output Hk (x) ∈ {−1, 1}` as the sequence B1 , . . . , B` , where Bj =                        N           .
+
+E.3.2    A Strongly Universal2 Hash Proof System
+In our strongly universal2 HPS P̂ for quadratic residuosity, N and u are generated as in P, X̂ =
+X × Y and L̂ = L × Y for some set Y , and ((S, b, y), s) is a relation in X̂ × Ŵ when y ∈ Y ,
+S, s ∈ Z/N Z, S = s2 , and (τ (s)/N ) = b, where the polynomial τ is generated using Q0 as in Section
+                                                       ∗ 2`ˆ       ˆ
+6. K̂ = {(r1 , . . . , r`ˆ, r1+ , . . . , r+
+                                           ˆ ) ∈ (Z/N Z ) }, where ` is parameter depending on λ; T̂ and α̂ are
+                                  `
+defined in the obvious way. We set Π̂ = F = F2 [z]/h(z), where h(z) is a monic polynomial of degree
+`ˆ that is irreducible in F2 [z]. Finally, Γ0 : X̂ → Π̂ is a hash function. In the proof of Lemma E.14,
+Γ0 is assumed to be injective, but, as mentioned in [19], the hash proof system framework can be
+modified to handle the case that Γ0 is merely collision resistant.
+     To compute Ĥk̂ (x̂) using the private evaluation algorithm on input k̂ = (r1 , . . . , r`ˆ, r1+ , . . . , r+
+                                                                                                                 ˆ)∈           `
+K̂ and x̂ = (S, b, y) ∈ X̂, one does the following:
+                             ˆ use Q0 to generate fj (resp. f¯j ) for S and r2 when aj = 0 (resp. when
+   • For each j = 1, . . . , `,                                              j
+     aj = 1), as described in Section 6. Generate f + or f¯+ analogously.
+                                                                     j         j
+                                                                                            ¯             
+                              ˆ set Bj = (1 +             fj (rj )                                fj (rj )
+    • For each j = 1, . . . , `,                            N            )/2 or Bj = (1 + b         N              )/2, depending on
+      whether aj equals 0 or 1. Set Bj+ similarly.
+                P`ˆ          j−1 ∈ F. Set e+ similarly.
+    • Set e =     j=1 Bj z
+
+    • Set a ← Γ0 (S, b, y).
+    • Output π̂ ← e + a · e+ ∈ F = Π̂.
+   To compute Ĥk̂ (x̂) using the public evaluation algorithm on input t̂, x̂ = (S, b, y) ∈ X̂, and
+witness s for (S, b, y) satisfying S = s2 and (τ (s)/N ) = b, one does the following:
+   • For each j = 1, . . . , ˆ
+                             `, use Q0 to generate gj and g + as described in Section 6.
+                                                                           j
+                                                             
+                              ˆ set Bj = (1 +        gj (s)
+    • For each j = 1, . . . , `,                      N           )/2. Set Bj+ similarly.
+                P`ˆ          j−1 ∈ F. Set e+ similarly.
+    • Set e =     j=1 Bj z
+
+    • Set a ← Γ0 (S, b, y).
+    • Output π̂ ← e + a · e+ ∈ F = Π̂.
+
+                                                              32
+E.4    Proof of Theorem E.11
+We prove that the system is ANON-IND-ID-CCA under the ISM assumption for (M, P, P̂, ID, ID, Γ, Γ̂)
+when P is a strongly smooth HPS with trapdoor, P̂ is a strongly universal2 extended HPS with
+trapdoor for the subset membership problem M, and Γ and Γ̂ are injective.
+    Let A be an ANON-IND-ID-CCA adversary attacking the IBE system FullIBE. We wish to bound
+its advantage IBEAdvA,FullIBE (λ). We present the proof as a series of games. We let Wi denote the
+event that the adversary wins Game i.
+Game 0. The first game is identical to the ANON-IND-ID-CCA game defined in Section 2. Hence,
+we know that
+                                             1
+                                 Pr[W0 ] −     = IBEAdvA,FullIBE (λ)                                  (27)
+                                             2
+
+Game 1. In Game 1 we slightly modify Game 0. Instead of using the pseudorandom lifting
+functions σMSK and σ̂MSK to respond to A’s private key queries, the challenger uses truly random
+functions F : T → K and F̂ : T̂ → K̂ satisfying α(F (t)) = t and α̂(F̂ (t̂)) = t̂ for all t ∈ T and
+t̂ ∈ T̂ . To generate a private key (k, k̂) for ID, the challenger sets k = F (Γ(ID)) and k̂ = F̂ (Γ̂(ID)).
+Clearly, if σ and σ̂ are secure PRFs, A will not notice the difference between Game 0 and Game 1.
+In particular, there exists an algorithm B1 (whose running time is about the same as that of A)
+such that
+
+                             |Pr[W1 ] − Pr[W0 ]| = PRFAdvB1 ,(σ,σ̂) (λ)                               (28)
+
+Game 2. In Game 2 we remove knowledge of the master private key from the challenger. The
+challenger is given an instance Λ of M , the HPS’s P and P̂, hash functions Γ and Γ̂, and access to
+randomly chosen oracles O and Ô as in Definition E.10.
+    This changes how the challenger responds to private key queries, but Game 2 is otherwise
+identical to Game 1. In particular, to respond to a private key query on ID, the challenger feeds
+ID to O and Ô and forwards the oracles’ responses k and k̂ to A. However, the distribution of the
+challenger’s responses to private key queries (and decryption queries) is unchanged, since O and Ô
+have the same distribution as F ◦ Γ and F̂ ◦ Γ̂ on domain ID (and the challenger uses Decrypt with
+its private key to respond to decryption queries).
+    Therefore,
+
+                                          Pr[W2 ] = Pr[W1 ]                                           (29)
+
+Game 3. Game 3 proceeds exactly as Game 2 except that the encryption query is handled
+differently. To encrypt a message mb to a particular IDb , the challenger finds the private key
+                                   R
+dIDb = (k, k̂). It chooses x∗ ← L, computes π ← Hk (x∗ ) using the private evaluation algorithm for
+P, sets e∗ ← m + π, computes π̂ ∗ ← Ĥk̂ (x, e) using the private evaluation algorithm for P̂, and
+returns (x∗ , e∗ , π̂ ∗ ) to the adversary.
+    Since x∗ ∈ L, the private and public evaluation algorithms compute the same result for Hk (x∗ )
+and Ĥk̂ (x∗ , e∗ ). Since x∗ is a uniform L-element in Games 2 and 3, the distribution of the chal-
+lenger’s response to encryption query is identical. Since no other aspect of Games 2 and 3 differs,
+
+                                          Pr[W3 ] = Pr[W2 ]                                           (30)
+
+                                                    33
+Game 4. Game 4 proceeds exactly as Game 3 except that when responding to the encryption
+                                 R                          R
+query, instead of choosing x∗ ← L, the challenger sets x∗ ← X \ L. The adversary should not
+notice the difference unless it can distinguish subset membership (in the interactive setting). In
+particular, there exists an algorithm B2 (whose running time is about the same as that of A) such
+that
+
+                              |Pr[W4 ] − Pr[W3 ]| = ISMAdvB2 ,Gen (λ)                                  (31)
+
+Game 5. In Game 5 we modify how the challenger handles decryption queries. In particular,
+the challenger is given the power to determine subset membership (in L), and the challenger
+immediately outputs ⊥ in response to a decryption query (x, e, π̂, ID) if x 6∈ L. Aside from this
+additional ciphertext check, the challenger handles decryption queries as in Game 4.
+    Let E be the event the challenger rejects some decryption query C in Game 5 that would have
+been accepted in Game 4. (Note that the opposite is impossible; if C is rejected in Game 4, it is
+certainly rejected in Game 5.) Since Games 4 and 5 proceed identically until E occurs,
+
+                                    |Pr[W5 ] − Pr[W4 ]| ≤ Pr[E]                                        (32)
+
+Below, we prove the following:
+Lemma E.15. Pr[E] ≤ Q/|Π̂|, where Q is the number of decryption queries made by the adversary.
+
+Game 6. In Game 6, we again modify how the encryption query is handled. In particular, the
+                                                                                        R
+challenger generates the x∗ component of its encryption query response as in Game 5 (x∗ ← X \ L),
+but generates the e∗ and π̂ ∗ components as uniformly random elements of Π and Π̂. Below, we
+prove the following:
+Lemma E.16.
+
+                                         Pr[W6 ] = Pr[W5 ]                                             (33)
+
+Since the challenger does not use mb or IDb to generate its response, the response is independent
+of mb or IDb , and we have,
+                                                         1
+                                            Pr[W6 ] =                                                  (34)
+                                                         2
+Combining equations (27) through (34), and subject to Lemmas E.15 and E.16, we obtain:
+
+               IBEAdvA,FullIBE (λ) ≤ PRFAdvB1 ,(σ,σ̂) (λ) + ISMAdvB2 ,Gen (λ) + Q/|Π̂|
+
+
+Now, we prove Lemmas E.15 and E.16.
+Proof of Lemma E.15. Suppose A makes the decryption query (x, e, π̂, ID) with x ∈ X \ L. Let
+(k, k̂) be the private key for ID that the challenger obtains from (O, Ô). We consider three cases:
+   • Case 1: (x, e, ID) = (x∗ , e∗ , IDb ). Since we must have (x, e, π̂, ID) 6= (x∗ , e∗ , π̂ ∗ , IDb ), we
+     conclude that π̂ 6= π̂ ∗ . However, this implies that π̂ 6= Ĥk̂ (x, e), and so the decryption query
+     is certainly rejected in either game.
+
+                                                    34
+    • Case 2: ID = IDb but (x, e) 6= (x∗ , e∗ ). In A’s view, the only constraint on k̂ is that
+      α̂(k̂) = Γ̂(ID) and π̂ ∗ = Ĥk̂ (x∗ , e∗ ). Even if A knows b, the (1/|Π̂|)-universality2 of Ĥ implies
+      that the probability that Ĥk̂ (x, e) = π̂ is only 1/|Π̂|.
+
+    • Case 3: ID 6= IDb . Here, A has even less information about k̂ than in Case 2: just that α̂(k̂) =
+      Γ̂(ID). Again, the (1/|Π̂|)-universality2 of Ĥ implies that the probability that Ĥk̂ (x, e) = π̂
+      is only 1/|Π̂|.
+Thus, the desired bound follows.
+Proof of Lemma E.16. Let (k, k̂) be the private key for IDb that the challenger obtains from (O, Ô).
+Since the challenger rejects all decryption queries (x, e, π̂, ID) with x 6∈ L, since Decrypt outputs
+the same result when applied to (x, e, π̂, IDb ) irrespective of which private keys for IDb is used when
+x ∈ L, and since (O, Ô) are truly random functions (i.e., the private keys for distinct ID’s are
+generated independently since Γ and Γ̂ are injections), A has no information about (k, k̂) other
+than that (α(k), α̂(k̂)) ∈ (Γ(IDb ), Γ̂(IDb )), e∗ = mb + Hk (x∗ ), and π̂ ∗ = Ĥk̂ (x∗ , e∗ ). Since both H
+and Ĥ are strongly smooth, the values of Hk (x∗ ) and Ĥk̂ (x∗ , e∗ ) remain uniformly random in Π
+and Π̂ given (α(k), α̂(k̂)). The result follows.
+
+E.5     Proof of Lemma E.13
+First, we make sure that P meets the basic requirements of a hash proof system with trapdoor. It is
+clear that the QR problem is a subset membership problem, complete with efficient algorithms for
+sampling instances, for checking whether an element S is in X = J(N )×{−1, 1}, and for generating
+a random element (S, b) ∈ L = QR(N ) × {−1, 1} together with a witness s satisfying S = s2 and
+(τ (s)/N ) = b. (An algorithm for the latter is given in Section 6.) For PHF H = (H, K, X, L, Π, T, α)
+for (X, L), it is also clear that there are efficient algorithms for sampling k from K at random,
+computing α(k), and checking whether a bit string is an element of Π. Given the factorization of
+N , it is straightforward to construct the pseudorandom lifting function. In the body of the paper,
+we discussed efficient algorithms for implementing the private and public evaluation algorithms.
+    It remains to prove that H is strongly smooth – i.e., that for all S ∈ X \ L and all values of
+t ∈ T , the distribution of Hk (S) is uniform in Π when k ∈ K is chosen uniformly at random from
+the values satisfying t = α(k). Since the j-th bit of Hk (S) for t = (R1 , . . . , R` ) is independent of
+(R1 , . . . , Rj−1 , Rj+1 , . . . , R` ), it suffices to show that the j-th bit of Hk (S) is uniform in {0, 1} when
+rj (in the key k = (r1 , . . . , r` )) is chosen uniformly from the square roots of Rj . However, this is
+immediate consequence of Lemma 3.3.
+
+E.6     Proof of Lemma E.14
+As in the proof of Lemma E.13, it is clear that P̂ meets the basic requirements of being a hash
+proof system. It remains to prove that Ĥ is strongly universal2 . We prove this by showing that
+the cardinality of the set K̂ † = {k̂ ∈ K̂ : t̂ = α̂(k̂) ∧ π̂ = Ĥk̂ (x̂) ∧ π̂ ∗ = Ĥk̂ (x̂∗ )} is constant over all
+distinct x̂, x̂∗ ∈ X̂ \ L̂ = (J(N ) \ QR(N )) × {−1, 1} × Y , all π̂, πˆ∗ ∈ Π̂, and all t̂ ∈ T̂ . In particular,
+            ˆ
+|K̂ † | = 22` .
+     To prove this, let us consider the structure of Z/N Z∗ for N = pq. Let W ⊂ Z/N Z∗ be such
+that |W| is maximal for sets satisfying w2 6= w0 2 for distinct w, w0 ∈ W. Let v ∈ Z/N Z be such
+v = 1 mod p and v = −1 mod q. Then, each element in r ∈ Z/N Z∗ has a unique representation
+
+                                                        35
+(a, b, w) ∈ {0, 1} × {0, 1} × W with r = (−1)a · v b · w. We can extend this representation component-
+wise to a representation for k̂ = (r1 , . . . , r`ˆ, r1+ , . . . , r+  ) ∈ K̂ as (~a, ~b, ~
+                                                                                          w) in the obvious way. Also,
+                                                                    `ˆ
+                                                                                                      Pˆ
+we use mappings from the ~b component to F-elements as follows: b ← θ(~b) ← `j=1 bj z j−1 and
+                 Pˆ
+b+ ← θ+ (~b) ← ` b+ z j−1 .
+                       j=1 j
+      Now, we state some useful facts. Let k̂ and k̂ 0 be distinct elements of α̂−1 (t̂) with representations
+                                                                                                           0
+(~a, ~b, ~
+         w) and (~a0 , ~b0 , w      ~ 0 ), respectively, with b ← θ(~b), b+ ← θ+ (~b), b0 ← θ(~b0 ), and b+ ← θ+ (~b0 ).
+                                                                                           0
+Obviously, w         ~ =w     ~ 0 , since t̂ determines ~ w. Let e and e+ (resp. e0 and e+ ) be the F-elements that
+arise in Step E.3.2 of the private evaluation algorithm while computing Ĥk̂ (x̂) (resp. Ĥk̂0 (x̂)).
+                                                                              0      0
+Then, it turns out that b − e = b0 − e0 and b+ − e+ = b+ − e+ . In other words, ∆t̂,x̂ = b − e
+and ∆+      t̂,x̂
+                   = b+ − e+ depend only on t̂ and x̂ (and W), and are invariant under keys in α̂(t̂). To
+                                                                                                         f (r0 ) 
+                                                                                                 f (r )      j j
+see this, note that the coefficients of z j−1 in e and e0 differ precisely when jN j 6=                       N       (or
+                                 
+                       f¯j (rj0 )
+¯          
+   fj (rj )
+      N           6=      N         ), which occurs iff 1 < gcd(N, rj − rj0 ) < N , which occurs iff bj 6= b0j (in the
+representations of rj and rj0 ), which occurs precisely when the coefficients of z j−1 in b and b0 differ.
+   So, for any fixed distinct x̂, x̂∗ ∈ X̂ \ L̂, fixed π̂, πˆ∗ ∈ Π̂, and fixed t̂ ∈ T̂ , we obtain:
+                                             ˆ                 ˆ
+ |K̂ † | =    |{(~a, b, b+ , ~                                      w) ∧ π̂ = (b − ∆t̂,x̂ ) + Γ(x̂)(b+ − ∆+
+                             w) ∈ {0, 1}2` × F × F × W 2` : t̂ = α̂( ~                                    t̂,x̂
+                                                                                                                )
+                ∧π̂ ∗ = (b − ∆t̂,x̂∗ ) + Γ(x̂∗ )(b+ − ∆+
+                                                       t̂,x̂∗
+                                                              )}|
+                                         ˆ
+       =      |{(~a, b, b+ ) ∈ {0, 1}2` × F × F : π̂ = (b − ∆t̂,x̂ ) + Γ(x̂)(b+ − ∆+
+                                                                                   t̂,x̂
+                                                                                         )
+                ∧π̂ ∗ = (b − ∆t̂,x̂∗ ) + Γ(x̂∗ )(b+ − ∆+
+                                                       t̂,x̂∗
+                                                              )}|
+                 ˆ
+       =      22` |{(b̄, b̂) ∈ F × F : π̂ = (b − ∆t̂,x̂ ) + Γ(x̂)(b+ − ∆+
+                                                                        t̂,x̂
+                                                                              )
+                ∧π̂ ∗ = (b − ∆t̂,x̂∗ ) + Γ(x̂∗ )(b+ − ∆+
+                                                       t̂,x̂∗
+                                                              )}|
+
+   From the equations π̂ = (b − ∆t̂,x̂ ) + Γ(x̂)(b+ − ∆+
+                                                       t̂,x̂
+                                                             ) and π̂ ∗ = (b − ∆t̂,x̂∗ ) + Γ(x̂∗ )(b+ − ∆+
+                                                                                                         t̂,x̂∗
+                                                                                                                ),
+we conclude that
+                     (Γ(x̂) − Γ(x̂∗ ))b+ = π̂ − π̂ ∗ + ∆t̂,x̂ − ∆t̂,x̂∗ + Γ(x̂)∆+
+                                                                                t̂,x̂
+                                                                                      − Γ(x̂∗ )∆+
+                                                                                                t̂,x̂∗
+                                                                                                       ,
+
+where the right side of the equation is a constant. Since Γ is injective, Γ(x̂) − Γ(x̂∗ ) 6= 0, and b+ is
+                                                                              ˆ
+uniquely determined. Similarly, b is uniquely determined. Thus, |K̂ † | = 22` .
+
+E.7     IND-CCA PKE from Hash Proof Systems
+We note that our hash proof systems allow us to construct an IND-CCA PKE system in the stan-
+dard model under the (non-interactive) quadratic residuosity assumption. This result may be of
+independent interest.
+    Cramer and Shoup describe the following PKE system, for which we can use our instantiations
+of P and P̂.
+The PKE system FullPKE.
+Setup(1λ ): Generate an instance Λ[X, L, W, R] of M. Let Y = Π. It is required that Π be an
+abelian group (with operations + and −). Publish the parameters (common reference string) PP,
+which include Λ, P and P̂.
+
+                                                             36
+KeyGen(PP): Generate random k ∈ K and k̂ ∈ K̂. The private key is k, k̂. The public key is (t, t̂)
+with t = α(k) and t̂ = α̂(k̂).
+Encrypt(PP,t,t̂,m): Takes as input PP, a user’s public key (t, t̂), and a message m ∈ Π. It generates
+a random x ∈ L together with a witness w for x, computes π = Hk (x) using the public evaluation
+algorithm for P, sets e = m + π, computes π̂ = Ĥk̂ (x, e) using the public evaluation algorithm for
+P̂, and outputs the ciphertext C = (x, e, π̂).
+Decrypt(PP,C,k,k̂): Takes as input ciphertext C and decryption key (k, k̂). It parses C and outputs
+⊥ if C does not encode some (x, e, π̂) ∈ X × Π × Π̂. Otherwise, it computes π̂ 0 = Ĥk̂ (x, e) using
+the private evaluation algorithm for P̂. If π̂ 0 6= π̂, it outputs ⊥. Otherwise, it computes π = Hk (x)
+using the private evaluation algorithm for P, and outputs m = e − π.
+   Cramer and Shoup [19] proved the following theorem.
+
+Theorem E.17 (Cramer-Shoup). Suppose P is a strongly smooth HPS and P̂ is a strongly
+universal2 extended HPS for the subset membership problem M. Then, the system above is se-
+cure against chosen ciphertext attack (in the standard model) assuming M is a hard problem.
+
+    Our hash proof systems also allow us to construct an efficient PKE KEM-DEM in the standard
+model under the quadratic residuosity assumption, à la Kurosawa and Desmedt [30]. Both PKE
+systems are recipient-anonymous, or “key-private” in the terminology of [3].
+    We note that, since the above system is not identity-based, we could use a slightly simpler pair
+of HPS’s for quadratic residuosity. Basically, the reason is that the user’s public key can be a
+set of elements from QR(N ), rather than J(N ), making the parameter u ∈ J(N ) \ QR(N ) (and
+the algorithmic steps involving u) unnecessary. (See Appendix B for the IND-CPA version of this
+system.)
+    Cramer and Shoup [19] also describe an IND-CCA PKE system that uses HPS’s for quadratic
+residuosity. In their scheme, the lengths of the ciphertext and public key are basically the same
+as in our scheme. The decryption times are also comparable, assuming that in our scheme the
+ciphertext value S and the public key values {Rj } are presented as primes already satisfying the
+conditions mentioned in Section 5.2. Encryption in our system may take longer, only because the
+sender must generate (s, S̃) such that s is uniformly random in Z/N Z, and S̃ is a prime satisfying
+S̃ = s2 mod N and S̃ = 1 mod 4. However, we note that (s, S̃) could be computed offline, since it
+is independent of the plaintext and the recipient’s public key.
+
+
+
+
+                                                  37
+

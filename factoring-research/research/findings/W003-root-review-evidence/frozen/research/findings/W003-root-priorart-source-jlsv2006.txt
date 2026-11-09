@@ -1,0 +1,908 @@
+In C. Dwork, editor, Advances in Cryptology - CRYPTO 2006. 26th Annual International
+Cryptology Conference, Santa Barbara, California, USA, August 20-24, 2006, Proceed-
+ings, volume 4117 of Lecture Notes in Computer Science, pages 326–344. Springer Berlin
+/ Heidelberg, August 2006.
+
+
+
+
+                                            The Number Field Sieve
+                                          in the Medium Prime Case
+
+                     Antoine Joux1,3 , Reynald Lercier1,2 , Nigel Smart4 , and Frederik Vercauteren5?
+                                                                  1
+                                                                DGA
+                                                              2
+                                                              CELAR
+                                               Route de Laillé, 35170 Bruz, France
+                                                    Reynald.Lercier@m4x.org
+                                         3
+                                           Université de Versailles St-Quentin-en-Yvelines
+                                                             PRISM
+                                    45, avenue des Etats-Unis, 78035 Versailles Cedex, France
+                                                      Antoine.Joux@m4x.org
+                                         4
+                                           Dept. Computer Science, University of Bristol
+                                    MVB, Woodland Road, Bristol, BS8 1UB, United Kingdom
+                                                       nigel@cs.bris.ac.uk
+                                  5
+                                     Department of Electrical Engineering, University of Leuven
+                                   Kasteelpark Arenberg 10, B-3001 Leuven-Heverlee, Belgium
+                                           frederik.vercauteren@esat.kuleuven.be
+
+
+
+               Abstract. In this paper, we study several variations of the number field sieve to compute discrete
+               logarithms in finite fields of the form Fpn , with p a medium to large prime. We show that when n is
+               not too large, this yields a Lpn (1/3) algorithm with efficiency similar to that of the regular number
+               field sieve over prime fields. This approach complements the recent results of Joux and Lercier on
+               the function field sieve. Combining both results, we deduce that computing discrete logarithms
+               have heuristic complexity Lpn (1/3) in all finite fields. To illustrate the efficiency of our algorithm,
+               we computed discrete logarithms in a 120-digit finite field Fp3 .
+
+
+       1     Introduction
+
+       Today’s public key cryptosystems usually rely on either integer factorisation or discrete logarithms in
+       finite fields or on elliptic curves. In this paper, we consider discrete logarithm computations in finite
+       fields of the form Fpn , with n > 1 and p a medium to large prime. For a long time, these fields have
+       been mostly ignored in cryptosystems, and the security of their discrete logarithm problems are much
+       less known than the security in prime fields Fp or fields of fixed characteristic such as F2n or F3n . Indeed,
+       in Fp it is well-known that the best available algorithm is the number field sieve, first introduced in [7]
+       and further studied in [18, 20, 21, 12, 19]. Similarly, in fixed characteristic and n tending to infinity, the
+       best available algorithm is the function field sieve, first introduced in [3] and further studied in [4, 11, 8].
+       Both algorithms have complexity Lpn (1/3). However, until very recently for the intermediate case Fpn ,
+       no general Lpn (1/3) algorithm was known and the best available approach had complexity Lpn (1/2)
+       (see [2, 1]). With the advent of pairing-based and torus-based cryptography, the security of discrete
+       logarithms in Fpn is a growing concern. Recently, two very different methods have been proposed to deal
+       with some of these fields. The first approach is based on rational torus representation and was proposed
+       by Granger and Vercauteren [9]. It was effectively used by Lercier and Vercauteren in [15]. The second
+       approach, by Joux and Lercier [13], proposes a family of algorithms which are based on the function field
+       sieve and yields complexity Lpn (1/3) where applicable.
+           In this paper, we introduce several variations of the number field sieve algorithm that depend on
+       the relative size of p and n. The main difference with existing algorithms lies in the construction of the
+       number fields and the choice of sieving space: for p large compared to Lpn (2/3), we use a new polynomial
+       selection algorithm and for p small compared to Lpn (2/3), we sieve over elements of degree higher than
+       ?
+           Postdoctoral Fellow of the Research Foundation - Flanders (FWO - Vlaanderen)
+
+
+                                                                      1
+2
+
+one. Furthermore, we show that these variations can fill the gap which was left open by [13]. As a
+consequence, we conclude that discrete logarithm computation has heuristic complexity Lpn (1/3) for all
+finite fields, which greatly improves the Lpn (1/2) complexity of [2, 1].
+    The paper is organised as follows: in Section 2 we describe our setup and the basic number field
+sieve variation that we are considering. In Section 3 we show how the basic algorithm can be modified in
+order to cover all the finite fields left out by [13]. In Section 4 we describe the mathematical background
+required to make this description rigorous and in Section 5 we give a precise heuristic analysis of the
+algorithm. Finally in Section 6 we report on experiments obtained with an actual implementation of this
+algorithm.
+
+
+2     Our Basic Variation on the Number Field Sieve
+
+The number and function field sieve algorithms are both index calculus algorithms that search for mul-
+tiplicative identities using smooth objects over well-chosen smoothness bases. In the number field sieve,
+the smoothness bases contain ideals of small norm. Since we are using ideals, some important mathemat-
+ical technicalities arise when transforming these multiplicative identities into linear equations involving
+logarithms. For the sake of simplicity, we defer these technicalities to Section 4. When dealing with index
+calculus algorithms, the complexities are usually expressed using the following notation:
+
+                             Lq (α, c) = exp((c + o(1))(log q)α (log log q)1−α ) ,
+
+where log denotes natural logarithm. When the constant c is not given explicitly, the notation Lq (α)
+is often used. In particular, for the prime field Fp and for extension fields Fpn with fixed character-
+istic p, the number field sieve and the function field sieve respectively yield Lp (1/3, (64/9)1/3 ) and
+Lpn (1/3, (32/9)1/3 ) algorithms. Moreover, in [13] it was shown that variations of the function field sieve
+yield Lpn (1/3) algorithms for Fpn as long as p ≤ Lpn (1/3). In this paper, we consider the complementary
+case: p ≥ Lpn (1/3).
+
+
+2.1   Setup, Sieving and Linear Algebra
+
+Our basic variation addresses finite fields Fpn with p = Lpn (2/3, c) and c near 2 · (1/3)1/3 . Recall that
+the regular number field sieve algorithm over Fp starts by choosing two polynomials f1 , f2 ∈ Z[X] with
+a common root in Fp . In our basic variation, we generalise this to Fpn as follows: first, f1 is chosen as a
+degree n polynomial, with very small coefficients and irreducible over Fp . Then, we set f2 equal to the
+polynomial f1 + p. Since f2 ≡ f1 mod p, both polynomials clearly have a common root in Fpn (in fact all
+of them are equal).
+    Let K1 ≃ Q[X]/(f1 (X)) ∼  = Q[θ1 ] and K2 ∼= Q[X]/(f2 (X)) ∼= Q[θ2 ] be the two number fields defined
+respectively by f1 and f2 , i.e. θ1 and θ2 are roots of f1 and f2 in C. Choose a smoothness bound B
+and a sieve limit S and consider all pairs (a, b) of coprime integers, with |a| ≤ S and |b| ≤ S, such that
+a − bθ1 and a − bθ2 both have B-smooth norms. After some post-processing described in Section 4, which
+involves adding unit contributions or Schirokauer maps, each such pair yields a linear equation between
+“logarithms of ideals” in the smoothness bases. Since the number of small norm ideals involved on each
+side is smaller than nπ(B), with π(x) the number of primes smaller than x, it suffices to collect 2nπ(B)
+equations during the sieving phase. Once the sieving phase is complete, we solve the resulting sparse
+system of linear equations modulo the cardinality of F∗pn , or more precisely, modulo a large factor of this
+cardinality and recover logarithms of ideals of small norm. There are two options for this large factor:
+either we take it prime, but then we need to factor pn −1 (which would not increase the total complexity)
+or we simply take it composite without small factors, since all operations we perform modulo a large
+prime factor remain valid for such a composite factor. Finally, small prime factors of pn − 1 can be dealt
+with separately using a combination of the Pohlig-Hellman and Pollard rho algorithm.
+                                                                                                                   3
+
+2.2     Individual Discrete Logarithms
+
+Once the two steps described above, sieving and linear algebra, have been performed, we obtain the
+logarithms of the ideals of the smoothness bases. In order to complete the computation, an additional
+step is required, namely computing the logarithm of random elements in the finite field. We propose a
+classical approach based on “special-q” descent, which is similar to the approach in [12] for the case of
+logarithms over a prime field.
+    Represent Fpn as Fp [t]/(f1 (t)) and assume we want to compute the discrete logarithm of some element
+y ∈ Fpn . First, we search for an element of the form z = y i tj for some i, j ∈ N with the following additional
+properties:
+
+ 1. after lifting z to the number field K1 (also denoted by z), its norm factors into primes smaller than
+    some bound B1 ∈ Lpn (2/3, 1/31/3 ),
+ 2. the norm of the lift of z should be squarefree, implying that only degree one prime ideals will appear
+    in the factorisation of (z).
+
+    Assuming that z does not belong to a strict subfield6 of Fpn , nothing prevents such a squarefree
+factorisation to occur. Therefore, we make the usual heuristic hypothesis and assume that the norm has
+a squarefree factorisation into small primes with probability similar to that of a random number of the
+same size. According to [10], this probability can be expressed as a product of two terms. The first term
+is the usual probability of smoothness, without the squarefree condition. The second term, comes from
+the squarefree condition and quickly tends to 6/π 2 . Since the constant 6/π 2 vanishes into the o(1) of the
+L notation, we simply ignore this technicality in the remainder of the paper.
+    Whilst the first condition on the element z is standard, the second condition is required to guarantee
+that only degree one prime ideals will appear in the factorisation of (z). This condition is necessary since
+during the sieving phase, we only computed logarithms of degree one prime ideals. Since squared factors
+in the norm could correspond to higher degree ideals, we would not know the corresponding logarithms.
+    After finding an adequate candidate, we factor the principal ideal generated by z into degree one
+prime ideals of small norm. Note that there will be several prime ideals not contained in the factor base,
+since their norm is allowed to be bigger than the smoothness bound B. To compute the logarithm of
+such an ideal q, we start a special-q descent as follows: we sieve on pairs (a, b), where a and b are chosen
+to ensure that q divides a − bθ1 in the number field K1 . After finding a pair (a, b) such that the norm of
+a − bθ1 (divided by the norm of q) and the norm of a − bθ2 factor into primes smaller than B2 < B1 , we
+iterate the descent lowering the bound at each step until it becomes lower than B. At this point, all the
+discrete logarithms are known and we can backtrack to recover the logarithm of each of the initial q and
+consequently the logarithm of z. Note that during the descent, we will need to consider special-q ideals
+in both number fields.
+
+
+2.3     Practical Improvements
+
+Galois extensions If possible, we should choose f1 such that K1 is Galois over Q. Let Gal(K1 /Q) be its
+Galois group, then since p is inert in K1 , we obtain an isomorphism Gal(K1 /Q) ≃ Gal(Fq /Fp ) (see [17,
+Chapter I, 9.6]) which implies that K1 has to be a cyclic number field of degree n. The first major
+improvement for Galois K1 , is that the factor basis associated with K1 can be n times smaller. We refer
+to Section 4.3 for a detailed description. The second improvement is related to finding an adequate z in
+the individual logarithm phase. Assuming that n is prime, the prime ideals lying above a rational prime
+l are of two types only: either (l) is inert or splits into degree one prime ideals. In the former case, we
+simply have to compute logarithms in Fp , which is a much smaller finite field, so we can neglect its cost.
+In the latter case, we proceed as before. For Galois K1 of prime extension degree n, we therefore only
+need to find a z with sufficiently smooth norm and can ignore the squarefree condition.
+6
+    Of course, when z belongs to a strict subfield, we are in an easier case of the algorithm, since it then suffices
+    to compute the logarithm in F∗p of z w.r.t. the norm of a generator of Fpn .
+4
+
+Choice of polynomials Instead of simply setting f2 = f1 + p, we can in fact take any polynomial f2 such
+that f1 |f2 over the finite field Fp . In particular, if f1 defines a cyclic number field, f2 should be chosen
+to maximise the automorphism group of K2 . For instance, for all primes p ≡ 2, 5 mod 9, f1 = x6 + x3 + 1
+is irreducible over Fp and by choosing f2 = x6 + (p + 1)x3 + 1, K2 will have a non-trivial automorphism
+group of order 2. Constructing a K2 with large automorphism group for general p remains an open
+problem.
+     Since f1 normally has tiny coefficients, the coefficients of the polynomial f2 will be much larger than
+those of f1 . To balance the size of the norms we compute during the algorithm, there are basically two
+approaches: unbalance the size of a and b of the elements we sieve over or change the polynomial selection
+such that the coefficients of both polynomials are of the same size. One possibility is to choose f1 such
+                                                       √
+that (at least) one of its coefficients, c, is of order p. Write c ≡ c1 /c2 mod p with c1 and c2 also of order
+√                                                                                                         √
+   p and define f2 ≡ c2 f1 mod p. The polynomial f2 is no longer monic, but its coefficients are O( p)
+instead of O(p).
+
+Individual logarithms Instead of directly decomposing z as a product of ideals, it is useful in practice to
+start by writing z as a fraction of the form:
+                                                     P i
+                                                         at
+                                                      P i i,
+                                                         bi t
+                                                         √
+where the coefficients ai and bi are of the order of p.
+    More precisely, this is done by reducing the following lattice L, where the generating vectors are in
+columns and where the algebraic numbers in the first line stand for the subcolumns of their coordinates:
+                                    z tz t2 z · · · tn−1 z p pt pt2 · · · ptn−1
+                                                                               
+                                 1 0 0 ··· 0 0 0 0 ···                     0 
+                                                                               
+                                 0 1 0 ··· 0 0 0 0 ···                     0 
+                             L = 0 0 1 ··· 0 0 0 0 ···                           .
+                                                                               
+                                                                           0  
+                                  .. .. .. . .       ..     .. .. .. . .   .. 
+                                 . . .           .    .      . . .       .  . 
+                                    0 0 0 ··· 1 0 0 0 ···                   0
+    Clearly, any vector in this lattice represents a fraction equal to z, where the numerator is encoded by
+the upper half of the vector and the denominator by the lower half. Since the determinant of the lattice
+                                                                                                   √
+is pn and the dimension 2n, we expect that lattice reduction can find a short vector of norm p. Note
+that this is only a practical expectation in small dimension that does not hold when n becomes too large.
+
+3     Extension to Other Fields
+The analysis (cf. Section 5) of the previous algorithm yields a Lpn (1/3) complexity when p has the right
+size compared to pn . In this section, we discuss the possible adaptations to larger and smaller values of
+p.
+
+3.1   Smaller Values of p
+When p is smaller than in the basic case, we encounter a major problem, when sieving over the (a, b)
+pairs. Indeed, we would like to keep the norms of a − bθ1 and a − bθ2 below Lpn (2/3), however, since p
+is small, n is larger than before and there are less than Lpn (1/3) relations. To summarise, the possible
+sieving space is too small and we cannot collect enough relations. Thus, we need to enlarge the sieving
+space. A simple technique is to sieve over elements ofPhigher degree.P    Instead of pairs (a, b), we consider
+                                                           t               t
+(t + 1)-tuples (a0 , · · · , at ) and compute the norms of i=0 ai θ1i and i=0 ai θ2i . Each of these norms can
+                                                                                 Pt
+be obtained through a resultant computation of two polynomials A(x) = i=0 ai xi and f1 (x) (resp.
+f2 (x)). It is well-known that the resultant can be obtained as the determinant of an (n + t) × (n + t)
+matrix formed of t columns containing the coefficients of f1 and n columns containing the coefficients
+of A. Thus, we can clearly bound the norm by (n + t)n+t Ba n Bf t , where Ba is an upper bound on the
+absolute values of the ai and Bf a similar bound on the coefficients of f1 (resp. f2 ).
+                                                                                                                 5
+
+3.2   Larger Values of p
+When p is larger than in the basic case, the basic polynomial construction is no longer usable, because due
+to the addition of p, a coefficient of f2 is larger than Lpn (2/3). In order to lower the size of the coefficients,
+we need to change the polynomial construction and to use polynomials with higher total degree. This is
+not completely surprising, since the number field sieve in the prime field case uses polynomials with total
+degree increasing with p. The most difficult part is to find a polynomial construction which does not
+somehow fail in the individual logarithm phase. We propose the following simple construction. Start from
+a polynomial f0 of degree n with small coefficients (and optionally cyclic Galois group when possible).
+Then, we choose a constant W and let f1 (x) = f0 (x + W ), the largest coefficient of f1 is around W n .
+Then, using lattice reduction, we search for a polynomial f2 of degree D and coefficients smaller than
+W n , such that f1 |f2 mod p. This can be done by reducing the lattice L, where the generating vectors
+are in columns
+                       L = f1 (x) xf1 (x) x2 f1 (x) · · · xD−n f1 (x) p px px2 · · · pxD
+                                                                                          
+
+It is clear that every linear combination of the columns results in a polynomial which is divisible by f1
+modulo p. Furthermore, the dimension of the lattice L is D + 1 and its determinant is pD+1 . We know
+that for lattices of dimension s and determinant D, LLL [14] outputs a vector shorter than 2s/4 D1/s . We
+want this vector to encode a polynomial different from f1 . This can be ensured if the vector is smaller
+than the encoding of f1 . Thus, we need:
+
+                                           2(D+1)/4 pn/(D+1) ≤ W n .
+
+Since the term 2(D+1)/4 can be hidden in the o(1) of the L representation, the optimal size of the
+coefficients in f1 and f2 is R = W n ≈ pn/(D+1) .
+
+
+4     Mathematical Aspects
+In this section, we describe the mathematical background required to make our algorithm rigorous. As
+before, let Fq be a finite field with q = pn elements, with p prime. Given h = g x ∈ F∗q and a large prime
+divisor l of q − 1, we show how to recover x mod l.
+    We will work in several number fields of the form K = Q[θ] for some algebraic integer θ with minimal
+polynomial f (X) ∈ Z[X]. In the basic case, all these number fields will be of degree n over Q, such that p
+remains prime in the ring of integers OK of K, i.e. OK /(p) ∼ = Fq . In general, we also need number fields
+of degree m > n, such that there exists a prime ideal Q of degree n lying above p, i.e. OK /Q ∼   = Fq . To
+construct such a number field, it simply suffices for f (X) mod p to have an irreducible factor of degree
+n. Denote by ϕQ the surjective ring homomorphism obtained by dividing out the ideal Q, then for any
+element x ∈ OK we define x = ϕQ (x).
+
+4.1   Factoring Ideals in OK
+Recall that in the algorithm we look for coprime pairs of integers (a, b) such that the principal ideal
+(a − bθ) factors into prime ideals of small norm, i.e. of norm smaller than some predefined bound B.
+The possible prime ideals occurring in the factorisation of (a − bθ) are given by the following lemma [6,
+Lemma 10.5.1].
+
+Lemma 1. Let K = Q[θ] and (a, b) coprime integers, then any prime ideal p which divides a − bθ either
+divides the index fθ = [OK : Z[θ]] or is of degree one.
+
+   Therefore, let F consist of degree one prime ideals of norm smaller than B and the finitely many
+prime ideals that divide the index fθ , then we try to decompose (a − bθ) over F. Each degree one prime
+ideal is generated by (pi , θ − cpi ) with pi a rational prime smaller than B and cpi a root of f (X) mod pi .
+   Furthermore, finding the decomposition of the ideal (a − bθ) into prime ideals is equally easy. First
+compute its norm NK/Q  Q(a e−    bθ) = bdeg(f ) f (a/b) and test whether NK/Q (a − bθ) is B-smooth. If it is,
+write NK/Q (a − bθ) = i pi ; now we need to make the following distinction:
+                               i
+6
+
+    – For rational primes pi - fθ , we obtain that pi = (pi , θ − cpi ) with cpi ≡ a/b mod pi will occur in the
+      ideal factorisation of (a − bθ) and that the pi -adic valuation is precisely ei .
+    – For rational primes pi |fθ , use Algorithm 4.8.17 in Cohen [6].
+
+   At the end, we therefore have several pairs of coprime integers (a, b) with corresponding ideal decom-
+positions                                              Y
+                                           (a − bθ) =    pei i .                                       (1)
+                                                                      i
+
+    For p smaller than in the basic case, we P         will need to sieve over (t + 1)-tuples of coprime integers
+                                                         t
+(a0 , a1 , . . . , at ) such that the principal ideal ( i=0 ai θi ) factors into prime ideals of norm smaller than
+B. The following lemma is an easy generalisation of Lemma 1.
+
+Lemma 2. Let  Pt K = Q[θ] and (a0 , . . . , at ) a (t + 1)-tuple of coprime integers, then any prime ideal p
+that divides ( i=0 ai θi ) either divides the index fθ = [OK : Z[θ]] or is of degree ≤ t.
+                                                Pt                                           Pt
+     To find the decomposition of the ideal ( i=0 ai θi ), we compute its norm as NK/Q ( i=0 ai θi ) =
+      Pt
+Res( i=0 ai X i , f (X)), with Res the resultant. For each prime factor pi not dividing the index fθ , we
+                                                     Pt
+proceed as follows: each irreducible factor of gcd( i=0 ai X i , f (X)) over Fpi , corresponds to an ideal
+pi lying above p occurring in the ideal decomposition. Furthermore, if the gcd itself is irreducible, the
+pi -adic valuation is simply m/ deg pi ; if not, we use Algorithm 4.8.17 in Cohen [6]. For prime factors
+dividing the index, we proceed as described above.
+
+
+4.2     From Ideals to Elements
+
+We now show how to transform the relations involving ideals into multiplicative relations involving
+elements only. After mapping these relations to F∗q using ϕQ and taking logarithms, we obtain linear
+equations between logarithms of elements in F∗q modulo the prime factor l.
+   We make a distinction between two cases: the simple case where K has class number one and com-
+putable unit group, the general case.
+
+
+K with Class Number One and Computable Unit Group Since the class number equals one,
+every idealQI in OK is principal, i.e. there exists γI ∈ OK with I = (γI ). The ideal decomposition
+(a − bθ) = i pei i then leads to
+                                                      Y
+                                           a − bθ = u    γiei
+                                                                      i
+                                                                                                                    ∗ ∼
+with (γi ) = pi and u a unit in OK . Let (r1 , r2 ) be the signature of K, then the unit group OK                      =
+          r1 +r2 −1
+µ(K) × Z            , with µ(K) = hu0 i a finite cyclic group of order v. Assuming we can compute a system
+of fundamental units u1 , . . . , ur with r = r1 + r2 − 1, we can write u = un0 0 un1 1 · · · unr r . In this setting we
+thus obtain r logarithmic maps λi for i = 1, . . . , r defined by
+                                                     ∗
+                                              λ i : OK → Z : u 7→ ni ,
+                            ∗
+and a logarithmic map λ0 : OK 7→ Z/vZ : u 7→ n0 . Finally, we obtain the decomposition
+                                                         r
+                                                                λ (u)
+                                                         Y                Y
+                                            a − bθ =           ui i               γiei .
+                                                         i=0                  i
+
+Applying ϕQ and taking logarithms of both sides then leads to
+                                            r
+                                            X                             X
+                          logg (a − bθ) ≡         λi (u) logg ui +                ei logg γ i mod q − 1 .           (2)
+                                            i=0                           i
+                                                                                                                    7
+
+General K Here we assume that the large prime factor l of q − 1 does not divide the class number
+h(K), which constitutes a very minor restriction.   To obtain a relation between elements, we raise both
+sides of the ideal decomposition (a − bθ) = i pei i to the power h = h(K) and obtain
+                                           Q
+
+                                                                    Y
+                                               (a − bθ)h = u               δiei                                   (3)
+                                                                       i
+
+with u a unit and δi ∈ OK with (δi ) = phi . Note that the left hand side denotes the h-th power of the
+element (not the ideal) a − bθ. Furthermore, we will never compute the elements δi , but only need that
+these exist and correspond to the ideals pi .
+   It is tempting to apply ϕQ to both sides and take logarithms as in the easy case, leading to
+                                                      X
+                           h logg (a − bθ) ≡ logg u +   ei logg δ i mod q − 1 .
+                                                                i
+
+The problem with this approach is that for each equation, the unit u will be different, so logg u is a new
+unknown for every equation, and thus we will never obtain a linear system of full rank. Note that in
+the easy case, we could express u as a product of fundamental units, which effectively circumvented this
+problem.
+    To solve this problem we follow Schirokauer [18]: since it is sufficient to compute the discrete logarithm
+                                                                                     ∗
+modulo a large prime l|q − 1, we need not work with the whole unit group OK            , but only modulo l-th
+                        ∗      ∗ l                      ∗ l
+powers of units, i.e. OK /(OK ) . Clearly, for u ∈ (OK ) , we have logg u ≡ 0 mod l. Instead of defining
+                                                                                      ∗     ∗ l
+logarithmic maps on the whole unit group, Schirokauer defines such maps on OK           /(OK  ).
+    For simplicity we will assume that l does not ramify in K. Consider the set ΓK = {γ ∈ OK | NK/Q (γ) 6=
+0 mod l}, and note that the elements a − bθ are in Γ , since they are smooth and thus l - NK/Q (a − bθ).
+                                                                         ∗
+Also note that ΓK is multiplicative and contains the unit group OK         .
+             D
+    Let ε = l − 1, with D the least common multiples of the irreducible factors of f (X) mod l, then for
+all γ ∈ ΓK we have
+                                               γ ε ≡ 1 mod l .
+Define the map λ from ΓK to lOK /l2 OK by λ(γ) = (γ ε −1)+l2 OK . Fix a basis {lbi +l2 OK : i = 1, . . . , n}
+                                                                    ∗
+for lOK /l2 OK with {lbi + l2 OK : i = 1, . . . , r} a basis for λ(OK ) and define maps λi : ΓK → Z/lZ by
+                                                         n
+                                                         X
+                                         (γ ε − 1) ≡ l         λi (γ)bi mod l2 .
+                                                         i=1
+
+Note that λ(γ · γ 0 ) = λ(γ) + λ(γ 0 ) and similarly λi (γ · γ 0 ) = λi (γ) + λi (γ 0 ), so these maps are logarithmic
+                                                                                                           ∗
+on ΓK . As a consequence, the maps λi for i = 1, . . . , n are in fact homomorphisms from OK                  to Z/lZ.
+Consider the homomorphism
+                                   ∗    ∗ l
+                              λ : OK /(OK ) → (Z/lZ)r : u 7→ (λ1 (u), . . . , λr (u)) .
+
+We have the following trivial lemma which is a special case of Schirokauer’s theorem.
+                                            ∗
+Lemma 3. Assuming that λ is injective, u ∈ OK is an l-th power if and only if λ(u) = 0.
+                                      ∗                                                           ∗    ∗ l
+   If we furthermore assume that OK     does not contain the primitive l-th roots of unity, then OK /(OK )
+     r                                                                                              ∗
+has l elements and thus λ defines an isomorphism. Therefore, there exist units u1 , . . . , ur ∈ OK such
+that λi (ui ) = 1 and λi (uj ) = 0 for i 6= j. Note that these units are not unique, since they are only
+                       ∗ l
+determined modulo (OK     ) . Any unit u ∈ OK can thus be written as
+                                                      r
+                                                               λ (u)
+                                                      Y
+                                                 u=         ui i       · ξl                                       (4)
+                                                      i=1
+
+for some unit ξ.
+8
+
+      In Equation (3) we now modify the elements δi by multiplying with a well defined unit
+                                                                   r
+                                                                             −λj (δi )
+                                                                   Y
+                                                    δi0 = δi ·           uj              ,
+                                                                   j=1
+
+such that λj (δi0 ) = 0 for j = 1, . . . , r. Note that δi0 stillQ
+                                                                 generates phi .
+    Rewriting Equation (3) then leads to (a−bθ) = u i (δi0 )ei , with u0 a unit. Since we have constructed
+                                                        h      0
+
+δi such that λj (δi0 ) = 0 for j = 1, . . . , r, we have hλj (a − bθ) = λj (u0 ). Rewriting the unit u0 as in (4)
+  0
+
+finally leads to the equation
+                                                                r
+                                                                         hλ (a−bθ)
+                                                                Y                                Y
+                                    (a − bθ)h = ξa,b
+                                                 l
+                                                     ·                 ui i                  ·    (δi0 )ei ,
+                                                                i=1                               i
+
+                 ∗
+for some ξa,b ∈ OK . Applying ϕQ and taking logarithms of both sides modulo l then gives
+                                            r
+                                            X                                       X                             0
+                          logg (a − bθ) ≡         λi (a − bθ) logg ui +                          ei h−1 logg δ i mod l .           (5)
+                                            i=0                                      i
+
+                      0
+Note that h−1 logg δ i and logg ui correspond precisely to the virtual logarithms of ideals and Schirokauer
+maps introduced in [12] and [19], but are now given as logarithms of the reduction of specific elements
+           ∗
+in pi and OK . Furthermore, note that these values are well defined modulo l.
+
+4.3     Exploiting Automorphisms
+In this section we show that if the number field K has a non-trivial automorphism group Aut(K), the
+size of the factor basis F can be reduced by a factor of #Aut(K).
+    Let K be a number field of degree n with non-trivial automorphism group Aut(K) and assume p is
+inert in K. Clearly, the prime ideal (p) is invariant under each φ ∈ Aut(K). Therefore, each automorphism
+φ defines an automorphism φ of Fq by reduction modulo p. Furthermore, since p is unramified, this map
+will be injective, so Aut(K) ⊂ Gal(Fq /Fp ), implying that Aut(K) has to be cyclic and #Aut(K)|n.
+    Let A = #Aut(K) and d = n/A and denote by ψ ∈ Aut(K) the unique automorphism such that
+              d
+ψ(x) ≡ xp mod p for all x ∈ OK . Then Aut(K) = hψi and define ψk = ψ k for k = 0, . . . , A − 1.
+    Write F = Fe ∪ Fu where Fu contains all unramified degree one prime ideals and Fe the others.
+Note that Fe is tiny, since these prime ideals have to divide the discriminant of f . Since ψk (p) is a prime
+ideal of the same degree and ramification index as p, we can partition Fu into A disjunct sets Fu,k for
+k = 0, . . . , A − 1 such that p ∈ Fu,0 ⇔ ψk (p) ∈ Fu,k . The decomposition (1) can then be rewritten as
+
+                                                       Y               A−1
+                                                                       Y        Y
+                                    (a − bθ) =                 pei i                     ψk (pi )ei,k ,
+                                                     pi ∈Fe            k=0 pi ∈Fu,0
+
+where most of the ei and ei,k will be zero.
+    Let δi be a generator of the principal ideal phi , then clearly ψk (δi ) is a generator of (ψk (pi ))h and
+logg ψk (δi ) ≡ pdk logg δ i mod q − 1. Rewrite Equation (3) as
+
+                                                            Y            A−1
+                                                                         Y        Y
+                                  (a − bθ)h = u0                  δiei                           ψk (δi )ei,k ,
+                                                        i∈[Fe ]          k=0 i∈[Fu,0 ]
+
+for some unit u0 and with [·] denoting the index set of a set. Note that we no longer have the equality
+λj (u0 ) = hλj (a − bθ), since λj (ψk (δi )) will not be zero. However, we can explicitly compute
+
+                                                   X                          A−1
+                                                                              X          X
+                  λj (u0 ) ≡ hλj (a − bθ) −                 ei λj (δi ) −                             ei,k λj (ψk (δi )) mod l .
+                                                  i∈[Fe ]                     k=0 i∈[Fu,0 ]
+                                                                                                                     9
+
+The equivalent of Equation (5) then becomes
+                                            r
+                                            X                                      X
+                          logg (a − bθ) ≡         h−1 λj (u0 ) logg uj +                    h−1 ei logg δ i
+                                            j=0                                   i∈[Fe ]
+                                                                      A−1
+                                                                                     !                             (6)
+                                                      X               X
+                                                                 −1          dk
+                                            +                h              p ei,k       logg δ i mod l .
+                                                i∈[Fu,0 ]             k=0
+
+    Note that the number of unknowns in the right hand side of the above equation now only amounts
+to #Fu,0 + #Fe + r, which is roughly #Aut(K) times smaller than in the previous section. However,
+this approach is only feasible when we are able to compute the class number h. Furthermore, for each
+ideal pi ∈ Fu,0 we now have to explicitly compute a δi that generates phi . and all the Schirokauer maps
+λj (ψk (δi )) for j = 1, . . . , r, k = 0, . . . , A − 1 and all i. Clearly none of these issues arise when K has class
+number one and computable unit group.
+
+
+5    Asymptotic Heuristic Complexity
+In this section we summarise the heuristic complexity of the different variations described in Sections 2
+and 3. The details of this complexity analysis are given in Appendix A. Note that the basic algorithm is
+a special case of the algorithm given in Section 3.1, so we do not treat it separately.
+    The precise complexity depends on the ratio of p compared to pn and we have the following cases:
+ – p can be written as Lq (lp , c) with 1/3 < lp < 2/3, then the algorithm given in 3.1 has complexity
+
+                                                      Lq (1/3, (128/9)1/3 ) .
+
+ – p can be written as Lq (2/3, c) for a constant c, then the algorithm given in 3.1 has complexity
+                                                                                              1/3
+                                                  0                   0   4          3t
+                                    Lq (1/3, 2c )         with        c =                             ,
+                                                                          3       4(t + 1)
+
+   where we sieve over (t + 1)-tuples where the degree t is taken as the natural number closest to the
+   real root of 3c3 t(t + 1)2 − 32 = 0.
+ – p can be written as Lq (2/3, c) for a constant c, then the algorithm given in 3.2 has complexity
+                                                                       6      1
+                                 Lq (1/3, 2c0 )       with       9c03 − c02 + 2 c0 − 8 = 0 .
+                                                                       c     c
+ – p can be written as Lq (lp , c) with lp > 2/3, then the algorithm given in 3.2 has complexity
+
+                                                      Lq (1/3, (64/9)1/3 ) .
+
+    In Figure 1 we have plotted the constant c0 which determines the complexity Lq (1/3, 2c0 ) as a function
+of the constant c. The plot also shows for which c to switch from algorithm 3.1 to algorithm 3.2.
+
+
+6    Numerical Experiments
+We modified Joux and Lercier’s discrete logarithm C-implementation in order to handle a 120-digit
+realistic experiment. More precisely, we consider a finite field of the form Fp3 with
+
+                   p = b1039 πc + 2622 = 3141592653589793238462643383279502886819 ,
+the smallest 40-digit integer than 1039 π such that (p − 1)/2 is prime. Its multiplicative group has p3 − 1
+elements, which factors as
+         2 × 13 × 19 × 199 × 4177 × 212145751 × 547465820443 × 337091202666800863 × l × (p − 1)/2 ,
+10
+
+
+
+
+                           1.2
+                                 t     ∞
+
+
+
+
+                          1.15
+
+
+                                     t = 3
+
+                           1.1
+
+                                      t = 2
+                     c’
+
+
+                          1.05
+
+
+                                                            D > n
+
+                             1
+
+
+
+
+                                      t = 1
+                          0.95                2   4           6          8        10
+                                                        c
+
+
+
+
+Fig. 1. Asymptotic complexity Lq (1/3, 2c0 ) (note factor 2) as a function of c with p ∈ Lq (1/3, c). Also
+indicated are the degree t of the elements in the sieving space and the degree D ≥ n of the number field
+K2 .
+
+
+
+
+where l = 1227853277188311599267416539617839. The hardest part is of course to compute discrete
+logarithms modulo the 110-bit factor l since smaller factors can be easily handled with the Pollard-rho
+algorithm and discrete logarithms modulo p − 1 are the same as discrete logarithms of norms in Fp . To
+solve this problem, let Q[θ1 ] and Q[θ2 ] be the two number fields defined respectively by
+
+                          f1 (X) = X 3 + X 2 − 2X − 1       and     f2 (X) = f1 (X) + p ,
+
+where we have Fp3 ≃ Fp [t]/(f1 (t)). With these settings, Q[θ1 ] is a cubic cyclic number field, the Galois
+group of which is given by Aut(Q[θ1 ]) = {θ1 7→ θ1 , θ1 7→ θ12 − 2, θ1 7→ −θ12 − θ1 + 1}, and a system of
+fundamental units by u1 = θ1 + 1 and u2 = θ12 + θ1 − 1. Q[θ2 ] has signature (1, 1), thus we will have to
+apply one single Schirokauer logarithmic map λ1 to our relations to deal with obstructions in the Q[θ2 ]
+side.
+    We construct smoothness bases with 1 000 000 prime ideals as follows,
+ – in the Q[θ1 ] side, we include 899 999 prime ideals, but only 300 000 are meaningful due to the Galois
+   action,
+ – in the Q[θ2 ] side, we include 700 000 prime ideals.
+The lattice sieving considers only algebraic integers a + bθ2 which are already divisible by a prime ideal
+in Q[θ2 ], such that norms to be smoothed in Q[θ2 ] are 150 bit integers (once removed the known prime
+ideal) and norms in Q[θ1 ] are 110 bit integers (an important tip to improve the running time with such
+polynomials is to unbalance the size of a versus the size of b). The sieving took 12 days on a 1.15 GHz
+16-processors HP AlphaServer GS1280.
+    We then had to compute the kernel of a 1 163 482 × 793 188 matrix, the coefficients of which are
+mostly equal modulo ` to ±1, ±p or ±p2 . We thus first modified the Joux-Lercier structured gaussian
+elimination step to reduce such a system to 450 246 equations in 445 097 unknowns with 44 544 016 non
+null entries. Time needed for this on one processor was only a few minutes. Then, the critical phase was
+                                                                                                              11
+
+the final computation via Lanczos’s algorithm. Our parallelised version of this algorithm (modified for
+such matrices too) took one additional week. At the end, since Q[θ1 ] is principal, we may check that we
+have discrete logarithms of generators of ideals in the smoothness bases, for instance,
+                                             3
+                             (t2 + t + 1)(p −1)/l = G294066886450155961127467122432171 ,
+                                            3
+                                   (t − 3)(p −1)/l = G364224563635095380733340123490719 ,
+                                            3
+                                 (3 t − 1)(p −1)/l = G468876587747396380675723502928257 ,
+               3
+where G = g (p −1)/1159268202574177739715462155841484 l and g = −2t + 1.
+                                                   P2
+    In the final step, we took as a challenge γ = i=0 (bπ × pi+1 c mod p)ti . We first easily computed its
+discrete logarithm in basis g modulo (p3 − 1)/l,
+                   3889538915890151897584592293694118467753499109961221460457697271386147286910282477328.
+
+
+To obtain a complete result, we expressed
+                             −90987980355959529347 t2 − 114443008248522156910 t + 154493664373341271998
+                       γ =                                                                                ,
+                              94912764441570771406 t2 − 120055569809711861965 t − 81959619964446352567
+
+
+where numerator and denominator are both smooth once considered as algebraic integers in Q[θ1 ].
+Using a three level tree with 80 special-q ideals, we recovered the discrete logarithm modulo l, namely
+110781190155780903592153105706975. Each special-q sieving took 10 minutes or a total of 14 hours.
+
+
+7   Conclusion
+
+In this paper, we have presented a new variation of the number field sieve algorithm to compute discrete
+logarithms in F∗pn . For p > Lpn (1/3), our variation yields a complexity of Lpn (1/3). For smaller values of
+p, the function field sieve algorithm described in [13] also gives Lpn (1/3) complexity. As a consequence,
+we have Lpn (1/3) heuristic algorithms to compute discrete logarithms in all finite fields Fpn . This should
+be compared to the previous Lpn (1/2) algorithms given in [1, 2]. Another major advantage is that this
+algorithm has a fast post-processing phase for individual logarithms, once the main algorithm terminates.
+This is extremely useful for applications which require the computation of many logarithms in the same
+field. To give an example, this was required by the identity based cryptosystem of Maurer and Yacobi [16].
+
+
+References
+ [1] L. Adleman and J. DeMarrais. A subexponential algorithm for discrete logarithms over all finite fields. In
+     D. Stinson, editor, Proceedings of CRYPTO’93, volume 773 of Lecture Notes in Comput. Sci., pages 147–158.
+     Springer, 1993.
+ [2] L. Adleman and J. DeMarrais. A subexponential algorithm for discrete logarithms over all finite fields.
+     Math. Comp., 61(203):1–15, 2003.
+ [3] L.M. Adleman. The function field sieve. In Algorithmic Number Theory, Proceedings of the ANTS-I confer-
+     ence, volume 877 of Lecture Notes in Comput. Sci., pages 108–121, 1994.
+ [4] L.M. Adleman and M.A. Huang. Function field sieve method for discrete logarithms over finite fields. In
+     Information and Computation, volume 151, pages 5–16. Academic Press, 1999.
+ [5] E. R. Canfield, Paul Erdős, and Carl Pomerance. On a problem of Oppenheim concerning “factorisatio
+     numerorum”. J. Number Theory, 17(1):1–28, 1983.
+ [6] H. Cohen. A course in computational algebraic number theory, volume 138 of Graduate Texts in Mathematics.
+     Springer-Verlag, Berlin, 1993.
+ [7] D.M. Gordon. Discrete logarithms in GF(p) using the number field sieve. SIAM J. Discrete Math., 6(1):124–
+     138, 1993.
+ [8] R. Granger, A. Holt, D. Page, N. Smart, and F. Vercauteren. Function field sieve in characteristic three.
+     In D. Buell, editor, Algorithmic Number Theory, Proceedings of the ANTS-VI conference, volume 3076 of
+     Lecture Notes in Comput. Sci., pages 223–234. Springer, 2004.
+ [9] R. Granger and F. Vercauteren. On the discrete logarithm problem on algebraic tori. In V. Shoup, editor,
+     Proceedings of CRYPTO’2005, volume 3621 of Lecture Notes in Comput. Sci., pages 66–85. Springer, 2005.
+12
+
+[10] A. Ivić and G. Tenenbaum. Local densities over integers free of large prime factors. Quart. J. Math. Oxford
+     Ser. (2), 37(148):401–417, 1986.
+[11] A. Joux and R. Lercier. The function field sieve is quite special. In C. Fieker and D. Kohel, editors, Algo-
+     rithmic Number Theory, Proceedings of the ANTS-V conference, volume 2369 of Lecture Notes in Comput.
+     Sci., pages 431–445. Springer, 2002.
+[12] A. Joux and R. Lercier. Improvements to the general number field sieve for discrete logarithms in prime
+     fields. A comparison with the gaussian integer method. Math. Comp., 72:953–967, 2003.
+[13] A. Joux and R. Lercier. The function field sieve in the medium prime case. In S. Vaudenay, editor,
+     Proceedings of EUROCRYPT’2006, volume 4004 of Lecture Notes in Comput. Sci., pages 254–270. Springer,
+     2006.
+[14] A. K. Lenstra, H. W. Lenstra, Jr., and L. Lovász. Factoring polynomials with rational coefficients. Math.
+     Ann., 261(4):515–534, 1982.
+[15] R. Lercier and F. Vercauteren. Discrete logarithms in Fp18 - 101 digits. NMBRTHRY mailing list, June
+     2005.
+[16] U.M. Maurer and Y. Yacobi. A non-interactive public-key distribution system. Des. Codes Cryptogr.,
+     9(3):305–316, 1996.
+[17] J. Neukirch. Algebraic number theory, volume 322 of Grundlehren der Mathematischen Wissenschaften.
+     Springer-Verlag, Berlin, 1999.
+[18] O. Schirokauer. Discrete logarithms and local units. Philos. Trans. Roy. Soc. London Ser. A, 345(1676):409–
+     423, 1993.
+[19] O. Schirokauer. Virtual logarithms. J. Algorithms, 57(2):140–147, 2005.
+[20] O. Schirokauer, D. Weber, and T. Denny. Discrete logarithms: the effectiveness of the index calculus method.
+     In Algorithmic Number Theory, Proceedings of the ANTS-II conference, volume 1122 of LNCS, pages 337–
+     361. Springer, Berlin, 1996.
+[21] D. Weber. Computing discrete logarithms with the general number field sieve. In Algorithmic Number
+     Theory, Proceedings of the ANTS-II conference, volume 1122 of LNCS, pages 391–403. Springer, Berlin,
+     1996.
+
+
+A     Asymptotic Heuristic Complexity
+A.1    Basic Algorithm
+In order to analyse the heuristic asymptotic complexity of the basic algorithm described in Section 2 we
+first assume that we can write the following relations between q = pn , p and n, for some constant c to
+be determined later on:
+                                          1/3           q                   
+                           1       log q                      3    2
+                      n= ·                      , p = exp c · log q · log log q .
+                           c     log log q
+
+We further assume that the sieve limit S and the smoothness bound B are chosen equal and expressed
+as:                                          q                  
+                                   S = B = exp c0 ·         log q · log2 log q ,
+                                                        3
+
+
+
+
+for some constant c0 . Since f1 has small coefficients, say bounded by b0 , the norm of a−bθ1 is smaller than
+nb0 B n = B n+o(1) . Similarly, the norm of a − bθ2 is smaller than p · B n+o(1) . Thus, the product of these
+two norms is smaller than p · B 2n+o(1) = Lq (2/3, c + 2c0 /c). We make the usual heuristic hypothesis and
+assume that the probability for each value of this product to split into primes lower than B follows the
+well-known theorem of Canfield, Erdös and Pomerance [5]: a random number below Lq (r, γ) is Lq (s, δ)-
+smooth with probability Lq (r − s, −γ(r − s)/δ). As explained above, in the squarefree factorisation case,
+this probability is lower, by a factor 6/π 2 which we can neglect in the L-notation. Plugging in our values,
+we find that the product of the norms is smooth with probability Lq (1/3, −(1/3) · (c/c0 + 2/c)). In order
+to minimise the total runtime, we want to roughly balance the complexities of the sieving phase and of
+the linear algebra phase. This is achieved when c0 = (1/3) · (c/c0 + 2/c) and thus:
+                                                                 
+                                               1 1 p
+                                         c0 =        + 3c + c−2 .
+                                               3 c
+                                                                                                             13
+
+The heuristic complexity is Lq (1/3, 2c0 ) and it varies depending on c. It is minimal for c = 2 · (1/3)1/3 ,
+where c0 = 2 · (1/3)2/3 . At this minimal point, the complexity is Lq (1/3, (64/9)1/3 ), thus identical to the
+complexity of the number field sieve over prime fields.
+
+A.2    Algorithm for Smaller p
+When considering our algorithmic variants for smaller values of p, two cases are possible. Either p is
+written Lq (2/3, c) as before or it is of the form Lq (lp , c) with 1/3 < lp < 2/3. In the first case, the
+overall complexity is Lq (1/3) with a constant which depends on c, in the second case, the complexity is
+Lq (1/3, (128/9)1/3 ). The parameters of the algorithms are the smoothness bound B, the degree t of the
+elements we are sieving over and the bound on the coefficients of these elements S. Clearly, the norm on
+the f1 side is bounded by S n+o(1) and the norm on the f2 side is bounded by S n+o(1) pt+o(1) . Thus the
+product of the norms is bounded by S 2n+o(1) pt+o(1) . Choose for t the nearest integer to:
+                                                           2/3−lp
+                                           ct       log q
+                                              ·                     ,
+                                           c      log log q
+for a constant ct to be determined later on. Choose the sieve bound as:
+                                                                           
+                               S = exp cS c · loglp −1/3 q · log4/3−lp log q .
+
+Then, the total sieving space contains S t elements, where
+                                                                               
+                             S t = exp (cS ct + o(1)) · log1/3 q · log2/3 log q
+
+when lp < 2/3. For the lp = 2/3 case, the round-off error in t is no longer negligible, which explains why
+the complexity varies with c. We continue the analysis for lp < 2/3, the lp = 2/3 case is discussed in the
+next subsection and summarised in Figure 1. Let the smoothness bound be B = Lq (1/3, c0 ) as before.
+Rewrite the bound on the product of norms as Lq (2/3, 2cS + ct ), then the smoothness probability is
+                                  P r = Lq (1/3, −(1/3) · (2cS /c0 + ct /c0 )) .
+In order to choose cS and ct , we need to equate the runtime of the sieving, i.e. the size of the sieving
+space S t , with the time of the linear algebra, i.e. B 2 , and also with B/P r. This implies S t/2 = B = 1/P r.
+Translating this into equations involving the various constants, we find:
+                                                               
+                                               1 2cS         ct      cS ct
+                                          c0 =        0
+                                                          +   0
+                                                                  =        .
+                                               3     c       c        2
+As a consequence, we deduce:                     r
+                                            0 2cS + ct   cS ct
+                                           c =         =       .
+                                                 3        2
+We now write ct = x, cS = µx and minimise c0 . With this notation:
+                            (2µ + 1)x   µ2 x4                      4(2µ + 1)
+                                      =       or equivalently x3 =           .
+                                3        4                            3µ2
+Since c0 = µx2 /2, we write:
+                                                        2(2µ + 1)2
+                                                c03 =              .
+                                                            9µ
+Clearly, minimising c0 is equivalent to minimising c03 and implies:
+                       8(2µ + 1)   2(2µ + 1)2                                  1
+                                 =      2
+                                              , or 4µ = 1 + 2µ, and finally µ = .
+                          9µ          9µ                                       2
+As a consequence x = (32/3)1/3 , c0 = x2 /4 = (16/9)1/3 . Thus, the complexity of the algorithm is
+Lq (1/3, 2c0 ) = Lq (1/3, (128/9)1/3 ).
+14
+
+The case of lp = 2/3. In this case, it is easier to consider a family of algorithms, indexed by t and to
+compute the complexity of each algorithm. We then choose B = Lq (1/3, c0 ) and S = Lq (1/3, 2c0 /(t + 1)),
+the total size of the sieving space and the runtime of the linear algebra are Lq (1/3, 2c0 ), the product of the
+norms is Lq (2/3, 4c0 /(t+1)c+tc) and the probability of smoothness is Lq (1/3, (−1/3)·(4/(t+1)c+tc/c0 )).
+As usual, we equalise c0 with the constant in the probability expression and find:
+                                                                 
+                                            0  1       4       tc
+                                          c =                + 0 .
+                                               3 (t + 1)c      c
+
+This implies:
+                                                         4c0
+                                            3c02 −             − tc = 0.
+                                                      (t + 1)c
+Thus:                                                         s                    !
+                                       1         2                    4
+                                  c0 =                +                       + 3tc .
+                                       3     (t + 1)c             (t + 1)2 c2
+Note that for t = 1, we recover the formula of the basic case. This comes to a minimum when:
+                                                                     −2 −3
+                                              2        −8(t+1) c +3t
+                                           (t+1)c2   = √      −2 −2
+                                                          2    4(t+1)     c    +3tc
+                                             ⇔
+                                                                            2
+                         64(t + 1) c + 48tc = −8(t + 1)−1 c−1 + 3t(t + 1)c2
+                                  −2 −2
+
+                                             ⇔
+                                        48tc = −48tc + 9t2 (t + 1)2 c4 .
+Thus, we take:
+                                                                       1/3
+                                                               4
+                                             c=2                               .
+                                                          3t(t + 1)2
+As a consequence:
+                                                                       1/3
+                                              0  4            3t
+                                             c =                               .
+                                                 3         4(t + 1)
+We recover the basic complexity Lq (1/3, (64/9)1/3 ) when t = 1 and find the expected limit
+
+                                                  Lq (1/3, (128/9)1/3 )
+
+when t tends to infinity. We show how the complexity constant varies with c in Figure 1.
+
+
+A.3     Algorithm for Larger p
+
+For larger p, as for smaller p, two cases arise. Either p is written Lq (2/3, c) or it is of the form Lq (lp , c)
+with lp > 2/3. In the first case, the overall complexity is Lq (1/3) with a constant which depends on c,
+in the second case, the complexity is Lq (1/3, (64/9)1/3 ). The parameters in this case are the smoothness
+bound B and the degree D. The degree of f1 is n, the bound on the coefficients when sieving is S = B
+and the size of the coefficients of both f1 and f2 , according to the construction of polynomials described
+above is R = pn/(D+1) = q 1/(D+1) . Choose:
+                                                                         1/3
+                                                                log q
+                                             D = cD
+                                                              log log q
+
+and write B = Lq (1/3, c0 ). Bound the norms on the f1 side by RS n+o(1) and the norms on the f2 side
+by RS D+1+o(1) . Thus the product of the norms is bounded by B n+D+1+o(1) q 2/(D+1) . When lp > 2/3,
+n is negligible compared to D and the product of the norms can√be rewritten as Lq (2/3, c0 cD + 2/cD ).
+This is minimised when cD = (2/c0 )1/2 , and becomes Lq (2/3, 2 2c0 ). The probability of smoothness
+                                                                                                        15
+                      p
+is Lq (1/3, −(1/3) · 2 2/c0 ). As usual, we equalise the (opposite of) this constant with c0 . This yields
+c0 = (8/9)1/3 and finally the expected Lq (1/3, (64/9)1/3 ) complexity.
+    When lp = 2/3, matters are more complicated. The product of the norms is now rewritten as
+Lq (2/3, c0 (cD +√
+                 1/c) + 2/cD ), again this is minimised at cD = (2/c0 )1/2 . However,
+                                                                                    p     it now becomes,
+          0
+Lq (2/3, c /c + 2 2c0 ). The probability of smoothness is Lq (1/3, −(1/3) · (1/c + 2 2/c0 )). Equating this
+constant to c0 yields:
+                                                             6      1
+                           (3c0 − 1/c)2 = 8/c0 or 9c03 − c02 + 2 c0 − 8 = 0.
+                                                             c      c
+When c tends to infinity, we recover the (64/9)1/3 constant in the complexity.
+

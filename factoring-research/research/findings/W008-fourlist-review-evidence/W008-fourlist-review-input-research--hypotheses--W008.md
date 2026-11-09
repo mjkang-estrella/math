@@ -1,0 +1,154 @@
+# W008 — implicit four-list additive collision detection
+
+2026-10-08. Parent proposal, PROVISIONAL pending independent audit. No
+candidate execution, code or Lean change, or new factoring bound.
+
+This branch replaces repeated concentration-map training with four directly
+sampled uniform lists. Useful supply is elementary; the selected question is
+the actual computation that detects it without expanding both pair lists.
+
+## Paid generator and an exact candidate success calculation
+
+Promise initially N=pq, distinct odd primes p<q. Generate four independent
+lists A,B,C,D, each containing K independent uniform residues modulo N.
+Sampling costs O(K) residues, no factors or local group orders.
+
+For each tuple t=(i,j,k,l), define
+L_t=a_i+b_j-c_k-d_l modulo N. Let I_t indicate p divides L_t but q does not.
+Its mean is a=(1/p)(1-1/q). Any two distinct tuples give linearly independent
+linear forms in the 4K input coordinates over each prime field: their supports
+differ and every coefficient is nonzero. Their two values are therefore
+independent uniform residues over each field. CRT then makes I_t,I_u pairwise
+independent, despite shared list entries. Thus, with Z=sum_t I_t,
+
+    lambda=E Z=K^4*a,
+    E Z^2=lambda^2+lambda*(1-a),
+    Pr[Z>0] >= lambda/(lambda+1-a).
+
+This is a proposed exact second-moment argument, not an iid model for all
+K^4 tuples. At K about p^(1/4), it gives constant useful-collision mass.
+A tuple that vanishes modulo N is a global duplicate and is not useful.
+Its total occurrence probability is at most K^4/N by a union bound.
+
+## Actual scalar object and a full-gcd localization procedure
+
+For monic input polynomials F_A(T)=product_i(T-a_i), etc., define
+
+    S_AB(T)=Res_X(F_A(X),F_B(T-X))
+           =product_(i,j)(T-a_i-b_j),
+    S_CD(T)=product_(k,l)(T-c_k-d_l),
+    R(A,B,C,D)=Res_T(S_AB(T),S_CD(T)).
+
+Up to an irrelevant sign, R is product_t L_t. The target is its residue
+modulo N, not an exponentially large exact integer.
+
+If gcd(R,N) is proper, return it. If it is 1, this trial fails. If it is N,
+partition one non-singleton original list into two parts. The two child
+products multiply to the parent. Evaluate the first child:
+proper gcd returns; gcd N descends there; gcd 1 descends into the other
+child whose gcd is then N. Repeat, splitting original lists, down to a
+single tuple. Reaching a tuple with gcd N is declared a failed trial, not
+a factor. There is no restart into every sibling.
+
+On the event that no tuple is globally zero, such a full-gcd descent cannot
+reach a full-gcd leaf. If some useful tuple exists, the root has gcd p or N
+and the procedure must recover a proper factor. This probabilistic extractor
+therefore avoids globally deduplicating K^2 pair sums: it may fail on a
+global duplicate, whose total probability was bounded above. This is a
+different recovery rule from claiming arbitrary deterministic full-gcd
+backtracking succeeds.
+
+With p,q>=131, the first power-of-two K with K^4>=p has K^4<16p.
+The useful-event lower bound exceeds 0.49, while the global-duplicate bound
+is at most 16/q<1/8. Hence success exceeds 1/3 at that stage.
+An N-only schedule doubles K up to the first K with K^4>=ceil(sqrt(N)),
+then repeats that capped stage. For all stages from the useful threshold
+to this cap, lambda is at least the threshold value and
+K^4/N<16/sqrt(N)<=16/p; the same lower bound works.
+A fixed number of independent trials per stage makes the geometric
+expected-cost tail summable for a detector with any fixed power exponent.
+Small primes up to 127 can be removed at constant setup cost.
+This is still only the stated squarefree semiprime scope.
+
+## What the supplied algorithms actually cost
+
+1. Explicit pair-list control: form K^2 sums per side, then apply a paid
+   scalar version of the W006 batch detector or ordinary product trees.
+   Cost K^2*poly(log N+log K), not K. At the threshold this is
+   sqrt(p)*poly(log N), a known scale.
+
+2. Newton/composed-sum construction: for degree d=K^2, compute power sums
+   of the K roots up to order d from the reciprocal input polynomials'
+   logarithmic derivatives. The exponential-generating-series identity is
+
+       s_m(AB)=sum_(r=0)^m binom(m,r) s_r(A)s_(m-r)(B).
+
+   Form S_AB and S_CD through Newton/exponential series, then their scalar
+   resultant. This actually shares the K^4 term product; it still writes
+   Theta(K^2) coefficients and does not save the critical quadratic cost.
+   The exact quasi-linear-in-d algorithm and ring conditions require audit.
+
+   Integer divisions 1,...,d in these formulas must be charged: test
+   gcd(d!,N). A proper gcd is an early factor; gcd N triggers bounded
+   product-tree localization among the explicit integers 1,...,d or a
+   declared failed chart. If the gcd is 1 these integers are units and all
+   indicated divisions are legal. Computing this product in O(d) work
+   does not spoil the d-scale bound. Nonunit polynomial pivots in a fast
+   resultant must similarly produce factors or be handled correctly.
+   Do not import a field algorithm without these conditions.
+
+Primary source to inspect: Bostan, Flajolet, Salvy, Schost,
+Fast Computation of Special Resultants (2006), author copy
+https://cs.uwaterloo.ca/~eschost/publications/BoFlSaSc05.pdf .
+Parent opened the paper and read search/intro material; the full theorem
+scope is NOT yet accepted. The explicit power-sum identity above is derived
+algebraically. No source claim of a subquadratic-in-K scalar detector.
+
+## A materially different attempted saving: visible modular filtering
+
+Use auxiliary M coprime to N (gcd-tested) and draw each input uniformly
+modulo MN. Then the auxiliary labels modulo M are independent of ALL CRT
+data modulo N. Reduce only the residue payload modulo N.
+
+Keep A+B pairs with auxiliary sum 0 and independently keep C+D pairs
+with auxiliary sum 0. Each retained list has expected size L=K^2/M.
+Conditional on labels the hidden-p tests still have their original
+probabilities. The expected useful-tuple count is
+
+    K^4/M^2 * (1/p)(1-1/q).
+
+To retain constant success via this count one still needs K^2/M of
+order sqrt(p), and explicit surviving-pair traffic already costs that
+much. A matched-bucket variant retaining all pair sums has K^2 traffic
+and loses a factor M in the number of tested quadruples, so it does not
+improve the exponent either. This closes these INDEPENDENT-label filters,
+not all filters correlated with arithmetic structure. Ordinary low bits
+of residues sampled only modulo N need a separate dependence argument;
+they are not silently identified with this exact CRT experiment.
+
+## Conditional consequence and limited hardness connection
+
+An actual uniform evaluator for R on arbitrary sublists of size at most K
+in K^alpha*poly(log N+log K) bit work, with alpha<2, plus the displayed
+O(log K) localization and paid sampling, would give expected
+p^(alpha/4)*poly(log N) splitting on distinct odd semiprimes. This would
+improve the p^1/2 collision control. It is NOT a supplied algorithm and
+does not by itself improve heuristic NFS or rigorous subexponential
+general factoring. No degree/output-size lower bound is claimed for a
+scalar-only computation.
+
+An exact scalar-R algorithm on arbitrary lists and prime moduli also
+decides ordinary four-list integer sum equality: for inputs of magnitude
+at most B choose a prime ell>4B. A term is 0 mod ell exactly when it is the
+integer zero; the full product vanishes iff such a tuple exists.
+This is only a reduction, not an imported 4SUM conjecture/lower bound.
+It does NOT apply unchanged to a detector returning only proper factors,
+or to a method proved solely for random lists.
+
+Next constructive question: can the scalar-only computation exploit the
+random-list promise, or actual shared algebraic structure, to go below
+K^2 without the explicitly expanded degree-K^2 intermediate? The standard
+Newton computation and independent visible filtering do not do so.
+Merely naming a resultant evaluator is not progress; require an explicit
+algorithm, with full-gcd recovery and the paid generator intact.
+

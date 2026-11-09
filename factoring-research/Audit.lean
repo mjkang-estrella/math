@@ -1,0 +1,35 @@
+import Factoring
+
+#print axioms Factoring.accepts_iff
+#print axioms Factoring.accepts_mod_iff
+#print axioms Factoring.factor_implies_composite
+#print axioms Factoring.factor_has_cofactor
+#print axioms Factoring.cofactor_smaller
+#print axioms Factoring.exhaustive_sound
+#print axioms Factoring.exhaustive_complete
+#print axioms Factoring.exhaustive_none_iff
+#print axioms Factoring.factor_15
+#print axioms Factoring.prime_13
+#print axioms Factoring.certificate_evaluation
+#print axioms Factoring.certificate_quotient_exists
+#print axioms Factoring.quotient_recovery
+#print axioms Factoring.recovery_iff_quotient
+#print axioms Factoring.certificate_recovery_nonzero
+#print axioms Factoring.residual_normalization_error
+#print axioms Factoring.residual_normalization_recovery
+#print axioms Factoring.residual_normalization_exponent
+#print axioms Factoring.residual_recovery_nonzero_at_zero
+#print axioms Factoring.exact_reciprocal_recovery_zero
+#print axioms Factoring.square_form_conic_point
+#print axioms Factoring.conic_line_norm
+#print axioms Factoring.conic_line_negative_cross
+#print axioms Factoring.conic_line_cancel_x
+#print axioms Factoring.conic_line_cancel_y
+#print axioms Factoring.conic_line_cancel_z
+#print axioms Factoring.conic_line_positive_cross
+#print axioms Factoring.sqrt_series4_residual
+#print axioms Factoring.sqrt_product4_truncation
+#print axioms Factoring.truncated_product_square_residual
+#print axioms Factoring.covered_exponent_residual
+#print axioms Factoring.covered_exponent_residue_dvd
+#print axioms Factoring.chart_sign_product_residual
