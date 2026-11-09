@@ -1,0 +1,4 @@
+export PATH=/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin:$PATH
+PKGS=/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages
+export LEAN_PATH="$PWD/build:$(find "$PKGS" -path '*/.lake/build/lib/lean' -type d | paste -sd :)"
+export TMPDIR="$PWD/tmp" PYTHONDONTWRITEBYTECODE=1 MALLOC_ARENA_MAX=2
