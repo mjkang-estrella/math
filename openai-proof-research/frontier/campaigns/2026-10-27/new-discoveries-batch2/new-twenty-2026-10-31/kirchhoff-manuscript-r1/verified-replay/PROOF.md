@@ -1,0 +1,95 @@
+# Ordinary proof of the MathDB 349441 counterexample
+
+AI-assisted DRAFT. Zero accepted credit. No priority claim.
+
+## A clique with a five-edge tail reverses the hubs-biased Kirchhoff ordering
+
+### Status and abstract
+
+This is an AI-assisted research draft prepared with OpenAI Codex. No human authorship or affiliation is asserted. Acceptance, independent manuscript review, and any campaign credit remain with the project root; accepted credit is zero. No priority claim is made.
+
+Estrada and Mugnolo conjectured that the hubs-repelling Kirchhoff index dominates the ordinary Kirchhoff index, which in turn dominates the hubs-attracting index [1, Conjecture 4.13]. For the spectral quantity in their Lemma 4.6, the graph consisting of K₆ with a pendant path of five edges has R₁ = 1696684/14035 < 370/3 = R₀. We give exact rational inverse certificates and a Lean dossier with uniqueness proofs over both the rationals and the reals. The independently reviewed experiment has no spectral failures on all 12,103 connected graphs of orders 5 through 8, consistent with the source's reported computation. Global minimality remains open: the smallest spectral counterexample has order between 9 and 11.
+
+The source's potential, Moore-Penrose, and spectral descriptions are not mutually equivalent on irregular graphs. We explain the distinction without claiming credit for these observations. The spectral counterexample persists after that distinction is made; it is the substantive result reported here.
+
+### 1. Source objects and the precise question
+
+Let G be a finite simple connected unweighted graph on n ≥ 2 vertices. Write A for its adjacency matrix, dᵢ for its positive degrees, K = diag(dᵢ), and 1 for the all-ones column. The biased Laplacian in [1, (3.8)] is defined by the following entries (we also allow α = 0):
+
+cα(i) = Σⱼ Aᵢⱼ(dᵢ/dⱼ)^α,     Lα = diag(cα) − K^α A K^(−α).
+
+Thus Lα1 = 0 and L₀ is the ordinary combinatorial Laplacian. The source uses α = 1 for hubs-repelling and α = −1 for hubs-attracting. Definition 4.1 defines resistance as a potential drop divided by the imposed current. Lemma 4.2, equation (4.3), instead specifies a Moore-Penrose matrix expression. For X = Lα⁺ it is
+
+Ωα(i,j) = Xᵢᵢ + Xⱼⱼ − Xᵢⱼ − Xⱼᵢ;     Rαᴹᴾ = Σᵢ<ⱼ Ωα(i,j).
+
+The sum is Definition 4.5, equation (4.15). Both off-diagonal entries are essential, since X need not be symmetric. Lemma 4.6, equation (4.16), asserts the different spectral expression
+
+Rαˢᵖ = n Σₖ₌₂ⁿ 1/ρα,ₖ = n tr(Lα#).
+
+Here 0 = ρα,₁ < ρα,₂ ≤ ⋯ ≤ ρα,ₙ are the eigenvalues and # denotes the group inverse. Section 3 below justifies this spectral interpretation independently of the source's Moore-Penrose argument. Conjecture 4.13, equation (4.25), asserts R₁ ≥ R₀ ≥ R₋₁, with equality if and only if G is regular. Violating the first inequality already refutes that universal assertion, regardless of the interpretation of its equality clause.
+
+## 2. Why the three source descriptions separate
+
+### The physical equation has a compatibility obstruction
+
+Set wᵢ = dᵢ^(−2α). For adjacent i,j the identity wᵢ(dᵢ/dⱼ)^α = (dᵢdⱼ)^(−α) is symmetric in i,j. Consequently wᵀLα = 0. The potential equation in the proof of Lemma 4.2, namely LαV = I(eᵢ − eⱼ) [1, (4.7)], requires I(wᵢ − wⱼ) = 0. For nonzero I and α = ±1 this requires equal degrees at the source and sink. An irregular graph has unequal-degree pairs, so this equation does not define an all-pairs physical resistance index.
+
+This is a necessary compatibility condition for the source's equation, rather than a proposed repair of its directional Ohm-law or antisymmetry assumptions. In particular, we do not claim that every possible corrected physical resistance model is refuted by our graph. For the witness below, w₀ − w₁₀ = −35/36 when α = 1, giving an explicit incompatible pair.
+
+### The non-orthogonal similarity does not preserve Penrose inversion
+
+The source diagonalizes Lα using a non-orthogonal change of basis and treats the correspondingly transformed reciprocal-eigenvalue matrix as its Moore-Penrose inverse in the proof of Lemma 4.2; Lemma 4.6 then uses its trace. Similarity preserves the group-inverse equations, but in general it does not preserve the two transpose equations defining the Moore-Penrose inverse. Orthogonal similarity would preserve those equations; the degree scaling used here is not orthogonal on irregular graphs.
+
+Accordingly, (4.3) and Lemma 4.6's formula (4.16) give different numbers. The source's equation numbered (4.6) is the vertex potential-balance equation, not the spectral formula; this numbering distinction matters when describing the inconsistency. For our witness at α = 1 the true Moore-Penrose pair sum is 515538204/7137235, whereas the spectral value is 1696684/14035. The dossier contains proofs that the group inverse is not a Penrose inverse at this witness. These observations receive no separate discovery credit.
+
+### The reported computation diagnoses the intended numerical quantity
+
+Before Conjecture 4.13, the authors report computations on more than 12,000 connected graphs with 5 ≤ n ≤ 8. The independent frozen review [R] checked the connected graph datasets exactly and obtained the following counts. No equality-versus-regularity failures were found in either reading.
+
+At n = 5 the graph K₄ with a pendant vertex already has R₁ᴹᴾ = 33856/4317 < 17/2 = R₀. The Moore-Penrose reading therefore contradicts the source's reported exhaustive data inside its stated range. By contrast the spectral reading passes every graph in that range. This strongly identifies the computed quantity as spectral; the authors' implementation was not recovered, so this remains an inference about their code. The review also enumerated all connected graphs of orders 2, 3, and 4. Taken together, these checks establish the diagnostic statement that the spectral ordering holds through n = 8. This finite enumeration is supporting computational evidence, not a Lean theorem or a proof of the conjecture.
+
+## 3. The eleven-vertex counterexample
+
+### Theorem and graph
+
+Let H have vertices 0,…,10. Join every pair in {0,…,5}, and add edges {0,6}, {6,7}, {7,8}, {8,9}, {9,10}. This is K₆ with a pendant five-edge path, and it is simple and connected. Its degree sequence is (6,5,5,5,5,5,2,2,2,2,1). Then
+
+R₁ˢᵖ(H) = 1696684/14035 < 370/3 = R₀(H).
+
+Hence the spectral reading of Conjecture 4.13 is false. Independently, R₁ᴹᴾ(H) = 515538204/7137235 < 370/3, so its literal Moore-Penrose reading is false as well. This is one spectral-ordering counterexample, with a secondary source inconsistency; it is not two claimed results.
+
+### Ordinary proof of the spectral correspondence
+
+Let W = diag(w). The matrix WLα is a symmetric weighted Laplacian whose edge conductances are (dᵢdⱼ)^(−α). For any real x, xᵀWLαx is the sum over edges of (dᵢdⱼ)^(−α)(xᵢ − xⱼ)². It is nonnegative, and connectedness makes its kernel precisely the constants. Since W is positive diagonal, S = W^(1/2)LαW^(−1/2) = K^(−α)LαK^α is symmetric positive semidefinite with one-dimensional kernel. Thus Lα is diagonalizable, zero is simple, and every other eigenvalue is positive.
+
+In a diagonalization of Lα, replace the simple zero eigenvalue by zero and every other eigenvalue by its reciprocal. The resulting matrix satisfies LGL = L, GLG = G, and LG = GL. Uniqueness of the group inverse (proved below and in Lean) identifies it with Lα#. Trace is similarity invariant, so tr(Lα#) = Σₖ₌₂ⁿ 1/ρα,ₖ. This argument justifies the spectral reading without using any similarity law for the Moore-Penrose inverse. The eigenvalue argument in this paragraph is ordinary mathematics, not part of the Lean bridge.
+
+### Exact values and the decisive inequality
+
+The rational certificates give the following values; the α = −1 row entries come from the independent exact review, while the formal refutation requires only α = 0 and 1.
+
+Cross multiplication gives R₀ − R₁ˢᵖ = 102898/42105 > 0. No floating-point eigenvalue estimate is involved. As an independent check on the ordinary value, each clique pair has resistance 1/3, yielding 5 in total. Among vertices 0,6,…,10 the path contributes 35. For a clique vertex i ≠ 0 and a path vertex at distance t from 0, resistance is 1/3 + t. The 25 such pairs contribute 5(5/3 + 15) = 250/3. Their sum is 370/3. Section 4 explains how the biased value is certified by finite rational identities.
+
+## 4. Exact certificates and uniqueness
+
+### A compact description of all matrix entries
+
+The full 11 × 11 rational Laplacians, Moore-Penrose inverses, group inverses, and intermediate products for α = 0,1 appear explicitly in formal/Certificates.lean. The independent review's witness-exact.json also supplies all three α values as arrays of rational strings. The following formulas describe these large matrices without printing hundreds of entries in the paper. They specify every entry once the displayed graph and degree sequence are fixed.
+
+Put P = 1wᵀ/(wᵀ1), U = 11ᵀ/n, and T = wwᵀ/(wᵀw). Then define
+
+G = (Lα + P)⁻¹ − P,           M = (I − U)G(I − T).
+
+The rank-one P is the spectral projection onto ker Lα along im Lα: P² = P and LαP = PLα = 0. On the zero eigenspace, Lα + P acts as the identity; on every other eigenspace it acts as Lα. It is therefore invertible. This gives LG = GL = I − P and the three group-inverse identities. Since im L = w⊥ and ker L = span{1}, projection yields LM = I − T and ML = I − U. Both are orthogonal projections; hence LML = L and MLM = M, with both LM and ML symmetric. This proves all four Penrose conditions for M.
+
+### Finite checking and a sample of the construction
+
+Every construction step can use exact rational Gaussian elimination. For α = 1, w = (1/36,1/25,1/25,1/25,1/25,1/25,1/4,1/4,1/4,1/4,1), and wᵀ1 = 401/180. The first row of L₁ is (9,−6/5,−6/5,−6/5,−6/5,−6/5,−3,0,0,0,0); an ordinary clique vertex has diagonal 29/6, entry −5/6 to vertex 0, and four entries −1. Vertex 6 has row entries −1/3 at 0, 4/3 at 6, and −1 at 7. These rules and the edge formula in Section 1 determine L₁ completely.
+
+The formal certificate does not trust a Gaussian-elimination program. It checks the resulting matrix equations and index sums in the kernel using rational arithmetic. Separate certificates verify the four Penrose equations for M₀,M₁ and the three group-inverse equations for G₀,G₁. The graph module proves that its Laplacians equal the displayed L₀,L₁ and that the witness is connected. The index equalities then reduce to exact rational identities.
+
+### Why the inverse cannot be chosen differently
+
+Here is an algebraic uniqueness proof, valid over the reals or rationals. If X,Y are Penrose inverses of A, then (AX)(AY) = AY and (AY)(AX) = AX. Transposing the first identity, using symmetry of AX and AY, identifies AX = AY. Similarly the symmetric products XA and YA agree. Thus X = XAX = YAX = YAY = Y. If X,Y are group inverses, commutation gives AX = (AYA)X = Y(AXA) = YA = AY; then X = XAX = XAY = AXY = AYY = YAY = Y. This removes all inverse-choice ambiguity. In particular, existential inverse data in the conjecture cannot avoid the certified strict inequality. Both uniqueness arguments are formalized over the rationals in Basic.lean and repeated over the reals in RealBridge.lean.
+
+Global spectral minimality remains open in [9,11]. The eigenvalue bridge here is ordinary mathematics; the Lean endpoint is the unique group-inverse trace. Full rational matrices are in formal/Certificates.lean and sources/kirchhoff-review-r1/outputs/witness-exact.json.

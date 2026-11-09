@@ -1,0 +1,1 @@
+No Lean declarations were created. Phase 1 remains unresolved. See ../GAPS.md. No strict Lean replay, leanchecker or axiom audit passed. The exact rational certificate matrices are ordinary-code evidence in ../outputs/exact-independent.json, not formal proof artifacts.
