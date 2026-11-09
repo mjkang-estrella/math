@@ -1,0 +1,7 @@
+from pathlib import Path
+import json
+L=Path('/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/splitmatch-review-r1')
+a=json.loads((L/'downloads/openalex-doi/raw').read_text());p=json.loads((L/'downloads/pool-head/raw').read_text());b=json.loads((L/'downloads/openalex-arxiv/raw').read_text())
+print('PUBLISHED',a['id'],'CITATIONS',a['cited_by_count']);print('POOL',p['sha'],p['commit']['committer']['date']);print('ARXIV SEARCH',[(x['id'],x['title']) for x in b['results']]);
+plan=[('openalex-citing-published','https://api.openalex.org/works?filter=cites:'+a['id'].split('/')[-1]+'&per-page=200'),('openalex-title','https://api.openalex.org/works?search=Splitting%20matchings%20and%20the%20Ryser-Brualdi-Stein%20conjecture%20for%20multisets&per-page=30'),('pool-projects','https://raw.githubusercontent.com/Vilin97/lean-pool/'+p['sha']+'/LeanPool/projects.yml'),('pool-tree','https://api.github.com/repos/Vilin97/lean-pool/git/trees/'+p['sha']+'?recursive=1'),('colourful','https://arxiv.org/pdf/2102.09633'),('published','https://www.combinatorics.org/ojs/index.php/eljc/article/download/v30i3p10/pdf/'),('github-search1','https://api.github.com/search/repositories?q=%222212.03100%22'),('arxiv-fabian-list','https://arxiv.org/a/fabian_d_1.html')]
+(L/'network-plan.tsv').write_text(''.join(n+'\t'+u+'\n' for n,u in plan))
