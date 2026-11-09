@@ -1,0 +1,125 @@
+# Three induced colours on the Möbius ladder M_12
+
+DRAFT — AI-assisted research manuscript — 5 November 2026
+
+This draft was prepared with OpenAI Codex assistance in source screening, computation, proof exposition and document production. No human authorship or affiliation is asserted. It has not been accepted by the campaign root or submitted for publication. No priority claim is made.
+
+## Abstract
+
+An explicit local antimagic edge labelling of the Möbius ladder M_12 induces exactly three vertex colours. An odd cycle supplies the matching lower bound, so χ_la(M_12) = 3. This refutes Conjecture 3.2 of Lau, Shiu and Ng in arXiv:1805.04888, which asserts value four for every even parameter n ≥ 4 in M_2n. A separate labelling of M_8 also contradicts Theorem 2.4 of Lau and Shiu's arXiv:2203.06594; its proof uses an incorrect sum of induced colours. We distinguish the elementary proof of exact value three from the supplied Lean certificate, whose endpoint negates the universal conjecture. A bounded prior-art screen found no earlier valid determination for an even parameter in the conjecture's range, subject to stated access and scope limits.
+
+## 1. Definitions and the source question
+
+All graphs here are finite, simple and undirected. Write E(v) for the edges incident with v. The source introduction [1] defines a local antimagic edge labelling as follows (quoted with mathematical typography normalized): “a bijection f : E → {1, …, |E|} such that the induced vertex labeling f^+ : V → Z given by f^+(u) = ∑ f(e) (with e ranging over all the edges incident to u) has the property that any two adjacent vertices have distinct induced vertex labels”. It calls f^+(u) the “induced color of u under f” and defines the colour number c(f) as the number of distinct induced colours. Thus
+
+χ_la(G) = min{c(f) : f is a local antimagic labeling of G}.
+
+Immediately before its odd-parameter theorem, [1] defines the ladder (same typography convention): “For n ≥ 2, let M_2n be the Mobiüs ladder obtained from C_2n = u_1 u_2 ··· u_n v_1 v_2 ··· v_n u_1 by adding the edges u_i v_i, 1 ≤ i ≤ n.” We use vertices 0, …, 2n−1 and edges (i, i+1 mod 2n), followed by (i, i+n) for 0 ≤ i < n. For n ≥ 2 this lists each of its 3n edges once.
+
+The two source statements, verbatim apart from typography, are:
+
+“Theorem 3.11. For odd n ≥ 3, χ_la(M_2n) = 3.”
+
+“Conjecture 3.2. For even n ≥ 4, χ_la(M_2n) = 4.”
+
+These are the arXiv numbering and hypotheses. The journal is Discussiones Mathematicae Graph Theory 41 (2021), 133–152, DOI 10.7151/dmgt.2177. The review's public indexing evidence identifies the corresponding journal conjecture as Conjecture 3.14 and the odd theorem as Theorem 3.12; a complete journal-version comparison was unavailable. MathDB record 339235 reproduces the even-n conjecture. Its title's “even-order” does not enlarge the mathematical scope: all these ladders have even order, whereas the conjecture restricts n itself to be even.
+
+---PAGE---
+
+## 2. An explicit counterexample
+
+Theorem. The Möbius ladder M_12 has χ_la(M_12) = 3. Consequently the universal even-parameter assertion in Conjecture 3.2 is false.
+
+Proof. Take n = 6. Table 1 assigns labels to the cycle edges in cyclic order, and then to the antipodal edges. These labels are precisely the integers from 1 to 18, with no repetition. Each row of Table 2 lists the three labels incident with a vertex and their sum. Thus every entry can be checked by a single addition. The distinct induced sums are 25, 29 and 31.
+
+[TABLE M12 EDGES]
+
+Table 1. Edge labels. The entry i in the first block denotes the edge (i, i+1 mod 12); in the second block it denotes (i, i+6).
+
+[TABLE M12 SUMS]
+
+Table 2. Vertex sums, with all incident labels displayed. The three colour classes are {4,7,9,11}, {0,2,5}, and {1,3,6,8,10}, in increasing order of their sums.
+
+To check adjacency without relying on the tables' appearance, read the sums along the cycle:
+
+29, 31, 29, 31, 25, 29, 31, 25, 31, 25, 31, 25.
+
+Every consecutive pair is unequal, including the last-first pair (25,29). On the antipodal edges the pairs are (29,31), (31,25), (29,31), (31,25), (25,31), (29,25); all are unequal. Hence this is a local antimagic labelling with three colours, proving χ_la(M_12) ≤ 3.
+
+For the opposite bound, vertices 0,1,2,3,4,5,6 followed by the edge (6,0) form a cycle of length seven. A graph with an odd cycle cannot be coloured with two colours: following the cycle forces alternating colours and makes the closing edge monochromatic. Since any local antimagic labelling induces a proper vertex colouring, χ_la(M_12) ≥ χ(M_12) ≥ 3. Combining the bounds proves the theorem. The parameter six is even and at least four, so its value three contradicts the conjectured value four. □
+
+As an independent aggregate check, the twelve sums total 342, which equals twice the sum 1+···+18. This identity alone would not prove propriety or bijectivity; those were checked separately above. The same lower-bound argument works for every even n ≥ 4: the path 0,1,…,n and the chord (n,0) form an odd cycle of length n+1. No general upper bound of three for all such n is proved here.
+
+---PAGE---
+
+## 3. The order-eight remark and bounded computations
+
+Remark (a false small-order theorem). Lau and Shiu [2, Theorem 2.4] assert that every cubic graph of order eight has local antimagic chromatic number four. The following assignment to M_8 contradicts that published assertion. Use the same cycle-then-antipodes convention:
+
+Cycle labels: 11, 2, 9, 12, 5, 10, 6, 8.
+
+Antipodal labels: 3, 7, 4, 1.
+
+[TABLE M8 SUMS]
+
+Table 3. The M_8 witness: incident labels and their sums.
+
+The labels form a permutation of 1, …, 12. Consecutive cycle sums are unequal, including the closing pair (15,22). The antipodal sum pairs are (22,20), (20,22), (15,20), (22,15). Its three colour classes have sums 15, 20 and 22, of sizes two, three and three respectively. The cycle 0,1,2,3,4,0 has length five, so the lower bound is again three. Thus χ_la(M_8) = 3.
+
+The proof of [2, Theorem 2.4] prints the line
+
+“2x + 3y + 3z = 2 × (sum of all labels) = 132”.
+
+For a cubic graph on eight vertices there are twelve edges. Since each edge label is counted at both endpoints, the total must instead be 2(1+···+12) = 156. Our colour classes give 2·15 + 3·20 + 3·22 = 156. The erroneous total enters the case restrictions in that proof; the theorem itself is false, not merely its displayed calculation. This remark is separate from the main M_12 result, which lies outside the order-eight theorem. It is not offered as an independent priority claim.
+
+Computations. All witness checks in this draft were freshly recomputed by scripts/verify.py using integer arithmetic. The program constructs the edge sets independently of the Lean packet, checks their simplicity, checks the label permutations, recomputes every vertex sum and tests every edge. Its JSON output also records all the incident labels and the aggregate checks.
+
+For context, we performed fresh bounded heuristic searches at n = 8 and n = 10. For each graph a deterministic greedy proper three-colouring was fixed. A seeded label-swap heuristic minimized the sum of squared differences between vertex sums within each fixed colour class. Each search used 20,000 proposals, and neither found a witness. This is not an exhaustive search over labels or colourings; it says nothing about nonexistence. Fixing a colouring also limits the search space independently of the proposal bound. The script and seeds are preserved, and no SAT or integer-programming solver was used.
+
+The earlier discovery and independent review likewise record bounded larger-parameter searches, preserved as provenance rather than mathematical evidence. Neither those unsuccessful runs nor the fresh runs justify extending the theorem to all even parameters. The proof here consists of the two explicit witnesses and the odd-cycle lower bound, not of search statistics.
+
+---PAGE---
+
+## 4. Formal correspondence and reproducibility
+
+The supplied packet uses Lean with Init only, rather than a generic graph library. In namespace Mobius, edge n i lists the 2n cycle edges first and then n antipodal edges; edgeIndices n is the list of indices below 3n. vertexSum n labels v filters that list to edges incident with v and adds their labels. colorCount takes the length after duplicate sums are removed from the list of sums at all vertices below 2n.
+
+LocalAntimagic n labels requires both a permutation of the integers from 1 to 3n and unequal sums at the two endpoints of every enumerated edge. The permutation clause enforces exact list length; default out-of-range list indexing cannot contribute extra labels to a successful witness. The ordered edge representation serves only to enumerate undirected edges.
+
+LocalAntimagicChromaticNumberEq n k is an attained-minimum relation: a valid labelling with k colours exists, and every valid labelling has at least k colours. This expresses equality of the minimum to k, rather than mere existence of a k-colour labelling. For the particular graph used here, simple_edges_nodup and no_loops_and_in_range certify simple, in-range edges, while adjacency_literal checks every pair against the literal cycle-plus-antipodes adjacency condition. These bridge declarations concern the counterexample graph; no uniform general-family simplicity theorem is claimed.
+
+The declarations witness_valid, witness_colors and witness_sums certify the displayed M_12 assignment. number_not_four applies the lower-bound clause of a hypothetical minimum-four assertion to that witness and derives the impossible inequality 4 ≤ 3. The final endpoint is
+
+Mobius.conjecture_false : ¬ (∀ n : Nat, 4 ≤ n → n % 2 = 0 → Mobius.LocalAntimagicChromaticNumberEq n 4).
+
+It specializes the universal assertion to n = 6. The Lean packet therefore proves the literal negation needed for the MathDB refutation. It does not prove the exact value three: the non-bipartiteness lower bound in Section 2 is an ordinary mathematical proof, not a theorem of this packet. The M_8 remark is also checked by the fresh arithmetic script and proved above, rather than certified by this endpoint.
+
+Trust and execution limits. The packet was reused byte-identically. The manuscript lane performed a safe-extraction test checking allowed names, sizes and file types, but did not run Lean, lake, leanchecker or any solver. The preserved root replay receipt reports Lean 4.34.1, successful compilation and explicit kernel-checker runs for Mobius and Audit, and only propext, Classical.choice and Quot.sound in the endpoint's axiom closure. These are inherited replay results, not a fresh replay by this lane. Core precompiled libraries, the compiler and checker remain trusted; no upstream bootstrap was attempted.
+
+Dossier. The packet SHA256 is recorded in the manifest and REPRODUCE.md. The exact MathDB JSON line is preserved as 339235.jsonl with its hash. Scripts, integer-check output, source bodies, HTTP receipts, prior-art dispositions, immutable input manifests and the root replay/registry evidence are included. Reproduction of the arithmetic and PDF needs no network and executes no proof-assistant code. The full-dossier archive excludes itself from its own manifest. PDF page images and a separate visual-QA receipt document the final rendering.
+
+---PAGE---
+
+## 5. Related work, limits and significance
+
+Arumugam, Premalatha, Bača and Semaničová-Fenovčíková [3] introduced the local antimagic chromatic parameter and studied basic graph families. Haslegrave [4] proved the existence of local antimagic labellings for connected graphs other than the single edge. Existence alone does not bound the number of induced colours by three. Lau, Shiu and Ng [1] settled the odd-parameter ladders at three and proposed the even-parameter assertion quoted above. Its odd-parameter formula is not a labelling formula for even n: its half-integer expressions and parity ranges require the stated odd hypothesis.
+
+Later work must be distinguished by hypotheses and invariant. The circulant constructions in arXiv:2009.01996 use unit generators strictly below half the order; the antipodal generator of the present cubic ladder is not covered. The lexicographic constructions of Lau and Shiu, arXiv:2203.16359, impose even-degree hypotheses that fail here. The later note arXiv:2208.14707 uses equal numbers of even and odd incident labels in its auxiliary graph, again forcing even degree there. General constructions do not establish a three-colour labelling of this ladder merely by advertising small colour numbers.
+
+The completed bounded screen records all 31 OpenAlex citing records returned in the review's snapshot, with body-based scope checks for the plausible remaining edge-labelling constructions and explicit exclusions for different invariants. HTML arXiv author listings supplied further later work. Among the additional bodies examined were arXiv:2311.15520 (even-degree LAU constructions), arXiv:2404.18049 (matrix constructions retaining degree-two or higher-degree vertices), arXiv:2410.17674 (matching-null joins and splits), and arXiv:2610.14486 (middle graphs and direct products). None was found to determine an even ladder in the conjecture's range or to print its three-colour labelling. Details and receipts are in prior-art-completion.json; this conclusion is bounded source screening, not a proof of novelty.
+
+Gallian's survey [5], specifically its 28th edition, summarizes local antimagic results, including small regular graphs and even-degree constructions. Its silence on this counterexample cannot exclude an unindexed or unnoticed result. The mathematical body of the purported workshop slides from 2020 remained unread behind the available access interface. The complete journal body and correction history of [1] also remained inaccessible through the verified routes used. The journal indexing retains the conjecture, and the later paper [2] still asserts four at order eight; this is retention evidence, not a substitute for those missing bodies. The root's preserved registry refresh is a clean bounded path/index screen, not an exhaustive proof-content search.
+
+The contribution is modest and concrete: one explicit finite counterexample refutes a universal assertion. It supplies neither a classification of even ladders nor a new general construction. No claim of first discovery, publication priority or campaign acceptance is made. Independent source comparison and root adjudication remain separate from preparing this draft.
+
+## References
+
+[1] G.-C. Lau, W.-C. Shiu and H.-K. Ng, On local antimagic chromatic number of cycle-related join graphs. arXiv:1805.04888v1 (2018); Discussiones Mathematicae Graph Theory 41 (2021), 133–152. DOI: 10.7151/dmgt.2177. Statements quoted from the arXiv body; journal metadata checked by the review.
+
+[2] G.-C. Lau and W.-C. Shiu, On join product and local antimagic chromatic number of regular graphs. arXiv:2203.06594v1 (2022); Acta Mathematica Hungarica 169 (2023), 108–133. Theorem numbering and faulty line refer to the arXiv body.
+
+[3] S. Arumugam, K. Premalatha, M. Bača and A. Semaničová-Fenovčíková, Local antimagic vertex coloring of a graph. Graphs and Combinatorics 33 (2017), 275–285. DOI: 10.1007/s00373-017-1758-7.
+
+[4] J. Haslegrave, Proof of a local antimagic conjecture. Discrete Mathematics & Theoretical Computer Science 20:1 (2018), article 18; arXiv:1705.09957v4.
+
+[5] J. A. Gallian, A Dynamic Survey of Graph Labeling, 28th edition, October 30, 2025. Electronic Journal of Combinatorics, Dynamic Survey DS6. The edition and body, rather than the OpenAlex record's original year, were screened.

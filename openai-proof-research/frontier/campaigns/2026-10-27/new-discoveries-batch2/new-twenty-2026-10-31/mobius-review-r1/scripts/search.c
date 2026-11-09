@@ -1,0 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+static unsigned state=339235; unsigned rnd(){state^=state<<13;state^=state>>17;state^=state<<5;return state;}
+int a[100],b[100],c[100],s[100],l[100],nn,m;
+int cost(){int sz[3]={0},ss[3]={0},sq[3]={0};for(int v=0;v<nn;v++)s[v]=0;for(int e=0;e<m;e++){s[a[e]]+=l[e];s[b[e]]+=l[e];}for(int v=0;v<nn;v++){sz[c[v]]++;ss[c[v]]+=s[v];sq[c[v]]+=s[v]*s[v];}int z=0;for(int k=0;k<3;k++)z+=sz[k]*sq[k]-ss[k]*ss[k];return z;}
+int main(){for(int n=8;n<=10;n+=2){nn=2*n;m=3*n;for(int e=0;e<nn;e++){a[e]=e;b[e]=(e+1)%nn;}for(int i=0;i<n;i++){a[nn+i]=i;b[nn+i]=i+n;}clock_t start=clock();int found=0,best=1000000;long trials=0;while((double)(clock()-start)/CLOCKS_PER_SEC<12&&!found){for(int v=0;v<nn;v++)c[v]=-1;int good=1;for(int v=0;v<nn;v++){int ok[3]={1,1,1},opts[3],cnt=0;for(int e=0;e<m;e++){int w=a[e]==v?b[e]:b[e]==v?a[e]:-1;if(w>=0&&c[w]>=0)ok[c[w]]=0;}for(int k=0;k<3;k++)if(ok[k])opts[cnt++]=k;if(!cnt){good=0;break;}c[v]=opts[rnd()%cnt];}if(!good)continue;for(int e=0;e<m;e++)l[e]=e+1;for(int e=m-1;e>0;e--){int j=rnd()%(e+1),t=l[e];l[e]=l[j];l[j]=t;}int cur=cost();for(int it=0;it<30000;it++){trials++;int i=rnd()%m,j=rnd()%m,t=l[i];l[i]=l[j];l[j]=t;int nc=cost();double temp=0.25+15.0*(1-(it%3000)/3000.0);if(nc<=cur||(rnd()/(double)4294967296.0)<exp((cur-nc)/temp))cur=nc;else{t=l[i];l[i]=l[j];l[j]=t;}if(cur<best)best=cur;if(cur==0){cost();found=1;for(int e=0;e<m;e++)if(s[a[e]]==s[b[e]])found=0;if(found)break;}}}printf("n=%d found=%d best=%d trials=%ld labels=",n,found,best,trials);if(found)for(int e=0;e<m;e++)printf("%d,",l[e]);printf("\n");fflush(stdout);}return 0;}
