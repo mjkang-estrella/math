@@ -1,0 +1,9 @@
+# Outside report — R162AJ proof review round 1
+
+The full-scope independent correctness verdict is **PASS** for the exact unchanged frozen statement and author proof. There is no required author correction and no essential verification obligation outstanding, relative to stipulated Source104 truth. REVIEW.md contains the substantive review and independent reconstructions; FINAL.md gives the scope and disposition. Neither this report nor the review assigns contribution, acceptance or accounting outcomes.
+
+Work was confined to the assigned root. Actual source and primary proof interfaces were read, including new essential fixed-point/universal-graph antecedents. Source objects were authenticated against the complete pinned tree. All six admitted primary text extracts were independently regenerated from their PDFs and matched exactly. Reading extents, omissions, versions, incidental metadata exposure, truncated displays and recoveries are recorded privately. No optional original-history traversal or other-review/peer query occurred; no clearance or exhaustive literature claim follows.
+
+This REPORT is deliberately outside the manifest’s own-artifact list and has a separate detached hash. The fresh MANIFEST lists only this reviewer’s exact own artifacts plus explicit readonly input references. The separate ANCHORS.json records FINAL, MANIFEST and REPORT digests. The read-only verifier requires those three hashes as command-line inputs. Its tiny copied controls include a correct copy, a byte-corrupt copy and a mode-altered copy; originals are never modified. Artifact verification tests consistency, not mathematical truth.
+
+Model provenance: Codex / GPT-6 Astra / reasoningEffort high / serviceTier default. Publication, uploads, submissions, contacts, browser UI, nested agents, git/shared writes and downstream work remained stopped.
