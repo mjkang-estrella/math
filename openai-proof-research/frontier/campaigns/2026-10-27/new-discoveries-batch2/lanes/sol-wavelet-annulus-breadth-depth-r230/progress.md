@@ -1,0 +1,10 @@
+# Progress and limitations
+
+1. Read ancestor/batch rules and administrative snapshots. Froze r227 ATTACK/SCOUTING/SUMMARY, receipts and direct primary bytes before their mathematical reading; copies checked against originals immediately. No recursive historical trees.
+2. Retrieved original2003 university proof body and2025 follow-up, preserving URLs/status/timestamps/hashes. An attempted guessed publisher page resolved to an unrelated article and is rejected as a source, not silently treated as the target. Bing RSS returned unrelated material and is unusable for clearance.
+3. Derived normalized neighbor maps and used rational interval preimages, with a known-frame control. Initial inefficient/in-place implementation was stopped; replacement completed inside unchanged512MiB/210CPU/230wall limits. Its finite stages settle no parameter.
+4. Sustained a distinct cancellation route using measured Cheeger/coarea and checked the actual adjacent-range positive-measure chain. Extra third-scale edges prevent that chain class from supplying low energy, including at the critical parameter. No all-witness lower bound proved.
+5. Read new survey bodies and the original Bilyk–Grabner and Steinerberger proofs for scope. Direct compact history scan654 reports caught the old MMPP work and public snake refutation. An attempted expansion initially used the wrong ancestor and produced zero references; corrected immediately, not used as negative history evidence.
+6. Wrote outcome and bounded scouting reports. Separate final hash verifier follows manifest generation. No full ordinary proof/counterexample obtained. No formalization or manuscript begun.
+
+Access limitations: no current public proof-registry head; no exhaustive citation index, MathSciNet or zbMATH search; many older proofs behind cited survey claims unread. GitHub API/raw/codeload/diff/patch, denied publisher/challenge routes are parked. No403/429/challenge route was retried. Access failures and misleading200 responses remain preserved. The11 new screens are provisional families, not11 confirmed open targets.
