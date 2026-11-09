@@ -1,0 +1,7 @@
+import CascadeTheorem
+set_option autoImplicit false
+set_option warningAsError true
+#check CascadeRate.convergent_non_geometric
+#check CascadeRate.source_geometric_rate_refuted
+#print axioms CascadeRate.convergent_non_geometric
+#print axioms CascadeRate.source_geometric_rate_refuted
