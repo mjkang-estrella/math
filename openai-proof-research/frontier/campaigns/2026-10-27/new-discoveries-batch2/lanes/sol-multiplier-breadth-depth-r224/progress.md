@@ -1,0 +1,7 @@
+# Progress and outstanding work
+
+Bound r223 SCOUTING/source-map originals before reading; copied compact administrative snapshots and read ancestor/batch rules. Read r222 brief/status once and avoided its five finite/algebraic families. Frozen primary PDFs/text were read directly. Campaign-wide path traversal bound14,268 distinct textual bodies (<=4MB each), with before/after checks and semantic author/object terms;390 additional breadth-alias hits were retained. This expands substantially beyond r223's1,532 references but is still bounded, not universal synonym coverage. Administrative entries in that inventory are observations, not assertions of immutable campaign status.
+
+Constructed exact radical sign certificates through Jensen degree128, then sustained the entire-function attack to the full ordinary candidate proof. Actual citation-body screening located the crucial historical v1 claim and verified its removal in latest v2. OpenAlex returns three citing entries; two relevant mathematical bodies were read. The third is an applied Volterra collocation article and was not body-read. OpenAlex coverage is incomplete and is not a proof registry.
+
+Outstanding: independent mathematical review, final journal/correction chronology, full current registry and broader citation clearance, root substantive-credit decision. No Lean/manuscript authorization requested or used. All root counts unchanged.
