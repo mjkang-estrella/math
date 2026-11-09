@@ -1,0 +1,32 @@
+import BunDomFinal
+#print axioms BunDom.hit_false
+#print axioms BunDom.hit_card_eq
+#print axioms BunDom.rows_card
+#print axioms BunDom.rows_sum
+#print axioms BunDom.increment_card
+#print axioms BunDom.increment_four
+#print axioms BunDom.hor_join_hit
+#print axioms BunDom.actual_increment_card
+#print axioms BunDom.rowCount_set
+#print axioms BunDom.stepU_sizes
+#print axioms BunDom.fresh_state_count
+#print axioms BunDom.transport_dec
+#print axioms BunDom.count_law_uncompressed
+#print axioms BunDom.box_closed
+#print axioms BunDom.sum_by_state
+#print axioms BunDom.sizes_mem_box
+#print axioms BunDom.count_law
+#print axioms BunDom.kernel_flip
+#print axioms BunDom.kernel_cross
+#print axioms BunDom.source_below
+#print axioms BunDom.dominance
+#print axioms BunDom.payoff_flip
+#print axioms BunDom.payoff_formula
+#print axioms BunDom.payoff_pos
+#print axioms BunDom.rows_payoff
+#print axioms BunDom.sum_by_state_int
+#print axioms BunDom.step_mem_indicator
+#print axioms BunDom.event_count
+#print axioms BunDom.endpoint_step
+#print axioms Bun.state_endpoint
+#check Bun.state_endpoint

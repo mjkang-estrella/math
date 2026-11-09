@@ -1,0 +1,1 @@
+Do not restart broad API discovery or attempt whole bridge before first compile. Implement/compile the actual hor witness iff, checkpoint, then stf support/old-index stability. Corrected r3 ordinary review is authoritative, flip/fiber equality rejected. No new r5 theorem yet.

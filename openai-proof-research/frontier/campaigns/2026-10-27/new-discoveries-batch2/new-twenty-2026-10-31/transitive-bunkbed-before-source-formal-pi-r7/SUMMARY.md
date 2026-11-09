@@ -1,0 +1,1 @@
+SEALED r7: single theorem Bun.stf_before_source (before-source emptiness, j<u => stf n u j w = (empty,empty)) compiled clean exit 0, receipt receipt/1793997508389461730_lean_BunBeforeSource.json, source sha 395b99e355885375. Axioms propext/Classical.choice/Quot.sound only. Frozen 515 verified before and after. Support/Reach/count/endpoint remain unpaid. Credit 0; 52/60.

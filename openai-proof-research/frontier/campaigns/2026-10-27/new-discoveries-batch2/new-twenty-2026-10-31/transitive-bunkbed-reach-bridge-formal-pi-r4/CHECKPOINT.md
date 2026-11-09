@@ -1,0 +1,1 @@
+Use completed semantic review r3 REVIEW and NEXT-PI-BRIEF, not r2 invalid count design. Reuse hash-verified baseline read-only oleans; no copied build tree. Prove support/hor interfaces and literal membership↔Reach, all valid n/u/i/j/layer guards. Count work separate. No new compile yet.

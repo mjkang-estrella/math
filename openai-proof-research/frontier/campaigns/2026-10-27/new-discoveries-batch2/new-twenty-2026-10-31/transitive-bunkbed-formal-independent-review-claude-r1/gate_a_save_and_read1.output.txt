@@ -1,0 +1,441 @@
+True 1.64
+['BunBeforeSource.olean', 'BunBridge.olean', 'BunDomAbstract.olean', 'BunDomActualCounts.olean', 'BunDomCompressed.olean', 'BunDomCountLaw.olean'] 33
+{"stage": "compile", "module": "BunFinalModel", "argv": ["/home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin/lean", "-j1", "-M3500", "-DwarningAsError=true", "-o", "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/transitive-bunkbed-formal-independent-review-claude-r1/build/BunFinalModel.olean", "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/transitive-bunkbed-formal-independent-review-claude-r1/src/BunFinalModel.lean"], "exit": 0, "source_sha256_before": "d3fffd03a3e8c107189b430e9e8014935e69b5aa3884363d5f306d0a18112586", "source_sha256_after": "d3fffd03a3e8c107189b430e9e8014935e69b5aa3884363d5f306d0a181
+===== BunkbedCount
+/-
+# Bunkbed E7: finite-counting layer
+
+Token-universe instances, the two domain splits, the uniform pin rule, the prefix
+state, the transition kernel and the reflection-dominance step.  Pure finite
+combinatorics over `Nat` and `Int`; no probability, no measure theory.
+-/
+import BunkbedBase
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Algebra.BigOperators.Intervals
+
+namespace Bun
+
+open Finset
+
+/-! ### Universes -/
+
+instance {n : Nat} : Fintype {p : Fin n × Fin n // (p.1 : Nat) < (p.2 : Nat)} :=
+  Subtype.fintype (fun p : Fin n × Fin n => (p.1 : Nat) < (p.2 : Nat))
+
+def htokenEquiv (n : Nat) : HToken n ≃ {p : Fin n × Fin n // (p.1 : Nat) < (p.2 : Nat)} × Bool :=
+  ⟨fun t => (⟨(t.fst, t.snd), t.hlt⟩, t.layer),
+   fun p => ⟨p.1.1.1, p.1.1.2, p.1.2, p.2⟩,
+   fun t => by obtain ⟨i, j, h, l⟩ := t; simp,
+   fun p => by
+     obtain ⟨q, l⟩ := p
+     have hq : q = ⟨(q.1.1, q.1.2), q.2⟩ := Subtype.ext rfl
+     rw [hq]⟩
+
+instance {n : Nat} : Fintype (HToken n) := Fintype.ofEquiv _ (htokenEquiv n).symm
+
+instance : Fintype (Token n) := by unfold Token; infer_instance
+
+noncomputable instance {n : Nat} : Fintype (Out n) := by
+  classical
+  unfold Out
+  infer_instance
+
+end Bun
+
+===== BunDomAbstract
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Int.Basic
+import Mathlib.Tactic.Linarith
+
+namespace BunDom
+open Finset
+abbrev State := Nat × Nat
+def flip (s : State) : State := (s.2, s.1)
+@[simp] theorem flip_flip (s : State) : flip (flip s) = s := by cases s; rfl
+
+theorem sum_flip (S : Finset State) (closed : ∀ s ∈ S, flip s ∈ S)
+    (f : State → Int) : ∑ s ∈ S, f (flip s) = ∑ s ∈ S, f s := by
+  apply Finset.sum_bij (fun s _ => flip s)
+  · exact closed
+  · intro a _ b _ h
+    simpa using congrArg flip h
+  · intro b hb
+    exact ⟨flip b, closed b hb, flip_flip b⟩
+  · intros; rfl
+
+theorem paired_nonneg (S : Finset State) (closed : ∀ s ∈ S, flip s ∈ S)
+    (f : State → Int) (h : ∀ s ∈ S, 0 ≤ f s + f (flip s)) :
+    0 ≤ ∑ s ∈ S, f s := by
+  have hp := Finset.sum_nonneg h
+  rw [Finset.sum_add_distrib, sum_flip S closed f] at hp
+  omega
+
+def advance (S : Finset State) (F : State → Int) (w : State → State → Int)
+    (q : State) : Int := ∑ s ∈ S, F s * w s q
+
+theorem reflection_step (S : Finset State) (closed : ∀ s ∈ S, flip s ∈ S)
+    (F : State → Int) (w : State → State → Int)
+    (wn : ∀ s q, 0 ≤ w s q)
+    (eqv : ∀ s q, w (flip s) (flip q) = w s q)
+    (cross : ∀ s q, s.2 < s.1 → q.1 < q.2 → w s q = 0)
+    (dom : ∀ s ∈ S, s.2 < s.1 → F (flip s) ≤ F s)
+    (q : State) (hq : q.2 < q.1) :
+    advance S F w (flip q) ≤ advance S F w q := by
+  have he (s : State) : w (flip s) q = w s (flip q) := by
+    simpa using eqv s (flip q)
+  have hn : 0 ≤ ∑ s ∈ S, (F s * w s q - F s * w s (flip q)) := by
+    apply paired_nonneg S closed
+    intro s hs
+    rw [eqv s q, he s]
+    rcases lt_trichotomy s.2 s.1 with ha | ha | ha
+    · have hz := cross s (flip q) ha hq
+      have hd := dom s hs ha
+      have hw := wn s q
+      rw [hz]
+      nlinarith
+    · have hf : flip s = s := by
+        exact Prod.ext ha ha.symm
+      rw [hf]
+      omega
+    · have hz := cross (flip s) (flip q) ha hq
+      rw [eqv s q] at hz
+      have hd := dom (flip s) (closed s hs) ha
+      simp only [flip_flip] at hd
+      have hw := wn s (flip q)
+      rw [hz]
+      nlinarith
+  unfold advance
+  rw [Finset.sum_sub_distrib] at hn
+  exact sub_nonneg.mp hn
+
+theorem reflection_time (S : Finset State) (closed : ∀ s ∈ S, flip s ∈ S)
+    (F : Nat → State → Int) (w : Nat → State → State → Int)
+    (rec : ∀ t q, F (t+1) q = advance S (F t) (w t) q)
+    (wn : ∀ t s q, 0 ≤ w t s q)
+    (eqv : ∀ t s q, w t (flip s) (flip q) = w t s q)
+    (cross : ∀ t s q, s.2 < s.1 → q.1 < q.2 → w t s q = 0)
+    (init : ∀ s ∈ S, s.2 < s.1 → F 0 (flip s) ≤ F 0 s) :
+    ∀ t, ∀ s ∈ S, s.2 < s.1 → F t (flip s) ≤ F t s := by
+  intro t
+  induction t with
+  | zero => exact init
+  | succ t ih =>
+    intro s _ hs
+    rw [rec, rec]
+    exact reflection_step S closed (F t) (w t) (wn t) (eqv t) (cross t) ih s hs
+
+theorem payoff_nonneg (S : Finset State) (closed : ∀ s ∈ S, flip s ∈ S)
+    (F g : State → Int)
+    (dom : ∀ s ∈ S, s.2 < s.1 → F (flip s) ≤ F s)
+    (anti : ∀ s, g (flip s) = -g s)
+    (pos : ∀ s, s.2 < s.1 → 0 ≤ g s) :
+    0 ≤ ∑ s ∈ S, F s * g s := by
+  apply paired_nonneg S closed
+  intro s hs
+  rw [anti]
+  rcases lt_trichotomy s.2 s.1 with ha | ha | ha
+  · have hd := dom s hs ha
+    have hg := pos s ha
+    nlinarith
+  · have hf : flip s = s := by
+        exact Prod.ext ha ha.symm
+    have hg := anti s
+    rw [hf] at hg
+    have : g s = 0 := by omega
+    simp [this]
+  · have hd := dom (flip s) (closed s hs) ha
+    simp only [flip_flip] at hd
+    have hg := pos (flip s) ha
+    rw [anti] at hg
+    nlinarith
+end BunDom
+
+===== BunState
+/-
+# Bunkbed E7 (r2): prefix state dynamics
+
+Window `Win n j` = tokens with `tmax t ≤ j`; `Asg n j` = Boolean assignments to that
+window.  For a source index `u`, `stf n u j w` is the pair of sets of indices `≤ j`
+whose layer-0 / layer-1 copies are reachable from `(u,false)` using only the prefix `w`;
+it is defined by the exact new-index closure.  The new indicator pair is
+`(if z then x||y else x, if z then x||y else y)` with `x,y` the horizontal-entry
+disjunctions and `z` the new vertical bit.
+
+Bridge (later lemmas): for any two full outcomes agreeing on the window `j`, literal
+`Reach` from `(u,false)` to any index-`≤ j` vertex agrees, and `Reach` into `(j,σ)`
+holds iff `j` lies in the corresponding state set.  No counting here.
+-/
+import BunkbedCount
+import Mathlib.Data.Finset.Attach
+import Mathlib.Data.Finset.Card
+
+namespace Bun
+
+/-- Tokens of `tmax ≤ j`. -/
+def Win (n j : Nat) := {t : Token n // tmax t ≤ j}
+
+/-- Assignments to the `j`-window. -/
+def Asg (n j : Nat) := Win n j → Bool
+
+/-- Restrict a `(j+1)`-prefix to the `j`-window. -/
+def res (n j : Nat) (w : Asg n (j+1)) : Asg n j :=
+  fun t => w ⟨t.1, Nat.le_trans t.2 (Nat.le_succ j)⟩
+
+/-- Horizontal fresh token `(i,m,l)` seen as a window-`m` element (`m < n`, `i < m`). -/
+def fresH {n m : Nat} (hm : m < n) (i : Nat) (hic : i < m) (l : Bool) : Win n m :=
+  ⟨htok (⟨i, by omega⟩ : Fin n) (⟨m, hm⟩ : Fin n) hic l, by simp [htok, tmax]⟩
+
+/-- Vertical fresh token of index `m` seen as a window-`m` element (`m < n`). -/
+def fresV {n m : Nat} (hm : m < n) : Win n m :=
+  ⟨Sum.inr (⟨m, hm⟩ : Fin n), by simp [tmax]⟩
+
+/-- Horizontal-entry disjunction into layer `l` at new index `m`, from reachable set `R`. -/
+def hor {n m : Nat} (hm : m < n) (R : Finset Nat) (l : Bool) (w : Asg n m) : Bool :=
+  decide (((Finset.range m).attach.filter
+    fun t : {x // x ∈ Finset.range m} =>
+      decide (t.1 ∈ R) && w (fresH hm t.1 (Finset.mem_range.mp t.2) l)).Nonempty)
+
+/-- The exact new-index indicator pair, closed form. -/
+def ind (x y z : Bool) : Bool × Bool :=
+  (if z then x || y else x, if z then x || y else y)
+
+/-- Pure new-index set update. -/
+def stepU (m : Nat) (R S : Finset Nat) (x y z : Bool) : Finset Nat × Finset Nat :=
+  let a := (ind x y z).1
+  let b := (ind x y z).2
+  ((if a then insert m R else R), (if b then insert m S else S))
+
+/-- The start state at index `j` (used at `j = u`): the layer-0 copy is reachable by
+reflexivity; the layer-1 copy exactly through the vertical bit. -/
+def startST (n j : Nat) (w : Asg n j) : Finset Nat × Finset Nat :=
+  (insert j ∅,
+    if hj : j < n then (if w (fresV (n := n) (m := j) hj) then insert j ∅ else ∅) else ∅)
+
+/-- Prefix state: sets of indices `≤ j` whose layer-0/1 copies are reachable from
+`(u,false)` within the prefix `w`.  Off the strip `u ≤ · ≤ v < n` values are dummies. -/
+def stf (n u : Nat) : (j : Nat) → Asg n j → Finset Nat × Finset Nat
+  | 0, w => if u = 0 then startST n 0 w else (∅, ∅)
+  | j+1, w =>
+      if _h1 : j + 1 < u then (∅, ∅)
+      else if _h2 : j + 1 = u then startST n (j+1) w
+      else
+        let p := stf n u j (res n j w)
+        if hjn : j + 1 < n then
+          stepU (j+1) p.1 p.2
+            (hor (m := j+1) hjn p.1 false w)
+            (hor (m := j+1) hjn p.2 true w)
+            (w (fresV (n := n) (m := j+1) hjn))
+        else p
+
+/-- Selector of the layer-`σ` component. -/
+def sval (σ : Bool) (p : Finset Nat × Finset Nat) : Finset Nat :=
+  if σ then p.2 else p.1
+
+end Bun
+
+===== BunBeforeSource
+import BunState
+
+namespace Bun
+
+/-- For any strict prefix `j < u`, the state transition returns the empty pair. -/
+theorem stf_before_source (n u : Nat) :
+    ∀ (j : Nat) (w : Asg n j), j < u → stf n u j w = (∅, ∅) := by
+  intro j
+  induction j with
+  | zero =>
+    intro w h
+    have hu : ¬ (u = 0) := by omega
+    simp [stf, hu]
+  | succ k ih =>
+    intro w h
+    simp [stf, h]
+
+end Bun
+
+===== BunDomFiber
+import BunState
+import Mathlib.Data.Fintype.EquivFin
+namespace BunDom
+open Bun Classical
+abbrev Fresh (j : Nat) := (Fin (j+1) → Bool → Bool) × Bool
+
+def split {n j : Nat} (hn : j+1 < n) (w : Asg n (j+1)) : Asg n j × Fresh j :=
+  (res n j w, (fun i l => w (fresH hn i.1 i.2 l), w (fresV hn)))
+
+def join {n j : Nat} (p : Asg n j × Fresh j) : Asg n (j+1) := fun t =>
+  if h : tmax t.1 ≤ j then p.1 ⟨t.1, h⟩ else
+  match he : t.1 with
+  | Sum.inl a => p.2.1 ⟨a.fst.1, by have hh := a.hlt; have ht := t.2; rw [he] at ht; simp only [tmax] at ht; omega⟩ a.layer
+  | Sum.inr _ => p.2.2
+
+theorem join_split {n j : Nat} (hn : j+1 < n) (w : Asg n (j+1)) :
+    join (split hn w) = w := by
+  funext t
+  unfold join
+  split_ifs with h
+  · rfl
+  · rcases t with ⟨a, ha⟩
+    cases a with
+    | inl a =>
+      have hs : a.snd.1 = j+1 := by simp [tmax] at h ha; omega
+      have he : fresH hn a.fst.1 (by have := a.hlt; omega) a.layer =
+          (⟨Sum.inl a, ha⟩ : Win n (j+1)) := by
+        apply Subtype.ext
+        change Sum.inl _ = Sum.inl _
+        congr 1
+        cases a
+        congr 1
+        exact Fin.ext hs.symm
+      exact congrArg w he
+    | inr a =>
+      have hs : a.1 = j+1 := by simp [tmax] at h ha; omega
+      apply congrArg w
+      apply Subtype.ext
+      simp only [fresV]
+      congr 1
+      exact Fin.ext hs.symm
+
+theorem split_join {n j : Nat} (hn : j+1 < n) (p : Asg n j × Fresh j) :
+    split hn (join p) = p := by
+  apply Prod.ext
+  · funext t
+    change (if h : tmax t.1 ≤ j then p.1 ⟨t.1,h⟩ else _) = p.1 t
+    rw [dite_eq_left t.2]
+    rfl
+  · apply Prod.ext
+    · funext i l
+      simp [split, join, fresH, tmax, htok]
+    · simp [split, join, fresV, tmax]
+
+def assignmentEquiv {n j : Nat} (hn : j+1 < n) :
+    Asg n (j+1) ≃ Asg n j × Fresh j :=
+  ⟨split hn, join, join_split hn, split_join hn⟩
+
+noncomputable instance asgFintype (n j : Nat) : Fintype (Asg n j) := by
+  classical
+  unfold Asg Win
+  infer_instance
+
+def fiberEquiv {n j : Nat} (hn : j+1 < n) (p : Asg n j) :
+    {w : Asg n (j+1) // res n j w = p} ≃ Fresh j where
+  toFun w := (split hn w.1).2
+  invFun f := ⟨join (p,f), congrArg Prod.fst (split_join hn (p,f))⟩
+  left_inv w := by
+    apply Subtype.ext
+    have h := join_split hn w.1
+    have hp : split hn w.1 = (p, (split hn w.1).2) :=
+      Prod.ext w.2 rfl
+    rw [hp] at h
+    exact h
+  right_inv f := congrArg Prod.snd (split_join hn (p,f))
+
+theorem fresh_card (j : Nat) : Fintype.card (Fresh j) = 2^(2*j+3) := by
+  simp only [Fresh, Fintype.card_prod, Fintype.card_fun, Fintype.card_bool,
+    Fintype.card_fin]
+  rw [← pow_mul, ← pow_succ]
+  congr 1
+
+theorem prefix_fiber_card {n j : Nat} (hn : j+1 < n) (p : Asg n j) :
+    Fintype.card {w : Asg n (j+1) // res n j w = p} = 2^(2*j+3) := by
+  classical
+  exact (Fintype.card_congr (fiberEquiv hn p)).trans (fresh_card j)
+end BunDom
+
+===== BunReach
+/-
+# Bunkbed E7 (r2): prefix-state lemmas, part 1
+
+Indicator algebra of the exact new-index closure; the prefix state depends only on the
+window restriction (start state and horizontal-entry disjunction included).
+-/
+import BunState
+
+namespace Bun
+
+/-- Closed form, left component: `A ↔ X ∨ (Z ∧ B)`. -/
+theorem ind_fst (x y z : Bool) :
+    (ind x y z).1 = true ↔ x = true ∨ (z = true ∧ (ind x y z).2 = true) := by
+  cases x <;> cases y <;> cases z <;> simp [ind]
+
+/-- Closed form, right component: `B ↔ Y ∨ (Z ∧ A)`. -/
+theorem ind_snd (x y z : Bool) :
+    (ind x y z).2 = true ↔ y = true ∨ (z = true ∧ (ind x y z).1 = true) := by
+  cases x <;> cases y <;> cases z <;> simp [ind]
+
+theorem ind_fst_or {x y z : Bool} (hx : x = true) : (ind x y z).1 = true :=
+  (ind_fst x y z).mpr (Or.inl hx)
+
+theorem ind_fst_vert {x y z : Bool} (hz : z = true) (hb : (ind x y z).2 = true) :
+    (ind x y z).1 = true :=
+  (ind_fst x y z).mpr (Or.inr ⟨hz, hb⟩)
+
+theorem ind_snd_or {x y z : Bool} (hy : y = true) : (ind x y z).2 = true :=
+  (ind_snd x y z).mpr (Or.inl hy)
+
+theorem ind_snd_vert {x y z : Bool} (hz : z = true) (hb : (ind x y z).1 = true) :
+    (ind x y z).2 = true :=
+  (ind_snd x y z).mpr (Or.inr ⟨hz, hb⟩)
+
+theorem startST_congr (n j : Nat) {w w' : Asg n j} (hw : ∀ t : Win n j, w t = w' t) :
+    startST n j w = startST n j w' := by
+  unfold startST
+  split
+  · rename_i hj
+    rw [hw (fresV (n := n) (m := j) hj)]
+  · rfl
+
+theorem hor_congr {n m : Nat} (hm : m < n) {R R' : Finset Nat} (hR : R = R')
+    {w w' : Asg n m} (hw : ∀ t : Win n m, w t = w' t) (l : Bool) :
+    hor hm R l w = hor hm R' l w' := by
+  unfold hor
+  apply congrArg (fun S : Finset _ => decide S.Nonempty)
+  apply Finset.filter_congr
+  intro t _hc
+  have hwt : w (fresH hm t.1 (Finset.mem_range.mp t.2) l) =
+      w' (fresH hm t.1 (Finset.mem_range.mp t.2) l) := hw _
+  by_cases hmem : t.1 ∈ R
+  · have hmem' : t.1 ∈ R' := by rw [← hR]; exact hmem
+    simp only [decide_eq_true hmem, decide_eq_true hmem', hwt]
+  · have hmem' : ¬ (t.1 ∈ R') := fun hc => hmem (by rw [hR]; exact hc)
+    simp only [decide_eq_false hmem, decide_eq_false hmem', hwt]
+
+/-- The prefix state is unchanged when the window assignments agree. -/
+theorem stf_congr (n u : Nat) : ∀ j : Nat, ∀ w w' : Asg n j,
+    (∀ t : Win n j, w t = w' t) → stf n u j w = stf n u j w' := by
+  intro j
+  induction j with
+  | zero =>
+      intro w w' hw
+      by_cases hue : u = 0
+      · have h1 : stf n u 0 w = startST n 0 w := by
+          simp only [stf]; split <;> rfl
+        have h2 : stf n u 0 w' = startST n 0 w' := by
+          simp only [stf]; split <;> rfl
+        rw [h1, h2]
+        exact startST_congr n 0 hw
+      · have h : ∀ v : Asg n 0, stf n u 0 v = ((∅ : Finset Nat), ∅) := by
+          intro v; simp only [stf]; split
+          · rename_i hn; exact absurd hn hue
+          · rfl
+        rw [h w, h w']
+  | succ j ih =>
+      intro w w' hw
+      have hres : ∀ t : Win n j, res n j w t = res n j w' t := fun t =>
+        hw ⟨t.1, Nat.le_trans t.2 (Nat.le_succ j)⟩
+      simp only [stf]
+      split
+      · rfl
+      split
+      · exact startST_congr n (j+1) hw
+      · rename_i _ hIEQ
+        split
+        · rename_i hLT
+          rw [ih (res n j w) (res n j w') hres]
+          unfold stepU
+          rw [hor_congr hLT rfl hw, hor_congr hLT rfl hw, hw (fresV (n := n) (m := j + 1) hLT)]
+        · exact ih (res n j w) (res n j w') hres
+
+end Bun
+

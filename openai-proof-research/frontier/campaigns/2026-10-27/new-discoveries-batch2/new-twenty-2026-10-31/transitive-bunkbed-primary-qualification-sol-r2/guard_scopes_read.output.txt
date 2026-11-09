@@ -1,0 +1,202 @@
+"""One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+SCOPES inputs/accepted57-scopes.json dict
+{'utc': '2026-11-08T08:17:20.392738+00:00', 'kind': 'Trusted57accepted statement scopes,39prior separately; metadata only', 'accepted_count': 57, 'prior39_not_audited_here': True, 'root_role': 'metadataextraction,notmathematicalduplicateclearance', 'limitation': 'CurrentimmutableMathDBstatementmetadataisnotacceptancecertificateaudit; exactsourceURLortitlematch/nonmatchdoesnotsettlefamilyoverlap. Protectedformalbodiesnotread.', 'records': [{'mathdb_id': 324342, 'title': 'Conference-matrix MDS code conjecture', 'statement': 'Let $p$ be a prime, and let ${\\mathbb C}$ be a code of length $p+1$ constructed from a generator matrix that is a conference matrix. **Conference-matrix MDS conjecture.** The code ${\\mathbb C}$ is an MDS code of dimension $\\frac{p+1}{2}$ and minimum Hamming distance $\\frac{p+3}{2}$. This would give an MDS code with parameters determined by the rank of a conference matrix over ${\\mathbb Z}_p$; the source provides no resolution of the claim.', 'source_url': 'https://arxiv.org/abs/1210.5725', 'tags': ['coding-theory', 'conference-matrices', 'mds-codes'], 'canonical_url': 'https://mathdb.com/p/324342/conference-matrix-mds-code-conjecture'}, {'mathdb_id': 330264, 'title': 'The spectral characterization of geodesic growth for right-angled Coxeter groups on trees', 'statement': "Let $T$ and $T'$ be trees. Assume that they are simultaneously co-spectral, their complements are co-spectral, and their line graphs are co-spectral. **Geodesic-growth conjecture.** Then $T$ and $T'$ have the same geodesic growth, meaning that the associated right-angled Coxeter groups $G(T)$ and $G(T')$ have the same geodesic growth series. The conjecture asks whether these three spectral data determine geodesic growth for right-angled Coxeter groups based on trees; the paper establishes examples supporting the question but does not resolve the general implication.", 'source_url': 'https://arxiv.org/abs/1504.02774', 'tags': ['geodesic-growth', 'right-angled-coxeter-groups', 'spectral-graph-theory'], 'canonical_url': 'https://mathdb.com/p/330264/the-spectral-characterization-of-geodesic-growth-for-right-a'}, {'mathdb_id': 331705, 'title': 'Starlikeness conjecture for Cassinian balls in starlike domains', 'statement': 'Let $G\\subset\\mathbb{R}^n$ be a domain that is starlike with respect to $x\\in G$, and let $B_{c_G}(x,r)$ denote the Cassinian ball of radius $r$. **Starlikeness conjecture.** For every $r>0$, the ball $B_{c_G}(x,r)$ is starlike with respect to $x$. This is a proposed extension of convexity results to starlike domains, and the paper does not establish it.', 'source_url': 'https://arxiv.org/abs/1511.01298', 'tags': ['cassinian-metric', 'metric-geometry', 'starlike-domains'], 'canonical_url': 'https://mathdb.com/p/331705/starlikeness-conjecture-for-cassinian-balls-in-starlike-doma'}, {'mathdb_id': 332037, 'title': 'The combinatorial injection conjecture for dominance order on compositions', 'statement': "Let $A,a,B,b$ be integers with $A \\geq B \\geq 0$ and $a \\geq b \\geq 0$. For $m,n \\in \\mathbb{N}$, let $\\mathcal{U}^m_n$ denote the set of compositions of $n$ with $m$ non-negative parts. For compositions $\\lambda$ and $\\mu$, write $\\lambda\\mu$ for their concatenation, and write $\\trianglerighteq$ for the dominance order induced by the non-increasing rearrangements. **Combinatorial injection conjecture.** There is an injection\n\n$$\n\\gamma: \\mathcal{U}^A_b \\times \\mathcal{U}^B_a \\hookrightarrow \\mathcal{U}^A_a \\times \\mathcal{U}^B_b\n$$\n\nsuch that, for every $(\\lambda_1,\\mu_1) \\in \\mathcal{U}^A_b \\times \\mathcal{U}^B_a$, if $(\\lambda_2,\\mu_2)=\\gamma((\\lambda_1,\\mu_1))$, then\n\n$$\n\\lambda_1\\mu_1 \\trianglerighteq \\lambda_2\\mu_2.\n$$\n\nThis conjecture gives a combinatorial formulation implying the case $k=2$ of the paper's theorem relating total nonnegativity of the matrices $\\mathcal{T}_p$ and $\\mathcal{S}_p$.", 'source_url': 'https://arxiv.org/abs/1512.04084', 'tags': ['combinatorics', 'dominance-order', 'partitions'], 'canonical_url': 'https://mathdb.com/p/332037/the-combinatorial-injection-conjecture-for-dominance-order-o'}, {'mathdb_id': 332371, 'title': 'Common-basis conjecture for partitions of a matroid ground set', 'statement': "Let $k\\geq 2$, and let $M$ be a matroid of rank $r$ on a ground set $E$ with $|E|=kr+1$. Suppose $x,y\\in E$ are such that both $E\\setminus\\{x\\}$ and $E\\setminus\\{y\\}$ can be partitioned into $k$ pairwise disjoint bases.\n\n**Common-basis conjecture.** There exist partitions of $E\\setminus\\{x\\}$ and $E\\setminus\\{y\\}$ into $k$ pairwise disjoint bases that share a common basis.\n\nThis is the second conjecture introduced as closely related to White's conjectures. It expresses a common-basis condition for two complementary decompositions and is not resolved in the supplied text.", 'source_url': 'https://arxiv.org/abs/1601.08199', 'tags': ['basis-exchange', 'matroid-theory'], 'canonical_url': 'https://mathdb.com/p/332371/common-basis-conjecture-for-partitions-of-a-matroid-ground-s'}, {'mathdb_id': 333569, 'title': 'A fully supported local information maximum on the full two-shift', 'statement': 'Let $(X,T)$ be the full two-shift, let $\\alpha$ be the partition used to define information, and consider the space of one-step Markov measures on $X$. A measure is fully supported when every allowed cylinder has positive measure, and a local maximum is understood relative to this space. **Fully supported local-maximum conjecture.** There is a fully supported one-step Markov measure that is a local maximum of $\\operatorname{Int}_\\mu(X,T,\\alpha)$ among all one-step Markov measures. The assertion is suggested by numerical computations in the source; no proof or resolution is supplied.', 'source_url': 'https://arxiv.org/abs/1607.02425', 'tags': ['ergodic-theory', 'symbolic-dynamics'], 'canonical_url': 'https://mathdb.com/p/333569/a-fully-supported-local-information-maximum-on-the-full-two'}, {'mathdb_id': 333709, 'title': 'The two-round minimal percolating set conjecture', 'statement': 'Let $\\Pi_q$ be a finite projective plane of order $q$, let $r$ be the infection rate, and let $t_r(A)$ denote the percolation time of a percolating set $A$. **Two-round minimal percolating set conjecture.** For each $r$ with\n\n$$\n4\\leq r\\leq q,\n$$\n\nthere exists a minimal percolating set $A_r$ with\n\n$$\nt_r(A_r)=2.\n$$\n\nThis asserts the existence of minimal percolating configurations that infect the entire plane in exactly two rounds throughout the stated range. The source gives a construction and proof around the conjecture, but the supplied parser status is unresolved.', 'source_url': 'https://arxiv.org/abs/1608.00531', 'tags': ['combinatorics', 'finite-projective-planes', 'percolation'], 'canonical_url': 'https://mathdb.com/p/333709/the-two-round-minimal-percolating-set-conjecture'}, {'mathdb_id': 334599, 'title': 'The expressivity hierarchy conjecture for finitely iterated supervenience languages', 'statement': 'Let $\\mathcal{L}_{\\Rrightarrow^n}$ be the propositional language with the $n$-ary supervenience operator $\\Rrightarrow^n$.\n\n**Expressivity hierarchy conjecture.** For all $n\\in\\mathbb{N}$, $\\mathcal{L}_{\\Rrightarrow^{n+1}}$ is more expressive than $\\mathcal{L}_{\\Rrightarrow^n}$.\n\nThe paper establishes the corresponding result for $n=0$ and leaves the generalization to future work.', 'source_url': 'https://arxiv.org/abs/1611.04740', 'tags': ['expressivity', 'modal-logic', 'supervenience'], 'canonical_url': 'https://mathdb.com/p/334599/the-expressivity-hierarchy-conjecture-for-finitely-iterated'}, {'mathdb_id': 338258, 'title': 'Odd-coordinate kernel conjecture for singular io-decomposable Riordan graphs', 'statement': 'Let $G_n(g,zg)$ be a singular io-decomposable Riordan graph, let ${\\cal A}_n$ be its adjacency matrix, and let $X=[x_1,x_2,\\ldots,x_n]^T$ be an eigenvector with eigenvalue $0$. Define the odd-index and even-index subvectors by\n\n$$\nX_o=[x_1,x_3,\\ldots,x_{2\\lceil n/2\\rceil-1}]^T,\n$$\n\n$$\nX_e=[x_2,x_4,\\ldots,x_{2\\lfloor n/2\\rfloor}]^T.\n$$\n\n**Odd-coordinate kernel conjecture.** Then\n\n$$\nX_o=O_{\\lceil n/2\\rceil}.\n$$\n\nThis claim is motivated by Sage computations and, together with the preceding block-matrix lemma, would constrain the zero-eigenspace of every singular io-decomposable Riordan graph. No proof or resolution is supplied.', 'source_url': 'https://arxiv.org/abs/1801.07021', 'tags': ['linear-algebra', 'riordan-graphs', 'spectral-graph-theory'], 'canonical_url': 'https://mathdb.com/p/338258/odd-coordinate-kernel-conjecture-for-singular-io-decomposabl'}, {'mathdb_id': 338887, 'title': 'Conjecture on recurrent component cardinalities in sinkless rotor networks', 'statement': 'Let $C_n$ be the bidirected cycle on $n$ vertices, and let $\\mathcal{C}_{n,m,i}$ denote the unique recurrent component of level $m$ and weight $i\\in\\mathbb{Z}_n$. Write $r(\\mathcal{C}_{n,m,i})$ for the number of recurrent configurations in this component.\n\n**Recurrent-component cardinality conjecture.** For $n\\geq 3$, $m\\geq 1$, and $i,j\\in\\mathbb{Z}_n$, one has\n\n$$\nr(\\mathcal{C}_{n,m,i})=r(\\mathcal{C}_{n,m,j})\n$$\n\nwhenever\n\n$$\n\\gcd(n,m,i)=\\gcd(n,m,j).\n$$\n\nThe conjecture refines the observed near equality of recurrent-component sizes in sinkless rotor networks on bidirected cycles. It is supported by data for small values of $m$ and $n$, but the supplied source does not state a resolution.', 'source_url': 'https://arxiv.org/abs/1804.03322', 'tags': ['combinatorics', 'dynamical-systems', 'rotor-networks'], 'canonical_url': 'https://mathdb.com/p/338887/conjecture-on-recurrent-component-cardinalities-in-sinkless'}, {'mathdb_id': 339235, 'title': 'The even-order M{"o}bius ladder local antimagic chromatic number conjecture', 'statement': 'For $n\\ge 2$, let $M_{2n}$ be the M{"o}bius ladder obtained from the cycle $C_{2n}=u_1u_2\\cdots u_nv_1v_2\\cdots v_nu_1$ by adding the edges $u_iv_i$ for $1\\le i\\le n$. Let $\\chi_{la}$ denote the local antimagic chromatic number.\n\n**M{"o}bius ladder conjecture.** For even $n\\ge 4$,\n\n$$\n\\chi_{la}(M_{2n})=4.\n$$\n\nThe surrounding results establish the value for odd $n\\ge 3$ and note that $M_4=K_4$ has local antimagic chromatic number $4$. The even-order case stated here is presented as a conjecture, with no resolution supplied in the text.', 'source_url': 'https://arxiv.org/abs/1805.04888', 'tags': ['graph-coloring', 'local-antimagic-labeling', 'mobius-ladders'], 'canonical_url': 'https://mathdb.com/p/339235/the-even-order-m-o-bius-ladder-local-antimagic-chromatic-num'}, {'mathdb_id': 341850, 'title': 'Submodular separation conjecture for low-degree monomial families', 'statement': 'Let $0\\leqslant r\\leqslant d$ be integers and let $n=\\binom{d}{\\leqslant r}$. Define\n\n$$\n\\phi:\\{0,1\\}^d\\to\\{0,1\\}^n,\n\\qquad \\phi(x)=\\left(\\prod_{i\\in S}x_i\\right)_{S\\subset[d]:|S|\\leqslant r},\n$$\n\nand let ${\\mathcal F}_{r,d}=\\phi(\\{0,1\\}^d)$. A function $f:\\{0,1\\}^n\\to\\mathbb Z$ is **submodular** if $f(x)+f(y)\\geqslant f(x\\vee y)+f(x\\wedge y)$ for all $x,y$.\n\n**Submodular separation conjecture.** For every such $r,d$, there exists a submodular function $f$ such that $f(x)$ is computable in $\\mathrm{poly}(n)$ time, $f(x)\\leqslant-1$ for every $x\\in\\mathcal F_{r,d}$, and $f(x)\\geqslant0$ for every $x\\notin\\mathcal F_{r,d}$. If true, this would yield a hardness result for submodular minimization with modular constraints, complementing the known prime-power algorithms; the source does not resolve the conjecture.', 'source_url': 'https://arxiv.org/abs/1902.04740', 'tags': ['combinatorial-optimization', 'modular-constraints', 'submodular-optimization'], 'canonical_url': 'https://mathdb.com/p/341850/submodular-separation-conjecture-for-low-degree-monomial-fam'}, {'mathdb_id': 342364, 'title': 'The 2-adic valuation conjecture for even-colored 2-ary partition functions', 'statement': 'Let $c_m(n)$ denote the $m$-colored binary partition function, and let $\nu_2$ be the 2-adic valuation. For positive integers $k,n$ and nonnegative integers $k$ as specified below, consider the differences of the values of $c_m$. **2-adic valuation conjecture.** For $kin\\mathbb{N}_{+}$ and each $n\\in\\mathbb{N}_{+}$, \n$$\n\\nu_{2}(c_{2k}(4n)-c_{2k}(n))=\\nu_{2}(n)+2\\nu_{2}(k)+3.\n$$\n Moreover, for $k\\in\\mathbb{N}$ and $n\\in\\mathbb{N}_{+}$, \n$$\n\\nu_{2}(c_{4k+1}(4n)-c_{4k+1}(n))\\geq\\nu_{2}(n)+3,\n$$\n \n$$\n\\nu_{2}(c_{4k+3}(4n)-c_{4k+3}(n))\\geq\\nu_{2}(n)+6.\n$$\n In each case, equality holds for infinitely many $n\\in\\mathbb{N}$. These predictions are motivated by known sharp congruences for the ordinary binary partition function and numerical computations for $m\\leq10$ and $n\\leq10^5$; their general validity remains open.', 'source_url': 'https://arxiv.org/abs/1904.03398', 'tags': ['binary-partitions', 'p-adic-valuations', 'partition-congruences'], 'canonical_url': 'https://mathdb.com/p/342364/the-2-adic-valuation-conjecture-for-even-colored-2-ary-parti'}, {'mathdb_id': 342414, 'title': 'The edge-pattern convex-combination conjecture', 'statement': "Let $P$ be a $d$-regular edge-rooted pattern of depth $r$ and girth $2r+2$. For each edge-rooted pattern, let $\\mathbf{e}(P)$ denote its constraint vector, and let $\\mathcal{T}'_r(d)$ be the specified family of $d$-regular edge-rooted trees of depth $r$. The constraint $\\mathbf{e}(P)$ is **weaker** than a convex combination of constraints from this family in the sense that there exist $T_1,\\dots,T_m\\in\\mathcal{T}'_r(d)$ and $\\lambda_1,\\dots,\\lambda_m\\in[0,1]$ with\n\n$$\n\\sum_{i=1}^m\\lambda_i=1\n$$\n\nand, for every $\\bm{\\alpha}\\in{\\left(\\mathbb{Q}^+\\right)}^{r+1}$,\n\n$$\n\\bm{\\alpha}^{\\!\\top}\\left(\\sum_{i=1}^m\\lambda_i\\mathbf{e}(T_i)\\right)\\ge 1\\quad\\implies\\quad\\bm{\\alpha}^{\\!\\top}\\mathbf{e}(P)\\ge 1.\n$$\n\nThis would explain why the bounds obtained from edge-ro
+SCOPES inputs/prior39-scopes.json dict
+{'kind': 'Trustedacceptedscopemetadataonly,nocertificateaudit', 'prior30': [{'number': 1, 'mathdb_id': 352508, 'path': 'candidates/fractional-binomial', 'title': 'Sharp converse fractional-binomial inequality', 'status': 'ACCEPT: full proof, source fidelity, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 67, 'discovery_count_credit': 1, 'scope': 'One combined resolution of Gerhold–Simon Conjecture 3.2; includes biased bound and optimality, no separate counts.', 'novelty_limit': 'No prior full sharp finite-sum resolution located. Alzer full article inaccessible; exact classical summand theorem and corollary types checked in two accessible primary successors. Absolute worldwide priority not certified.', 'packet': 'candidate-packets/352508-fractional-binomial-proof.zip', 'packet_sha256': 'baf26ba9f238e40f6fa3efa5a990b3c2b1a5a02dbdefa62cefd7a223ee9ebd15'}, {'number': 2, 'related_mathdb_id': 363319, 'mathdb_record_itself_resolved': False, 'source_target': 'Capitelli–Somma arXiv2405.19593v1 Section3 general all-odd nonconvergence assertion', 'path': 'candidates/odd-subtraction', 'title': 'Nonconvergence for every finite all-odd randomized subtraction set', 'status': 'ACCEPT: complete proof, source fidelity, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 37, 'discovery_count_credit': 1, 'scope': 'One source-question resolution, bypassing the separate root-simplicity conjecture. No separate counts for invariant, zigzag or known small-cardinality cases.', 'novelty_limit': 'No earlier full resolution or directly subsuming theorem found in inspected primary literature; finite searches do not certify absolute priority.', 'packet': 'candidate-packets/2405-19593-odd-subtraction-proof.zip', 'packet_sha256': '85194069ee35ae8d3a2b92f6d97ec42b9b009af933639075df50e71c9d2f4d96'}, {'number': 3, 'mathdb_id': 369172, 'path': 'candidates/trig-counterexample', 'title': 'Exact counterexample to square-root trigonometric positivity', 'status': 'ACCEPT: full source proof, published-source comparison, Lean, independent review, documented novelty screen, paper and extracted packet replay PASS', 'formal_declarations': 55, 'discovery_count_credit': 1, 'witness': {'d': 49, 'n': 949, 't': 'arccos(523/527)'}, 'scope': 'One counterexample to Kovalev Conjecture1.3, no zero-free Conjecture1.2 or minimality claim.', 'novelty_limit': 'Actual 2026 published body retains the conjecture. No prior counterexample located; finite searches cannot certify absolute priority.', 'packet': 'candidate-packets/369172-trigonometric-counterexample-proof.zip', 'packet_sha256': 'b66de396960f2d60b6fd92c1d6aec5c88bdca9958fad3c661fec30e168f046f8'}, {'number': 4, 'mathdb_id': 336466, 'path': 'candidates/odd-root-means', 'title': 'Odd-degree derivative-root mean identity', 'status': 'ACCEPT: exact-source full proof, Lean, independent review, documented novelty screen with explicit limitation, paper and extracted replay PASS', 'formal_declarations': 50, 'discovery_count_credit': 1, 'scope': 'One full arbitrary odd-degree complex-polynomial Conjecture2 resolution, with repeated roots and exact source means. No per-degree/helper/other-conjecture counts.', 'novelty_limit': 'Toda1934 full body unread; actual1936/1940 neighboring formulas and classical apolarity read/credited. Independent review found no explicit old stronger source endpoint and recommends acceptance under documented-prior/no-known-resolution standard with this material limitation. Absolute priority not certified.', 'packet': 'candidate-packets/336466-odd-derivative-root-means-proof.zip', 'packet_sha256': '6d67e327be472c2bae0dedde767d5b6146831a981ef8ce62d2e5ce28c651587d'}, {'number': 5, 'mathdb_id': 357503, 'path': 'candidates/yuster-rootcount', 'title': 'Four interior roots refute Yuster Conjecture3.9', 'status': 'ACCEPT: literal-source full proof, canonical parameter, Lean, independent final review, documented novelty screen, paper QA and extracted packet replay PASS', 'formal_declarations': 53, 'discovery_count_credit': 1, 'witness': {'k': 48, 'root_intervals': ['(1/100,1/10)', '(1/10,1/2)', '(1/2,3/5)', '(3/5,4/5)']}, 'scope': 'One counterexample, no minimality/exact total root count/extra Wakhare formal endpoint or entropy result.', 'novelty_limit': 'No prior root-count refutation located. Full later Yuster–Yashfe manuscript not located; Wakhare publisher full body not separately read. Closest actual primary arXiv sources and known true entropy theorem compared and credited.', 'packet': 'candidate-packets/357503-yuster-rootcount-proof.zip', 'packet_sha256': '910b35cde2310248bbf01f0193e0f21bd3311251531287a4e6565455476c9ec2'}, {'number': 6, 'mathdb_ids': [371345, 371346], 'path': 'candidates/vendi-negative', 'title': 'Arbitrary-rank negative-order Vendi–LCR comparison', 'status': 'ACCEPT: exact-source full proof, actual PSD-matrix bridge, Lean, independent formal and manuscript reviews, documented novelty screen, paper QA and extracted replay PASS', 'formal_declarations': 48, 'discovery_count_credit': 1, 'scope': 'One uniform comparison at all finite q<0 and directly defined minus-infinity endpoint, on source-evidenced positive spectral support. Known nonnegative/fullrank cases, classical Jensen ingredient and equivalent power-sum statement uncredited. No formal analytic order-limit or weighted-p bridge.', 'novelty_limit': 'PRE final full body unread; current primary abstract retains fullranknegative restriction. Later Bioengineering article broadly asserts comparison citing PRE without separate singular-negative proof. Classical Jensen/Hölder–McCarthy and all known source cases credited; no earlier demonstrated full support comparison found.', 'packet': 'candidate-packets/371345-vendi-negative-proof.zip', 'packet_sha256': 'c812cfdf49064343a6936c704394b7e59068528cb67f952b85e34f15d93c872d'}, {'number': 7, 'mathdb_id': 368572, 'path': 'candidates/bergman-unit-circle', 'title': 'Full unit-circle nonvanishing and root allocation for rational Hartogs-triangle polynomials', 'status': 'ACCEPT: full all-coprime-pairs source conjecture, ordinary-polynomial bridge, complete Lean, reciprocal independent reviews, documented novelty screen, paper QA and extracted replay PASS', 'formal_declarations': 78, 'discovery_count_credit': 1, 'scope': 'One full Edholm–Mathew Conjecture4.20 resolution: all coprime0<n<m, no unit-circle roots and exactlym−n punctured-disc roots counted with multiplicity. Known differences, old Fourier/kernel identities, helpers and analytic consequences are not separate counts.', 'novelty_limit': 'Actual full June2026 target and published Almughrabi2023 body read. Older weighted roots-of-unity identity explicitly credited; no previous full strict boundary conclusion found. Source-mentioned in-preparation successor not located/read; unpublished or absolute worldwide priority not certified.', 'packet': 'candidate-packets/368572-bergman-unit-circle-proof.zip', 'packet_sha256': '91016233e33cebd53832e3806c1e408d733dcb0869cb76722720df0d320a42d6'}, {'number': 8, 'mathdb_id': 338823, 'path': 'candidates/classical-means', 'title': 'Complete real-exponent classification for both four-classical-mean comparison directions', 'status': 'ACCEPT: exact published source, full classification, complete Lean, independent source/math/formal/bounded-novelty and final manuscript reviews, rendered paper and fresh extracted packet replay PASS', 'formal_declarations': 34, 'discovery_count_credit': 1, 'scope': 'ONE combined Meštrović–Andjić Conjecture1.5 (preprint1.6) resolution: forward universal exactly n≤0 or n≥1, reverse universal exactly n=0. Substantive counterexamples for every 0<n<1, including asserted 1/2≤n<1. No separate direction, endpoint, witness, helper or known integer count.', 'novelty_limit': 'Actual published source and nearest primary comparisons inspected; no known earlier full classification found. MathSciNet/zbMATH unavailable, Sándor survey only partially extractable; bounded literature search does not certify absolute worldwide priority. Parent corrected original review prose errors; unchanged complete reports retained.', 'packet': 'candidate-packets/338823-classical-means-proof.zip', 'packet_sha256': '296974db2e7f2d9acbd288430a7b658c285fa9df5cd1e6df71f13b919d459927'}, {'number': 9, 'mathdb_id': 345259, 'path': 'candidates/keith-multicolor', 'title': 'Strict-valley refutation of Keith’s three-color linear-cut conjecture', 'status': 'ACCEPT: literal-source complete Lean, independent source/math/formal/bounded-novelty/final-manuscript review, rendered paper and fresh extracted packet replay PASS', 'formal_declarations': 37, 'discovery_count_credit': 1, 'scope': 'ONE source-question refutation: M=N25,n325,k3,x3=1,full lattice line y45−2x. Formal coefficient bounds53130,50600,third≥52900. Actual box partitions and coefficient/injection bridges proved; original two-color Dousse–Kim conjecture not refuted. No credit for individual coefficients, helpers, boxes or research-only variable-N family.', 'novelty_limit': 'Actual arXiv source and predecessor inspected; independent search found no known prior multicolor resolution. Final typeset Keith body unread after403; Wagner thesis assessed through official abstract/chapter descriptions, complete body unread. Citing-body coverage bounded, no exhaustive2026/worldwide priority claim. Parent addendum clarifies report wording.', 'packet': 'candidate-packets/345259-keith-multicolor-proof.zip', 'packet_sha256': '5b91fca46c28e6f4bcac2fab15fd10fb5bda5d9aeb757a049de9868b725be01f'}, {'number': 10, 'mathdb_id': 351633, 'path': 'candidates/cstar-novak', 'title': 'Hermitian finite-matrix refutation of C*-algebraic Novak positivity', 'status': 'ACCEPT: exact published source, full mathematical proof, complete36-declaration Lean, independent source/math/formal/bounded-novelty/manuscript review, rendered paper and fresh extracted packet replay PASS', 'formal_declarations': 36, 'discovery_count_credit': 1, 'scope': 'ONE refutation of Krishna published Conjecture4.2 / preprint4.3 in M2(C), n4,d2. Actual self-adjoint inputs, genuine exponential-defined cosine and literal Hermitian8x8source matrix with exact quadratic form cos(pi sqrt15)−3≤−2. Scalar/commutative Novak theorems untouched; no helper or centered/uncentered extra credit.', 'novelty_limit': 'No prior full source-conjecture refutation found in inspected primary/citing literature. Classical radial-kernel mechanisms credited; Semantic Scholar corpus is incomplete, subscription indexes and systematic non-English search unavailable. Independent numerical precision/index-comment errors reconciled by parent addendum. No absolute worldwide priority certified.', 'packet': 'candidate-packets/351633-cstar-novak-proof.zip', 'packet_sha256': '17e8a352cba22a593112414698826b7df860d011fca6c3432c61beb526bfcb17'}, {'number': 11, 'mathdb_ids': [355008, 355009], 'source_conjectures': ['2206.06653v1 Conjecture2.1', '2206.06653v1 Conjecture2.3', '2206.06653v1 Conjecture2.4'], 'path': 'candidates/cstar-polynomial', 'title': 'One cubic refutation of three C*-algebraic polynomial moment conjectures', 'status': 'ACCEPT: exact-source mathematics, complete36-declaration strict Lean, independent source/math/formal/bounded-novelty/manuscript review, rendered2-page paper and fresh extracted packet replay PASS', 'formal_declarations': 36, 'discovery_count_credit': 1, 'scope': 'ONE common nonnormal-involution construction. Degree3M2(C), centered genuine roots(R,-2R,R), genuine critical factors(I,-I), ordered derivative factorization for EVERY complex matrix argument, all six literal defects Hermitian/nonPSD. Scalar classical theorems untouched; no separate conjecture/direction/helper or optional family count.', 'novelty_limit': 'Independent primary/citing/companion search found no prior refutation or subsuming negative theorem. Subscription indexes and systematic worldwide coverage unavailable. Parent addendum corrects ancillary review alternative-coefficient arithmetic, stale script docstring and an optional tautological loop; unchanged complete literal-source Lean and paper unaffected. No absolute priority guarantee.', 'packet': 'candidate-packets/355008-cstar-polynomial-proof.zip', 'packet_sha256': '71b02b1d0f76c731050f6b4332d6144daec2c6eb6cd08e03093101d8f178071e'}, {'number': 12, 'mathdb_id': 347947, 'path': 'candidates/maximal-index', 'title': 'Sharp maximal index for separately sorted arithmetic and geometric means in every dimension at least five', 'status': 'ACCEPT: exact-source mathematics, complete76-declaration strict Lean, independent source/math/formal/bounded-novelty/manuscript review, rendered3-page paper and fresh extracted packet replay PASS', 'formal_declarations': 76, 'discovery_count_credit': 1, 'scope': 'ONE combined source-question resolution: for every d≥5 and 0≤k≤d², the full probability-simplex universal bound for independently sorted ordered arithmetic/geometric arrays holds iff k≤2d−5. No dimensions, helpers, directions, witnesses or small-d research extra credits.', 'novelty_limit': 'No earlier resolution found in inspected primary and full-body citing sources. Citation indexes are incomplete; one published citing body and subscription indexes remain unread. Author listings are not full-body surveys. Parent addendum qualifies review scope; no absolute worldwide priority certified.', 'packet': 'candidate-packets/347947-maximal-index-proof.zip', 'packet_sha256': 'd1ebb869d50c4ba2804ad177c072bfdf07711f0a1ed06a380e34fd1082fcd69f'}, {'number': 13, 'mathdb_id': 338076, 'source_conjecture': 'Lachaume1712.10327v1Conjecture1 ONLY', 'path': 'candidates/lachaume-quartic', 'title': 'Positive diagonal concavity does not imply concavity for elementary-symmetric sums', 'status': 'ACCEPT: exact source, complete61-declaration strict Lean, independent source/math/formal/bounded-novelty/manuscript review, rendered2-page paper and

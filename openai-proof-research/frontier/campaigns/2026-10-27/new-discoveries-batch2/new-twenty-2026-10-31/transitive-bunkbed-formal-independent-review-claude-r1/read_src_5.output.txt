@@ -1,0 +1,523 @@
+===== BunDomCountLaw
+import BunDomActualCounts
+import BunDomAbstract
+namespace BunDom
+open Classical Bun Finset
+noncomputable local instance (j : Nat) : DecidableEq (Fin (j+1)) := Classical.decEq _
+def rowSize (j a : Nat) (x : Bool) : Nat :=
+  if x then 2^(j+1) - 2^(j+1-a) else 2^(j+1-a)
+def nextSize (s : State) (d : Bool × Bool) : State :=
+  (s.1 + d.1.toNat, s.2 + d.2.toNat)
+noncomputable def kernel (j : Nat) (s q : State) : Nat :=
+  ∑ x : Bool, ∑ y : Bool, ∑ z : Bool,
+    rowSize j s.1 x * rowSize j s.2 y * (if nextSize s (ind x y z) = q then 1 else 0)
+theorem stepU_sizes (m : Nat) (R S : Finset Nat) (hmR : m ∉ R) (hmS : m ∉ S)
+    (x y z : Bool) :
+    ((stepU m R S x y z).1.card, (stepU m R S x y z).2.card) =
+      nextSize (R.card,S.card) (ind x y z) := by
+  cases x <;> cases y <;> cases z <;> simp [stepU, ind, nextSize, hmR, hmS]
+theorem fresh_state_count (j : Nat) (R S : Finset Nat)
+    (hR : ∀ i ∈ R, i ≤ j) (hS : ∀ i ∈ S, i ≤ j) (q : State) :
+    (∑ f : Fresh j, if
+      ((stepU (j+1) R S (hit (fun i : Fin (j+1) => i.1 ∈ R) (fun i => f.1 i false))
+      (hit (fun i : Fin (j+1) => i.1 ∈ S) (fun i => f.1 i true)) f.2).1.card,
+      (stepU (j+1) R S (hit (fun i : Fin (j+1) => i.1 ∈ R) (fun i => f.1 i false))
+      (hit (fun i : Fin (j+1) => i.1 ∈ S) (fun i => f.1 i true)) f.2).2.card) = q then 1 else 0) =
+      kernel j (R.card,S.card) q := by
+  have hmR : j+1 ∉ R := by intro h; have := hR _ h; omega
+  have hmS : j+1 ∉ S := by intro h; have := hS _ h; omega
+  simp_rw [stepU_sizes (j+1) R S hmR hmS]
+  rw [rows_sum j (fun i : Fin (j+1) => i.1 ∈ R) (fun i : Fin (j+1) => i.1 ∈ S)
+    (fun x y z => if nextSize (R.card,S.card) (ind x y z) = q then 1 else 0)]
+  simp only [rowCount_set j R hR, rowCount_set j S hS, kernel, rowSize]
+theorem transport_dec {n j : Nat} (hn : j+1 < n) (P : Asg n (j+1) → Prop) [DecidablePred P] :
+    Fintype.card {w // P w} = ∑ p : Asg n j, ∑ f : Fresh j, if P (join (p,f)) then 1 else 0 := by
+  rw [Fintype.card_subtype, Finset.card_filter]
+  rw [Fintype.sum_equiv (assignmentEquiv hn)
+    (fun w => if P w then 1 else 0)
+    (fun q => if P (join q) then 1 else 0)
+    (fun w => by change (if P w then 1 else 0) = if P (join (split hn w)) then 1 else 0; rw [join_split hn])]
+  exact Fintype.sum_prod_type _
+attribute [local irreducible] Bun.stf
+set_option maxHeartbeats 800000 in
+theorem count_law_uncompressed {n u j : Nat} (hn : j+1 < n) (hu : u ≤ j) (q : State) :
+    stateCount n u (j+1) q.1 q.2 =
+      ∑ p : Asg n j, kernel j ((stf n u j p).1.card, (stf n u j p).2.card) q := by
+  unfold stateCount
+  rw [transport_dec hn]
+  apply Finset.sum_congr rfl
+  intro p _
+  have hr : ∀ i ∈ (stf n u j p).1, i ≤ j := fun i hi => stf_upper_support n u j i p false hi
+  have hs : ∀ i ∈ (stf n u j p).2, i ≤ j := fun i hi => stf_upper_support n u j i p true hi
+  rw [← fresh_state_count j _ _ hr hs]
+  apply Finset.sum_congr rfl
+  intro f _
+  rw [stf_join hn hu, hor_join_hit hn, hor_join_hit hn]
+end BunDom
+
+===== BunDomCompressed
+import BunDomCountLaw
+namespace BunDom
+open Classical Finset Bun
+def box (n : Nat) : Finset State := (range (n+1)) ×ˢ (range (n+1))
+theorem box_closed (n : Nat) (s : State) (hs : s ∈ box n) : flip s ∈ box n := by
+  simpa only [box, mem_product, flip, and_comm] using hs
+theorem sum_by_state {ι : Type} [Fintype ι] (F : ι → State) (S : Finset State)
+    (hS : ∀ i, F i ∈ S) (H : State → Nat) :
+    (∑ i, H (F i)) = ∑ s ∈ S, Fintype.card {i // F i = s} * H s := by
+  rw [← Finset.sum_fiberwise_of_maps_to (fun i (_ : i ∈ (univ : Finset ι)) => hS i) (fun i => H (F i))]
+  apply Finset.sum_congr rfl
+  intro s _
+  rw [Fintype.card_subtype]
+  calc
+    _ = ∑ _i ∈ univ.filter (fun i => F i = s), H s := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [(mem_filter.mp hi).2]
+    _ = _ := by simp [Nat.mul_comm]
+attribute [local irreducible] Bun.stf
+theorem sizes_mem_box (n u j : Nat) (hj : j < n) (p : Asg n j) :
+    ((stf n u j p).1.card, (stf n u j p).2.card) ∈ box n := by
+  have hb (l : Bool) : (sval l (stf n u j p)).card ≤ j+1 := by
+    have hsub : sval l (stf n u j p) ⊆ range (j+1) := by
+      intro i hi; exact mem_range.mpr (by have := stf_upper_support n u j i p l hi; omega)
+    simpa using card_le_card hsub
+  have h0 := hb false
+  have h1 := hb true
+  change (stf n u j p).1.card ≤ j+1 at h0
+  change (stf n u j p).2.card ≤ j+1 at h1
+  simp only [box, mem_product, mem_range]
+  omega
+set_option maxHeartbeats 800000 in
+theorem count_law {n u j : Nat} (hn : j+1 < n) (hu : u ≤ j) (q : State) :
+    stateCount n u (j+1) q.1 q.2 =
+      ∑ s ∈ box n, stateCount n u j s.1 s.2 * kernel j s q := by
+  rw [count_law_uncompressed hn hu]
+  exact sum_by_state (fun p : Asg n j => ((stf n u j p).1.card,(stf n u j p).2.card))
+    (box n) (sizes_mem_box n u j (by omega)) (fun s => kernel j s q)
+end BunDom
+
+===== BunDomDominance
+import BunDomCompressed
+import BunDomEndpoint
+namespace BunDom
+open Classical Bun Finset
+theorem kernel_flip (j : Nat) (s q : State) : kernel j (flip s) (flip q) = kernel j s q := by
+  rcases q with ⟨a,b⟩
+  have hi (x y z : Bool) : ind y x z = ((ind x y z).2,(ind x y z).1) := by
+    cases x <;> cases y <;> cases z <;> rfl
+  unfold kernel
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro x _
+  apply Finset.sum_congr rfl
+  intro y _
+  apply Finset.sum_congr rfl
+  intro z _
+  rw [hi]
+  have he : nextSize (flip s) ((ind x y z).2,(ind x y z).1) = flip (a,b) ↔ nextSize s (ind x y z) = (a,b) := by
+    simp only [nextSize, flip, Prod.mk.injEq]
+    exact and_comm
+  simp only [he]
+  simp only [flip, Nat.mul_comm]
+theorem kernel_cross (j : Nat) (s q : State) (hs : s.2 < s.1) (hq : q.1 < q.2) :
+    kernel j s q = 0 := by
+  unfold kernel
+  apply Finset.sum_eq_zero
+  intro x _
+  apply Finset.sum_eq_zero
+  intro y _
+  apply Finset.sum_eq_zero
+  intro z _
+  have he : nextSize s (ind x y z) ≠ q := by
+    intro h
+    have h1 := congrArg Prod.fst h
+    have h2 := congrArg Prod.snd h
+    cases x <;> cases y <;> cases z <;> simp [nextSize, ind] at h1 h2 <;> omega
+  simp [he]
+attribute [local irreducible] Bun.stf BunDom.stateCount
+theorem source_below (n u a b : Nat) (hab : a < b) : stateCount n u u a b = 0 := by
+  rw [stateCount, Fintype.card_eq_zero_iff]
+  refine ⟨fun w => ?_⟩
+  have h := w.2
+  rw [stf_at_source] at h
+  have h1 := congrArg Prod.fst h
+  have h2 := congrArg Prod.snd h
+  simp only [startST] at h1 h2
+  split_ifs at h2 <;> simp_all <;> omega
+theorem dominance (n u j : Nat) (hu : u ≤ j) (hjn : j < n) :
+    ∀ s ∈ box n, s.2 < s.1 → stateCount n u j s.2 s.1 ≤ stateCount n u j s.1 s.2 := by
+  induction j, hu using Nat.le_induction with
+  | base =>
+    intro s _ hs
+    rw [source_below n u s.2 s.1 hs]
+    exact Nat.zero_le _
+  | succ j hu ih =>
+    intro s _ hs
+    have hd := ih (by omega)
+    have hr (q : State) : (stateCount n u (j+1) q.1 q.2 : Int) =
+        advance (box n) (fun s => (stateCount n u j s.1 s.2 : Int))
+          (fun s q => (kernel j s q : Int)) q := by
+      rw [count_law hjn hu]
+      simp [advance]
+    have h := reflection_step (box n) (box_closed n)
+      (fun s => (stateCount n u j s.1 s.2 : Int)) (fun s q => (kernel j s q : Int))
+      (fun _ _ => Int.natCast_nonneg _) (fun s q => by rw [kernel_flip])
+      (fun s q hs hq => by rw [kernel_cross j s q hs hq]; rfl)
+      (fun s hm hs => by exact_mod_cast hd s hm hs) s hs
+    rw [← hr, ← hr] at h
+    exact_mod_cast h
+end BunDom
+
+===== BunDomPayoff
+import BunDomDominance
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.GCongr
+namespace BunDom
+open Classical Bun Finset
+noncomputable local instance (j : Nat) : DecidableEq (Fin (j+1)) := Classical.decEq _
+def payoff (j : Nat) (s : State) : Int :=
+  (rowSize j s.1 true : Int) * rowSize j s.2 false -
+  (rowSize j s.1 false : Int) * rowSize j s.2 true
+theorem payoff_flip (j : Nat) (s : State) : payoff j (flip s) = -payoff j s := by
+  simp only [payoff, flip]
+  ring
+theorem payoff_formula (j : Nat) (s : State) :
+    payoff j s = (2^(j+1) : Int) * ((2^(j+1-s.2) : Int) - 2^(j+1-s.1)) := by
+  have ha : (2 : Nat)^(j+1-s.1) ≤ 2^(j+1) := by gcongr; omega
+  have hb : (2 : Nat)^(j+1-s.2) ≤ 2^(j+1) := by gcongr; omega
+  simp only [payoff, rowSize, Bool.false_eq_true, ite_false, ite_true]
+  rw [Nat.cast_sub ha, Nat.cast_sub hb]
+  push_cast
+  ring
+theorem payoff_pos (j : Nat) (s : State) (hs : s.2 < s.1) : 0 ≤ payoff j s := by
+  rw [payoff_formula]
+  apply mul_nonneg (by positivity)
+  apply sub_nonneg.mpr
+  gcongr
+  omega
+theorem rows_payoff (j : Nat) (R S : Finset Nat)
+    (hR : ∀ i ∈ R, i ≤ j) (hS : ∀ i ∈ S, i ≤ j) :
+    (Fintype.card {f : Fresh j // (freshInd j (fun i : Fin (j+1) => i.1 ∈ R)
+      (fun i : Fin (j+1) => i.1 ∈ S) f).1 = true} : Int) -
+    (Fintype.card {f : Fresh j // (freshInd j (fun i : Fin (j+1) => i.1 ∈ R)
+      (fun i : Fin (j+1) => i.1 ∈ S) f).2 = true} : Int) = payoff j (R.card,S.card) := by
+  have hc (l : Bool) : Fintype.card {f : Fresh j //
+      (if l then (freshInd j (fun i : Fin (j+1) => i.1 ∈ R) (fun i : Fin (j+1) => i.1 ∈ S) f).2
+      else (freshInd j (fun i : Fin (j+1) => i.1 ∈ R) (fun i : Fin (j+1) => i.1 ∈ S) f).1) = true} =
+      ∑ x : Bool, ∑ y : Bool, ∑ z : Bool, rowSize j R.card x * rowSize j S.card y *
+      (if (if l then (ind x y z).2 else (ind x y z).1) = true then 1 else 0) := by
+    rw [Fintype.card_subtype, Finset.card_filter]
+    unfold freshInd
+    rw [rows_sum j (fun i : Fin (j+1) => i.1 ∈ R) (fun i : Fin (j+1) => i.1 ∈ S) (fun x y z => if (if l then (ind x y z).2 else (ind x y z).1) = true then 1 else 0)]
+    simp only [rowCount_set j R hR, rowCount_set j S hS, rowSize]
+  have h0 := hc false
+  have h1 := hc true
+  simp only [Bool.false_eq_true, ite_false, ite_true] at h0 h1
+  rw [h0,h1]
+  simp [ind, payoff]
+  ring
+end BunDom
+
+===== BunDomFinal
+import BunDomPayoff
+namespace BunDom
+open Classical Bun Finset
+noncomputable local instance (j : Nat) : DecidableEq (Fin (j+1)) := Classical.decEq _
+theorem sum_by_state_int {ι : Type} [Fintype ι] (F : ι → State) (S : Finset State)
+    (hS : ∀ i, F i ∈ S) (H : State → Int) :
+    (∑ i, H (F i)) = ∑ s ∈ S, (Fintype.card {i // F i = s} : Int) * H s := by
+  rw [← Finset.sum_fiberwise_of_maps_to (fun i (_ : i ∈ (univ : Finset ι)) => hS i) (fun i => H (F i))]
+  apply Finset.sum_congr rfl
+  intro s _
+  rw [Fintype.card_subtype]
+  calc
+    _ = ∑ _i ∈ univ.filter (fun i => F i = s), H s := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [(mem_filter.mp hi).2]
+    _ = _ := by simp [mul_comm]
+theorem step_mem_indicator (m : Nat) (R S : Finset Nat) (hmR : m ∉ R) (hmS : m ∉ S)
+    (x y z l : Bool) : m ∈ sval l (stepU m R S x y z) ↔
+      (if l then (ind x y z).2 else (ind x y z).1) = true := by
+  cases x <;> cases y <;> cases z <;> cases l <;> simp [sval, stepU, ind, hmR, hmS]
+attribute [local irreducible] Bun.stf
+theorem event_count {n u j : Nat} (hn : j+1 < n) (hu : u ≤ j) (l : Bool) :
+    Fintype.card {w : Asg n (j+1) // j+1 ∈ sval l (stf n u (j+1) w)} =
+      ∑ p : Asg n j, Fintype.card {f : Fresh j //
+        (if l then (freshInd j (fun i : Fin (j+1) => i.1 ∈ (stf n u j p).1)
+          (fun i : Fin (j+1) => i.1 ∈ (stf n u j p).2) f).2
+        else (freshInd j (fun i : Fin (j+1) => i.1 ∈ (stf n u j p).1)
+          (fun i : Fin (j+1) => i.1 ∈ (stf n u j p).2) f).1) = true} := by
+  rw [transport_dec hn]
+  apply Finset.sum_congr rfl
+  intro p _
+  have hmR : j+1 ∉ (stf n u j p).1 := by intro h; have := stf_upper_support n u j (j+1) p false h; omega
+  have hmS : j+1 ∉ (stf n u j p).2 := by intro h; have := stf_upper_support n u j (j+1) p true h; omega
+  rw [Fintype.card_subtype, card_filter]
+  apply Finset.sum_congr rfl
+  intro f _
+  rw [stf_join hn hu, hor_join_hit hn, hor_join_hit hn]
+  simp only [step_mem_indicator (j+1) _ _ hmR hmS, freshInd]
+  split_ifs <;> rfl
+set_option maxHeartbeats 400000 in
+theorem endpoint_step {n u j : Nat} (hn : j+1 < n) (hu : u ≤ j) :
+    Fintype.card {w : Asg n (j+1) // j+1 ∈ sval true (stf n u (j+1) w)} ≤
+    Fintype.card {w : Asg n (j+1) // j+1 ∈ sval false (stf n u (j+1) w)} := by
+  have hpay := payoff_nonneg (box n) (box_closed n)
+    (fun s => (stateCount n u j s.1 s.2 : Int)) (payoff j)
+    (fun s hs hlt => by exact_mod_cast dominance n u j hu (by omega) s hs hlt)
+    (payoff_flip j) (payoff_pos j)
+  have hg := sum_by_state_int
+    (fun p : Asg n j => ((stf n u j p).1.card,(stf n u j p).2.card))
+    (box n) (sizes_mem_box n u j (by omega)) (payoff j)
+  change (∑ p : Asg n j, payoff j ((stf n u j p).1.card,(stf n u j p).2.card)) =
+    ∑ s ∈ box n, (stateCount n u j s.1 s.2 : Int) * payoff j s at hg
+  rw [← hg] at hpay
+  rw [event_count hn hu true, event_count hn hu false]
+  apply Int.ofNat_le.mp
+  rw [Nat.cast_sum, Nat.cast_sum]
+  apply sub_nonneg.mp
+  rw [← Finset.sum_sub_distrib]
+  convert hpay using 1
+  congr 1
+  funext p
+  have hr : ∀ i ∈ (stf n u j p).1, i ≤ j := fun i hi => stf_upper_support n u j i p false hi
+  have hs : ∀ i ∈ (stf n u j p).2, i ≤ j := fun i hi => stf_upper_support n u j i p true hi
+  simpa only [ite_true, Bool.false_eq_true, ite_false] using rows_payoff j _ _ hr hs
+end BunDom
+namespace Bun
+ theorem state_endpoint : ∀ (n u j : Nat), u ≤ j → j < n →
+    Fintype.card {w : Bun.Asg n j // j ∈ Bun.sval true (Bun.stf n u j w)} ≤
+    Fintype.card {w : Bun.Asg n j // j ∈ Bun.sval false (Bun.stf n u j w)} := by
+  intro n u j hu hj
+  by_cases he : j = u
+  · subst j; exact BunDom.source_inequality n u
+  · cases j with
+    | zero => omega
+    | succ j => exact BunDom.endpoint_step hj (by omega)
+end Bun
+
+===== BunFinalWindow
+/-
+# BunFinalWindow — the window factor
+
+For `n`, `j` and any predicate `P` on the `j`-window assignments `Asg n j`, the number
+of full outcomes `ω : Out n` whose window restriction `wres n j ω` satisfies `P` equals
+`2 ^ c` times the number of window assignments satisfying `P`, where `c` is the number of
+tokens outside the window (`tmax t > j`).
+
+Route: `Equiv.piEquivPiSubtypeProd` splits `Out n = Token n → Bool` into the window
+function and the off-window function; the fiber over a fixed window assignment has
+`2 ^ c` elements.  All decidability is classical.
+-/
+import BunReachBridge
+import BunDomFiber
+import Mathlib.Logic.Equiv.Prod
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.Sum
+
+namespace Bun
+
+open Classical
+
+/-- Tokens outside the `j`-window (`tmax t > j`). -/
+def outside (n j : Nat) := {t : Token n // ¬ tmax t ≤ j}
+
+noncomputable instance outsideFintype (n j : Nat) : Fintype (outside n j) := by
+  unfold outside
+  infer_instance
+
+/-- Split an outcome into its window assignment and its off-window assignment. -/
+noncomputable def outSplit (n j : Nat) :
+    Out n ≃ Asg n j × (outside n j → Bool) :=
+  Equiv.piEquivPiSubtypeProd (fun t : Token n => tmax t ≤ j) (fun _ => Bool)
+
+/-- The window component of the split is exactly `wres`. -/
+theorem outSplit_fst (n j : Nat) (ω : Out n) :
+    (outSplit n j ω).1 = wres n j ω := rfl
+
+/-- **Window factor.**  Counting full outcomes by a window predicate equals
+`2 ^ (number of off-window tokens)` times the window-assignment count. -/
+theorem window_factor (n j : Nat) (P : Asg n j → Prop) [DecidablePred P] :
+    Fintype.card {ω : Out n // P (wres n j ω)} =
+      2 ^ Fintype.card (outside n j) * Fintype.card {w : Asg n j // P w} := by
+  classical
+  have e1 : {ω : Out n // P (wres n j ω)} ≃
+      {s : Asg n j × (outside n j → Bool) // P s.1} :=
+    Equiv.subtypeEquiv (outSplit n j) (fun ω => by
+      show P (wres n j ω) ↔ P ((outSplit n j ω).1)
+      rw [outSplit_fst])
+  have e2 : {s : Asg n j × (outside n j → Bool) // P s.1} ≃
+      {w : Asg n j // P w} × (outside n j → Bool) :=
+    Equiv.prodSubtypeFstEquivSubtypeProd
+  calc Fintype.card {ω : Out n // P (wres n j ω)}
+      = Fintype.card ({w : Asg n j // P w} × (outside n j → Bool)) :=
+        Fintype.card_congr (e1.trans e2)
+    _ = Fintype.card {w : Asg n j // P w} * Fintype.card (outside n j → Bool) :=
+        Fintype.card_prod _ _
+    _ = Fintype.card {w : Asg n j // P w} * 2 ^ Fintype.card (outside n j) := by
+        rw [Fintype.card_fun, Fintype.card_bool]
+    _ = 2 ^ Fintype.card (outside n j) * Fintype.card {w : Asg n j // P w} :=
+        Nat.mul_comm _ _
+
+end Bun
+
+===== BunFinalEndpoint
+/-
+# BunFinalEndpoint — the literal bunkbed inequality for transitive tournaments (E7)
+
+`Bun.bunkbed_E7_transitive`: for every `n` and every pair of indices `u v : Fin n`, the
+number of outcomes in which `(v, true)` is reachable from `(u, false)` is at most the
+number in which `(v, false)` is.
+
+Proof.  If `v < u`, index monotonicity of `Reach` empties both events.  Otherwise
+`u ≤ v`, and `stf_reach_endpoint` identifies each event with membership of `v` in the
+corresponding component of the prefix state at window `v`.  The window factor
+(`Bun.window_factor`, module `BunFinalWindow`) rewrites both counts as
+`2 ^ (off-window tokens)` times the corresponding window-assignment counts, and
+`Bun.state_endpoint` (module `BunDomFinal`) supplies the window-level inequality.
+-/
+import BunFinalWindow
+import BunDomFinal
+import Mathlib.Data.Fintype.Card
+import Mathlib.Logic.Equiv.Basic
+
+namespace Bun
+
+open Classical
+
+open Classical in
+/-- **The bunkbed conjecture in the E7 model for transitive tournaments.** -/
+theorem bunkbed_E7_transitive (n : Nat) (u v : Fin n) :
+    Fintype.card {ω : Out n // Reach n ω (u, false) (v, true)} ≤
+    Fintype.card {ω : Out n // Reach n ω (u, false) (v, false)} := by
+  classical
+  by_cases hlt : (v : Nat) < (u : Nat)
+  · have h1 : Fintype.card {ω : Out n // Reach n ω (u, false) (v, true)} = 0 := by
+      apply Fintype.card_eq_zero_iff.mpr
+      exact ⟨fun x => reach_of_lt n x.1 u v true hlt x.2⟩
+    have h2 : Fintype.card {ω : Out n // Reach n ω (u, false) (v, false)} = 0 := by
+      apply Fintype.card_eq_zero_iff.mpr
+      exact ⟨fun x => reach_of_lt n x.1 u v false hlt x.2⟩
+    rw [h1, h2]
+  · have huv : (u : Nat) ≤ (v : Nat) := Nat.le_of_not_lt hlt
+    have hv : (v : Nat) < n := v.isLt
+    have e1 : {ω : Out n // Reach n ω (u, false) (v, true)} ≃
+        {ω : Out n // (v : Nat) ∈ sval true
+          (stf n (u : Nat) (v : Nat) (wres n (v : Nat) ω))} :=
+      Equiv.subtypeEquivRight (fun ω => (stf_reach_endpoint n u v true ω).symm)
+    have e2 : {ω : Out n // Reach n ω (u, false) (v, false)} ≃
+        {ω : Out n // (v : Nat) ∈ sval false
+          (stf n (u : Nat) (v : Nat) (wres n (v : Nat) ω))} :=
+      Equiv.subtypeEquivRight (fun ω => (stf_reach_endpoint n u v false ω).symm)
+    have h1 : Fintype.card {ω : Out n // Reach n ω (u, false) (v, true)} =
+        2 ^ Fintype.card (outside n (v : Nat)) *
+          Fintype.card {w : Asg n (v : Nat) //
+            (v : Nat) ∈ sval true (stf n (u : Nat) (v : Nat) w)} :=
+      (Fintype.card_congr e1).trans
+        (window_factor n (v : Nat)
+          (fun w => (v : Nat) ∈ sval true (stf n (u : Nat) (v : Nat) w)))
+    have h2 : Fintype.card {ω : Out n // Reach n ω (u, false) (v, false)} =
+        2 ^ Fintype.card (outside n (v : Nat)) *
+          Fintype.card {w : Asg n (v : Nat) //
+            (v : Nat) ∈ sval false (stf n (u : Nat) (v : Nat) w)} :=
+      (Fintype.card_congr e2).trans
+        (window_factor n (v : Nat)
+          (fun w => (v : Nat) ∈ sval false (stf n (u : Nat) (v : Nat) w)))
+    have hs := state_endpoint n (u : Nat) (v : Nat) huv hv
+    calc Fintype.card {ω : Out n // Reach n ω (u, false) (v, true)}
+        = 2 ^ Fintype.card (outside n (v : Nat)) *
+            Fintype.card {w : Asg n (v : Nat) //
+              (v : Nat) ∈ sval true (stf n (u : Nat) (v : Nat) w)} := h1
+      _ ≤ 2 ^ Fintype.card (outside n (v : Nat)) *
+            Fintype.card {w : Asg n (v : Nat) //
+              (v : Nat) ∈ sval false (stf n (u : Nat) (v : Nat) w)} :=
+          Nat.mul_le_mul_left (2 ^ Fintype.card (outside n (v : Nat))) hs
+      _ = Fintype.card {ω : Out n // Reach n ω (u, false) (v, false)} := h2.symm
+
+end Bun
+
+===== BunFinalModel
+/-
+# BunFinalModel — token/outcome counts and the uniform probability form
+
+* `Bun.card_token : Fintype.card (Bun.Token n) = n * n` — the model has `n(n-1)`
+  horizontal tokens (two layers per transitive arc) plus `n` bidirectional vertical
+  tokens, i.e. the source's `n(n-1) + n` tokens.
+* `Bun.card_out : Fintype.card (Bun.Out n) = 2 ^ (n * n)` — the outcome space is the
+  uniform Boolean cube on those tokens.
+* `Bun.prob_layer_true_le_false` — the probability form of the bunkbed inequality:
+  both layer counts divided by `2 ^ (n * n)` satisfy the inequality.
+-/
+import BunFinalEndpoint
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.Sum
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Data.Nat.Cast.Order.Basic
+import Mathlib.Algebra.Order.Field.Rat
+import Mathlib.Algebra.Order.GroupWithZero.Basic
+
+namespace Bun
+
+open Classical
+
+/-- Strict ordered pairs of indices are the sigma of lower indices. -/
+noncomputable def pairLtEquiv (n : Nat) :
+    {p : Fin n × Fin n // (p.1 : Nat) < (p.2 : Nat)} ≃ Σ j : Fin n, Fin (j : Nat) where
+  toFun p := ⟨p.1.2, ⟨p.1.1, p.2⟩⟩
+  invFun s := ⟨(⟨s.2.val, s.2.isLt.trans s.1.isLt⟩, s.1), s.2.isLt⟩
+  left_inv p := by
+    obtain ⟨⟨i, j⟩, h⟩ := p
+    rfl
+  right_inv s := by
+    obtain ⟨j, i⟩ := s
+    rfl
+
+/-- The number of ordered pairs `i < j` is `∑_{i<n} i`. -/
+theorem card_pairLt (n : Nat) :
+    Fintype.card {p : Fin n × Fin n // (p.1 : Nat) < (p.2 : Nat)} =
+      ∑ i ∈ Finset.range n, i := by
+  rw [Fintype.card_congr (pairLtEquiv n), Fintype.card_sigma]
+  simp only [Fintype.card_fin]
+  rw [Fin.sum_univ_eq_sum_range (fun i => i) n]
+
+/-- Two layers per transitive arc: `n(n-1)` horizontal tokens. -/
+theorem card_htoken (n : Nat) : Fintype.card (HToken n) = n * (n - 1) := by
+  rw [Fintype.card_congr (htokenEquiv n), Fintype.card_prod, Fintype.card_bool,
+    card_pairLt, Finset.sum_range_id_mul_two]
+
+/-- **Token count.**  `n(n-1)` horizontal tokens plus `n` vertical tokens. -/
+theorem card_token (n : Nat) : Fintype.card (Token n) = n * n := by
+  change Fintype.card (HToken n ⊕ Fin n) = n * n
+  rw [Fintype.card_sum, card_htoken, Fintype.card_fin]
+  cases n with
+  | zero => simp
+  | succ m =>
+      rw [Nat.succ_sub_one, Nat.mul_succ]
+
+/-- **Outcome count.**  The uniform Boolean cube on `n * n` tokens. -/
+theorem card_out (n : Nat) : Fintype.card (Out n) = 2 ^ (n * n) := by
+  classical
+  change Fintype.card (Token n → Bool) = 2 ^ (n * n)
+  rw [Fintype.card_fun, Fintype.card_bool, card_token]
+
+/-- **Probability form** of the bunkbed inequality in the uniform model:
+the true-layer probability is at most the false-layer probability. -/
+theorem prob_layer_true_le_false (n : Nat) (u v : Fin n) :
+    ((Fintype.card {ω : Out n // Reach n ω (u, false) (v, true)} : ℚ) / 2 ^ (n * n)) ≤
+    ((Fintype.card {ω : Out n // Reach n ω (u, false) (v, false)} : ℚ) / 2 ^ (n * n)) := by
+  classical
+  have h := bunkbed_E7_transitive n u v
+  have hq : ((Fintype.card {ω : Out n // Reach n ω (u, false) (v, true)} : ℚ)) ≤
+      ((Fintype.card {ω : Out n // Reach n ω (u, false) (v, false)} : ℚ)) := by
+    exact_mod_cast h
+  have hpos : (0 : ℚ) < 2 ^ (n * n) := by positivity
+  exact (div_le_div_iff_of_pos_right hpos).mpr hq
+
+end Bun
+

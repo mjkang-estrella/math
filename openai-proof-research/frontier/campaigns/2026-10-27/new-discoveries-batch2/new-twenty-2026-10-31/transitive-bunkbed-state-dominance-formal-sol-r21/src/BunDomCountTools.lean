@@ -1,0 +1,12 @@
+import BunDomFiber
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+#check Equiv.piEquivPiSubtypeProd
+#check Equiv.sumArrowEquivProdArrow
+#check Fintype.card_fun
+#check Fintype.card_subtype_compl
+#check Finset.sum_boole
+#check Finset.sum_ite_irrel
+#check Finset.sum_ite
+#check Finset.card_eq_sum_ones
+#check Finset.card_filter
+#check Fintype.card_subtype_iff

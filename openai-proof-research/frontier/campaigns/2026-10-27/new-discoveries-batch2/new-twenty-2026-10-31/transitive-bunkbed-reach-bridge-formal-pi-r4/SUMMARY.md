@@ -1,0 +1,1 @@
+PARTIAL382297. Five source modules inherited; literal Reach↔state not yet proved. Independent ordinary review rejected flip/equality shortcut and both-full diagonal claim. Immediate Pi task actual semantic bridge only; counts/endpoint remain unpaid.0credit,52/60.

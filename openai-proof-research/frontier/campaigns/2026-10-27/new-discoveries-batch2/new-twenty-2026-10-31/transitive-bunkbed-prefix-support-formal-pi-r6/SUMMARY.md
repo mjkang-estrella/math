@@ -1,0 +1,1 @@
+PARTIAL382297. Actual hor witness iff strict compiled in r5; source/log/olean matched. No new r6 compile yet. Next support/stability/indicator helper milestone, literal Reach/count/endpoint unpaid.0credit;52/60.

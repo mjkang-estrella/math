@@ -1,0 +1,464 @@
+===== BunDomEndpoint
+import BunDomFiber
+import BunOldStable
+namespace BunDom
+open Bun Classical
+
+theorem stf_at_source (n u : Nat) (w : Asg n u) : stf n u u w = startST n u w := by
+  cases u with
+  | zero => simp [stf]
+  | succ j => simp [stf]
+
+theorem source_bottom_mem (n u : Nat) (w : Asg n u) :
+    u ∈ sval false (stf n u u w) := by
+  rw [stf_at_source]
+  simp [sval, startST]
+
+theorem source_inequality (n u : Nat) :
+    Fintype.card {w : Asg n u // u ∈ sval true (stf n u u w)} ≤
+      Fintype.card {w : Asg n u // u ∈ sval false (stf n u u w)} := by
+  apply Fintype.card_le_of_injective
+    (fun w => (⟨w.1, source_bottom_mem n u w.1⟩ :
+      {w : Asg n u // u ∈ sval false (stf n u u w)}))
+  intro a b h
+  apply Subtype.ext
+  exact congrArg (fun w : {w : Asg n u // u ∈ sval false (stf n u u w)} => w.1) h
+end BunDom
+
+===== BunDomZero
+import BunDomPins
+namespace BunDom
+open Classical
+
+noncomputable def zeroFreshEquiv (j : Nat) (P : Fin (j+1) × Bool → Prop) :
+    {f : Fresh j // ∀ i l, P (i,l) → f.1 i l = false} ≃
+      (({x : Fin (j+1) × Bool // ¬ P x} → Bool) × Bool) where
+  toFun f := (fun x => f.1.1 x.1.1 x.1.2, f.1.2)
+  invFun g := ⟨(fun i l => if h : P (i,l) then false else g.1 ⟨(i,l),h⟩, g.2),
+    by intro i l h; simp [h]⟩
+  left_inv f := by
+    apply Subtype.ext
+    apply Prod.ext
+    · funext i l
+      by_cases h : P (i,l)
+      · simp [h, f.2 i l h]
+      · simp [h]
+    · rfl
+  right_inv g := by
+    apply Prod.ext
+    · funext x
+      rcases x with ⟨⟨i,l⟩,hx⟩
+      simp [hx]
+    · rfl
+
+theorem zero_fresh_card (j : Nat) (P : Fin (j+1) × Bool → Prop) :
+    Fintype.card {f : Fresh j // ∀ i l, P (i,l) → f.1 i l = false} =
+      2 ^ (2*j+2 - Fintype.card {x : Fin (j+1) × Bool // P x}) * 2 := by
+  rw [Fintype.card_congr (zeroFreshEquiv j P)]
+  simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_bool,
+    Fintype.card_subtype_compl, Fintype.card_fin]
+  congr 2
+  omega
+end BunDom
+
+===== BunNewIndicators
+/-
+# Bunkbed E7 (r19): direct new-index indicator identities
+
+The two direct new-index membership equivalences for the active branch of the
+prefix recurrence `Bun.stf`.  For every `n u j : Nat`, every assignment
+`w : Asg n (j+1)` with `u < j+1` and `j+1 < n`, writing
+
+* `p := stf n u j (res n j w)` (the previous level),
+* `x := hor (m := j+1) hjn p.1 false w` (horizontal entry into layer 0),
+* `y := hor (m := j+1) hjn p.2 true w` (horizontal entry into layer 1),
+* `z := w (fresV (n := n) (m := j+1) hjn)` (the vertical bit),
+
+the level-`(j+1)` state of the existing unchanged `Bun.stf` satisfies
+
+* `j+1 ∈ (stf n u (j+1) w).1 ↔ x = true ∨ (z = true ∧ y = true)`,
+* `j+1 ∈ (stf n u (j+1) w).2 ↔ y = true ∨ (z = true ∧ x = true)`.
+
+Mechanism: on the active branch the recursion is exactly `stepU`, whose
+components are `if (ind x y z).i then insert (j+1) _ else _`; the new index
+enters exactly when the corresponding indicator is true (self membership in an
+insert; absence from the previous level's component by the paid r9 upper-support
+theorem `stf_upper_support`, since every old element is `≤ j`).  The direct
+indicator forms are pure Boolean case splits; the coupled `ind_fst`/`ind_snd`
+characterizations are not used.  No old-index stability is reproved and no
+`Reach` is expanded; below-source, reset and out-of-range branches are not
+claimed here.
+-/
+import BunOldStable
+import BunUpperSupport
+import BunState
+
+namespace Bun
+
+/-- Direct first-component form of the exact new-index indicator:
+`(ind x y z).1 = true ↔ x = true ∨ (z = true ∧ y = true)` — the pure Boolean
+core of the direct recurrence, by ordinary kernel cases on the three bits. -/
+theorem ind_fst_direct (x y z : Bool) :
+    (ind x y z).1 = true ↔ x = true ∨ (z = true ∧ y = true) := by
+  cases x <;> cases y <;> cases z <;> simp [ind]
+
+/-- Direct second-component form: `(ind x y z).2 = true ↔ y = true ∨ (z = true ∧ x = true)`. -/
+theorem ind_snd_direct (x y z : Bool) :
+    (ind x y z).2 = true ↔ y = true ∨ (z = true ∧ x = true) := by
+  cases x <;> cases y <;> cases z <;> simp [ind]
+
+/-- The moved index belongs to a one-sided conditional update exactly when the
+indicator fires: `m ∈ (if c then insert m T else T) ↔ c = true ∨ m ∈ T`. -/
+theorem mem_update_self {m : Nat} {T : Finset Nat} (c : Bool) :
+    m ∈ (if c then insert m T else T) ↔ (c = true ∨ m ∈ T) := by
+  cases c <;> simp
+
+/-- First component of the pure new-index update: the new index `m` enters
+exactly through the first indicator, given it is absent from the carried set. -/
+theorem stepU_new_mem_fst (m : Nat) (R S : Finset Nat) (x y z : Bool)
+    (hmR : ¬ (m ∈ R)) :
+    m ∈ (stepU m R S x y z).1 ↔ x = true ∨ (z = true ∧ y = true) := by
+  have h1 : (stepU m R S x y z).1 = if (ind x y z).1 then insert m R else R := rfl
+  rw [h1, mem_update_self]
+  have hRf : m ∈ R ↔ False := ⟨fun h => absurd h hmR, fun h => False.elim h⟩
+  rw [hRf, or_false]
+  exact ind_fst_direct x y z
+
+/-- Second component of the pure new-index update: the new index `m` enters
+exactly through the second indicator, given it is absent from the carried set. -/
+theorem stepU_new_mem_snd (m : Nat) (R S : Finset Nat) (x y z : Bool)
+    (hmS : ¬ (m ∈ S)) :
+    m ∈ (stepU m R S x y z).2 ↔ y = true ∨ (z = true ∧ x = true) := by
+  have h2 : (stepU m R S x y z).2 = if (ind x y z).2 then insert m S else S := rfl
+  rw [h2, mem_update_self]
+  have hSf : m ∈ S ↔ False := ⟨fun h => absurd h hmS, fun h => False.elim h⟩
+  rw [hSf, or_false]
+  exact ind_snd_direct x y z
+
+/-- **Direct new-index identity, first component** (the task target): for the
+actual active branch `u < j+1 < n` of the prefix recurrence, the new index
+`j+1` lies in the first component of `stf n u (j+1) w` exactly when the
+horizontal layer-0 entry fires, or the vertical bit fires together with the
+horizontal layer-1 entry.  No membership, conclusion-bearing or proxy
+assumption beyond `hu` and `hjn`; the absence of `j+1` from the previous level
+is derived from the paid upper-support theorem. -/
+theorem stf_new_mem_fst_iff (n u j : Nat) (w : Asg n (j+1))
+    (hu : u < j + 1) (hjn : j + 1 < n) :
+    j + 1 ∈ (stf n u (j+1) w).1 ↔
+      hor (m := j+1) hjn (stf n u j (res n j w)).1 false w = true ∨
+      (w (fresV (n := n) (m := j+1) hjn) = true ∧
+        hor (m := j+1) hjn (stf n u j (res n j w)).2 true w = true) := by
+  have hu' : ¬ (j + 1 < u) := by omega
+  have heq' : ¬ (j + 1 = u) := by omega
+  have hC : stf n u (j+1) w =
+      stepU (j+1) (stf n u j (res n j w)).1 (stf n u j (res n j w)).2
+        (hor (m := j+1) hjn (stf n u j (res n j w)).1 false w)
+        (hor (m := j+1) hjn (stf n u j (res n j w)).2 true w)
+        (w (fresV (n := n) (m := j+1) hjn)) := by
+    simp only [stf]
+    rw [dite_eq_right hu', dite_eq_right heq', dite_eq_left hjn]
+  rw [hC]
+  have hsupF : ¬ (j + 1 ∈ (stf n u j (res n j w)).1) := by
+    intro hmem
+    have hle : j + 1 ≤ j := stf_upper_support n u j (j+1) (res n j w) false hmem
+    omega
+  exact stepU_new_mem_fst (j+1) _ _ _ _ _ hsupF
+
+/-- **Direct new-index identity, second component** (the task target): mirror
+of `stf_new_mem_fst_iff` with the two horizontal layers exchanged. -/
+theorem stf_new_mem_snd_iff (n u j : Nat) (w : Asg n (j+1))
+    (hu : u < j + 1) (hjn : j + 1 < n) :
+    j + 1 ∈ (stf n u (j+1) w).2 ↔
+      hor (m := j+1) hjn (stf n u j (res n j w)).2 true w = true ∨
+      (w (fresV (n := n) (m := j+1) hjn) = true ∧
+        hor (m := j+1) hjn (stf n u j (res n j w)).1 false w = true) := by
+  have hu' : ¬ (j + 1 < u) := by omega
+  have heq' : ¬ (j + 1 = u) := by omega
+  have hC : stf n u (j+1) w =
+      stepU (j+1) (stf n u j (res n j w)).1 (stf n u j (res n j w)).2
+        (hor (m := j+1) hjn (stf n u j (res n j w)).1 false w)
+        (hor (m := j+1) hjn (stf n u j (res n j w)).2 true w)
+        (w (fresV (n := n) (m := j+1) hjn)) := by
+    simp only [stf]
+    rw [dite_eq_right hu', dite_eq_right heq', dite_eq_left hjn]
+  rw [hC]
+  have hsupS : ¬ (j + 1 ∈ (stf n u j (res n j w)).2) := by
+    intro hmem
+    have hle : j + 1 ≤ j := stf_upper_support n u j (j+1) (res n j w) true hmem
+    omega
+  exact stepU_new_mem_snd (j+1) _ _ _ _ _ hsupS
+
+end Bun
+
+===== BunDomRecursion
+import BunDomFiber
+import BunNewIndicators
+import BunHorWitness
+import Mathlib.Algebra.BigOperators.Finprod
+namespace BunDom
+open Bun Classical Finset
+
+theorem res_join {n j : Nat} (hn : j+1 < n) (p : Asg n j) (f : Fresh j) :
+    res n j (join (p,f)) = p := congrArg Prod.fst (split_join hn (p,f))
+
+theorem hor_join {n j : Nat} (hn : j+1 < n) (p : Asg n j) (f : Fresh j)
+    (R : Finset Nat) (l : Bool) :
+    hor hn R l (join (p,f)) = true ↔
+      ∃ i : Fin (j+1), i.1 ∈ R ∧ f.1 i l = true := by
+  rw [hor_iff]
+  constructor
+  · rintro ⟨k,hk,hR,hw⟩
+    refine ⟨⟨k,hk⟩,hR,?_⟩
+    simpa [join, fresH, tmax, htok] using hw
+  · rintro ⟨i,hR,hw⟩
+    refine ⟨i.1,i.2,hR,?_⟩
+    simpa [join, fresH, tmax, htok] using hw
+
+theorem stf_join {n u j : Nat} (hn : j+1 < n) (hu : u ≤ j)
+    (p : Asg n j) (f : Fresh j) :
+    stf n u (j+1) (join (p,f)) =
+      stepU (j+1) (stf n u j p).1 (stf n u j p).2
+        (hor hn (stf n u j p).1 false (join (p,f)))
+        (hor hn (stf n u j p).2 true (join (p,f))) f.2 := by
+  have hlt : ¬ j+1 < u := by omega
+  have heq : ¬ j+1 = u := by omega
+  simp only [stf, dite_eq_right hlt, dite_eq_right heq, dite_eq_left hn]
+  rw [res_join hn]
+  congr 1
+  simp [join, fresV, tmax]
+
+noncomputable def stateCount (n u j a b : Nat) : Nat :=
+  Fintype.card {w : Asg n j // ((stf n u j w).1.card, (stf n u j w).2.card) = (a,b)}
+
+
+theorem count_transport {n j : Nat} (hn : j+1 < n) (P : Asg n (j+1) → Prop) :
+    Fintype.card {w // P w} =
+      ∑ p : Asg n j, ∑ f : Fresh j, if P (join (p,f)) then 1 else 0 := by
+  rw [Fintype.card_subtype, Finset.card_filter]
+  rw [Fintype.sum_equiv (assignmentEquiv hn)
+    (fun w => if P w then 1 else 0)
+    (fun q => if P (join q) then 1 else 0)
+    (fun w => by change (if P w then 1 else 0) = if P (join (split hn w)) then 1 else 0; rw [join_split hn])]
+  exact Fintype.sum_prod_type _
+
+theorem sum_transport {n j : Nat} (hn : j+1 < n) (H : Asg n (j+1) → Nat) :
+    (∑ w, H w) = ∑ p : Asg n j, ∑ f : Fresh j, H (join (p,f)) := by
+  rw [Fintype.sum_equiv (assignmentEquiv hn) H (fun q => H (join q))
+    (fun w => by change H w = H (join (split hn w)); rw [join_split hn])]
+  exact Fintype.sum_prod_type _
+end BunDom
+
+===== BunReachSupport
+/-
+# Bunkbed E7 (r20): the literal Reach/state membership bridge
+
+Main theorem `Bun.stf_reach_strong`: for `j < n`, a full outcome `ω`, a vertex
+`i : Fin n` and a layer `σ`, membership of `i.val` in the layer-`σ` component of
+the prefix state `stf n u.val j (wres n j ω)` is equivalent to
+`u.val ≤ i.val ∧ i.val ≤ j ∧ Reach n ω (u,false) (i,σ)`.
+
+The proof is the joint prefix induction prescribed by the review: state→Reach
+uses the closed indicator forms `X ∨ (Z ∧ Y)` / `Y ∨ (Z ∧ X)`; Reach→state uses
+an inner `ReflTransGen` derivation induction for endpoints at the new index
+`j+1`, where a final vertical arc consumes the shorter derivation's
+opposite-layer membership through the coupled `ind` equations.  No cyclic
+rewriting of `reach_char` is used.
+-/
+import BunkbedBase
+import BunState
+import BunBridge
+import BunReach
+import BunOldStable
+import BunNewIndicators
+import BunHorWitness
+import BunUpperSupport
+import BunLowerSupport
+
+namespace Bun
+
+/-! ### Token transport -/
+
+/-- Horizontal tokens are equal when the underlying index values agree. -/
+theorem htok_congr {n : Nat} {i i' j j' : Fin n}
+    (hi : (i : Nat) = (i' : Nat)) (hj : (j : Nat) = (j' : Nat))
+    (h : (i : Nat) < (j : Nat)) (h' : (i' : Nat) < (j' : Nat)) (l : Bool) :
+    htok i j h l = htok i' j' h' l := by
+  have hii : i = i' := Fin.ext hi
+  have hjj : j = j' := Fin.ext hj
+  subst hii
+  subst hjj
+  rfl
+
+/-- Window value of a fresh horizontal token, in outcome form. -/
+theorem wres_fresH {n m : Nat} (hm : m < n) (ω : Out n) (i : Nat) (hic : i < m) (l : Bool) :
+    wres n m ω (fresH hm i hic l) =
+      ω (htok ⟨i, Nat.lt_trans hic hm⟩ ⟨m, hm⟩ hic l) := by
+  unfold wres fresH
+  congr 1
+
+/-- Window value of the fresh vertical token, in outcome form. -/
+theorem wres_fresV {n m : Nat} (hm : m < n) (ω : Out n) :
+    wres n m ω (fresV (n := n) (m := m) hm) = ω (vtok ⟨m, hm⟩) := rfl
+
+theorem fresV_congr {n m : Nat} (h1 h2 : m < n) :
+    fresV (n := n) (m := m) h1 = fresV (n := n) (m := m) h2 := by
+  have h : (⟨m, h1⟩ : Fin n) = ⟨m, h2⟩ := Fin.ext rfl
+  exact Subtype.ext (congrArg Sum.inr h)
+
+theorem fresV_bit_congr {n m : Nat} (w : Asg n m) (h1 h2 : m < n) :
+    w (fresV (n := n) (m := m) h1) = w (fresV (n := n) (m := m) h2) := by
+  rw [fresV_congr h1 h2]
+
+/-! ### Start-state membership -/
+
+theorem startST_mem_fst (n j : Nat) (w : Asg n j) (k : Nat) :
+    k ∈ (startST n j w).1 ↔ k = j := by
+  simp [startST]
+
+theorem startST_mem_snd (n j : Nat) (w : Asg n j) (k : Nat) :
+    k ∈ (startST n j w).2 ↔ (k = j ∧ ∃ hj : j < n, w (fresV (n := n) (m := j) hj) = true) := by
+  unfold startST
+  split
+  · rename_i hj
+    by_cases hbit : w (fresV (n := n) (m := j) hj) = true
+    · rw [ite_eq_left hbit]
+      constructor
+      · intro h
+        rcases Finset.mem_insert.1 h with hk | hk
+        · exact ⟨hk, ⟨hj, hbit⟩⟩
+        · exact absurd hk (Finset.notMem_empty k)
+      · intro h; exact Finset.mem_insert.2 (Or.inl h.1)
+    · rw [ite_eq_right hbit]
+      constructor
+      · intro h; exact absurd h (Finset.notMem_empty k)
+      · rintro ⟨-, hj', hbit'⟩
+        have hh := fresV_bit_congr w hj' hj
+        rw [hh] at hbit'
+        exact absurd hbit' hbit
+  · rename_i hn
+    constructor
+    · intro h; exact absurd h (Finset.notMem_empty k)
+    · rintro ⟨-, hj, -⟩
+      exact absurd hj hn
+
+theorem startST_mem (n j : Nat) (w : Asg n j) (k : Nat) (σ : Bool) :
+    k ∈ sval σ (startST n j w) ↔
+      (k = j ∧ (σ = false ∨ (σ = true ∧ ∃ hj : j < n, w (fresV (n := n) (m := j) hj) = true))) := by
+  cases σ with
+  | false =>
+      have hs : sval false (startST n j w) = (startST n j w).1 := rfl
+      rw [hs, startST_mem_fst]
+      simp
+  | true =>
+      have hs : sval true (startST n j w) = (startST n j w).2 := rfl
+      rw [hs, startST_mem_snd]
+      simp
+
+/-! ### Same-index reachability -/
+
+/-- Reachability between the two copies of one index: reflexivity gives the
+same layer, and the opposite layer is reachable exactly when the single shared
+vertical token is retained. -/
+theorem reach_same_index (n : Nat) (ω : Out n) (u : Fin n) (σ : Bool) :
+    Reach n ω (u, false) (u, σ) ↔ (σ = false ∨ ω (vtok u) = true) := by
+  constructor
+  · intro h
+    have key : ∀ b : Vert n, Reach n ω (u, false) b → (b.1 : Nat) = (u : Nat) →
+        (b = (u, false) ∨ ω (vtok u) = true) := by
+      intro b hb
+      induction hb with
+      | refl => intro _; exact Or.inl rfl
+      | @tail b c h1 h2 ih =>
+          intro hc
+          have hb1 : (b.1 : Nat) = (u : Nat) := by
+            have h1le : (u : Nat) ≤ (b.1 : Nat) := reach_ge h1
+            have h2le : (b.1 : Nat) ≤ (c.1 : Nat) := arc_fst_le h2
+            omega
+          rcases ih hb1 with hbe | hvt
+          · subst hbe
+            rcases arc_cases h2 with ⟨hce, hlt, hbit⟩ | ⟨hce, hne, hbit⟩
+            · exfalso
+              omega
+            · exact Or.inr hbit
+          · exact Or.inr hvt
+    rcases key (u, σ) h rfl with h | h
+    · have hσ : σ = false := by
+        have := congrArg Prod.snd h
+        simpa using this
+      exact Or.inl hσ
+    · exact Or.inr h
+  · rintro (hσ | hvt)
+    · subst hσ
+      exact Relation.ReflTransGen.refl
+    · cases σ with
+      | false => exact Relation.ReflTransGen.refl
+      | true => exact Relation.ReflTransGen.single (arc_vert (l := false) hvt)
+
+/-! ### New-index indicator membership -/
+
+theorem stepU_new_ind_fst (m : Nat) (R S : Finset Nat) (x y z : Bool) (hmR : ¬ m ∈ R) :
+    m ∈ (stepU m R S x y z).1 ↔ (ind x y z).1 = true := by
+  have h1 : (stepU m R S x y z).1 = if (ind x y z).1 then insert m R else R := rfl
+  rw [h1, mem_update_self]
+  constructor
+  · rintro (h | h)
+    · exact h
+    · exact absurd h hmR
+  · intro h; exact Or.inl h
+
+theorem stepU_new_ind_snd (m : Nat) (R S : Finset Nat) (x y z : Bool) (hmS : ¬ m ∈ S) :
+    m ∈ (stepU m R S x y z).2 ↔ (ind x y z).2 = true := by
+  have h2 : (stepU m R S x y z).2 = if (ind x y z).2 then insert m S else S := rfl
+  rw [h2, mem_update_self]
+  constructor
+  · rintro (h | h)
+    · exact h
+    · exact absurd h hmS
+  · intro h; exact Or.inl h
+
+end Bun
+
+===== BunDomRows
+import BunDomPins
+import BunDomZero
+import BunDomRecursion
+namespace BunDom
+open Classical Bun
+variable {α : Type} [Fintype α]
+noncomputable def hit (P : α → Prop) (f : α → Bool) : Bool :=
+  decide (∃ a, P a ∧ f a = true)
+noncomputable def rowCount (P : α → Prop) (x : Bool) : Nat :=
+  if x then 2 ^ Fintype.card α - 2 ^ (Fintype.card α - Fintype.card {a // P a})
+  else 2 ^ (Fintype.card α - Fintype.card {a // P a})
+theorem hit_false (P : α → Prop) (f : α → Bool) :
+    hit P f = false ↔ ∀ a, P a → f a = false := by
+  simp only [hit, decide_eq_false_iff_not, not_exists, not_and]
+  constructor
+  · intro h a ha; simpa using h a ha
+  · intro h a ha; simp [h a ha]
+theorem hit_card_eq (P : α → Prop) (x : Bool) :
+    Fintype.card {f : α → Bool // hit P f = x} = rowCount P x := by
+  cases x
+  · exact (Fintype.card_congr (Equiv.subtypeEquivRight (hit_false P))).trans (pin_card P)
+  · exact (Fintype.card_congr (Equiv.subtypeEquivRight (fun f => by simp [hit]))).trans (hit_card P)
+noncomputable local instance (j : Nat) : DecidableEq (Fin (j+1)) := Classical.decEq _
+noncomputable def rowsEquiv (j : Nat) (P Q : Fin (j+1) → Prop) (x y z : Bool) :
+    {f : Fresh j // hit P (fun i => f.1 i false) = x ∧
+      hit Q (fun i => f.1 i true) = y ∧ f.2 = z} ≃
+    ({r : Fin (j+1) → Bool // hit P r = x} ×
+      {r : Fin (j+1) → Bool // hit Q r = y}) where
+  toFun f := (⟨_, f.2.1⟩, ⟨_, f.2.2.1⟩)
+  invFun r := ⟨(fun i l => if l then r.2.1 i else r.1.1 i, z), by simp [r.1.2, r.2.2]⟩
+  left_inv f := by
+    apply Subtype.ext
+    apply Prod.ext
+    · funext i l; cases l <;> rfl
+    · exact f.2.2.2.symm
+  right_inv r := by apply Prod.ext <;> apply Subtype.ext <;> rfl
+ theorem rows_card (j : Nat) (P Q : Fin (j+1) → Prop) (x y z : Bool) :
+    Fintype.card {f : Fresh j // hit P (fun i => f.1 i false) = x ∧
+      hit Q (fun i => f.1 i true) = y ∧ f.2 = z} = rowCount P x * rowCount Q y := by
+  rw [Fintype.card_congr (rowsEquiv j P Q x y z), Fintype.card_prod]
+  exact congrArg₂ (fun a b : Nat => a*b) (hit_card_eq P x) (hit_card_eq Q y)
+end BunDom
+

@@ -1,0 +1,564 @@
+===== BunStartSupport
+/-
+# Bunkbed start-state support (r14)
+
+Pure base-state fact for the exact start state of `BunState`: for every `n j k`,
+every window assignment `w : Asg n j` and every layer bit `sigma`, any index in
+`k ∈ sval sigma (startST n j w)` must equal `j`.  The first component is the
+singleton `{j}`; the second is `{j}` or empty according to the vertical bit
+when `j < n`, and empty otherwise.  No recursive machinery here.
+-/
+import BunState
+
+namespace Bun
+
+/-- All indices appearing in either layer of `startST n j w` are `j`. -/
+theorem startST_support (n j k : Nat) (w : Asg n j) (σ : Bool)
+    (h : k ∈ sval σ (startST n j w)) : k = j := by
+  cases σ with
+  | false => simpa [sval, startST] using h
+  | true =>
+    simp only [sval, startST, reduceIte] at h
+    split at h
+    · split at h
+      · simpa using h
+      · exact absurd h (Finset.notMem_empty _)
+    · exact absurd h (Finset.notMem_empty _)
+
+end Bun
+
+===== BunStepLower
+import BunState
+
+namespace Bun
+
+theorem stepU_lower_closed (m u k : Nat) (R S : Finset Nat) (x y z : Bool) (sigma : Bool)
+    (hR : ∀ a ∈ R, u ≤ a) (hS : ∀ a ∈ S, u ≤ a) (hm : u ≤ m)
+    (hk : k ∈ sval sigma (stepU m R S x y z)) : u ≤ k := by
+  have h0 : sval sigma (stepU m R S x y z)
+      = if sigma then (stepU m R S x y z).2 else (stepU m R S x y z).1 := rfl
+  rw [h0] at hk
+  split at hk
+  · have hk2 : k ∈ (if (ind x y z).2 then insert m S else S) := hk
+    split at hk2
+    · rcases Finset.mem_insert.1 hk2 with rfl | hk2
+      · exact hm
+      · exact hS _ hk2
+    · exact hS _ hk2
+  · have hk1 : k ∈ (if (ind x y z).1 then insert m R else R) := hk
+    split at hk1
+    · rcases Finset.mem_insert.1 hk1 with rfl | hk1
+      · exact hm
+      · exact hR _ hk1
+    · exact hR _ hk1
+
+end Bun
+
+===== BunStepOld
+import BunState
+
+namespace Bun
+
+/-- Membership transfer through one component of the pure new-index update:
+an old index `k ≠ m` lies in `if c then insert m T else T` exactly when it lies
+in `T`, for either truth value of the indicator `c`. -/
+theorem mem_stepU_component (k m : Nat) (T : Finset Nat) (c : Bool) (hkm : k ≠ m) :
+    k ∈ (if c then insert m T else T) ↔ k ∈ T := by
+  cases c
+  · exact Iff.rfl
+  · constructor
+    · intro h
+      have h' : k ∈ insert m T := h
+      rcases Finset.mem_insert.1 h' with he | hk'
+      · exact absurd he hkm
+      · exact hk'
+    · exact fun h => Finset.mem_insert.2 (Or.inr h)
+
+/-- The actual `stepU` update preserves membership of every old index `k ≠ m`
+in the layer `σ` selector of the state: both indicator truth values and both
+layers are covered, with no finiteness or enumeration assumptions. -/
+theorem stepU_old_mem_iff (m k : Nat) (R S : Finset Nat) (x y z σ : Bool) (hkm : k ≠ m) :
+    k ∈ sval σ (stepU m R S x y z) ↔ k ∈ sval σ (R, S) := by
+  have h1 : (stepU m R S x y z).2
+      = if (ind x y z).2 then insert m S else S := rfl
+  have h2 : (stepU m R S x y z).1
+      = if (ind x y z).1 then insert m R else R := rfl
+  have key1 : k ∈ (stepU m R S x y z).1 ↔ k ∈ R := by
+    rw [h2]
+    exact mem_stepU_component k m R (ind x y z).1 hkm
+  have key2 : k ∈ (stepU m R S x y z).2 ↔ k ∈ S := by
+    rw [h1]
+    exact mem_stepU_component k m S (ind x y z).2 hkm
+  cases σ
+  · have e1 : sval false (stepU m R S x y z) = (stepU m R S x y z).1 := rfl
+    have e2 : sval false (R, S) = R := rfl
+    rw [e1, e2]
+    exact key1
+  · have e1 : sval true (stepU m R S x y z) = (stepU m R S x y z).2 := rfl
+    have e2 : sval true (R, S) = S := rfl
+    rw [e1, e2]
+    exact key2
+
+end Bun
+
+#print axioms Bun.mem_stepU_component
+#print axioms Bun.stepU_old_mem_iff
+
+===== BunUpperSupport
+/-
+# Bunkbed E7 (r9): upper support of the prefix state
+
+Theorem `stf_upper_support` (the single target of this task): for the existing,
+unchanged `Bun.stf` and `Bun.sval`, arbitrary `n u j k : Nat`, `w : Asg n j` and
+`sigma : Bool`, `k ∈ sval sigma (stf n u j w)` implies `k ≤ j`.
+
+Mechanism: both components of `stf n u j w` are subsets of `Finset.range (j+1)`
+(induction on `j`; `startST` contributes only the index `j` itself, `stepU`
+either keeps a component or inserts `j+1`), and `sval` only selects one of the
+two components.
+-/
+import BunState
+
+namespace Bun
+
+/-- Both components of `startST n j w` are contained in `Finset.range (j+1)`. -/
+theorem startST_parts_range (n j : Nat) (w : Asg n j) :
+    (startST n j w).1 ⊆ Finset.range (j + 1) ∧ (startST n j w).2 ⊆ Finset.range (j + 1) := by
+  have h1 : (startST n j w).1 = insert j ∅ := rfl
+  have h2 : (startST n j w).2 =
+      if hj : j < n then (if w (fresV (n := n) (m := j) hj) then insert j ∅ else ∅) else ∅ := rfl
+  rw [h1, h2]
+  constructor
+  · intro k hk
+    rcases Finset.mem_insert.1 hk with h | h
+    · exact Finset.mem_range.2 (by omega)
+    · simp at h
+  · intro k hk
+    split at hk
+    · split at hk
+      · rcases Finset.mem_insert.1 hk with h | h
+        · exact Finset.mem_range.2 (by omega)
+        · simp at h
+      · simp at hk
+    · simp at hk
+
+/-- Both components of the prefix state `stf n u j w` are contained in
+`Finset.range (j+1)`, i.e. every index occurring in them is `≤ j`. -/
+theorem stf_parts_range (n u : Nat) : ∀ (j : Nat) (w : Asg n j),
+    (stf n u j w).1 ⊆ Finset.range (j + 1) ∧ (stf n u j w).2 ⊆ Finset.range (j + 1) := by
+  intro j
+  induction j with
+  | zero =>
+    intro w
+    refine ⟨?_, ?_⟩
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · exact (startST_parts_range n 0 w).1 hk
+      · simp at hk
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · exact (startST_parts_range n 0 w).2 hk
+      · simp at hk
+  | succ j ih =>
+    intro w
+    have hP := ih (res n j w)
+    refine ⟨?_, ?_⟩
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · simp at hk
+      · rename_i h1
+        split at hk
+        · exact (startST_parts_range n (j + 1) w).1 hk
+        · rename_i h2
+          have hule : u ≤ j := by omega
+          split at hk
+          · simp only [stepU] at hk
+            split at hk
+            · rcases Finset.mem_insert.1 hk with h | h
+              · exact Finset.mem_range.2 (by omega)
+              · have hlt := Finset.mem_range.1 (hP.1 h)
+                exact Finset.mem_range.2 (by omega)
+            · have hlt := Finset.mem_range.1 (hP.1 hk)
+              exact Finset.mem_range.2 (by omega)
+          · have hlt := Finset.mem_range.1 (hP.1 hk)
+            exact Finset.mem_range.2 (by omega)
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · simp at hk
+      · rename_i h1
+        split at hk
+        · exact (startST_parts_range n (j + 1) w).2 hk
+        · rename_i h2
+          have hule : u ≤ j := by omega
+          split at hk
+          · simp only [stepU] at hk
+            split at hk
+            · rcases Finset.mem_insert.1 hk with h | h
+              · exact Finset.mem_range.2 (by omega)
+              · have hlt := Finset.mem_range.1 (hP.2 h)
+                exact Finset.mem_range.2 (by omega)
+            · have hlt := Finset.mem_range.1 (hP.2 hk)
+              exact Finset.mem_range.2 (by omega)
+          · have hlt := Finset.mem_range.1 (hP.2 hk)
+            exact Finset.mem_range.2 (by omega)
+
+/-- **Upper support** (the task target): membership in the selected component of
+the prefix state is bounded by the window index. -/
+theorem stf_upper_support (n u j k : Nat) (w : Asg n j) (sigma : Bool)
+    (hk : k ∈ sval sigma (stf n u j w)) : k ≤ j := by
+  cases sigma
+  · simp only [sval] at hk
+    have h := Finset.mem_range.1 ((stf_parts_range n u j w).1 hk)
+    omega
+  · simp only [sval] at hk
+    have h := Finset.mem_range.1 ((stf_parts_range n u j w).2 hk)
+    omega
+
+end Bun
+
+===== BunBridge
+/-
+# Bunkbed E7 (r2): bridge, part 1 — the window assignment of an outcome.
+
+`wres n j ω` is the window-`j` assignment obtained by reading `ω` on the
+window tokens; `wres_apply` is its defining equation.  The remaining bridge
+(RT-derivation induction, level bounds, count kernel, endpoint) is specified
+in CHECKPOINT.md.
+-/
+import BunkbedBase
+import BunState
+import BunReach
+
+namespace Bun
+
+/-- The window-`j` assignment induced by the outcome. -/
+def wres (n j : Nat) (ω : Out n) : Asg n j := fun t => ω t.1
+
+theorem wres_apply {n j : Nat} (ω : Out n) (t : Win n j) : wres n j ω t = ω t.1 := rfl
+
+/-- The window assignment restricts: `wres n j ω = res n j (wres n (j+1) ω)`. -/
+theorem wres_res {n j : Nat} (ω : Out n) :
+    wres n j ω = res n j (wres n (j+1) ω) := by
+  unfold wres res
+  funext t
+  rfl
+
+/-- Window agreement from outcome agreement on `tmax ≤ j`. -/
+theorem wres_agree {n j : Nat} {ω ω' : Out n}
+    (hag : ∀ t : Token n, tmax t ≤ j → ω t = ω' t) : wres n j ω = wres n j ω' := by
+  unfold wres
+  funext t
+  exact hag _ t.2
+
+end Bun
+
+===== BunDomPins
+import BunDomFiber
+namespace BunDom
+open Classical
+variable {α : Type} [Fintype α]
+
+noncomputable def pinEquiv (P : α → Prop) :
+    {f : α → Bool // ∀ a, P a → f a = false} ≃ ({a : α // ¬ P a} → Bool) where
+  toFun f a := f.1 a.1
+  invFun g := ⟨fun a => if h : P a then false else g ⟨a,h⟩,
+    by intro a ha; simp [ha]⟩
+  left_inv f := by
+    apply Subtype.ext
+    funext a
+    by_cases h : P a
+    · simp [h, f.2 a h]
+    · simp [h]
+  right_inv g := by
+    funext a
+    simp [a.2]
+
+theorem pin_card (P : α → Prop) :
+    Fintype.card {f : α → Bool // ∀ a, P a → f a = false} =
+      2 ^ (Fintype.card α - Fintype.card {a // P a}) := by
+  rw [Fintype.card_congr (pinEquiv P), Fintype.card_fun,
+    Fintype.card_bool, Fintype.card_subtype_compl]
+
+theorem hit_card (P : α → Prop) :
+    Fintype.card {f : α → Bool // ∃ a, P a ∧ f a = true} =
+      2 ^ Fintype.card α - 2 ^ (Fintype.card α - Fintype.card {a // P a}) := by
+  let Q := fun f : α → Bool => ∀ a, P a → f a = false
+  have he : {f : α → Bool // ∃ a, P a ∧ f a = true} ≃ {f : α → Bool // ¬ Q f} :=
+    Equiv.subtypeEquivRight (fun f => by
+      simp only [Q, not_forall]
+      constructor
+      · rintro ⟨a,ha,hf⟩
+        exact ⟨a,ha,by simp [hf]⟩
+      · rintro ⟨a,ha,hf⟩
+        exact ⟨a,ha,by cases h : f a <;> simp_all⟩)
+  rw [Fintype.card_congr he, Fintype.card_subtype_compl,
+    Fintype.card_fun, Fintype.card_bool]
+  rw [pin_card P]
+end BunDom
+
+===== BunHorWitness
+/-
+# Bunkbed E7 (r5): horizontal-witness characterisation of `Bun.hor`
+
+`Bun.hor hm R l w` is `decide` of nonemptiness of the finite attached-range filter of
+indices `k ∈ Finset.range m` with `k ∈ R` and window value `w (fresH hm k · l)`.  This
+module proves its exact witness characterisation: the disjunction is true iff some
+`k < m` in `R` has horizontal-entry window value `w (fresH hm k hk l) = true`.
+
+Pure logical unpacking of the existing definition in `BunState`; no new definitions,
+no additional axioms.
+-/
+import BunReach
+
+namespace Bun
+
+/-- Horizontal-entry characterisation: `hor hm R l w = true` iff some `k < m` with
+`k ∈ R` has horizontal-entry window value `w (fresH hm k hk l) = true`. -/
+theorem hor_iff {n m : Nat} (hm : m < n) (R : Finset Nat) (l : Bool) (w : Asg n m) :
+    hor hm R l w = true ↔ ∃ k : Nat, ∃ hk : k < m, k ∈ R ∧ w (fresH hm k hk l) = true := by
+  unfold hor
+  constructor
+  · intro h
+    obtain ⟨t, ht⟩ := of_decide_eq_true h
+    obtain ⟨-, hc⟩ := Finset.mem_filter.mp ht
+    simp at hc
+    obtain ⟨hmem, hwk⟩ := hc
+    exact ⟨t.1, Finset.mem_range.mp t.2, hmem, hwk⟩
+  · rintro ⟨k, hk, hmem, hwk⟩
+    refine decide_eq_true ⟨⟨k, Finset.mem_range.mpr hk⟩, ?_⟩
+    refine Finset.mem_filter.mpr ⟨?_, ?_⟩
+    · simp
+    · rw [decide_eq_true hmem, Bool.true_and]
+      exact hwk
+
+===== BunLowerSupport
+/-
+# Bunkbed E7 (r15): lower support of the prefix state
+
+Theorem `stf_lower_support` (the single target of this task): for the existing,
+unchanged `Bun.stf` and `Bun.sval`, arbitrary `n u j k : Nat`, `w : Asg n j` and
+`sigma : Bool`, `k ∈ sval sigma (stf n u j w)` implies `u ≤ k`.
+
+Mechanism: componentwise induction on `j` along the exact recursion, no
+enumeration.  The start state contributes only the index `j` itself, via the
+r14 fact `startST_support`; the update `stepU` either keeps a component or
+inserts `j+1`, via the r12 fact `stepU_lower_closed`; below-source and dummy
+states are empty, so those branches are vacuous.
+-/
+import BunState
+import BunStartSupport
+import BunStepLower
+
+namespace Bun
+
+/-- Both components of the prefix state `stf n u j w` only contain indices `≥ u`. -/
+theorem stf_lower_parts (n u : Nat) : ∀ (j : Nat) (w : Asg n j),
+    (∀ k : Nat, k ∈ (stf n u j w).1 → u ≤ k) ∧
+    (∀ k : Nat, k ∈ (stf n u j w).2 → u ≤ k) := by
+  intro j
+  induction j with
+  | zero =>
+    intro w
+    refine ⟨?_, ?_⟩
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · rename_i hu
+        have hk0 : k = 0 := startST_support n 0 k w false hk
+        omega
+      · simp at hk
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · rename_i hu
+        have hk0 : k = 0 := startST_support n 0 k w true hk
+        omega
+      · simp at hk
+  | succ j ih =>
+    intro w
+    have hP := ih (res n j w)
+    refine ⟨?_, ?_⟩
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · simp at hk
+      · rename_i h1
+        split at hk
+        · rename_i h2
+          have hk1 : k = j + 1 := startST_support n (j + 1) k w false hk
+          omega
+        · have hu1 : u ≤ j + 1 := by omega
+          have hR : ∀ a : Nat, a ∈ (stf n u j (res n j w)).1 → u ≤ a := fun a ha => hP.1 a ha
+          have hS : ∀ a : Nat, a ∈ (stf n u j (res n j w)).2 → u ≤ a := fun a ha => hP.2 a ha
+          split at hk
+          · rename_i hjn
+            exact stepU_lower_closed (j + 1) u k (stf n u j (res n j w)).1
+              (stf n u j (res n j w)).2
+              (hor (m := j + 1) hjn (stf n u j (res n j w)).1 false w)
+              (hor (m := j + 1) hjn (stf n u j (res n j w)).2 true w)
+              (w (fresV (n := n) (m := j + 1) hjn)) false hR hS hu1 hk
+          · exact hP.1 k hk
+    · intro k hk
+      simp only [stf] at hk
+      split at hk
+      · simp at hk
+      · rename_i h1
+        split at hk
+        · rename_i h2
+          have hk1 : k = j + 1 := startST_support n (j + 1) k w true hk
+          omega
+        · have hu1 : u ≤ j + 1 := by omega
+          have hR : ∀ a : Nat, a ∈ (stf n u j (res n j w)).1 → u ≤ a := fun a ha => hP.1 a ha
+          have hS : ∀ a : Nat, a ∈ (stf n u j (res n j w)).2 → u ≤ a := fun a ha => hP.2 a ha
+          split at hk
+          · rename_i hjn
+            exact stepU_lower_closed (j + 1) u k (stf n u j (res n j w)).1
+              (stf n u j (res n j w)).2
+              (hor (m := j + 1) hjn (stf n u j (res n j w)).1 false w)
+              (hor (m := j + 1) hjn (stf n u j (res n j w)).2 true w)
+              (w (fresV (n := n) (m := j + 1) hjn)) true hR hS hu1 hk
+          · exact hP.2 k hk
+
+/-- **Lower support** (the task target): membership in the selected component of
+the prefix state is bounded below by the source index. -/
+theorem stf_lower_support (n u j k : Nat) (w : Asg n j) (sigma : Bool)
+    (hk : k ∈ sval sigma (stf n u j w)) : u ≤ k := by
+  have hparts := stf_lower_parts n u j w
+  cases sigma with
+  | false => exact hparts.1 k hk
+  | true => exact hparts.2 k hk
+
+end Bun
+
+===== BunOldStable
+/-
+# Bunkbed E7 (r18): old-index membership stability of the recursive state
+
+Full old-index stability of the actual recursive `stf` of `BunState`: for all
+`n u j k : Nat`, every assignment `w : Asg n (j+1)`, every layer bit `σ` and
+every old index `k ≤ j`,
+
+    k ∈ sval σ (stf n u (j+1) w) ↔ k ∈ sval σ (stf n u j (res n j w)),
+
+with no range hypothesis on `n`, `u` or `j`.  Every recursion branch is covered:
+the below-source dummies (`j+1 < u`, both sides the dummy pair), the source
+reset (`j+1 = u`, where the start-state layers contain at most the new index, so
+no old index), the active `stepU` update (`u < j+1 < n`, decided by the paid r17
+step lemma `stepU_old_mem_iff`, since `stepU` only ever inserts the new index)
+and the out-of-range identity (`u < j+1` with `n ≤ j+1`, where the level equals
+the previous one verbatim).  Both layers go through the selector `sval`.
+-/
+import BunStepOld
+import BunState
+
+namespace Bun
+
+/-- Below-source levels are the dummy pair. -/
+theorem stf_dummy_of_lt (n u j : Nat) (q : Asg n j) (hju : j < u) :
+    stf n u j q = (∅, ∅) := by
+  cases j with
+  | zero =>
+    have hnu : ¬(u = 0) := by omega
+    simp only [stf]
+    rw [ite_eq_right hnu]
+  | succ m =>
+    simp only [stf]
+    rw [dite_eq_left hju]
+
+/-- The first component of a start state. -/
+theorem startST_fst (n j : Nat) (w : Asg n j) :
+    (startST n j w).1 = insert j (∅ : Finset Nat) := rfl
+
+/-- The second component of a start state. -/
+theorem startST_snd (n j : Nat) (w : Asg n j) :
+    (startST n j w).2 =
+      if hj : j < n then
+        (if w (fresV (n := n) (m := j) hj) then insert j (∅ : Finset Nat) else ∅)
+      else ∅ :=
+  rfl
+
+/-- The layers of the dummy pair are empty. -/
+theorem sval_pair_empty (σ : Bool) : sval σ (∅, ∅) = (∅ : Finset Nat) := by
+  cases σ <;> rfl
+
+/-- An index below the start index lies in no layer of the start state. -/
+theorem startST_not_mem_old (n j k : Nat) (w : Asg n j) (σ : Bool) (hk : k < j) :
+    ¬ (k ∈ sval σ (startST n j w)) := by
+  cases σ with
+  | false =>
+    intro h
+    have h' : k ∈ (startST n j w).1 := h
+    rw [startST_fst] at h'
+    simp only [Finset.mem_insert] at h'
+    rcases h' with he | hE
+    · omega
+    · exact absurd hE (Finset.notMem_empty k)
+  | true =>
+    intro h
+    have h' : k ∈ (startST n j w).2 := h
+    rw [startST_snd] at h'
+    rcases Nat.lt_or_ge j n with hjn | hnge
+    · rw [dite_eq_left hjn] at h'
+      by_cases hw : w (fresV (n := n) (m := j) hjn) = true
+      · rw [ite_eq_left hw] at h'
+        simp only [Finset.mem_insert] at h'
+        rcases h' with he | hE
+        · omega
+        · exact absurd hE (Finset.notMem_empty k)
+      · rw [ite_eq_right hw] at h'
+        exact absurd h' (Finset.notMem_empty k)
+    · have hnge' : ¬(j < n) := by omega
+      rw [dite_eq_right hnge'] at h'
+      exact absurd h' (Finset.notMem_empty k)
+
+/-- **Old-index membership stability** of the recursive prefix state: for every
+window boundary `j`, every layer `σ` and every old index `k ≤ j`, membership in
+the level-`(j+1)` state along `w` agrees with membership in the level-`j` state
+along the restriction `res n j w`.  No hypothesis on `n`, `u` or `j`. -/
+theorem stf_old_mem_iff (n u j k : Nat) (w : Asg n (j+1)) (σ : Bool) (hk : k ≤ j) :
+    k ∈ sval σ (stf n u (j+1) w) ↔ k ∈ sval σ (stf n u j (res n j w)) := by
+  rcases Nat.lt_or_ge (j+1) u with hlt | hge
+  · -- below the source: both levels are dummy pairs
+    have hju : j < u := by omega
+    rw [stf_dummy_of_lt n u (j+1) w hlt, stf_dummy_of_lt n u j (res n j w) hju]
+  · by_cases heq : j+1 = u
+    · -- source reset: start state against the dummy pair
+      have hu : ¬(j+1 < u) := by omega
+      have hju : j < u := by omega
+      have hL : stf n u (j+1) w = startST n (j+1) w := by
+        simp only [stf]
+        rw [dite_eq_right hu, dite_eq_left heq]
+      rw [hL, stf_dummy_of_lt n u j (res n j w) hju]
+      have hLnot := startST_not_mem_old n (j+1) k w σ (by omega)
+      have hRnot : ¬(k ∈ sval σ (∅, ∅)) := by
+        rw [sval_pair_empty]
+        intro hh
+        exact absurd hh (Finset.notMem_empty k)
+      exact ⟨fun h => absurd h hLnot, fun h => absurd h hRnot⟩
+    · -- past the source: active update or verbatim carry
+      have hu' : ¬(j+1 < u) := by omega
+      have heq' : ¬(j+1 = u) := by omega
+      rcases Nat.lt_or_ge (j+1) n with hjn | hge'n
+      · -- active update at the new index `j+1`
+        have hC : stf n u (j+1) w =
+            stepU (j+1) (stf n u j (res n j w)).1 (stf n u j (res n j w)).2
+              (hor (m := j+1) hjn (stf n u j (res n j w)).1 false w)
+              (hor (m := j+1) hjn (stf n u j (res n j w)).2 true w)
+              (w (fresV (n := n) (m := j+1) hjn)) := by
+          simp only [stf]
+          rw [dite_eq_right hu', dite_eq_right heq', dite_eq_left hjn]
+        rw [hC]
+        exact stepU_old_mem_iff (j+1) k _ _ _ _ _ _ (by omega)
+      · -- out of range: the level equals the previous one verbatim
+        have hnle : ¬(j+1 < n) := by omega
+        have hC : stf n u (j+1) w = stf n u j (res n j w) := by
+          simp only [stf]
+          rw [dite_eq_right hu', dite_eq_right heq', dite_eq_right hnle]
+        rw [hC]
+
+end Bun
+

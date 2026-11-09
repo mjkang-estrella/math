@@ -1,0 +1,1 @@
+Use known readonly r5/r2/r1 imports, no baseline rebuild. First actual support lemma proof+compile within3calls after frozen-check. Preserve hor source unchanged. Correct r3review governs, no flip equality/both-full/cyclicReachshortcut. New theorem evidence must have current SHA/latest true exit/receipt.
