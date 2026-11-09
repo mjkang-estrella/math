@@ -1,0 +1,1 @@
+Initial guarded copy command requested nonexistent reviewer provenance.json and exited 1 after copying review.md, before scientific reading. Corrected to actual bindings.json and access.json; refroze review before reading. No source edits.
