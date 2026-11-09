@@ -1,0 +1,302 @@
+---
+name: "pdf"
+description: "Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction."
+---
+
+# PDF Skill
+
+## When To Use
+
+- Read or review PDF content where layout and visuals matter.
+- Create PDFs programmatically with reliable formatting.
+- Fill and validate interactive PDF forms.
+- Validate final rendering before delivery.
+
+## Tools + Contract Requirements
+
+Immediately before the first create/edit authoring command, run `mark_artifact_operation_started.mjs` successfully exactly once using the command below. Do not run it for read-only work. For edits, replace `create` with `edit`; adjust the expected count and output format to match the requested outputs.
+
+
+
+```bash
+node container_tools/mark_artifact_operation_started.mjs --operation-kind create --expected-output-count 1 --output-format pdf
+```
+
+## Workflow
+
+1. Prefer visual review: render PDF pages to PNGs and inspect them.
+   - Use `pdftoppm` from the bundled runtime or system Poppler when available.
+   - If unavailable, install Poppler or ask the user to review the output locally.
+2. Use `reportlab` to generate PDFs when creating new documents.
+3. Use `pdfplumber` or `pypdf` for text extraction and quick checks; do not rely on text extraction for layout fidelity.
+4. After each meaningful update, re-render pages and verify alignment, spacing, and legibility.
+
+## Fill And Validate AcroForms
+
+Visual review alone is not a correctness check for a fillable PDF. A page `/Widget` annotation can render a value from its appearance stream while the canonical `/AcroForm/Fields` tree is missing or contains a stale value.
+
+1. Keep the result interactive by default; set `flatten=True` only when the user explicitly requests a completed, static form. Preserve the source PDF, and do not flatten a signed PDF without an explicit workflow decision.
+2. Inspect both representations before filling: enumerate fields from `reader.get_fields()` and `/Widget` annotations from every page's `/Annots`, following `/Parent` and `/Kids`. If a widget and a canonical field have the same name but are distinct objects with no `/Parent` relationship, do not call `reattach_fields()` blindly: it can create a second top-level field with the same name. Report the ambiguity or produce a static result.
+3. Recover genuinely orphaned widgets, fill all pages, and write the result with `pypdf`:
+
+```python
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import NameObject
+
+reader = PdfReader(input_pdf)
+writer = PdfWriter()
+writer.clone_document_from_reader(reader)
+
+# Restores widgets that are missing from /AcroForm/Fields.
+writer.reattach_fields()
+fields = writer.get_fields() or {}
+missing = set(expected_values) - set(fields)
+if missing:
+    raise ValueError(f"Form fields not found after repair: {sorted(missing)}")
+
+values_to_write = dict(expected_values)
+if flatten:
+    # Paint every existing value before removing every widget.
+    values_to_write = {
+        name: field.get("/V", "/Off" if field.get("/FT") == "/Btn" else "")
+        for name, field in fields.items()
+    }
+    values_to_write.update(expected_values)
+
+writer.update_page_form_field_values(
+    None, values_to_write, auto_regenerate=False, flatten=flatten
+)
+
+if flatten:
+    # pypdf's flatten=True paints appearances but does not remove widgets.
+    writer.remove_annotations(subtypes="/Widget")
+    writer.root_object.pop(NameObject("/AcroForm"), None)
+
+with open(output_pdf, "wb") as stream:
+    writer.write(stream)
+```
+
+4. Reopen the written PDF before delivery. For an interactive result, require every expected field to be present in `get_fields()` with the expected `/V`, enumerate page widgets again, and confirm their effective `/V` (the widget value or inherited `/Parent` value) agrees. Confirm each updated widget has a non-empty `/AP` `/N` appearance and render the final pages to catch stale or clipped appearances. Do not rely on `/NeedAppearances` or a successful PNG render as proof that logical field data was updated.
+5. For a flattened result, require zero `/Widget` annotations and no remaining `/AcroForm` field tree after reopening, then render the final pages. Keep an editable copy when the user may need to revise the form.
+
+## Temp And Output Conventions
+
+- Use `tmp/pdfs/` for intermediate files; delete them when done.
+- Write final artifacts under `output/pdf/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies
+
+Prefer the Codex bundled workspace/runtime dependencies when available. The primary runtime is expected to include:
+
+- Python packages: `reportlab`, `pdfplumber`, `pypdf`
+- Rendering tools: `pdftoppm` and `pdfinfo` from Poppler
+
+If a dependency is missing, install only what is needed.
+
+Python packages:
+
+```bash
+uv pip install reportlab pdfplumber pypdf
+```
+
+If `uv` is unavailable:
+
+```bash
+python3 -m pip install reportlab pdfplumber pypdf
+```
+
+System tools for rendering:
+
+```bash
+# macOS (Homebrew)
+brew install poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y poppler-utils
+```
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it locally.
+
+## Environment
+
+No required environment variables.
+
+## Rendering Command
+
+```bash
+pdftoppm -png "$INPUT_PDF" "$OUTPUT_PREFIX"
+```
+
+## Quality Expectations
+
+- Maintain polished visual design: consistent typography, spacing, margins, and section hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, broken tables, black squares, or unreadable glyphs.
+- Charts, tables, and images must be sharp, aligned, and clearly labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
+- Citations and references must be human-readable; never leave tool tokens or placeholder strings.
+
+## Final Checks
+
+- Do not deliver until the latest PNG inspection shows zero visual or formatting defects.
+- Confirm headers, footers, page numbering, and section transitions look polished.
+- Keep intermediate files organized or remove them after final approval.
+
+## Final response
+
+### Final Response Citations
+
+- **Create/edit:** for created or edited PDFs, cite each final deliverable exactly once with `purpose="output"`, in its own paragraph. Briefly describe the result without repeating its filename, path, or link. Never put output directives inside prose or list items.
+- **Q&A and summaries:** Every file whose contents you summarize or use to support an answer MUST receive a `:codex-file-citation{...}` with `purpose="source"` in the final response. Use the source citation in place of the filename, wherever the filename would appear. Do not write the filename separately and append its citation at the end. Files merely inspected but not used in the answer need no citation. Do not emit output citations for unchanged files or read-only answers.
+
+- Emit `:codex-file-citation{...}` directly, without backticks, code fences, or a Markdown-link wrapper. Use verified targets only. No need to cite or reference intermediate work.
+
+For file citations, set `path` to the verified absolute file path on the task host. Omit `mode`.
+
+Some illustrative examples, real responses use verified targets outside code fences.
+
+```text
+:codex-file-citation{path="/absolute/path/review.pdf" purpose="output"}
+```
+
+```text
+The review of :codex-file-citation{path="/absolute/path/review.pdf" purpose="source"} is due Friday.
+```
+
+
+### Additional Citation Guidance
+
+For PDF Q&A, inspect complete relevant pages and preserve material headings, table/figure labels, footnotes, sources, and sample sizes. PDF citations support only plain file citations; do not add `artifact_kind`, `page_number`, or other locators.
+
+TASK.txt 13048
+bootstrap-receipt.json 1315
+bootstrap.py 1250
+charge_search.py 2373
+denials_015000_075000.output.txt 60080
+denials_015000_075000.receipt.json 1084
+denials_075000_105000.output.txt 30041
+denials_075000_105000.receipt.json 1086
+denials_105000_135000.output.txt 30044
+denials_105000_135000.receipt.json 1075
+denials_135000_165000.output.txt 30044
+denials_135000_165000.receipt.json 1075
+denials_165000_195000.output.txt 30044
+denials_165000_195000.receipt.json 1074
+denials_195000_225000.output.txt 30044
+denials_195000_225000.receipt.json 1087
+denials_225000_255000.output.txt 30044
+denials_225000_255000.receipt.json 1075
+denials_255000_end.output.txt 22824
+denials_255000_end.receipt.json 1091
+denials_recover_030000_060000.output.txt 30040
+denials_recover_030000_060000.receipt.json 1088
+frozen-before.json 94
+frozen-inputs.json 13258
+inherited-denials.json 277780
+inputs/ACTUALBRIEF.md 5902
+inputs/DORMANT-SOL-FORMAL-PLAN.md 2293
+inputs/FULLCANDIDATE.md 9118
+inputs/NEW-UNAVAILABLE.json 742
+inputs/accepted57-scopes.json 78190
+inputs/author-gates323531.json 2784
+inputs/evidence-page4.jpg 110454
+inputs/evidence.pdf 835137
+inputs/evidence.txt 106396
+inputs/get-evidence-plan.json 311
+inputs/get-parking-author-plan.json 318
+inputs/get-parking-metadata-plan.json 314
+inputs/get-parking-plan.json 276
+inputs/history-matches.json 418848
+inputs/http-search-inventory.json 9360
+inputs/literal323531.json 2536
+inputs/original323531.raw.jsonl 2452
+inputs/parking-metadata.html 41232
+inputs/parking-page17.jpg 113663
+inputs/parking-page20.jpg 93066
+inputs/parking-page22.jpg 72593
+inputs/parking.pdf 2490889
+inputs/parking.txt 187640
+inputs/prior39-scopes.json 71032
+inputs/provenance323531.json 4657
+inputs/review-r1-NEW-UNAVAILABLE-REVIEW.json 577
+inputs/review-r1-PROOF.md 3309
+inputs/review-r1-REVIEW.md 16293
+inputs/review-r1-family-comparison.json 86714
+inputs/review-r1-review.json 2089
+inputs/review-r1-search-one-response.json 27155
+inputs/review-r1-source-map.json 2323
+inputs/search1-response.json 28381
+inputs/search2-response.json 30121
+inputs/search3-response.json 29040
+inputs/source-read-inventory.json 1840
+model-policy-sol-only.json 452
+read_instructions_000.output.txt 28169
+read_instructions_000.receipt.json 1240
+registry-roots.json 399
+reservation.json 2829
+reservation.sha256 83
+run.py 2401
+search-budget.json 120
+source_get_guard.py 9762
+verify_frozen.py 742
+write_lane.py 681
+FILE write_lane.py import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(10,10))
+resource.setrlimit(resource.RLIMIT_AS,(512*1024**2,512*1024**2))
+import pathlib,sys
+lane=pathlib.Path(__file__).resolve().parent
+rel=pathlib.PurePath(sys.argv[1])
+assert not rel.is_absolute() and ".." not in rel.parts
+target=(lane/rel).resolve()
+assert target.is_relative_to(lane) and target!=lane and not target.is_symlink()
+text=sys.stdin.read()
+target.parent.mkdir(parents=True,exist_ok=True)
+
+if len(sys.argv)>2 and sys.argv[2]=='--base64':
+ import base64
+ target.write_bytes(base64.b64decode(text))
+else:
+ target.write_text(text)
+print(str(target))
+
+FILE charge_search.py """Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+PROOF # Independent hand proof, before author proposal access
+Take the complexified real A2 reflection representation: c acts on V* by diag(zeta,zeta^-1), s swaps x,y, zeta a primitive cube root. These generate the dihedral group of order six; two generating reflections s and cs have product c, hence rank 2 and Coxeter number 3. Set k=3, d=10. Define theta1=(x^10+3x^4*y^6)/4, theta2=(y^10+3x^6*y^4)/4.
+Every monomial has degree 10. The c-weights are 10 and 4-6, both 1 mod3, and their negatives for theta2. Swapping x,y swaps theta1,theta2. Equivariance on generators extends to the generated group. Their distinct x^10 and y^10 coefficients imply linear independence. A common zero on an axis is the origin. Off axes the equations give x^6=-3y^6 and y^6=-3x^6, so 8x^6=8y^6=0, impossible. Thus their common zero set is {0}, giving an hsop under the source zero-locus definition (source binding still to inspect).
+Let Fi=thetai-xi. Direct hand expansion gives yF1-xF2=xy(x^3-y^3)^3/4. Every fixed point is the origin, a nonzero axis point, or lies on x^3=y^3. The two nonzero axes each have nine solutions t^9=4, all distinct in C. Off axes write y=rho*x, rho^3=1. Both fixed equations are equivalent to x^9=1; there are nine distinct nonzero roots for each of the three distinct ratios. The cases are exhaustive and pairwise disjoint: 1+18+27=46, strictly less than (kh+1)^n=100.
+At the origin DF=-I, so multiplicity one. At (a,0), a^9=4, DF has diagonal (9,-1) and off-diagonal zero; the other axis is symmetric. At any nonzero ratio-line point, x,y are units and the local ideal (F1,F2) equals (F1,(x^3-y^3)^3). The curve u=x^3-y^3=0 is smooth there; the derivative of F1 in its radial direction is 9, because theta1=x^10 on the line and x^9=1. Hence (F1,u) are local coordinates and the quotient has length 3. This is a local algebra argument, not merely a singular Jacobian inference. Multiplicities total 1+18+27*3=100. At (1,1), DF=[[9/2,9/2],[9/2,9/2]], determinant zero, rank one.
+A single failed first conjunct refutes the universal conjunction; this proves neither failure of every hsop nor any failure of the existential or generic conjecture. All mathematics above is personally reconstructed, with no enumeration/CAS/formal execution. Exact source hypotheses, real-form compatibility, and prior art remain to audit.
+
+## Completed source bridges (after independent proof record)
+The original p4 zero-locus hsop definition and p7 complexification, p17 universal quantifier and p22 dihedral coordinates authenticate the assumptions used above. On real-form points y=conjugate(x), use c=diag(zeta^-1,zeta) and s=swap; the induced action on coordinate functions is as stated. This is a faithful irreducible real rank-two reflection representation; the two adjacent simple reflections have Coxeter product order3. The map preserves this real form. For any ninth root omega, homogeneity gives Theta(omega*v)=omega^10*Theta(v)=omega*Theta(v), so the fixed set is also Z9-stable. No generic or Cherednik premise is used. Under simultaneous basis change x'=Ax, theta'=A theta the same ideal is generated. Thus the exhibited first-conjunct failure negates the full universally quantified conjunction; Park bijections need not be independently negated. Source-final/prior/scientific holds remain in REVIEW.md.
+

@@ -1,0 +1,21 @@
+# Incomplete uncredited handback: MathDB 323531
+
+Scientific HOLD; credit 0; 57/60 beyond 39 prior remains unchanged. No literal Strong-negation endpoint is present. Root alone adjudicates.
+
+ParkingScalar has strict compile and module-name kernel check (scalar_exposed_compile_54 and scalar_exposed_kernel_58, both exit 0). It proves the normalized factorization, degree-10 scaling, the full-field common-zero implication, fixed-direction partition and ratio-line/ninth-root identities. ParkingSymmetry separately proves swap/rotation generator identities for arbitrary cube roots and linear independence of the two polynomial functions; this is not an all-W representation bridge.
+
+ParkingCount strictly compiles (count_nohundred_strict_72, exit 0): its explicit candidate set has card <=46, contains every coordinate fixed point, and admits no equivalence of that fixed set with Fin 100. It also proves an arbitrary-parking-predicate coordinate conjunction failure. The separate kernel checker fails (count_endpoint_kernel_73, exit 1) reading upstream List.Chain.olean. This is not a strict-green literal or polymorphic reflection-conjecture checkpoint.
+
+ParkingBase (base_no_quotient_compile_44, exit 0) gives coefficient-parametric polynomial homogeneity, zero locus, fixed locus and point-count definitions. Its kernel check fails (base_small_kernel_46, exit 1) reading Finset.Empty.olean.server. ParkingQuotient defines the deformed ideal and algebraic quotient; compile quotient_compile_47 is 0, checker quotient_kernel_50 is 1 on List.TakeDrop.olean.private. These are incomplete scaffolds; neither defines all three conjuncts or the universally quantified reflection datum. No claimed source model hides a witness or a conjecture conclusion in a structure field.
+
+Positive controls exhibit the rational origin and (1,1) as fixed points and certify 46<100. The intentional denominator-5 mutation fails with true exit 1 (negative_expected_failure_76). The scalar/positive source-only replay began with an empty replay build and only pinned upstream plus that build on LEAN_PATH; all four compile/check exits were 0. This fragment replay does not pay full-target replay. See results/scalar-fragment-replay.json.
+
+Top-level #print axioms for authored production declarations list only propext, Classical.choice and Quot.sound. This does not substitute for the unpaid private/generated/transitive body and implementation audit. Actual Lean binary hashes, runtime 4.34.1, upstream detached HEAD d13f23b723b8a846827a245b89c10fc7d3f11612 and metadata hashes were inspected. Prebuilt upstream oleans remain trusted and not origin-attested. Lowering Lean thread stack to 8192 KiB and OS stack to 1 MiB enabled compilation without relaxing prescribed caps. All earlier import/thread failures remain in receipts.
+
+UNPAID: genuine real irreducible A2 and h=3; complexification and coordinate duality; carrying V* and all-W equivariance; complete general reflection-group model and universal conjunction; multiplicity; both parking actions and identifications; separate kernel completion of base/quotient/count; full body/origin audit; literal controls/replay; manuscript/PDF/visual verification; independent reviews and root adjudication. No manuscript was authored, and no PDF skill was invoked.
+
+The original 2014 and companion 2017 finals remain unread and closed. Supplied v2 texts are not final-equivalence evidence. The printed Proposition 4.4 and companion Table 1 conflicts and the quantifier-correction objection remain unresolved. No contemporary-registry or worldwide priority clearance is claimed.
+
+Process limitation: original noncrossing definitions pp12-13 were read after first source authoring, not in the required initial reading order. No frozen/protected/cap breach was observed. All work stayed in the own lane or pinned upstream APIs; no embedded provenance paths were followed. Final standalone frozen verification and own-lane manifest are separate terminal evidence. No acceptance or helper credit.
+
+Final green module receipts: ParkingSymmetry symmetry_compile_79 / symmetry_kernel_80, both exit 0; ParkingPositive positive_compile_75 / positive_kernel_82, both exit 0. These add no literal endpoint or credit.

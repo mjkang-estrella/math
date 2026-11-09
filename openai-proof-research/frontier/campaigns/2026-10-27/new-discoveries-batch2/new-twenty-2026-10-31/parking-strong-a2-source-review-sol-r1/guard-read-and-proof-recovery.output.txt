@@ -1,0 +1,365 @@
+"""One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+evidence 18 18                                        BRENDON RHOADES
+
+                                                                                       w
+  To finish the proof, it suffices to show that |ParkN      C     H
+                                                         Sn (k) | = (kn + 1)
+                                                                                dim(X∩V ) . Since g d = e,
+
+we have H = hWX , wi ≤ W . The parking function (π, f ) ∈ ParkN               C
+                                                                            W (k) is fixed by w if and
+only if every block B of π is labeled by a union of cycles of w. It follows that (π, f ) is fixed by
+w if and only if (π, f ) is fixed by the entire parabolic subgroup WV w . Therefore, we have that
+ParkN C    H        NC     H0             0
+    W (k) = ParkW (k) , where H = hWX , WV w i = WX∩V w ≤ W .
+  Consider X ∩ V as a set partition of [n] and let w0 ∈ Sn be a permutation whose cycles
+                    w
+                                                      0                 H 0 = ParkN C (k)w0 . By the S -
+are the blocks of X ∩ V w . Then X ∩ V w = V w and ParkN            C
+                                                                   W (k)           W                     n
+equivariant bijection ParkN   C
+                            Sn (k) to classical Fuss parking functions of size n presented in [26], we
+have |ParkN  C   w0              cyc(w0 )−1 , where cyc(w 0 ) is the number of disjoint cycles of w 0 . On
+           W (k) | = (kn + 1)
+                                                    0
+the other hand, we have cyc(w0 ) − 1 = dim(V w ) = dim(X ∩ V w ).                                        
+
+     All of the pieces are assembled for the proof of the Intermediate Conjecture in type A.
+Theorem 4.8. Let W = Sn be of type A and let V denote the associated reflection representation.
+Let Θ be any h.s.o.p. of degree kh + 1 = kn + 1 carrying V ∗ such that the parking locus V Θ (k) is
+reduced. There exists a W × Zkn -equivariant bijection V Θ (k) ∼
+                                                               =W ×Zkh ParkN C
+                                                                           W (k).
+   In particular, the Intermediate Conjecture holds in type A and Theorem 1.1 is true.
+Proof. Let H ≤ W × Zkn be a subgroup such that H arises as the W × Zkn -stabilizer of some
+element of either V Θ (k) or of ParkN C
+                                    W (k). By Lemmas 3.4 and 3.5, there exists a flat X ∈ L, a
+group element w ∈ W , and a divisor d|kn such that H = hWX × {e}, (w, g d )i. Lemmas 4.1 and 4.7
+may therefore be applied to show that the fixed sets V Θ (k)H and ParkN C   H
+                                                                      W (k) have the same size.
+Lemma 3.1, with G = W × Zkn , supplies the desired W × Zkn -equivariant bijection.            
+
+   Since we assumed nothing about the h.s.o.p. Θ other than the reducedness of the associated
+parking locus V Θ (k), the argument presented in the last two sections proves the following statement
+in type A.
+           Let Θ be any h.s.o.p. of degree kh + 1 carrying V ∗ such that V Θ (k) is reduced.
+                We have a W × Zkh -equivariant bijection V Θ (k) ∼
+                                                                 =W ×Zkh ParkN   C
+                                                                               W (k).
+Aside from the claim about the nonempty Zariski open subset U, this proves the Generalized Strong
+Conjecture in type A. The same style of argument could be used to prove the above statement for
+the other classical types BCD, relying on known combinatorial models for ParkN   C
+                                                                                W (k) in each of
+these types.
+
+                              5. The Generic Strong Conjecture
+  The purpose of this section is to give evidence for the Generic Strong Conjecture, and in particular
+show that the Generic Strong and Intermediate Conjectures are equivalent.
+  Recall that R is the subset of the affine space HomC[W ] (V ∗ , C[V ]kh+1 ) consisting of those W -
+equivariant polynomial maps Θ : V −→ V of homogeneous degree kh + 1 such that Θ−1 (0) = {0}
+and V Θ is reduced. Our first main goal is the following result.
+Theorem 5.1. There exists a nonempty Zariski open subset U of HomW (V ∗ , C[V ]kh+1 ) such that
+U ⊆ R.
+  The proof of Theorem 5.1 will rely on Etingof’s Theorem 2.3 and will be uniform. By Theo-
+rem 5.1, the Main Conjecture exhibits the chain of implications
+                         Strong ⇒ Generic Strong ⇒ Intermediate ⇒ Weak,
+as claimed in the introduction. After proving Theorem 5.1, we will demonstrate that
+                                   Generic Strong ⇔ Intermediate;
+
+evidence 19                                   EVIDENCE FOR PARKING CONJECTURES                                             19
+
+
+the proof of this equivalence relies on Theorem 5.1.
+   To prove Theorem 5.1, we will use a number of basic analytical and topological results. The
+first of these is a multidimensional version of Rouché’s Theorem from complex √  analysis. Endow CN
+with its usual Euclidean norm || · || : CN → R≥0 given by ||(a1 , . . . , aN )|| = a1 a1 + · · · + an aN .
+For any z ∈ CN and  > 0, let B(z, ) = {z 0 ∈ CN : ||z − z 0 || < } be the open Euclidean ball of
+radius  centered at z.
+   Let F : CN → CN be a holomorphic function. A zero of F is a point z0 ∈ CN with F (z0 ) = 0.
+A zero z0 of F is called isolated if there exists  > 0 such that z0 is the only zero of F contained
+in the ball B(z0 , ). Given an isolated zero z0 of F , one can define the multiplicity m of z0 using
+the Taylor expansion of F around z0 . An isolated zero z0 of F is called simple if it has multiplicity
+one; this is equivalent to the condition that the Jacobian matrix of F is nondegenerate at z0 .
+   In this paper, we will only consider the case where F is a polynomial mapping and all of its
+zeros z0 are simple. As in the case N = 1, the multidimensional version of Rouché’s Theorem gives
+control over the number of zeros contained in some bounded domain Ω under perturbations of F
+which are “small” on the boundary ∂Ω.
+Theorem 5.2. (Multidimensional Rouché Theorem) Let F, G : CN → CN be holomorphic functions
+and let Ω ⊂ CN be a bounded domain whose boundary ∂Ω is homeomorphic to a sphere. Assume
+that F has a finite number of zeros on the domain Ω (which will automatically be isolated). Let M
+be the number of these zeros, counted with multiplicity. If the inequality ||F || > ||G|| holds on the
+boundary ∂Ω, then the function F + G also has M zeros on Ω, counted with multiplicity.
+  In all of our applications of Theorem 5.2, the functions F and G will be polynomial, the domain
+Ω will be a ball, and we will have the zero count M = 1.
+  To prove Theorem 5.1 and the equivalence of the Generalized Strong and Intermediate Conjec-
+tures, we will need to consider the relationship between the Euclidean and Zariski topologies on
+the set CN . The first tool we use in this regard is well known.
+Lemma 5.3. Let U ⊆ CN be a nonempty Zariski open set and suppose X ⊂ CN satisfies U ⊆ X ⊆
+CN . Then X is path connected.
+Proof. As a Zariski open subset of CN , we know that U is path connected. Let V := CN − U be
+the complement of U in CN , so that V is a proper subvariety of CN . It is enough to show that for
+any point p ∈ V, there exists a path γ : [0, 1] → CN such that γ(0) = p and γ(t) ∈ U for 0 < t ≤ 1.
+   We claim that we can take γ to be a linear path γ(t) = p + v0 t for some v0 ∈ CN − {0}. To
+see this, let Lv := {p + vz : z ∈ C} for v ∈ CN − {0}. Then Lv is a copy of C and V ∩ Lv is a
+subvariety of Lv . It follows that V ∩ Lv is finite or V ⊆ Lv for any v ∈ CN − {0}. Since V is a
+proper subvariety of CN , we can find v 0 ∈ CN − {0} such that V ∩ Lv0 is finite. This means that
+there exists a nonzero complex number α such that p + αv 0 t ∈ U for all real numbers 0 < t ≤ 1.
+Taking v0 := αv 0 , we get our desired path γ.                                                   
+
+  Recall that a subset C ⊆ CN is called constructible if there exist varieties V1 , . . . , Vm , W1 , . . . , Wn ⊆
+CN such that
+                                                   m
+                                                   [
+(5.1)                                        C=        (Vi − Wi ).
+                                                   i=1
+
+Equivalently, a subset C ⊆ CN is constructible if it is locally closed in the Zariski topology. We will
+need to consider images of varieties under the standard projection map π : CN +n  CN . While
+such images are not varieties in general, we have the following result (see, for example, [9]).
+Lemma 5.4. Let π : CN +n  CN be the projection map obtained by forgetting the last n coordi-
+nates. If V ⊆ CN +n is a variety, then π(V) ⊆ CN is a constructible set.
+
+provenance {
+  "id": 323531,
+  "chunk": "/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/lanes/pi-mathdb-full-corpus-inventory-r301/corpus/mathdb-normalized-chunk-0002.jsonl",
+  "chunk_sha256": "d944c503e3a0079f55f23b4cf0699a9c389f1e17d3d6e7be0e4620d1efcbea0a",
+  "line": 3064,
+  "raw_sha256": "efcd4b9152d6c8892bf2df4f0d3f920c3ec42405944f5c2f2512c07c3cba68b4",
+  "newline": true,
+  "object": {
+    "mathdb_id": 323531,
+    "uuid": "ce7cd3b7-78e1-4571-b6e6-a700cc5d5542",
+    "canonical_url": "https://mathdb.com/p/323531/the-strong-conjecture-for-algebraic-and-noncrossing-parking",
+    "title": "The Strong Conjecture for algebraic and noncrossing parking spaces",
+    "statement": "Let $W$ be a real reflection group of rank $n$ with Coxeter number $h$, let $V$ be its reflection representation, and let $k\\geq 1$. Let $\\theta_1,\\dots,\\theta_n$ be a homogeneous system of parameters of degree $kh+1$ carrying $V^*$, let $x_1,\\dots,x_n$ be a basis of $V^*$, and write $\\Theta=(\\theta_1,\\dots,\\theta_n)$ and $\\mathbf{x}=(x_1,\\dots,x_n)$. Define $V^{\\Theta}$ to be the variety cut out by $(\\Theta-\\mathbf{x})$. The groups $W$ and $\\mathbb{Z}_{kh}$ act on $V^{\\Theta}$, and ${{\\sf Park}}^{\\mathrm{alg}}_W(k)$ and ${{\\sf Park}}^{NC}_W(k)$ denote the algebraic and noncrossing parking spaces. **Strong Conjecture.** For any such hsop and basis for which the $\\mathbb{C}$-linear map induced by $x_i\\mapsto\\theta_i$ is $W$-equivariant, $V^{\\Theta}$ consists of $(kh+1)^n$ distinct points of multiplicity one, with a $W\\times\\mathbb{Z}_{kh}$-equivariant identification $V^{\\Theta}\\cong {{\\sf Park}}^{\\mathrm{alg}}_W(k)$, and there is a $W\\times\\mathbb{Z}_{kh}$-equivariant bijection $V^{\\Theta}\\xrightarrow{\\sim}{{\\sf Park}}^{NC}_W(k)$. The rank-one case verifies the conjecture, and the paper gives further evidence; its validity for arbitrary reflection groups and hsops remains open.",
+    "statement_completeness": "full",
+    "post_type": "conjecture",
+    "status": "open",
+    "tags": [
+      "noncrossing-partitions",
+      "parking-functions",
+      "reflection-groups"
+    ],
+    "importance": "corpus",
+    "source_name": "Brendon Rhoades, \u201cParking Structures: Fuss Analogs\u201d, arXiv:1205.4293 (2012).",
+    "source_url": "https://arxiv.org/abs/1205.4293",
+    "first_stated_year": 2012,
+    "first_stated_year_source_url": "https://arxiv.org/abs/1205.4293",
+    "documented_by_year": null,
+    "documented_by_source_url": null,
+    "references": "Source: https://arxiv.org/abs/1205.4293\n\nStatus: **open** according to the source (as of May 2012). \u201cEven the Weak Conjecture remains open in the exceptional types EFH.\u201d",
+    "solutions": [],
+    "solution_count": 0,
+    "has_formal_statement": null,
+    "has_bounty": null,
+    "created_at": "2026-08-11T05:39:54.394277Z",
+    "edited_at": null,
+    "lastmod": "2026-10-15T08:20:46Z",
+    "in_sitemap": true,
+    "historical": false,
+    "retrieval_source": "probxiv_2026-09-29"
+  },
+  "raw_statement_token": "\"Let $W$ be a real reflection group of rank $n$ with Coxeter number $h$, let $V$ be its reflection representation, and let $k\\\\geq 1$. Let $\\\\theta_1,\\\\dots,\\\\theta_n$ be a homogeneous system of parameters of degree $kh+1$ carrying $V^*$, let $x_1,\\\\dots,x_n$ be a basis of $V^*$, and write $\\\\Theta=(\\\\theta_1,\\\\dots,\\\\theta_n)$ and $\\\\mathbf{x}=(x_1,\\\\dots,x_n)$. Define $V^{\\\\Theta}$ to be the variety cut out by $(\\\\Theta-\\\\mathbf{x})$. The groups $W$ and $\\\\mathbb{Z}_{kh}$ act on $V^{\\\\Theta}$, and ${{\\\\sf Park}}^{\\\\mathrm{alg}}_W(k)$ and ${{\\\\sf Park}}^{NC}_W(k)$ denote the algebraic and noncrossing parking spaces. **Strong Conjecture.** For any such hsop and basis for which the $\\\\mathbb{C}$-linear map induced by $x_i\\\\mapsto\\\\theta_i$ is $W$-equivariant, $V^{\\\\Theta}$ consists of $(kh+1)^n$ distinct points of multiplicity one, with a $W\\\\times\\\\mathbb{Z}_{kh}$-equivariant identification $V^{\\\\Theta}\\\\cong {{\\\\sf Park}}^{\\\\mathrm{alg}}_W(k)$, and there is a $W\\\\times\\\\mathbb{Z}_{kh}$-equivariant bijection $V^{\\\\Theta}\\\\xrightarrow{\\\\sim}{{\\\\sf Park}}^{NC}_W(k)$. The rank-one case verifies the conjecture, and the paper gives further evidence; its validity for arbitrary reflection groups and hsops remains open.\"",
+  "raw_statement_token_sha256": "205f2ca80941174fd27c6723cce1a94ad9debc979607c3d0b7e90e61ab44a726",
+  "decoded_statement_utf8_sha256": "2bcf907036a608c3e1d95b51c65be662f35b2bfb7148292f57c607e3af2dfcea",
+  "raw_statement_token_bytes": 1232,
+  "decoded_statement_utf8_bytes": 1195
+}
+

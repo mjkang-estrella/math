@@ -1,0 +1,11 @@
+# Dormant plan only —323531
+No Lean/compiler/checker/formalAPI execution or dispatch occurred or is authorized by this file. Only GPT6.1Sol high/default in any later user-authorized work; no children or fallback.
+
+Endpoint must negate the ENTIRE literal universal Strong Conjecture through the explicit degree10 hsop at W=A2,k3,rank2. A theorem merely about a pair of polynomials is insufficient without all source bridges.
+
+1. Define the real irreducible reflection representation A2 and complexification, and identify its coordinate action with c=(zeta,zeta^-1),s=swap; prove rank2 and Coxeter number3. Bind to actual source conventions rather than introducing an unconnected custom group.
+2. Define the rational-coefficient polynomials exactly as FULLCANDIDATE; prove degree10 homogeneity, linear independence, generator equivariance and extension to all W. Prove common zero locus{0}; use the literal hsop definition or prove equivalence to a finite quotient/regular sequence if the formal source uses that definition.
+3. Define the fixed locus for Theta-x. Prove the cubed difference factorization, then partition all fixed points into origin, two axes and three ratio lines. Polynomial root-bound9 suffices to prove cardinal<=46; if using exact46, include existence/simplicity of roots of t^9-4 and t^9-1. Avoid enumerating approximations or unsafe/native_decide. Prove46<100 and derive the universal theorem's negation.
+4. The multiplicity/Jacobian check is optional reinforcement, not a substitute for literal bindings. A direct tangent-space proof may require substantial finite-algebra/geometry infrastructure; the root-bound route avoids importing an unproved reducedness bridge.
+5. Independent fidelity review must resolve source Proposition4.4/Table1 conflicts and account for2014final closure. Independent significance/prior review must precede any acceptance. No corrected/generic/Intermediate theorem may replace the target.
+6. Required final pipeline: no sorry/admit/added axioms/unsafe/native_decide; #print axioms on full transitive declarations limited to propext/Classical.choice/Quot.sound; independent deep body audit; fresh source-only strict replay; paper; root acceptance. All unpaid. No estimate of implementation speed or infrastructure availability is asserted.

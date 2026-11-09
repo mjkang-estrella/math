@@ -1,0 +1,68 @@
+/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31/parking-strong-a2-formal-sol-r1/CHECKPOINT.md
+section NthRoots
+
+/-- `nthRoots n a` noncomputably returns the solutions to `x ^ n = a`. -/
+def nthRoots (n : ℕ) (a : R) : Multiset R :=
+  roots ((X : R[X]) ^ n - C a)
+
+@[simp]
+theorem mem_nthRoots {n : ℕ} (hn : 0 < n) {a x : R} : x ∈ nthRoots n a ↔ x ^ n = a := by
+  rw [nthRoots, mem_roots (X_pow_sub_C_ne_zero hn a), IsRoot.def, eval_sub, eval_C, eval_pow,
+    eval_X, sub_eq_zero]
+
+@[simp]
+theorem nthRoots_zero (r : R) : nthRoots 0 r = 0 := by
+  simp only [pow_zero, nthRoots, ← C_1, ← C_sub, roots_C]
+
+@[simp]
+theorem nthRoots_zero_right {R} [CommRing R] [IsDomain R] (n : ℕ) :
+    nthRoots n (0 : R) = Multiset.replicate n 0 := by
+  rw [nthRoots, C.map_zero, sub_zero, roots_pow, roots_X, Multiset.nsmul_singleton]
+
+theorem card_nthRoots (n : ℕ) (a : R) : Multiset.card (nthRoots n a) ≤ n := by
+  classical exact
+  (if hn : n = 0 then
+    if h : (X : R[X]) ^ n - C a = 0 then by
+      simp [nthRoots, roots, h, empty_eq_zero, Multiset.card_zero]
+    else
+      WithBot.coe_le_coe.1
+        (le_trans (card_roots h)
+          (by
+            rw [hn, pow_zero, ← C_1, ← map_sub]
+            exact degree_C_le))
+  else by
+    rw [← Nat.cast_le (α := WithBot ℕ)]
+    rw [← degree_X_pow_sub_C (Nat.pos_of_ne_zero hn) a]
+    exact card_roots (X_pow_sub_C_ne_zero (Nat.pos_of_ne_zero hn) a))
+
+@[simp]
+theorem nthRoots_two_eq_zero_iff {r : R} : nthRoots 2 r = 0 ↔ ¬IsSquare r := by
+  simp_rw [isSquare_iff_exists_sq, eq_zero_iff_forall_notMem, mem_nthRoots (by simp : 0 < 2),
+    ← not_exists, eq_comm]
+
+/-- The multiset `nthRoots ↑n a` as a Finset. Previously `nthRootsFinset n` was defined to be
+`nthRoots n (1 : R)` as a Finset. That situation can be recovered by setting `a` to be `(1 : R)` -/
+def nthRootsFinset (n : ℕ) {R : Type*} (a : R) [CommRing R] [IsDomain R] : Finset R :=
+  haveI := Classical.decEq R
+  Multiset.toFinset (nthRoots n a)
+
+lemma nthRootsFinset_def (n : ℕ) {R : Type*} (a : R) [CommRing R] [IsDomain R] [DecidableEq R] :
+    nthRootsFinset n a = Multiset.toFinset (nthRoots n a) := by
+  unfold nthRootsFinset
+  convert! rfl
+
+@[simp]
+theorem mem_nthRootsFinset {n : ℕ} (h : 0 < n) (a : R) {x : R} :
+    x ∈ nthRootsFinset n a ↔ x ^ (n : ℕ) = a := by
+  classical
+  rw [nthRootsFinset_def, mem_toFinset, mem_nthRoots h]
+
+@[simp]
+theorem nthRootsFinset_zero (a : R) : nthRootsFinset 0 a = ∅ := by
+  classical simp [nthRootsFinset_def]
+
+theorem map_mem_nthRootsFinset {S F : Type*} [CommRing S] [IsDomain S] [FunLike F R S]
+    [MonoidHomClass F R S] {a : R} {x : R} (hx : x ∈ nthRootsFinset n a) (f : F) :
+    f x ∈ nthRootsFinset n (f a) := by
+  by_cases hn : n = 0
+  · simp [hn] at hx

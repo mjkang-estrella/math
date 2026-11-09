@@ -1,0 +1,432 @@
+"""One explicit public GET plan per invocation; run inside the supplied runner.
+
+The CLI has no batch/list traversal or retry mode. Every redirect is precharged.
+This guards this client only, not other tools or arbitrary Python networking.
+"""
+import contextlib
+import datetime
+import fcntl
+import hashlib
+import ipaddress
+import json
+from pathlib import Path
+import re
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+
+ROOTS = frozenset([
+    "https://github.com/openai/math",
+    "https://github.com/LeanPool/lean-pool",
+    "https://github.com/TauCetiProject/TauCeti",
+    "https://github.com/google-deepmind/formal-conjectures",
+])
+PER_ID_CAP = 12
+GLOBAL_CAP = 48
+MAX_BYTES = 24 * 1024 * 1024
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def key(url):
+    p = urllib.parse.urlsplit(url)
+    if p.scheme != "https" or not p.hostname or p.username or p.password:
+        raise PolicyError("Only explicit credential-free HTTPS URLs are allowed")
+    host = p.hostname.lower()
+    if p.port not in (None, 443) or host in ("localhost", "api.github.com") or host.endswith((".local", ".internal", ".localhost")):
+        raise PolicyError("Disallowed host/port")
+    try:
+        if not ipaddress.ip_address(host).is_global:
+            raise PolicyError("Nonpublic IP address")
+    except ValueError:
+        pass
+    return host + urllib.parse.unquote(p.path).rstrip("/")
+
+
+def artifacts(url):
+    s = urllib.parse.unquote(url).lower()
+    found = set(re.findall(r"(?<!\d)\d{4}\.\d{4,5}(?!\d)", s))
+    for doi in re.findall(r"10\.\d{4,9}/[-._;()/:a-z0-9]+", s):
+        while any(doi.endswith(t) for t in (".full", ".pdf", ".abstract", ".html", ".xml")):
+            doi = doi.rsplit(".", 1)[0]
+        found.add(doi)
+    return found
+
+
+class Guard:
+    def __init__(self, lane, opener=None):
+        self.lane = Path(lane).resolve()
+        self.ids = set(map(str, json.loads((self.lane / "reservation.json").read_text())["ids"]))
+        self.denied = json.loads((self.lane / "inherited-denials.json").read_text())
+        self.opener = opener  # Tests inject a local fake; CLI always uses urllib.
+        self.ledger = self.lane / "guard-ledger.jsonl"
+
+    @contextlib.contextmanager
+    def locked(self):
+        with (self.lane / "guard.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            records, previous = [], "0" * 64
+            if self.ledger.exists():
+                for raw in self.ledger.read_bytes().splitlines(keepends=True):
+                    record = json.loads(raw)
+                    if record.get("seq") != len(records) or record.get("previous") != previous:
+                        raise PolicyError("Broken guard ledger chain; no request permitted")
+                    records.append(record)
+                    previous = hashlib.sha256(raw).hexdigest()
+            yield records, previous
+
+    def append(self, records, previous, event):
+        record = dict(event, seq=len(records), previous=previous,
+                      utc=datetime.datetime.now(datetime.timezone.utc).isoformat())
+        raw = (json.dumps(record, sort_keys=True) + "\n").encode()
+        with self.ledger.open("ab") as f:
+            f.write(raw)
+            f.flush()
+        return record
+
+    def note(self, event):
+        with self.locked() as (records, previous):
+            return self.append(records, previous, event)
+
+    def reserve(self, url, routes, plan_sha):
+        k = key(url)
+        if url in ROOTS or k in {key(x) for x in ROOTS}:
+            routes = sorted(self.ids)  # Shared roots can never be undercharged.
+        if not routes or not set(routes) <= self.ids or len(routes) != len(set(routes)):
+            raise PolicyError("Routes must be exact unique reserved IDs")
+        with self.locked() as (records, previous):
+            attempts = [r for r in records if r["event"] == "attempt"]
+            failures = [r for r in records if r["event"] == "unavailable"]
+            denied_keys = set(self.denied["blocked_keys"]) | {r["url_key"] for r in failures}
+            denied_artifacts = set(self.denied["blocked_artifacts"])
+            for r in failures:
+                denied_artifacts.update(r.get("artifacts", []))
+            if k in denied_keys or artifacts(url) & denied_artifacts:
+                raise PolicyError("Inherited/current unavailable route or artifact: no retry")
+            if any(r["url_key"] == k for r in attempts):
+                raise PolicyError("Already attempted URL; use saved bytes/outcome, no refetch/query variant")
+            if len(attempts) >= GLOBAL_CAP:
+                raise PolicyError("Global GET-hop cap48 exhausted")
+            for route in routes:
+                if sum(route in r["routes"] for r in attempts) >= PER_ID_CAP:
+                    raise PolicyError("Per-ID GET-hop cap12 exhausted: " + route)
+            return self.append(records, previous, {
+                "event": "attempt", "url": url, "url_key": k,
+                "routes": routes, "plan_sha256": plan_sha,
+                "ordinal": len(attempts) + 1,
+            })
+
+    def fetch(self, plan):
+        if not isinstance(plan, dict) or set(plan) != {"url", "routes", "destination", "source_identity", "purpose"}:
+            raise PolicyError("Exactly one explicit plan object required; no URL arrays/seed traversal")
+        if not isinstance(plan["url"], str) or not isinstance(plan["routes"], list):
+            raise PolicyError("Invalid URL/routes types")
+        if not all(isinstance(x, str) for x in plan["routes"]):
+            raise PolicyError("Route IDs must be strings")
+        if not all(isinstance(plan[x], str) and len(plan[x].strip()) >= 12 for x in ["purpose", "source_identity"]):
+            raise PolicyError("Concrete source identity and assigned-target purpose required")
+        dest = (self.lane / plan["destination"]).resolve()
+        if not dest.is_relative_to(self.lane / "sources") or dest == self.lane / "sources" or dest.exists():
+            raise PolicyError("Destination must be a NEW file under own sources/")
+        plan_sha = hashlib.sha256(json.dumps(plan, sort_keys=True).encode()).hexdigest()
+        current = plan["url"]
+        attempt = self.reserve(current, plan["routes"], plan_sha)
+        guard = self
+
+        class Redirect(urllib.request.HTTPRedirectHandler):
+            max_redirections = 5
+
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                nonlocal current, attempt
+                guard.note({"event": "redirect", "url": current, "status": code, "location": newurl})
+                current = newurl
+                attempt = guard.reserve(current, plan["routes"], plan_sha)
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+        opener = self.opener or urllib.request.build_opener(Redirect())
+        http_status = None
+        observed_body = None
+        response_content_type = None
+        try:
+            req = urllib.request.Request(current, headers={"User-Agent": "Research-source-reader/1.0", "Accept-Encoding": "identity"}, method="GET")
+            with opener.open(req, timeout=20) as response:
+                status = response.status
+                http_status = status
+                response_content_type = response.headers.get("Content-Type")
+                if status != 200:
+                    raise RuntimeError("Non-200 status " + str(status))
+                body = response.read(MAX_BYTES + 1)
+                observed_body = body
+                if not body or len(body) > MAX_BYTES:
+                    raise RuntimeError("Empty or oversized body; unavailable, no retry")
+                if "html" in response.headers.get("Content-Type", "").lower() or body.lstrip().lower().startswith((b"<!doctype html", b"<html")):
+                    start = body[:12000].lower()
+                    if any(x in start for x in [b"verify you are human", b"cf-chl-", b"challenge-platform", b"robot check", b"access denied", b"incapsula", b"request unsuccessful"]):
+                        raise RuntimeError("Challenge/denial body; unavailable, no retry")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("xb") as f:
+                    f.write(body)
+                return self.note({"event": "success", "url": current, "status": status,
+                                  "destination": str(dest.relative_to(self.lane)), "bytes": len(body),
+                                  "sha256": hashlib.sha256(body).hexdigest(), "ordinal": attempt["ordinal"]})
+        except Exception as error:
+            self.note({"event": "unavailable", "url": current, "url_key": key(current),
+                       "artifacts": sorted(artifacts(current)), "error": repr(error),
+                       "status": getattr(error, "code", http_status), "ordinal": attempt["ordinal"],
+                       "response_content_type": response_content_type,
+                       "observed_bytes_read": len(observed_body) if observed_body is not None else None,
+                       "observed_body_sha256": hashlib.sha256(observed_body).hexdigest() if observed_body is not None else None,
+                       "body_may_be_truncated": len(observed_body) > MAX_BYTES if observed_body is not None else None})
+            raise
+
+
+def main():
+    if len(sys.argv) != 2:
+        raise PolicyError("Usage: source_get_guard.py OWN_EXPLICIT_PLAN.json")
+    lane = Path(__file__).resolve().parent
+    plan_path = Path(sys.argv[1]).resolve()
+    if not plan_path.is_relative_to(lane):
+        raise PolicyError("Plan must be an own-lane file")
+    print(json.dumps(Guard(lane).fetch(json.loads(plan_path.read_text())), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
+
+SOURCE parking PAGE 21                                  PARKING STRUCTURES: FUSS ANALOGS                                         21
+
+   We begin by showing that G = H. Let (w, gd ) ∈ G. We have that (1, g d ).β = ω d β. Also,
+the group element w ∈ W acts as the scalar transformation ω −d on X. We conclude that (w, gd )
+stabilizes β and G ⊆ H.
+   Let (w, gd ) ∈ H. We have that w.β = ω −d β. Since β is a nonzero element of the one-dimensional
+flat X, this implies that w stabilizes X. Since w acts as an orthogonal transformation on the real
+locus XR , either w acts as 1 on X (forcing d ≡ 0 modulo kh) or w acts as −1 on X (forcing d ≡ kh2
+modulo kh and h to be even by Lemma 4.3). We conclude that H ⊆ G.
+   We show next that G = K. To do this, we observe that if Y ∈ L is any one-dimensional
+noncrossing flat and 0 < i < k, we have
+(4.1)                                g : [1, Y i 0k−i ] 7→ [1, Y i+1 0k−i−1 ].
+Since g k .[w, X1 ≤ · · · ≤ Xk ] = [wc−1 , cX1 ≤ · · · ≤ cXk ] always, we have that
+(4.2)                                  g : [1, Y k ] 7→ [c−1 , (cY )0k−1 ].
+   Let (w, g d ) ∈ G. If d ≡ 0 modulo kh, Equation 4.2 implies that gd .[1, X0k−1 ] = [c−h , (ch X)0k−1 ] =
+[1, X0k−1 ]. Since w ∈ WX , we have that (w, gd ).[1, X0k−1 ] = [w, X0k−1 ] = [1, X0k−1 ], so that
+(w, g d ) ∈ G. If h is even, d ≡ kh
+                                  2 modulo kh, and w acts as −1 on X, Equation 4.2 implies that
+                            h    h
+(w, g d ).[1, X0k−1 ] = [wc− 2 , (c 2 X)0k−1 ]. It is well known that when h is even, the group element
+  h                                                                           h                 h
+c 2 acts as the scalar transformation −1 on V . Therefore, we have that c 2 X = X and wc− 2 ∈ WX
+because w acts as −1 on X. We conclude that G ⊆ K.
+    Let (w, g d ) ∈ K. Then we have that gd .(X0k−1 ) = (X0k−1 ). By Equations 4.1 and 4.2 this
+forces d ≡ 0 modulo k. Writing d = mk, we must also have that cm X = X. Let π : V ։ P be the
+orthogonal projection map, where P is the Coxeter plane. Since cm is an orthogonal transformation,
+we have that cm .π(X) = π(X). By Lemma 4.2, the space π(X) is nonzero, and therefore a one-
+dimensional subspace of P . Since c acts on the real locus of P by h-fold rotation, this forces m ≡ 0
+modulo h and cm to act as 1 on X or m ≡ h2 modulo h and cm to act as −1 on X. (By Lemma 4.3,
+this latter case only arises when h is even.) Moreover, we must have that wc−m acts as 1 on X.
+This implies that w fixes X pointwise or both w and c−m act as −1 on X, and the latter case only
+arises when h is even. We conclude that K ⊆ G.                                                       
+
+   Let O1 , . . . , Ot be a complete list of the W × Zkh -orbits in V Θ (1). For each 1 ≤ i ≤ t, let βi ∈ Oi
+and let Xi ∈ L be the unique one-dimensional flat such that βi ∈ Xi . By Lemma 2.5, we can
+assume without loss of generality that Xi is noncrossing for each i. Moreover, we have that
+                                                          [
+                                           Oi = V Θ (1) ∩      w.Xi ,
+                                                            w∈W
+
+and Oi ∩ w.Xi contains kh points in V Θ (1) for all w ∈ W . However, we also know that any
+one-dimensional flat Y ∈ L contains kh points of V Θ (1). Since O1 , . . . , Ot is a complete list of the
+W × Zkh -orbits in V Θ (1), we conclude that the list X1 , . . . , Xt is a transversal for the action of W
+on one-dimensional flats in L.
+   By Lemma 4.5, the assignments βi 7→ [1, Xi 0k−1 ] (for 1 ≤ i ≤ t) induce a unique W × Zkh -
+equivariant map V Θ (1) → ParkN    C
+                                 W (k). Moreover, this map restricts to an injection on each orbit
+Oi . By Equations 4.1 and 4.2, the image of Oi under this map is
+                                                                           
+                                    j k−j       w ∈ W, 0 < j ≤ k
+                              [w, Yi 0 ] :                                    .
+                                            Yi is in the C-orbit of Xi
+By Lemma 2.6, we can replace the above set with
+                                                                          
+                        j k−j                w ∈ W, 0 < j ≤ k
+                  [w, Yi 0 ] :                                               .
+                                Yi is in the W -orbit of Xi and noncrossing
+
+SOURCE parking PAGE 22 22                                           BRENDON RHOADES
+
+Since X1 , . . . , Xt forms a transversal for the action of W on one-dimensional flats, we conclude that
+the W × Zkh -equivariant map V Θ (1) → ParkN        C
+                                                   W (k) constructed above has image as claimed in the
+statement of the proposition. The fact that X1 , . . . , Xt is a transversal also implies that the images
+of distinct orbits Oi under this map are disjoint. This implies that the map V Θ (1) → ParkN         C
+                                                                                                    W (k)
+is injective, completing the proof.                                                                    
+
+
+
+                                                   5. Type I
+  In this section we let W be of dihedral type I2 (m) for m ≥ 3. We prove the Intermediate
+Conjecture for W .
+
+
+5.1. Analysis of V Θ . The reflection representation V of W can be identified with C2 , where W
+acts by dihedral symmetries on the real locus VR = R2 . A choice of simple reflections is given
+by S = {s, t} where s and t are adjacent dihedral reflections. The distinguished Coxeter element
+c := st acts on VR as rotation by 2π
+                                  m radians. The Coxeter number h is equal to m.
+   By diagonalizing the action of c on V , we can choose coordinate functions x, y on V so that
+
+                                                  c.x = ω k x,
+                                                  c.y = ω −k y,
+                                                  s.x = y,
+                                                  s.y = x.
+
+   We identify C[V ] ∼
+                     = C[x, y]. It follows that θ1 = xkh+1 , θ2 = y kh+1 is an hsop of degree kh + 1
+carrying V ∗ and the map x 7→ θ1 , y 7→ θ2 is W -equivariant.
+   The variety V Θ is the set of points cut out by (Θ − x) = (xkm+1 − x, y km+1 − y). This locus is
+given by
+
+             V Θ = {(0, 0)} ⊎ {(0, ω i ), (ω i , 0) : 0 ≤ i < km} ⊎ {(ω i , ω j ) : 0 ≤ i, j < km}.
+
+We have that |V Θ | = 1 + 2km + (km)2 = (kh + 1)2 , and each point in V Θ is cut out by (Θ − x)
+with multiplicity one. If we write W = hs, ci and let g be the distinguished generator of Zkh , the
+action of W × Zkh on V Θ is given by
+
+(5.1)                                    s.(v1 , v2 ) = (v2 , v1 ),
+(5.2)                                    c.(v1 , v2 ) = (ω k v1 , ω −k v2 ),
+(5.3)                                    g.(v1 , v2 ) = (ωv1 , ωv2 ).
+
+
+5.2. Analysis of ParkN               C
+                                   W (k). The intersection lattice L of W consists of the m reflecting hyper-
+planes in W , the reflection representation V , and {0}. All of these flats are noncrossing.
+   Let H, H ′ ⊂ V be the reflecting hyperplanes for s, t ∈ W , respectively. When m is odd,
+the hyperplanes in Cox(W ) form a single W -orbit given by {H, c.H, . . . , cm−1 .H}. When m is
+                                                                                                   m
+even, the hyperplanes in Cox(W ) break up into two W -orbits given by {H, c.H, . . . , c 2 −1 .H} and
+                        m
+{H ′ , c.H ′ , . . . , c 2 −1 .H ′ }.
+   A typical element of ParkN           C
+                                       W (k) is an equivalence class [w, X1 ≤ · · · ≤ Xk ], where X1 ≤ · · · ≤ Xk
+is of the form V i X j 0k−i−j and X is a hyperplane in Cox(W ). We record the following facts about
+
+SOURCE evidence PAGE 2 2                                        BRENDON RHOADES
+
+          type            k=1          k≥1              type            k=1            k≥1
+         A1 , A2         Strong       Strong           A1 , A2         Strong         Strong
+      An , n ≥ 3          Weak         Weak         An , n ≥ 3      Generic Strong Generic Strong
+         Bn /Cn       Intermediate Intermediate        Bn /Cn       Generic Strong Generic Strong
+           Dn         Intermediate Intermediate          Dn         Generic Strong Generic Strong
+    I2 (m), m ≥ 5        Strong    Intermediate   I2 (m), m ≥ 5        Strong      Generic Strong
+    F4 , H3 , H4 , E6     Weak         Open       F4 , H3 , H4 , E6     Weak           Open
+         E7 , E8          Open         Open            E7 , E8          Open           Open
+
+          Table 1. The strongest version of the Main Conjecture known in each type, before
+          this paper (left) and after (right). Here k ≥ 1 is our Fuss parameter.
+
+
+   The Weak Conjecture gives a character formula for the (permutation) action of W × Zh on the
+combinatorial parking space ParkN     C
+                                     W . The Intermediate and Strong Conjectures assert a strong
+                           NC ∼ Θ
+form of isomorphism ParkW = V between the combinatorial parking space and a “parking locus”
+V Θ attached to the algebraic parking space Parkalg W . The Intermediate Conjecture asserts that this
+isomorphism holds for one particular choice of the “parameter” Θ, whereas the Strong Conjecture
+asserts that any choice of Θ would give our isomorphism. Even the Weak Conjecture uniformly
+implies a collection of uniformly stated facts in Coxeter-Catalan theory which are at present only
+understood in a case-by-case fashion (see Subsection 2.6 for a statement of these facts).
+   This setup was extended to the Fuss setting in [26]. The k-W -combinatorial and algebraic
+                                      alg                                        NC           NC
+parking spaces ParkN    C
+                       W (k) and ParkW (k) were defined and specialize as ParkW (1) = ParkW and
+     alg           alg            NC              alg
+ParkW (1) = ParkW . Both ParkW (k) and ParkW (k) carry actions of the product group W × Zkh .
+The definition of Parkalg                                                           ∗
+                        W (k) depends on a h.s.o.p. Θ of degree kh + 1 carrying V and to any such
+h.s.o.p. Θ we have an associated parking locus V Θ (k). The Fuss analog of the Main Conjecture
+(in its Weak, Intermediate, and Strong incarnations) is presented.
+   The prior progress on Main Conjecture is presented on the left of Table 1. The assertions for
+k = 1 are proven in [2] and the assertions for k ≥ 1 are proven in [26]. While these proofs are (of
+course) case-by-case, uniform evidence for the Main Conjecture in any type W has been discovered
+which identifies certain “components” of ParkN    C            Θ
+                                                W (k) and V (k).
+   Perhaps the most striking feature of the left of Table 1 is that only the Weak Conjecture is known
+in type A whereas stronger forms are known for the other infinite families BCDI. That is, the state
+of knowledge for the symmetric group is lacking relative to all other infinite families. The reason
+for this is that relevant h.s.o.p.’s Θ in type A are harder to write down, making the parking loci
+V Θ (k) attached to symmetric groups harder to access. This is a rare instance where the case of the
+symmetric group is the most difficult among the real reflection groups! The first main contribution
+of this paper will remedy this situation.
+Theorem 1.1. The Intermediate Conjecture is true in type A for any Fuss parameter k ≥ 1.
+   The basic idea in the proof of Theorem 1.1 is to pick an arbitrary h.s.o.p. Θ of degree kh + 1
+carrying V ∗ such that the corresponding parking locus V Θ (k) is reduced. While V Θ (k) is hard to
+understand explicitly, it can be understood indirectly by considering an augmented version of the
+intersection lattice L attached to W which includes eigenspaces E(w, ξ) of elements w ∈ W for
+eigenvalues ξ 6= 1.
+   Our next contribution is yet another layer of the Main Conjecture which we term the Generic
+Strong Conjecture. The four flavors of the Main Conjecture are related by
+                        Strong ⇒ Generic Strong ⇒ Intermediate ⇒ Weak,
+so that the Generic Strong version sits between the Strong and Intermediate versions.
+
+SOURCE evidence PAGE 3                                EVIDENCE FOR PARKING CONJECTURES                                       3
+
+
+   The Generic Strong Conjecture is easy to conceptualize. The Strong Conjecture states that
+for any h.s.o.p. Θ of degree kh + 1 carrying V ∗ , we have our ‘strong isomorphism’ ParkN     C    ∼
+                                                                                             W (k) =
+V Θ (k). The Intermediate Conjecture asserts that there exists a choice of Θ so that our isomorphism
+ParkN C     ∼ Θ
+     W (k) = V (k) holds. The Generic Strong Conjecture states that for a generic choice of Θ
+(understood in an appropriate Zariski sense), we have ParkN    C    ∼ Θ
+                                                              W (k) = V (k). While these are three
+a priori distinct conditions, we will prove the following statement uniformly.
+
+Theorem 1.2. The Intermediate and Generic Strong Conjectures are equivalent for any reflection
+group W and any Fuss parameter k ≥ 1.
+
+   The current status of the Main Conjecture is summarized on the right of Table 1. The entries
+come from combining Theorems 1.1 and 1.2. Our proof of Theorem 1.2 will also show that the
+only obstacle to proving the Strong Conjecture given the Intermediate Conjecture is the proof of a
+purely algebraic statement having nothing to do with the combinatorics of noncrossing partitions.
+Namely, one would only need to show that for any h.s.o.p. Θ of degree kh + 1 carrying V ∗ , the
+parking locus V Θ (k) is reduced. This gives significant evidence for the Strong Conjecture itself.
+   The proof of Theorem 1.2 is uniform, but not combinatorial. One uses topological and ana-
+lytic arguments to show that a certain collection of “good” h.s.o.p.’s Θ can be identified with a
+nonempty Zariski open subset U of the affine space HomC[W ] (V ∗ , C[V ]kh+1 ) which parametrizes
+all W -equivariant polynomial functions Θ : V → V which are homogenous of degree kh + 1. As
+a Zariski open subspace of an affine complex space, the set U is path connected in its Euclidean
+topology. For any path γ : [0, 1] → U sending t to Θt , one gets a parking locus V Θt (k) for all
+0 ≤ t ≤ 1. A continuity argument shows that one may “follow group actions along paths” to
+identify the W × Zkh -set structures of these parking loci as t varies.
+   The remainder of this paper is structured as follows. In Section 2 we review material on
+reflection groups and Coxeter-Catalan Theory, recall the main constructions of [2, 26], and state
+the four flavors of the Main Conjecture. In Section 3 we present a simple tool (Lemma 3.1) for
+proving equivariant bijections of G-sets for any group G and give uniform enumerative and algebraic
+results regarding the actions of W × Zkh on ParkN    C          Θ
+                                                   W (k) and V (k). In Section 4 we specialize to
+type A and study the action of Sn × Zkn on ParkN      C
+                                                    Sn (k). Using the theory developed in Section 3,
+this will allow us to prove Theorem 1.1. We return to general type W in Section 5 with a proof
+of Theorem 1.2. In particular, all of the arguments appearing in this paper are type A or uniform,
+and the only type A arguments appear in Section 4.
+
+
+                                          2. Background
+2.1. Notation for group actions. Let G be a finite group and let S and T be finite G-sets.
+We write S ∼  =G T to mean that there is a G-equivariant bijection ϕ : S → T . If V and W
+are finite-dimensional C[G]-modules, we write V ∼  =C[G] W to mean that there is a G-equivariant
+linear isomorphism ϕ : V → W . If S and T are finite G-sets, we have that S ∼     =G T implies
+C[S] ∼=C[G] C[T ], but the converse does not hold in general.
+
+2.2. Reflection groups. Let W be a reflection group acting on its reflection representation V . In
+this paper, all reflection groups will be real and irreducible. It will be convenient to replace V with
+its complexification VC = C ⊗R V and regard V as a complex vector space. We let n := dim(V ) be
+the rank of W .
+   Let Φ ⊂ V denote a root system associated to V and let Φ+ ⊂ Φ be a choice of positive system
+within Φ. Let Π ⊆ Φ+ be the corresponding choice of simple system. For any α ∈ Φ, let Hα ⊂ V
+denote the orthogonal hyperplane Hα := {v ∈ V : hv, αi = 0}. The hyperplane arrangement
+Cox(W ) := {Hα : α ∈ Φ+ } is called the Coxeter arrangement of W .
+

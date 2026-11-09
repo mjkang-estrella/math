@@ -1,0 +1,103 @@
+46 protected def product (s : Finset α) (t : Finset β) : Finset (α × β) :=
+50   sprod := Finset.product
+53 theorem product_eq_sprod : Finset.product s t = s ×ˢ t :=
+141 theorem card_product (s : Finset α) (t : Finset β) : card (s ×ˢ t) = card s * card t :=
+142   Multiset.card_product _ _
+148   simp_rw [← card_pos, ← one_lt_card_iff_nontrivial, card_product]; apply Nat.one_lt_mul_iff
+167   rw [← card_product, ← card_product, ← filter_product, ← filter_product, ← card_union_of_disjoint]
+367 lemma card_product_filter_lt [LinearOrder α] :
+/-
+Copyright (c) 2017 Microsoft Corporation. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Johannes Hölzl, Mario Carneiro, Oliver Nash
+-/
+module
+
+public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Union
+public import Mathlib.Data.List.OffDiag
+public import Mathlib.Data.Nat.Choose.Basic
+
+/-!
+# Finsets in product types
+
+This file defines finset constructions on the product type `α × β`. Beware not to confuse with the
+`Finset.prod` operation which computes the multiplicative product.
+
+## Main declarations
+
+* `Finset.product`: Turns `s : Finset α`, `t : Finset β` into their product in `Finset (α × β)`.
+* `Finset.diag`: For `s : Finset α`, `s.diag` is the `Finset (α × α)` of pairs `(a, a)` with
+  `a ∈ s`.
+* `Finset.offDiag`: For `s : Finset α`, `s.offDiag` is the `Finset (α × α)` of pairs `(a, b)` with
+  `a, b ∈ s` and `a ≠ b`.
+-/
+
+@[expose] public section
+
+assert_not_exists MonoidWithZero
+
+open Multiset
+
+variable {α β γ : Type*}
+
+namespace Finset
+
+/-! ### prod -/
+
+
+section Prod
+
+variable {s s' : Finset α} {t t' : Finset β} {a : α} {b : β}
+
+/-- `product s t` is the set of pairs `(a, b)` such that `a ∈ s` and `b ∈ t`. -/
+protected def product (s : Finset α) (t : Finset β) : Finset (α × β) :=
+  ⟨_, s.nodup.product t.nodup⟩
+
+instance instSProd : SProd (Finset α) (Finset β) (Finset (α × β)) where
+  sprod := Finset.product
+
+@[simp]
+theorem product_eq_sprod : Finset.product s t = s ×ˢ t :=
+  rfl
+
+@[simp]
+theorem product_val : (s ×ˢ t).1 = s.1 ×ˢ t.1 :=
+  rfl
+
+@[simp, grind =]
+theorem mem_product {p : α × β} : p ∈ s ×ˢ t ↔ p.1 ∈ s ∧ p.2 ∈ t :=
+  Multiset.mem_product
+
+theorem mk_mem_product (ha : a ∈ s) (hb : b ∈ t) : (a, b) ∈ s ×ˢ t :=
+  mem_product.2 ⟨ha, hb⟩
+
+@[simp, norm_cast]
+theorem coe_product (s : Finset α) (t : Finset β) :
+    (↑(s ×ˢ t) : Set (α × β)) = (s : Set α) ×ˢ t :=
+  Set.ext fun _ => Finset.mem_product
+
+/-- The product `s ×ˢ t` of two finsets, viewed as a subtype, is equivalent to the product of the
+subtypes `s × t`. The `Finset` analogue of `Equiv.Set.prod`. -/
+def _root_.Equiv.Finset.prod (s : Finset α) (t : Finset β) : ↥(s ×ˢ t) ≃ s × t where
+  toFun x := ⟨⟨x.1.1, (mem_product.mp x.2).1⟩, ⟨x.1.2, (mem_product.mp x.2).2⟩⟩
+  invFun x := ⟨⟨x.1.1, x.2.1⟩, mem_product.mpr ⟨x.1.2, x.2.2⟩⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+theorem subset_product_image_fst [DecidableEq α] : (s ×ˢ t).image Prod.fst ⊆ s := fun i => by
+  simp +contextual [mem_image]
+
+theorem subset_product_image_snd [DecidableEq β] : (s ×ˢ t).image Prod.snd ⊆ t := fun i => by
+  simp +contextual [mem_image]
+
+theorem product_image_fst [DecidableEq α] (ht : t.Nonempty) : (s ×ˢ t).image Prod.fst = s := by
+  ext i
+  simp [mem_image, ht.exists_mem]
+
+theorem product_image_snd [DecidableEq β] (ht : s.Nonempty) : (s ×ˢ t).image Prod.snd = t := by
+  ext i
+  simp [mem_image, ht.exists_mem]
+
+theorem subset_product [DecidableEq α] [DecidableEq β] {s : Finset (α × β)} :
+    s ⊆ s.image Prod.fst ×ˢ s.image Prod.snd := by grind

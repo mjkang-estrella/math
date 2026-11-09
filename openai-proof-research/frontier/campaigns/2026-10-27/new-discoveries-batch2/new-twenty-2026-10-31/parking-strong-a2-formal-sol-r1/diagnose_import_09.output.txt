@@ -1,0 +1,265 @@
+Mathlib/Algebra/MvPolynomial/Basic.lean
+/-
+Copyright (c) 2017 Johannes Hölzl. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Johannes Hölzl, Johan Commelin, Mario Carneiro
+-/
+module
+
+public import Mathlib.Algebra.Algebra.Subalgebra.Lattice
+public import Mathlib.Algebra.Algebra.Tower
+public import Mathlib.Algebra.GroupWithZero.Divisibility
+public import Mathlib.Algebra.MonoidAlgebra.Basic
+public import Mathlib.Algebra.MonoidAlgebra.NoZeroDivisors
+public import Mathlib.Algebra.MonoidAlgebra.Support
+public import Mathlib.Algebra.Regular.Pow
+public import Mathlib.Data.Finsupp.Antidiagonal
+public import Mathlib.Data.Finsupp.Order
+public import Mathlib.Order.SymmDiff
+public import Mathlib.Tactic.Polynomial.Core
+
+/-!
+# Multivariate polynomials
+
+This file defines polynomial rings over a base ring (or even semiring),
+with variables from a general type `σ` (which could be infinite).
+
+## Important definitions
+
+Let `R` be a commutative ring (or a semiring) and let `σ` be an arbitrary
+type. This file creates the type `MvPolynomial σ R`, which mathematicians
+might denote $R[X_i : i \in σ]$. It is the type of multivariate
+(a.k.a. multivariable) polynomials, with variables
+corresponding to the terms in `σ`, and coefficients in `R`.
+
+### Notation
+
+In the definitions below, we use the following notation:
+
++ `σ : Type*` (indexing the variables)
++ `R : Type*` `[CommSemiring R]` (the coefficients)
++ `s : σ →₀ ℕ`, a function from `σ` to `ℕ` which is zero away from a finite set.
+  This will give rise to a monomial in `MvPolynomial σ R` which mathematicians might call `X^s`
++ `a : R`
++ `i : σ`, with corresponding monomial `X i`, often denoted `X_i` by mathematicians
++ `p : MvPolynomial σ R`
+
+### Definitions
+
+* `MvPolynomial σ R` : the type of polynomials with variables of type `σ` and coefficients
+  in the commutative semiring `R`
+* `monomial s a` : the monomial which mathematically would be denoted `a * X^s`
+* `C a` : the constant polynomial with value `a`
+* `X i` : the degree one monomial corresponding to i; mathematically this might be denoted `Xᵢ`.
+* `coeff s p` : the coefficient of `s` in `p`.
+
+## Implementation notes
+
+Recall that if `Y` has a zero, then `X →₀ Y` is the type of functions from `X` to `Y` with finite
+support, i.e. such that only finitely many elements of `X` get sent to non-zero terms in `Y`.
+The definition of `MvPolynomial σ R` is `(σ →₀ ℕ) →₀ R`; here `σ →₀ ℕ` denotes the space of all
+monomials in the variables, and the function to `R` sends a monomial to its coefficient in
+the polynomial being represented.
+
+## Tags
+
+polynomial, multivariate polynomial, multivariable polynomial
+
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open Set Function Finsupp AddMonoidAlgebra
+open scoped Pointwise
+
+universe u v w x
+
+variable {R : Type u} {S₁ : Type v} {S₂ : Type w}
+
+/-- Multivariate polynomial, where `σ` is the index set of the variables and
+  `R` is the coefficient ring -/
+abbrev MvPolynomial (σ : Type*) (R : Type*) [CommSemiring R] :=
+  AddMonoidAlgebra R (σ →₀ ℕ)
+
+namespace MvPolynomial
+Mathlib/Data/Complex/Basic.lean
+module -- shake: keep-all
+
+public import Mathlib.Basic.Complex.Basic
+
+deprecated_module (since := "2026-08-27")
+Mathlib/Data/List/Chain.lean
+/-
+Copyright (c) 2018 Mario Carneiro. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Mario Carneiro, Kenny Lau, Yury Kudryashov
+-/
+module
+
+public import Mathlib.Data.List.Forall2
+public import Mathlib.Data.List.Induction
+public import Mathlib.Data.List.Lex
+public import Mathlib.Data.List.Pairwise
+public import Mathlib.Logic.Function.Iterate
+
+/-!
+# Relation chain
+
+This file provides basic results about `List.IsChain` from Batteries.
+A list `[a₁, a₂, ..., aₙ]` satisfies `IsChain` with respect to the relation `r` if `r a₁ a₂`
+and `r a₂ a₃` and ... and `r aₙ₋₁ aₙ`. We write it `IsChain r [a₁, a₂, ..., aₙ]`.
+A graph-specialized version is in development and will hopefully be added under `combinatorics.`
+sometime soon.
+-/
+
+public section
+
+assert_not_imported Mathlib.Algebra.Order.Group.Nat
+
+open Nat
+
+variable {α β : Type*} {R r : α → α → Prop} {l l₁ l₂ : List α} {a b : α}
+
+namespace List
+
+mk_iff_of_inductive_prop List.IsChain List.isChain_iff
+
+theorem isChain_nil : IsChain R [] := .nil
+theorem isChain_singleton (a : α) : IsChain R [a] := .singleton _
+
+theorem isChain_cons_iff (R : α → α → Prop) (a : α) (l : List α) :
+    IsChain R (a :: l) ↔ l = [] ∨
+      ∃ (b : α) (l' : List α), R a b ∧ IsChain R (b :: l') ∧ l = b :: l' :=
+  (isChain_iff _ _).trans <| by
+    simp only [cons_ne_nil, List.cons_eq_cons, exists_and_right,
+      exists_eq', true_and, exists_and_left, false_or]
+    grind
+
+theorem IsChain.imp_of_mem_tail_imp {S : α → α → Prop} {l : List α}
+    (H : ∀ a b : α, a ∈ l → b ∈ l.tail → R a b → S a b) (p : IsChain R l) : IsChain S l := by
+  induction p with grind
+
+theorem IsChain.imp_of_mem_imp {S : α → α → Prop} {l : List α}
+    (H : ∀ a b : α, a ∈ l → b ∈ l → R a b → S a b) (p : IsChain R l) : IsChain S l :=
+  p.imp_of_mem_tail_imp (H · · · <| mem_of_mem_tail ·)
+
+theorem IsChain.iff {S : α → α → Prop} (H : ∀ a b, R a b ↔ S a b) {l : List α} :
+    IsChain R l ↔ IsChain S l :=
+  ⟨IsChain.imp fun a b => (H a b).1, IsChain.imp fun a b => (H a b).2⟩
+
+theorem IsChain.iff_of_mem_imp {S : α → α → Prop} {l : List α}
+    (H : ∀ a b : α, a ∈ l → b ∈ l → (R a b ↔ S a b)) : IsChain R l ↔ IsChain S l :=
+  ⟨IsChain.imp_of_mem_imp (Iff.mp <| H · · · ·), IsChain.imp_of_mem_imp (Iff.mpr <| H · · · ·)⟩
+
+theorem IsChain.iff_of_mem_tail_imp {S : α → α → Prop} {l : List α}
+    (H : ∀ a b : α, a ∈ l → b ∈ l.tail → (R a b ↔ S a b)) : IsChain R l ↔ IsChain S l :=
+  ⟨IsChain.imp_of_mem_tail_imp (Iff.mp <| H · · · ·),
+  IsChain.imp_of_mem_tail_imp (Iff.mpr <| H · · · ·)⟩
+
+theorem IsChain.iff_mem {l : List α} :
+    IsChain R l ↔ IsChain (fun x y => x ∈ l ∧ y ∈ l ∧ R x y) l :=
+  IsChain.iff_of_mem_imp <| by grind
+
+theorem IsChain.iff_mem_mem_tail {l : List α} :
+    IsChain R l ↔ IsChain (fun x y => x ∈ l ∧ y ∈ l.tail ∧ R x y) l :=
+  IsChain.iff_of_mem_tail_imp <| by grind
+
+theorem isChain_pair {x y} : IsChain R [x, y] ↔ R x y := by
+  simp only [IsChain.singleton, isChain_cons_cons, and_true]
+
+theorem isChain_isInfix : ∀ l : List α, IsChain (fun x y => [x, y] <:+: l) l
+  | [] => .nil
+  | [_] => .singleton _
+  | a :: b :: l => .cons_cons ⟨[], l, by simp⟩
+    ((isChain_isInfix (b :: l)).imp fun _ _ h => h.trans ⟨[a], [], by simp⟩)
+
+theorem isChain_split {c : α} {l₁ l₂ : List α} :
+Mathlib/Algebra/Polynomial/Basic.lean
+/-
+Copyright (c) 2018 Chris Hughes. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Hughes, Johannes Hölzl, Kim Morrison, Jens Wagemaker
+-/
+module
+
+public import Mathlib.Algebra.Group.AddChar
+public import Mathlib.Algebra.Group.Submonoid.Operations
+public import Mathlib.Algebra.MonoidAlgebra.Module
+public import Mathlib.Algebra.MonoidAlgebra.NoZeroDivisors
+public import Mathlib.Algebra.Order.Monoid.Unbundled.WithTop
+public import Mathlib.Algebra.Ring.Action.Rat
+public import Mathlib.Data.Finset.Sort
+public import Mathlib.Tactic.FastInstance
+public import Mathlib.LinearAlgebra.Finsupp.LSum
+public import Mathlib.Algebra.Order.Group.Nat
+
+
+/-!
+# Theory of univariate polynomials
+
+This file defines `Polynomial R`, the type of univariate polynomials over the semiring `R`, builds
+a semiring structure on it, and gives basic definitions that are expanded in other files in this
+directory.
+
+## Main definitions
+
+* `monomial n a` is the polynomial `a X^n`. Note that `monomial n` is defined as an `R`-linear map.
+* `C a` is the constant polynomial `a`. Note that `C` is defined as a ring homomorphism.
+* `X` is the polynomial `X`, i.e., `monomial 1 1`.
+* `p.sum f` is `∑ n ∈ p.support, f n (p.coeff n)`, i.e., one sums the values of functions applied
+  to coefficients of the polynomial `p`.
+* `p.erase n` is the polynomial `p` in which one removes the `c X^n` term.
+* `ofMultiset s` is the monic polynomial `p` which has roots `s`.
+
+There are often two natural variants of lemmas involving sums, depending on whether one acts on the
+polynomials, or on the function. The naming convention is that one adds `index` when acting on
+the polynomials. For instance,
+* `sum_add_index` states that `(p + q).sum f = p.sum f + q.sum f`;
+* `sum_add` states that `p.sum (fun n x ↦ f n x + g n x) = p.sum f + p.sum g`.
+* Notation to refer to `Polynomial R`, as `R[X]` or `R[t]`.
+
+## Implementation
+
+Polynomials are defined using `R[ℕ]`, where `R` is a semiring.
+The variable `X` commutes with every polynomial `p`: lemma `X_mul` proves the identity
+`X * p = p * X`.  The relationship to `R[ℕ]` is through a structure
+to make polynomials irreducible from the point of view of the kernel. Most operations
+are irreducible since Lean cannot compute anyway with `AddMonoidAlgebra`. There are two
+exceptions that we make semireducible:
+* The zero polynomial, so that its coefficients are definitionally equal to `0`.
+* The scalar action, to permit typeclass search to unfold it to resolve potential instance
+  diamonds.
+
+The raw implementation of the equivalence between `R[X]` and `R[ℕ]` is
+done through `ofFinsupp` and `toFinsupp` (or, equivalently, `rcases p` when `p` is a polynomial
+gives an element `q` of `R[ℕ]`, and conversely `⟨q⟩` gives back `p`). The
+equivalence is also registered as a ring equiv in `Polynomial.toFinsuppIso`. These should
+in general not be used once the basic API for polynomials is constructed.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+/-- `Polynomial R` is the type of univariate polynomials over `R`,
+denoted as `R[X]` within the `Polynomial` namespace.
+
+Polynomials should be seen as (semi-)rings with the additional constructor `X`.
+The embedding from `R` is called `C`. -/
+@[wikidata Q43260]
+structure Polynomial (R : Type*) [Semiring R] where ofFinsupp ::
+  /-- The coefficients `ℕ →₀ R` of a polynomial in `R[X]`. -/
+  toFinsupp : AddMonoidAlgebra R ℕ
+
+@[inherit_doc] scoped[Polynomial] notation:9000 R "[X]" => Polynomial R
+
+open AddMonoidAlgebra Finset Module
+open Finsupp hiding single
+open Function hiding Commute
+
+namespace Polynomial
+
+universe u
+MISSING PRIVATE FILE EXISTS True
