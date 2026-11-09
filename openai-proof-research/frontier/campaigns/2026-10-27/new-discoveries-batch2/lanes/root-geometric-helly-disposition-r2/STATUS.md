@@ -1,0 +1,11 @@
+# Root disposition
+
+No nomination; counts remain 9 additional / 39 total / next 40. The finite, nonvacuous Swanepoel question remains unresolved. Park further random searches absent a new uniform mechanism.
+
+Root reviewed the bound reports, not every primary extraction or numerical run. The finite centre criterion is consistent with subdividing each normal cone at edge-normal and opposite-edge-normal rays: the support difference is linear on each resulting cone, so a nonnegative value requires a nonnegative boundary-ray value. The parabola/domain and small-cardinality issues are wording corrections, not substantive campaign outcomes. For a bounded finite parabola segment, reflection above a sufficiently high horizontal line lies in its upward convex hull and preserves supporting lower boundary points; the entire unbounded parabola cannot lie on a compact convex body's boundary. This does not answer the intended finite question.
+
+The bounded-to-finite transfer is retained as a proposed helper argument, not separately certified in this root triage. Its compactness and recession steps do not establish a uniform finite Helly bound.
+
+Qualifications that supersede stronger shorthand in the scout: the near-symmetric double-cone description is first-order and has no proved uniform finite-epsilon equivalence. Endpoint/limiting details of the Hadwiger application are also explicitly missing. Therefore no theorem limiting actual near-symmetric minimal obstructions to six points has been established here. Similarly, finding intersections with eight components does not contradict the existence of some larger universal component bound. The reported six-point obstruction only rejects the specific three-triangle certificate; it does not rule out a nine-point theorem or all Helly-based approaches.
+
+Bergman's octahedron mapping-radius question is a concrete reserve for new work after source/history screening. Its general-norm upper bound cannot automatically be advertised as an equality formula for one fixed Euclidean target. Konyagin–Laba arbitrary slopes needs further prior-body screening and a new mechanism. No novelty clearance, formal investment, manuscript, or shared-state change.
