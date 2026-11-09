@@ -1,0 +1,3 @@
+exec(open(__file__.replace('retrieve-discovery.py','retrieve.py')).read().split('a=list(')[0])
+jobs=[('openalex-1996','https://api.openalex.org/works?search=Orientable%20domination%20in%20graphs&per-page=10'),('archive-catalog','https://archive.org/advancedsearch.php?q=title%3A%22Congressus+Numerantium%22+AND+year%3A1996&output=json'),('arxiv-greedy-abs','https://arxiv.org/abs/1010.2467'),('arxiv-directed-abs','https://arxiv.org/abs/1010.2464')]
+a=list(concurrent.futures.ThreadPoolExecutor(max_workers=2).map(fetch,jobs));(P/'discovery-receipts.json').write_text(json.dumps(a,indent=2)); print(json.dumps(a,indent=2))
