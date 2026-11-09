@@ -1,0 +1,15 @@
+# Round 7t handback for root review
+
+The assigned MatchingTraceExpansion is proved without additional premises by ChanLevine.Round7T.matchingTraceExpansion in formal/CountR7TFinal.lean. No acceptance or credit is requested; root decides. The sibling MatchingCountConvolution is outside this lane and is not claimed here. The overall MathDB 338887 endpoint is not assembled here.
+
+The proof establishes a stronger identity: for every nonzero n and every element z of any field, transferProduct z n has trace matchingNumerator n z. It does not need z^n = 1 or n ≥ 3. Specialization gives the exact frozen Prop.
+
+CountR7TStates constructs an inverse equivalence from admissible closed binary state words to the frozen cyclic matchings. State 1 occurs precisely at the right endpoint of a selected edge. The definition includes the wrap edge and both alternating perfect matchings. CountR7TWeights proves vanishing for inadmissible words and the exact matching weight, with the factor (-z)^|M|, uncovered-vertex factor (1+z)^(n-2|M|), and product of all covered local factors. CountR7TSum reindexes the weighted sum and identifies it with the literal frozen numerator. CountR7TMatrix expands an arbitrary ordered matrix product over paths, then closes the trace. CountR7TCyclic reindexes to ZMod, proving the wrap transition explicitly. CountR7TFinal assembles these ordinary identities. No original definition is replaced.
+
+The verified round-6a archive has SHA-256 844b066f28b9c97b43e41ce54c77813c1b41b6334994d2f1ebb406390d7ec9e0. All 36 source modules are frozen byte-for-byte, with before/after manifests. Development copied immutable inherited compiled dependencies into the lane; the delivered replay starts from a fresh source-only extraction and rebuilds serially. Exact inherited checks and an independent integer checker cover n = 3 through 10. Kernel controls include the wrap word and both alternating matchings. Numerical checks are diagnostics, not the proof.
+
+CountR7TAudit enumerates every declaration, including generated declarations, in the local final/control import closure, constructs the complete reachable type/value dependency closure, checks closure membership for every dependency, and allows only propext, Classical.choice and Quot.sound. LOCAL executable flags must be zero; UPSTREAM extern/implemented_by metadata is separately reported and is not misrepresented as zero. The pinned upstream repository is trusted; no upstream-truth or novelty audit is claimed.
+
+All writes are lane-local, with no child agents, git operations, shared ledger edits, network, uploads, external messages, or browser tabs. Each replay child is capped at two CPUs, CPU 120 seconds, wall 140 seconds, about 6 GiB aggregate RSS, MALLOC_ARENA_MAX=2, and Lean -j1 -M3500. Logs have unique names. Development failures are retained. No heavy background process is left at handback.
+
+Root's next step is to review the statement and certificate, combine with the sibling convolution proof when available, and use the frozen Round6.transferCountEvaluation. No new Prop remains in this lane.

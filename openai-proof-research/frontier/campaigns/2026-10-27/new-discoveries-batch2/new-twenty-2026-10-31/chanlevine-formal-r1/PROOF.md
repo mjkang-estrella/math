@@ -1,0 +1,176 @@
+# Ordinary proof update; formal status: PARTIAL
+
+The ordinary argument below uses the cited source theorems. The Lean package in this lane does not yet formalize all its steps. Seven explicit Props remain; no unconditional Lean resolution is claimed.
+
+# MathDB 338887 — proof of the Chan–Levine recurrent-component cardinality conjecture
+
+Status: CANDIDATE (ordinary proof complete; Lean endpoint not compiled in this lane). Not self-accepted.
+
+## 1. Exact statement
+
+Source: Swee Hong Chan and Lionel Levine, *Abelian networks IV. Dynamics of nonhalting networks*,
+arXiv:1804.03322 (v1 2018-04-10, v2 2020-11-14; Mem. Amer. Math. Soc. 276 (2022), no. 1358),
+Section 8.3, Conjecture 8.3 (identical wording in v1 and v2; see `sources/txt/1804.03322.txt` lines 4093–4130
+and `sources/txt/1804.03322v1.txt` lines 4074–4078).
+
+Setting (source, Example 3.11 and Section 8.3). Let C_n be the bidirected cycle on vertices v_0, …, v_{n−1}
+(indices in Z_n), n ≥ 3, carrying the sinkless rotor network. The edge weight is wt(v_k, v_{k−1}) = 1 and
+wt(v_k, v_{k+1}) = 0. A configuration x.q has chips x ∈ Z^V and rotor state q (each vertex points along one of its
+two outgoing edges). Its weight is
+
+  wt(x.q) = Σ_k k·x(v_k) + Σ_k wt(q(v_k))  (mod n).
+
+The source records that executions preserve weight. For every m ≥ 1 and i ∈ Z_n there is a unique recurrent
+component C_{n,m,i} of level (total number of chips) m and weight i. r(C) is the number of recurrent
+configurations in C.
+
+**Conjecture 8.3.** For n ≥ 3, m ≥ 1 and i, j ∈ Z_n: r(C_{n,m,i}) = r(C_{n,m,j}) whenever
+gcd(n, m, i) = gcd(n, m, j).
+
+MathDB 338887 states exactly this (literal raw line in `raw/338887.jsonl`).
+
+**Theorem (proved below).** The conjecture is true. Moreover, writing d = gcd(n, m),
+
+  r(C_{n,m,i}) = (1/n) Σ_{e | d} w_{n,m}(e) · c_e(i),
+
+where c_e(i) is the Ramanujan sum Σ_{1≤a≤e, gcd(a,e)=1} exp(2πi·a·i/e). The integers w_{n,m}(e) are given by the
+generating function
+
+  Σ_{m≥0} w_{n,m}(e) t^m = V_{n/e}(t) / (1 − t^e)^{n/e} − 2,
+
+with V_0 = 2, V_1 = p, V_j = p·V_{j−1} − (1 − t^e)^2·V_{j−2}, p = 2 + q_e t^e, and q_e = 0 (e odd), 2 (4 | e),
+−2 (e ≡ 2 mod 4).
+
+## 2. Reduction to a count (source theorems used as the semantic bridge)
+
+(a) Cycle test (source Theorem 7.4; Theorem 1.3 is the rotor special case). x.q is recurrent iff (C1) x ≥ 0,
+(C2) q is locally recurrent (automatic: rotor processors are irreducible, source §3.6), and (C3) every directed cycle
+of the rotor digraph ρ_q, whose edge set is {q(v)} (source §7, "%q = q" for rotor networks), contains a vertex of
+supp(x).
+
+(b) For n ≥ 3 the rotor digraph is a functional digraph on C_n in which each vertex points to a neighbour. Its
+directed cycles are exactly:
+- the 2-cycles {v_k, v_{k+1}} with q(v_k) = v_{k+1} and q(v_{k+1}) = v_k (call (k, k+1) a *facing pair*), and
+- the two n-cycles, present when all rotors point clockwise or all point anticlockwise.
+
+Reason: a directed walk that ever reverses direction immediately closes a 2-cycle. A walk that never reverses
+must go all the way round.
+
+(c) Uniqueness of C_{n,m,i}, with proof. Proposition 7.9 and Theorem 5.25(i) give exactly |Tor(N)| recurrent components at every positive level m, and
+
+  Tor(N) ≅ Z^V_0 / (2I − A) Z^V ≅ Z/nZ.
+
+Here the total kernel is 2 Z^V and P = A/2 (Example 3.11). For completeness, write e_k for the standard basis and use b_k = e_k − e_0, 1 ≤ k < n, as a basis of Z^V_0. The Laplacian relations are 2b_k − b_{k−1} − b_{k+1} = 0, with b_0 = b_n = 0. Successive relations give b_k = k b_1 and the last gives n b_1 = 0. Conversely the homomorphism Σ z_k e_k ↦ Σ k z_k mod n annihilates every Laplacian column and sends b_1 to 1. Thus the quotient is precisely cyclic of order n, not a proper quotient.
+
+Each of the n weights occurs at every m ≥ 1: put all m chips at v_0 and point the rotors left precisely at vertices 1, …, i, for the representative 0 ≤ i < n. For i > 0 its only facing pair is (0,1), which meets the chips; for i = 0 the rotor digraph is the clockwise Hamiltonian cycle, also meeting the chips. The cycle test therefore makes this configuration recurrent, and its weight is i. Since level and weight are invariant under legal executions, these n configurations occupy n different components. There are exactly n components in total, so each weight has exactly one. By Definition 5.2(ii), two recurrent configurations in a common component reach one another.
+
+(d) Lemma 5.19 of the source: a component is a recurrent component iff it contains a recurrent configuration. The
+number of chips and the weight are invariant along executions, hence constant on components. With the uniqueness proof in (c), every recurrent configuration with m chips and weight i lies in C_{n,m,i}. Hence
+
+  r(C_{n,m,i}) = N_{n,m}(i) := #{(x, q) : x ∈ N^{Z_n}, Σx = m, (x, q) satisfies (b)'s cycle conditions, wt = i}.
+
+Encode q(k) = + if q(v_k) = v_{k+1} and q(k) = − otherwise, so wt = Σ k x(k) + #{k : q(k) = −} mod n.
+
+Check. An exact DP implementing this count reproduces the source's Table 8.1 entry for entry (`logs/rotor-table.log`;
+the brute-force enumerator agrees with the DP).
+
+## 3. Proof
+
+Fix n ≥ 3 and m ≥ 1, and let R_{n,m} be the set counted above. For ω ∈ C with ω^n = 1 put
+W_m(ω) = Σ_{(x,q) ∈ R_{n,m}} ω^{wt(x,q)} (well defined because ω^n = 1).
+
+**Step 0 (Fourier).** N(i) = (1/n) Σ_{ω^n = 1} ω^{−i} W_m(ω).
+
+**Step 1 (rotation).** ρ(x, q)(k) := (x(k−1), q(k−1)) is a bijection of R_{n,m}, because the cycle conditions are
+rotation invariant. It satisfies wt∘ρ = wt + m, since Σ_k k·x(k−1) = Σ_j (j+1)·x(j) ≡ Σ_j j·x(j) + m (mod n).
+Hence W_m(ω) = ω^m W_m(ω), so W_m(ω) = 0 unless ω^m = 1.
+
+**Step 2 (inclusion–exclusion).** Let ζ satisfy ζ^n = 1 and work in C[[t]]. Let R′ be the set of (x, q), x ∈ N^{Z_n},
+such that every facing pair meets supp(x). By (b), R′ is R = ⊔_m R_{n,m} plus the two configurations with x = 0
+and q constant; their weights are 0 and n ≡ 0, so ζ^{wt} = 1 for both. Note R_{n,0} = ∅. Hence
+
+  G(t) := Σ_{m≥0} W_m(ζ) t^m = G′(t) − 2,  G′(t) := Σ_{(x,q) ∈ R′} t^{|x|} ζ^{wt(x,q)}.
+
+For fixed q the facing pairs are pairwise disjoint: a vertex with rotor + can only be the left end of a pair, and a
+vertex with rotor − only the right end. Write f_k = Σ_{a≥0} (tζ^k)^a = 1/(1 − tζ^k). Inclusion–exclusion over the set
+F of facing pairs forced empty gives
+
+  Σ_{x : every facing pair meets supp x} ζ^{#minus(q)} Π_k (tζ^k)^{x(k)} = ζ^{#minus(q)} Σ_{F ⊆ FP(q)} (−1)^{|F|} Π_{k ∉ V(F)} f_k.
+
+Exchange the sums. M ranges over matchings of the cycle graph on Z_n, with edges {k, k+1} including {n−1, 0}. The
+condition M ⊆ FP(q) fixes q on V(M): (+, −) on each edge, contributing ζ^{|M|}. Every other vertex is free and
+contributes (1 + ζ). Therefore
+
+  G′(t) = Σ_M (−ζ)^{|M|} Π_{k ∉ V(M)} (1 + ζ) f_k.
+
+(This is the cycle case of the source's master determinant, Theorem 7.11, but it is derived here directly.)
+
+**Step 3 (clear denominators; transfer matrices).** Let g_k(t) = 1 − tζ^k, so f_k = 1/g_k. Multiplying by
+D(t) = Π_{k ∈ Z_n} g_k(t) gives
+
+  D(t) G′(t) = H(t) := Σ_M (−ζ)^{|M|} (1 + ζ)^{n − 2|M|} Π_{k ∈ V(M)} g_k(t).
+
+Define 2×2 matrices X_k(t) = [[1 + ζ, −ζ g_k(t)], [g_k(t), 0]]. Expand Tr(X_0 X_1 ⋯ X_{n−1}) as a sum over closed
+state sequences s_0, …, s_n = s_0 in {1, 2} with weight Π X_k[s_k, s_{k+1}]. Since X_k[2,2] = 0, every step 1 → 2
+at position k is followed by 2 → 1 at position k+1. Closed sequences therefore correspond bijectively to matchings
+M of the n-cycle: dominoes {k, k+1}, cyclically, carry weight (−ζ g_k)·g_{k+1}, and singletons carry 1 + ζ. Hence
+
+  H(t) = Tr Π_{k=0}^{n−1} X_k(t).
+
+**Step 4 (periodicity at a primitive e-th root).** Now let ζ be a primitive e-th root of unity with e | n, and set
+r = n/e. X_k depends on k only modulo e, so Π_{k<n} X_k = P^r with P := X_0 X_1 ⋯ X_{e−1}. Also
+D(t) = (Π_{k<e} (1 − tζ^k))^r = (1 − t^e)^r. Moreover det X_k = ζ g_k^2, so det P = ζ^e (1 − t^e)^2 = (1 − t^e)^2.
+By Cayley–Hamilton, V_j := Tr(P^j) satisfies V_0 = 2, V_1 = p := Tr P, and V_j = p V_{j−1} − (1 − t^e)^2 V_{j−2}.
+
+**Step 5 (the period trace is 2 + q_e t^e).** p(t) is a polynomial of degree ≤ e, since each entry of X_k has degree
+≤ 1.
+- *Rotation.* g_k(ζt) = g_{k+1}(t), so X_k(ζt) = X_{k+1}(t) with X_e = X_0. Cyclicity of the trace then gives
+  p(ζt) = Tr(X_1 ⋯ X_{e−1} X_0) = p(t). Comparing coefficients, p_j(ζ^j − 1) = 0, so p_j = 0 for 0 < j < e.
+- *Constant term.* p(0) = Tr A^e with A = [[1 + ζ, −ζ], [1, 0]]. The characteristic polynomial of A is
+  (λ − 1)(λ − ζ), so Tr A^e = 1 + ζ^e = 2.
+- *Top coefficient.* The t-coefficient of X_k is ζ^k J with J = [[0, ζ], [−1, 0]], so
+  p_e = Tr(ζ^{e(e−1)/2} J^e), and J^2 = −ζ I.
+  - e odd: J^e is a scalar times J and Tr J = 0, so p_e = 0.
+  - e even: ζ^{e/2} = −1 and ζ^{e(e−1)/2} = (−1)^{e−1} = −1, so p_e = −2(−ζ)^{e/2} = 2(−1)^{e/2}.
+
+So p(t) = 2 + q_e t^e with q_e ∈ {0, 2, −2} depending only on e.
+
+**Step 6 (conclusion).** V_r has integer coefficients and depends only on (e, r). Hence
+G(t) = V_r(t)/(1 − t^e)^r − 2 ∈ Z[[t]] depends on ζ only through its order e, so W_m(ζ) = w_{n,m}(e) ∈ Z. By Step 1,
+w_{n,m}(e) = 0 unless e | m. Grouping the n-th roots of unity in Step 0 by their order gives
+
+  N(i) = (1/n) Σ_{e | gcd(n,m)} w_{n,m}(e) c_e(i),  c_e(i) = Σ_{ζ primitive e-th} ζ^{−i}.
+
+The Ramanujan sum c_e(i) depends only on gcd(e, i): multiplying by a unit u mod e permutes the primitive e-th roots,
+and gcd(e, i) = gcd(e, j) implies j ≡ u·i (mod e) for some unit u. For e | d = gcd(n, m) we have
+gcd(e, i) = gcd(e, gcd(d, i)). Hence N(i) depends only on gcd(n, m, i). ∎
+
+## 4. Checks (diagnostics, not proof)
+- `outputs/rotor-counts.jsonl`: exact DP counts for all 3 ≤ n ≤ 40 and 1 ≤ m ≤ 3n (2,451 rows). The conjecture holds
+  on every row (`logs/rotor-fast-b.log`). The closed formula above reproduces every row exactly (`scripts/rotor_formula.py`,
+  `logs/rotor-formula.log`: 2,451 rows, 0 mismatches).
+- `scripts/rotor_trace_check.py`: floating-point check that Tr Π_{k<e} X_k = 2 + q_e t^e for all primitive roots,
+  e ≤ 30.
+- Worked values: W(ζ) = 2 for n = m = 5 (642 − 640); 4 for n = m = 4 and n = m = 8; 0 for n = m = 6. These agree with
+  q_e and the source's Table 8.1.
+
+## 5. Source-ingredient audit (r94 / r97 / 374241 lessons)
+- Used from the source: the cycle test (Thm 7.4), Lemma 5.19 and the §8.3 uniqueness/weight-invariance statements.
+  All of these serve only to identify r(C_{n,m,i}) with an explicit count. The master determinant (Thm 7.11) is not
+  needed; Step 2 rederives its cycle case.
+- Not in the source: evaluating at roots of unity of order e | n, the period reduction P^{n/e}, the rotation-plus-degree
+  argument that forces Tr P = 2 + q_e t^e, the Lucas/Cayley–Hamilton step, and the Galois (Ramanujan-sum) conclusion.
+  The source says only that "the case when i − j is divisible by gcd(n, m) is a consequence of rotational symmetry,
+  but the general case seems more mysterious".
+- Risk for root: the proof is short (about one page). It is a structural argument rather than a combination of the
+  source's lemmas, but root should judge whether it counts as routine.
+
+## 6. Prior art (bounded)
+- arXiv v1 and v2 of the source both pose the conjecture; the AMS Memoirs version (2022) was not accessed.
+- Web searches on 2026-11-03 (standard and extended) found no proof or disproof
+  (`outputs/prior-art-searches.md`).
+- OpenAI/math HEAD 4eaee875 (unchanged): no rotor or abelian-network preprint in the pinned preprints listing.
+  Omega trureturing: cached D5/Problems trees at b576c901 contain no relevant path. The new HEAD 6ffa76e4 commit
+  touches only Bajnok–Beatty files. Commits between b576c901 and 6ffa76e4 were not enumerated, because this lane is
+  limited to /commits/HEAD.
+- Not checked: Google Scholar citation lists of the Memoir; later papers by Chan or Levine; theses.
