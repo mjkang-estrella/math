@@ -1,0 +1,11 @@
+# Reproduction
+
+Lean 4.34.1: /home/mj-kang/Documents/Dev/math/dlp-research/.tools/lean-4.34.1-linux/bin. Read-only mathlib packages: /home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-14/formal/.lake/packages, pinned to d13f23b723b8a846827a245b89c10fc7d3f11612.
+
+Extract stacksort-source5a.zip into a NEW EMPTY directory inside stacksort-formal-r5a. Run `bash scripts/replay.sh` there. The build script follows scripts/order.txt, strictly and serially compiling 79 modules with `lean -j1 -M3500 -DwarningAsError=true`; it resumes completed modules. Replay then runs leanchecker with every explicit module name and the audit verifier. No invocation of leanchecker without a module is needed.
+
+Every Lean, leanchecker and Python process goes through scripts/run.sh. It sets lane-local TMPDIR/cache paths, MALLOC_ARENA_MAX=2, one Lean thread, CPU affinity 0,1, CPU 120 seconds and wall 140 seconds. Its process-tree RSS watchdog kills the run above 6291456 KiB. Each call has a unique complete log. The watchdog is stopped and waited after its command. Run no concurrent heavy processes.
+
+StackSortCut5Audit imports StackSortCut5Final, which also imports StackSortFinal4 to retain the complete proof and control closure. The audit records every kernel declaration and generated symbol, reading values with allowOpaque=true. It checks local metadata and transitive axioms. check_audit5.py independently derives the final import closure, proves equality of the expected and audited declaration-name sets, checks all local flags, separates new/local/upstream statistics, and traverses the endpoint and helper dependencies. Audit modules themselves are metaprogram validation utilities, not theorem dependencies.
+
+The 73 inherited module hashes are recorded before and after in hashes/. All must be identical. The source archive includes safe relative source/script paths only. The retained fresh-extraction directory contains a build from source without copied olean files, explicit-module checker logs, the raw audit, and the closure summary. Inherited negative controls reject a wrong seed, wrong certificate base, wrong threshold, wrong stack-sorting convention, and wrong recurrence rows. Literal P5/P6 kernel regressions are not newly claimed.

@@ -1,0 +1,9 @@
+# Round 6 replay
+
+Run `bash scripts/replay6.sh` from this lane. The driver uses the supplied source archive, extracts into a fresh lane-local directory on first invocation, and resumes successful builds by checking for their olean files. Delete only the replay extraction if a completely fresh replay is desired. Modules compile strictly and serially; every Lean and explicit-module leanchecker call passes through scripts/run.sh, which sets lane-local TMPDIR/cache, two-CPU affinity, MALLOC_ARENA_MAX=2, CPU 120 seconds, wall 140 seconds, and a 6 GiB descendant RSS watchdog. Lean also receives -j1 -M3500 and warningAsError=true.
+
+The pinned Lean and package paths are embedded in run.sh. No network is required. The source archive contains no compiled objects. Review logs for completion; a partially executed replay is not a successful replay.
+
+The completed replay logs are under logs/fresh-build-*.log and logs/fresh-checker-*.log; successful checker markers use .ok. logs/fresh-audit-summary.log records the independent closure analysis. The endpoint prints are in logs/fresh-build-StackSortFinal6.log. The original and fresh reports agree exactly. The independent numerical diagnostic is scripts/regress6.py, run through scripts/run.sh; its successful log is logs/regression6-rerun.log.
+
+Audit classification correction: the final analyzer uses an explicit set of the six new module names. A suffix-only test incorrectly included inherited seed row modules ending in 06 and 16. Corrected totals are 90 new and 1,020 inherited local declarations; the audited closure, metadata flags, dependency results and all proof sources are unchanged. The original and fresh raw audit files are byte-identical. Only the two metadata scripts in the archive were corrected after the rebuild; every archived Lean source is byte-identical to the file freshly rebuilt and checked.
