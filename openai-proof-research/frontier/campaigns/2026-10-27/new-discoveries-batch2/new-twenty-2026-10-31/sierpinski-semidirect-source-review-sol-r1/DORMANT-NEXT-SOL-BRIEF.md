@@ -1,0 +1,11 @@
+# Dormant next Sol brief — no execution authorization
+
+Only if root separately qualifies and authorizes: GPT-6.1 Sol high/default, personally, no children or fallback. Preserve this ordinary review and all access restrictions. Credit remains0.
+
+Before formal execution resolve the final published bar A/counterpart of Conj3.28 limitation through a later explicitly authorized and access-compliant source decision; this brief authorizes no retries or alternate delivery. Complete bounded current-registry/relevant-primary-body prior qualification and root significance adjudication. No generic worldwide unknown is an automatic veto, and no no-hit result is clearance.
+
+The ordinary v1 mathematics passes: use the exact common six-element vertex type, G opposite parity, H cyclic adjacency, f=id. Define product adjacency by the precise inner/connecting disjunction. Define tilde A by preservation of both classes, diagonal d_alpha by f alpha f^{-1}, bar A by admissibility, and hat B by subgroup generation of the exact pointwise-neighbor-stabilizing local Phi maps. Do not broaden bar A to arbitrary lifts or strengthen the target to nonsplitting of every abstract extension.
+
+Prove connectedness and simplicity, r's H automorphism property, alpha's G automorphism property and failure on H edge {1,2}->{1,4}. Construct gamma with the explicit inverse; prove both edge-class transport formulas by bipartition reasoning. Prove every generated hat B element fixes first coordinate, then the product obstruction. Prove that the source's internal semidirect assertion implies product-set equality and conclude its universal negation. Optional triviality of hat B is an independent audit, not a second outcome. Use the correct composition local component beta_{delta(g)} circ C_g.
+
+The target theorem must include every definition and the literal/source bridge; no residual unproved equivalence. No claims about currently available libraries or measured build cost are supplied here. A future authorized lane must pin Lean/mathlib, build an exact endpoint, audit transitive axioms (only propext, Classical.choice, Quot.sound; no sorry/admit/new axioms/unsafe/native_decide), obtain independent statement review, paper and clean extracted replay. Root alone decides qualification and credit. This is a dormant handoff, not dispatch.
