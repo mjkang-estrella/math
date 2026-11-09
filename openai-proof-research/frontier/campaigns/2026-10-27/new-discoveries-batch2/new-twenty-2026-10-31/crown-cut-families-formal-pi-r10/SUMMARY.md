@@ -1,0 +1,1 @@
+PARTIAL toward MathDB369163. Copied eight verified baseline sources including the r9 cut-neighbor bridge. No new r10 theorem compiled yet. Immediate target: prove actual Cutset for every valid family at n>=4. Converse classification and full local-v endpoint remain unpaid. Credit0;52/60.
