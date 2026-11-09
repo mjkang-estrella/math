@@ -1,0 +1,15 @@
+# Round 3 proof notes
+
+The source is published Conjecture 6.1, with literal Definitions 1.1–1.4 inherited unchanged. The binary depth-two construction belongs to source Figure 5. The even t >= 4 depth-two construction uses published Lemmas 2.2 and 2.9. The higher-depth shell construction is the reviewed candidate, still open formally. Published Lemma 2.10 is the parity obstruction; HTML numbering in the discovery draft differs.
+
+Write t = 2s, s >= 2. The low labels are the root labels 2 and 3s+2-i (1 <= i < 2s), and the special-child leaf labels 1, j+2 (1 <= j <= s), and 2s+1+j (s < j < 2s). Branch inequalities prove positivity, range and injectivity of their disjoint sum. Equal finite domain/codomain cardinalities yield bijectivity onto 1..4s. Direct unfolding proves agreement with the immutable formula.
+
+For k >= 0, index the middle pairs by 0 <= a < 2k+1. If a <= k their entries are 2a+1 and 3k+2-a. Otherwise their entries are 2(a-k) and 4k+3-(a-k). Branch inequalities and parity prove injectivity on (a,slot); positivity and the upper bound 4k+2 give a finite map. Its equal-cardinality injectivity proves bijectivity and unique occurrence of each middle-run label. The pair sum is 3k+3+a, including at k=0. Translation by beta gives 2beta+3k+3+a. With k=s-1 and beta=4s+(s-1)(2s-1), depthTwo_middle proves these are exactly the frozen formula's last two slots.
+
+For each b < s-1 the reversed outer pair sums to 8s+2s(2s-1)+1. A proved sum_range_pairs identity groups the first 2(s-1) slots, and the middle pair completes the row. Adding incoming label 3s+1-a cancels the parent index. The resulting common value is depthTwoConstant s, defined without any division. The first outer-pair contribution alone bounds it above all edge labels, since s-1 >= 1.
+
+The root sum is evaluated using termwise justified natural subtraction and twice the arithmetic-series sum. It is t^2+t. Bijectivity of the complete low-label set supplies its total sum, so subtracting the root-edge sum gives t^2 for the special child's outgoing labels. Its incoming label is 2. The literal_weight_row lemma uses inherited weight_row, retaining the +1 label shift. Its specializations give actual incidence weights for a supplied edge equivalence agreeing with label.
+
+No complete ordinary-block permutation is proved. Thus no complete formula edge equivalence is built at depth two with t >= 4. Leaf ranges, properness and exact colour count are still obligations. The supplied equivalence assumption in the literal row identities must not be mistaken for such a construction.
+
+Next round, in order: assemble ordinary blocks and the middle partition into a bijection over all t(t-1) high labels; combine with lowMap to build the edge equivalence; use the closed row formulas, label ranges and lowerBound to prove properness and t^2+1 colours. Then prove the higher-depth shell and leaf-block permutations and the binary patch separately. Finally order arbitrary child sets and induct on depth to build ModelBridge. The final split Props retain every one of these open cases.

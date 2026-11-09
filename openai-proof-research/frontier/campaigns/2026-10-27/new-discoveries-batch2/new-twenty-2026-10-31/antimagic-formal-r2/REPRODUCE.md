@@ -1,0 +1,11 @@
+# Reproduction
+
+The source-only source.zip has flat Lean modules, documentation, hashes and scripts, and no binaries or package dependencies. Extract only into a new empty directory inside this lane. From that extraction run `bash scripts/replay2.sh`. For a same-source interrupted run use `RESUME=1 bash scripts/replay2.sh`; to replay freshly leave RESUME unset and begin in a fresh extraction. Resume markers are valid only when sources and dependencies are unchanged; otherwise delete that extraction's build directory and rebuild.
+
+The driver sets TMPDIR, XDG_CACHE_HOME and Python bytecode paths to that extraction's lane-local subdirectories. It uses Lean 4.34.1 from the task's absolute path and the read-only package builds at the pinned mathlib revision d13f23b723b8a846827a245b89c10fc7d3f11612. It compiles all seventeen modules in dependency order with -j1 -M3500 -DwarningAsError=true. Every module is separately passed to leanchecker with an explicit argument. It runs the inherited independent Python regression and the round-2 report generator afterward.
+
+Every Lean, leanchecker and Python invocation is under scripts/capped.sh: two CPUs, CPU 120 seconds, wall 140 seconds, RSS process-group watchdog at 6 GiB, MALLOC_ARENA_MAX=2. Each invocation retains uniquely named stdout/stderr logs. Heavy invocations are serial. No network or installed package changes are needed.
+
+Antimagic2Audit imports the final module plus inherited regressions. It enumerates every declaration in imported Antimagic modules, including generated declarations, and expands type and opaque-value dependencies, inductive constructors, constant families and unsafe-rec companions. It verifies every direct dependency belongs to the enumerated closure before emitting audit.tsv. report2.py separates local and upstream flags, verifies allowed axioms and inherited source hashes, and writes results.json. The inherited Audit module is also rebuilt and checked, but its smaller audit output is subsequently replaced by the full round-2 audit.
+
+The supplied replay/ directory is the fresh extracted validation run. Its logs are the authoritative replay evidence. The main lane contains development logs as well. results.json describes formal proof status, not root acceptance.
