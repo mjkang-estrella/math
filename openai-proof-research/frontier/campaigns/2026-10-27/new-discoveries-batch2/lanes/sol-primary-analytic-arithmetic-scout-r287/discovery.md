@@ -1,0 +1,7 @@
+# Candidate discovery and limitations
+
+The full ordinary negative endpoint is PROOF.md RouteA. It resolves the exact CZDS question, not the already known weaker multiplier-sequence claim (source Proposition35) and not the square-root factorial question. All nonreal roots count multiplicity. The certified input is a genuine real polynomial of degree72 with no missing positivity/real-rootedness premise: the source imposes neither on inputs.
+
+Chronology: Craven–Csordas1995 pp420–441 gives the necessary moment criterion, polynomial-interpolant classification, and a different unmodified-quadratic refutation. Csordas–Forgácsv1 is2May2015; current official abstract page lists latestv2 on26August2015. Both primary bodies retain Problem37. Terwilliger2021 was an early successor exclusion for the independent q-Onsager family. This lane's computation is30October2026. No first-in-literature priority follows.
+
+Strongest subsumption objection is explicit: does the1995 criterion plus elementary moment inversion already make the full factorial-modified question routine, or was this exact negative instance published elsewhere? The old polynomial theorem does not directly apply to the nonpolynomial k-sequence; cancelling the known factorial CZDS is invalid. Our full bridge is exhibited, not hidden. Root must adjudicate credit and conduct independent source/prior review before investing in formal acceptance. This lane does not change a ledger or propose counting helper facts, analytic explanation, witness degree, or formalization separately.

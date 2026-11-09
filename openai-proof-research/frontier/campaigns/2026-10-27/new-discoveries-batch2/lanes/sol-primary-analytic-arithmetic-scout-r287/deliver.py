@@ -1,0 +1,44 @@
+from pathlib import Path
+import runpy,json,datetime,re
+n=runpy.run_path(str(Path(__file__).with_name('work.py')));L=n['L'];h=n['h'];freeze=n['freeze']
+freeze(Path('openai-proof-research/AGENTS.md'),True)
+guard=L.parent/'sol-edge-irregulator-manuscript-packet-r1/packet/helper_guard.py';freeze(guard,True)
+summary='''# Research handback: one full ordinary endpoint; no count
+
+Rank1: **Csordas–Forgács Problem37 is false** for the literal sequence (k²+k+1)/k!. A degree72 rational polynomial f has f(1)<0 and positive leading coefficient, while Tf=r²+ε with deg r=36 and ε>0. Thus f has at least two real roots and Tf has none. The source requires every real polynomial, so this is a full refutation, not a bounded positive census. PROOF.md gives the exact certificate construction and a second, analytic moment-density route.
+
+Separate guarded direct verification PASS: direct rational convolution, reciprocal moment sum, coefficientwise T identity, all source hypotheses, signs and degrees. moment-witness.json contains every rational coefficient as signed hexadecimal numerator/denominator. witness-verification.json binds its hash. No numerical-root claim is used in the proof.
+
+Twelve distinct attributed primary-source families screened in SCOUTING.md, spanning2000–2023 and analysis, probability, arithmetic, algebra. Source-resolved, routine classical, previously screened and broad no-mechanism questions are removed explicitly. Only one candidate is ranked; no padded ranks2/3. The square-root factorial family from r224 is a different endpoint and is not being taken over.
+
+**Novelty/substantive credit HOLD.** The1995 Craven–Csordas reciprocal-moment criterion and their refutation of the unmodified quadratic sequence are genuine close prior proof bodies. The exact factorial denominator changes the moment matrix; the displayed bridge needs root adjudication. Current registry pages triggered the challenge detector, so no authenticated live head or exhaustive current proof-tree clearance is claimed. The journal version DOI10.1016/j.jmaa.2015.08.047 is identified but not fetched through prohibited ScienceDirect routes. Accessible arXiv latestv2 (26August2015) retains Problem37. Bounded arXiv searches found no exact successor, which does not establish priority.
+
+All work remained in this lane; solo, no children, git, public/browser/MathDB edits, Lean or manuscript. Counts unchanged:9 additional/39 total/next40; root alone accepts/counts. Fullerene independent review, literal Zeckendorf formal work and reserved Claude octahedron were left untouched.
+'''
+(L/'SUMMARY.md').write_text(summary)
+(L/'discovery.md').write_text('''# Candidate discovery and limitations
+
+The full ordinary negative endpoint is PROOF.md RouteA. It resolves the exact CZDS question, not the already known weaker multiplier-sequence claim (source Proposition35) and not the square-root factorial question. All nonreal roots count multiplicity. The certified input is a genuine real polynomial of degree72 with no missing positivity/real-rootedness premise: the source imposes neither on inputs.
+
+Chronology: Craven–Csordas1995 pp420–441 gives the necessary moment criterion, polynomial-interpolant classification, and a different unmodified-quadratic refutation. Csordas–Forgácsv1 is2May2015; current official abstract page lists latestv2 on26August2015. Both primary bodies retain Problem37. Terwilliger2021 was an early successor exclusion for the independent q-Onsager family. This lane's computation is30October2026. No first-in-literature priority follows.
+
+Strongest subsumption objection is explicit: does the1995 criterion plus elementary moment inversion already make the full factorial-modified question routine, or was this exact negative instance published elsewhere? The old polynomial theorem does not directly apply to the nonpolynomial k-sequence; cancelling the known factorial CZDS is invalid. Our full bridge is exhibited, not hidden. Root must adjudicate credit and conduct independent source/prior review before investing in formal acceptance. This lane does not change a ledger or propose counting helper facts, analytic explanation, witness degree, or formalization separately.
+''')
+(L/'progress.md').write_text('''# Progress and decisive next work
+
+Completed primary generation and semantic filtering for twelve distinct families. Rejected code target from its own proof body; excluded current-algebra target after reading successor Theorems9.14/10.2/10.3; exhibited elementary algebraic rationalization bridge; parked broad classifications and famous all-denominator barrier. History aliases r223/r224, r227 and r236 are explicit.
+
+Focused route1:15,000 structured numerical tests (degrees4–32, seed287) found no witness; this is not evidence of CZDS. Focused route2: exact reciprocal-Hankel LDL found first negative pivot at36 after positive pivots0–35. This produced the complete degree72 inverse-square witness. A separate direct Fraction checker verified it without relying on LDL. A distinct analytic inverse-Mellin route explains the sign-changing moment density and reaches the same universal negative endpoint.
+
+Failures preserved: two serialization failures, one unrelated retrieved article due to wrong issue-article URL, one404, and two current registry challenge-detector stops. No cap was raised. The final witness uses hexadecimal rationals rather than altering Python's decimal-digit limit.
+
+Next decisive work is external to this authorized solo scouting scope: independent adversarial review of exact source binding and certificate; current accessible proof-registry and journal/citer body clearance; substantive-credit adjudication of the classical moment bridge. There is no remaining ordinary mathematical endpoint gap in RouteA. No Lean/manuscript should be inferred from this handback.
+''')
+access=[json.loads(x) for x in (L/'access.jsonl').read_text().splitlines()]
+provenance=dict(created_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),scope='assigned lane only',source_versions={'1505.00355v1':'2015-05-02','1505.00355v2':'2015-08-26','journal_doi':'10.1016/j.jmaa.2015.08.047','1995_primary':'Methods Appl Anal2(4),420-441'},primary_access=access,source_binding_file='primarybindings.jsonl',cached_reference_files=['cache-references.json','registry-references.json'],scientific_freeze_policy='retrieved originals and derived text content-addressed before inspection; immutable cache identities recorded before content scan and verified after; matching proof/history bodies copied and verified; administrative files snapshots only',bounded_coverage={'openai_cached_tex':555,'registry_and_top_level_history_records':13335,'history':'top-level SUMMARY/SCOUTING/discovery, no recursive evidence copies'},limitations=['No authenticated current registry head: challenge detector stopped both regular pages; no retries','No prohibited API/raw/codeload/diff/patch, ScienceDirect, Google challenges, proxy/TLS or browser bypass','No exhaustive current registry, MathSciNet, zbMATH or journal/citer-body clearance','Immutable-reference scans do not claim full upstream719-manuscript coverage','Primary source final journal body not retrieved; exact arXiv v1 and latestv2 body binding retained'],count_credit=0,accepted_count_unchanged=9,total_unchanged=39,next_unchanged=40)
+(L/'provenance.json').write_text(json.dumps(provenance,indent=2))
+checks=json.loads((L/'cappedchecks.json').read_text());checks.update(hankel=json.loads((L/'hankel-checks.json').read_text()),separate_direct_verification=json.loads((L/'witness-verification.json').read_text()),resource_policy=dict(guard=str(guard.resolve()),guard_sha256=h(guard.read_bytes()),AS_bytes=512*1024*1024,group_RSS_bytes=512*1024*1024,CPU_seconds=210,wall_seconds=230,cap_raises=False,env={'OPENBLAS_NUM_THREADS':'1','OMP_NUM_THREADS':'1','PYTHONDONTWRITEBYTECODE':'1'},monitor='fixed helper process-group /proc sampling; no claim about unsampled transients'))
+(L/'cappedchecks.json').write_text(json.dumps(checks,indent=2))
+(L/'failures.md').write_text('# Preserved failures and access limits\n\n'+(L/'check-failure.txt').read_text()+'\n'+(L/'hankel-failure.txt').read_text()+'\n'+(L/'failures.jsonl').read_text()+'\nThe unrelated article is preserved as craven1995.pdf and not used as mathematical support. Correct1995 primary is craven1995-correct.pdf. Detection on GitHub200 pages is recorded conservatively as a challenge-detector stop, not proof of a403 response; these routes were not retried. No absent source or failed search is counted as novelty clearance.\n')
+manifest={str(p.relative_to(L)):dict(sha256=h(p.read_bytes()),bytes=p.stat().st_size) for p in sorted(L.rglob('*')) if p.is_file() and p.name not in ['MANIFEST.json','verification-receipt.json']}
+(L/'MANIFEST.json').write_text(json.dumps(manifest,indent=2));print('manifest files',len(manifest),'bytes',sum(r['bytes'] for r in manifest.values()))
