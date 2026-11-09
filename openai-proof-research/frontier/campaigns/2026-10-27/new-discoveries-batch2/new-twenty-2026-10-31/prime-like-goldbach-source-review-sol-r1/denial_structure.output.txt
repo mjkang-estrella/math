@@ -1,0 +1,166 @@
+utc 34 str
+blocked_keys 6657 list
+blocked_artifacts 5601 list
+records 78490 list
+scope 163 str
+root_square_r2_rule 237 str
+root_qmc2014_scope 503 str
+root_distance330909_scope 418 str
+root_rainbow346850_scope 353 str
+root_frame329292_scope 569 str
+root_cpp326886_scope 435 str
+root_cmdrr_companion_scope 373 str
+root_r432_r433_scope 617 str
+root_regular_mis_final_scope 396 str
+root_galbraith_holmes_scope 465 str
+root_cover_companion_final_scope 414 str
+root_r434_outcome 187 str
+root_r435_intake 168 str
+root_cactus351165_outcome 247 str
+root_r436_outcome 216 str
+root_binary341052_scope 521 str
+root_binary_guard_normalization 252 str
+root_r438_sumset332892_scope 519 str
+root_r439_scope 444 str
+root_r440_r441_scope 514 str
+root_wavelet332073_thesis_scope 724 str
+root_r442_scope 321 str
+root_r443_r444_scope 714 str
+root_tree_hitting351988_scope 676 str
+root_r445_r446_r447_scope 401 str
+root_r449_scope 390 str
+root_r448_neighborhood_scope 425 str
+root_tree_hitting_review_r1_scope 455 str
+root_r450_scope 386 str
+root_r451_r452_scope 703 str
+root_zero_pattern338620_review_scope 564 str
+root_r453_r454_scope 572 str
+root_r455_q_inverse_scope 477 str
+root_matching328748_review_scope 566 str
+root_completed_r456_r457 433 str
+root_r458_scope 487 str
+root_r459_scope 375 str
+root_r460_scope 561 str
+root_r461_scope 487 str
+root_r462_scope 435 str
+root_r464_scope 428 str
+root_r463_r466_quarantine 628 str
+root_r465_scope 552 str
+root_percolation330008_independent_scope 607 str
+root_r468_scope 526 str
+root_r467_scope 652 str
+root_r469_scope 616 str
+root_r470_scope 604 str
+root_r471_scope 489 str
+root_virus322479_review_scope 1200 str
+root_lr318479_scope 1313 str
+root_r472_scope 716 str
+root_r473_scope 911 str
+root_r474_scope 1097 str
+root_r475_scope 1109 str
+root_adaptive_lp376636_scope 1275 str
+root_qtransversal373611_scope 997 str
+root_r476_scope 1207 str
+root_r477_scope 871 str
+root_r478_scope 1065 str
+root_r480_scope 929 str
+root_r479_scope 1215 str
+root_r481_scope 998 str
+root_r482_quarantine 884 str
+root_r483_scope 1146 str
+root_r484_scope 983 str
+root_eps321798_review_scope 661 str
+root_staircase317443_review_scope 820 str
+root_unit_sums316244_review_scope 995 str
+root_r486_scope 1131 str
+root_r485_scope 1245 str
+root_r487_scope 1339 str
+root_split_orthogonality382572_review_scope 986 str
+root_r488_scope 1181 str
+root_cubical378413_review_scope 880 str
+root_avoidable377665_review_scope 696 str
+root_r489_scope 1086 str
+root_cubical378413_qualification_r2_scope 834 str
+root_r490_scope 1349 str
+root_cubical378413_qualification_r3_scope 956 str
+root_r491_scope 703 str
+root_pagerank316846_review_scope 734 str
+root_r492_scope 624 str
+root_pagerank316846_r2_scope 747 str
+root_r493_scope 1043 str
+root_r494_scope 1044 str
+root_r495_scope 1007 str
+root_tree_radius317672_review_scope 1187 str
+root_weighted_zero_sum316875_review_scope 1398 str
+root_r496_scope 1067 str
+"""Documentary native-search precharge; invoke only under the assigned run.py."""
+import os,resource
+os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[:2])
+resource.setrlimit(resource.RLIMIT_CPU,(115,115))
+resource.setrlimit(resource.RLIMIT_AS,(6*1024**3,6*1024**3))
+from pathlib import Path
+import json,sys,hashlib,datetime,subprocess,fcntl
+lane=Path(__file__).resolve().parent
+assert Path.cwd().resolve()==lane,'Assigned lane cwd required'
+assert len(sys.argv)==2,'Expected own persisted search-plan path'
+planpath=(lane/sys.argv[1]).resolve();assert planpath.is_relative_to(lane) and planpath.is_file()
+planbytes=planpath.read_bytes();plan=json.loads(planbytes)
+queries=plan['queries'];assert isinstance(queries,list) and queries and all(isinstance(q,str) and q.strip() for q in queries)
+with (lane/'search-charge.lock').open('a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ budgetpath=lane/'search-budget.json';before=json.loads(budgetpath.read_text())
+ ledgerpath=lane/'search-charges.jsonl';prior=ledgerpath.read_text() if ledgerpath.exists() else ''
+ charges=[json.loads(s) for s in prior.splitlines() if s]
+ assert before['calls_used']==len(charges) and before['queries_used']==sum(len(x['queries']) for x in charges),'Live counter/charge continuity mismatch; preserve and stop, never repair history'
+ digest=hashlib.sha256(planbytes).hexdigest();assert digest not in {x['plan_sha256'] for x in charges},'Plan already charged'
+ after=dict(before);after['calls_used']+=1;after['queries_used']+=len(queries)
+ assert after['calls_used']<=before['maximum_calls'] and after['queries_used']<=before['maximum_queries'],'Search budget exhausted'
+ charge=dict(utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),sequence=len(charges)+1,plan=str(planpath.relative_to(lane)),plan_sha256=digest,queries=queries,before=before,after=after)
+ def write(name,text):
+  r=subprocess.run([sys.executable,'-I','-B',str(lane/'write_lane.py'),name],input=text,text=True,capture_output=True)
+  if r.returncode:raise RuntimeError({'writer_exit':r.returncode,'stderr':r.stderr})
+ write('search-budget.json',json.dumps(after,indent=2)+'\n')
+ write('search-charges.jsonl',prior+json.dumps(charge,sort_keys=True)+'\n')
+ print(json.dumps({'charged':charge,'next':'Run exactly this native search once, immediately save the FULL actual response; no reset/refund or history edits.'}))
+
+{
+  "ids": [
+    368088
+  ],
+  "rows": [
+    {
+      "mathdb_id": 368088,
+      "uuid": "665e9855-7fe7-4723-bf86-92386c626647",
+      "canonical_url": "https://mathdb.com/p/368088/goldbach-s-conjecture-for-prime-like-distributions",
+      "title": "Goldbach's conjecture for prime-like distributions",
+      "statement": "Let $Q$ be a subset of the natural numbers, and let $\\pi_Q(n)$ denote the number of elements of $Q$ less than or equal to $n$. Let $\\pi(n)$ denote the number of primes less than or equal to $n$. The distribution of $Q$ is **similar to the distribution of primes** if there exists $c\\ta\\in\\mathbb{N}$ such that\n\n$$\n|\\pi_Q(n)-\\pi(n)|<c\n$$\n\nfor every integer $n$.\n\n**Generalization of Goldbach's conjecture.** Let $Q$ be a subset of natural numbers whose distribution is similar to primes. There exists $N_Q\\in\\mathbb{N}$ such that, for any even integer $2n>N_Q$, there exist $q_1,q_2\\in Q$ satisfying\n\n$$\nq_1+q_2=2n.\n$$\n\nThis proposes that the Goldbach representation property depends on having a prime-like counting distribution rather than on primality itself. The source gives computational evidence for particular shifted-prime constructions, but does not establish the assertion for every subset with the stated distribution property.",
+      "statement_completeness": "full",
+      "post_type": "conjecture",
+      "status": "open",
+      "tags": [
+        "additive-number-theory",
+        "prime-distributions"
+      ],
+      "importance": "corpus",
+      "source_name": "Ameneh Farhadian, \u201cGoldbach Conjecture: Violation Probability and Generalization to Prime-like Distributions\u201d, arXiv:2504.14353 (2025).",
+      "source_url": "https://arxiv.org/abs/2504.14353",
+      "first_stated_year": 2004,
+      "first_stated_year_source_url": "https://arxiv.org/abs/2504.14353",
+      "documented_by_year": null,
+      "documented_by_source_url": null,
+      "references": "**17 papers in this index state this conjecture** (2004\u20132025). The statement above is taken from the most recent of them; the others are [arXiv:2502.03513](https://arxiv.org/abs/2502.03513), [arXiv:2301.02770](https://arxiv.org/abs/2301.02770), [arXiv:2210.02722](https://arxiv.org/abs/2210.02722), [arXiv:2207.09452](https://arxiv.org/abs/2207.09452), [arXiv:1912.08043](https://arxiv.org/abs/1912.08043), [arXiv:1904.09835](https://arxiv.org/abs/1904.09835), [arXiv:1806.00946](https://arxiv.org/abs/1806.00946), [arXiv:1804.05561](https://arxiv.org/abs/1804.05561), [arXiv:1711.06961](https://arxiv.org/abs/1711.06961), [arXiv:1706.00317](https://arxiv.org/abs/1706.00317), [arXiv:1611.07251](https://arxiv.org/abs/1611.07251), [arXiv:1512.05024](https://arxiv.org/abs/1512.05024), and 4 more.\n\nSource: https://arxiv.org/abs/2504.14353\n\nStatus: no resolution is reported in the source (as of April 2025).",
+      "solutions": [],
+      "solution_count": 0,
+      "has_formal_statement": null,
+      "has_bounty": null,
+      "created_at": "2026-08-11T05:41:21.064470Z",
+      "edited_at": null,
+      "lastmod": "2026-10-03T19:11:25Z",
+      "in_sitemap": true,
+      "historical": false,
+      "retrieval_source": "probxiv_2026-09-29"
+    }
+  ],
+  "purpose": "Independent full arbitrary-prime-counting-distribution Goldbach negation, literal/actual-source and substantive/prior qualification; no formal tools"
+}
+
