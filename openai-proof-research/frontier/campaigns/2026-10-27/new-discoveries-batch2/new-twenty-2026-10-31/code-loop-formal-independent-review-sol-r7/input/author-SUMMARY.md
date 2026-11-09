@@ -1,0 +1,13 @@
+# MathDB343790 implementation handoff — Sol r6
+
+Implemented and verified; not accepted, credit zero, campaign remains 52/60.
+
+The final global theorems `literal2019_refuted_on_fin50` and `full50_counterexample` are in src/CodeLoopTransport.lean. They use actual rank-seven full-support doubly-even subspaces of F2^50, actual quotient-class sorted type fifteen ones/seven fives, reduction, factor-set identities for all codewords, multiplicative bijections from one explicitly nonassociative Moufang loop, and inequivalence under every Fin50 permutation. All source sign, weight, pair/triple, coordinate/type and representation transports are included in the production chain.
+
+All 15 current modules strictly build and pass module-name leanchecker. All 15 rebuild from the independently receipted empty cleanroom/source-replay-v2/build with own fresh build plus pinned upstream ONLY. Actual tool binaries match frozen pins. Both original and fresh-import whole-production actual-body/safety/origin/transitive-axiom audits pass. Original: 429 roots, 13203 closure constants, 25386 complete type/value DAGs, 2469269 nodes. Only propext, Classical.choice, Quot.sound occur. The DAG validator confirms unique contiguous node ids and resolved references. Generated IR-only entries without kernel constants are explicitly recorded, not supplied with fabricated bodies. The negative opposite-endpoint control is rejected with the expected type mismatch. All earlier failures remain preserved.
+
+Read-only final review sources: review-src. Hashes: results/review-source-hashes.json. Key evidence: CHECKPOINT.json, results/production-checks.json, results/deep-audit.json, results/fresh-deep-audit.json, results/audit-dag-validation.json, results/replay-v2-setup.json. Paper/fidelity note: manuscript/proof-and-fidelity.md. Full artifact/receipt hashes and named terminal self-exclusions: MANIFEST.json. Frozen before/after: all 45 paths match.
+
+Independent final-source/fidelity review and root acceptance remain unpaid. Latest root prospective qualification PASS is adopted, rather than reinstating the older thesis HOLD; no worldwide priority claim follows. The implementation author does not count the result.
+
+Procedural deviation is expressly preserved in results/review-objections.md: an initial bare attempt to cat missing FULLTASK.txt and runner.py occurred after the mandated two first commands, and log output was transported with bare cat. Do not claim universal per-reader process compliance. All source changes, Lean builds/checkers/replay/audits used the unchanged trusted runner/writer and pinned flags. No children, external math programs, network, git, protected bodies or dependency modifications were used.
