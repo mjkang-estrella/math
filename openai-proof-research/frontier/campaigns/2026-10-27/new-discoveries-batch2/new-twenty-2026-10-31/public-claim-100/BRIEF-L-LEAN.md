@@ -1,0 +1,11 @@
+# Formalization and paper brief (root Claude Fable 5.2, 2026-11-19)
+
+C = `/home/mj-kang/Documents/Dev/math/openai-proof-research/frontier/campaigns/2026-10-27/new-discoveries-batch2/new-twenty-2026-10-31`
+
+Read `C/root-intake-r60/FABLE-PIPELINE.md` (step 2 is your job), then the proof and the adversarial review named in your task. The review fixes the required literal endpoint; follow it. Write only in your lane folder; no git; nothing published; do not start subagents.
+
+Endpoint: the MathDB statement or its exact negation, with every definition included and transcribed literally from the source (quote the source definitions in the paper next to the Lean ones). It must not hold vacuously. Do not replace the source's objects by a model whose equivalence is proved only on paper; if a bridge is needed, prove it in Lean.
+
+Lean rules: Lean 4 with Mathlib, specific imports only (never `import Mathlib`), only the axioms propext, Classical.choice, Quot.sound (print axioms for every endpoint), no sorry, admit, axiom, unsafe or native_decide (plain `decide` and kernel reduction are fine). Run Lean only through the 32 GiB runner: copy run_lean_32g.py, formal_command.py, check32.sh, checker32.sh, write_lane.py and PINS.json from `C/catalan-triangle-381408-formal-paper-sol62-20261119-r1` into your folder, keep modules in `src/<Module>.lean`, and compile and kernel-check each module with ./check32.sh and ./checker32.sh as that lane's REPORT.md shows. Root replays your packet with `C/root-intake-r60/root-replay.py`, which extracts modules from LEAN-SOURCE-APPENDIX.md (one `### `Module.lean`` heading followed by a ```lean block per module, in import order, byte-identical to src/).
+
+Deliverables: `src/*.lean`, `LEAN-SOURCE-APPENDIX.md`, `PAPER.md` (standalone manuscript: the conjecture verbatim, source definitions verbatim, the complete written proof, an honest significance paragraph, the prior-art paragraph from the review, no claim the proof does not support), `REPORT.md` (endpoints with full Lean statements, axioms output, receipts) and `result.json` `{"mathdb_id":...,"endpoints":[...],"axioms":[...],"modules":[...],"status":"COMPLETE|PARTIAL","notes":...}`. If the work is PARTIAL when you stop, say exactly which lemmas remain and keep everything that compiles. Final message: status, endpoint names, and anything root must decide.
