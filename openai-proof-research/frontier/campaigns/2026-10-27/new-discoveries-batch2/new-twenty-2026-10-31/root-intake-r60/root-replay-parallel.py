@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""Root replay, parallel: same checks as root-replay.py (extract modules from LEAN-SOURCE-APPENDIX.md of an author packet into a
+fresh dir, byte-compare with the author's src/, rebuild, kernel-check, collect axioms, scan for forbidden tokens), but modules
+whose local imports are done run concurrently, one pinned core each.
+Usage: root-replay-parallel.py AUTHOR_PACKET_DIR REPLAY_DIR CPUS(e.g. 0,1,2,3) [resume]"""
+import re, sys, hashlib, shutil, subprocess, json, os
+from pathlib import Path
+A = Path(sys.argv[1]).resolve(); R = Path(sys.argv[2]).resolve(); cpus = sys.argv[3].split(',')
+RESUME = len(sys.argv) > 4 and sys.argv[4] == 'resume'
+prior = {}
+if RESUME:
+    # resume a replay that was cut short by the runner's wall-time guard: keep modules that already passed, rerun the rest
+    prior = json.loads((R / 'ROOT-REPLAY.json').read_text())['runs']
+    prior = {m: r for m, r in prior.items() if r['compile'] == 0 and r['kernel'] == 0}
+else:
+    assert not R.exists(), 'replay dir exists'
+    (R / 'src').mkdir(parents=True); (R / 'build').mkdir(); (R / 'cache').mkdir()
+for f in ('run_lean_32g.py', 'formal_command.py', 'check32.sh', 'checker32.sh', 'write_lane.py', 'PINS.json'):
+    shutil.copy2(A / f, R / f)
+for f in ('check32.sh', 'checker32.sh'): os.chmod(R / f, 0o755)
+t = (A / 'LEAN-SOURCE-APPENDIX.md').read_text()
+blocks = re.findall(r'^#+[^\n`A-Za-z]*`?([A-Za-z][A-Za-z0-9_]*)(?:\.lean)?`?[^\n]*\n+```lean\n(.*?)\n```[ \t]*$', t, flags=re.S | re.M)
+order, bad, deps = [], [], {}
+for name, body in blocks:
+    body += '\n'; order.append(name)
+    tgt = R / 'src' / f'{name}.lean'
+    if RESUME and name in prior: assert tgt.read_text() == body, f'{name}: extracted source changed since the first run'
+    else: tgt.write_text(body)
+    src = A / 'src' / f'{name}.lean'
+    if not src.exists() or hashlib.sha256(body.encode()).hexdigest() != hashlib.sha256(src.read_bytes()).hexdigest(): bad.append(name)
+names = set(order)
+for name, body in blocks:
+    deps[name] = set(m for m in re.findall(r'^(?:(?:public|private|meta)\s+)*import\s+(?:all\s+)?([A-Za-z][A-Za-z0-9_.]*)', body, flags=re.M) if m in names)
+missing = sorted(set(p.stem for p in (A / 'src').glob('*.lean')) - names)
+res = {'modules': order, 'appendix_vs_author_src_mismatch': bad, 'author_src_not_in_appendix': missing, 'runs': {}, 'parallel': len(cpus)}
+done = set(prior); started = set(prior); res['runs'].update(prior); res['resumed_from'] = sorted(prior)
+import time as _t
+SUF = ('-resume' + _t.strftime('%H%M%S')) if RESUME else ''
+def run(m, cpu):
+    c = subprocess.run(['taskset', '-c', cpu, './check32.sh', m, f'root-compile-{m}{SUF}'], cwd=R, capture_output=True, text=True)
+    (R / f'root-compile-{m}{SUF}.console.txt').write_text(c.stdout + c.stderr)
+    k = subprocess.run(['taskset', '-c', cpu, './checker32.sh', m, f'root-kernel-{m}{SUF}'], cwd=R, capture_output=True, text=True)
+    (R / f'root-kernel-{m}{SUF}.console.txt').write_text(k.stdout + k.stderr)
+    same = None
+    ao, ro = A / 'build' / f'{m}.olean', R / 'build' / f'{m}.olean'
+    if ao.exists() and ro.exists(): same = hashlib.sha256(ao.read_bytes()).hexdigest() == hashlib.sha256(ro.read_bytes()).hexdigest()
+    ax = sorted(set(re.findall(r"'([^']+)' depends on axioms: \[([^\]]*)\]", c.stdout)))
+    return {'compile': c.returncode, 'kernel': k.returncode, 'olean_matches_author': same, 'axioms': ax}
+from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
+failed = set(); free = list(cpus); running = {}
+with ThreadPoolExecutor(max_workers=len(cpus)) as ex:
+    while True:
+        ready = [m for m in order if m not in started and deps[m] <= done]
+        while ready and free:
+            m = ready.pop(0); cpu = free.pop(); started.add(m)
+            running[ex.submit(run, m, cpu)] = (m, cpu)
+        if not running: break
+        fin, _ = wait(list(running), return_when=FIRST_COMPLETED)
+        for f in fin:
+            m, cpu = running.pop(f); r = f.result(); res['runs'][m] = r; free.append(cpu)
+            (done if r['compile'] == 0 and r['kernel'] == 0 else failed).add(m)
+ok = len(done) == len(order)
+res['not_run'] = [m for m in order if m not in res['runs']]
+allowed = {'propext', 'Classical.choice', 'Quot.sound'}
+res['axioms_ok'] = all(set(x.strip() for x in a.split(',')) <= allowed for r in res['runs'].values() for _, a in r['axioms'])
+src_all = ''.join((R / 'src' / f'{m}.lean').read_text() for m in order)
+res['forbidden_tokens'] = sorted(set(re.findall(r'\b(sorry|admit|native_decide|implemented_by|unsafe)\b|^\s*axiom\b', src_all, flags=re.M)) - {''})
+res['all_ok'] = ok and not bad and not missing and res['axioms_ok']
+(R / 'ROOT-REPLAY.json').write_text(json.dumps(res, indent=1))
+print(json.dumps({k: v for k, v in res.items() if k != 'runs'}, indent=1))
+print('per-module:', {m: (r['compile'], r['kernel'], r['olean_matches_author']) for m, r in res['runs'].items()})

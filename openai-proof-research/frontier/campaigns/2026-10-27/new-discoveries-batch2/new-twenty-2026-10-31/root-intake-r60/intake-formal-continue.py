@@ -52,6 +52,12 @@ for row in green:
  for q in sorted((F/'build').glob(m+'.*')):
   if q.is_file():copy(q,'build/'+q.name);blobs.append(dict(path='build/'+q.name,sha256=sha(q)))
  baseline.append(dict(row,blobs=blobs))
+if (F/'BASELINE.json').exists():
+ for row in read(F/'BASELINE.json')['immutable_green_modules']:
+  m=row['name'];assert m not in {r['name'] for r in green} and sha(F/'src'/(m+'.lean'))==row['source_sha256'],m;copy(F/'src'/(m+'.lean'),'src/'+m+'.lean')
+  for b in row['blobs']:
+   assert sha(F/b['path'])==b['sha256'],b;copy(F/b['path'],b['path'])
+  baseline.append(row)
 for q in sorted((F/'inputs').rglob('*')):
  if q.is_file():copy(q,str(Path('inputs')/q.relative_to(F/'inputs')))
 copy(F/'SUMMARY.md','inputs/previous-SUMMARY.md');copy(F/f'results/{mid}.json','inputs/previous-results.json')

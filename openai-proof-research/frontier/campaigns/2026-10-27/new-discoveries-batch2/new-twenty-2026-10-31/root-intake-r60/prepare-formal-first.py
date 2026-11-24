@@ -23,6 +23,8 @@ for q in list((L/'inputs/sources').glob('*.pdf')):
  tx=q.with_suffix('.txt')
  if not tx.exists():
   r=subprocess.run(['pdftotext','-layout',str(q),str(tx)],capture_output=True);assert r.returncode==0,r.stderr
+if (Q/'inputs/first-review-PROOF.md').exists():copy(Q/'inputs/first-review-PROOF.md','inputs/first-review-PROOF.md')
+for _q in sorted(Q.glob('PROOF-ERRATUM*.md')):copy(_q,'inputs/reviewer-'+_q.name)
 save(L/'INPUT-ORIGINS.json',origins)
 (L/'TASK.txt').write_text(Path(bodyf).read_text().replace('{L}',str(L)).replace('{P1}',p1).replace('{P2}',p2))
 ff=[q for q in L.rglob('*') if q.is_file()];save(L/'frozen-inputs.json',{str(q):sha(q) for q in ff})

@@ -1,0 +1,6 @@
+# Candidate pipeline after discovery (root Claude Fable 5.2, from 2026-11-18)
+
+1. REVIEW (a different model from the author): adversarial check of the proof; exact statement fidelity against the MathDB record and the source; prior-art search; an attempt at the shortest generic proof from published results (if one exists in a few lines, the result is ROUTINE); comparison with accepted results. Output REVIEW.md with verdict PASS, FAIL (first gap), PUBLIC or ROUTINE.
+2. FORMAL + PAPER (either model): literal Lean 4 endpoint for the MathDB statement or its negation, definitions included, only propext, Classical.choice, Quot.sound; no sorry, admit, axiom, unsafe, native_decide; Lean runs through the 32 GiB runner with specific Mathlib imports (never `import Mathlib`); then PAPER.md (standalone manuscript) and LEAN-SOURCE-APPENDIX.md (all sources, byte exact, import order).
+3. FINAL (a different model from step 2): extract the sources from the appendix into an empty directory, rebuild and kernel-check, print axioms, check statement fidelity of the endpoint against the source, read the whole paper for gaps, refresh prior art. Output FINAL-REVIEW.md with verdict.
+4. ROOT: registry head refresh by git ls-remote, acceptance record, ledger, submission folder in mathdb-submissions/.

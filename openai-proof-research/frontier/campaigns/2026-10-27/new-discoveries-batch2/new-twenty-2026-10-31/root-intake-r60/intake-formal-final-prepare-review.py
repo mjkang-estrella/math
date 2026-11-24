@@ -20,11 +20,11 @@ mc=read(F/'MANIFEST.json')['count'];fex=manifest(F,'MANIFEST.json',mc,'seal_mani
 rec=[];failed=[]
 for q in sorted(F.glob('*.receipt.json')):
  v=read(q);cmd=' '.join(v['command']);lean='runpy.run_path' in cmd and 'FORMAL_ROOT' in cmd
- assert v['cwd']==str(F) and v['cpu_limit_s']==115 and v['group_rss_guard_bytes']==G6 and v['deadline_s']==130 and len(v['affinity'])<=2 and v.get('killed') is None,q.name
+ assert v['cwd']==str(F) and v['cpu_limit_s']==115 and v['group_rss_guard_bytes']==G6 and v['deadline_s']==130 and len(v['affinity'])<=2 and (v.get('killed') is None or v['exit']!=0),q.name
  assert v['as_limit_bytes']==(G32 if lean else G6),q.name
  if v['exit']!=0:failed.append(q.name[:-13])
- rec.append(dict(path=q.name,sha256=sha(q),exit=v['exit']))
-res=read(F/f'results/{mid}.json');green=res['strict_green_modules'];base=read(F/'BASELINE.json')['immutable_green_modules'];gl=set()
+ rec.append(dict(path=q.name,sha256=sha(q),exit=v['exit'],killed=v.get('killed')))
+res=read(F/f'results/{mid}.json');green=res['strict_green_modules'];base=read(F/'BASELINE.json')['immutable_green_modules'] if (F/'BASELINE.json').exists() else [];gl=set()
 for row in green:
  m=row['name'];cl=row['compile_label'];kl=row['check_label'];gl|={cl,kl}
  c=next(x for x in jsonrows(F/(cl+'.output.txt')) if x.get('stage')=='compile' and x.get('module')==m);k=next(x for x in jsonrows(F/(kl+'.output.txt')) if x.get('stage')=='check' and x.get('module')==m)

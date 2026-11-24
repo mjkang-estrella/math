@@ -6,17 +6,17 @@ openai-proof-research/AGENTS.md, ledger.json, and prior-campaign-context.json.
 
 Workers write only in the lane specifically assigned in their task. No changes
 to shared ledgers, shared indexes, other lanes, old campaigns, or existing papers.
-No git operations or public posting by workers. No child agents. Root alone
+No git operations or public posting by workers. Root alone
 integrates, accepts, stages and commits.
 
 Latest user model instruction (2026-10-30) authorizes multiple GPT-6.1 Sol and
 Claude Opus 5.5 subagents in addition to the previously authorized Pi model.
-It supersedes the earlier Pi-only restriction. Current allocation: two Codex
-`gpt-6.1-sol` workers and one Claude `claude-opus-5-5` worker, high effort and
-standard/default speed. Preserve all earlier artifacts regardless of provider.
-At most three active delegates may run alongside the root.
-Keep all three available delegate slots occupied
-when useful work is available (root plus three = runtime maximum four). Never
+It supersedes the earlier Pi-only restriction. Preserve all earlier artifacts regardless of provider. Effort, speed and
+whether a worker may start its own child agents are root's choice per task
+(user, 2026-11-18).
+There is no cap on the number of active delegates (user, 2026-11-18: the
+earlier three-delegate cap is removed). Root decides how many lanes to run from
+the useful work available, machine resources and provider rate limits. Never
 substitute another model or tier without user authorization.
 Do not poll asynchronous workers; follow the orchestrator's completion wake.
 
